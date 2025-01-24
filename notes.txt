@@ -1,0 +1,5 @@
+Rect + vite
+tailwind
+react router dom 
+mui
+bg-[#212529]
