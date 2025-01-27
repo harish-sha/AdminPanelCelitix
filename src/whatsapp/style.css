@@ -1,0 +1,110 @@
+.control-dots {
+  position: absolute !important;
+  /* top: 10px !important; */
+  bottom: 0px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  text-align: center !important;
+  width: 100% !important;
+  z-index: 1 !important;
+}
+
+.file-upload-container {
+  margin-top: 1rem;
+  padding: 2rem;
+  border: 2px dashed #6b7280;
+  border-radius: 1rem;
+  background-color: #f9fafb;
+  text-align: center;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+.file-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-upload-container.drag-active {
+  border-color: #10b981;
+  background-color: #d1fae5;
+}
+
+.file-upload-label {
+  /* display: block; */
+  /* font-size: 1.125rem; */
+  /* font-weight: 600; */
+  /* color: #374151; */
+  /* margin-bottom: 1rem; */
+}
+
+label {
+  /* display: block; */
+  /* font-size: 1.125rem !important; */
+  /* font-weight: 600 !important; */
+  /* color: #374151; */
+}
+
+.file-upload-text {
+  font-size: 1rem;
+  color: #6b7280;
+  margin-bottom: 1rem;
+}
+
+.file-upload-button {
+  display: inline-block;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: 600;
+  font-size: 0.875rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  text-align: center;
+}
+
+.file-upload-button:hover {
+  background-color: #2563eb;
+}
+
+.file-upload-button:active {
+  background-color: #1d4ed8;
+}
+
+.file-upload-button:focus {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+.file-upload-feedback {
+  font-size: 1rem;
+  margin-top: 1rem;
+}
+
+.file-upload-feedback-success {
+  color: #10b981;
+  font-weight: 500;
+}
+
+.file-upload-feedback-error {
+  color: #9ca3af;
+}
+
+.file-upload-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  text-align: left;
+}
+
+.file-upload-preview strong {
+  font-weight: 600;
+  color: #111827;
+}

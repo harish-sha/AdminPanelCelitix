@@ -1,4 +1,8 @@
+import { Button } from "@mui/material";
+
 const UniversalButton = ({
+    id,
+    name,
     label,
     onClick,
     type = 'button',
@@ -10,7 +14,7 @@ const UniversalButton = ({
     const getButtonStyles = () => {
         switch (variant) {
             case 'primary':
-                return 'bg-[#212529] hover:bg-gray-700 text-white';
+                return 'bg-[#212529] hover:bg-gray-900 text-white';
             case 'secondary':
                 return 'bg-gray-500 hover:bg-gray-600 text-white';
             case 'danger':

@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Mainlayout from '../../mainlayout/Mainlayout';
 import Dashboard from '../../mainlayout/dashboard/Dashboard';
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
+import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
+import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
 
 
 const Approutes = () => {
@@ -12,6 +14,8 @@ const Approutes = () => {
                 <Route path="/" element={<Mainlayout />}>
                     <Route path="/dashboard" element={<Dashboard />} />
                     <Route path="/managetemplate" element={<ManageTemplate />} />
+                    <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
+                    <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
                 </Route>
 
                 <Route path="*" element={
@@ -28,3 +32,5 @@ const Approutes = () => {
 }
 
 export default Approutes
+
+

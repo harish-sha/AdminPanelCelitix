@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
 
 * {
   font-family: "Poppins", sans-serif;
@@ -20,9 +23,30 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  color: #999;
 }
 
 #root {
   height: 100%;
+}
+
+.outlet-container {
+  border-top-left-radius: 1rem;
+}
+
+.loader {
+  border: 4px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 4px solid #3498db;
+  width: 16px;
+  height: 16px;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }

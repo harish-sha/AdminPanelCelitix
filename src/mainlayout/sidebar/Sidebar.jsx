@@ -8,6 +8,7 @@ import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import clsx from 'clsx'; // Install clsx for cleaner class handling: npm install clsx
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import toast from 'react-hot-toast';
 
 const Sidebar = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
@@ -72,10 +73,10 @@ const Sidebar = () => {
             icon: <FaWhatsapp />,
             label: 'WhatsApp',
             links: [
-                { to: '/managetemplate', label: 'Launch Campaigns' },
+                { to: '/wlaunchcampaign', label: 'Launch Campaigns' },
                 { to: '#', label: 'Live Chats' },
                 { to: '#', label: 'Manage Campaigns' },
-                { to: '#', label: 'Manage Templates' },
+                { to: '/managetemplate', label: 'Manage Templates' },
                 { to: '#', label: 'Manage Optin' },
                 { to: '#', label: 'Chat Widget' },
                 { to: '#', label: 'QR Code' },

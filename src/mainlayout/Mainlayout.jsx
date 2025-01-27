@@ -1,17 +1,19 @@
-import React from 'react'
+import React, { useRef } from 'react';
 import Sidebar from './sidebar/Sidebar'
 import Navbar from './navbar/Navbar'
 import { Outlet } from 'react-router-dom'
 
 const Mainlayout = () => {
+    const scrollableContainerRef = useRef(null);
     return (
         <div className="flex h-screen">
             <Sidebar />
             <div className="flex-1 flex flex-col">
                 <Navbar />
                 <div
-                    className="flex-1 p-3 overflow-auto bg-gray-100 rounded-l-2xl">
-                    <Outlet />
+                    ref={scrollableContainerRef}
+                    className="flex-1 p-3 overflow-auto bg-gray-100 outlet-container">
+                    <Outlet context={{ scrollableContainerRef }} />
                 </div>
             </div>
         </div>
