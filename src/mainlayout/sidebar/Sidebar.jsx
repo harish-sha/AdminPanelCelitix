@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaCog, FaHome, FaSignOutAlt, FaBars, FaWhatsapp } from 'react-icons/fa';
 import { LuMessageSquareMore } from "react-icons/lu";
@@ -10,10 +10,12 @@ import clsx from 'clsx'; // Install clsx for cleaner class handling: npm install
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 import toast from 'react-hot-toast';
 
-const Sidebar = () => {
-    const [isCollapsed, setIsCollapsed] = useState(false);
+const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+    // const [isCollapsed, setIsCollapsed] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const location = useLocation();
+    const dropdownRefs = useRef({}); // Store dropdown refs dynamically
+
 
     // Toggle sidebar collapse/uncollapse
     const toggleSidebar = () => {
@@ -27,17 +29,14 @@ const Sidebar = () => {
     // Handle dropdown open/close
     const handleDropdownClick = (dropdownName) => {
         if (isCollapsed) {
-            // If the sidebar is collapsed, uncollapse it instead of opening the dropdown
             setIsCollapsed(false);
             return;
         }
-        // Toggle the dropdown
         setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
     };
 
     // Check if a route is active
     // const isActiveRoute = (route) => location.pathname.startsWith(route);
-    // Check if a route is active
     const isActiveRoute = (route) => {
         // If the route is "/", match it exactly
         if (route === "/") {
@@ -47,6 +46,18 @@ const Sidebar = () => {
         return location.pathname.startsWith(route);
     };
 
+    // Automatically open the dropdown for the active page on refresh
+    useEffect(() => {
+        // Find the menu item whose sub-route is currently active
+        const activeMenu = menuItems.find((item) =>
+            item.links.some((link) => isActiveRoute(link.to))
+        );
+
+        // If found, set its dropdown to be open
+        if (activeMenu) {
+            setOpenDropdown(activeMenu.name);
+        }
+    }, [location.pathname]); // Runs every time route changes
 
     // Menu items for sidebar
     const menuItems = [
@@ -91,14 +102,14 @@ const Sidebar = () => {
             links: [
                 { to: '/wlaunchcampaign', label: 'Launch Campaigns' },
                 { to: '/wlivechat', label: 'Live Chats' },
-                { to: '#', label: 'Manage Campaigns' },
+                { to: '/wmanagecampaign', label: 'Manage Campaigns' },
                 { to: '/managetemplate', label: 'Manage Templates' },
-                { to: '#', label: 'Manage Optin' },
-                { to: '#', label: 'Chat Widget' },
-                { to: '#', label: 'QR Code' },
-                { to: '#', label: 'Live Chats Settings' },
-                { to: '#', label: 'Manage WABA' },
-                { to: '#', label: 'WhatsApp Conversation' },
+                { to: '/wmanageoptin', label: 'Manage Optin' },
+                { to: '/wchatwidget', label: 'Chat Widget' },
+                { to: '/wqrcode', label: 'QR Code' },
+                { to: '/wlcsetting', label: 'Live Chats Settings' },
+                { to: '/wmanagewaba', label: 'Manage WABA' },
+                { to: '/wwhatsappconversation', label: 'WhatsApp Conversation' },
             ],
         },
         {
@@ -180,31 +191,37 @@ const Sidebar = () => {
 
     return (
         <div
+            // className={clsx(
+            //     "h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 transition-all duration-300 overflow-scroll ",
+            //     isCollapsed ? "w-16" : "w-64"
+            // )}
             className={clsx(
-                'h-screen bg-white text-white px-0 flex flex-col transition-all duration-300',
-                isCollapsed ? 'w-16' : 'w-[16rem]',
+                "h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 transition-all duration-300 overflow-y-auto",
+                isCollapsed ? "w-16" : "w-64"
             )}
+            style={{ maxHeight: "calc(100vh - 3.5rem)" }} // Ensure it doesn't exceed screen height
         >
             {/* Sidebar Header */}
-            <div className="flex items-center justify-between px-4 py-4">
+            <div className="flex items-center justify-between px-4 py-2">
                 <span className={clsx('text-xl font-medium tracking-wider text-gray-800', isCollapsed && 'hidden')}>
                     Celitix
                 </span>
                 <button
-                    onClick={toggleSidebar}
-                    className="text-gray-700 focus:outline-none"
+                    // onClick={toggleSidebar}
+                    onClick={() => setIsCollapsed((prev) => !prev)}
+                    className="text-gray-700 focus:outline-none "
                 >
                     <FaBars />
                 </button>
             </div>
 
             {/* Sidebar Links */}
-            <nav className="mt-4 flex-grow">
+            <nav className="mt-1 flex-grow flex-1">
                 <Tooltip title={isCollapsed ? 'Home' : ''} placement="right">
                     <Link
                         to="/"
                         className={clsx(
-                            'flex items-center gap-4 px-4 py-2 rounded-lg transition-all',
+                            'flex items-center gap-4 px-4 py-2  transition-all',
                             isActiveRoute('/') ? 'bg-[#e6f4ff] text-blue-800' : 'text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800'
                         )}
                     >
@@ -228,7 +245,7 @@ const Sidebar = () => {
                             <button
                                 onClick={() => handleDropdownClick(item.name)}
                                 className={clsx(
-                                    'flex items-center justify-between w-full px-4 py-2 rounded-lg hover:bg-[#e6f4ff] transition-all',
+                                    'flex items-center justify-between w-full px-4 py-2  hover:bg-[#e6f4ff] transition-all',
                                     isActiveRoute(`/${item.name}`) && 'bg-[#6b728075]',
                                     isCollapsed && 'justify-center'
                                 )}
@@ -243,55 +260,24 @@ const Sidebar = () => {
                                     )}
                                 </div>
                             </button>
-                            {/* <button
-                                className="flex items-center justify-between w-full px-4 py-2 text-left"
-                                onClick={() => setOpenDropdown(openDropdown === item.name ? null : item.name)}
-                            >
-                                <div className="flex items-center gap-4">
-                                    <span className="flex-shrink-0 text-black">{item.icon}</span>
-                                    <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600]')}>{item.label}</span>
-                                </div>
-                                <div className="text-gray-800">
-                                    {!isCollapsed && (openDropdown === item.name ? <MdExpandLess /> : <MdExpandMore />)}
-                                </div>
-                            </button> */}
-
                             {/* Dropdown Content */}
                             <div
-                                className={clsx(
-                                    'overflow-hidden transition-max-height rounded-lg  duration-300 ease-in-out ',
-                                    openDropdown === item.name ? 'max-h-auto' : 'max-h-0'
-                                )}
+                                ref={(el) => (dropdownRefs[item.name] = el)}
+                                // className={clsx(
+                                //     'overflow-hidden transition-all  duration-200 ease-in-out ',
+                                //     openDropdown === item.name ? "max-h-64" : "max-h-0"
+                                // )}
+                                style={{
+                                    maxHeight: openDropdown === item.name ? `${dropdownRefs[item.name]?.scrollHeight}px` : "0px",
+                                    transition: "max-height 0.2s ease-in-out"
+                                }}
+                                className="overflow-hidden"
                             >
                                 {item.links.map((link) => (
-                                    // <>
-                                    //     <Link
-                                    //         key={link.to}
-                                    //         to={link.to}
-                                    //         className={clsx(
-                                    //             'block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] hover:text-blue-800  transition-all',
-                                    //             isActiveRoute(link.to) && 'bg-[#e6f4ff]'
-                                    //         )}
-                                    //     >
-                                    //         <FiberManualRecordIcon sx={{
-                                    //             color: 'black',
-                                    //             fontSize: '10px',
-                                    //             marginRight: '10px'
-                                    //         }}
-                                    //             className={clsx(isActiveRoute(link.to) && 'text-blue-800')}
-
-                                    //         />
-                                    //         <span className={clsx('text-gray-800 font-[600]', isActiveRoute(link.to) && 'text-blue-800')} >{link.label}</span>
-                                    //     </Link>
-                                    //     <Divider variant='middle' sx={{
-                                    //         mx: 0,
-                                    //         p: 0,
-                                    //     }} />
-                                    // </>
                                     <React.Fragment key={link.to}>
                                         <Link
                                             to={link.to}
-                                            className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] hover:text-blue-800 transition-all ${isActiveRoute(link.to) ? 'bg-[#e6f4ff] text-blue-800' : 'text-gray-800'}`}
+                                            className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to) ? 'bg-[#e6f4ff] text-blue-800' : 'text-gray-800'}`}
                                         >
                                             <FiberManualRecordIcon
                                                 sx={{
@@ -306,19 +292,13 @@ const Sidebar = () => {
                                     </React.Fragment>
                                 ))}
                             </div>
-                            {/* 
-                            <Divider variant='middle' sx={{
-                                mx: 0,
-                                p: 0,
-                                // color: #000,
-                            }} /> */}
                         </div>
                     </Tooltip>
                 ))}
             </nav>
 
             {/* Logout Button */}
-            <div className=" py-4">
+            {/* <div className=" py-4">
                 <Tooltip title="Logout" placement="right" arrow disableHoverListener={!isCollapsed}>
                     <button
                         className={clsx(
@@ -333,7 +313,7 @@ const Sidebar = () => {
                         <span className={clsx(isCollapsed && 'hidden', 'text-gray-800 font-semibold')}>Logout</span>
                     </button>
                 </Tooltip>
-            </div>
+            </div> */}
         </div>
     );
 };

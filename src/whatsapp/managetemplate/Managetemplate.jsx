@@ -151,6 +151,14 @@ const ManageTemplate = () => {
         setValue(newValue);
     };
 
+    const [inputValue, setInputValue] = useState("");
+
+    const handleInputChange = (value) => {
+        // Apply logic for spaces or no spaces here
+        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
+        setValueWithoutSpaces(newValue);
+    };
+
     return (
         <div className='w-full ' >
             {isLoading ? (
@@ -271,7 +279,9 @@ const ManageTemplate = () => {
                                             name="manageTemplateName"
                                             label="Template Name"
                                             value={valueWithoutSpaces}
-                                            onChange={(val) => setValueWithoutSpaces(val)}
+                                            // onChange={(val) => setValueWithoutSpaces(val)}
+                                            // value={inputValue}
+                                            onChange={(e) => handleInputChange(e.target.value)}
                                             placeholder="Template Name"
                                             noSpaces={true}
                                             tooltipContent="Your templatename should not contain spaces."

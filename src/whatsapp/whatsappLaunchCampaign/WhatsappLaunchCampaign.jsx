@@ -1,57 +1,37 @@
 import { useEffect, useState } from 'react';
-import UniversalSkeleton from '../components/UniversalSkeleton';
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import InputField from '../components/InputField';
 import RadioButton from './components/RadioButton';
 import TemplateRenderer from './components/lunchPreview';
-import UniversalButton from '../components/UniversalButton';
-import { Button } from '@mui/material';
 import Loader from '../components/Loader';
+import Templates from './components/Templates';
+import Waba1Template from './components/Waba1Template';
 
 const WhatsappLaunchCampaign = () => {
-    const [selectedOption, setSelectedOption] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
-    const [selectedOption2, setSelectedOption2] = useState('');
-    const [selectedOption3, setSelectedOption3] = useState('');
-    const [selectedTemplateType, setSelectedTemplateType] = useState('');
+    const [selectedTemplate, setSelectedTemplate] = useState("");
+    const [selectedWaba, setSelectedWaba] = useState("");
+    const [inputValue, setInputValue] = useState("");
 
-    const options = [
+    const [templateData, setTemplateData] = useState({});
+
+    // Handle template updates
+    const updateTemplateData = (data) => {
+        setTemplateData((prev) => ({ ...prev, ...data }));
+    };
+
+    const wabaoptions = [
         { value: 'WABA1', label: 'WABA1' },
         { value: 'WABA2', label: 'WABA2' },
         { value: 'WABA3', label: 'WABA3' },
     ];
     const templateOptions = [
-        { value: 'WABA Template 1', label: 'WABA Template 1' },
-        { value: 'WABA Template 2', label: 'WABA Template 2' },
-        { value: 'WABA Template 3', label: 'WABA Template 3' },
+        { value: "wabaTemplate1", label: "WABA Template 1" },
+        { value: "wabaTemplate2", label: "WABA Template 2" },
+        { value: "wabaTemplate3", label: "WABA Template 3" },
     ];
 
-    const templateTypeOptions = [
-        { value: 'text', label: 'Text' },
-        { value: 'image', label: 'Image' },
-        { value: 'video', label: 'Video' },
-        { value: 'document', label: 'Document' },
-        { value: 'location', label: 'Location' },
-        { value: 'carousel', label: 'Carousel' }, // Only for marketing
-    ];
-
-    const options2 = [
-        { value: 'utility', label: 'Utility' },
-        { value: 'marketing', label: 'Marketing' },
-        { value: 'authentication', label: 'Authentication' },
-    ];
-    const options3 = [
-        { value: 'text', label: 'Text' },
-        { value: 'image', label: 'Image' },
-        { value: 'document', label: 'Document' },
-        { value: 'carousel', label: 'Carousel' },
-    ];
-    const options4 = [
-        { value: 'pending', label: 'Pending' },
-        { value: 'rejected', label: 'Rejected' },
-        { value: 'approval', label: 'Approval' },
-    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -62,9 +42,13 @@ const WhatsappLaunchCampaign = () => {
         fetchData();
     }, []);
 
-    const handleTemplateTypeChange = (value) => {
-        setSelectedTemplateType(value);
+
+    const handleInputChange = (value) => {
+        // Apply logic for spaces or no spaces here
+        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
+        setInputValue(newValue);
     };
+
     return (
         <div className='max-w-full'>
             {isLoading ? (
@@ -73,7 +57,7 @@ const WhatsappLaunchCampaign = () => {
                 </>
             ) : (
                 <>
-                    <div className='container '>
+                    <div className='container-fluid '>
                         <div className="flex gap-4 ">
                             <div className="col-lg-4 w-full lg:w-1/3 p-0">
                                 <div className='w-100 mb-2'>
@@ -83,9 +67,9 @@ const WhatsappLaunchCampaign = () => {
                                         label='Select WABA'
                                         tooltipContent='Select your whatsapp business account'
                                         tooltipPlacement='right'
-                                        options={options}
-                                        value={selectedOption}
-                                        onChange={(value) => setSelectedOption(value)}
+                                        options={wabaoptions}
+                                        value={selectedWaba}
+                                        onChange={(value) => setSelectedWaba(value)}
                                         placeholder='Select WABA'
                                     />
                                 </div>
@@ -95,10 +79,10 @@ const WhatsappLaunchCampaign = () => {
                                         id="createCampaign"
                                         name="createCampaign"
                                         label='Campaign Name'
-                                        value={valueWithoutSpaces}
-                                        onChange={(val) => setValueWithoutSpaces(val)}
+                                        value={inputValue}
+                                        onChange={(e) => handleInputChange(e.target.value)}
                                         placeholder='Campaign Name'
-                                        noSpaces={true}
+                                        // noSpaces={true}
                                         tooltipContent='Your templatename should not contain spaces.'
                                         tooltipPlacement='right'
                                     />
@@ -111,17 +95,33 @@ const WhatsappLaunchCampaign = () => {
                                         tooltipContent='Select Template'
                                         tooltipPlacement='right'
                                         options={templateOptions}
-                                        value={selectedOption3}
-                                        onChange={(value) => setSelectedOption3(value)}
+                                        value={selectedTemplate}
+                                        onChange={(value) => setSelectedTemplate(value)}
                                         placeholder='Select Template'
                                     />
+
+                                </div>
+
+                                <div className='w-full mb-2' >
+                                    {/* Dynamic Template UI based on selection */}
+                                    {selectedTemplate === "wabaTemplate1" && (
+                                        <Waba1Template updateTemplate={updateTemplateData} />
+                                    )}
                                 </div>
                             </div>
+
+
+
+
                             <div className="col-lg-4 w-full lg:w-1/3 p-0">
                                 <RadioButton />
                             </div>
                             <div className="col-lg-4 w-full lg:w-1/3 p-0">
-                                <TemplateRenderer />
+                                <TemplateRenderer
+                                    header={templateData.title}
+                                    format={templateData.messageParams?.join("\n")}
+                                    imageUrl={templateData.media}
+                                />
                             </div>
                         </div>
                     </div>

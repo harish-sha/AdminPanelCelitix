@@ -83,7 +83,7 @@ const TemplateRenderer = ({
 
   return (
 
-    <div className="p-4 border rounded-md shadow-lg bg-gray-100 transition-all duration-300"
+    <div className="p-4 border rounded-md shadow-lg bg-gray-100 transition-all duration-300 w-100"
     >
       <div className='flex items-center justify-between bg-green-500 text-white px-4 py-2 rounded-t-md'>
         <h2 className='text-lg font-semibold'>Template Preview</h2>

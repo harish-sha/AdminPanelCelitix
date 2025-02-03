@@ -12,16 +12,16 @@ const InputField = ({
     placeholder = "",
     error = false,
     errorText = "",
-    noSpaces = false,
+    // noSpaces = false,
     tooltipPlacement = "top",
 }) => {
-    const handleChange = (e) => {
-        let inputValue = e.target.value;
-        if (noSpaces) {
-            inputValue = inputValue.replace(/\s/g, "");
-        }
-        onChange(inputValue);
-    };
+    // const handleChange = (e) => {
+    //     let inputValue = e.target.value;
+    //     if (noSpaces) {
+    //         inputValue = inputValue.replace(/\s/g, "");
+    //     }
+    //     onChange(inputValue);
+    // };
 
     return (
         <div className="w-full">
@@ -47,9 +47,9 @@ const InputField = ({
                 name={name}
                 type={type}
                 value={value}
-                onChange={handleChange}
+                onChange={onChange}
                 placeholder={placeholder}
-                className={`block w-full p-2 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
+                className={`block w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
                     }`}
             />
 

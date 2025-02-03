@@ -6,6 +6,14 @@ import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
 import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
 import WhatsappLiveChat from '../../whatsapp/livechat/WhatsappLiveChat';
+import WhatsappManageCampaign from '../../whatsapp/whatsappManageCampaign/WhatsappManageCampaign';
+import WhatsappManageOptin from '../../whatsapp/whatsappManageOptin/WhatsappManageOptin';
+import WhatsappChatWidget from '../../whatsapp/WhatsappChatWidget/WhatsappChatWidget';
+import WhatsappQrCode from '../../whatsapp/whatsappQrcode/WhatsappQrCode';
+import WhatsappLiveChatSettings from '../../whatsapp/whatsappLiveChatSetting/WhatsappLiveChatSettings';
+import WhatsappManageWaba from '../../whatsapp/whatsappManageWaba/WhatsappManageWaba';
+import WhatsappConversation from '../../whatsapp/whatsappConversation/WhatsappConversation';
+import Dummy from '../../whatsapp/Dummy';
 
 
 const Approutes = () => {
@@ -13,12 +21,20 @@ const Approutes = () => {
         <Router>
             <Routes>
                 <Route path="/" element={<Mainlayout />}>
-                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/" element={<Dashboard />} />
                     <Route path="/managetemplate" element={<ManageTemplate />} />
                     <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
                     <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
                     <Route path="/wlivechat" element={<WhatsappLiveChat />} />
+                    <Route path="/wmanagecampaign" element={<WhatsappManageCampaign />} />
+                    <Route path="/wmanageoptin" element={<WhatsappManageOptin />} />
+                    <Route path="/wchatwidget" element={<WhatsappChatWidget />} />
+                    <Route path="/wqrcode" element={<WhatsappQrCode />} />
+                    <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
+                    <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
+                    <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
                 </Route>
+                <Route path="/dummy" element={<Dummy />} />
 
                 <Route path="*" element={
                     <div className='flex items-center justify-center min-h-[100vh]'>
