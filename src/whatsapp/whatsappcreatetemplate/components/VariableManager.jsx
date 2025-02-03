@@ -95,6 +95,8 @@ const VariableManager = ({ templateFormat, setTemplateFormat, onUpdateVariables 
                     <div key={variable.id} className="flex items-center mt-2 gap-5 w-full px-1">
                         <label htmlFor="" className="w-14" >{`{{${index + 1}}}`}</label>
                         <input
+                            id="templateVariable"
+                            name="templateVariable"
                             type="text"
                             value={variable.value}
                             onChange={(e) => handleVariableChange(variable.id, e.target.value)}

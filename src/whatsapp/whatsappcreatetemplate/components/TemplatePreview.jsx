@@ -93,7 +93,7 @@ const TemplatePreview = ({
                 overflowY: 'auto',
                 // zIndex: 50,
             }}
-            className="p-4 border border-gray-400 bg-white rounded-md shadow-lg bg-gray-100 transition-all duration-300"
+            className="p-4 border border-gray-400 bg-white rounded-md shadow-lg  transition-all duration-300"
         >
             <div className='flex items-center justify-between bg-green-500 text-white px-4 py-2 rounded-t-md'>
                 <h2 className='text-lg font-semibold'>Template Preview</h2>
@@ -104,7 +104,10 @@ const TemplatePreview = ({
 
             <div className='bg-white rounded-b-md p-4 shadow-inner'>
                 {header && (
-                    <div className='mb-4 bg-green-100 px-3 py-2 rounded-md text-sm text-gray-900 w-full max-h-20 break-words'>
+                    <div className='mb-4 bg-green-100 px-3 py-2 rounded-md text-sm text-gray-900 w-full max-h-20 break-words'
+                        id='templateHeaderPreview'
+                        name='templateHeaderPreview'
+                    >
                         <strong className='font-semibold text-lg'>{header}</strong>
                     </div>
                 )}
@@ -112,6 +115,8 @@ const TemplatePreview = ({
                 {imageUrl && (
                     <div className='mb-4'>
                         <img
+                            id='templateImagePreview'
+                            name='templateImagePreview'
                             src={imageUrl}
                             alt='Template Preview'
                             className='w-full h-48 object-cover rounded-md'
@@ -121,7 +126,10 @@ const TemplatePreview = ({
 
                 {videoUrl && (
                     <div className='mb-4'>
-                        <video controls className='w-full h-48 rounded-md'>
+                        <video controls className='w-full h-48 rounded-md'
+                            id='templateVideoPreview'
+                            name='templateVideoPreview'
+                        >
                             <source src={videoUrl} type='video/mp4' />
                             Your browser does not support the video tag.
                         </video>
@@ -131,6 +139,8 @@ const TemplatePreview = ({
                 {documentUrl && (
                     <div className='mb-4'>
                         <a
+                            id='templateDocumentPreview'
+                            name='templateDocumentPreview'
                             href={documentUrl}
                             target='_blank'
                             rel='noopener noreferrer'
@@ -148,6 +158,8 @@ const TemplatePreview = ({
                             if (coordinates) {
                                 return (
                                     <iframe
+                                        id='templateLocationPreview'
+                                        name='templateLocationPreview'
                                         src={`https://www.google.com/maps?q=${coordinates.lat},${coordinates.lng}&output=embed`}
                                         width='100%'
                                         height='200'
@@ -176,23 +188,37 @@ const TemplatePreview = ({
                 )}
 
                 {format && (
-                    <div className='mb-4 bg-gray-100 px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full max-h-40 break-words'>
+                    <div className='mb-4 bg-gray-100 px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full max-h-40 break-words'
+                        id='templateFormatPreview'
+                        name='templateFormatPreview'
+
+                    >
                         {renderWithVariables(format)}
                     </div>
                 )}
 
                 {footer && (
-                    <div className='mt-4 text-center text-xs text-gray-500 max-h-16 overflow-auto break-words'>{footer}</div>
+                    <div className='mt-4 text-center text-xs text-gray-500 max-h-16 overflow-auto break-words'
+                        id='templateFooterPreview'
+                        name='templateFooterPreview'
+                    >{footer}</div>
                 )}
                 <div className='flex flex-col gap-2 mt-4'>
                     {phoneTitle && (
-                        <button className='flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md'>
+                        <button className='flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md'
+                            id='templatePhoneBtnPreview'
+                            name='templatePhoneBtnPreview'
+                        >
                             <BsTelephoneFill className='mr-2' />
                             {phoneTitle}
                         </button>
                     )}
                     {urlTitle && (
-                        <button className='flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-md'>
+                        <button className='flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-md'
+                            id='templateUrlBtnPreview'
+                            name='templateUrlBtnPreview'
+
+                        >
                             <FaExternalLinkAlt className='mr-2' />
                             {urlTitle}
                         </button>
@@ -206,6 +232,8 @@ const TemplatePreview = ({
                                 (reply, index) =>
                                     reply && (
                                         <button
+                                            id='templateQuickReplyBtnPreview'
+                                            name='templateQuickReplyBtnPreview'
                                             key={index}
                                             className='flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm w-full'
                                         >

@@ -14,10 +14,11 @@ import TemplateTypes from '../whatsappcreatetemplate/components/TemplateTypes.js
 import CarouselTemplatePreview from '../whatsappcreatetemplate/components/CarouselTemplatePreview.jsx';
 import CarouselTemplateTypes from '../whatsappcreatetemplate/components/CarouselTemplateTypes.jsx';
 import CarouselInteractiveActions from '../whatsappcreatetemplate/components/CarouselInteractiveActions.jsx';
+import Loader from '../components/Loader.jsx';
 
 const WhatsappCreateTemplate = () => {
     const navigate = useNavigate();
-    const { scrollableContainerRef } = useOutletContext(); // Get the ref from context
+    const { scrollableContainerRef } = useOutletContext();
 
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
     const [selectedOption, setSelectedOption] = useState('');
@@ -37,8 +38,6 @@ const WhatsappCreateTemplate = () => {
 
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
 
-    // const [variables, setVariables] = useState([]); // Define variables state here
-
     const [interactiveAction, setInteractiveAction] = useState('none');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [phoneTitle, setPhoneTitle] = useState('');
@@ -46,17 +45,6 @@ const WhatsappCreateTemplate = () => {
     const [urlTitle, setUrlTitle] = useState('');
     const [quickReplies, setQuickReplies] = useState([]);
     const [urlValid, setUrlValid] = useState(true);
-    // const [cards, setCards] = useState([]);
-
-    // const [cards, setCards] = useState([
-    //   {
-    //     mediaType: 'image',
-    //     mediaUrl: '',
-    //     body: 'This is a dummy card body. You can change this content later.',
-    //     footer: 'This is a dummy footer. You can change this content later.',
-    //   },
-    // ]);
-
     const [cards, setCards] = useState([
         {
             mediaType: 'image',
@@ -125,7 +113,7 @@ const WhatsappCreateTemplate = () => {
 
     const handleCategoryChange = (value) => {
         setSelectedOption2(value);
-        setSelectedTemplateType(''); // Reset template type when category changes
+        setSelectedTemplateType('');
     };
 
     const handleTemplateTypeChange = (value) => {
@@ -133,42 +121,18 @@ const WhatsappCreateTemplate = () => {
         setCarouselMediaType('');
     };
 
-    // const handleCarouselMediaTypeChange = (value) => {
-    //   setCarouselMediaType(value);
-    //   setCards([{ mediaType: value, mediaUrl: '', body: 'This is a dummy card body. You can change this content later.', footer: 'This is a dummy footer. You can change this content later.' }]);
-    // };
-
-    // const handleCarouselMediaTypeChange = (value) => {
-    //   setCarouselMediaType(value);
-
-    //   // Initialize cards with the appropriate media type
-    //   const initialCard = {
-    //     mediaType: value,
-    //     mediaUrl: '',
-    //     body: 'This is a dummy card body. You can change this content later.',
-    //     footer: 'This is a dummy footer. You can change this content later.',
-    //     actions: [], // Initialize actions for buttons
-    //   };
-
-    //   setCards([initialCard]); // Reset cards to contain only the initial card
-    //   setSelectedCardIndex(0); // Always select the first card
-    // };
-
     const handleCarouselMediaTypeChange = (value) => {
         setCarouselMediaType(value);
 
-        // Reset cards array with the selected media type
         setCards([
             {
                 mediaType: value,
                 mediaUrl: '',
                 body: 'This is a dummy card body. You can change this content later.',
                 footer: 'This is a dummy footer. You can change this content later.',
-                actions: [], // Ensure actions field is initialized
+                actions: [],
             },
         ]);
-
-        // Ensure the first card is selected
         setSelectedCardIndex(0);
     };
 
@@ -238,7 +202,7 @@ const WhatsappCreateTemplate = () => {
         <div className='w-full'>
             {isLoading ? (
                 <>
-                    <div className='w-full'>
+                    {/* <div className='w-full'>
                         <div className='py-5 flex flex-row gap-5'>
                             <div className='w-56'>
                                 <UniversalSkeleton height='3rem' />
@@ -261,7 +225,8 @@ const WhatsappCreateTemplate = () => {
                                 <UniversalSkeleton height='35rem' width='45%%' />
                             </div>
                         </div>
-                    </div>
+                    </div> */}
+                    <Loader />
                 </>
             ) : (
                 <>
@@ -273,6 +238,8 @@ const WhatsappCreateTemplate = () => {
                             <div className='flex gap-4 items-end justify-start align-middle pb-5'>
                                 <div className='w-56'>
                                     <AnimatedDropdown
+                                        id='createSelectWaba'
+                                        name='createSelectWaba'
                                         label='Select WABA'
                                         tooltipContent='Select your whatsapp business account'
                                         tooltipPlacement='right'
@@ -285,6 +252,8 @@ const WhatsappCreateTemplate = () => {
 
                                 <div className='w-56'>
                                     <AnimatedDropdown
+                                        id='category'
+                                        name='category'
                                         label='Category'
                                         tooltipContent='Select category'
                                         tooltipPlacement='right'
@@ -298,6 +267,8 @@ const WhatsappCreateTemplate = () => {
                                 {selectedOption2 && (
                                     <div className='w-56'>
                                         <AnimatedDropdown
+                                            id='templateType'
+                                            name='templateType'
                                             label='Template Type'
                                             tooltipContent='Select template type'
                                             tooltipPlacement='right'
@@ -316,6 +287,8 @@ const WhatsappCreateTemplate = () => {
                                 {selectedTemplateType === 'carousel' && (
                                     <div className='w-56'>
                                         <AnimatedDropdown
+                                            id='carouselMediaType'
+                                            name='carouselMediaType'
                                             label='Carousel Media'
                                             tooltipContent='Select Carousel Media'
                                             tooltipPlacement='right'
@@ -328,6 +301,8 @@ const WhatsappCreateTemplate = () => {
                                 )}
                                 <div className='w-56'>
                                     <LanguageSelect
+                                        id='language'
+                                        name='language'
                                         label='Language'
                                         tooltipContent='Select Template language'
                                         tooltipPlacement='right'
@@ -337,6 +312,8 @@ const WhatsappCreateTemplate = () => {
                                 </div>
                                 <div className='w-56'>
                                     <InputField
+                                        id='templateName'
+                                        name='templateName'
                                         label='Template Name'
                                         value={valueWithoutSpaces}
                                         onChange={(val) => setValueWithoutSpaces(val)}
@@ -355,26 +332,8 @@ const WhatsappCreateTemplate = () => {
                                     <>
                                         {selectedTemplateType === 'carousel' &&
                                             carouselMediaType ? (
-                                            // <CarouselTemplateTypes
-                                            //   selectedTemplateType={selectedTemplateType}
-                                            //   templateHeader={templateHeader}
-                                            //   setTemplateHeader={setTemplateHeader}
-                                            //   templateFormat={templateFormat}
-                                            //   setTemplateFormat={setTemplateFormat}
-                                            //   templateFooter={templateFooter}
-                                            //   setTemplateFooter={setTemplateFooter}
-                                            //   handleAddVariable={handleAddVariable}
-                                            //   handleEmojiSelect={handleEmojiSelect}
-                                            //   imageUrl={imageUrl}
-                                            //   setImageUrl={setImageUrl}
-                                            //   videoUrl={videoUrl}
-                                            //   setVideoUrl={setVideoUrl}
-                                            // // variables={variables} // Pass variables
-                                            // // setVariables={setVariables} // Pass setVariables
-                                            // />
                                             <CarouselTemplateTypes
                                                 // selectedTemplateType={selectedTemplateType}
-
                                                 templateFormat={templateFormat}
                                                 setTemplateFormat={setTemplateFormat}
                                                 templateFooter={templateFooter}
@@ -462,6 +421,8 @@ const WhatsappCreateTemplate = () => {
                                                 : 'bg-gray-300 cursor-not-allowed'
                                                 }`}
                                             onClick={handleSubmit}
+                                            id='submitTemplate'
+                                            name='submitTemplate'
                                         >
                                             Submit Template
                                         </button>

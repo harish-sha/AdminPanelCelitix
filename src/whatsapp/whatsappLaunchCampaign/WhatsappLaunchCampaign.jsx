@@ -6,6 +6,7 @@ import RadioButton from './components/RadioButton';
 import TemplateRenderer from './components/lunchPreview';
 import UniversalButton from '../components/UniversalButton';
 import { Button } from '@mui/material';
+import Loader from '../components/Loader';
 
 const WhatsappLaunchCampaign = () => {
     const [selectedOption, setSelectedOption] = useState('');
@@ -65,25 +66,10 @@ const WhatsappLaunchCampaign = () => {
         setSelectedTemplateType(value);
     };
     return (
-        <div className='max-w-full flex'>
+        <div className='max-w-full'>
             {isLoading ? (
                 <>
-                    <div className='w-full'>
-                        <div className='py-5 flex flex-row gap-5'>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                        </div>
-                    </div>
+                    <Loader />
                 </>
             ) : (
                 <>
@@ -92,8 +78,8 @@ const WhatsappLaunchCampaign = () => {
                             <div className="col-lg-4 w-full lg:w-1/3 p-0">
                                 <div className='w-100 mb-2'>
                                     <AnimatedDropdown
-                                        id='selectWABA'
-                                        name='selectWABA'
+                                        id='launchSelectWABA'
+                                        name='launchSelectWABA'
                                         label='Select WABA'
                                         tooltipContent='Select your whatsapp business account'
                                         tooltipPlacement='right'
@@ -143,7 +129,6 @@ const WhatsappLaunchCampaign = () => {
                 </>
             )}
         </div>
-        // <div>WhatsappLaunchCampaign</div>
     )
 }
 

@@ -72,13 +72,13 @@ function RadioButton() {
 
 
   return (
-    <div className="p-3 bg-gray-100 rounded-lg shadow-md w-full">
+    <div className="p-3 bg-gray-100 rounded-lg shadow-md w-90">
       <div>
 
         <h2 className="text-sm font-semibold text-gray-800 mb-4">Choose an Option</h2>
         <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-2">
           {/* Option 1 */}
-          <label className="h-10 w-50 cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
+          <label className="h-10 w-40 cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center gap-2 mt-1" >
 
               <input
@@ -95,7 +95,7 @@ function RadioButton() {
           </label>
 
           {/* Option 2 */}
-          <label className=" h-10 w-50  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
+          <label className=" h-10 w-40  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center gap-2 mt-1" >
 
 
@@ -113,7 +113,7 @@ function RadioButton() {
           </label>
 
           {/* Option 3 */}
-          <label className="h-10 w-50  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
+          <label className="h-10 w-40  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center gap-2 mt-1" >
 
 
@@ -163,7 +163,7 @@ function RadioButton() {
                 value="Yes"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
                 aria-label="No"
-                checked
+                // checked
               />
               <span className="text-gray-800 font-medium text-sm">No</span>
             </div>

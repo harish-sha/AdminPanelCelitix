@@ -47,8 +47,6 @@ const TemplateTypes = ({
 
     const updateVariables = (updatedVariables) => {
         setVariables(updatedVariables);
-
-        // Update the preview format dynamically
         const previewFormat = templateFormat.replace(/{#(.*?)#}/g, (match, id) => {
             const variable = updatedVariables.find((v) => v.id === id);
             return variable ? `[${variable.value || id}]` : match;
@@ -56,21 +54,6 @@ const TemplateTypes = ({
         onPreviewUpdate(previewFormat);
     };
 
-
-    // const handleFileUpload = (setState, allowedTypes, maxSize) => {
-    //   if (file && allowedTypes.includes(file.type) && file.size <= maxSize) {
-    //     const reader = new FileReader();
-    //     reader.onload = (e) => {
-    //       setState(e.target.result);
-    //       toast.success(`${file.type.split('/')[0]} uploaded successfully`);
-    //     };
-    //     reader.readAsDataURL(file);
-    //   } else {
-    //     toast.error(
-    //       `Invalid file. Only ${allowedTypes.join(', ')} allowed and size must be less than ${maxSize / (1024 * 1024)} MB.`
-    //     );
-    //   }
-    // };
 
     return (
         <div className='w-full'>
@@ -92,6 +75,8 @@ const TemplateTypes = ({
                     </div>
                     <div className='relative'>
                         <textarea
+                            id='template-header-textarea'
+                            name='template-header-textarea'
                             className='w-full p-2 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm break-words'
                             value={templateHeader}
                             onChange={(e) => setTemplateHeader(e.target.value)}
@@ -125,14 +110,15 @@ const TemplateTypes = ({
                     {/* File Selection */}
                     <div className='flex items-center gap-4 mt-2'>
                         <label
-                            htmlFor='imageUpload'
+                            htmlFor='createTemplateImageUpload'
                             className='bg-[#212529] hover:bg-[#434851] text-white px-4 py-2 rounded-md cursor-pointer  text-sm'
                         >
                             Select Image
                         </label>
                         <input
                             type='file'
-                            id='imageUpload'
+                            id='createTemplateImageUpload'
+                            name='createTemplateImageUpload'
                             accept='image/jpeg, image/png'
                             className='hidden'
                             ref={fileInputRef}
@@ -213,14 +199,15 @@ const TemplateTypes = ({
                     {/* File Selection */}
                     <div className='flex items-center gap-4 mt-2'>
                         <label
-                            htmlFor='videoUpload'
+                            htmlFor='createTemplateVideoUpload'
                             className='bg-[#212529] hover:bg-[#434851] text-white px-4 py-2 rounded-md cursor-pointer text-sm'
                         >
                             Select Video
                         </label>
                         <input
                             type='file'
-                            id='videoUpload'
+                            id='createTemplateVideoUpload'
+                            name='createTemplateVideoUpload'
                             accept='video/mp4, video/avi'
                             className='hidden'
                             onChange={(e) => {
@@ -298,14 +285,15 @@ const TemplateTypes = ({
                     {/* File Selection */}
                     <div className='flex items-center gap-4 mt-2'>
                         <label
-                            htmlFor='documentUpload'
+                            htmlFor='createTemplateDocumentUpload'
                             className='bg-[#212529] hover:bg-[#434851] text-white px-4 py-2 rounded-md cursor-pointer  text-sm'
                         >
                             Select Document
                         </label>
                         <input
                             type='file'
-                            id='documentUpload'
+                            id='createTemplateDocumentUpload'
+                            name='createTemplateDocumentUpload'
                             accept='application/pdf, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-powerpoint, application/vnd.openxmlformats-officedocument.presentationml.presentation, application/msword'
                             className='hidden'
                             onChange={(e) => {
@@ -380,6 +368,8 @@ const TemplateTypes = ({
                         </CustomTooltip>
                     </div>
                     <input
+                        id='location-url'
+                        name='location-url'
                         type='text'
                         className='w-full p-2 border rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         value={locationUrl}
@@ -388,7 +378,6 @@ const TemplateTypes = ({
                     />
                 </div>
             )}
-
 
             <div className='w-full mb-4'>
                 <div className='flex items-center mb-2'>
@@ -408,7 +397,8 @@ const TemplateTypes = ({
 
                 <div className='relative'>
                     <textarea
-                        id="template-format-textarea"
+                        id="createTemplateFormatTextarea"
+                        name="createTemplateFormatTextarea"
                         className='w-full p-2 pr-8 h-40 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         value={templateFormat}
                         onChange={(e) => setTemplateFormat(e.target.value)}
@@ -435,6 +425,7 @@ const TemplateTypes = ({
                     />
                 </div>
             </div>
+
             <div className='w-full mb-4'>
                 <div className='flex items-center mb-2'>
                     <label className='text-sm font-medium text-gray-700'>
@@ -452,6 +443,8 @@ const TemplateTypes = ({
                 </div>
                 <div className='relative'>
                     <textarea
+                        id='createTemplateFooterTextarea'
+                        name='createTemplateFooterTextarea'
                         className='w-full p-2 border border-gray-300 bg-white pr-8 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         value={templateFooter}
                         onChange={(e) => setTemplateFooter(e.target.value)}

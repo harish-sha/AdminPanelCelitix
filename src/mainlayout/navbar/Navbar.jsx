@@ -3,6 +3,9 @@ import { FaDownload } from "react-icons/fa6";
 import { IoWalletOutline } from "react-icons/io5";
 import { CiMoneyBill } from "react-icons/ci";
 import { BsInfoCircle } from "react-icons/bs";
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import FileDownloadOutlinedIcon from '@mui/icons-material/FileDownloadOutlined';
 
 const Navbar = () => {
     return (
@@ -11,11 +14,11 @@ const Navbar = () => {
 
             {/* Navbar actions (adjust as needed) */}
             <div className="ml-auto flex gap-4">
-                <button className="py-2 px-3 rounded-full bg-gray-700 hover:bg-gray-600"><BsInfoCircle className="text-xl" /></button>
-                <button className="py-2 px-3 rounded-full bg-gray-700 hover:bg-gray-600"><CiMoneyBill className="text-xl" /></button>
-                <button className="py-2 px-3 rounded-full bg-gray-700 hover:bg-gray-600"><IoWalletOutline className="text-xl" /></button>
-                <button className="py-2 px-3 rounded-full bg-gray-700 hover:bg-gray-600"><FaDownload className="text-xl" /></button>
-                <button className="py-2 px-3 rounded-full bg-gray-700 hover:bg-gray-600"><CgProfile className="text-xl" /></button>
+                <button className="py-2 px-3 rounded-full bg-[#e6f4ff] hover:bg-gray-600"><InfoOutlinedIcon className="text-xl text-blue-800" /></button>
+                <button className="py-2 px-3 rounded-full bg-[#e6f4ff] hover:bg-gray-600"><CiMoneyBill className="text-xl text-blue-800" /></button>
+                <button className="py-2 px-3 rounded-full bg-[#e6f4ff] hover:bg-gray-600"><AccountBalanceWalletOutlinedIcon className="text-xl text-blue-800" /></button>
+                <button className="py-2 px-3 rounded-full bg-[#e6f4ff] hover:bg-gray-600"><FileDownloadOutlinedIcon className="text-xl text-blue-800" /></button>
+                <button className="py-2 px-3 rounded-full bg-[#e6f4ff] hover:bg-gray-600"><CgProfile className="text-xl text-blue-800" /></button>
             </div>
         </nav>
     );

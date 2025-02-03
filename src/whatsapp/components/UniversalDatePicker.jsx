@@ -5,6 +5,8 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import CustomTooltip from "./CustomTooltip";
 
 const UniversalDatePicker = ({
+    id,
+    name,
     label,
     value,
     onChange,
@@ -35,6 +37,8 @@ const UniversalDatePicker = ({
 
             <LocalizationProvider dateAdapter={AdapterDateFns} className="h-5 bg-slate-500" >
                 <DatePicker
+                    id={id}
+                    name={name}
                     value={value}
                     onChange={onChange}
                     format='dd/MM/yyyy'

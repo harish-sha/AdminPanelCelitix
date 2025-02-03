@@ -119,12 +119,15 @@ const CarouselTemplatePreview = ({
             </div>
 
             {format && (
-                <div className='mb-3 bg-gray-200 border border-gray-200  px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full h-auto max-h-24 break-words'>
+                <div className='mb-3 bg-gray-200 border border-gray-200  px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full h-auto max-h-24 break-words'
+                    id='carousel-format-preview' name='carousel-format-preview'
+                >
                     {renderWithVariables(format)}
                 </div>
             )}
 
             <Carousel
+
                 showThumbs={false}
                 showStatus={false}
                 infiniteLoop
@@ -140,6 +143,8 @@ const CarouselTemplatePreview = ({
 
                     return (
                         <li
+                            id='carousel-indicator'
+                            name='carousel-indicator'
                             key={index}
                             className={`inline-block ${indicatorClass}`}
                             onClick={() => {
@@ -156,13 +161,15 @@ const CarouselTemplatePreview = ({
                 {cards.map((card, index) => (
                     <div key={index} className='relative h-[350px]'>
                         {card.mediaType === 'video' && card.mediaUrl ? (
-                            <video controls className='w-full h-48 rounded-md'>
+                            <video controls className='w-full h-48 rounded-md'  >
                                 <source src={card.mediaUrl} type='video/mp4' />
                                 Your browser does not support the video tag.
                             </video>
                         ) : card.mediaType === 'video' ? (
                             <div className='relative'>
                                 <img
+                                    id='carousel-media-video-dummy'
+                                    name='carousel-media-video-dummy'
                                     src='https://dummyimage.com/500x500/cccccc/ffffff'
                                     alt='Dummy Video'
                                     className='w-full h-48 object-cover rounded-md'
@@ -174,19 +181,25 @@ const CarouselTemplatePreview = ({
                             </div>
                         ) : card.mediaType === 'image' && card.mediaUrl ? (
                             <img
+                                id='carousel-media-image'
+                                name='carousel-media-image'
                                 src={card.mediaUrl}
                                 alt='Card Media'
                                 className='w-full h-48 object-cover rounded-md'
                             />
                         ) : (
                             <img
+                                id='carousel-media-image-dummy'
+                                name='carousel-media-image-dummy'
                                 src='https://dummyimage.com/500x500/cccccc/ffffff'
                                 alt='Dummy Image'
                                 className='w-full h-48 object-cover rounded-md'
                             />
                         )}
                         <div className='pt-2 '>
-                            <div className='mb-0 border border-gray-200 bg-gray-100 px-2 py-2 text-justify align-middle rounded-md border-2 text-gray-800 text-sm overflow-auto w-full h-28 break-words'>
+                            <div className='mb-0  border-gray-200 bg-gray-100 px-2 py-2 text-justify align-middle rounded-md border-2 text-gray-800 text-sm overflow-auto w-full h-28 break-words'
+                                id='carousel-body-preview' name='carousel-body-preview'
+                            >
                                 {card.body ||
                                     'This is a dummy card body. You can change this content later.'}
                             </div>
@@ -205,18 +218,22 @@ const CarouselTemplatePreview = ({
                 ))}
             </Carousel>
 
-            <div className=' mt-2 px-2 py-1 border-gray-200  text-xs text-gray-500 rounded-md h-16 overflow-auto break-words border-2 carouselfooterpreview'>
+            <div className=' mt-2 px-2 py-1 border-gray-200  text-xs text-gray-500 rounded-md h-16 overflow-auto break-words border-2 carouselfooterpreview'
+                id='carousel-footer-preview' name='carousel-footer-preview'
+            >
                 {footer || 'This is a dummy footer. You can change this content later.'}
             </div>
 
             {cards[selectedCardIndex]?.actions.map((action, index) => (
                 <button
+                    id='carousel-action-preview'
+                    name='carousel-action-preview'
                     key={index}
                     className={`flex items-center justify-center px-4 py-2 w-full  mt-2 ${action.type === 'phone'
-                            ? 'bg-blue-500 text-white'
-                            : action.type === 'url'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-gray-200 text-gray-800'
+                        ? 'bg-blue-500 text-white'
+                        : action.type === 'url'
+                            ? 'bg-green-500 text-white'
+                            : 'bg-gray-200 text-gray-800'
                         } rounded-md`}
                 >
                     {action.type === 'phone' && <BsTelephoneFill className='mr-2' />}
@@ -225,19 +242,10 @@ const CarouselTemplatePreview = ({
                     {action.title}
                 </button>
             ))}
-
-            {/* {cards.length < 10 && (
-        <div className='mt-4 flex justify-center relative'>
-          <button
-            className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851]"
-            onClick={onAddCard}
-          >
-            Add Card
-          </button>
-        </div>
-      )} */}
             <div className='mt-4 flex justify-center relative'>
                 <button
+                    id='carousel-add-card'
+                    name='carousel-add-card'
                     className={`bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] ${cards.length >= 10 ? 'bg-[#434851]' : 'bg-[#212529]'}`}
                     onClick={handleAddCard}
                 >

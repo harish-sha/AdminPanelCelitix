@@ -1,86 +1,148 @@
 import React, { useState } from "react";
-import { AiOutlineInfoCircle } from "react-icons/ai";
-import CustomTooltip from "./CustomTooltip";
-import Select, { selectClasses } from "@mui/joy/Select";
-import Option from "@mui/joy/Option";
-import Checkbox from "@mui/joy/Checkbox";
-import KeyboardArrowDown from "@mui/icons-material/KeyboardArrowDown";
+import { BsThreeDots, BsFilter, BsSend } from "react-icons/bs";
+import { FaChevronDown } from "react-icons/fa";
+import "./LiveChat.css";
 
-const AnimatedDropdown = ({
-    id,
-    name,
-    label,
-    tooltipContent = "",
-    tooltipPlacement = "top",
-    options,
-    value,
-    onChange,
-    placeholder = "Select options...",
-}) => {
-    const handleOptionToggle = (selectedValue) => {
-        const isSelected = value.includes(selectedValue);
-        const newValue = isSelected
-            ? value.filter((val) => val !== selectedValue) // Remove if already selected
-            : [...value, selectedValue]; // Add if not selected
-        onChange(newValue);
+const LiveChat = () => {
+    const [selectedChat, setSelectedChat] = useState(null);
+
+    // Dummy user data
+    const users = [
+        {
+            id: 1,
+            name: "John Doe",
+            lastMessage: "Hello! How are you?",
+            time: "10:15 AM",
+            profilePic: "https://via.placeholder.com/40",
+            unreadCount: 5,
+        },
+        {
+            id: 2,
+            name: "Jane Smith",
+            lastMessage: "Are you available for a call?",
+            time: "9:45 AM",
+            profilePic: "https://via.placeholder.com/40",
+            unreadCount: 2,
+        },
+        {
+            id: 3,
+            name: "Robert Brown",
+            lastMessage: "Thanks for the update!",
+            time: "Yesterday",
+            profilePic: "https://via.placeholder.com/40",
+            unreadCount: 0,
+        },
+    ];
+
+    // Render selected chat
+    const renderChatBody = () => {
+        if (!selectedChat) {
+            return <div className="no-chat">Select a chat to start a conversation</div>;
+        }
+
+        return (
+            <div className="chat-body">
+                {selectedChat.messages?.map((msg, idx) => (
+                    <div
+                        key={idx}
+                        className={`message ${msg.sentByUser ? "sent" : "received"}`}
+                    >
+                        {msg.text}
+                    </div>
+                ))}
+            </div>
+        );
     };
 
     return (
-        <div className="relative w-full">
-            {label && (
-                <div className="flex items-center mb-2">
-                    <label htmlFor={id} className="text-sm font-medium text-gray-800">
-                        {label}
-                    </label>
-                    {tooltipContent && (
-                        <CustomTooltip
-                            title={tooltipContent}
-                            placement={tooltipPlacement}
-                            arrow
-                        >
-                            <span className="ml-2">
-                                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
-                            </span>
-                        </CustomTooltip>
-                    )}
-                </div>
-            )}
+        <div className="live-chat-container">
+            {/* Left Side: Chat List */}
+            <div className="chat-list">
+                {/* Top Controls */}
+                <div className="chat-list-header">
+                    <div className="dropdown">
+                        <button className="dropdown-btn">
+                            Filter Options <FaChevronDown />
+                        </button>
+                        <div className="dropdown-content">
+                            <div>All Chats</div>
+                            <div>Unread Chats</div>
+                            <div>Archived Chats</div>
+                        </div>
+                    </div>
 
-            <Select
-                id={id}
-                name={name}
-                multiple
-                placeholder={placeholder}
-                indicator={<KeyboardArrowDown />}
-                value={value}
-                onChange={(e, selectedValue) => handleOptionToggle(selectedValue)}
-                sx={{
-                    width: "100%",
-                    [`& .${selectClasses.indicator}`]: {
-                        transition: "0.2s",
-                        [`&.${selectClasses.expanded}`]: {
-                            transform: "rotate(-180deg)",
-                        },
-                    },
-                }}
-            >
-                {options.map((option) => (
-                    <Option
-                        key={option.value}
-                        value={option.value}
-                        label={option.label}
-                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                    >
-                        <Checkbox
-                            checked={value.includes(option.value)}
-                            onChange={() => handleOptionToggle(option.value)}
+                    <div className="search-bar">
+                        <input type="text" placeholder="Search..." />
+                        <BsFilter className="icon filter-icon" />
+                        <BsThreeDots className="icon dots-icon" />
+                    </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="chat-buttons">
+                    <button className="btn active">Active</button>
+                    <button className="btn close">Close</button>
+                </div>
+
+                {/* User List */}
+                <div className="user-list">
+                    {users.map((user) => (
+                        <div
+                            key={user.id}
+                            className={`user ${selectedChat?.id === user.id ? "selected" : ""}`}
+                            onClick={() => setSelectedChat(user)}
+                        >
+                            <img
+                                src={user.profilePic}
+                                alt={`${user.name}'s profile`}
+                                className="profile-pic"
+                            />
+                            <div className="user-info">
+                                <div className="user-name">{user.name}</div>
+                                <div className="last-message">{user.lastMessage}</div>
+                            </div>
+                            <div className="user-meta">
+                                <div className="time">{user.time}</div>
+                                {user.unreadCount > 0 && (
+                                    <div className="notification">{user.unreadCount}</div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            {/* Right Side: Chat View */}
+            <div className="chat-view">
+                {/* Chat Header */}
+                {selectedChat && (
+                    <div className="chat-header">
+                        <img
+                            src={selectedChat.profilePic}
+                            alt={`${selectedChat.name}'s profile`}
+                            className="profile-pic"
                         />
-                        {option.label}
-                    </Option>
-                ))}
-            </Select>
+                        <div className="chat-user-info">
+                            <div className="chat-user-name">{selectedChat.name}</div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Chat Body */}
+                {renderChatBody()}
+
+                {/* Chat Input */}
+                {selectedChat && (
+                    <div className="chat-input">
+                        <input type="text" placeholder="Type a message..." />
+                        <button className="send-btn">
+                            <BsSend />
+                        </button>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
-export default AnimatedDropdown;
+export default LiveChat;

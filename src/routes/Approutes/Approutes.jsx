@@ -5,6 +5,7 @@ import Dashboard from '../../mainlayout/dashboard/Dashboard';
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
 import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
+import WhatsappLiveChat from '../../whatsapp/livechat/WhatsappLiveChat';
 
 
 const Approutes = () => {
@@ -16,6 +17,7 @@ const Approutes = () => {
                     <Route path="/managetemplate" element={<ManageTemplate />} />
                     <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
                     <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
+                    <Route path="/wlivechat" element={<WhatsappLiveChat />} />
                 </Route>
 
                 <Route path="*" element={

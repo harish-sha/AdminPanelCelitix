@@ -26,6 +26,8 @@ const UniversalButton = ({
 
     return (
         <button
+            id={id}
+            name={name}
             type={type}
             onClick={onClick}
             disabled={disabled || isLoading}

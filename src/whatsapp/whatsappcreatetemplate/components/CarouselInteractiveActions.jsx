@@ -56,7 +56,7 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
     };
 
     return (
-        <div className='w-full p-4 border bg-white border-gray-300 rounded-lg shadow-md bg-gray-50'>
+        <div className='w-full p-4 border bg-white border-gray-300 rounded-lg shadow-md '>
             <div className='flex items-center mb-2'>
                 <label className='text-base font-medium text-gray-700'>
                     Carousel Interactive Actions
@@ -81,18 +81,24 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
             <div className='space-y-4'>
                 <div className='flex gap-2'>
                     <button
+                        id='carouselPhoneAction'
+                        name='carouselPhoneAction'
                         className='bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600'
                         onClick={() => handleAddAction('phone')}
                     >
                         Add Phone
                     </button>
                     <button
+                        id='carouselUrlAction'
+                        name='carouselUrlAction'
                         className='bg-green-500 text-white px-3 py-1 text-sm rounded hover:bg-green-600'
                         onClick={() => handleAddAction('url')}
                     >
                         Add URL
                     </button>
                     <button
+                        id='carouselQuickReplyAction'
+                        name='carouselQuickReplyAction'
                         className='bg-gray-500 text-white px-3 py-1 text-sm rounded hover:bg-gray-600'
                         onClick={() => handleAddAction('quickReply')}
                     >
@@ -121,6 +127,8 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
                         {action.type === 'phone' && (
                             <div className='flex gap-2'>
                                 <input
+                                    id='carouselPhoneActionTitle'
+                                    name='carouselPhoneActionTitle'
                                     type='text'
                                     className='flex-1 border rounded px-2 py-1 text-sm'
                                     placeholder='Button Title'
@@ -131,6 +139,8 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
                                     maxLength={25}
                                 />
                                 <input
+                                    id='carouselPhoneActionPhoneNumber'
+                                    name='carouselPhoneActionPhoneNumber'
                                     type='text'
                                     className='flex-1 border rounded px-2 py-1 text-sm'
                                     placeholder='Phone Number (+91)'
@@ -146,6 +156,8 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
                         {action.type === 'url' && (
                             <div className='flex gap-2'>
                                 <input
+                                    id='carouselUrlActionTitle'
+                                    name='carouselUrlActionTitle'
                                     type='text'
                                     className='flex-1 border rounded px-2 py-1 text-sm'
                                     placeholder='Button Title'
@@ -156,6 +168,8 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
                                     maxLength={25}
                                 />
                                 <input
+                                    id='carouselUrlActionUrl'
+                                    name='carouselUrlActionUrl'
                                     type='text'
                                     className='flex-1 border rounded px-2 py-1 text-sm'
                                     placeholder='Enter URL'
@@ -170,6 +184,8 @@ const CarouselInteractiveActions = ({ cards, setCards, selectedCardIndex }) => {
                         {action.type === 'quickReply' && (
                             <div>
                                 <input
+                                    id='carouselQuickReplyActionTitle'
+                                    name='carouselQuickReplyActionTitle'
                                     type='text'
                                     className='w-full border rounded px-2 py-1 text-sm'
                                     placeholder='Quick Reply Title'

@@ -9,13 +9,13 @@ import { TablePagination } from '@mui/material';
 
 const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
     const columns = [
-        { field: 'sn', headerName: 'S.No', width: 80 },
-        { field: 'name', headerName: 'Name', width: 130 },
-        { field: 'category', headerName: 'Category', width: 130 },
-        { field: 'status', headerName: 'Status', width: 130 },
-        { field: 'type', headerName: 'Type', width: 130 },
-        { field: 'health', headerName: 'Health', width: 130 },
-        { field: 'createdat', headerName: 'Created At', width: 130 },
+        { field: 'sn', headerName: 'S.No', width: 100 },
+        { field: 'name', headerName: 'Name', width: 180 },
+        { field: 'category', headerName: 'Category', width: 180 },
+        { field: 'status', headerName: 'Status', width: 150 },
+        { field: 'type', headerName: 'Type', width: 150 },
+        { field: 'health', headerName: 'Health', width: 180 },
+        { field: 'createdat', headerName: 'Created At', width: 200 },
         {
             field: 'action',
             headerName: 'Action',
@@ -105,7 +105,7 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
     ];
 
     return (
-        <Paper sx={{ height: 500, width: '95%' }}>
+        <Paper sx={{ height: 500, width: '100%' }}>
             <DataGrid
                 rows={rows}
                 columns={columns}

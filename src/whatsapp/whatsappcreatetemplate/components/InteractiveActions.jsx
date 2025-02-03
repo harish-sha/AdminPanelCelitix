@@ -43,7 +43,7 @@ const InteractiveActions = ({
     ]);
 
     return (
-        <div className='w-full mb-4 p-4 border border-gray-300 bg-white rounded-lg shadow-md bg-gray-50'>
+        <div className='w-full mb-4 p-4 border border-gray-300 bg-white rounded-lg shadow-md '>
             {/* Header */}
             <div className='flex items-center mb-2'>
                 <label className='text-base font-medium text-gray-700'>
@@ -71,6 +71,7 @@ const InteractiveActions = ({
                         className='flex items-center gap-2 cursor-pointer'
                     >
                         <input
+                            id='interactiveAction'
                             type='radio'
                             name='interactiveAction'
                             value={action}
@@ -91,12 +92,16 @@ const InteractiveActions = ({
                     <div className='space-y-4'>
                         <div className='flex gap-2'>
                             <button
+                                id='templateAddPhoneNumber'
+                                name='templateAddPhoneNumber'
                                 className='bg-blue-500 text-white px-3 py-1 text-sm rounded hover:bg-blue-600'
                                 onClick={() => setPhoneNumber(phoneNumber || '+91')}
                             >
                                 Add Phone Number
                             </button>
                             <button
+                                id='templateAddUrl'
+                                name='templateAddUrl'
                                 className='bg-green-500 text-white px-3 py-1 text-sm rounded hover:bg-green-600'
                                 onClick={() => setUrl((prev) => (prev ? prev : 'http://'))} // Ensure URL is initialized
                             >
@@ -106,7 +111,7 @@ const InteractiveActions = ({
 
                         {/* Phone Number Section */}
                         {phoneNumber && (
-                            <div className='relative border p-3 rounded-md shadow-sm'>
+                            <div className='relative border border-gray-300  p-3 rounded-md shadow-sm'>
                                 <div className='flex items-center justify-between mb-2'>
                                     <label className='text-sm font-medium text-gray-700'>
                                         Phone Number
@@ -121,16 +126,20 @@ const InteractiveActions = ({
                                 </div>
                                 <div className='flex gap-2'>
                                     <input
+                                        id='templatePhoneNumberTitle'
+                                        name='templatePhoneNumberTitle'
                                         type='text'
-                                        className='flex-1 border rounded px-2 py-1 text-sm'
+                                        className='flex-1 border border-gray-300 rounded px-2 py-1 text-sm'
                                         placeholder='Button Title'
                                         value={phoneTitle}
                                         onChange={(e) => setPhoneTitle(e.target.value)}
                                         maxLength={25}
                                     />
                                     <input
+                                        id='templatePhoneNumber'
+                                        name='templatePhoneNumber'
                                         type='text'
-                                        className='flex-1 border rounded px-2 py-1 text-sm'
+                                        className='flex-1 border border-gray-300 rounded px-2 py-1 text-sm'
                                         placeholder='Phone Number (+919876543210)'
                                         value={phoneNumber}
                                         onChange={(e) => {
@@ -147,7 +156,7 @@ const InteractiveActions = ({
 
                         {/* URL Section */}
                         {url && (
-                            <div className='relative border p-3 rounded-md shadow-sm'>
+                            <div className='relative border border-gray-300 p-3 rounded-md shadow-sm'>
                                 <div className='flex items-center justify-between gap-2 mb-2'>
                                     <label className='text-sm font-medium text-gray-700'>
                                         URL Title
@@ -161,14 +170,18 @@ const InteractiveActions = ({
                                     />
                                 </div>
                                 <input
+                                    id='templateUrlTitle'
+                                    name='templateUrlTitle'
                                     type='text'
-                                    className='w-full border rounded px-2 py-1 text-sm mb-2'
+                                    className='w-full border rounded border-gray-300 px-2 py-1 text-sm mb-2'
                                     placeholder='Button Title'
                                     value={urlTitle}
                                     onChange={(e) => setUrlTitle(e.target.value)}
                                     maxLength={25}
                                 />
                                 <input
+                                    id='templateUrl'
+                                    name='templateUrl'
                                     type='text'
                                     className={`w-full border rounded px-2 py-1 text-sm ${urlValid ? 'border-green-500' : 'border-red-500'
                                         }`}
@@ -194,8 +207,10 @@ const InteractiveActions = ({
                         {quickReplies.map((reply, index) => (
                             <div key={index} className='flex gap-2 items-center'>
                                 <input
+                                    id={`quickReply${index}`}
+                                    name={`quickReply${index}`}
                                     type='text'
-                                    className='flex-1 border rounded px-2 py-1 text-sm'
+                                    className='flex-1 border border-gray-300 rounded px-2 py-1 text-sm'
                                     placeholder={`Quick Reply ${index + 1}`}
                                     value={reply}
                                     onChange={(e) => handleQuickReplyChange(index, e.target.value)}

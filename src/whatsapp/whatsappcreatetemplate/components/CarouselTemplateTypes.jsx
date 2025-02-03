@@ -34,60 +34,29 @@ const CarouselTemplateTypes = ({
         onPreviewUpdate(previewFormat);
     };
 
-
-    // Update card body
-    // const handleCardBodyChange = (index, value) => {
-    //   const updatedCards = [...cards];
-    //   updatedCards[index].body = value;
-    //   setCards(updatedCards);
-    // };
-
     const handleCardBodyChange = (value) => {
         const updatedCards = [...cards];
-        updatedCards[selectedCardIndex].body = value; // Update the body of the selected card
-        setCards(updatedCards); // Set the updated cards
+        updatedCards[selectedCardIndex].body = value; 
+        setCards(updatedCards); 
     };
 
-    // Add emoji to the card body
     const handleEmojiForCardBody = (emoji) => {
         const updatedCards = [...cards];
         updatedCards[selectedCardIndex].body = (updatedCards[selectedCardIndex].body || '') + emoji; // Append emoji to the body
         setCards(updatedCards);
     };
 
-
-    // Handles the update of the card body
-    // const handleCardBodyChange = (value) => {
-    //   const updatedCards = [...cards];
-    //   updatedCards[selectedCardIndex].body = value; // Update the body of the selected card
-    //   setCards(updatedCards);
-    // };
-
-
-    // Handle file upload for media
-    // const handleMediaUpload = (index, mediaUrl) => {
-    //   const updatedCards = [...cards];
-    //   updatedCards[index].mediaUrl = mediaUrl;
-    //   setCards(updatedCards);
-    // };
-
-    // const handleMediaUpload = (mediaUrl) => {
-    //   const updatedCards = [...cards];
-    //   updatedCards[selectedCardIndex].mediaUrl = mediaUrl; // Update media URL for the selected card
-    //   setCards(updatedCards);
-    // };
-
     const handleMediaUpload = () => {
         if (file) {
             const isVideo = cards[selectedCardIndex]?.mediaType === "video";
-            const maxSize = isVideo ? 16 * 1024 * 1024 : 5 * 1024 * 1024; // File size limit
+            const maxSize = isVideo ? 16 * 1024 * 1024 : 5 * 1024 * 1024; 
             if (file.size <= maxSize) {
                 const updatedCards = [...cards];
-                updatedCards[selectedCardIndex].mediaUrl = URL.createObjectURL(file); // Set media URL
-                updatedCards[selectedCardIndex].fileName = file.name; // Set file name for the particular card
+                updatedCards[selectedCardIndex].mediaUrl = URL.createObjectURL(file); 
+                updatedCards[selectedCardIndex].fileName = file.name;
                 setCards(updatedCards);
-                setFile(null); // Reset file
-                fileInputRef.current.value = ""; // Reset file input
+                setFile(null);
+                fileInputRef.current.value = ""; 
                 toast.success(`${isVideo ? "Video" : "Image"} uploaded successfully!`);
             } else {
                 toast.error(
@@ -99,70 +68,19 @@ const CarouselTemplateTypes = ({
         }
     };
 
-
-
-    // useEffect(() => {
-    //   if (file) {
-    //     const selectedFile = file;
-    //     if (selectedFile.size <= (cards[selectedCardIndex]?.mediaType === 'video' ? 16 : 5) * 1024 * 1024) {
-    //       handleMediaUpload(selectedCardIndex, URL.createObjectURL(selectedFile));
-    //       setLastUploadedFileName(selectedFile.name);
-    //       setFile(null); // Reset file state after upload
-    //       fileInputRef.current.value = ''; // Reset file input
-    //       toast.success(`${cards[selectedCardIndex]?.mediaType === 'video' ? 'Video' : 'Image'} uploaded successfully!`);
-    //     } else {
-    //       toast.error(`File size exceeds ${cards[selectedCardIndex]?.mediaType === 'video' ? '16' : '5'} MB limit!`);
-    //     }
-    //   }
-    // }, [file]);
-
-
-    // useEffect(() => {
-    //   if (file) {
-    //     const selectedFile = file;
-    //     const isVideo = cards[selectedCardIndex]?.mediaType === "video";
-    //     const maxSize = isVideo ? 16 * 1024 * 1024 : 5 * 1024 * 1024; // Size limit based on media type
-    //     if (selectedFile.size <= maxSize) {
-    //       handleMediaUpload(URL.createObjectURL(selectedFile)); // Update the media URL
-    //       setLastUploadedFileName(selectedFile.name); // Store the uploaded file name
-    //       setFile(null); // Reset file state
-    //       fileInputRef.current.value = ""; // Reset file input value
-    //       toast.success(`${isVideo ? "Video" : "Image"} uploaded successfully!`);
-    //     } else {
-    //       toast.error(
-    //         `File size exceeds ${isVideo ? "16MB" : "5MB"} limit. Please upload a smaller file.`
-    //       );
-    //     }
-    //   }
-    // }, [file, cards, selectedCardIndex]);
-
-
-
-    // Handle delete media
-    // const handleDeleteMedia = (index) => {
-    //   const updatedCards = [...cards];
-    //   updatedCards[index].mediaUrl = '';
-    //   updatedCards[index].mediaType = '';
-    //   setCards(updatedCards);
-    // };
-
-
-    // Handles the deletion of media for the selected card
     const handleDeleteMedia = () => {
         const updatedCards = [...cards];
-        updatedCards[selectedCardIndex].mediaUrl = ""; // Clear the media URL
-        // updatedCards[selectedCardIndex].mediaType = ""; // Clear the media type
-        updatedCards[selectedCardIndex].fileName = ""; // Clear file name
-        setCards(updatedCards); // Update the state
+        updatedCards[selectedCardIndex].mediaUrl = ""; 
+        // updatedCards[selectedCardIndex].mediaType = ""; 
+        updatedCards[selectedCardIndex].fileName = ""; 
+        setCards(updatedCards); 
         toast.success("Media removed successfully!");
     };
 
-    // Effect to clear card content and media if the card is deleted
     useEffect(() => {
         if (selectedCardIndex >= cards.length) {
-            setSelectedCardIndex(Math.max(0, cards.length - 1)); // Adjust index to a valid card
+            setSelectedCardIndex(Math.max(0, cards.length - 1)); 
         } else if (!cards[selectedCardIndex]) {
-            // Clear the card body and media if the card was deleted
             handleCardBodyChange('');
             handleMediaUpload('');
         }
@@ -190,7 +108,8 @@ const CarouselTemplateTypes = ({
 
                 <div className='relative'>
                     <textarea
-                        // id="template-format-textarea"
+                        id="templateFormatCarouselTextarea"
+                        name="templateFormatCarouselTextarea"
                         className='w-full p-2 pr-8 h-24 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         value={templateFormat}
                         onChange={(e) => setTemplateFormat(e.target.value)}
@@ -213,21 +132,7 @@ const CarouselTemplateTypes = ({
                     />
                 </div>
             </div>
-
-            {/* Card Selection */}
-            {/* <div className="mb-4 flex gap-2">
-        {cards.map((_, index) => (
-          <button
-            key={index}
-            className={`px-3 py-1 rounded-md text-white ${index === selectedCardIndex ? 'bg-blue-500' : 'bg-gray-500'
-              }`}
-            onClick={() => setSelectedCardIndex(index)}
-          >
-            Card {index + 1}
-          </button>
-        ))}
-      </div> */}
-
+            
 
             <div className='w-full mb-4'>
                 <div className='flex items-center mb-2'>
@@ -247,6 +152,8 @@ const CarouselTemplateTypes = ({
 
                 <div className='relative'>
                     <textarea
+                        id='cardBodyCarouselTextarea'
+                        name='cardBodyCarouselTextarea'
                         className='w-full p-2 pr-8 h-24 border bg-white border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         maxLength={160}
                         value={cards[selectedCardIndex]?.body || ''}
@@ -257,7 +164,7 @@ const CarouselTemplateTypes = ({
                     />
                     <div className='absolute top-0 right-0 mt-2 mr-2 flex space-x-2'>
                         <CustomEmojiPicker
-                            onSelect={handleEmojiForCardBody} // Add emoji to card body
+                            onSelect={handleEmojiForCardBody}
                             position='right'
                         />
                     </div>
@@ -268,6 +175,7 @@ const CarouselTemplateTypes = ({
                     </p>
                 </div>
             </div>
+
 
             <div className='w-full mb-4'>
                 <div className='flex items-center'>
@@ -291,14 +199,15 @@ const CarouselTemplateTypes = ({
 
                 <div className='flex items-center gap-4 mt-2'>
                     <label
-                        htmlFor='mediaUpload'
+                        htmlFor='carouselMediaUpload'
                         className='bg-[#212529] hover:bg-[#434851] text-white px-4 py-2 rounded-md cursor-pointer text-sm'
                     >
                         Select {cards[selectedCardIndex]?.mediaType === 'video' ? 'Video' : 'Image'}
                     </label>
                     <input
                         type='file'
-                        id='mediaUpload'
+                        id='carouselMediaUpload'
+                        name='carouselMediaUpload'
                         accept={cards[selectedCardIndex]?.mediaType === 'video' ? 'video/mp4, video/avi' : 'image/jpeg, image/png'}
                         className='hidden'
                         ref={fileInputRef}
@@ -310,26 +219,6 @@ const CarouselTemplateTypes = ({
                         }}
                     />
 
-                    {/* {file && (
-            <button
-              className='px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm'
-              onClick={() => {
-                if (file.size <= (cards[selectedCardIndex]?.mediaType === 'video' ? 16 : 5) * 1024 * 1024) {
-                  handleMediaUpload(selectedCardIndex, URL.createObjectURL(file));
-                  setLastUploadedFileName(file.name);
-                  setFile(null); // Reset file state after upload
-                  fileInputRef.current.value = ''; // Reset file input
-                  toast.success(`${cards[selectedCardIndex]?.mediaType === 'video' ? 'Video' : 'Image'} uploaded successfully!`);
-                } else {
-                  toast.error(`File size exceeds ${cards[selectedCardIndex]?.mediaType === 'video' ? '16' : '5'} MB limit!`);
-                }
-              }}
-            >
-              Upload
-            </button>
-          )} */}
-
-
                     {file && (
                         <button
                             className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 text-sm"
@@ -338,19 +227,6 @@ const CarouselTemplateTypes = ({
                             Upload
                         </button>
                     )}
-
-                    {/* {file && (
-            <MdOutlineDeleteForever
-              className='text-red-500 cursor-pointer hover:text-red-700'
-              size={20}
-              onClick={() => {
-                setFile(null);
-                handleMediaUpload(selectedCardIndex, null);
-                fileInputRef.current.value = '';
-                toast.success(`${cards[selectedCardIndex]?.mediaType === 'video' ? 'Video' : 'Image'} removed successfully!`);
-              }}
-            />
-          )} */}
                     {cards[selectedCardIndex]?.mediaUrl && (
                         <MdOutlineDeleteForever
                             className="text-red-500 cursor-pointer hover:text-red-700"
@@ -359,14 +235,12 @@ const CarouselTemplateTypes = ({
                         />
                     )}
                 </div>
-                {/* Display file name for uploaded media */}
                 {cards[selectedCardIndex]?.fileName && (
                     <span className="text-sm text-gray-600 mt-2 block">
                         {cards[selectedCardIndex].fileName}
                     </span>
                 )}
             </div>
-
 
             <div className='w-full mb-4'>
                 <div className='flex items-center mb-2'>
@@ -385,6 +259,8 @@ const CarouselTemplateTypes = ({
                 </div>
                 <div className='relative'>
                     <textarea
+                        id='templateFooterCarouselTextarea'
+                        name='templateFooterCarouselTextarea'
                         className='w-full p-2 border bg-white border-gray-300 pr-8 h-14 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm'
                         value={templateFooter}
                         onChange={(e) => setTemplateFooter(e.target.value)}
