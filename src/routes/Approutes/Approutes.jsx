@@ -14,6 +14,7 @@ import WhatsappLiveChatSettings from '../../whatsapp/whatsappLiveChatSetting/Wha
 import WhatsappManageWaba from '../../whatsapp/whatsappManageWaba/WhatsappManageWaba';
 import WhatsappConversation from '../../whatsapp/whatsappConversation/WhatsappConversation';
 import Dummy from '../../whatsapp/Dummy';
+import ProfilePage from '../../mainlayout/navbar/pages/Profile';
 
 
 const Approutes = () => {
@@ -33,6 +34,7 @@ const Approutes = () => {
                     <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
                     <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
                     <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
+                    <Route path="/profile" element={<ProfilePage />} />
                 </Route>
                 <Route path="/dummy" element={<Dummy />} />
 

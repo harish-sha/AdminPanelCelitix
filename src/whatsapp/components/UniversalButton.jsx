@@ -14,7 +14,8 @@ const UniversalButton = ({
     const getButtonStyles = () => {
         switch (variant) {
             case 'primary':
-                return 'bg-[#212529] hover:bg-gray-900 text-white';
+                // return 'bg-[#212529] hover:bg-gray-900 text-white';
+                return 'bg-blue-400 hover:bg-blue-500 text-white';
             case 'secondary':
                 return 'bg-gray-500 hover:bg-gray-600 text-white';
             case 'danger':

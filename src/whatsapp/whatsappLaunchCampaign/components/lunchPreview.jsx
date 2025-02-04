@@ -99,7 +99,7 @@ const TemplateRenderer = ({
           </div>
         )}
 
-        {imageUrl && (
+        {/* {imageUrl && (
           <div className='mb-4'>
             <img
               src={imageUrl}
@@ -107,6 +107,14 @@ const TemplateRenderer = ({
               className='w-full h-48 object-cover rounded-md'
             />
           </div>
+        )} */}
+
+        {imageUrl ? (
+          <div className="mb-4">
+            <img src={imageUrl} alt="Template Preview" className="w-full h-48 object-cover rounded-md" />
+          </div>
+        ) : (
+          <div className="mb-4 bg-gray-200 text-center text-sm py-2 rounded-md">No Image Uploaded</div>
         )}
 
         {videoUrl && (

@@ -229,7 +229,7 @@ const ManageTemplate = () => {
                                             name='manageTemplateAddNewBtn'
                                             label="Add New"
                                             onClick={handleAddNew}
-                                            variant="secondary"
+                                            variant="primary"
                                         />
                                     </div>
                                     <div className="w-max-content ">
@@ -238,7 +238,7 @@ const ManageTemplate = () => {
                                             name='syncStatusBtn'
                                             label="Sync Status"
                                             // onClick={handleAddNew}
-                                            variant="secondary"
+                                            variant="primary"
                                         />
                                     </div>
                                 </div>
