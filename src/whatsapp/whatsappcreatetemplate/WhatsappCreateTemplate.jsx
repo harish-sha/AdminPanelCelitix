@@ -198,6 +198,14 @@ const WhatsappCreateTemplate = () => {
         }
     };
 
+    const handleInputChange = (value) => {
+        // Apply logic for spaces or no spaces here
+        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
+        setValueWithoutSpaces(newValue);
+    };
+
+
+
     return (
         <div className='w-full'>
             {isLoading ? (
@@ -316,7 +324,8 @@ const WhatsappCreateTemplate = () => {
                                         name='templateName'
                                         label='Template Name'
                                         value={valueWithoutSpaces}
-                                        onChange={(val) => setValueWithoutSpaces(val)}
+                                        // onChange={(val) => setValueWithoutSpaces(val)}
+                                        onChange={(e) => handleInputChange(e.target.value)}
                                         placeholder='Template Name'
                                         noSpaces={true}
                                         tooltipContent='Your templatename should not contain spaces.'

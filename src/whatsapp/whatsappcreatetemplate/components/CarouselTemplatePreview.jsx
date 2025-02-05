@@ -127,7 +127,6 @@ const CarouselTemplatePreview = ({
             )}
 
             <Carousel
-
                 showThumbs={false}
                 showStatus={false}
                 infiniteLoop
@@ -170,7 +169,8 @@ const CarouselTemplatePreview = ({
                                 <img
                                     id='carousel-media-video-dummy'
                                     name='carousel-media-video-dummy'
-                                    src='https://dummyimage.com/500x500/cccccc/ffffff'
+                                    // src='https://dummyimage.com/500x500/cccccc/ffffff'
+                                    src='https://picsum.photos/500/500'
                                     alt='Dummy Video'
                                     className='w-full h-48 object-cover rounded-md'
                                 />
@@ -191,7 +191,8 @@ const CarouselTemplatePreview = ({
                             <img
                                 id='carousel-media-image-dummy'
                                 name='carousel-media-image-dummy'
-                                src='https://dummyimage.com/500x500/cccccc/ffffff'
+                                // src='https://dummyimage.com/500x500/cccccc/ffffff'
+                                src='https://picsum.photos/500/500'
                                 alt='Dummy Image'
                                 className='w-full h-48 object-cover rounded-md'
                             />

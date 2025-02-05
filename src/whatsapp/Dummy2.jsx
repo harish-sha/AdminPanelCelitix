@@ -1,134 +1,240 @@
-import * as React from "react";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { Paper, Typography, Box, Button } from "@mui/material";
-import usePagination from "@mui/material/usePagination";
-import { styled } from "@mui/material/styles";
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
+import { IoSearch } from "react-icons/io5";
+import Box from '@mui/material/Box';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Modal from '@mui/material/Modal';
+import { MdClose } from 'react-icons/md';
+import { WhatsApp } from '@mui/icons-material';
+import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
+import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import PropTypes from 'prop-types';
 
-// ✅ Styled Pagination Container
-const PaginationList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "8px",
-});
+import DataTable from '../components/Datatable';
+import AnimatedDropdown from '../components/AnimatedDropdown';
+import InputField from '../components/InputField';
+import UniversalSkeleton from '../components/UniversalSkeleton';
+import UniversalDatePicker from '../components/UniversalDatePicker';
+import UniversalButton from '../components/UniversalButton';
+import Loader from '../components/Loader';
 
-// ✅ Custom Pagination Component
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
-    const { items } = usePagination({
-        count: totalPages, // Total number of pages
-        page: paginationModel.page + 1, // Convert zero-based index to one-based
-        onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-    });
+import '../style.css';
 
-    return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: 1 }}>
-            <PaginationList>
-                {items.map(({ page, type, selected, ...item }, index) => {
-                    let children = null;
+const ManageTemplate = () => {
+    const navigate = useNavigate();
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedOption, setSelectedOption] = useState("");
+    const [selectedOption2, setSelectedOption2] = useState("");
+    const [selectedOption3, setSelectedOption3] = useState("");
+    const [selectedOption4, setSelectedOption4] = useState("");
+    const [templateName, setTemplateName] = useState("");
+    const [open, setOpen] = useState(false);
+    const [selectedRow, setSelectedRow] = useState(null);
 
-                    if (type === "start-ellipsis" || type === "end-ellipsis") {
-                        children = "…";
-                    } else if (type === "page") {
-                        children = (
-                            <Button
-                                key={index}
-                                variant={selected ? "contained" : "outlined"}
-                                size="small"
-                                sx={{ minWidth: "36px" }}
-                                {...item}
-                            >
-                                {page}
-                            </Button>
-                        );
-                    } else {
-                        children = (
-                            <Button key={index} variant="outlined" size="small" {...item}>
-                                {type === "previous" ? "Previous" : "Next"}
-                            </Button>
-                        );
-                    }
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFetching, setIsFetching] = useState(false); // ✅ New state for search loading
+    const [filteredData, setFilteredData] = useState([]); // ✅ Holds filtered data
+    const [value, setValue] = useState(0);
 
-                    return <li key={index}>{children}</li>;
-                })}
-            </PaginationList>
-        </Box>
-    );
-};
+    useEffect(() => {
+        const fetchData = async () => {
+            setIsLoading(true);
+            await new Promise((resolve) => setTimeout(resolve, 1000));
+            setIsLoading(false);
+        };
+        fetchData();
+    }, []);
 
-// ✅ DataTable Component
-const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
-    const [selectedRows, setSelectedRows] = React.useState([]);
-    const [paginationModel, setPaginationModel] = React.useState({
-        page: 0,
-        pageSize: 10,
-    });
+    const handleSearch = async () => {
+        console.log("Search Filters:", {
+            startDate: selectedDate,
+            WABA: selectedOption,
+            category: selectedOption2,
+            type: selectedOption3,
+            status: selectedOption4,
+            templateName: templateName,
+        });
 
-    const columns = [
-        { field: "sn", headerName: "S.No", width: 100 },
-        { field: "name", headerName: "Name", width: 180 },
-        { field: "category", headerName: "Category", width: 180 },
-        { field: "status", headerName: "Status", width: 150 },
-        { field: "type", headerName: "Type", width: 150 },
-        { field: "health", headerName: "Health", width: 180 },
-        { field: "createdat", headerName: "Created At", width: 200 },
-    ];
+        // ✅ Show the loader before fetching results
+        setIsFetching(true);
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
+        setIsFetching(false);
 
-    // ✅ Mock Data for 52 rows
-    const rows = Array.from({ length: 52 }, (_, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        name: "Ram",
-        category: "Sharma",
-        status: 66,
-        type: "5",
-        health: "High",
-        createdat: "12/10/2024",
-    }));
-
-    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-    // ✅ Custom Footer (Total Records + Custom Pagination)
-    const CustomFooter = () => {
-        return (
-            <GridFooterContainer sx={{ justifyContent: "space-between", padding: 1 }}>
-                {/* Left Section: Selected Rows & Total Records */}
-                <Box sx={{ display: "flex", alignItems: "center", pl: 2 }}>
-                    {selectedRows.length > 0 ? (
-                        <Typography variant="body2" sx={{ mr: 2, fontWeight: "bold" }}>
-                            {selectedRows.length} Rows Selected
-                        </Typography>
-                    ) : null}
-                    <Typography variant="body2">
-                        Total Records: <strong>{rows.length}</strong>
-                    </Typography>
-                </Box>
-
-                {/* Right Section: Custom Pagination */}
-                <CustomPagination
-                    totalPages={totalPages}
-                    paginationModel={paginationModel}
-                    setPaginationModel={setPaginationModel}
-                />
-            </GridFooterContainer>
-        );
+        // ✅ Here you would fetch the real filtered data from API
+        setFilteredData([]); // Replace this with actual API data
     };
 
     return (
-        <Paper sx={{ height: 629, width: "100%" }}>
-            <DataGrid
-                rows={rows}
-                columns={columns}
-                pagination
-                checkboxSelection
-                pageSizeOptions={[10, 20, 50]}
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                slots={{ footer: CustomFooter }} // ✅ Fully Integrated Custom Footer
-            />
-        </Paper>
+        <div className='w-full'>
+            {isLoading ? (
+                <Loader />
+            ) : (
+                <Box sx={{ width: '100%' }}>
+                    <Tabs
+                        value={value}
+                        onChange={(e, newValue) => setValue(newValue)}
+                        aria-label="Manage Templates Tabs"
+                        textColor="primary"
+                        indicatorColor="primary"
+                    >
+                        <Tab
+                            label={
+                                <span>
+                                    <GradingOutlinedIcon size={20} /> Templates
+                                </span>
+                            }
+                            sx={{
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                color: 'text.secondary',
+                                '&:hover': {
+                                    color: 'primary.main',
+                                    backgroundColor: '#f0f4ff',
+                                    borderRadius: '8px',
+                                },
+                            }}
+                        />
+                        <Tab
+                            label={
+                                <span>
+                                    <LibraryBooksOutlinedIcon size={20} /> Library
+                                </span>
+                            }
+                            sx={{
+                                textTransform: 'none',
+                                fontWeight: 'bold',
+                                color: 'text.secondary',
+                                '&:hover': {
+                                    color: 'primary.main',
+                                    backgroundColor: '#f0f4ff',
+                                    borderRadius: '8px',
+                                },
+                            }}
+                        />
+                    </Tabs>
+
+                    <div className='w-full'>
+                        <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full'>
+                            <h1 className='text-xl font-semibold text-gray-800 mb-4'>Manage Templates</h1>
+                            <div className='flex gap-2'>
+                                <UniversalButton
+                                    id='manageTemplateAddNewBtn'
+                                    name='manageTemplateAddNewBtn'
+                                    label="Add New"
+                                    onClick={() => navigate("/createtemplate")}
+                                    variant="primary"
+                                />
+                                <UniversalButton
+                                    id='syncStatusBtn'
+                                    name='syncStatusBtn'
+                                    label="Sync Status"
+                                    variant="primary"
+                                />
+                            </div>
+                        </div>
+
+                        {/* ✅ FILTER SECTION */}
+                        <div className='flex flex-wrap gap-4 items-end justify-start pb-5 w-full'>
+                            <UniversalDatePicker
+                                id="manageTemplateDate"
+                                name="manageTemplateDate"
+                                label="Start Date"
+                                value={selectedDate}
+                                onChange={(newValue) => setSelectedDate(newValue)}
+                                placeholder="Pick a start date"
+                                tooltipContent="Select the starting date for your project"
+                                tooltipPlacement="right"
+                            />
+                            <AnimatedDropdown
+                                id='manageTemplateWaba'
+                                name='manageTemplateWaba'
+                                label="Select WABA"
+                                options={[
+                                    { value: "WABA1", label: "WABA1" },
+                                    { value: "WABA2", label: "WABA2" },
+                                    { value: "WABA3", label: "WABA3" }
+                                ]}
+                                value={selectedOption}
+                                onChange={setSelectedOption}
+                                placeholder="Select WABA"
+                            />
+                            <InputField
+                                id="manageTemplateName"
+                                name="manageTemplateName"
+                                label="Template Name"
+                                value={templateName}
+                                onChange={(e) => setTemplateName(e.target.value)}
+                                placeholder="Template Name"
+                                tooltipContent="Your template name should not contain spaces."
+                                tooltipPlacement="right"
+                            />
+                            <AnimatedDropdown
+                                id='manageTemplateCategory'
+                                name='manageTemplateCategory'
+                                label="Category"
+                                options={[
+                                    { value: "utility", label: "Utility" },
+                                    { value: "marketing", label: "Marketing" },
+                                    { value: "authentication", label: "Authentication" }
+                                ]}
+                                value={selectedOption2}
+                                onChange={setSelectedOption2}
+                                placeholder="Category"
+                            />
+                            <UniversalButton
+                                id='manageTemplateSearchBtn'
+                                name='manageTemplateSearchBtn'
+                                label="Search"
+                                icon={<IoSearch />}
+                                onClick={handleSearch}
+                                variant="primary"
+                            />
+                        </div>
+
+                        {/* ✅ DATA TABLE LOADING STATE */}
+                        {isFetching ? (
+                            <UniversalSkeleton height='30rem' width='100%' />
+                        ) : (
+                            <DataTable
+                                id='whatsappManageTemplateTable'
+                                name='whatsappManageTemplateTable'
+                                rows={filteredData} // ✅ Use filtered data after search
+                            />
+                        )}
+                    </div>
+
+                    {/* ✅ MODAL */}
+                    <Modal open={open} onClose={() => setOpen(false)} className='modal-view'>
+                        <Box sx={modalStyle} className="rounded-lg">
+                            <div className="modal-content my-2 mx-2 rounded-md">
+                                <div className="fixed top-2 right-2 cursor-pointer bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
+                                    <MdClose size={20} onClick={() => setOpen(false)} />
+                                </div>
+                                <div className="modal-body border-2 rounded-lg border-gray-200 p-4">
+                                    <WhatsApp />
+                                    <h2 className="text-lg font-semibold mt-2">Template Details</h2>
+                                    <p>Showing details for the selected template...</p>
+                                </div>
+                            </div>
+                        </Box>
+                    </Modal>
+                </Box>
+            )}
+        </div>
     );
 };
 
-export default DataTable;
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '400px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 4,
+    borderRadius: "20px"
+};
+
+export default ManageTemplate;

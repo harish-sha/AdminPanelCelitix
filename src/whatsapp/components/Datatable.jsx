@@ -59,7 +59,7 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
+const DataTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
     const [selectedRows, setSelectedRows] = React.useState([]);
 
     // const paginationModel = { page: 0, pageSize: 10 };
@@ -69,18 +69,60 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
     });
 
 
+    // const columns = [
+    //     { field: 'sn', headerName: 'S.No', width: 100 },
+    //     { field: 'name', headerName: 'Name', width: 180 },
+    //     { field: 'category', headerName: 'Category', width: 180 },
+    //     { field: 'status', headerName: 'Status', width: 150 },
+    //     { field: 'type', headerName: 'Type', width: 150 },
+    //     { field: 'health', headerName: 'Health', width: 180 },
+    //     { field: 'createdat', headerName: 'Created At', width: 200 },
+    //     {
+    //         field: 'action',
+    //         headerName: 'Action',
+    //         width: 200,
+    //         renderCell: (params) => (
+    //             <>
+    //                 <IconButton className='text-xs' onClick={() => handleView(params.row)}>
+    //                     <VisibilityIcon
+    //                         sx={{
+    //                             fontSize: '1.2rem',
+    //                             color: 'green'
+    //                         }}
+    //                     />
+    //                 </IconButton>
+    //                 <IconButton onClick={() => handleDuplicate(params.row)}>
+    //                     <FileCopyIcon
+    //                         sx={{
+    //                             fontSize: '1.2rem',
+    //                             color: 'gray',
+    //                         }} />
+    //                 </IconButton>
+    //                 <IconButton onClick={() => handleDelete(params.row)}>
+    //                     <DeleteForeverIcon
+    //                         sx={{
+    //                             fontSize: '1.2rem',
+    //                             color: '#e31a1a',
+    //                         }} />
+    //                 </IconButton>
+    //             </>
+    //         ),
+    //     },
+    // ];
+
     const columns = [
-        { field: 'sn', headerName: 'S.No', width: 100 },
-        { field: 'name', headerName: 'Name', width: 180 },
-        { field: 'category', headerName: 'Category', width: 180 },
-        { field: 'status', headerName: 'Status', width: 150 },
-        { field: 'type', headerName: 'Type', width: 150 },
-        { field: 'health', headerName: 'Health', width: 180 },
-        { field: 'createdat', headerName: 'Created At', width: 200 },
+        { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
+        { field: 'name', headerName: 'Name', flex: 1, minWidth: 120 },
+        { field: 'category', headerName: 'Category', flex: 1, minWidth: 120 },
+        { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
+        { field: 'type', headerName: 'Type', flex: 1, minWidth: 120 },
+        { field: 'health', headerName: 'Health', flex: 1, minWidth: 120 },
+        { field: 'createdat', headerName: 'Created At', flex: 1, minWidth: 120 },
         {
             field: 'action',
             headerName: 'Action',
-            width: 200,
+            flex: 1,
+            minWidth: 150,
             renderCell: (params) => (
                 <>
                     <IconButton className='text-xs' onClick={() => handleView(params.row)}>
@@ -110,61 +152,59 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
         },
     ];
 
-
-
     const rows = [
-        { id: 1, sn: 1, name: 'GulshanSharmaSharmaSharmaSharma', category: 'Sharma', status: 35, type: '2', health: 'High', createdat: '11/05/2024', action: 'True' },
-        { id: 2, sn: 2, name: 'Akhil', category: 'Sharma', status: 45, type: '1', health: 'Low', createdat: '15/08/2024', action: 'True' },
-        { id: 3, sn: 3, name: 'Sunil', category: 'Sharma', status: 14, type: '8', health: 'Poor', createdat: '10/06/2024', action: 'True' },
-        { id: 4, sn: 4, name: 'Tarun', category: 'Sharma', status: 52, type: '7', health: 'Low', createdat: '10/07/2024', action: 'True' },
-        { id: 5, sn: 5, name: 'Lakshay', category: 'SharmaSharmaSharmaSharmaSharma', status: 50, type: '6', health: 'Low', createdat: '10/09/2024', action: 'True' },
-        { id: 6, sn: 6, name: 'Snow', category: 'Sharma', status: 88, type: '2', health: 'High', createdat: '10/10/2024', action: 'Shyam' },
-        { id: 7, sn: 7, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 8, sn: 8, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 9, sn: 9, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 10, sn: 10, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 11, sn: 11, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 12, sn: 12, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 13, sn: 13, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 14, sn: 14, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 15, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 16, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 17, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 18, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 19, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 20, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 21, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 22, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 23, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 24, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 25, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 26, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 27, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 28, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 29, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 30, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 31, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 32, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 33, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 34, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 35, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 36, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 37, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 38, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 39, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 40, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 41, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 42, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 43, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 44, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 45, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 46, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 47, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 48, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 49, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 50, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 51, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
-        { id: 52, sn: 15, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 1, sn: 1, name: 'HoliWish', category: 'Utility', status: 'Rejected', type: 'Text', health: 'High', createdat: '11/05/2024', action: 'True' },
+        { id: 2, sn: 2, name: 'NewYear', category: 'Marketing', status: 'Approved', type: 'Image', health: 'Low', createdat: '15/08/2024', action: 'True' },
+        { id: 3, sn: 3, name: 'Diwali', category: 'Utility', status: 'Pending', type: 'Carousel', health: 'Poor', createdat: '10/06/2024', action: 'True' },
+        { id: 4, sn: 4, name: 'Sms', category: 'Marketing', status: 'Approved', type: 'Video', health: 'Low', createdat: '10/07/2024', action: 'True' },
+        { id: 5, sn: 5, name: 'WhatsappNew', category: 'Utility', status: 'Approved', type: 'Text', health: 'Low', createdat: '10/09/2024', action: 'True' },
+        { id: 6, sn: 6, name: 'BillCategory', category: 'Authentication', status: 'Rejected', type: 'Image', health: 'High', createdat: '10/10/2024', action: 'Shyam' },
+        { id: 7, sn: 7, name: 'Airlines', category: 'Sharma', status: 'Approved', type: 'Video', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 8, sn: 8, name: 'Communication', category: 'Utility', status: 'Pending', type: 'Image', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 9, sn: 9, name: 'MarketingNew', category: 'Marketing', status: 'Approved', type: 'Text', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 10, sn: 10, name: 'SmsNew', category: 'Marketing', status: 'Pending', type: 'Image', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 11, sn: 11, name: 'Ram', category: 'Utility', status: 'Approved', type: 'Image', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 12, sn: 12, name: 'Ram', category: 'Marketing', status: 'Pending', type: 'Video', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 13, sn: 13, name: 'Ram', category: 'Utility', status: 'Rejected', type: 'Text', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 14, sn: 14, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 15, sn: 15, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 16, sn: 16, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 17, sn: 17, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 18, sn: 18, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 19, sn: 19, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 20, sn: 20, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 21, sn: 21, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 22, sn: 22, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 23, sn: 23, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 24, sn: 24, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 25, sn: 25, name: 'Ram', category: 'Utility', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 26, sn: 26, name: 'Ram', category: 'Marketing', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 27, sn: 27, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 28, sn: 28, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 29, sn: 29, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 30, sn: 30, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 31, sn: 31, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 32, sn: 32, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 33, sn: 33, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 34, sn: 34, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 35, sn: 35, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 36, sn: 36, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 37, sn: 37, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 38, sn: 38, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 39, sn: 39, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 40, sn: 40, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 41, sn: 41, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 42, sn: 42, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 43, sn: 43, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 44, sn: 44, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 45, sn: 45, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 46, sn: 46, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 47, sn: 47, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 48, sn: 48, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 49, sn: 49, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 50, sn: 50, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 51, sn: 51, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
+        { id: 52, sn: 52, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
     ];
 
     // use this when you want to create rows dynamically
@@ -207,34 +247,68 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
 
     const CustomFooter = () => {
         return (
-            <GridFooterContainer sx={{ justifyContent: "space-between", padding: 1 }}>
-                {/* Left Section: Selected Rows & Total Records */}
-                <Box sx={{ display: "flex", alignItems: "center", pl: 2 }}>
-                    {selectedRows.length > 0 ? (
-                        <Typography variant="body2" sx={{ mr: 2, borderRight: '1px solid #ccc', paddingRight: '10px' }}>
+            <GridFooterContainer
+                sx={{
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: {
+                        xs: "center", lg: "space-between"
+                    },
+                    alignItems: "center",
+                    padding: 1,
+                    gap: 2,
+                    overflowX: "auto",
+                }
+                }
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        flexWrap: "wrap",
+                        gap: 1.5,
+                    }}
+                >
+                    {selectedRows.length > 0 && (
+                        <Typography
+                            variant="body2"
+                            sx={{
+                                borderRight: "1px solid #ccc",
+                                paddingRight: "10px",
+                            }}
+                        >
                             {selectedRows.length} Rows Selected
                         </Typography>
-                    ) : null}
+                    )}
+
                     <Typography variant="body2">
-                        Total Records: <span className='font-semibold'  >{rows.length}</span>
+                        Total Records: <span className='font-semibold'>{rows.length}</span>
                     </Typography>
                 </Box>
 
-                {/* Right Section: Custom Pagination */}
-                <CustomPagination
-                    totalPages={totalPages}
-                    paginationModel={paginationModel}
-                    setPaginationModel={setPaginationModel}
-                />
-            </GridFooterContainer>
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: { xs: "100%", sm: "auto" },
+                    }}
+                >
+                    <CustomPagination
+                        totalPages={totalPages}
+                        paginationModel={paginationModel}
+                        setPaginationModel={setPaginationModel}
+                    />
+                </Box>
+            </GridFooterContainer >
         );
     };
 
 
-
     return (
-        <Paper sx={{ height: 558, width: '100%' }}>
+        <Paper sx={{ height: 558 }}>
             <DataGrid
+                id={id}
+                name={name}
                 rows={rows}
                 columns={columns}
                 initialState={{ pagination: { paginationModel } }}
@@ -248,8 +322,17 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
                 slotProps={{ footer: { totalRecords: rows.length } }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                 disableRowSelectionOnClick
+                // autoPageSize
+                disableColumnResize
+                disableColumnMenu
                 sx={{
                     border: 0,
+                    "& .MuiDataGrid-cellCheckbox": {
+                        outline: "none !important",
+                    },
+                    "& .MuiDataGrid-cell": {
+                        outline: "none !important",
+                    },
                     "& .MuiDataGrid-columnHeaders": {
                         color: "#193cb8",
                         fontSize: "14px",
@@ -259,6 +342,7 @@ const DataTable = ({ handleView, handleDuplicate, handleDelete }) => {
                         backgroundColor: "#e6f4ff !important",
                     },
                     "& .MuiDataGrid-columnSeparator": {
+                        // display: "none",
                         color: "#ccc",
                     },
                 }}

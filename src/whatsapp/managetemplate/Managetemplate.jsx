@@ -23,7 +23,6 @@ import UniversalSkeleton from '../components/UniversalSkeleton';
 import '../style.css'
 import Loader from '../components/Loader';
 
-// import { Box }
 
 
 function CustomTabPanel(props) {
@@ -68,6 +67,15 @@ const ManageTemplate = () => {
     const [selectedOption4, setSelectedOption4] = useState("");
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [value, setValue] = React.useState(0);
+    const [inputValue, setInputValue] = useState("");
+
+    const [isFetching, setIsFetching] = useState(false);
+    const [filteredData, setFilteredData] = useState([]);
+
+
+
 
     // const handleSearch = () => {
     //     // Implement search logic here
@@ -115,10 +123,9 @@ const ManageTemplate = () => {
     const options4 = [
         { value: "pending", label: "Pending" },
         { value: "rejected", label: "Rejected" },
-        { value: "approval", label: "Approval" },
+        { value: "approved", label: "Approved" },
     ];
 
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -133,7 +140,7 @@ const ManageTemplate = () => {
         navigate("/createtemplate");
     };
 
-    const handleSearch = () => {
+    const handleSearch = async () => {
         console.log("Search Filters:");
         console.log({
             startDate: selectedDate,
@@ -143,15 +150,21 @@ const ManageTemplate = () => {
             status: selectedOption4,
             templateName: valueWithoutSpaces,
         });
+
+        // ✅ Show the loader before fetching results
+        setIsFetching(true);
+        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
+        setIsFetching(false);
+
+        // ✅ Here you would fetch the real filtered data from API
+        setFilteredData([]); // Replace this with actual API data
     };
 
-    const [value, setValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
-    const [inputValue, setInputValue] = useState("");
 
     const handleInputChange = (value) => {
         // Apply logic for spaces or no spaces here
@@ -162,10 +175,7 @@ const ManageTemplate = () => {
     return (
         <div className='w-full ' >
             {isLoading ? (
-
-                <>
-                    <Loader />
-                </>
+                <Loader />
             ) : (
 
                 <Box sx={{ width: '100%' }}>
@@ -291,8 +301,8 @@ const ManageTemplate = () => {
 
                                     <div className="w-full sm:w-56" >
                                         <AnimatedDropdown
-                                            id='manageTemplateLanguage'
-                                            name='manageTemplateLanguage'
+                                            id='manageTemplateCategory'
+                                            name='manageTemplateCategory'
                                             label="Category"
                                             tooltipContent="Select category"
                                             tooltipPlacement="right"
@@ -342,12 +352,21 @@ const ManageTemplate = () => {
 
 
                                 </div>
-                                <div className='w-full' >
+                                {/* ✅ DATA TABLE LOADING STATE */}
+                                {isFetching ? (
+                                    <div className='' >
+                                        <UniversalSkeleton height='35rem' width='100%' />
+                                    </div>
+                                ) : (
                                     <DataTable
+                                        id='whatsappManageTemplateTable'
+                                        name='whatsappManageTemplateTable'
                                         handleView={handleView}
                                         handleDuplicate={handleDuplicate}
-                                        handleDelete={handleDelete} />
-                                </div>
+                                        handleDelete={handleDelete}
+                                        rows={filteredData}
+                                    />
+                                )}
                             </>
 
                             <Modal open={open} onClose={handleClose} className='modal-view' >

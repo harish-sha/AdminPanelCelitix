@@ -5,8 +5,8 @@ const UniversalButton = ({
   onClick,
   type = 'button',
   variant = 'primary',
-  icon = null, 
-  disabled = false, 
+  icon = null,
+  disabled = false,
   isLoading = false,
 }) => {
   const getButtonStyles = () => {
@@ -24,14 +24,13 @@ const UniversalButton = ({
 
   return (
     <button
-    id={id}
-    name={name}
+      id={id}
+      name={name}
       type={type}
       onClick={onClick}
       disabled={disabled || isLoading}
-      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-0 focus:ring-offset-2 ${getButtonStyles()} ${
-        disabled ? 'opacity-50 cursor-not-allowed' : ''
-      }`}
+      className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg shadow-md cursor-pointer focus:outline-none focus:ring-0 focus:ring-offset-2 ${getButtonStyles()} ${disabled ? 'opacity-50 cursor-not-allowed' : ''
+        }`}
     >
       {isLoading ? (
         <span className='loader'></span>

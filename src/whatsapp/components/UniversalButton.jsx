@@ -26,24 +26,45 @@ const UniversalButton = ({
     };
 
     return (
-        <button
-            id={id}
-            name={name}
-            type={type}
-            onClick={onClick}
-            disabled={disabled || isLoading}
-            className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-0 focus:ring-offset-2 ${getButtonStyles()} ${disabled ? 'opacity-50 cursor-not-allowed' : ''
-                }`}
-        >
-            {isLoading ? (
-                <span className='loader'></span>
-            ) : (
-                <>
-                    {icon && <span>{icon}</span>}
-                    {label}
-                </>
-            )}
-        </button>
+        <>
+            <button
+                id={id}
+                name={name}
+                type={type}
+                onClick={onClick}
+                disabled={disabled || isLoading}
+                className={`flex items-center justify-center gap-2 px-4 py-2 cursor-pointer rounded-lg shadow-md focus:outline-none focus:ring-0 focus:ring-offset-2 ${getButtonStyles()} ${disabled ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+            >
+                {isLoading ? (
+                    <span className='loader'></span>
+                ) : (
+                    <>
+                        {icon && <span>{icon}</span>}
+                        {label}
+                    </>
+                )}
+            </button>
+            {/* <Button
+                id={id}
+                name={name}
+                type={type}
+                onClick={onClick}
+                disabled={disabled || isLoading}
+                className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg shadow-md focus:outline-none focus:ring-0 focus:ring-offset-2 ${getButtonStyles()} ${disabled ? 'opacity-50 cursor-not-allowed' : ''
+                    }`}
+            >
+                {isLoading ? (
+                    <span className='loader'></span>
+                ) : (
+                    <>
+                        {icon && <span>{icon}</span>}
+                        {label}
+                    </>
+                )}
+            </Button> */}
+        </>
+
     );
 };
 

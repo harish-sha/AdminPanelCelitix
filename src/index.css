@@ -58,3 +58,7 @@ li {
 .transition-height {
   transition: height 0.3s ease-in-out !important;
 }
+
+.MuiBox-root .css-19kzrtu {
+  padding: 15px 10px !important;
+}
