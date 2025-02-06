@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCog, FaHome, FaSignOutAlt, FaBars, FaWhatsapp } from 'react-icons/fa';
 import { LuMessageSquareMore } from "react-icons/lu";
 import { SiGoogleauthenticator } from "react-icons/si";
@@ -43,6 +43,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         }
         return location.pathname.startsWith(route);
     };
+
+
+    // const navigate = useNavigate();
+    const handleLogout = () => {
+        localStorage.removeItem("token");
+        toast.success("Logged out successfully!");
+        setTimeout(() => {
+            window.location.href = "/login";
+        }, 1500)
+    };
+
 
     useEffect(() => {
         const activeMenu = menuItems.find((item) =>
@@ -200,6 +211,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 { to: '/mainaccount', label: 'Account' },
             ],
         },
+        {
+            name: 'Logout',
+            icon: <FaSignOutAlt />,
+            label: 'Logout',
+            type: "single",
+            // to: "/",
+            onClick: handleLogout
+
+
+            // <UniversalButton label="Logout" onClick={handleLogout} variant="danger" />
+        },
     ];
 
     return (
@@ -285,24 +307,53 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                             </div>
                         </Tooltip>
                     ) : (
-                        <Tooltip
-                            key={item.name}
-                            title={isCollapsed ? item.label : ""}
-                            placement="right"
-                            arrow
-                        >
-                            <Link
-                                to={item.to}
-                                onClick={handleSingleRouteClick}
-                                className={clsx(
-                                    "flex items-center gap-4 px-4 py-2 transition-all",
-                                    isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
-                                    isCollapsed && "justify-center"
-                                )}
-                            >
-                                <span className="flex-shrink-0">{item.icon}</span>
-                                <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
-                            </Link>
+                        // <Tooltip
+                        //     key={item.name}
+                        //     title={isCollapsed ? item.label : ""}
+                        //     placement="right"
+                        //     arrow
+                        // >
+                        //     <Link
+                        //         to={item.to}
+                        //         onClick={handleSingleRouteClick}
+                        //         className={clsx(
+                        //             "flex items-center gap-4 px-4 py-2 transition-all",
+                        //             isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
+                        //             isCollapsed && "justify-center"
+                        //         )}
+                        //     >
+                        //         <span className="flex-shrink-0">{item.icon}</span>
+                        //         <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
+                        //     </Link>
+                        // </Tooltip>
+                        <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
+                            {item.onClick ? (
+                                // ✅ Logout Button
+                                <button
+                                    onClick={item.onClick}
+                                    className={clsx(
+                                        "flex items-center gap-4 px-4 py-2 transition-all w-full text-left",
+                                        "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
+                                        isCollapsed && "justify-center"
+                                    )}
+                                >
+                                    <span className="flex-shrink-0">{item.icon}</span>
+                                    <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
+                                </button>
+                            ) : (
+                                // ✅ Normal Navigation Link
+                                <Link
+                                    to={item.to}
+                                    className={clsx(
+                                        "flex items-center gap-4 px-4 py-2 transition-all",
+                                        isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
+                                        isCollapsed && "justify-center"
+                                    )}
+                                >
+                                    <span className="flex-shrink-0">{item.icon}</span>
+                                    <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
+                                </Link>
+                            )}
                         </Tooltip>
                     )
                 ))}

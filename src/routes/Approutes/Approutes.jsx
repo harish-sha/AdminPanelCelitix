@@ -19,35 +19,33 @@ import ProfilePage from '../../mainlayout/navbar/pages/Profile';
 
 const Approutes = () => {
     return (
-        <Router>
-            <Routes>
-                <Route path="/" element={<Mainlayout />}>
-                    <Route path="/" element={<Dashboard />} />
-                    <Route path="/managetemplate" element={<ManageTemplate />} />
-                    <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
-                    <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
-                    <Route path="/wlivechat" element={<WhatsappLiveChat />} />
-                    <Route path="/wmanagecampaign" element={<WhatsappManageCampaign />} />
-                    <Route path="/wmanageoptin" element={<WhatsappManageOptin />} />
-                    <Route path="/wchatwidget" element={<WhatsappChatWidget />} />
-                    <Route path="/wqrcode" element={<WhatsappQrCode />} />
-                    <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
-                    <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
-                    <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
-                    <Route path="/profile" element={<ProfilePage />} />
-                </Route>
-                <Route path="/dummy" element={<Dummy />} />
+        <Routes>
+            <Route path="/" element={<Mainlayout />}>
+                <Route path="/" element={<Dashboard />} />
+                <Route path="/managetemplate" element={<ManageTemplate />} />
+                <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
+                <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
+                <Route path="/wlivechat" element={<WhatsappLiveChat />} />
+                <Route path="/wmanagecampaign" element={<WhatsappManageCampaign />} />
+                <Route path="/wmanageoptin" element={<WhatsappManageOptin />} />
+                <Route path="/wchatwidget" element={<WhatsappChatWidget />} />
+                <Route path="/wqrcode" element={<WhatsappQrCode />} />
+                <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
+                <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
+                <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
+                <Route path="/profile" element={<ProfilePage />} />
+            </Route>
+            <Route path="/dummy" element={<Dummy />} />
 
-                <Route path="*" element={
-                    <div className='flex items-center justify-center min-h-[100vh]'>
-                        <span className="text-3xl text-gray-700 font-semibold">
-                            404 Not Found
-                        </span>
-                    </div>
-                }
-                />
-            </Routes>
-        </Router>
+            <Route path="*" element={
+                <div className='flex items-center justify-center min-h-[100vh]'>
+                    <span className="text-3xl text-gray-700 font-semibold">
+                        404 Not Found
+                    </span>
+                </div>
+            }
+            />
+        </Routes>
     )
 }
 

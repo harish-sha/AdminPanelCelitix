@@ -61,7 +61,7 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
+const ManageCampaignLogsTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
     const [selectedRows, setSelectedRows] = React.useState([]);
 
     // const paginationModel = { page: 0, pageSize: 10 };
@@ -72,77 +72,41 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
 
     const columns = [
         { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-        { field: 'createdOn', headerName: 'Created On', flex: 1, minWidth: 120 },
-        { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
-        { field: 'templateName', headerName: 'Template Name', flex: 1, minWidth: 120 },
-        { field: 'templateCategory', headerName: 'Template Category', flex: 1, minWidth: 120 },
-        { field: 'templateType', headerName: 'Template Type', flex: 1, minWidth: 120 },
-        { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-        { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
-        {
-            field: 'action',
-            headerName: 'Action',
-            flex: 1,
-            minWidth: 150,
-            renderCell: (params) => (
-                <>
-                    <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-                        <InfoOutlinedIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'green'
-                            }}
-                        />
-                    </IconButton>
-                    <IconButton onClick={() => handleDuplicate(params.row)}>
-                        <DescriptionOutlinedIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'gray',
-                            }} />
-                    </IconButton>
-                </>
-            ),
-        },
+        { field: 'user', headerName: 'User', flex: 1, minWidth: 120 },
+        { field: 'total', headerName: 'Total', flex: 1, minWidth: 120 },
+        { field: 'busy', headerName: 'Busy', flex: 1, minWidth: 120 },
+        { field: 'failed', headerName: 'Failed', flex: 1, minWidth: 120 },
+        { field: 'block', headerName: 'Block', flex: 1, minWidth: 120 },
+        { field: 'submitted', headerName: 'Submitted', flex: 1, minWidth: 120 },
+        { field: 'chargedUnit', headerName: 'Charged Unit', flex: 1, minWidth: 120 },
+        { field: 'sent', headerName: 'Sent', flex: 1, minWidth: 120 },
+        { field: 'delivered', headerName: 'Delivered', flex: 1, minWidth: 120 },
+        { field: 'read', headerName: 'Read', flex: 1, minWidth: 120 },
+        { field: 'undelivered', headerName: 'Undelivered', flex: 1, minWidth: 120 },
+        { field: 'sentDate', headerName: 'Sent Date', flex: 1, minWidth: 120 },
     ];
 
-    const rows = [
-        { id: 1, sn: 1, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 2, sn: 2, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 3, sn: 3, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 4, sn: 4, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 5, sn: 5, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 6, sn: 6, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 7, sn: 7, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 8, sn: 8, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 9, sn: 9, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 10, sn: 10, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 11, sn: 11, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 12, sn: 12, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 13, sn: 13, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 14, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 15, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 16, sn: 16, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 17, sn: 17, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 18, sn: 18, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 19, sn: 19, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 20, sn: 20, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-
-    ];
+    // const rows = [
+    //     { id: 1, sn: 1, user: 'Ram', total: '1000', busy: 'True', failed: 'False', block: 'True', submitted: 'Submit', chargedUnit: '10000', sent: 'Success', delivered: 'Success', read: 'True', undelivered: '-', sentDate: '12/01/2025' },
+    // ];
 
     // use this when you want to create rows dynamically
-    // const rows = Array.from({ length: 500 }, (_, i) => ({
-    //     id: i + 1,
-    //     sn: i + 1,
-    //     createdOn: '11/05/2024 14:58:39',
-    //     campaignName: 'Demo',
-    //     templateName: 'NewTemplate',
-    //     templateCategory: 'Utility',
-    //     templateType: 'Text',
-    //     status: 'Pending',
-    //     totalAudience: '10000',
-    //     action: 'True',
-    // }));
+    const rows = Array.from({ length: 500 }, (_, i) => ({
+        id: i + 1,
+        sn: i + 1,
+        user: 'Ram',
+        total: '1000',
+        busy: 'True',
+        failed: 'False',
+        block: 'True',
+        submitted: 'Submit',
+        chargedUnit: '10000',
+        sent: 'Success',
+        delivered: 'Success',
+        read: 'True',
+        undelivered: '-',
+        sentDate: '12/01/2025'
+    }));
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -256,4 +220,4 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
     );
 };
 
-export default ManageCampaignTable;
+export default ManageCampaignLogsTable;

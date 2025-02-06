@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import InputField from "../../components/layout/InputField";
-import UniversalButton from "../../components/common/UniversalButton";
+import InputField from "../components/layout/InputField";
+import UniversalButton from "../components/common/UniversalButton";
 
 const Login = () => {
     const [userId, setUserId] = useState("");
@@ -14,32 +14,38 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
+        const token = localStorage.getItem("token");
+
         try {
             const response = await fetch("/api/proCpaasRest/auth/login", {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
+                headers: {
+                    "Content-Type": "application/json",
+                    "Authorization": `Bearer ${token}`,
+                },
                 body: JSON.stringify({ userId, password }),
             });
 
             const data = await response.json();
-            console.log("Login Response:", data); // ✅ Debug token response
+            // console.log("Login Response:", data);
 
-            if (response.ok && data.token) {
-                console.log("Storing Token:", data.token); // ✅ Check token format
-                localStorage.setItem("token", data.token);
-                toast.success("Login Successful!");
-                navigate("/");
-            } else {
-                toast.error(data.message || "Invalid Credentials!");
+            if (!response.ok) {
+                throw new Error(data.message || "Invalid credentials!");
             }
+
+            if (!data.token) {
+                throw new Error("Authentication failed! Please check your credentials.");
+            }
+            localStorage.setItem("token", data.token);
+            toast.success("Login Successful!");
+            navigate("/");
         } catch (error) {
             console.error("Login Error:", error);
-            toast.error("Something went wrong!");
+            toast.error(error.message);
         } finally {
             setLoading(false);
         }
     };
-
 
 
 
