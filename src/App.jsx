@@ -6,7 +6,6 @@ import Apiroutes from './routes/Apiroutes/Apiroutes'
 import Login from './login/Login';
 import PrivateRoute from './routes/Auth/PrivateRoute';
 import AuthRoute from './routes/Auth/AuthRoute';
-// import login from '../../login/Login'
 
 const App = () => {
   return (

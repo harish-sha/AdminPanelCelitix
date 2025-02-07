@@ -27,7 +27,7 @@ const InputField = ({
         <div className="w-full">
             {label && (
                 <div className="flex items-center gap-2 mb-2">
-                    <label htmlFor={id} className="text-sm font-medium text-gray-700">{label}</label>
+                    <label htmlFor={id} className="text-sm  font-medium text-gray-700">{label}</label>
                     {tooltipContent && (
                         <CustomTooltip
                             title={tooltipContent}
@@ -49,7 +49,7 @@ const InputField = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
+                className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
                     }`}
             />
 

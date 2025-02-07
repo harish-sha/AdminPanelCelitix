@@ -10,33 +10,69 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
+    // const handleLogin = async (e) => {
+    //     e.preventDefault();
+    //     setLoading(true);
+
+    //     const token = localStorage.getItem("token");
+
+    //     console.log("Token saved:", localStorage.getItem("token")); // ✅ Check if token is saved properly
+
+
+    //     try {
+    //         const response = await fetch("/api/proCpaasRest/auth/login", {
+    //             method: "POST",
+    //             headers: {
+    //                 "Content-Type": "application/json",
+    //                 "Authorization": `Bearer ${token}`,
+    //             },
+    //             body: JSON.stringify({ userId, password }),
+    //         });
+
+    //         const data = await response.json();
+    //         // console.log("Login Response:", data);
+
+    //         if (!response.ok) {
+    //             throw new Error(data.message || "Invalid credentials!");
+    //         }
+
+    //         if (!data.token) {
+    //             throw new Error("Authentication failed! Please check your credentials.");
+    //         }
+    //         localStorage.setItem("token", data.token);
+    //         toast.success("Login Successful!");
+    //         navigate("/");
+    //     } catch (error) {
+    //         console.error("Login Error:", error);
+    //         toast.error(error.message);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+
     const handleLogin = async (e) => {
         e.preventDefault();
         setLoading(true);
 
-        const token = localStorage.getItem("token");
-
         try {
             const response = await fetch("/api/proCpaasRest/auth/login", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`,
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, password }),
             });
 
             const data = await response.json();
-            // console.log("Login Response:", data);
+            console.log("Login API Response:", data); // ✅ Debug response
 
-            if (!response.ok) {
-                throw new Error(data.message || "Invalid credentials!");
+            if (!response.ok || !data.token) {
+                throw new Error("Authentication failed! No valid token received.");
             }
 
-            if (!data.token) {
-                throw new Error("Authentication failed! Please check your credentials.");
-            }
+            console.log("Received Token:", data.token); // ✅ Debug token
+
             localStorage.setItem("token", data.token);
+            console.log("Token saved in localStorage:", localStorage.getItem("token"));
+
             toast.success("Login Successful!");
             navigate("/");
         } catch (error) {
@@ -46,6 +82,8 @@ const Login = () => {
             setLoading(false);
         }
     };
+
+
 
 
 

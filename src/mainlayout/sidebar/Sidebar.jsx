@@ -227,7 +227,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     return (
         <div
             className={clsx(
-                "h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 transition-all duration-300 overflow-y-auto",
+                "h-screen  bg-white text-white px-0 flex flex-col fixed top-14 left-0 transition-all duration-300 overflow-y-auto",
                 isCollapsed ? "w-16" : "w-64"
             )}
             style={{ maxHeight: "calc(100vh - 3.5rem)" }}
@@ -265,7 +265,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                                 >
                                     <div className="flex items-center gap-4 h-6">
                                         <span className="flex-shrink-0 text-black">{item.icon}</span>
-                                        <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600]')}>
+                                        <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600] ')}>
                                             {item.label}
                                         </span>
                                     </div>

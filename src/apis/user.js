@@ -1,7 +1,5 @@
-import { fetchWithAuth } from "./apiClient";
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import { fetchWithAuth } from "./apiClient.js";
 
 export const getUserDetails = async () => {
-  return await fetchWithAuth(`${API_BASE_URL}/auth/getuserdetails`);
+  return await fetchWithAuth("/auth/getuserdetails");
 };

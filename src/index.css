@@ -1,7 +1,4 @@
 @import "tailwindcss";
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities; */
 
 * {
   font-family: "Poppins", sans-serif;
@@ -31,6 +28,15 @@ body {
 
 .outlet-container {
   border-top-left-radius: 1rem;
+}
+
+.font-p {
+  font-family: "Poppins", sans-serif;
+}
+
+.font-m {
+  /* font-family: ; */
+  font-family: "Montserrat", serif;
 }
 
 .loader {

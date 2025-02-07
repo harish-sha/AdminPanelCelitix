@@ -6,13 +6,20 @@ import TemplateRenderer from './components/lunchPreview';
 import Loader from '../components/Loader';
 import Templates from './components/Templates';
 import Waba1Template from './components/Waba1Template';
+// import getWabaList from '../../apis/whatsapp/getWabaList.js'
+import { getWabaList } from '../../apis/whatsapp/getWabaList.js';
+import toast from 'react-hot-toast';
 
 const WhatsappLaunchCampaign = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedWaba, setSelectedWaba] = useState("");
+    const [selectedWabaMobileNo, setSelectedWabaMobileNo] = useState("");
     const [inputValue, setInputValue] = useState("");
+
+
+    const [wabaList, setWabaList] = useState(null);
 
     const [templateData, setTemplateData] = useState({});
 
@@ -21,11 +28,27 @@ const WhatsappLaunchCampaign = () => {
         setTemplateData((prev) => ({ ...prev, ...data }));
     };
 
-    const wabaoptions = [
-        { value: 'WABA1', label: 'WABA1' },
-        { value: 'WABA2', label: 'WABA2' },
-        { value: 'WABA3', label: 'WABA3' },
-    ];
+    // const wabaoptions = [
+    //     { value: 'WABA1', label: 'WABA1' },
+    //     { value: 'WABA2', label: 'WABA2' },
+    //     { value: 'WABA3', label: 'WABA3' },
+    // ];
+
+    // const wabaoptions = wabaList.map((waba) => ({
+    //     value: waba.name,
+    //     label: waba.name,
+    // }));
+
+    const wabaoptions = (wabaList || []).map((waba) => ({
+        value: waba.name,
+        label: waba.name,
+    }));
+
+    const wabaMobileNo = (wabaList || []).map((wabaMob) => ({
+        value: wabaMob.mobileNo,
+        label: wabaMob.mobileNo,
+    }));
+
     const templateOptions = [
         { value: "wabaTemplate1", label: "WABA Template 1" },
         { value: "wabaTemplate2", label: "WABA Template 2" },
@@ -33,14 +56,79 @@ const WhatsappLaunchCampaign = () => {
     ];
 
 
+    // useEffect(() => {
+    //     const fetchWabaList = async () => {
+    //         setIsLoading(true);
+
+    //         const response = await getWabaList();
+
+    //         if (response && response.statusCode === 200) {
+    //             const wabaList = response.data[0];
+
+    //             // ✅ Populate formData with API response
+    //             setWabaList(wabaList);
+    //             setWabaListData({
+    //                 name: wabaList.name || "",
+    //                 officalWhatsappSrno: wabaList.officalWhatsappSrno || "",
+    //                 mobileNo: wabaList.mobileNo || "",
+    //                 wabaAccountId: wabaList.wabaAccountId || "",
+    //                 phoneNumberId: wabaList.phoneNumberId || "",
+    //             });
+    //         } else {
+    //             console.error("Failed to load waba list.");
+    //             toast.error("Failed to load waba list!");
+    //         }
+
+    //         setIsLoading(false);
+    //     };
+    //     fetchWabaList();
+    // }, []);
+
+    // Fetch WABA list from the backend
+    // useEffect(() => {
+    //     const fetchWabaList = async () => {
+    //         setIsLoading(true);
+
+    //         const response = await getWabaList();
+
+    //         if (response && response.statusCode === 200) {
+    //             const wabaList = response.data;
+    //             setWabaList(wabaList);
+    //         } else {
+    //             console.error("Failed to load waba list.");
+    //             toast.error("Failed to load waba list!");
+    //         }
+
+    //         setIsLoading(false);
+    //     };
+    //     fetchWabaList();
+    // }, []);
     useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 700));
-            setIsLoading(false);
+        console.log(localStorage.getItem("token"));
+
+        const fetchWabaList = async () => {
+            try {
+                setIsLoading(true);
+
+                const response = await getWabaList();
+
+                if (response) {
+                    setWabaList(response);
+                } else {
+                    console.error("Failed to fetch WABA details");
+                    toast.error("Failed to load WABA details!");
+                }
+            } catch (error) {
+                console.error("Error fetching WABA list:", error);
+                toast.error("Error fetching WABA list.");
+            } finally {
+                setIsLoading(false);
+            }
         };
-        fetchData();
+
+        fetchWabaList();
     }, []);
+
 
 
     const handleInputChange = (value) => {
@@ -71,6 +159,19 @@ const WhatsappLaunchCampaign = () => {
                                         value={selectedWaba}
                                         onChange={(value) => setSelectedWaba(value)}
                                         placeholder='Select WABA'
+                                    />
+                                </div>
+                                <div className='w-100 mb-2'>
+                                    <AnimatedDropdown
+                                        id='launchWabaMobileNo'
+                                        name='launchWabaMobileNo'
+                                        label='Mobile No'
+                                        tooltipContent='Your Waba Mobile No.'
+                                        tooltipPlacement='right'
+                                        options={wabaMobileNo}
+                                        value={selectedWabaMobileNo}
+                                        onChange={(value) => setSelectedWabaMobileNo(value)}
+                                        placeholder='Waba Mobile No'
                                     />
                                 </div>
                                 <div className='w-100 mb-2'>

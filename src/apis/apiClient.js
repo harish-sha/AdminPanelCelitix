@@ -1,32 +1,10 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const isTokenExpired = (token) => {
-  if (!token) return true;
-  const payload = JSON.parse(atob(token.split(".")[1]));
-  return payload.exp * 1000 < Date.now();
-};
-
-// const isTokenExpired = (token) => {
-//   if (!token) return true;
-
-//   try {
-//     const payloadBase64 = token.split(".")[1];
-//     if (!payloadBase64) return true;
-
-//     const payload = JSON.parse(atob(payloadBase64));
-//     return payload.exp * 1000 < Date.now();
-//   } catch (error) {
-//     console.error("Invalid Token Format:", error);
-//     return true;
-//   }
-// };
-
 export const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
 
-  if (!token || isTokenExpired(token)) {
-    console.error("Token expired, logging out...");
-    localStorage.removeItem("token");
+  if (!token) {
+    console.error("No token found, redirecting to login.");
     window.location.href = "/login";
     return;
   }
@@ -38,13 +16,14 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   };
 
   try {
+    console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
       headers,
     });
 
     if (!response.ok) {
-      console.error("API Error:", response.statusText);
+      console.error(`API Error: ${response.status} ${response.statusText}`);
       return null;
     }
 

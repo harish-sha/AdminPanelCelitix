@@ -126,7 +126,7 @@ const AnimatedDropdown = ({
         <div className="relative w-full">
             {label && (
                 <div className="flex items-center mb-2">
-                    <label htmlFor={id} className="text-sm font-medium text-gray-800">
+                    <label htmlFor={id} className="text-sm font-p font-medium text-gray-800">
                         {label}
                     </label>
                     {tooltipContent && (
@@ -161,7 +161,7 @@ const AnimatedDropdown = ({
                 }}
             >
                 {options.map((option) => (
-                    <Option key={option.value} value={option.value} className="flex items-center justify-between font-serif">
+                    <Option key={option.value} value={option.value} className="flex font-p items-center justify-between font-serif">
                         {option.label}
                         {value === option.value && <BsCheck className="text-gray-600 text-xl" />}
                     </Option>

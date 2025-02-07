@@ -15,6 +15,8 @@ const InputField = ({
     errorText = "",
     // noSpaces = false,
     tooltipPlacement = "top",
+    readOnly = false,
+    disabled = false,
 }) => {
     // const handleChange = (e) => {
     //     let inputValue = e.target.value;
@@ -50,8 +52,10 @@ const InputField = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
-                className={`block w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
-                    }`}
+                readOnly={readOnly}
+                disabled={disabled}
+                className={`block w-full p-1.5 border  rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
+                    } ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"}`}
             />
 
             {error && (
