@@ -44,9 +44,9 @@ const WhatsappLaunchCampaign = () => {
         label: waba.name,
     }));
 
-    const wabaMobileNo = (wabaList || []).map((wabaMob) => ({
-        value: wabaMob.mobileNo,
-        label: wabaMob.mobileNo,
+    const wabaMobileNo = (wabaList || []).map((waba) => ({
+        value: waba.mobileNo,
+        label: waba.mobileNo,
     }));
 
     const templateOptions = [
@@ -55,54 +55,6 @@ const WhatsappLaunchCampaign = () => {
         { value: "wabaTemplate3", label: "WABA Template 3" },
     ];
 
-
-    // useEffect(() => {
-    //     const fetchWabaList = async () => {
-    //         setIsLoading(true);
-
-    //         const response = await getWabaList();
-
-    //         if (response && response.statusCode === 200) {
-    //             const wabaList = response.data[0];
-
-    //             // ✅ Populate formData with API response
-    //             setWabaList(wabaList);
-    //             setWabaListData({
-    //                 name: wabaList.name || "",
-    //                 officalWhatsappSrno: wabaList.officalWhatsappSrno || "",
-    //                 mobileNo: wabaList.mobileNo || "",
-    //                 wabaAccountId: wabaList.wabaAccountId || "",
-    //                 phoneNumberId: wabaList.phoneNumberId || "",
-    //             });
-    //         } else {
-    //             console.error("Failed to load waba list.");
-    //             toast.error("Failed to load waba list!");
-    //         }
-
-    //         setIsLoading(false);
-    //     };
-    //     fetchWabaList();
-    // }, []);
-
-    // Fetch WABA list from the backend
-    // useEffect(() => {
-    //     const fetchWabaList = async () => {
-    //         setIsLoading(true);
-
-    //         const response = await getWabaList();
-
-    //         if (response && response.statusCode === 200) {
-    //             const wabaList = response.data;
-    //             setWabaList(wabaList);
-    //         } else {
-    //             console.error("Failed to load waba list.");
-    //             toast.error("Failed to load waba list!");
-    //         }
-
-    //         setIsLoading(false);
-    //     };
-    //     fetchWabaList();
-    // }, []);
     useEffect(() => {
         console.log(localStorage.getItem("token"));
 
@@ -132,8 +84,7 @@ const WhatsappLaunchCampaign = () => {
 
 
     const handleInputChange = (value) => {
-        // Apply logic for spaces or no spaces here
-        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
+        const newValue = value.replace(/\s/g, "");
         setInputValue(newValue);
     };
 
@@ -236,3 +187,7 @@ const WhatsappLaunchCampaign = () => {
 
 
 export default WhatsappLaunchCampaign
+
+
+// http://95.216.43.170:8080/proCpaasRest/auth/getuserdetails
+// http://95.216.43.170:8080/proCpaasRest/whatsapp/getwabadetails

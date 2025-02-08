@@ -9,6 +9,8 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     return;
   }
 
+  console.log("Token:", token);
+
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
