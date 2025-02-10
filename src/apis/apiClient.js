@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = "/api";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
@@ -9,8 +10,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     return;
   }
 
-  console.log("Token:", token);
-
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
@@ -19,8 +18,12 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
+
+    const method = options.method || "GET";
+
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
+      method,
       headers,
     });
 

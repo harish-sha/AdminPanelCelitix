@@ -8,6 +8,8 @@ import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import clsx from 'clsx';
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import ApiOutlinedIcon from '@mui/icons-material/ApiOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import toast from 'react-hot-toast';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
@@ -73,6 +75,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             label: 'Home',
             type: "single",
             to: "/",
+        },
+        {
+            name: 'Dummy',
+            icon: <BlockOutlinedIcon />,
+            label: 'Dummy',
+            type: "single",
+            to: "/dummy",
         },
         {
             name: 'SMS',
@@ -216,11 +225,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             icon: <FaSignOutAlt />,
             label: 'Logout',
             type: "single",
-            // to: "/",
             onClick: handleLogout
-
-
-            // <UniversalButton label="Logout" onClick={handleLogout} variant="danger" />
         },
     ];
 

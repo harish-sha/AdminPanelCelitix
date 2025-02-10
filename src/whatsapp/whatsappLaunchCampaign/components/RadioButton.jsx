@@ -1,75 +1,74 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Select from "react-select";
 import '../../style.css'
+import { getWabaShowGroupsList } from "../../../apis/whatsapp/whatsapp";
+import { MultiSelect } from 'primereact/multiselect';
 
 function RadioButton() {
   const [selectedOption, setSelectedOption] = useState("option2");
-  const [selectedGroups, setSelectedGroups] = useState([]); // For multi-select dropdown
-  const [uploadedFile, setUploadedFile] = useState(null); // For file upload
+  const [selectedGroups, setSelectedGroups] = useState([]);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [showGroupList, setShowGroupList] = useState([]);
+  const [groups, setGroups] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Options for multi-select dropdown
-  const groupOptions = [
-    { value: "group1", label: "Group 1" },
-    { value: "group2", label: "Group 2" },
-    { value: "group3", label: "Group 3" },
-    { value: "group4", label: "Group 4" },
-  ];
-
-  // Add "Select All" option at the top
-  const allOption = { value: "all", label: "Select All" };
-
-  // Options including "Select All" at the top
-  const optionsWithSelectAll = [allOption, ...groupOptions];
-
-  // Handle multi-select changes
-  const handleGroupChange = (selected) => {
-    if (selected?.some((item) => item.value === "all")) {
-      setSelectedGroups(groupOptions);
-    } else {
-      setSelectedGroups(selected || []);
-    }
-  };
-
-  // Handle radio button changes
   const handleChange = (event) => {
     setSelectedOption(event.target.value);
     if (event.target.value !== "option1") {
       setSelectedGroups([]);
     }
     if (event.target.value !== "option2") {
-      setUploadedFile(null); // Clear file if switching from Import Contact
+      setUploadedFile(null);
+    }
+
+    if (event.target.value !== "option3") {
     }
   };
 
-  // Handle file drop
   const handleFileDrop = (event) => {
     event.preventDefault();
-    const file = event.dataTransfer.files[0]; // Only accept the first file
+    const file = event.dataTransfer.files[0];
     if (file) {
       setUploadedFile(file);
     }
   };
 
-  // Handle manual file selection
   const handleFileChange = (event) => {
-    const file = event.target.files[0]; // Only accept the first file
+    const file = event.target.files[0];
     if (file) {
       setUploadedFile(file);
     }
   };
 
-  // Prevent default behavior for drag-and-drop
+
   const handleDragOver = (event) => {
     event.preventDefault();
   };
 
 
-  // const customValue = selectedGroups.length > 0
-  //   ? [{ value: 'custom', label: `Selected ${selectedGroups.length}` }]
-  //   : [];
+  // Select Group List
+  useEffect(() => {
+    const fetchWabaShowGroupsList = async () => {
+      try {
+        const response = await getWabaShowGroupsList();
+        if (response) {
+          setGroups(response);
+        } else {
+          console.error("Failed to fetch WABA Group List!");
+          toast.error("Failed to load WABA Group List!");
+        }
+      } catch (error) {
+        console.error("Error fetching WABA Group List:", error);
+        toast.error("Error fetching WABA Group List.");
+      }
+    };
+    fetchWabaShowGroupsList();
+  }, []);
 
-
-
+  const selectGroupOptions = groups.map((group) => ({
+    label: `${group.groupName} (${group.totalCount})`,
+    value: group.groupCode,
+  }));
 
   return (
     <div className="p-3 bg-gray-100 rounded-lg shadow-md w-90">
@@ -97,8 +96,6 @@ function RadioButton() {
           {/* Option 2 */}
           <label className=" h-10 w-40  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center gap-2 mt-1" >
-
-
               <input
                 type="radio"
                 name="option"
@@ -115,8 +112,6 @@ function RadioButton() {
           {/* Option 3 */}
           <label className="h-10 w-40  cursor-pointer bg-white border border-gray-300 rounded-lg p-1 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center justify-center gap-2 mt-1" >
-
-
               <input
                 type="radio"
                 name="option"
@@ -132,78 +127,15 @@ function RadioButton() {
 
         </div>
       </div>
-      <div className="flex gap-3 items-center mt-3" >
-        <h2 className="text-sm font-semibold text-gray-800 ">Option Audience</h2>
-        <div className="flex items-center gap-6">
-          {/* Option 1 */}
-
-          <label className=" cursor-pointer p-0 bg-transparent   ">
-            <div className="flex items-center justify-center gap-2 mt-1" >
-
-
-              <input
-                type="radio"
-                name="OptinAudience"
-                value="Yes"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                aria-label="Yes"
-              />
-              <span className="text-gray-800 font-medium text-sm">Yes</span>
-            </div>
-          </label>
-
-          {/* Option 2 */}
-          <label className=" cursor-pointer p-0 bg-transparent   ">
-            <div className="flex items-center justify-center gap-2 mt-1" >
-
-
-              <input
-                type="radio"
-                name="OptinAudience"
-                value="Yes"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                aria-label="No"
-                // checked
-              />
-              <span className="text-gray-800 font-medium text-sm">No</span>
-            </div>
-          </label>
-        </div>
-      </div>
-
 
       {/* Multi-Select Dropdown for Select Group */}
       {selectedOption === "option1" && (
-        <div className="mt-2">
-          <label className="file-upload-label mb-0 text-sm font-semibold ">
-            Select Groups
-          </label>
-          <Select
-            options={optionsWithSelectAll}
-            isMulti
-            value={selectedGroups}
-            onChange={handleGroupChange}
-            closeMenuOnSelect={false}
-            isSearchable
-            placeholder="Select Groups..."
-            className="mt-2"
-          // styles={{
-          //   menu: (base) => ({ ...base, zIndex: 9999 }),
-          // }}
-          />
-
-          {/* Display selected group count */}
-          {/* {selectedGroups.length > 0 ? (
-            <p className="mt-2 text-sm text-green-600">
-              Selected ({selectedGroups.length}):{" "}
-              <strong>
-                {selectedGroups.map((group) => group.label).join(", ")}
-              </strong>
-            </p>
-          ) : (
-            <p className="mt-2 text-sm text-red-500">No groups selected.</p>
-          )} */}
-        </div>
+        <>
+          <div className="flex justify-content-center">
+            <MultiSelect value={showGroupList} onChange={(e) => setShowGroupList(e.value)} options={selectGroupOptions} optionLabel="label"
+              filter placeholder="Select Groups" maxSelectedLabels={0} className="custom-multiselect" />
+          </div>
+        </>
       )}
 
       {/* Drag-and-Drop and File Upload for Import Contact */}
@@ -239,6 +171,40 @@ function RadioButton() {
           </div>
         </div>
       )}
+
+      {/* Option Audience */}
+      {selectedOption === "option3" && (
+        <div className="flex gap-3 items-center mt-3" >
+          <h2 className="text-sm font-semibold text-gray-800 ">Option Audience</h2>
+          <div className="flex items-center gap-6">
+            <label className=" cursor-pointer p-0 bg-transparent">
+              <div className="flex items-center justify-center gap-2 mt-1">
+                <input
+                  type="radio"
+                  name="OptinAudience"
+                  value="Yes"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  aria-label="Yes"
+                />
+                <span className="text-gray-800 font-medium text-sm">Yes</span>
+              </div>
+            </label>
+            <label className=" cursor-pointer p-0 bg-transparent">
+              <div className="flex items-center justify-center gap-2 mt-1" >
+                <input
+                  type="radio"
+                  name="OptinAudience"
+                  value="Yes"
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
+                  aria-label="No"
+                />
+                <span className="text-gray-800 font-medium text-sm">No</span>
+              </div>
+            </label>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

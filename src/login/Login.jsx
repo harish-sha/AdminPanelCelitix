@@ -14,21 +14,23 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
+        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+
         try {
-            const response = await fetch("/api/proCpaasRest/auth/login", {
+            const response = await fetch(`${apiUrl}/proCpaasRest/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, password }),
             });
 
             const data = await response.json();
-            console.log("Login API Response:", data); // ✅ Debug response
+            console.log("Login API Response:", data);
 
             if (!response.ok || !data.token) {
                 throw new Error("Authentication failed! No valid token received.");
             }
 
-            console.log("Received Token:", data.token); // ✅ Debug token
+            console.log("Received Token:", data.token);
 
             localStorage.setItem("token", data.token);
             console.log("Token saved in localStorage:", localStorage.getItem("token"));
