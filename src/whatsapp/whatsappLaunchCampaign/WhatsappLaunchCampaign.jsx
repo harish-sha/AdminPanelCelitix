@@ -20,15 +20,19 @@ const WhatsappLaunchCampaign = () => {
     const [inputValue, setInputValue] = useState("");
     const [templateOptions, setTemplateOptions] = useState([]);
     const [templateDataNew, setTemplateDataNew] = useState(null); // Store selected template data
-
-
+    const [wabaAccountId, setWabaAccountId] = useState("");
     const [wabaList, setWabaList] = useState(null);
-
     const [templateData, setTemplateData] = useState({});
 
     // Handle template updates
     const updateTemplateData = (data) => {
         setTemplateData((prev) => ({ ...prev, ...data }));
+    };
+
+    // Set the values dynamically based on selection
+    const handleTemplateChange = (template) => {
+        setSelectedTemplate(template);
+        // Make sure wabaAccountId is also set dynamically from the WABA list
     };
 
     // const wabaoptions = [
@@ -115,17 +119,39 @@ const WhatsappLaunchCampaign = () => {
         }
     }, [selectedWaba]);
 
-    // Fetch templates based on TemplateDetails
+    // // Fetch templates based on TemplateDetails
+    // useEffect(() => {
+    //     const fetchTemplateDetails = async () => {
+    //         if (!selectedTemplate) return;
+
+    //         try {
+    //             // setIsLoading(true); // Start loading
+    //             const response = await getWabaTemplate(selectedTemplate);
+
+    //             if (response && response.data && response.data.length > 0) {
+    //                 setTemplateDataNew(response.data[0]);
+    //             } else {
+    //                 console.error("Failed to fetch template details");
+    //                 toast.error("Failed to load templates!");
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching template details:", error);
+    //             toast.error("Error fetching template details.");
+    //         }
+    //     };
+
+    //     fetchTemplateDetails();
+    // }, [selectedTemplate]);
+
     useEffect(() => {
         const fetchTemplateDetails = async () => {
-            if (!selectedTemplate) return;
+            if (!selectedTemplate || !wabaAccountId) return;
 
             try {
-                // setIsLoading(true); // Start loading
-                const response = await getWabaTemplate(selectedTemplate);
+                const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
 
-                if (response && response.length > 0) {
-                    setTemplateDataNew(response[0]);
+                if (response && response.data && response.data.length > 0) {
+                    setTemplateDataNew(response.data[0]);
                 } else {
                     console.error("Failed to fetch template details");
                     toast.error("Failed to load templates!");
@@ -137,60 +163,8 @@ const WhatsappLaunchCampaign = () => {
         };
 
         fetchTemplateDetails();
-    }, [selectedTemplate]);
+    }, [selectedTemplate, wabaAccountId]);
 
-
-    // waba show groups list
-    // useEffect(() => {
-    //     const fetchWabaShowGroupsList = async () => {
-    //         try {
-    //             setIsLoading(true);
-
-    //             const response = await getWabaShowGroupsList();
-    //             console.log("Show Group List:", response);
-
-
-    //             if (response) {
-    //                 getWabaShowGroupsList(response);
-    //             } else {
-    //                 console.error("Failed to fetch WABA Group List!");
-    //                 toast.error("Failed to load WABA Group List!");
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching WABA Group List:", error);
-    //             toast.error("Error fetching WABA Group List.");
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     };
-    //     fetchWabaShowGroupsList();
-    // }, []);
-
-    // Get country list 
-    // useEffect(() => {
-    //     const fetchCountryList = async () => {
-    //         try {
-    //             setIsLoading(true);
-
-    //             const response = await getCountryList();
-    //             console.log("Country List:", response);
-
-
-    //             if (response) {
-    //                 getCountryList(response);
-    //             } else {
-    //                 console.error("Failed to fetch Country List!");
-    //                 toast.error("Failed to load Country List");
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching country List:", error);
-    //             toast.error("Error fetching country List.");
-    //         } finally {
-    //             setIsLoading(false);
-    //         }
-    //     };
-    //     fetchCountryList();
-    // }, []);
 
     const handleInputChange = (value) => {
         const newValue = value.replace(/\s/g, "");
@@ -206,126 +180,117 @@ const WhatsappLaunchCampaign = () => {
             ) : (
                 <>
                     <div className='container-fluid '>
-                        <div className="flex gap-4 ">
-                            <div className="col-lg-4 w-full lg:w-1/3 p-0">
-                                <div className='w-100 mb-2'>
-                                    <AnimatedDropdown
-                                        id='launchSelectWABA'
-                                        name='launchSelectWABA'
-                                        label='Select WABA'
-                                        tooltipContent='Select your whatsapp business account'
-                                        tooltipPlacement='right'
-                                        options={wabaoptions}
-                                        value={selectedWaba}
-                                        onChange={(value) => setSelectedWaba(value)}
-                                        placeholder='Select WABA'
-                                    />
-                                </div>
-                                <div className='w-100 mb-2'>
-                                    <AnimatedDropdown
-                                        id='launchWabaMobileNo'
-                                        name='launchWabaMobileNo'
-                                        label='Mobile No'
-                                        tooltipContent='Your Waba Mobile No.'
-                                        tooltipPlacement='right'
-                                        options={wabaMobileNo}
-                                        value={selectedWabaMobileNo}
-                                        onChange={(value) => setSelectedWabaMobileNo(value)}
-                                        placeholder='Waba Mobile No'
-                                    />
-                                </div>
-                                <div className='w-100 mb-2'>
-                                    <InputField
-                                        id="createCampaign"
-                                        name="createCampaign"
-                                        label='Campaign Name'
-                                        value={inputValue}
-                                        onChange={(e) => handleInputChange(e.target.value)}
-                                        placeholder='Campaign Name'
-                                        tooltipContent='Your templatename should not contain spaces.'
-                                        tooltipPlacement='right'
-                                    />
-                                </div>
-                                <div className="w-100 mb-2">
-
-                                </div>
-                                <div className='w-100 mb-2'>
-                                    <AnimatedDropdown
-                                        id='selectTemplateType'
-                                        name='selectTemplateType'
-                                        label='Select Template'
-                                        tooltipContent='Select Template'
-                                        tooltipPlacement='right'
-                                        options={templateOptions}
-                                        value={selectedTemplate}
-                                        onChange={(value) => setSelectedTemplate(value)}
-                                        placeholder='Select Template'
-                                    />
-                                </div>
-
-                                {/* <div className='w-100 mb-2' >
-                                    <h2>{templateDataNew.template_name}</h2>
-                                    <p>{templateDataNew.message}</p>
-                                    <a href={templateDataNew.url_value}>{templateDataNew.url_display}</a>
-                                </div> */}
-                                {isLoading ? (
-                                    <UniversalSkeleton height="5rem" width="100%" />
-                                ) : (
-                                    // Display selected template details
-                                    templateDataNew && (
-                                        <div className='w-100 mb-2' >
-                                            <p>{templateDataNew.phone_value_2}</p>
-                                            <p>{templateDataNew.parent_user}</p>
-                                            <p>{templateDataNew.vendor_template_id}</p>
-                                            <p>{templateDataNew.og_url}</p>
-                                            <p>{templateDataNew.phone_display1}</p>
-                                            <h2>{templateDataNew.sr_no}</h2>
-                                            <h2>{templateDataNew.template_type}</h2>
-                                            <h2>{templateDataNew.top_reseller}</h2>
-                                            <h2>{templateDataNew.url_display1}</h2>
-                                            <h2>{templateDataNew.file_path}</h2>
-                                            <h2>{templateDataNew.phone_value1}</h2>
-                                            <h2>{templateDataNew.phone_display_2}</h2>
-                                            <h2>{templateDataNew.url_display_2}</h2>
-                                            <h2>{templateDataNew.phone_value}</h2>
-                                            <h2>{templateDataNew.is_hide}</h2>
-                                            <h2>{templateDataNew.url_display}</h2>
-                                            <h2>{templateDataNew.phone_display}</h2>
-                                            <h2>{templateDataNew.url_value_2}</h2>
-                                            <h2>variable count:{templateDataNew.variable_count}</h2>
-                                            <h2>{templateDataNew.is_shorturl}</h2>
-                                            <h2>{templateDataNew.url_value1}</h2>
-                                            <h2>{templateDataNew.is_replay_button}</h2>
-                                            <h2>{templateDataNew.url_value}</h2>
-                                            <h2>{templateDataNew.user_srno}</h2>
-                                            <h2>{templateDataNew.template_name}</h2>
-                                            <h2>{templateDataNew.is_flow}</h2>
-                                            <h2>{templateDataNew.template_language}</h2>
-                                            <h2>{templateDataNew.off_what_srno}</h2>
-                                            <h2>{templateDataNew.header}</h2>
-                                            <p>{templateDataNew.message}</p>
-                                            <p>{templateDataNew.insert_time}</p>
-                                            <p>{templateDataNew.footer}</p>
-                                            <p>{templateDataNew.template_category}</p>
-                                            <p>{templateDataNew.status}</p>
-                                        </div>
-                                    )
-                                )}
-
-                                <div className='w-full mb-2' >
-                                    {selectedTemplate === "wabaTemplate1" && (
-                                        <Waba1Template updateTemplate={updateTemplateData} />
+                        <div className="flex">
+                            <div className="col-lg-8 w-full lg:w-2/3 px-4 py-4 rounded-xl flex gap-6 bg-gray-200">
+                                <div className='w-full' >
+                                    <div className='mb-2'>
+                                        <AnimatedDropdown
+                                            id='launchSelectWABA'
+                                            name='launchSelectWABA'
+                                            label='Select WABA'
+                                            tooltipContent='Select your whatsapp business account'
+                                            tooltipPlacement='right'
+                                            options={wabaoptions}
+                                            value={selectedWaba}
+                                            onChange={(value) => setSelectedWaba(value)}
+                                            placeholder='Select WABA'
+                                        />
+                                    </div>
+                                    <div className='mb-2'>
+                                        <AnimatedDropdown
+                                            id='launchWabaMobileNo'
+                                            name='launchWabaMobileNo'
+                                            label='Mobile No'
+                                            tooltipContent='Your Waba Mobile No.'
+                                            tooltipPlacement='right'
+                                            options={wabaMobileNo}
+                                            value={selectedWabaMobileNo}
+                                            onChange={(value) => setSelectedWabaMobileNo(value)}
+                                            placeholder='Waba Mobile No'
+                                        />
+                                    </div>
+                                    <div className='mb-2'>
+                                        <InputField
+                                            id="createCampaign"
+                                            name="createCampaign"
+                                            label='Campaign Name'
+                                            value={inputValue}
+                                            onChange={(e) => handleInputChange(e.target.value)}
+                                            placeholder='Campaign Name'
+                                            tooltipContent='Your templatename should not contain spaces.'
+                                            tooltipPlacement='right'
+                                        />
+                                    </div>
+                                    <div className='mb-2'>
+                                        <AnimatedDropdown
+                                            id='selectTemplateType'
+                                            name='selectTemplateType'
+                                            label='Select Template'
+                                            tooltipContent='Select Template'
+                                            tooltipPlacement='right'
+                                            options={templateOptions}
+                                            value={selectedTemplate}
+                                            onChange={(value) => setSelectedTemplate(value)}
+                                            placeholder='Select Template'
+                                        />
+                                    </div>
+                                    {isLoading ? (
+                                        <UniversalSkeleton height="5rem" width="100%" />
+                                    ) : (
+                                        // Display selected template details
+                                        templateDataNew && (
+                                            <div className='w-100 mb-2' >
+                                                <p>{templateDataNew.phone_value_2}</p>
+                                                <p>{templateDataNew.parent_user}</p>
+                                                <p>{templateDataNew.vendor_template_id}</p>
+                                                <p>{templateDataNew.og_url}</p>
+                                                <p>{templateDataNew.phone_display1}</p>
+                                                <h2>{templateDataNew.sr_no}</h2>
+                                                <h2>{templateDataNew.template_type}</h2>
+                                                <h2>{templateDataNew.top_reseller}</h2>
+                                                <h2>{templateDataNew.url_display1}</h2>
+                                                <h2>{templateDataNew.file_path}</h2>
+                                                <h2>{templateDataNew.phone_value1}</h2>
+                                                <h2>{templateDataNew.phone_display_2}</h2>
+                                                <h2>{templateDataNew.url_display_2}</h2>
+                                                <h2>{templateDataNew.phone_value}</h2>
+                                                <h2>{templateDataNew.is_hide}</h2>
+                                                <h2>{templateDataNew.url_display}</h2>
+                                                <h2>{templateDataNew.phone_display}</h2>
+                                                <h2>{templateDataNew.url_value_2}</h2>
+                                                <h2>variable count:{templateDataNew.variable_count}</h2>
+                                                <h2>{templateDataNew.is_shorturl}</h2>
+                                                <h2>{templateDataNew.url_value1}</h2>
+                                                <h2>{templateDataNew.is_replay_button}</h2>
+                                                <h2>{templateDataNew.url_value}</h2>
+                                                <h2>{templateDataNew.user_srno}</h2>
+                                                <h2>{templateDataNew.template_name}</h2>
+                                                <h2>{templateDataNew.is_flow}</h2>
+                                                <h2>{templateDataNew.template_language}</h2>
+                                                <h2>{templateDataNew.off_what_srno}</h2>
+                                                <h2>{templateDataNew.header}</h2>
+                                                <p>{templateDataNew.message}</p>
+                                                <p>{templateDataNew.insert_time}</p>
+                                                <p>{templateDataNew.footer}</p>
+                                                <p>{templateDataNew.template_category}</p>
+                                                <p>{templateDataNew.status}</p>
+                                            </div>
+                                        )
                                     )}
+
+                                    <div className='w-full mb-2' >
+                                        {selectedTemplate === "wabaTemplate1" && (
+                                            <Waba1Template updateTemplate={updateTemplateData} />
+                                        )}
+                                    </div>
+                                </div>
+                                <div className="w-full">
+                                    <RadioButton />
                                 </div>
                             </div>
 
 
-
-
-                            <div className="col-lg-4 w-full lg:w-1/3 p-0">
-                                <RadioButton />
-                            </div>
-                            <div className="col-lg-4 w-full lg:w-1/3 p-0">
+                            <div className="col-lg-4 w-full lg:w-1/3 p-0 flex justify-center">
                                 <TemplateRenderer
                                     // header={templateDataNew.message}
                                     format={templateData.messageParams?.join("\n")}

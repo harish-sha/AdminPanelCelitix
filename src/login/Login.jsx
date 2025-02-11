@@ -14,7 +14,9 @@ const Login = () => {
         e.preventDefault();
         setLoading(true);
 
-        const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        // const apiUrl = import.meta.env.VITE_API_BASE_URL;
+        const apiUrl = "/api";
+        console.log("API URL: ", apiUrl);
 
         try {
             const response = await fetch(`${apiUrl}/proCpaasRest/auth/login`, {
