@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import InputField from '../components/InputField';
-import RadioButton from './components/RadioButton';
+import RadioButtonLaunchCampaign from './components/RadioButtonLaunchCampaign.jsx';
 import TemplateRenderer from './components/lunchPreview';
 import Loader from '../components/Loader';
 import Templates from './components/Templates';
@@ -285,7 +285,7 @@ const WhatsappLaunchCampaign = () => {
                                     </div>
                                 </div>
                                 <div className="w-full">
-                                    <RadioButton />
+                                    <RadioButtonLaunchCampaign />
                                 </div>
                             </div>
 

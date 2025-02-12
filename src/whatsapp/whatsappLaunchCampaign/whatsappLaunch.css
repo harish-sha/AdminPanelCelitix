@@ -1,0 +1,43 @@
+.file-upload-container {
+  margin-top: 0.7rem;
+  padding: 1rem;
+  border: 2px dashed #6b7280;
+  border-radius: 1rem;
+  background-color: #f9fafb;
+  text-align: center;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  position: relative;
+}
+
+.file-upload-container:hover {
+  border-color: #3b82f6;
+  background-color: #eff6ff;
+}
+
+.file-upload-container.drag-active {
+  border-color: #10b981;
+  background-color: #d1fae5;
+}
+
+.file-upload-preview {
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: #f3f4f6;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  color: #374151;
+  text-align: left;
+}
+
+.file-upload-preview strong {
+  font-weight: 600;
+  color: #111827;
+}
+
+
+.p-radiobutton{
+    /* background: #000; */
+    /* height: 10px; */
+    
+}

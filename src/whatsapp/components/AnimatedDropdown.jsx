@@ -148,6 +148,7 @@ const AnimatedDropdown = ({
                 name={name}
                 value={value} // Single selected value
                 onChange={(e, selectedValue) => onChange(selectedValue)} // Update value
+                // onChange={(e) => onChange(e.target.value)} // Update value
                 placeholder={placeholder}
                 indicator={<KeyboardArrowDown />}
                 sx={{
@@ -160,12 +161,19 @@ const AnimatedDropdown = ({
                     },
                 }}
             >
-                {options.map((option) => (
+                {/* {options.map((option) => (
                     <Option key={option.value} value={option.value} className="flex font-p items-center justify-between font-serif">
                         {option.label}
                         {value === option.value && <BsCheck className="text-gray-600 text-xl" />}
                     </Option>
+                ))} */}
+                {options.map((option, index) => (
+                    <Option key={`${option.value}-${index}`} value={option.value} className="flex font-p items-center justify-between font-serif">
+                        {option.label}
+                        {value === option.value && <BsCheck className="text-gray-600 text-xl" />}
+                    </Option>
                 ))}
+
             </Select>
         </div>
     );

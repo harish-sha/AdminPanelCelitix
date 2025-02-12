@@ -337,7 +337,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                                 <button
                                     onClick={item.onClick}
                                     className={clsx(
-                                        "flex items-center gap-4 px-4 py-2 transition-all w-full text-left",
+                                        "flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer",
                                         "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
                                         isCollapsed && "justify-center"
                                     )}

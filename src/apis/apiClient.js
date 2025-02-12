@@ -11,10 +11,17 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   }
 
   const headers = {
-    "Content-Type": "application/json",
+    // "Content-Type": "application/json",
     Authorization: `Bearer ${token}`,
     ...options.headers,
   };
+
+  // If FormData is used, do not set Content-Type header manually
+  if (options.body instanceof FormData) {
+    delete headers["Content-Type"]; // FormData will set it automatically
+  } else {
+    headers["Content-Type"] = "application/json"; // For other requests, use application/json
+  }
 
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);

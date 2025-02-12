@@ -24,7 +24,6 @@ export const getWabaTemplateDetails = async (wabaNumber) => {
 //   );
 // };
 
-
 export const getWabaTemplate = async (wabaAccountId, templateName) => {
   return await fetchWithAuth(
     `/proCpaasRest/whatsapptemplate/getWhatsappTemplate?templateName=${templateName}&wabaAccountId=${wabaAccountId}`,
@@ -38,4 +37,24 @@ export const getWabaShowGroupsList = async () => {
   return await fetchWithAuth("/proCpaasRest/showGroups", {
     method: "POST",
   });
+};
+
+export const campaignUploadFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  // Call the fetchWithAuth to upload the file
+  try {
+    const response = await fetchWithAuth("/proCpaasRest/campaignFile/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response) {
+      // console.log("File uploaded successfully:", response);
+      return response;
+    }
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
 };
