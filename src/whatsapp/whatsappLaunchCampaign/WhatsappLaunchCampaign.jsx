@@ -7,7 +7,7 @@ import Loader from '../components/Loader';
 import Templates from './components/Templates';
 import Waba1Template from './components/Waba1Template';
 // import getWabaList from '../../apis/whatsapp/getWabaList.js'
-import { getWabaList, getWabaTemplate, getWabaShowGroupsList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+import { getWabaList, getWabaTemplate, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
 import { getCountryList } from '../../apis/common/common.js'
 import toast from 'react-hot-toast';
 
@@ -16,10 +16,10 @@ const WhatsappLaunchCampaign = () => {
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedWaba, setSelectedWaba] = useState("");
-    const [selectedWabaMobileNo, setSelectedWabaMobileNo] = useState("");
+    const [selectedWabaMobileNo, setSelectedWabaMobileNo] = useState([]);
     const [inputValue, setInputValue] = useState("");
     const [templateOptions, setTemplateOptions] = useState([]);
-    const [templateDataNew, setTemplateDataNew] = useState(null); // Store selected template data
+    const [templateDataNew, setTemplateDataNew] = useState(null);
     const [wabaAccountId, setWabaAccountId] = useState("");
     const [wabaList, setWabaList] = useState(null);
     const [templateData, setTemplateData] = useState({});
@@ -57,10 +57,6 @@ const WhatsappLaunchCampaign = () => {
         label: waba.name,
     }));
 
-    const wabaMobileNo = (wabaList || []).map((waba) => ({
-        value: waba.mobileNo,
-        label: waba.mobileNo,
-    }));
 
     // const templateOptions = [
     //     { value: "wabaTemplate1", label: "WABA Template 1" },
@@ -91,33 +87,66 @@ const WhatsappLaunchCampaign = () => {
         fetchWabaList();
     }, []);
 
-    // WABA Template selection and fetch templates
-    useEffect(() => {
-        if (selectedWaba) {
-            const fetchTemplateDetails = async () => {
-                try {
-                    const response = await getWabaTemplateDetails(selectedWaba);
-                    if (response) {
-                        setTemplateOptions(
-                            response.map((template) => ({
-                                value: template.templateSrno,
-                                label: template.templateName,
-                            }))
-                        );
-                    } else {
-                        console.error("Failed to fetch template details");
-                        toast.error("Failed to load templates!");
-                    }
-                } catch (error) {
-                    console.error("Error fetching template details:", error);
-                    toast.error("Error fetching template details.");
-                }
-            };
-            fetchTemplateDetails();
-        } else {
-            setTemplateOptions([]);
+    // Handle WABA selection
+    const handleWabaSelect = async (value) => {
+        setSelectedWaba(value);
+        const selectedWabaDetails = wabaList.find((waba) => waba.mobileNo === value);
+        setSelectedWabaMobileNo(selectedWabaDetails ? [selectedWabaDetails.mobileNo] : []);
+        setWabaAccountId(selectedWabaDetails?.wabaAccountId || ""); // Set the wabaAccountId based on selection
+
+        // Fetch template details for the selected WABA
+        if (selectedWabaDetails) {
+            await fetchTemplateDetails(selectedWabaDetails.mobileNo); // Fetch templates based on mobileNo
         }
-    }, [selectedWaba]);
+    };
+
+    const fetchTemplateDetails = async (wabaNumber) => {
+        try {
+            const response = await getWabaTemplateDetails(wabaNumber);
+
+            if (response) {
+                setTemplateOptions(
+                    response.map((template) => ({
+                        value: template.templateName,
+                        label: template.templateName,
+                    }))
+                );
+            } else {
+                toast.error("Failed to load templates!");
+            }
+        } catch (error) {
+            toast.error("Error fetching template details.");
+        }
+    };
+
+
+    // WABA Template selection and fetch templates
+    // useEffect(() => {
+    //     if (selectedWaba) {
+    //         const fetchTemplateDetails = async () => {
+    //             try {
+    //                 const response = await getWabaTemplateDetails(selectedWaba);
+    //                 if (response) {
+    //                     setTemplateOptions(
+    //                         response.map((template) => ({
+    //                             value: template.templateSrno,
+    //                             label: template.templateName,
+    //                         }))
+    //                     );
+    //                 } else {
+    //                     console.error("Failed to fetch template details");
+    //                     toast.error("Failed to load templates!");
+    //                 }
+    //             } catch (error) {
+    //                 console.error("Error fetching template details:", error);
+    //                 toast.error("Error fetching template details.");
+    //             }
+    //         };
+    //         fetchTemplateDetails();
+    //     } else {
+    //         setTemplateOptions([]);
+    //     }
+    // }, [selectedWaba]);
 
     // // Fetch templates based on TemplateDetails
     // useEffect(() => {
@@ -143,26 +172,47 @@ const WhatsappLaunchCampaign = () => {
     //     fetchTemplateDetails();
     // }, [selectedTemplate]);
 
+    // useEffect(() => {
+    //     const fetchTemplateDetails = async () => {
+    //         if (!selectedTemplate || !wabaAccountId) return;
+
+    //         try {
+    //             const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+
+    //             if (response && response.data && response.data.length > 0) {
+    //                 setTemplateDataNew(response.data[0]);
+    //             } else {
+    //                 console.error("Failed to fetch template details");
+    //                 toast.error("Failed to load templates!");
+    //             }
+    //         } catch (error) {
+    //             console.error("Error fetching template details:", error);
+    //             toast.error("Error fetching template details.");
+    //         }
+    //     };
+
+    //     fetchTemplateDetails();
+    // }, [selectedTemplate, wabaAccountId]);
+
     useEffect(() => {
-        const fetchTemplateDetails = async () => {
-            if (!selectedTemplate || !wabaAccountId) return;
+        const fetchTemplateData = async () => {
+            if (!selectedTemplate || !wabaAccountId) return;  // Ensure both are selected
 
             try {
                 const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+                console.log("fetching particular template data : ", response)
 
                 if (response && response.data && response.data.length > 0) {
                     setTemplateDataNew(response.data[0]);
                 } else {
-                    console.error("Failed to fetch template details");
-                    toast.error("Failed to load templates!");
+                    toast.error("Failed to load template data!");
                 }
             } catch (error) {
-                console.error("Error fetching template details:", error);
-                toast.error("Error fetching template details.");
+                toast.error("Error fetching template data.");
             }
         };
 
-        fetchTemplateDetails();
+        fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
 
 
@@ -181,33 +231,46 @@ const WhatsappLaunchCampaign = () => {
                 <>
                     <div className='container-fluid '>
                         <div className="flex">
-                            <div className="col-lg-8 w-full lg:w-2/3 px-4 py-4 rounded-xl flex gap-6 bg-gray-200">
+                            <div className="col-lg-8 w-full lg:w-2/3 px-4 py-4 rounded-xl flex gap-6 bg-gray-200 h-[90vh]">
                                 <div className='w-full' >
-                                    <div className='mb-2'>
-                                        <AnimatedDropdown
-                                            id='launchSelectWABA'
-                                            name='launchSelectWABA'
-                                            label='Select WABA'
-                                            tooltipContent='Select your whatsapp business account'
-                                            tooltipPlacement='right'
-                                            options={wabaoptions}
-                                            value={selectedWaba}
-                                            onChange={(value) => setSelectedWaba(value)}
-                                            placeholder='Select WABA'
-                                        />
-                                    </div>
-                                    <div className='mb-2'>
-                                        <AnimatedDropdown
-                                            id='launchWabaMobileNo'
-                                            name='launchWabaMobileNo'
-                                            label='Mobile No'
-                                            tooltipContent='Your Waba Mobile No.'
-                                            tooltipPlacement='right'
-                                            options={wabaMobileNo}
-                                            value={selectedWabaMobileNo}
-                                            onChange={(value) => setSelectedWabaMobileNo(value)}
-                                            placeholder='Waba Mobile No'
-                                        />
+                                    <div className='flex items-center justify-between gap-2' >
+
+                                        <div className='mb-2 flex-1'>
+                                            <AnimatedDropdown
+                                                id='launchSelectWABA'
+                                                name='launchSelectWABA'
+                                                label='Select WABA'
+                                                tooltipContent='Select your whatsapp business account '
+                                                tooltipPlacement='right'
+                                                // options={wabaoptions}
+                                                options={wabaList?.map((waba) => ({
+                                                    value: waba.mobileNo,
+                                                    label: waba.name,
+                                                }))}
+                                                value={selectedWaba}
+                                                // onChange={(value) => setSelectedWaba(value)}
+                                                // onChange={(value) => {
+                                                //     setSelectedWaba(value);
+                                                //     const selectedWaba = wabaList.find(waba => waba.mobileNo === value);
+                                                //     setSelectedWabaMobileNo(selectedWaba ? [selectedWaba.mobileNo] : []);
+                                                //     console.log(selectedWaba)
+                                                // }}
+                                                onChange={handleWabaSelect}
+                                                placeholder='Select WABA'
+                                            />
+                                        </div>
+                                        <div className='mb-2 flex-1'>
+                                            <InputField
+                                                // id='launchWabaMobileNo'
+                                                // name='launchWabaMobileNo'
+                                                tooltipContent='Your waba account mobile no.'
+                                                tooltipPlacement='right'
+                                                label='Mobile No'
+                                                value={selectedWabaMobileNo.join(', ')}
+                                                readOnly={true}
+                                                placeholder='Your Waba Mobile No'
+                                            />
+                                        </div>
                                     </div>
                                     <div className='mb-2'>
                                         <InputField
@@ -238,42 +301,50 @@ const WhatsappLaunchCampaign = () => {
                                         <UniversalSkeleton height="5rem" width="100%" />
                                     ) : (
                                         // Display selected template details
+                                        // templateDataNew && (
+                                        //     <div className='w-100 mb-2' >
+                                        //         <p>{templateDataNew.phone_value_2}</p>
+                                        //         <p>{templateDataNew.parent_user}</p>
+                                        //         <p>{templateDataNew.vendor_template_id}</p>
+                                        //         <p>{templateDataNew.og_url}</p>
+                                        //         <p>{templateDataNew.phone_display1}</p>
+                                        //         <h2>{templateDataNew.sr_no}</h2>
+                                        //         <h2>{templateDataNew.template_type}</h2>
+                                        //         <h2>{templateDataNew.top_reseller}</h2>
+                                        //         <h2>{templateDataNew.url_display1}</h2>
+                                        //         <h2>{templateDataNew.file_path}</h2>
+                                        //         <h2>{templateDataNew.phone_value1}</h2>
+                                        //         <h2>{templateDataNew.phone_display_2}</h2>
+                                        //         <h2>{templateDataNew.url_display_2}</h2>
+                                        //         <h2>{templateDataNew.phone_value}</h2>
+                                        //         <h2>{templateDataNew.is_hide}</h2>
+                                        //         <h2>{templateDataNew.url_display}</h2>
+                                        //         <h2>{templateDataNew.phone_display}</h2>
+                                        //         <h2>{templateDataNew.url_value_2}</h2>
+                                        //         <h2>variable count:{templateDataNew.variable_count}</h2>
+                                        //         <h2>{templateDataNew.is_shorturl}</h2>
+                                        //         <h2>{templateDataNew.url_value1}</h2>
+                                        //         <h2>{templateDataNew.is_replay_button}</h2>
+                                        //         <h2>{templateDataNew.url_value}</h2>
+                                        //         <h2>{templateDataNew.user_srno}</h2>
+                                        //         <h2>{templateDataNew.template_name}</h2>
+                                        //         <h2>{templateDataNew.is_flow}</h2>
+                                        //         <h2>{templateDataNew.template_language}</h2>
+                                        //         <h2>{templateDataNew.off_what_srno}</h2>
+                                        //         <h2>{templateDataNew.header}</h2>
+                                        //         <p>{templateDataNew.message}</p>
+                                        //         <p>{templateDataNew.insert_time}</p>
+                                        //         <p>{templateDataNew.footer}</p>
+                                        //         <p>{templateDataNew.template_category}</p>
+                                        //         <p>{templateDataNew.status}</p>
+                                        //     </div>
+                                        // )
                                         templateDataNew && (
-                                            <div className='w-100 mb-2' >
-                                                <p>{templateDataNew.phone_value_2}</p>
-                                                <p>{templateDataNew.parent_user}</p>
-                                                <p>{templateDataNew.vendor_template_id}</p>
-                                                <p>{templateDataNew.og_url}</p>
-                                                <p>{templateDataNew.phone_display1}</p>
-                                                <h2>{templateDataNew.sr_no}</h2>
-                                                <h2>{templateDataNew.template_type}</h2>
-                                                <h2>{templateDataNew.top_reseller}</h2>
-                                                <h2>{templateDataNew.url_display1}</h2>
-                                                <h2>{templateDataNew.file_path}</h2>
-                                                <h2>{templateDataNew.phone_value1}</h2>
-                                                <h2>{templateDataNew.phone_display_2}</h2>
-                                                <h2>{templateDataNew.url_display_2}</h2>
-                                                <h2>{templateDataNew.phone_value}</h2>
-                                                <h2>{templateDataNew.is_hide}</h2>
-                                                <h2>{templateDataNew.url_display}</h2>
-                                                <h2>{templateDataNew.phone_display}</h2>
-                                                <h2>{templateDataNew.url_value_2}</h2>
-                                                <h2>variable count:{templateDataNew.variable_count}</h2>
-                                                <h2>{templateDataNew.is_shorturl}</h2>
-                                                <h2>{templateDataNew.url_value1}</h2>
-                                                <h2>{templateDataNew.is_replay_button}</h2>
-                                                <h2>{templateDataNew.url_value}</h2>
-                                                <h2>{templateDataNew.user_srno}</h2>
-                                                <h2>{templateDataNew.template_name}</h2>
-                                                <h2>{templateDataNew.is_flow}</h2>
-                                                <h2>{templateDataNew.template_language}</h2>
-                                                <h2>{templateDataNew.off_what_srno}</h2>
-                                                <h2>{templateDataNew.header}</h2>
-                                                <p>{templateDataNew.message}</p>
-                                                <p>{templateDataNew.insert_time}</p>
-                                                <p>{templateDataNew.footer}</p>
-                                                <p>{templateDataNew.template_category}</p>
+                                            <div className="w-full mb-2">
+                                                <h2>{templateDataNew.parameter_format}</h2>
+                                                <p>{templateDataNew.name}</p>
                                                 <p>{templateDataNew.status}</p>
+                                                <p>Template Category: {templateDataNew.category}</p>
                                             </div>
                                         )
                                     )}

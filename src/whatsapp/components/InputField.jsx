@@ -14,6 +14,8 @@ const InputField = ({
     errorText = "",
     // noSpaces = false,
     tooltipPlacement = "top",
+    readOnly = false,
+    style
 }) => {
     // const handleChange = (e) => {
     //     let inputValue = e.target.value;
@@ -49,6 +51,8 @@ const InputField = ({
                 value={value}
                 onChange={onChange}
                 placeholder={placeholder}
+                readOnly={readOnly}
+                style={style}
                 className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
                     }`}
             />

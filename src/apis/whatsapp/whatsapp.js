@@ -8,7 +8,7 @@ export const getWabaList = async () => {
 
 export const getWabaTemplateDetails = async (wabaNumber) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/getTemplateList?wabanumber=${wabaNumber}`,
+    `/proCpaasRest/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}`,
     {
       method: "GET",
     }

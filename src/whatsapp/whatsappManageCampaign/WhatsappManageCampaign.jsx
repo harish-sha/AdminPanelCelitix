@@ -312,7 +312,7 @@ const WhatsappManageCampaign = () => {
                     id='manageCampaignExportBtn'
                     name='manageCampaignExportBtn'
                     label="Export"
-                    icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+                    icon={<IosShareOutlinedIcon sx={{ marginBottom: '3px', fontSize: '1.1rem' }} />}
                     variant="primary"
                   />
                 </div>

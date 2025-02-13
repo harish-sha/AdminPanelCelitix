@@ -35,16 +35,47 @@ function RadioButtonLaunchCampaign() {
   const [countryList, setCountryList] = useState([]); // This is where the country list will be stored
 
 
+  // const handleChange = (event) => {
+  //   setSelectedOption(event.target.value);
+  //   if (event.target.value !== "option1") {
+  //     setSelectedGroups([]);
+  //   }
+  //   if (event.target.value !== "option2") {
+  //     setUploadedFile(null);
+  //   }
+
+  //   if (event.target.value !== "option3") {
+  //   }
+  // };
+
   const handleChange = (event) => {
-    setSelectedOption(event.target.value);
-    if (event.target.value !== "option1") {
-      setSelectedGroups([]);
-    }
-    if (event.target.value !== "option2") {
-      setUploadedFile(null);
+    const value = event.target.value;
+    setSelectedOption(value);
+
+    // Reset all related states when switching between options
+    if (value === "option1") {
+      setUploadedFile(null); 
+      setSelectedGroups([]); 
+      setSelectedCountryCode(""); 
+      setSelectedCountryName(""); 
+      setFileData([]); 
+      setTotalRecords(""); 
+      setAddCountryCode(false); 
+      setIsUploaded(false); 
     }
 
-    if (event.target.value !== "option3") {
+    if (value === "option2") {
+      setSelectedGroups([]); 
+      setFileData([]); 
+      setTotalRecords(""); 
+      setSelectedMobileColumn(''); 
+      setAddCountryCode(false); 
+    }
+    if (value === "option3") {
+      setSelectedGroups([]); 
+      setFileData([]);
+      setTotalRecords("");
+      setSelectedMobileColumn('');
     }
   };
 
@@ -290,7 +321,7 @@ function RadioButtonLaunchCampaign() {
     <div className="p-3 bg-gray-100 rounded-lg shadow-md w-full">
       <div>
 
-        <h2 className="text-sm font-semibold text-gray-800 mb-3">Choose an Option</h2>
+        <h2 className="text-sm font-semibold text-gray-800 mb-3 tracking-wide">Choose an Option</h2>
         <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-2">
           {/* Option 1 */}
           <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
@@ -379,7 +410,7 @@ function RadioButtonLaunchCampaign() {
                 accept=".xls,.xlsx,.xlsm"
               />
               <div className="flex items-center justify-center gap-2" >
-                <label htmlFor="fileInput" className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-[500] text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider">
+                <label htmlFor="fileInput" className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider">
                   Choose or Drop File
                 </label>
                 <div className="upload-button-container ">
@@ -398,7 +429,7 @@ function RadioButtonLaunchCampaign() {
               </p>
               <div className="mt-3" >
                 {uploadedFile ? (
-                  <div className="file-upload-info flex items-center justify-center mt-4 gap-1">
+                  <div className="file-upload-info flex items-center justify-center  gap-1">
                     <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
                       {isUploaded ? (
                         "File Uploaded: "
@@ -418,8 +449,8 @@ function RadioButtonLaunchCampaign() {
                     </button>
                   </div>
                 ) : (
-                  <p className="file-upload-feedback file-upload-feedback-error text-gray-400 text-sm">
-                    No file uploaded yet.
+                  <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
+                    No file uploaded yet!
                   </p>
                 )}
               </div>
