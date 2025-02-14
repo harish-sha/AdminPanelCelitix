@@ -6,7 +6,7 @@ import './Dummy.css';
 
 import celitix_logo from '../assets/images/celitix-logo-white.svg'
 
-const LoginPage = () => {
+const Dummy = () => {
     const [isSignUp, setIsSignUp] = useState(false);
 
     // Toggle between Sign In and Sign Up
@@ -100,4 +100,4 @@ const LoginPage = () => {
     );
 };
 
-export default LoginPage;
+export default Dummy;

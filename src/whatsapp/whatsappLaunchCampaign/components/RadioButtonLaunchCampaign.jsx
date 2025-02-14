@@ -22,7 +22,7 @@ function RadioButtonLaunchCampaign() {
   const [isUploaded, setIsUploaded] = useState(false);
 
 
-  const [selectedCountryCode, setSelectedCountryCode] = useState(""); // For storing selected country code
+  const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedCountryName, setSelectedCountryName] = useState("");
 
   const [totalRecords, setTotalRecords] = useState("")
@@ -32,7 +32,7 @@ function RadioButtonLaunchCampaign() {
   const [selectedMobileColumn, setSelectedMobileColumn] = useState('');
   const [countryCode, setCountryCode] = useState('');
   const [addCountryCode, setAddCountryCode] = useState(false);
-  const [countryList, setCountryList] = useState([]); // This is where the country list will be stored
+  const [countryList, setCountryList] = useState([]);
 
 
   // const handleChange = (event) => {
@@ -54,25 +54,25 @@ function RadioButtonLaunchCampaign() {
 
     // Reset all related states when switching between options
     if (value === "option1") {
-      setUploadedFile(null); 
-      setSelectedGroups([]); 
-      setSelectedCountryCode(""); 
-      setSelectedCountryName(""); 
-      setFileData([]); 
-      setTotalRecords(""); 
-      setAddCountryCode(false); 
-      setIsUploaded(false); 
+      setUploadedFile(null);
+      setSelectedGroups([]);
+      setSelectedCountryCode("");
+      setSelectedCountryName("");
+      setFileData([]);
+      setTotalRecords("");
+      setAddCountryCode(false);
+      setIsUploaded(false);
     }
 
     if (value === "option2") {
-      setSelectedGroups([]); 
-      setFileData([]); 
-      setTotalRecords(""); 
-      setSelectedMobileColumn(''); 
-      setAddCountryCode(false); 
+      setSelectedGroups([]);
+      setFileData([]);
+      setTotalRecords("");
+      setSelectedMobileColumn('');
+      setAddCountryCode(false);
     }
     if (value === "option3") {
-      setSelectedGroups([]); 
+      setSelectedGroups([]);
       setFileData([]);
       setTotalRecords("");
       setSelectedMobileColumn('');
@@ -144,25 +144,6 @@ function RadioButtonLaunchCampaign() {
     reader.readAsBinaryString(file);
   };
 
-
-  // Handle file upload
-  // const handleFileUpload = () => {
-  //   if (uploadedFile) {
-  //     if (isUploaded) {
-  //       toast.error("file already uploaded. Please select a different one.");
-  //       return;
-  //     }
-  //     setIsUploading(true);
-  //     setTimeout(() => {
-  //       setIsUploading(false);
-  //       setIsUploaded(true);
-  //       toast.success("File uploaded successfully.");
-  //     }, 500);
-  //   } else {
-  //     toast.error("No file selected for upload.");
-  //   }
-  // };
-
   const handleFileUpload = async () => {
     if (uploadedFile) {
       if (isUploaded) {
@@ -200,19 +181,11 @@ function RadioButtonLaunchCampaign() {
     toast.success("File removed successfully.");
   };
 
-  // Handle mobile number column change
-  // const handleMobileColumnChange = (e) => {
-  //   setSelectedMobileColumn(e.target.value);
-  // };
 
   const handleMobileColumnChange = (value) => {
     setSelectedMobileColumn(value);
   };
 
-  // Handle country code change
-  // const handleCountryCodeChange = (e) => {
-  //   setCountryCode(e.target.value);
-  // };
   const handleCountryCodeChange = (e) => {
     setCountryCode(e.target.value);
   };
@@ -221,24 +194,6 @@ function RadioButtonLaunchCampaign() {
     event.preventDefault();
   };
 
-  // Apply country code to mobile numbers
-  // const handleApplyCountryCode = () => {
-  //   if (!selectedMobileColumn) {
-  //     toast.error("Please select a mobile number column.");
-  //     return;
-  //   }
-
-  //   const updatedData = fileData.map((row) => {
-  //     const updatedRow = { ...row };
-  //     const mobileNumber = row[selectedMobileColumn];
-  //     if (mobileNumber && !mobileNumber.startsWith(countryCode)) {
-  //       updatedRow[selectedMobileColumn] = `${countryCode}${mobileNumber}`;
-  //     }
-  //     return updatedRow;
-  //   });
-
-  //   setFileData(updatedData);
-  // };
 
   // Apply country code to mobile numbers
   const handleApplyCountryCode = () => {
@@ -313,15 +268,14 @@ function RadioButtonLaunchCampaign() {
   }, []);
 
   useEffect(() => {
-    // This will run whenever selectedCountryCode changes
     console.log("Updated selectedCountryCode:", selectedCountryCode);
-  }, [selectedCountryCode]); // This effect will run when selectedCountryCode changes
+  }, [selectedCountryCode]);
 
   return (
-    <div className="p-3 bg-gray-100 rounded-lg shadow-md w-full">
+    <div className="p-3 bg-gray-100 rounded-lg shadow-md w-full h-[87.5vh]">
       <div>
 
-        <h2 className="text-sm font-semibold text-gray-800 mb-3 tracking-wide">Choose an Option</h2>
+        <h2 className="text-sm font-medium text-gray-800 mb-2 tracking-wide">Choose an Option</h2>
         <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-2">
           {/* Option 1 */}
           <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
@@ -460,7 +414,6 @@ function RadioButtonLaunchCampaign() {
 
 
         <div className="flex items-start justify-between mt-2 gap-2" >
-
           {/* Country Code Section */}
           {selectedOption === "option2" && isUploaded && (
             <>
@@ -470,7 +423,7 @@ function RadioButtonLaunchCampaign() {
                   <label className="text-sm font-medium">Add Country Code</label>
                 </div>
                 {addCountryCode && (
-                  <div className="w-full mt-3">
+                  <div className="w-full mt-4">
                     <AnimatedDropdown
                       id="selectCountryCode"
                       name="selectCountryCode"
@@ -508,6 +461,7 @@ function RadioButtonLaunchCampaign() {
                           setSelectedCountryName(name);  // Set the selected country name
                           console.log("Updated selectedCountryCode:", code);
                           console.log("Updated selectedCountryName:", name);
+                          console.log("final value : ", value)
                         }
                       }}
                     />
@@ -537,7 +491,7 @@ function RadioButtonLaunchCampaign() {
           {/* Mobile Column Selection */}
           {selectedOption === "option2" && isUploaded && (
             <div className="w-full">
-              <div className="w-full mt-8">
+              <div className="w-full mt-9">
                 <AnimatedDropdown
                   id="selectMobileColumn"
                   name="selectMobileColumn"
@@ -570,10 +524,10 @@ function RadioButtonLaunchCampaign() {
         {/* Display Table */}
         {selectedOption === "option2" && isUploaded && fileData.length > 0 && (
           <>
-            <div className="my-2">
+            <div className="my-3">
               <p className="text-sm text-gray-700 font-semibold tracking-wide">Total Records in file: {totalRecords} </p>
             </div>
-            <div className="mt-1 py-1 rounded-md " style={{ maxHeight: '400px', maxWidth: "490px", overflowY: 'auto' }}>
+            <div className="" style={{ maxHeight: '400px', maxWidth: "490px", overflowY: 'auto' }}>
               <table className="min-w-full table-fixed " style={{ tableLayout: 'fixed' }} >
                 <thead className="bg-blue-400" >
                   <tr className="" >

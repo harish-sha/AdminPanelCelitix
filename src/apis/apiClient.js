@@ -18,9 +18,9 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   // If FormData is used, do not set Content-Type header manually
   if (options.body instanceof FormData) {
-    delete headers["Content-Type"]; // FormData will set it automatically
+    delete headers["Content-Type"];
   } else {
-    headers["Content-Type"] = "application/json"; // For other requests, use application/json
+    headers["Content-Type"] = "application/json";
   }
 
   try {
@@ -33,6 +33,13 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       method,
       headers,
     });
+
+    if (response.status === 401) {
+      console.error("Session expired. Redirecting to login...");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+      return null;
+    }
 
     if (!response.ok) {
       console.error(`API Error: ${response.status} ${response.statusText}`);

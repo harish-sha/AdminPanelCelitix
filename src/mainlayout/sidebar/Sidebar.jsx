@@ -51,9 +51,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     const handleLogout = () => {
         localStorage.removeItem("token");
         toast.success("Logged out successfully!");
+        // window.location.href = "/login";
         setTimeout(() => {
             window.location.href = "/login";
-        }, 1500)
+        }, 1000)
     };
 
 

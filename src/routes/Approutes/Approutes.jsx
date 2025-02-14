@@ -13,9 +13,9 @@ import WhatsappQrCode from '../../whatsapp/whatsappQrcode/WhatsappQrCode';
 import WhatsappLiveChatSettings from '../../whatsapp/whatsappLiveChatSetting/WhatsappLiveChatSettings';
 import WhatsappManageWaba from '../../whatsapp/whatsappManageWaba/WhatsappManageWaba';
 import WhatsappConversation from '../../whatsapp/whatsappConversation/WhatsappConversation';
-// import Dummy from '../../dummy/Dummy';
 import ProfilePage from '../../mainlayout/navbar/pages/Profile';
-import LoginPage from '../../dummy/Dummy';
+
+import Dummy from '../../dummy/Dummy';
 
 
 const Approutes = () => {
@@ -36,7 +36,7 @@ const Approutes = () => {
                 <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
                 <Route path="/profile" element={<ProfilePage />} />
             </Route>
-            <Route path="/dummy" element={<LoginPage />} />
+            <Route path="/dummy" element={<Dummy />} />
 
             <Route path="*" element={
                 <div className='flex items-center justify-center min-h-[100vh]'>

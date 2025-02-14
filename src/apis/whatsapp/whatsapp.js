@@ -42,8 +42,6 @@ export const getWabaShowGroupsList = async () => {
 export const campaignUploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
-
-  // Call the fetchWithAuth to upload the file
   try {
     const response = await fetchWithAuth("/proCpaasRest/campaignFile/upload", {
       method: "POST",

@@ -69,12 +69,15 @@ const Login = () => {
                         onChange={(e) => setPassword(e.target.value)}
                         placeholder="Enter your password"
                     />
-                    <UniversalButton
-                        label={loading ? "Logging in..." : "Login"}
-                        variant="primary"
-                        type="submit"
-                        disabled={loading}
-                    />
+                    <div className="flex items-center justify-center" >
+
+                        <UniversalButton
+                            label={loading ? "Logging in..." : "Login"}
+                            variant="primary"
+                            type="submit"
+                            disabled={loading}
+                        />
+                    </div>
                 </form>
             </div>
         </div>

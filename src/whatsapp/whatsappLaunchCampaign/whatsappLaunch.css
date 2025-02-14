@@ -35,9 +35,61 @@
   color: #111827;
 }
 
+.MuiBox-root .css-19kzrtu {
+  padding: 15px 10px !important;
+}
 
-.p-radiobutton{
-    /* background: #000; */
-    /* height: 10px; */
-    
+/* Custom styles for the MultiSelect component */
+.custom-multiselect {
+  width: 100%;
+  /* max-width: 24rem; */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 0px;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+}
+
+.custom-multiselect:focus-within {
+  border-color: none;
+  box-shadow: none;
+}
+
+.p-multiselect-panel .p-multiselect-header {
+  padding: 0.4rem 0.5rem;
+}
+
+.p-multiselect-panel .p-multiselect-items {
+  padding: 0;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item {
+  padding: 0.6rem 0.6rem;
+  font-size: 14px;
+}
+
+.p-multiselect-panel .p-multiselect-items .p-multiselect-item.p-highlight {
+  color: #0e7490;
+  background: #458af23f;
+}
+
+.p-checkbox.p-highlight .p-checkbox-box {
+  border-color: #458bf2;
+  background: #458bf2;
+  height: 20px;
+  width: 20px;
+}
+
+.p-inputtext {
+  padding: 0.2rem 0.2rem;
+}
+
+.p-inputtext:focus {
+  border: 1px solid #999;
+  outline: none;
+  box-shadow: none;
 }
