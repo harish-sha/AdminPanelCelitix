@@ -10,6 +10,7 @@ const UniversalButton = ({
     icon = null,
     disabled = false,
     isLoading = false,
+    style
 }) => {
     const getButtonStyles = () => {
         switch (variant) {
@@ -33,6 +34,7 @@ const UniversalButton = ({
                 type={type}
                 onClick={onClick}
                 disabled={disabled || isLoading}
+                style={style}
                 className={`flex items-center font-p text-sm justify-center gap-2 px-4 py-2 cursor-pointer rounded-lg shadow-md focus:outline-none  focus:ring-0  ${getButtonStyles()} ${disabled ? 'opacity-50 cursor-not-allowed' : ''
                     }`}
             >

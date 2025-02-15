@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MdOutlineDeleteForever } from "react-icons/md";
 
 import toast from 'react-hot-toast';
+import InputVariable from './InputVariable';
 
 // Function to extract variables from text (e.g., {{1}}) in URL
 const extractVariablesFromUrl = (url) => {
@@ -16,14 +17,14 @@ const extractVariablesFromUrl = (url) => {
     return variables;
 };
 
-const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
-    const [inputValues, setInputValues] = useState({}); // Store all input field values
-    const [selectedImage, setSelectedImage] = useState(null); // Store the selected image
-    const [imageFileName, setImageFileName] = useState(''); // Store the file name
-    const [isImageUploaded, setIsImageUploaded] = useState(false); // Track if the image is uploaded
-    const [imageError, setImageError] = useState(''); // Track image error (if any)
+const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders }) => {
+    const [inputValues, setInputValues] = useState({});
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [imageFileName, setImageFileName] = useState('');
+    const [isImageUploaded, setIsImageUploaded] = useState(false);
+    const [imageError, setImageError] = useState('');
+    const [selectedVariable, setSelectedVariable] = useState("");
 
-    // Reset the form when template changes
     useEffect(() => {
         setInputValues({});
         setSelectedImage(null);
@@ -33,37 +34,68 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
     }, [templateDataNew]);
 
     // Handle input change
+    // const handleInputChange = (e, variable) => {
+    //     setInputValues((prev) => ({
+    //         ...prev,
+    //         [variable]: e.target.value,
+    //     }));
+    //     if (onInputChange) onInputChange(e, variable);
+    // };
+
+    let variables = [];
+    if (selectedOption === "option1") {
+        // Show firstname and lastname when option 1 is selected
+        variables = ["firstname", "lastname"];
+    } else if (selectedOption === "option2" && fileHeaders && fileHeaders.length > 0) {
+        // Show file headers when option 2 is selected
+        variables = fileHeaders;
+    }
+
     const handleInputChange = (e, variable) => {
+        const { value } = e.target;
         setInputValues((prev) => ({
             ...prev,
-            [variable]: e.target.value,
+            [variable]: value,
         }));
-        if (onInputChange) onInputChange(e, variable);
+        onInputChange(value, variable); // Notify the parent component about the change
+    };
+
+    // const handleSelectVariable = (variable) => {
+    //     // Insert the selected variable into the corresponding input field
+    //     setInputValues((prev) => ({
+    //         ...prev,
+    //         [selectedVariable]: `{{${variable}}}`,
+    //     }));
+    // };
+
+    const handleSelectVariable = (variable) => {
+        setInputValues((prev) => ({
+            ...prev,
+            [variable]: `{{${variable}}}`,
+        }));
     };
 
     // Handle file input change
     const handleImageChange = (e) => {
-        const file = e.target.files?.[0]; // Safe check if files are available
+        const file = e.target.files?.[0];
         if (file) {
-            // Validate file type and size
             if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
                 setImageError('Only jpg, jpeg, and png files are allowed.');
                 setSelectedImage(null);
                 setImageFileName('');
                 return;
             }
-            if (file.size > 5 * 1024 * 1024) { // 5MB size limit
+            if (file.size > 5 * 1024 * 1024) {
                 setImageError('File size must be less than 5MB.');
                 setSelectedImage(null);
                 setImageFileName('');
                 return;
             }
 
-            // If validation passes, set the image
             setImageError('');
             setImageFileName(file.name);
-            setSelectedImage(URL.createObjectURL(file)); // Create a URL for the selected image
-            setIsImageUploaded(false); // Image is selected but not uploaded yet
+            setSelectedImage(URL.createObjectURL(file));
+            setIsImageUploaded(false);
         } else {
             setImageError('No file selected');
         }
@@ -75,14 +107,12 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
             toast.error("File already uploaded. Please choose a different image.");
             return;
         }
-
         if (selectedImage) {
-            // You can replace this with actual image upload logic to your backend
-            onImageUpload(selectedImage); // Passing the selected image to the parent handler
-            setIsImageUploaded(true); // Set the image as uploaded
-            toast.success("Image uploaded successfully!"); // Show success toast
+            onImageUpload(selectedImage);
+            setIsImageUploaded(true);
+            toast.success("Image uploaded successfully!");
         } else {
-            toast.error("Please select an image first!"); // Show error toast if no image selected
+            toast.error("Please select an image first!");
         }
     };
 
@@ -90,49 +120,91 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
     const handleDelete = () => {
         setSelectedImage(null);
         setImageFileName('');
-        setIsImageUploaded(false); // Reset image upload status
-        setImageError(''); // Clear any error
-        toast.success("Image deleted successfully!"); // Show success toast
+        setIsImageUploaded(false);
+        setImageError('');
+        toast.success("Image deleted successfully!");
     };
+
+    // Determine which variables to show based on selected option
+    // let variables = [];
+    // if (selectedOption === "option1") {
+    //     variables = ["firstname", "lastname"];  // Hardcoded values for option1
+    // } else if (selectedOption === "option2") {
+    //     variables = fileHeaders;  // Use file headers for option2
+    // }
+
 
 
     return (
         <div className='shadow-md rounded-md' >
 
-            <div className='bg-blue-400 p-2 rounded-t-md ' >
+            <div className='bg-blue-400 p-2 rounded-t-md'>
                 <h3 className="text-md font-medium text-white tracking-wide ">Template Category : {templateDataNew.category}</h3>
             </div>
-            <div className="space-y-3 p-2 bg-gray-50 rounded-b-xl ">
+
+            <div className="space-y-2 p-2 bg-gray-50 rounded-b-xl">
 
                 {/* BODY Component: Handle Variables */}
                 {templateDataNew?.components.map((component, idx) => {
                     if (component.type === 'BODY') {
                         const text = component.text;
-                        const variables = extractVariablesFromUrl(text);
+                        // const variables = extractVariablesFromUrl(component.text);
+                        const extractedVariables = extractVariablesFromUrl(text); // Extract variables like {{1}}, {{2}}
                         return (
-                            <>
-                                <div key={component.id || idx} className="space-y-2">
-                                    {/* <p className="text-gray-600">{text}</p> */}
-                                    <p className='text-sm text-gray-700 font-medium tracking-wide'>Message Parameters:</p>
-                                    {variables.map((variable, index) => (
-                                        <div key={index} className="flex flex-col space-y-2 ">
-                                            <div className='flex items-center gap-2' >
-                                                <label htmlFor={`input${variable}`} className="text-sm font-medium text-gray-600 w-10">
-                                                    {`{{${variable}}}`}
-                                                </label>
-                                                <input
-                                                    id={`input${variable}`}
-                                                    name={`input${variable}`}
-                                                    value={inputValues[variable] || ''}
-                                                    placeholder={`Enter value for {{${variable}}}`}
-                                                    onChange={(e) => handleInputChange(e, variable)}
-                                                    className="px-2 py-2 w-full border rounded-md text-sm border-gray-300 shadow-sm focus:outline-none "
-                                                />
-                                            </div>
+                            // <div key={component.id || idx} className="space-y-1.5">
+                            //     <p className='text-sm text-gray-700 font-medium tracking-wide'>Message Parameters:</p>
+                            //     {variables.map((variable, index) => (
+                            //         <div key={index} className="flex flex-col space-y-2 relative">
+                            //             <div className='flex items-center gap-2 ' >
+                            //                 <label htmlFor={`input${variable}`} className="text-[0.8rem] font-medium text-gray-600 w-10">
+                            //                     {`{{${variable}}}`}
+                            //                 </label>
+                            //                 <input
+                            //                     id={`input${variable}`}
+                            //                     name={`input${variable}`}
+                            //                     // value={inputValues[variable] || ''}
+                            //                     value={inputValues[variable] || ""}
+                            //                     placeholder={`Enter value for {{${variable}}}`}
+                            //                     onChange={(e) => handleInputChange(e, variable)}
+                            //                     className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none "
+                            //                 />
+                            //             </div>
+                            //             <div className='absolute top-0 right-0  z-50'>
+                            //                 <InputVariable
+                            //                     onSelect={handleSelectVariable}
+                            //                     variables={variables}
+                            //                 />
+                            //             </div>
+                            //         </div>
+                            //     ))}
+                            // </div>
+                            <div key={component.id || idx} className="space-y-1.5">
+                                <p className="text-sm text-gray-700 font-medium tracking-wide">Message Parameters:</p>
+                                {extractedVariables.map((variable, index) => (
+                                    <div key={index} className="flex flex-col space-y-2 relative">
+                                        <div className='flex items-center gap-2 ' >
+                                            <label htmlFor={`input${variable}`} className="text-[0.8rem] font-medium text-gray-600 w-10">
+                                                {`{{${variable}}}`}
+                                            </label>
+                                            <input
+                                                id={`input${variable}`}
+                                                name={`input${variable}`}
+                                                value={inputValues[variable] || ""}
+                                                placeholder={`Enter value for {{${variable}}}`}
+                                                onChange={(e) => handleInputChange(e, variable)}
+                                                className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
+                                            />
                                         </div>
-                                    ))}
-                                </div>
-                            </>
+                                        <div className='absolute top-0 right-0  z-50'>
+                                            <InputVariable
+                                                // onSelect={handleSelectVariable}
+                                                onSelect={(variable) => setInputValues((prev) => ({ ...prev, [variable]: `{{${variable}}}` }))} // Update the selected value
+                                                variables={variables} // Pass variables according to option selected
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         );
                     }
                     return null;
@@ -149,10 +221,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                                     return (
                                         <div key={index} className="space-y-4">
                                             {urlVariables.map((variable) => (
-                                                <div key={variable} className="flex flex-col space-y-2">
+                                                <div key={variable} className="flex flex-col space-y-2 relative">
                                                     <div className='flex items-center gap-2' >
-
-
                                                         <label htmlFor={`buttonInput${variable}`} className="text-sm font-medium text-gray-600 w-10">
                                                             {`{{${variable}}}`}
                                                         </label>
@@ -162,7 +232,13 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                                                             value={inputValues[`button${variable}`] || ''}
                                                             placeholder={`Enter value for {{${variable}}}`}
                                                             onChange={(e) => handleInputChange(e, `button${variable}`)}
-                                                            className="px-2 py-2 w-full border rounded-md text-sm border-gray-300 shadow-sm focus:outline-none"
+                                                            className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
+                                                        />
+                                                    </div>
+                                                    <div className='absolute top-0 right-0  z-50'>
+                                                        <InputVariable
+                                                            onSelect={handleSelectVariable}
+                                                            variables={variables} // Show URL variables dynamically
                                                         />
                                                     </div>
                                                 </div>
@@ -182,8 +258,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                         return (
                             <div key={`header-component-${idx}`} className="space-y-2">
                                 <p className="text-sm text-gray-700 font-medium tracking-wide">Media:</p>
-
-                                {/* Hidden Input (for file upload) */}
                                 <div className='flex items-start gap-2'>
                                     <div className='space-y-2' >
                                         <input
@@ -193,8 +267,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                                             onChange={handleImageChange}
                                             className="hidden"
                                         />
-
-                                        {/* Custom Upload Button */}
                                         <button
                                             type="button"
                                             onClick={() => document.getElementById('imageUpload').click()}
@@ -202,12 +274,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                                         >
                                             Choose File
                                         </button>
-
-                                        {/* Error Message */}
                                         {imageError && <p className="text-red-600 text-sm">{imageError}</p>}
                                     </div>
-
-                                    {/* File Name and Upload/Delete options */}
                                     {imageFileName && !isImageUploaded && (
                                         <>
                                             <div className="space-y-2">
@@ -235,14 +303,12 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload }) => {
                                 </div>
                                 <p className="text-sm text-gray-600">Selected File: {imageFileName}</p>
 
-
-                                {/* Image Preview */}
-                                {isImageUploaded && selectedImage && (
+                                {/* {isImageUploaded && selectedImage && (
                                     <div className="mt-4">
                                         <p className="text-sm text-gray-600">Image Preview:</p>
                                         <img src={selectedImage} alt="Preview" className="w-48 h-48 object-cover rounded-md shadow-md" />
                                     </div>
-                                )}
+                                )} */}
                             </div>
                         );
                     }

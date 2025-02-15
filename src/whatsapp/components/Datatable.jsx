@@ -207,6 +207,8 @@ const DataTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
         { id: 52, sn: 52, name: 'Ram', category: 'Sharma', status: 66, type: '5', health: 'High', createdat: '12/10/2024', action: 'True' },
     ];
 
+    
+
     // use this when you want to create rows dynamically
     // const rows = Array.from({ length: 500 }, (_, i) => ({
     //     id: i + 1,

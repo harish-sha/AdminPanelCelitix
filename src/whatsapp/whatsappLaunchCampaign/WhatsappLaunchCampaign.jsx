@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { getWabaList, getWabaTemplate, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
-import Loader from '../components/Loader';
-import UniversalSkeleton from '../../components/common/UniversalSkeleton.jsx'
-import AnimatedDropdown from '../components/AnimatedDropdown';
-import InputField from '../components/InputField';
 import RadioButtonLaunchCampaign from './components/RadioButtonLaunchCampaign.jsx';
-import TemplateRenderer from './components/lunchPreview';
-import Waba1Template from './components/Waba1Template';
+import UniversalSkeleton from '../../components/common/UniversalSkeleton.jsx'
+import WhatsappLaunchPreview from './components/WhatsappLaunchPreview.jsx';
+import AnimatedDropdown from '../components/AnimatedDropdown';
 import TemplateForm from './components/TemplateForm.jsx';
+import InputField from '../components/InputField';
+import UniversalButton from '../components/UniversalButton.jsx'
+import Loader from '../components/Loader';
 
 const WhatsappLaunchCampaign = () => {
     const [isLoading, setIsLoading] = useState(true);
@@ -22,43 +22,49 @@ const WhatsappLaunchCampaign = () => {
     const [wabaAccountId, setWabaAccountId] = useState("");
     const [wabaList, setWabaList] = useState(null);
     const [templateData, setTemplateData] = useState({});
-    const [formData, setFormData] = useState({}); // Form data state
-    const [imageFile, setImageFile] = useState(null);  // State to store image
+    const [formData, setFormData] = useState({});
+    const [imageFile, setImageFile] = useState(null);
+    const [selectedOption, setSelectedOption] = useState("option2");
+    const [fileHeaders, setFileHeaders] = useState([]); // Store headers from uploaded file
+
 
     const updateTemplateData = (data) => {
         setTemplateData((prev) => ({ ...prev, ...data }));
     };
+
+    const handleOptionChange = (value) => {
+        setSelectedOption(value);
+    };
+
 
     const handleInputChange = (value) => {
         const newValue = value.replace(/\s/g, "");
         setInputValue(newValue);
     };
 
-    const handleInputChangeNew = (event, variable) => {
-        const { value } = event.target;
+    // const handleInputChangeNew = (event, variable) => {
+    //     const { value } = event.target;
+    //     setFormData((prevData) => ({
+    //         ...prevData,
+    //         [`input${variable}`]: value,
+    //     }));
+    // };
+
+    const handleInputChangeNew = (value, variable) => {
         setFormData((prevData) => ({
             ...prevData,
             [`input${variable}`]: value,
         }));
     };
 
-    // const handleImageUpload = (event) => {
-    //     const file = event.target.files[0];
-    //     setImageFile(file);  // Store the uploaded image file
-    // };
-
     const handleImageUpload = (e) => {
-        const file = e.target?.files?.[0]; // Safe check for files
+        const file = e.target?.files?.[0];
         if (file) {
-            // Proceed with the upload logic if the file is valid
             console.log('File selected:', file);
         } else {
-            // Handle the case where no file is selected
             console.error('No file selected');
         }
     };
-
-
 
     // WABA LIST
     useEffect(() => {
@@ -140,13 +146,12 @@ const WhatsappLaunchCampaign = () => {
                 </>
             ) : (
                 <>
-                    <div className='container-fluid '>
+                    <div className='container-fluid'>
                         <div className="flex">
-                            <div className="col-lg-8 w-full lg:w-2/3 px-3 py-3 rounded-xl flex gap-6 bg-gray-200 h-[90vh]">
+                            <div className="col-lg-8 w-full lg:w-2/3 px-3 py-3 rounded-xl flex gap-6 bg-gray-200 min-h-[80vh]">
                                 <div className='p-3 bg-gray-100 rounded-lg shadow-md w-full' >
                                     <div className='flex items-center justify-between gap-2 mb-3' >
-
-                                        <div className=' flex-1'>
+                                        <div className='flex-1'>
                                             <AnimatedDropdown
                                                 id='launchSelectWABA'
                                                 name='launchSelectWABA'
@@ -162,10 +167,8 @@ const WhatsappLaunchCampaign = () => {
                                                 placeholder='Select WABA'
                                             />
                                         </div>
-                                        <div className=' flex-1'>
+                                        <div className='flex-1'>
                                             <InputField
-                                                // id='launchWabaMobileNo'
-                                                // name='launchWabaMobileNo'
                                                 tooltipContent='Your waba account mobile no.'
                                                 tooltipPlacement='right'
                                                 label='Mobile No'
@@ -200,43 +203,49 @@ const WhatsappLaunchCampaign = () => {
                                             placeholder='Select Template'
                                         />
                                     </div>
-                                    {isLoading ? (
-                                        <UniversalSkeleton height="5rem" width="100%" />
-                                    ) : (
-                                        templateDataNew && (
-                                            // <div className="w-full mb-2">
-                                            //     <h2>{templateDataNew.parameter_format}</h2>
-                                            //     <p>{templateDataNew.name}</p>
-                                            //     <p>{templateDataNew.status}</p>
-                                            //     <p>Template Category: {templateDataNew.category}</p>
-                                            // </div>
-                                            <TemplateForm
-                                                templateDataNew={templateDataNew}
-                                                onInputChange={handleInputChangeNew}
-                                                onImageUpload={handleImageUpload}
-                                            />
-                                        )
-                                    )}
+                                    <div>
+                                        {isLoading ? (
+                                            <UniversalSkeleton height="5rem" width="100%" />
+                                        ) : (
+                                            templateDataNew && (
+                                                <TemplateForm
+                                                    templateDataNew={templateDataNew}
+                                                    onInputChange={handleInputChangeNew}
+                                                    onImageUpload={handleImageUpload}
+                                                    selectedOption={selectedOption}
+                                                    fileHeaders={fileHeaders}  // Pass fileHeaders here
 
-                                    {/* <div className='w-full mb-2' >
-                                        {selectedTemplate === "wabaTemplate1" && (
-                                            <Waba1Template updateTemplate={updateTemplateData} />
+                                                />
+                                            )
                                         )}
-                                    </div> */}
+                                    </div>
                                 </div>
                                 <div className="w-full">
-                                    <RadioButtonLaunchCampaign />
+                                    <RadioButtonLaunchCampaign
+                                        onOptionChange={handleOptionChange} selectedOption={selectedOption}
+
+                                    />
                                 </div>
+
                             </div>
 
 
-                            <div className="col-lg-4 w-full lg:w-1/3 p-0 flex justify-center">
-                                <TemplateRenderer
-                                    // header={templateDataNew.message}
-                                    format={templateData.messageParams?.join("\n")}
-                                    imageUrl={templateData.media}
+                            <div className="col-lg-4 w-full lg:w-1/3 p-0 flex justify-center items-start">
+                                <WhatsappLaunchPreview
                                 />
                             </div>
+
+                        </div>
+                        <div className="flex items-center justify-center mt-5">
+                            <UniversalButton
+                                id='LaunchCampaignSubmitBtn'
+                                name='LaunchCampaignSubmitBtn'
+                                label="Review & Send"
+                                type='submit'
+                                style={{ borderRadius: '40px', letterSpacing: '1px', }}
+                                // onClick={submitTemplate}
+                                variant="primary"
+                            />
                         </div>
                     </div>
                 </>
@@ -245,4 +254,4 @@ const WhatsappLaunchCampaign = () => {
     )
 }
 
-export default WhatsappLaunchCampaign
+export default WhatsappLaunchCampaign;
