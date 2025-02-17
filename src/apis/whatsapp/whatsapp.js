@@ -34,7 +34,7 @@ export const getWabaTemplate = async (wabaAccountId, templateName) => {
 };
 
 export const getWabaShowGroupsList = async () => {
-  return await fetchWithAuth("/proCpaasRest/showGroups", {
+  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
     method: "POST",
   });
 };

@@ -121,6 +121,7 @@ const AnimatedDropdown = ({
     value = "", // Default value is an empty string for single select
     onChange,
     placeholder = "Select an option...",
+    disabled
 }) => {
     return (
         <div className="relative w-full">
@@ -151,6 +152,7 @@ const AnimatedDropdown = ({
                 // onChange={(e) => onChange(e.target.value)} // Update value
                 placeholder={placeholder}
                 indicator={<KeyboardArrowDown />}
+                disabled={disabled}
                 sx={{
                     width: "100%",
                     [`& .${selectClasses.indicator}`]: {

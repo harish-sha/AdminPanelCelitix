@@ -25,7 +25,8 @@ const WhatsappLaunchCampaign = () => {
     const [formData, setFormData] = useState({});
     const [imageFile, setImageFile] = useState(null);
     const [selectedOption, setSelectedOption] = useState("option2");
-    const [fileHeaders, setFileHeaders] = useState([]); // Store headers from uploaded file
+    const [fileHeaders, setFileHeaders] = useState([]);
+    const [templateList, setTemplateList] = useState([]); // Store full template data
 
 
     const updateTemplateData = (data) => {
@@ -56,6 +57,7 @@ const WhatsappLaunchCampaign = () => {
             [`input${variable}`]: value,
         }));
     };
+
 
     const handleImageUpload = (e) => {
         const file = e.target?.files?.[0];
@@ -104,6 +106,7 @@ const WhatsappLaunchCampaign = () => {
         try {
             const response = await getWabaTemplateDetails(wabaNumber);
             if (response) {
+                setTemplateList(response); // Store full data
                 setTemplateOptions(
                     response.map((template) => ({
                         value: template.templateName,
@@ -117,6 +120,11 @@ const WhatsappLaunchCampaign = () => {
             toast.error("Error fetching template details.");
         }
     };
+
+    // Find the selected template data
+    const selectedTemplateData = templateList.find(
+        (template) => template.templateName === selectedTemplate
+    );
 
     useEffect(() => {
         const fetchTemplateData = async () => {
@@ -136,6 +144,11 @@ const WhatsappLaunchCampaign = () => {
         };
         fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
+
+    const handleFileHeadersUpdate = (headers) => {
+        console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
+        setFileHeaders(headers);  // Ensure fileHeaders is updated correctly
+    };
 
 
     return (
@@ -213,8 +226,8 @@ const WhatsappLaunchCampaign = () => {
                                                     onInputChange={handleInputChangeNew}
                                                     onImageUpload={handleImageUpload}
                                                     selectedOption={selectedOption}
-                                                    fileHeaders={fileHeaders}  // Pass fileHeaders here
-
+                                                    fileHeaders={fileHeaders}
+                                                    selectedTemplateData={selectedTemplateData} // Pass the selected template details
                                                 />
                                             )
                                         )}
@@ -222,7 +235,9 @@ const WhatsappLaunchCampaign = () => {
                                 </div>
                                 <div className="w-full">
                                     <RadioButtonLaunchCampaign
-                                        onOptionChange={handleOptionChange} selectedOption={selectedOption}
+                                        onOptionChange={handleOptionChange}
+                                        selectedOption={selectedOption}
+                                        onFileUpload={handleFileHeadersUpdate}
 
                                     />
                                 </div>
@@ -232,6 +247,8 @@ const WhatsappLaunchCampaign = () => {
 
                             <div className="col-lg-4 w-full lg:w-1/3 p-0 flex justify-center items-start">
                                 <WhatsappLaunchPreview
+                                    templateDataNew={templateDataNew}
+                                    formData={formData}
                                 />
                             </div>
 

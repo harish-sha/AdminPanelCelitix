@@ -17,7 +17,7 @@ const extractVariablesFromUrl = (url) => {
     return variables;
 };
 
-const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders }) => {
+const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders, selectedTemplateData }) => {
     const [inputValues, setInputValues] = useState({});
     const [selectedImage, setSelectedImage] = useState(null);
     const [imageFileName, setImageFileName] = useState('');
@@ -46,7 +46,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
     if (selectedOption === "option1") {
         // Show firstname and lastname when option 1 is selected
         variables = ["firstname", "lastname"];
-    } else if (selectedOption === "option2" && fileHeaders && fileHeaders.length > 0) {
+    } else if (selectedOption === "option2" && fileHeaders?.length > 0) {
         // Show file headers when option 2 is selected
         variables = fileHeaders;
     }
@@ -60,20 +60,51 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         onInputChange(value, variable); // Notify the parent component about the change
     };
 
-    // const handleSelectVariable = (variable) => {
-    //     // Insert the selected variable into the corresponding input field
+    // const handleSelectVariable = (variable, inputKey) => {
     //     setInputValues((prev) => ({
     //         ...prev,
-    //         [selectedVariable]: `{{${variable}}}`,
+    //         [inputKey]: `{{${variable}}}`,
     //     }));
     // };
 
-    const handleSelectVariable = (variable) => {
+    const handleSelectVariable = (variable, inputKey) => {
         setInputValues((prev) => ({
             ...prev,
-            [variable]: `{{${variable}}}`,
+            [inputKey]: prev[inputKey] ? `${prev[inputKey]} {{${variable}}}` : `{{${variable}}}`,
         }));
     };
+
+    // const handleSelectVariable = (variable, inputKey) => {
+    //     setInputValues((prev) => {
+    //         const inputElement = document.getElementById(`input${inputKey}`);
+
+    //         if (!inputElement) return prev; // Ensure the input exists
+
+    //         const cursorPos = inputElement.selectionStart; // Get cursor position
+    //         const currentValue = prev[inputKey] || ""; // Get current input value
+
+    //         // Insert variable at cursor position
+    //         const newValue =
+    //             currentValue.slice(0, cursorPos) + ` {{${variable}}} ` + currentValue.slice(cursorPos);
+
+    //         return {
+    //             ...prev,
+    //             [inputKey]: newValue, // Update input with new value
+    //         };
+    //     });
+
+    //     // Move cursor after inserted text
+    //     setTimeout(() => {
+    //         const inputElement = document.getElementById(`input${inputKey}`);
+    //         if (inputElement) {
+    //             const newCursorPos = inputElement.selectionStart + ` {{${variable}}} `.length;
+    //             inputElement.setSelectionRange(newCursorPos, newCursorPos);
+    //             inputElement.focus();
+    //         }
+    //     }, 0);
+    // };
+
+
 
     // Handle file input change
     const handleImageChange = (e) => {
@@ -125,21 +156,17 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         toast.success("Image deleted successfully!");
     };
 
-    // Determine which variables to show based on selected option
-    // let variables = [];
-    // if (selectedOption === "option1") {
-    //     variables = ["firstname", "lastname"];  // Hardcoded values for option1
-    // } else if (selectedOption === "option2") {
-    //     variables = fileHeaders;  // Use file headers for option2
-    // }
-
+    useEffect(() => {
+        console.log("Received fileHeaders in TemplateForm:", fileHeaders);
+    }, [fileHeaders]);
 
 
     return (
         <div className='shadow-md rounded-md' >
 
             <div className='bg-blue-400 p-2 rounded-t-md'>
-                <h3 className="text-md font-medium text-white tracking-wide ">Template Category : {templateDataNew.category}</h3>
+                <h3 className="text-sm font-medium text-white tracking-wider ">Template Category -  {selectedTemplateData.category}</h3>
+                <h3 className="text-sm font-medium text-white tracking-wider ">Template Type - {selectedTemplateData.type}</h3>
             </div>
 
             <div className="space-y-2 p-2 bg-gray-50 rounded-b-xl">
@@ -149,7 +176,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                     if (component.type === 'BODY') {
                         const text = component.text;
                         // const variables = extractVariablesFromUrl(component.text);
-                        const extractedVariables = extractVariablesFromUrl(text); // Extract variables like {{1}}, {{2}}
+                        const extractedVariables = extractVariablesFromUrl(component.text); // Extract variables like {{1}}, {{2}}
                         return (
                             // <div key={component.id || idx} className="space-y-1.5">
                             //     <p className='text-sm text-gray-700 font-medium tracking-wide'>Message Parameters:</p>
@@ -198,7 +225,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                                         <div className='absolute top-0 right-0  z-50'>
                                             <InputVariable
                                                 // onSelect={handleSelectVariable}
-                                                onSelect={(variable) => setInputValues((prev) => ({ ...prev, [variable]: `{{${variable}}}` }))} // Update the selected value
+                                                // onSelect={(variable) => setInputValues((prev) => ({ ...prev, [variable]: `{{${variable}}}` }))} // Update the selected value
+                                                onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable)}
                                                 variables={variables} // Pass variables according to option selected
                                             />
                                         </div>

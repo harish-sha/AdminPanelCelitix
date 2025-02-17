@@ -1,70 +1,57 @@
-import React, { useState } from 'react';
-import * as XLSX from 'xlsx';
-import toast from 'react-hot-toast';
-import { RadioButton } from 'primereact/radiobutton';
+import React from "react";
+import { WhatsApp } from '@mui/icons-material';
 
-const RadioButtonLaunchCampaign = ({ onOptionChange, onFileUpload }) => {
-    const [selectedOption, setSelectedOption] = useState("option2");
-    const [fileHeaders, setFileHeaders] = useState([]); // Store headers from uploaded file
-    const [uploadedFile, setUploadedFile] = useState(null);
+// Function to replace placeholders with input values
+const replacePlaceholders = (text, inputValues) => {
+    return text.replace(/{{(\d+)}}/g, (match, number) => inputValues[number] || match);
+};
 
-    const handleChange = (event) => {
-        const value = event.target.value;
-        setSelectedOption(value);
-        onOptionChange(value); // Notify parent component about option change
-    };
+const WhatsappLaunchPreview = ({ templateDataNew, formData }) => {
+    if (!templateDataNew || !templateDataNew.components) {
+        return (
+            <div className="p-4 bg-gray-200 text-center rounded-md">
+                <p>No template selected</p>
+            </div>
+        );
+    }
 
-    // Handle file parsing
-    const handleFileChange = (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            const validExtensions = ['.xls', '.xlsx', '.xlsm'];
-            const fileExtension = file.name.split('.').pop();
-
-            if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-                setUploadedFile(file);
-                parseFile(file);
-            } else {
-                toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-            }
-        }
-    };
-
-    const parseFile = (file) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            const workbook = XLSX.read(reader.result, { type: 'binary' });
-            const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-            const headers = Object.keys(jsonData[0]);
-            setFileHeaders(headers); // Set headers after file parsing
-        };
-        reader.readAsBinaryString(file);
-    };
+    const bodyComponent = templateDataNew.components.find(c => c.type === "BODY");
+    const buttonsComponent = templateDataNew.components.find(c => c.type === "BUTTONS");
 
     return (
-        <div>
-            {/* Option Selection */}
-            <RadioButton inputId="radioOption1" name="radioGroup" value="option1" onChange={handleChange} checked={selectedOption === 'option1'} />
-            <label htmlFor="radioOption1">Select Group</label>
-            <RadioButton inputId="radioOption2" name="radioGroup" value="option2" onChange={handleChange} checked={selectedOption === 'option2'} />
-            <label htmlFor="radioOption2">Import Contact</label>
+        <div className="p-3 rounded-xl bg-gray-100 shadow-md">
+            <div className="bg-[#128C7E] text-white px-4 py-2 rounded-t-md flex justify-between">
+                <h2 className="text-md font-medium">Template Preview</h2>
+                <WhatsApp />
+            </div>
 
-            {/* Option 2: File Upload */}
-            {selectedOption === "option2" && (
-                <div>
-                    <input type="file" accept=".xls, .xlsx, .xlsm" onChange={handleFileChange} />
-                    <div>
-                        {fileHeaders.length > 0 ? (
-                            <p>File Headers: {fileHeaders.join(", ")}</p>
-                        ) : (
-                            <p>No headers available</p>
-                        )}
+            <div className="bg-white p-3 rounded-b-md">
+                {/* Body Text with Dynamic Replacement */}
+                {bodyComponent && (
+                    <div className="border border-gray-300 rounded-md p-2 bg-gray-100 text-sm text-gray-800">
+                        {replacePlaceholders(bodyComponent.text, formData)}
                     </div>
-                </div>
-            )}
+                )}
+
+                {/* Buttons with URL Replacement */}
+                {buttonsComponent && buttonsComponent.buttons.length > 0 && (
+                    <div className="mt-2 flex flex-col gap-2">
+                        {buttonsComponent.buttons.map((button, index) => (
+                            <a
+                                key={index}
+                                href={button.url ? replacePlaceholders(button.url, formData) : "#"}
+                                className="bg-blue-400 text-white py-2 px-4 rounded-md text-center block"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                {button.text}
+                            </a>
+                        ))}
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
 
-export default RadioButtonLaunchCampaign;
+export default WhatsappLaunchPreview;

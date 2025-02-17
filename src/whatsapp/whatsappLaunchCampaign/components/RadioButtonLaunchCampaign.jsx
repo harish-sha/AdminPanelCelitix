@@ -92,6 +92,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   };
 
 
+
+
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
@@ -141,15 +143,26 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       const workbook = XLSX.read(reader.result, { type: 'binary' });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      const headers = Object.keys(jsonData[0]);
+      // const headers = Object.keys(jsonData[0]);
+      const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
+
+      // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
+      console.log("Extracted headers:", headers);
+
       setFileData(jsonData);
       setColumns(headers);
+      setFileHeaders(headers);
       // setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-      setFileHeaders(headers); // Set the headers from the uploaded file
       setTotalRecords(jsonData.length);
     };
     reader.readAsBinaryString(file);
   };
+
+  useEffect(() => {
+    if (fileHeaders.length > 0) {
+      onFileUpload(fileHeaders); // Ensure parent gets the update
+    }
+  }, [fileHeaders]);
 
   const handleFileUpload = async () => {
     if (uploadedFile) {
@@ -165,6 +178,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         toast.success("File uploaded successfully.");
         setColumns(response.headers);
         setFileData(response.sampleRecords);
+        setFileHeaders(response.headers || [])
       } catch (error) {
         toast.error("File upload failed: " + error.message);
       } finally {
@@ -287,17 +301,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
             <div className="flex items-center justify-center gap-2 cursor-pointer" >
               <RadioButton inputId="radioOption1" name="radioGroup" value="option1" onChange={handleChange} checked={selectedOption === 'option1'} />
               <label htmlFor="radioOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Select Group</label>
-
-              {/* <input
-                type="radio"
-                name="option"
-                value="option1"
-                checked={selectedOption === "option1"}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                aria-label="Select Group"
-              />
-              <span className="text-gray-700 font-medium text-sm">Select Group</span> */}
             </div>
           </label>
 
@@ -306,16 +309,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
             <div className="flex items-center justify-center gap-2" >
               <RadioButton inputId="radioOption2" name="radioGroup" value="option2" onChange={handleChange} checked={selectedOption === 'option2'} />
               <label htmlFor="radioOption2" className="text-gray-700 font-medium text-sm cursor-pointer">import contact</label>
-              {/* <input
-                type="radio"
-                name="option"
-                value="option2"
-                checked={selectedOption === "option2"}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                aria-label="Import Contact"
-              />
-              <span className="text-gray-700 font-medium text-sm">Import Contact</span> */}
             </div>
           </label>
 
@@ -324,16 +317,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
             <div className="flex items-center justify-center gap-2 " >
               <RadioButton inputId="radioOption3" name="radioGroup" value="option3" onChange={handleChange} checked={selectedOption === 'option3'} />
               <label htmlFor="radioOption3" className="text-gray-700 font-medium text-sm">AI Audience</label>
-              <input
-                type="radio"
-                name="option"
-                value="option3"
-                checked={selectedOption === "option3"}
-                onChange={handleChange}
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300"
-                aria-label="AI Audience"
-              />
-              <span className="text-gray-700 font-medium text-sm">AI Audience</span>
             </div>
           </label> */}
 
@@ -353,15 +336,15 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
 
       {/* Drag-and-Drop and File Upload for Import Contact */}
       {selectedOption === "option2" && (
-        
+
         <div className="file-upload mt-2">
           <div
             className="file-upload-container"
             onDrop={handleFileDrop}
             onDragOver={handleDragOver}
           >
-            
-            
+
+
             <input
               type="file"
               onChange={handleFileChange}
@@ -420,7 +403,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       )}
 
 
-      <div className="flex items-start justify-between mt-2 gap-2">
+      <div className="flex items-start justify-between mt-3 gap-2">
         {/* Country Code Section */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
@@ -428,51 +411,53 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
               <input type="checkbox" className="h-4 w-4 bg-gray-200 border-gray-300 rounded" onChange={handleAddCountryCodeChange} />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            {addCountryCode && (
-              <div className="w-full mt-4">
-                <AnimatedDropdown
-                  id="selectCountryCode"
-                  name="selectCountryCode"
-                  label="Select Country Code"
-                  tooltipContent="Select your country code"
-                  tooltipPlacement="right"
-                  placeholder="Select Country Code"
-                  // options={countryList.map(country => ({
-                  //   label: `${country.countryName} (+${country.countryCode})`,
-                  //   value: country.countryCode,
-                  // }))}
-                  options={countryList
-                    .sort((a, b) => a.countryName.localeCompare(b.countryName)) // Sorting alphabetically by countryName
-                    .map((country) => ({
-                      label: `${country.countryName} (+${country.countryCode})`,
-                      value: `${country.countryCode}-${country.countryName}`,
-                      // value: country.countryCode,
-                    }))}
-                  // value={selectedCountryCode}
-                  value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
+            {/* {addCountryCode && ( */}
+            <div className="w-full mt-4">
+              <AnimatedDropdown
+                id="selectCountryCode"
+                name="selectCountryCode"
+                label="Select Country Code"
+                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
+                tooltipPlacement="right"
+                placeholder="Select Country Code"
+                // options={countryList.map(country => ({
+                //   label: `${country.countryName} (+${country.countryCode})`,
+                //   value: country.countryCode,
+                // }))}
+                options={countryList
+                  .sort((a, b) => a.countryName.localeCompare(b.countryName)) // Sorting alphabetically by countryName
+                  .map((country) => ({
+                    label: `${country.countryName} (+${country.countryCode})`,
+                    value: `${country.countryCode}-${country.countryName}`,
+                    // value: country.countryCode,
+                  }))}
+                // value={selectedCountryCode}
+                value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
 
-                  // onChange={(value) => setSelectedCountryCode(value)}
-                  onChange={(value) => {
-                    // setSelectedCountryCode(value);
-                    // const selectedCountry = countryList.find((country) => country.countryCode === value);
-                    // if (selectedCountry) {
-                    //   console.log("Selected Country Code:", value); // Logs the selected country code
-                    //   console.log("Selected Country Name:", selectedCountry.countryName); // Logs the country name
-                    // }
-                    // Split the value to get country code and country name
-                    if (value) { // Ensure value is not null or undefined
-                      const [code, name] = value.split('-'); // Split only if value is valid
-                      console.log("Selected Value:", value);  // Logs the full value (code-name)
-                      setSelectedCountryCode(code);  // Set the selected country code
-                      setSelectedCountryName(name);  // Set the selected country name
-                      console.log("Updated selectedCountryCode:", code);
-                      console.log("Updated selectedCountryName:", name);
-                      console.log("final value : ", value)
-                    }
-                  }}
-                />
-              </div>
-            )}
+                // onChange={(value) => setSelectedCountryCode(value)}
+                onChange={(value) => {
+                  // setSelectedCountryCode(value);
+                  // const selectedCountry = countryList.find((country) => country.countryCode === value);
+                  // if (selectedCountry) {
+                  //   console.log("Selected Country Code:", value); // Logs the selected country code
+                  //   console.log("Selected Country Name:", selectedCountry.countryName); // Logs the country name
+                  // }
+                  // Split the value to get country code and country name
+                  if (value) { // Ensure value is not null or undefined
+                    const [code, name] = value.split('-'); // Split only if value is valid
+                    console.log("Selected Value:", value);  // Logs the full value (code-name)
+                    setSelectedCountryCode(code);  // Set the selected country code
+                    setSelectedCountryName(name);  // Set the selected country name
+                    console.log("Updated selectedCountryCode:", code);
+                    console.log("Updated selectedCountryName:", name);
+                    console.log("final value : ", value)
+                  }
+                }}
+                disabled={!addCountryCode}
+
+              />
+            </div>
+            {/* )} */}
             {/* {addCountryCode && (
                 <div className="mt-2">
                   <select className="p-2 border rounded" onChange={handleCountryCodeChange}>
