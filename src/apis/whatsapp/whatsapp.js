@@ -15,15 +15,6 @@ export const getWabaTemplateDetails = async (wabaNumber) => {
   );
 };
 
-// export const getWabaTemplate = async (templateSrno) => {
-//   return await fetchWithAuth(
-//     `/proCpaasRest/whatsapptemplate/getTemplate?templateSrno=${templateSrno}`,
-//     {
-//       method: "GET",
-//     }
-//   );
-// };
-
 export const getWabaTemplate = async (wabaAccountId, templateName) => {
   return await fetchWithAuth(
     `/proCpaasRest/whatsapptemplate/getWhatsappTemplate?templateName=${templateName}&wabaAccountId=${wabaAccountId}`,
@@ -42,6 +33,7 @@ export const getWabaShowGroupsList = async () => {
 export const campaignUploadFile = async (file) => {
   const formData = new FormData();
   formData.append("file", file);
+
   try {
     const response = await fetchWithAuth("/proCpaasRest/campaignFile/upload", {
       method: "POST",
@@ -49,10 +41,47 @@ export const campaignUploadFile = async (file) => {
     });
 
     if (response) {
-      // console.log("File uploaded successfully:", response);
       return response;
     }
   } catch (error) {
     console.error("Error uploading file:", error);
+  }
+};
+
+export const uploadImageFile = async (file) => {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  try {
+    const response = await fetchWithAuth("/proCpaasRest/utility/upload", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (response && response.status) {
+      return response;
+    } else {
+      throw new Error(response?.msg || "Image upload failed.");
+    }
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
+  }
+};
+
+export const sendWhatsappCampaign = async (campaignData) => {
+  try {
+    const response = await fetchWithAuth("/proCpaasRest/sendWhatsappCampaign", {
+      method: "POST",
+      body: JSON.stringify(campaignData),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error sending campaign:", error);
+    throw error;
   }
 };

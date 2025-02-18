@@ -1,16 +1,15 @@
 import React, { useEffect, useState } from "react";
-import { MultiSelect } from 'primereact/multiselect';
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+import { MultiSelect } from 'primereact/multiselect';
 import { MdOutlineDeleteForever } from "react-icons/md";
-import toast from 'react-hot-toast';
 import { RadioButton } from 'primereact/radiobutton';
+import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 
 import { campaignUploadFile, getWabaShowGroupsList } from "../../../apis/whatsapp/whatsapp.js";
 import { getCountryList } from "../../../apis/common/common.js";
 import AnimatedDropdown from "../../components/AnimatedDropdown.jsx"
 import '../whatsappLaunch.css'
-import InputVariable from "./InputVariable.jsx";
 
 function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [selectedOption, setSelectedOption] = useState("option2");
@@ -21,15 +20,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
-
-  const [fileHeaders, setFileHeaders] = useState([]); // Store headers from uploaded file
-
-
+  const [fileHeaders, setFileHeaders] = useState([]);
   const [selectedCountryCode, setSelectedCountryCode] = useState("");
   const [selectedCountryName, setSelectedCountryName] = useState("");
-
   const [totalRecords, setTotalRecords] = useState("")
-
   const [columns, setColumns] = useState([]);
   const [fileData, setFileData] = useState([]);
   const [selectedMobileColumn, setSelectedMobileColumn] = useState('');
@@ -38,23 +32,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [countryList, setCountryList] = useState([]);
 
 
-  // const handleChange = (event) => {
-  //   setSelectedOption(event.target.value);
-  //   if (event.target.value !== "option1") {
-  //     setSelectedGroups([]);
-  //   }
-  //   if (event.target.value !== "option2") {
-  //     setUploadedFile(null);
-  //   }
-
-  //   if (event.target.value !== "option3") {
-  //   }
-  // };
-
   const handleChange = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
-    onOptionChange(value); // Notify parent component about option change
+    onOptionChange(value); 
 
     // Reset all related states when switching between options
     if (value === "option1") {
@@ -90,9 +71,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     const regex = /^[a-zA-Z0-9_-]+$/;
     return regex.test(fileName);
   };
-
-
-
 
   const handleFileDrop = (event) => {
     event.preventDefault();
@@ -145,7 +123,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
       // const headers = Object.keys(jsonData[0]);
       const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-
       // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
       console.log("Extracted headers:", headers);
 
@@ -189,7 +166,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     }
   };
 
-
   // Handle file removal
   const handleRemoveFile = () => {
     setUploadedFile(null);
@@ -200,13 +176,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     toast.success("File removed successfully.");
   };
 
-
   const handleMobileColumnChange = (value) => {
     setSelectedMobileColumn(value);
-  };
-
-  const handleCountryCodeChange = (e) => {
-    setCountryCode(e.target.value);
   };
 
   const handleDragOver = (event) => {
@@ -333,18 +304,14 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         </div>
       )}
 
-
       {/* Drag-and-Drop and File Upload for Import Contact */}
       {selectedOption === "option2" && (
-
         <div className="file-upload mt-2">
           <div
             className="file-upload-container"
             onDrop={handleFileDrop}
             onDragOver={handleDragOver}
           >
-
-
             <input
               type="file"
               onChange={handleFileChange}
@@ -404,14 +371,12 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
 
 
       <div className="flex items-start justify-between mt-3 gap-2">
-        {/* Country Code Section */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
             <div className="flex items-center gap-2" >
               <input type="checkbox" className="h-4 w-4 bg-gray-200 border-gray-300 rounded" onChange={handleAddCountryCodeChange} />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            {/* {addCountryCode && ( */}
             <div className="w-full mt-4">
               <AnimatedDropdown
                 id="selectCountryCode"
@@ -436,13 +401,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
 
                 // onChange={(value) => setSelectedCountryCode(value)}
                 onChange={(value) => {
-                  // setSelectedCountryCode(value);
-                  // const selectedCountry = countryList.find((country) => country.countryCode === value);
-                  // if (selectedCountry) {
-                  //   console.log("Selected Country Code:", value); // Logs the selected country code
-                  //   console.log("Selected Country Name:", selectedCountry.countryName); // Logs the country name
-                  // }
-                  // Split the value to get country code and country name
                   if (value) { // Ensure value is not null or undefined
                     const [code, name] = value.split('-'); // Split only if value is valid
                     console.log("Selected Value:", value);  // Logs the full value (code-name)
@@ -457,19 +415,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
 
               />
             </div>
-            {/* )} */}
-            {/* {addCountryCode && (
-                <div className="mt-2">
-                  <select className="p-2 border rounded" onChange={handleCountryCodeChange}>
-                    <option value="">Select Country</option>
-                    {countryList.map((country, index) => (
-                      <option key={index} value={country.countryCode}>
-                        {country.countryName} (+{country.countryCode})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              )} */}
           </div>
         )}
 
@@ -489,16 +434,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
                 placeholder="Select Mobile No."
               />
             </div>
-
-            {/* <label htmlFor="mobileColumn">Select Mobile Number Column</label>
-              <select id="mobileColumn" className="p-2 border rounded" onChange={handleMobileColumnChange}>
-                <option value="">Select a column</option>
-                {columns.map((col, index) => (
-                  <option key={index} value={col}>
-                    {col}
-                  </option>
-                ))}
-              </select> */}
           </div>
         )}
       </div>
@@ -512,7 +447,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
           </div>
           <div className="" style={{ maxHeight: '400px', maxWidth: "490px", overflowY: 'auto' }}>
             <table className="min-w-full table-fixed " style={{ tableLayout: 'fixed' }} >
-              <thead className="bg-blue-400" >
+              <thead className="bg-[#128C7E]" >
                 <tr className="" >
                   {columns.map((col, index) => (
                     <th key={index} className="border border-gray-500 px-3 py-1 text-[0.94rem] font-medium tracking-wide text-white whitespace-nowrap"

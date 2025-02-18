@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { MdOutlineDeleteForever } from "react-icons/md";
+import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+import DoNotDisturbOutlinedIcon from '@mui/icons-material/DoNotDisturbOutlined';
 
 import toast from 'react-hot-toast';
 import InputVariable from './InputVariable';
+import { uploadImageFile } from '../../../apis/whatsapp/whatsapp.js';
 
-// Function to extract variables from text (e.g., {{1}}) in URL
-const extractVariablesFromUrl = (url) => {
+// Function to extract variables from text (e.g., {{1}}) 
+const extractVariablesFromText = (text) => {
     const regex = /{{(\d+)}}/g;
     let match;
     const variables = [];
-    while ((match = regex.exec(url)) !== null) {
+    while ((match = regex.exec(text)) !== null) {
         if (!variables.includes(match[1])) {
             variables.push(match[1]);
         }
@@ -19,142 +22,179 @@ const extractVariablesFromUrl = (url) => {
 
 const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders, selectedTemplateData }) => {
     const [inputValues, setInputValues] = useState({});
-    const [selectedImage, setSelectedImage] = useState(null);
-    const [imageFileName, setImageFileName] = useState('');
-    const [isImageUploaded, setIsImageUploaded] = useState(false);
-    const [imageError, setImageError] = useState('');
     const [selectedVariable, setSelectedVariable] = useState("");
+    const [imageState, setImageState] = useState({
+        file: null,
+        preview: null,
+        name: "",
+        uploading: false,
+        uploadedUrl: null,
+        validFileSelected: false,
+    });
 
     useEffect(() => {
+        setImageState({
+            file: null,
+            preview: null,
+            name: "",
+            uploading: false,
+            uploadedUrl: null,
+            validFileSelected: false,
+        });
         setInputValues({});
-        setSelectedImage(null);
-        setImageFileName('');
-        setIsImageUploaded(false);
-        setImageError('');
     }, [templateDataNew]);
-
-    // Handle input change
-    // const handleInputChange = (e, variable) => {
-    //     setInputValues((prev) => ({
-    //         ...prev,
-    //         [variable]: e.target.value,
-    //     }));
-    //     if (onInputChange) onInputChange(e, variable);
-    // };
 
     let variables = [];
     if (selectedOption === "option1") {
-        // Show firstname and lastname when option 1 is selected
         variables = ["firstname", "lastname"];
     } else if (selectedOption === "option2" && fileHeaders?.length > 0) {
-        // Show file headers when option 2 is selected
         variables = fileHeaders;
     }
 
-    const handleInputChange = (e, variable) => {
+    useEffect(() => {
+        if (!templateDataNew) return;
+        let defaultValues = {};
+
+        templateDataNew?.components.forEach((component) => {
+            if (component.type === "BODY") {
+                const variables = extractVariablesFromText(component.text);
+                const exampleValues = component.example?.body_text?.[0] || [];
+
+                variables.forEach((variable, index) => {
+                    defaultValues[variable] = exampleValues[index] || "";
+                });
+            }
+
+            if (component.type === "BUTTONS") {
+                component.buttons.forEach((button) => {
+                    if (button.type === "URL") {
+                        const variables = extractVariablesFromText(button.url);
+                        const exampleValues = button.example || [];
+
+                        variables.forEach((variable, index) => {
+                            defaultValues[`button${variable}`] = exampleValues[index] || "";
+                        });
+                    }
+                });
+            }
+        });
+
+        setInputValues(defaultValues);
+    }, [templateDataNew]);
+
+    // const handleInputChange = (e, variable) => {
+    //     const { value } = e.target;
+    //     setInputValues((prev) => ({
+    //         ...prev,
+    //         [variable]: value,
+    //     }));
+    //     onInputChange(value, variable);
+    // };
+
+    const handleInputChange = (e, variable, type = "body") => {
         const { value } = e.target;
         setInputValues((prev) => ({
             ...prev,
-            [variable]: value,
+            [`${type}${variable}`]: value, // Differentiate between body and button variables
         }));
-        onInputChange(value, variable); // Notify the parent component about the change
-    };
-
-    // const handleSelectVariable = (variable, inputKey) => {
-    //     setInputValues((prev) => ({
-    //         ...prev,
-    //         [inputKey]: `{{${variable}}}`,
-    //     }));
-    // };
-
-    const handleSelectVariable = (variable, inputKey) => {
-        setInputValues((prev) => ({
-            ...prev,
-            [inputKey]: prev[inputKey] ? `${prev[inputKey]} {{${variable}}}` : `{{${variable}}}`,
-        }));
+        onInputChange(value, `${type}${variable}`);
     };
 
     // const handleSelectVariable = (variable, inputKey) => {
     //     setInputValues((prev) => {
-    //         const inputElement = document.getElementById(`input${inputKey}`);
-
-    //         if (!inputElement) return prev; // Ensure the input exists
-
-    //         const cursorPos = inputElement.selectionStart; // Get cursor position
-    //         const currentValue = prev[inputKey] || ""; // Get current input value
-
-    //         // Insert variable at cursor position
-    //         const newValue =
-    //             currentValue.slice(0, cursorPos) + ` {{${variable}}} ` + currentValue.slice(cursorPos);
-
-    //         return {
-    //             ...prev,
-    //             [inputKey]: newValue, // Update input with new value
-    //         };
+    //         const updatedValue = prev[inputKey] ? `${prev[inputKey]} {{${variable}}}` : `{{${variable}}}`;
+    //         return { ...prev, [inputKey]: updatedValue };
     //     });
-
-    //     // Move cursor after inserted text
-    //     setTimeout(() => {
-    //         const inputElement = document.getElementById(`input${inputKey}`);
-    //         if (inputElement) {
-    //             const newCursorPos = inputElement.selectionStart + ` {{${variable}}} `.length;
-    //             inputElement.setSelectionRange(newCursorPos, newCursorPos);
-    //             inputElement.focus();
-    //         }
-    //     }, 0);
+    //     onInputChange(`{{${variable}}}`, inputKey);
     // };
 
+    const handleSelectVariable = (variable, inputKey, type = "body") => {
+        setInputValues((prev) => ({
+            ...prev,
+            [`${type}${inputKey}`]: prev[`${type}${inputKey}`]
+                ? `${prev[`${type}${inputKey}`]} {{${variable}}}`
+                : `{{${variable}}}`,
+        }));
+        onInputChange(`{{${variable}}}`, `${type}${inputKey}`);
+    };
 
-
-    // Handle file input change
     const handleImageChange = (e) => {
         const file = e.target.files?.[0];
-        if (file) {
-            if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
-                setImageError('Only jpg, jpeg, and png files are allowed.');
-                setSelectedImage(null);
-                setImageFileName('');
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                setImageError('File size must be less than 5MB.');
-                setSelectedImage(null);
-                setImageFileName('');
-                return;
-            }
 
-            setImageError('');
-            setImageFileName(file.name);
-            setSelectedImage(URL.createObjectURL(file));
-            setIsImageUploaded(false);
-        } else {
-            setImageError('No file selected');
-        }
-    };
-
-    // Handle upload action
-    const handleUpload = () => {
-        if (isImageUploaded) {
-            toast.error("File already uploaded. Please choose a different image.");
+        if (!file) {
+            toast.error("No file selected.");
             return;
         }
-        if (selectedImage) {
-            onImageUpload(selectedImage);
-            setIsImageUploaded(true);
-            toast.success("Image uploaded successfully!");
-        } else {
+        const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+        if (!allowedTypes.includes(file.type)) {
+            toast.error("Only jpg, jpeg, and png files are allowed.");
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            toast.error("File size must be less than 5MB.");
+            return;
+        }
+        if (/\s/.test(file.name)) {
+            toast.error("File name should not contain spaces.");
+            return;
+        }
+        setImageState({
+            file,
+            preview: URL.createObjectURL(file),
+            name: file.name,
+            uploading: false,
+            uploadedUrl: null,
+            validFileSelected: true,
+        });
+    };
+
+    const handleUpload = async () => {
+        if (!imageState.file) {
             toast.error("Please select an image first!");
+            return;
+        }
+        if (imageState.uploadedUrl) {
+            toast.error("Image already uploaded, please choose a different one.");
+            return;
+        }
+        setImageState((prev) => ({ ...prev, uploading: true }));
+        try {
+            console.log("Uploading image:", imageState.file);
+            const response = await uploadImageFile(imageState.file);
+            console.log("Upload Response:", response);
+            if (response.status) {
+                toast.success("Image uploaded successfully!");
+                setImageState((prev) => ({
+                    ...prev,
+                    uploadedUrl: response.fileUrl,
+                    preview: response.fileUrl,
+                    validFileSelected: false,
+                }));
+                onImageUpload(response.fileUrl);
+            } else {
+                toast.error(response.msg || "Image upload failed.");
+            }
+        } catch (error) {
+            toast.error(error.message || "Error uploading image.");
+        } finally {
+            setImageState((prev) => ({ ...prev, uploading: false }));
+
         }
     };
 
-    // Handle delete action
     const handleDelete = () => {
-        setSelectedImage(null);
-        setImageFileName('');
-        setIsImageUploaded(false);
-        setImageError('');
-        toast.success("Image deleted successfully!");
+        setImageState({
+            file: null,
+            preview: null,
+            name: "",
+            uploading: false,
+            uploadedUrl: null,
+            validFileSelected: false,
+        });
+        onImageUpload(null);
+        toast.success("Image removed successfully.");
     };
+
 
     useEffect(() => {
         console.log("Received fileHeaders in TemplateForm:", fileHeaders);
@@ -162,11 +202,17 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
 
 
     return (
-        <div className='shadow-md rounded-md' >
+        <div className='shadow-sm rounded-md' >
 
-            <div className='bg-blue-400 p-2 rounded-t-md'>
-                <h3 className="text-sm font-medium text-white tracking-wider ">Template Category -  {selectedTemplateData.category}</h3>
-                <h3 className="text-sm font-medium text-white tracking-wider ">Template Type - {selectedTemplateData.type}</h3>
+            <div className='bg-[#128C7E] p-2 rounded-t-md'>
+                <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
+                    {/* Template Category -  {selectedTemplateData.category} */}
+                    Template Category - {selectedTemplateData?.category || "N/A"}
+                </h3>
+                <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
+                    {/* Template Type - {selectedTemplateData.type} */}
+                    Template Type - {selectedTemplateData?.type || "N/A"}
+                </h3>
             </div>
 
             <div className="space-y-2 p-2 bg-gray-50 rounded-b-xl">
@@ -174,37 +220,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 {/* BODY Component: Handle Variables */}
                 {templateDataNew?.components.map((component, idx) => {
                     if (component.type === 'BODY') {
-                        const text = component.text;
-                        // const variables = extractVariablesFromUrl(component.text);
-                        const extractedVariables = extractVariablesFromUrl(component.text); // Extract variables like {{1}}, {{2}}
+                        const extractedVariables = extractVariablesFromText(component.text);
                         return (
-                            // <div key={component.id || idx} className="space-y-1.5">
-                            //     <p className='text-sm text-gray-700 font-medium tracking-wide'>Message Parameters:</p>
-                            //     {variables.map((variable, index) => (
-                            //         <div key={index} className="flex flex-col space-y-2 relative">
-                            //             <div className='flex items-center gap-2 ' >
-                            //                 <label htmlFor={`input${variable}`} className="text-[0.8rem] font-medium text-gray-600 w-10">
-                            //                     {`{{${variable}}}`}
-                            //                 </label>
-                            //                 <input
-                            //                     id={`input${variable}`}
-                            //                     name={`input${variable}`}
-                            //                     // value={inputValues[variable] || ''}
-                            //                     value={inputValues[variable] || ""}
-                            //                     placeholder={`Enter value for {{${variable}}}`}
-                            //                     onChange={(e) => handleInputChange(e, variable)}
-                            //                     className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none "
-                            //                 />
-                            //             </div>
-                            //             <div className='absolute top-0 right-0  z-50'>
-                            //                 <InputVariable
-                            //                     onSelect={handleSelectVariable}
-                            //                     variables={variables}
-                            //                 />
-                            //             </div>
-                            //         </div>
-                            //     ))}
-                            // </div>
                             <div key={component.id || idx} className="space-y-1.5">
                                 <p className="text-sm text-gray-700 font-medium tracking-wide">Message Parameters:</p>
                                 {extractedVariables.map((variable, index) => (
@@ -216,18 +233,22 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                                             <input
                                                 id={`input${variable}`}
                                                 name={`input${variable}`}
-                                                value={inputValues[variable] || ""}
+                                                // value={inputValues[variable] || ""}
+                                                value={inputValues[`body${variable}`] || ""}
                                                 placeholder={`Enter value for {{${variable}}}`}
-                                                onChange={(e) => handleInputChange(e, variable)}
-                                                className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
+                                                // onChange={(e) => handleInputChange(e, variable)}
+                                                // onChange={(e) => {
+                                                //     handleInputChange(e, variable);
+                                                //     onInputChange(e.target.value, variable); // Ensure real-time preview update
+                                                // }}
+                                                onChange={(e) => handleInputChange(e, variable, "body")}
+                                                className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                                             />
                                         </div>
                                         <div className='absolute top-0 right-0  z-50'>
                                             <InputVariable
-                                                // onSelect={handleSelectVariable}
-                                                // onSelect={(variable) => setInputValues((prev) => ({ ...prev, [variable]: `{{${variable}}}` }))} // Update the selected value
-                                                onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable)}
-                                                variables={variables} // Pass variables according to option selected
+                                                onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable, "body")}
+                                                variables={variables}
                                             />
                                         </div>
                                     </div>
@@ -245,7 +266,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                             <div key={idx} className="space-y-2">
                                 <p className="text-sm text-gray-700 font-medium tracking-wide">URL Parameter:</p>
                                 {component.buttons.map((button, index) => {
-                                    const urlVariables = extractVariablesFromUrl(button.url);
+                                    const urlVariables = extractVariablesFromText(button.url);
                                     return (
                                         <div key={index} className="space-y-4">
                                             {urlVariables.map((variable) => (
@@ -257,16 +278,21 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                                                         <input
                                                             id={`buttonInput${variable}`}
                                                             name={`buttonInput${variable}`}
-                                                            value={inputValues[`button${variable}`] || ''}
+                                                            // value={inputValues[`button${variable}`] || ''}
+                                                            value={inputValues[`button${variable}`] || ""}
                                                             placeholder={`Enter value for {{${variable}}}`}
-                                                            onChange={(e) => handleInputChange(e, `button${variable}`)}
-                                                            className="px-2 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
+                                                            // onChange={(e) => {
+                                                            //     handleInputChange(e, `button${variable}`);
+                                                            //     onInputChange(e.target.value, `button${variable}`); // Ensure real-time update in preview
+                                                            // }}
+                                                            onChange={(e) => handleInputChange(e, variable, "button")}
+                                                            className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                                                         />
                                                     </div>
                                                     <div className='absolute top-0 right-0  z-50'>
                                                         <InputVariable
-                                                            onSelect={handleSelectVariable}
-                                                            variables={variables} // Show URL variables dynamically
+                                                           onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable, "button")}
+                                                            variables={variables}
                                                         />
                                                     </div>
                                                 </div>
@@ -281,67 +307,51 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 })}
 
                 {/* HEADER Component: Handle Image Upload */}
-                {templateDataNew?.components.map((component, idx) => {
-                    if (component.type === 'HEADER' && component.format === 'IMAGE') {
-                        return (
-                            <div key={`header-component-${idx}`} className="space-y-2">
-                                <p className="text-sm text-gray-700 font-medium tracking-wide">Media:</p>
-                                <div className='flex items-start gap-2'>
-                                    <div className='space-y-2' >
-                                        <input
-                                            type="file"
-                                            id="imageUpload"
-                                            accept="image/*"
-                                            onChange={handleImageChange}
-                                            className="hidden"
-                                        />
-                                        <button
-                                            type="button"
-                                            onClick={() => document.getElementById('imageUpload').click()}
-                                            className="px-2 py-2 tracking-wide bg-blue-400 text-white text-sm rounded-md shadow-md hover:bg-blue-500 focus:outline-none cursor-pointer"
-                                        >
-                                            Choose File
-                                        </button>
-                                        {imageError && <p className="text-red-600 text-sm">{imageError}</p>}
-                                    </div>
-                                    {imageFileName && !isImageUploaded && (
-                                        <>
-                                            <div className="space-y-2">
-                                                <div className="flex gap-2">
-                                                    <button
-                                                        onClick={handleUpload}
-                                                        className="px-3 py-2 tracking-wide bg-blue-400 text-white text-sm cursor-pointer rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
-                                                    >
-                                                        Upload
-                                                    </button>
-                                                    <button
-                                                        onClick={handleDelete}
-                                                        className="p-2 focus:outline-none hover:bg-gray-200 rounded-full cursor-pointer"
-                                                    >
-                                                        <MdOutlineDeleteForever
-                                                            className='text-red-500 cursor-pointer hover:text-red-600'
-                                                            size={20}
+                {templateDataNew?.components.some(component => component.type === 'HEADER' && component.format === 'IMAGE') && (
+                    <div className="flex flex-col gap-2">
+                        <p className="text-sm text-gray-700 font-medium tracking-wide">Upload Image:</p>
+                        <div className="flex items-start gap-2">
+                            <input
+                                type="file"
+                                id="imageUpload"
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="hidden"
+                            />
+                            <button
+                                type="button"
+                                onClick={() => document.getElementById('imageUpload').click()}
+                                className="px-2 py-1.5 tracking-wide bg-blue-400 text-white text-[0.85rem] rounded-md shadow-md hover:bg-blue-500 focus:outline-none cursor-pointer"
+                            >
+                                Choose File
+                            </button>
 
-                                                        />
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        </>
-                                    )}
-                                </div>
-                                <p className="text-sm text-gray-600">Selected File: {imageFileName}</p>
 
-                                {/* {isImageUploaded && selectedImage && (
-                                    <div className="mt-4">
-                                        <p className="text-sm text-gray-600">Image Preview:</p>
-                                        <img src={selectedImage} alt="Preview" className="w-48 h-48 object-cover rounded-md shadow-md" />
-                                    </div>
-                                )} */}
-                            </div>
-                        );
-                    }
-                    return null;
-                })}
+                            {(imageState.file || imageState.uploadedUrl) && (
+                                <>
+                                    <button
+                                        onClick={handleUpload}
+                                        disabled={imageState.uploading || !imageState.validFileSelected}
+                                        className={`px-2 py-[0.3rem] ${imageState.uploading || !imageState.validFileSelected ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-400 cursor-pointer hover:bg-green-500'} text-white text-sm rounded-md shadow-md focus:outline-none`}
+                                    >
+                                        {imageState.uploading ? <DoNotDisturbOutlinedIcon sx={{ color: "white", fontSize: "22px" }} /> : <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "22px" }} />}
+                                    </button>
+                                    <button
+                                        onClick={handleDelete}
+                                        className="p-2 focus:outline-none hover:bg-gray-200 rounded-full cursor-pointer"
+                                    >
+                                        <MdOutlineDeleteForever className="text-red-500 cursor-pointer hover:text-red-600" size={20} />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                        {imageState.name && (
+                            <span className="text-[0.8rem] text-gray-700">{imageState.name}</span>
+                        )}
+                        <div className='text-[0.8rem] text-gray-600'>Only jpg,jpeg and png allowed (5 MB max)</div>
+                    </div>
+                )}
+
             </div>
         </div>
 

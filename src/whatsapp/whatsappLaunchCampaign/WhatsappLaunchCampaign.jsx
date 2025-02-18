@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from "react-router-dom";
 import toast from 'react-hot-toast';
 
-import { getWabaList, getWabaTemplate, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+
+import { getWabaList, getWabaTemplate, getWabaTemplateDetails, sendWhatsappCampaign } from '../../apis/whatsapp/whatsapp.js';
 import RadioButtonLaunchCampaign from './components/RadioButtonLaunchCampaign.jsx';
 import UniversalSkeleton from '../../components/common/UniversalSkeleton.jsx'
 import WhatsappLaunchPreview from './components/WhatsappLaunchPreview.jsx';
@@ -26,46 +28,99 @@ const WhatsappLaunchCampaign = () => {
     const [imageFile, setImageFile] = useState(null);
     const [selectedOption, setSelectedOption] = useState("option2");
     const [fileHeaders, setFileHeaders] = useState([]);
-    const [templateList, setTemplateList] = useState([]); // Store full template data
+    const [templateList, setTemplateList] = useState([]);
+    const [imagePreview, setImagePreview] = useState(null)
+    const [sending, setSending] = useState(false); // State to track campaign submission
+
+    const navigate = useNavigate();
+
+    const handleSubmitCampaign = async () => {
+        if (!inputValue) {
+            toast.error("Please enter campaign name!");
+            return;
+        }
+        // if (!selectedWaba) {
+        //     toast.error("Please fill all required fields.");
+        //     return;
+        // }
+        // if (!selectedTemplate) {
+        //     toast.error("Please fill all required fields.");
+        //     return;
+        // }
+
+        const campaignData = {
+            mobileIndex: "0",
+            ContentMessage: formData?.message || "",
+            wabaNumber: selectedWaba,
+            campaignName: inputValue,
+            templateSrno: templateDataNew?.id || "",
+            templateName: selectedTemplate,
+            templateLanguage: templateDataNew?.language || "en",
+            templateCategory: templateDataNew?.category || "Marketing",
+            templateType: templateDataNew?.type || "default",
+            url: "",
+            variables: [],
+            cardsVariables: [],
+            ScheduleCheck: "0",
+            imgCard: imagePreview ? [imagePreview] : [],
+            xlsxpath: "",
+            totalRecords: "5",
+            attachmentfile: "",
+            urlValues: "",
+            urlIndex: 0,
+            isShortUrl: 0,
+            isGroup: 1,
+            countryCode: 91,
+            scheduleDateTime: "0",
+            groupValues: "-1",
+        };
+
+        try {
+            setSending(true);
+            console.log("🚀 Sending API Request:", campaignData);
+
+            const response = await sendWhatsappCampaign(campaignData);
+
+            if (response?.status) {
+                toast.success("Campaign added successfully!");
+
+                setInputValue("");
+                setSelectedTemplate("");
+                setTemplateDataNew(null);
+                setImagePreview(null);
+                setFormData({});
+            } else {
+                toast.error(response?.msg || "Failed to send campaign.");
+            }
+        } catch (error) {
+            toast.error("Error sending campaign.");
+            console.error("❌ API Error:", error);
+        } finally {
+            setSending(false);
+        }
 
 
-    const updateTemplateData = (data) => {
-        setTemplateData((prev) => ({ ...prev, ...data }));
+        // if (response?.status) {
+        //     toast.success("Campaign added successfully!");
+        //     setTimeout(() => navigate("/campaigns"), 2000); 
+        // }
     };
+
 
     const handleOptionChange = (value) => {
         setSelectedOption(value);
     };
-
 
     const handleInputChange = (value) => {
         const newValue = value.replace(/\s/g, "");
         setInputValue(newValue);
     };
 
-    // const handleInputChangeNew = (event, variable) => {
-    //     const { value } = event.target;
-    //     setFormData((prevData) => ({
-    //         ...prevData,
-    //         [`input${variable}`]: value,
-    //     }));
-    // };
-
     const handleInputChangeNew = (value, variable) => {
         setFormData((prevData) => ({
             ...prevData,
             [`input${variable}`]: value,
         }));
-    };
-
-
-    const handleImageUpload = (e) => {
-        const file = e.target?.files?.[0];
-        if (file) {
-            console.log('File selected:', file);
-        } else {
-            console.error('No file selected');
-        }
     };
 
     // WABA LIST
@@ -106,7 +161,7 @@ const WhatsappLaunchCampaign = () => {
         try {
             const response = await getWabaTemplateDetails(wabaNumber);
             if (response) {
-                setTemplateList(response); // Store full data
+                setTemplateList(response);
                 setTemplateOptions(
                     response.map((template) => ({
                         value: template.templateName,
@@ -147,7 +202,7 @@ const WhatsappLaunchCampaign = () => {
 
     const handleFileHeadersUpdate = (headers) => {
         console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
-        setFileHeaders(headers);  // Ensure fileHeaders is updated correctly
+        setFileHeaders(headers);
     };
 
 
@@ -223,11 +278,12 @@ const WhatsappLaunchCampaign = () => {
                                             templateDataNew && (
                                                 <TemplateForm
                                                     templateDataNew={templateDataNew}
-                                                    onInputChange={handleInputChangeNew}
-                                                    onImageUpload={handleImageUpload}
+                                                    // onInputChange={handleInputChangeNew}
+                                                    onInputChange={(value, variable) => setFormData(prev => ({ ...prev, [variable]: value }))}
+                                                    onImageUpload={setImagePreview}
                                                     selectedOption={selectedOption}
                                                     fileHeaders={fileHeaders}
-                                                    selectedTemplateData={selectedTemplateData} // Pass the selected template details
+                                                    selectedTemplateData={selectedTemplateData}
                                                 />
                                             )
                                         )}
@@ -238,10 +294,8 @@ const WhatsappLaunchCampaign = () => {
                                         onOptionChange={handleOptionChange}
                                         selectedOption={selectedOption}
                                         onFileUpload={handleFileHeadersUpdate}
-
                                     />
                                 </div>
-
                             </div>
 
 
@@ -249,9 +303,9 @@ const WhatsappLaunchCampaign = () => {
                                 <WhatsappLaunchPreview
                                     templateDataNew={templateDataNew}
                                     formData={formData}
+                                    uploadedImage={imagePreview}
                                 />
                             </div>
-
                         </div>
                         <div className="flex items-center justify-center mt-5">
                             <UniversalButton
@@ -260,7 +314,7 @@ const WhatsappLaunchCampaign = () => {
                                 label="Review & Send"
                                 type='submit'
                                 style={{ borderRadius: '40px', letterSpacing: '1px', }}
-                                // onClick={submitTemplate}
+                                onClick={handleSubmitCampaign}
                                 variant="primary"
                             />
                         </div>
