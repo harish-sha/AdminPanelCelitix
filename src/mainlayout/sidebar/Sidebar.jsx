@@ -1,19 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaCog, FaHome, FaSignOutAlt, FaBars, FaWhatsapp } from 'react-icons/fa';
-import { LuMessageSquareMore } from "react-icons/lu";
-import { SiGoogleauthenticator } from "react-icons/si";
 import { MdExpandLess, MdExpandMore, MdOutlineEmail } from 'react-icons/md';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import { SiGoogleauthenticator } from "react-icons/si";
+import { LuMessageSquareMore } from "react-icons/lu";
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
-import clsx from 'clsx';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import ApiOutlinedIcon from '@mui/icons-material/ApiOutlined';
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import toast from 'react-hot-toast';
+import clsx from 'clsx';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
-    // const [isCollapsed, setIsCollapsed] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const location = useLocation();
     const dropdownRefs = useRef({});
@@ -33,11 +31,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
     };
 
-    // ✅ Close dropdown when clicking on a single route
-    const handleSingleRouteClick = () => {
-        setOpenDropdown(null);
-    };
-
     // const isActiveRoute = (route) => location.pathname.startsWith(route);
     const isActiveRoute = (route) => {
         if (route === "/") {
@@ -45,7 +38,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
         }
         return location.pathname.startsWith(route);
     };
-
 
     // const navigate = useNavigate();
     const handleLogout = () => {
@@ -250,7 +242,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                 </button>
             </div>
 
-            <nav className="mt-1 ">
+            <nav className="mt-1">
                 {menuItems.map((item) => (
                     item.type === "dropdown" ? (
                         <Tooltip
@@ -313,28 +305,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                             </div>
                         </Tooltip>
                     ) : (
-                        // <Tooltip
-                        //     key={item.name}
-                        //     title={isCollapsed ? item.label : ""}
-                        //     placement="right"
-                        //     arrow
-                        // >
-                        //     <Link
-                        //         to={item.to}
-                        //         onClick={handleSingleRouteClick}
-                        //         className={clsx(
-                        //             "flex items-center gap-4 px-4 py-2 transition-all",
-                        //             isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
-                        //             isCollapsed && "justify-center"
-                        //         )}
-                        //     >
-                        //         <span className="flex-shrink-0">{item.icon}</span>
-                        //         <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
-                        //     </Link>
-                        // </Tooltip>
                         <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
                             {item.onClick ? (
-                                // ✅ Logout Button
                                 <button
                                     onClick={item.onClick}
                                     className={clsx(
@@ -347,7 +319,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
                                     <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
                                 </button>
                             ) : (
-                                // ✅ Normal Navigation Link
                                 <Link
                                     to={item.to}
                                     className={clsx(

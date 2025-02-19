@@ -3,87 +3,131 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
 import Modal from '@mui/material/Modal';
-import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
+import Box from '@mui/material/Box';
 
 import DataTable from '../components/Datatable'
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import InputField from '../components/InputField';
-// import UniversalSkeleton from '../../components/common/UniversalSkeleton';
 import UniversalDatePicker from '../components/UniversalDatePicker';
 import UniversalButton from "../components/UniversalButton";
 import { WhatsApp } from '@mui/icons-material';
 import { MdClose } from 'react-icons/md';
-import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import UniversalSkeleton from '../components/UniversalSkeleton';
-import '../style.css'
 import Loader from '../components/Loader';
-
-
-
-function CustomTabPanel(props) {
-    const { children, value, index, ...other } = props;
-
-    return (
-        <div
-            role="tabpanel"
-            hidden={value !== index}
-            id={`simple-tabpanel-${index}`}
-            aria-labelledby={`simple-tab-${index}`}
-            {...other}
-        >
-            {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-        </div>
-    );
-}
-
-CustomTabPanel.propTypes = {
-    children: PropTypes.node,
-    index: PropTypes.number.isRequired,
-    value: PropTypes.number.isRequired,
-};
-
-function a11yProps(index) {
-    return {
-        id: `simple-tab-${index}`,
-        'aria-controls': `simple-tabpanel-${index}`,
-    };
-}
-
+import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp';
+import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
+import '../style.css'
 
 const ManageTemplate = () => {
     const navigate = useNavigate();
-    // const [valueWithSpaces, setValueWithSpaces] = useState("");
-    const [valueWithoutSpaces, setValueWithoutSpaces] = useState("");
-    const [selectedDate, setSelectedDate] = useState(null);
 
-    const [selectedOption, setSelectedOption] = useState("");
-    const [selectedOption2, setSelectedOption2] = useState("");
-    const [selectedOption3, setSelectedOption3] = useState("");
-    const [selectedOption4, setSelectedOption4] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const [isFetching, setIsFetching] = useState(false);
+    const [value, setValue] = useState(0);
+
+    const [valueWithoutSpaces, setValueWithoutSpaces] = useState("");
     const [open, setOpen] = useState(false);
     const [selectedRow, setSelectedRow] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [value, setValue] = React.useState(0);
-    const [inputValue, setInputValue] = useState("");
 
-    const [isFetching, setIsFetching] = useState(false);
+    // Filters
+    const [selectedDate, setSelectedDate] = useState(null);
+    const [selectedWaba, setSelectedWaba] = useState("");
+    const [selectedCategory, setSelectedCategory] = useState("");
+    const [selectedType, setSelectedType] = useState("");
+    const [selectedStatus, setSelectedStatus] = useState("");
+    const [templateName, setTemplateName] = useState("");
+
+    // Data
+    const [wabaList, setWabaList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+    const [apiData, setApiData] = useState([]); // Stores unfiltered API response
+
+
+
+    // Fetch WABA List
+    useEffect(() => {
+        const fetchWabaList = async () => {
+            setIsLoading(true); // Show loader while fetching
+            try {
+                const response = await getWabaList();
+                if (response) {
+                    setWabaList(response);
+                } else {
+                    console.error("Failed to fetch WABA List");
+                }
+            } catch (error) {
+                console.error("Error fetching WABA List:", error);
+            }
+            setIsLoading(false); // Hide loader after fetching
+        };
+        fetchWabaList();
+    }, []);
+
+    // Fetch Templates when WABA is selected
+    useEffect(() => {
+        if (!selectedWaba) return;
+
+        setIsFetching(true);
+        const fetchTemplates = async () => {
+            try {
+                const response = await getWabaTemplateDetails(selectedWaba);
+                if (response) {
+                    setApiData(response);
+                    setFilteredData(response); // Initially, show all data
+                } else {
+                    setApiData([]);
+                    setFilteredData([]);
+                }
+            } catch (error) {
+                console.error("Error fetching template data:", error);
+                setApiData([]);
+                setFilteredData([]);
+            }
+            setIsFetching(false);
+        };
+        fetchTemplates();
+    }, [selectedWaba]);
+
+    // ✅ Correct Filtering Function
+    const handleSearch = () => {
+        if (!selectedWaba) {
+            console.error("Please select a WABA account before searching.");
+            return;
+        }
+
+        setIsFetching(true); // Show skeleton while filtering
+
+        const filtered = apiData.filter(item => {
+            // Convert values to lowercase & trim spaces
+            const itemCategory = item.category?.toLowerCase().trim() || "";
+            const itemType = item.type?.toLowerCase().trim() || "";
+            const itemStatus = item.status?.toLowerCase().trim() || "";
+            const itemName = item.templateName?.toLowerCase().trim() || "";
+            const itemDate = item.createdDate ? new Date(item.createdDate).toISOString().split('T')[0] : "";
+
+            return (
+                (!selectedCategory || itemCategory === selectedCategory.toLowerCase().trim()) &&
+                (!selectedType || itemType === selectedType.toLowerCase().trim()) &&
+                (!selectedStatus || itemStatus === selectedStatus.toLowerCase().trim()) &&
+                (!templateName || itemName.includes(templateName.toLowerCase().trim())) &&
+                (!selectedDate || itemDate === new Date(selectedDate).toISOString().split('T')[0])
+            );
+        });
+
+        setTimeout(() => {
+            setFilteredData(filtered);
+            setIsFetching(false);
+        }, 500); // Simulating API response delay
+    };
 
 
 
 
-    // const handleSearch = () => {
-    //     // Implement search logic here
-    // };
-
-    // const handleAddNew = () => {
-    //     // Implement add new logic here
-    // };
 
     const handleView = (row) => {
         setSelectedRow(row);
@@ -101,65 +145,6 @@ const ManageTemplate = () => {
     const handleClose = () => {
         setOpen(false);
     };
-
-
-    const options = [
-        { value: "WABA1", label: "WABA1" },
-        { value: "WABA2", label: "WABA2" },
-        { value: "WABA3", label: "WABA3" },
-    ];
-
-    const options2 = [
-        { value: "utility", label: "Utility" },
-        { value: "marketing", label: "Marketing" },
-        { value: "authentication", label: "Authentication" },
-    ];
-    const options3 = [
-        { value: "text", label: "Text" },
-        { value: "image", label: "Image" },
-        { value: "document", label: "Document" },
-        { value: "carousel", label: "Carousel" },
-    ];
-    const options4 = [
-        { value: "pending", label: "Pending" },
-        { value: "rejected", label: "Rejected" },
-        { value: "approved", label: "Approved" },
-    ];
-
-
-    useEffect(() => {
-        const fetchData = async () => {
-            setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1000));
-            setIsLoading(false);
-        };
-        fetchData();
-    }, []);
-
-    const handleAddNew = () => {
-        navigate("/createtemplate");
-    };
-
-    const handleSearch = async () => {
-        console.log("Search Filters:");
-        console.log({
-            startDate: selectedDate,
-            WABA: selectedOption,
-            category: selectedOption2,
-            type: selectedOption3,
-            status: selectedOption4,
-            templateName: valueWithoutSpaces,
-        });
-
-        // ✅ Show the loader before fetching results
-        setIsFetching(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
-        setIsFetching(false);
-
-        // ✅ Here you would fetch the real filtered data from API
-        setFilteredData([]); // Replace this with actual API data
-    };
-
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -231,14 +216,13 @@ const ManageTemplate = () => {
                                 <div>
                                     <h1 className='text-xl font-semibold text-gray-800 mb-4'>Manage Templates</h1>
                                 </div>
-                                <div className='flex gap-2' >
-
-                                    <div className="w-max-content ">
+                                <div className='flex gap-2'>
+                                    <div className="w-max-content">
                                         <UniversalButton
                                             id='manageTemplateAddNewBtn'
                                             name='manageTemplateAddNewBtn'
                                             label="Add New"
-                                            onClick={handleAddNew}
+                                            onClick={() => navigate("/createtemplate")}
                                             variant="primary"
                                         />
                                     </div>
@@ -247,7 +231,6 @@ const ManageTemplate = () => {
                                             id='syncStatusBtn'
                                             name='syncStatusBtn'
                                             label="Sync Status"
-                                            // onClick={handleAddNew}
                                             variant="primary"
                                         />
                                     </div>
@@ -255,14 +238,14 @@ const ManageTemplate = () => {
                             </div>
 
                             <>
-                                <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+                                <div className='flex flex-wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
                                     <div className="w-full sm:w-56">
                                         <UniversalDatePicker
                                             id="manageTemplateDate"
                                             name="manageTemplateDate"
                                             label="Start Date"
                                             value={selectedDate}
-                                            onChange={(newValue) => setSelectedDate(newValue)}
+                                            onChange={setSelectedDate}
                                             placeholder="Pick a start date"
                                             tooltipContent="Select the starting date for your project"
                                             tooltipPlacement="right"
@@ -277,9 +260,12 @@ const ManageTemplate = () => {
                                             label="Select WABA"
                                             tooltipContent="Select your whatsapp business account"
                                             tooltipPlacement="right"
-                                            options={options}
-                                            value={selectedOption}
-                                            onChange={(value) => setSelectedOption(value)}
+                                            options={wabaList.map((waba) => ({
+                                                value: waba.mobileNo,
+                                                label: waba.name,
+                                            }))}
+                                            value={selectedWaba}
+                                            onChange={setSelectedWaba}
                                             placeholder="Select WABA"
                                         />
                                     </div>
@@ -288,14 +274,11 @@ const ManageTemplate = () => {
                                             id="manageTemplateName"
                                             name="manageTemplateName"
                                             label="Template Name"
-                                            value={valueWithoutSpaces}
-                                            // onChange={(val) => setValueWithoutSpaces(val)}
-                                            // value={inputValue}
-                                            onChange={(e) => handleInputChange(e.target.value)}
-                                            placeholder="Template Name"
-                                            noSpaces={true}
-                                            tooltipContent="Your templatename should not contain spaces."
+                                            value={templateName}
+                                            onChange={(e) => setTemplateName(e.target.value)}
                                             tooltipPlacement="right"
+                                            tooltipContent="Your templatename should not contain spaces."
+                                            placeholder="Template Name"
                                         />
                                     </div>
 
@@ -306,9 +289,13 @@ const ManageTemplate = () => {
                                             label="Category"
                                             tooltipContent="Select category"
                                             tooltipPlacement="right"
-                                            options={options2}
-                                            value={selectedOption2}
-                                            onChange={(value) => setSelectedOption2(value)}
+                                            options={[
+                                                { value: "marketing", label: "Marketing" },
+                                                { value: "utility", label: "Utility" },
+                                                { value: "authentication", label: "Authentication" },
+                                            ]}
+                                            value={selectedCategory}
+                                            onChange={setSelectedCategory}
                                             placeholder="Category"
                                         />
                                     </div>
@@ -319,9 +306,14 @@ const ManageTemplate = () => {
                                             label="Type"
                                             tooltipContent="Select Type"
                                             tooltipPlacement="right"
-                                            options={options3}
-                                            value={selectedOption3}
-                                            onChange={(value) => setSelectedOption3(value)}
+                                            options={[
+                                                { value: "text", label: "Text" },
+                                                { value: "image", label: "Image" },
+                                                { value: "document", label: "Document" },
+                                                { value: "carousel", label: "Carousel" },
+                                            ]}
+                                            value={selectedType}
+                                            onChange={setSelectedType}
                                             placeholder="Type"
                                         />
                                     </div>
@@ -332,9 +324,13 @@ const ManageTemplate = () => {
                                             label="Status"
                                             tooltipContent="Select Status"
                                             tooltipPlacement="right"
-                                            options={options4}
-                                            value={selectedOption4}
-                                            onChange={(value) => setSelectedOption4(value)}
+                                            options={[
+                                                { value: "pending", label: "Pending" },
+                                                { value: "rejected", label: "Rejected" },
+                                                { value: "approved", label: "Approved" },
+                                            ]}
+                                            value={selectedStatus}
+                                            onChange={setSelectedStatus}
                                             placeholder="Status"
                                         />
                                     </div>
@@ -350,20 +346,26 @@ const ManageTemplate = () => {
                                         />
                                     </div>
 
-
                                 </div>
-                                {/* ✅ DATA TABLE LOADING STATE */}
                                 {isFetching ? (
-                                    <div className='' >
-                                        <UniversalSkeleton height='35rem' width='100%' />
+                                    <UniversalSkeleton height='35rem' width='100%' />
+                                ) : filteredData.length === 0 ? (
+                                    <div className="border-2 border-dashed h-[60vh] bg-white border-blue-500 rounded-2xl w-full flex items-center justify-center">
+                                        <div className="text-center text-blue-500 p-8 shadow-2xl rounded-2xl" >
+                                            <span className='text-2xl font-m font-medium tracking-wide'>Select your Waba Account First!</span>
+                                        </div>
                                     </div>
                                 ) : (
                                     <DataTable
                                         id='whatsappManageTemplateTable'
                                         name='whatsappManageTemplateTable'
-                                        handleView={handleView}
-                                        handleDuplicate={handleDuplicate}
-                                        handleDelete={handleDelete}
+                                        // handleView={handleView}
+                                        // handleDuplicate={handleDuplicate}
+                                        // handleDelete={handleDelete}
+                                        handleView={() => { }}
+                                        handleDuplicate={() => { }}
+                                        handleDelete={() => { }}
+                                        wabaNumber={selectedWaba}
                                         rows={filteredData}
                                     />
                                 )}
@@ -410,7 +412,7 @@ const ManageTemplate = () => {
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
                         <div className='w-full' >
-                            <h1 className='text-xl font-semibold text-gray-800 mb-4' >Libraries</h1>
+                            <h1 className='text-xl font-semibold text-gray-800 mb-4'>Libraries</h1>
                         </div>
                     </CustomTabPanel>
                 </Box>

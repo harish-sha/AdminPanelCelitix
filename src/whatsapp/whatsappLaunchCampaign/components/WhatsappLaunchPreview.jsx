@@ -5,20 +5,14 @@ import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { FaLinkSlash } from "react-icons/fa6";
 
-
-import whatsappdummy from '../../../assets/images/whatsappdummy.webp'
-
-// const replaceVariablesInText = (text, variables) => {
-//   return text.replace(/{{(\d+)}}/g, (_, key) => variables[key] || `{{${key}}}`);
-// };
+import whatsappImg from '../../../assets/images/whatsappdummy.webp'
 
 const replaceVariablesInText = (text, variables, type = "body") => {
   return text.replace(/{{(\d+)}}/g, (_, key) => variables[`${type}${key}`] || `{{${key}}}`);
 };
 
-
-
 const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => {
+
   if (!templateDataNew || !templateDataNew.components) {
     return (
       <div className='px-3 py-3 rounded-xl flex  bg-gray-200  min-h-100'>
@@ -30,11 +24,11 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
             </p>
           </div>
           <div className='bg-white rounded-b-md p-3 flex flex-col gap-3'>
-            <img src={whatsappdummy} alt="whatsapp-dummy-image" className='w-full h-48 object-cover rounded-md' />
-            <div className="border border-gray-300 rounded-md p-2 w-full bg-gray-100 text-center text-sm">
+            <img src={whatsappImg} alt="whatsapp-dummy-image" className='w-full h-48 object-cover rounded-md bg-center bg-no-repeat border border-gray-200' />
+            <div className="border border-gray-300 rounded-md p-2 h-30 flex items-center justify-center w-full bg-gray-100 text-center text-sm">
               No template selected
             </div>
-            <div className='flex flex-col gap-2 mt-4 '>
+            <div className='flex flex-col gap-2  '>
               <button className='flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md '>
                 <BsTelephoneFill className='mr-2' />
                 Contact us
@@ -61,20 +55,11 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
   const bodyComponent = templateDataNew.components.find(
     (comp) => comp.type === "BODY"
   );
-
-  // let finalMessage = bodyComponent?.text || "";
-  // if (bodyComponent) {
-  //   finalMessage = replaceVariablesInText(bodyComponent.text, formData);
-  // }
-
   let finalMessage = bodyComponent ? replaceVariablesInText(bodyComponent.text, formData, "body") : "";
-
 
   const buttonsComponent = templateDataNew.components.find(
     (comp) => comp.type === "BUTTONS"
   );
-
-
 
   return (
     <div className='px-3 py-3 rounded-xl flex  bg-gray-200  min-h-100' >
@@ -93,17 +78,17 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
               <img
                 src={uploadedImage}
                 alt="Uploaded Preview"
-                className="w-full h-48 object-contain rounded-md border border-gray-200 bg-center bg-no-repeat"
+                className="w-full h-48 object-contain border border-gray-200 rounded-md bg-center bg-no-repeat"
               />
             </div>
           ) : (
             headerComponent?.example?.header_handle?.[0] && (
               <div className="mb-2 flex justify-center">
                 <img
-                  src={headerComponent.example.header_handle[0]}
-                  // src={whatsappdummy}
+                  // src={headerComponent.example.header_handle[0]}
+                  src={whatsappImg}
                   alt="Template Preview"
-                  className="w-full h-48 object-contain rounded-md border border-gray-200 bg-center bg-no-repeat"
+                  className="w-full h-48 object-cover rounded-md border border-gray-200  bg-center bg-no-repeat"
                 />
               </div>
             )
@@ -111,7 +96,6 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
 
           {bodyComponent && (
             <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
-              {/* {bodyComponent.text} */}
               {finalMessage}
             </div>
           )}
@@ -120,7 +104,6 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
           {buttonsComponent && buttonsComponent.buttons.length > 0 && (
             <div className="mt-1 flex flex-col gap-2">
               {buttonsComponent && buttonsComponent.buttons.map((button, index) => {
-                // let hrefValue = button.url ? replaceVariablesInText(button.url, formData) : `tel:${button.phone_number}`;
                 let hrefValue = button.url ? replaceVariablesInText(button.url, formData, "button") : `tel:${button.phone_number}`;
 
                 return (
@@ -135,7 +118,6 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
       </div>
 
     </div>
-
   );
 };
 

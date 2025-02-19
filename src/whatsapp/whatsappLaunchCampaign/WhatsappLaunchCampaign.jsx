@@ -9,7 +9,8 @@ import UniversalSkeleton from '../../components/common/UniversalSkeleton.jsx'
 import WhatsappLaunchPreview from './components/WhatsappLaunchPreview.jsx';
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import TemplateForm from './components/TemplateForm.jsx';
-import InputField from '../components/InputField';
+// import InputField from '../components/InputField';
+import InputField from '../../components/layout/InputField.jsx';
 import UniversalButton from '../components/UniversalButton.jsx'
 import Loader from '../components/Loader';
 
@@ -31,6 +32,8 @@ const WhatsappLaunchCampaign = () => {
     const [templateList, setTemplateList] = useState([]);
     const [imagePreview, setImagePreview] = useState(null)
     const [sending, setSending] = useState(false); // State to track campaign submission
+    const [isFetching, setIsFetching] = useState(false);
+
 
     const navigate = useNavigate();
 
@@ -109,6 +112,7 @@ const WhatsappLaunchCampaign = () => {
 
     const handleOptionChange = (value) => {
         setSelectedOption(value);
+        setFormData({});
     };
 
     const handleInputChange = (value) => {
@@ -149,6 +153,17 @@ const WhatsappLaunchCampaign = () => {
     // Handle WABA selection
     const handleWabaSelect = async (value) => {
         setSelectedWaba(value);
+
+        // Reset all dependent states when WABA changes
+        setSelectedTemplate("");  // Clear selected template
+        setTemplateDataNew(null); // Reset template data
+        setFormData({});  // Clear form inputs
+        setImagePreview(null);  // Remove uploaded image
+        setSelectedOption("option2"); // Reset radio button to default
+        setFileHeaders([]);  // Clear uploaded file headers
+        setTemplateList([]); // Clear template list options
+        setTemplateOptions([]); // Clear dropdown options
+
         const selectedWabaDetails = wabaList.find((waba) => waba.mobileNo === value);
         setSelectedWabaMobileNo(selectedWabaDetails ? [selectedWabaDetails.mobileNo] : []);
         setWabaAccountId(selectedWabaDetails?.wabaAccountId || "");
@@ -184,6 +199,7 @@ const WhatsappLaunchCampaign = () => {
     useEffect(() => {
         const fetchTemplateData = async () => {
             if (!selectedTemplate || !wabaAccountId) return;
+            setIsFetching(true);
             try {
                 const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
                 console.log("fetching particular template data : ", response)
@@ -196,6 +212,9 @@ const WhatsappLaunchCampaign = () => {
             } catch (error) {
                 toast.error("Error fetching template data.");
             }
+            finally {
+                setIsFetching(false);
+            }
         };
         fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
@@ -204,7 +223,6 @@ const WhatsappLaunchCampaign = () => {
         console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
         setFileHeaders(headers);
     };
-
 
     return (
         <div className='max-w-full'>
@@ -215,10 +233,10 @@ const WhatsappLaunchCampaign = () => {
             ) : (
                 <>
                     <div className='container-fluid'>
-                        <div className="flex">
-                            <div className="col-lg-8 w-full lg:w-2/3 px-3 py-3 rounded-xl flex gap-6 bg-gray-200 min-h-[80vh]">
-                                <div className='p-3 bg-gray-100 rounded-lg shadow-md w-full' >
-                                    <div className='flex items-center justify-between gap-2 mb-3' >
+                        <div className="flex flex-wrap">
+                            <div className="col-lg-8 w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
+                                <div className='p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 w-full' >
+                                    <div className='flex items-center flex-wrap justify-between gap-2 mb-3' >
                                         <div className='flex-1'>
                                             <AnimatedDropdown
                                                 id='launchSelectWABA'
@@ -241,7 +259,8 @@ const WhatsappLaunchCampaign = () => {
                                                 tooltipPlacement='right'
                                                 label='Mobile No'
                                                 value={selectedWabaMobileNo.join(', ')}
-                                                readOnly={true}
+                                                readOnly
+                                                disabled
                                                 placeholder='Your Waba Mobile No'
                                             />
                                         </div>
@@ -267,13 +286,20 @@ const WhatsappLaunchCampaign = () => {
                                             tooltipPlacement='right'
                                             options={templateOptions}
                                             value={selectedTemplate}
-                                            onChange={(value) => setSelectedTemplate(value)}
+                                            // onChange={(value) => setSelectedTemplate(value)}
+                                            onChange={(value) => {
+                                                setSelectedTemplate(value);
+                                                setTemplateDataNew(null);
+                                                setFormData({});
+                                                setImagePreview(null);
+                                                setImageFile(null);
+                                            }}
                                             placeholder='Select Template'
                                         />
                                     </div>
                                     <div>
-                                        {isLoading ? (
-                                            <UniversalSkeleton height="5rem" width="100%" />
+                                        {isFetching ? (
+                                            <UniversalSkeleton height="15rem" width="100%" />
                                         ) : (
                                             templateDataNew && (
                                                 <TemplateForm
@@ -289,22 +315,32 @@ const WhatsappLaunchCampaign = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className="w-full">
-                                    <RadioButtonLaunchCampaign
-                                        onOptionChange={handleOptionChange}
-                                        selectedOption={selectedOption}
-                                        onFileUpload={handleFileHeadersUpdate}
-                                    />
+                                <div className="lg:flex-1 w-full">
+                                    {isFetching ? (
+                                        <UniversalSkeleton className='h-full' height="35rem" width="100%" />
+                                    ) : (
+                                        <RadioButtonLaunchCampaign
+                                            onOptionChange={handleOptionChange}
+                                            selectedOption={selectedOption}
+                                            onFileUpload={handleFileHeadersUpdate}
+                                        />
+                                    )}
                                 </div>
                             </div>
 
 
-                            <div className="col-lg-4 w-full lg:w-1/3 p-0 flex justify-center items-start">
-                                <WhatsappLaunchPreview
-                                    templateDataNew={templateDataNew}
-                                    formData={formData}
-                                    uploadedImage={imagePreview}
-                                />
+                            <div className="col-lg-4 w-full lg:w-1/3  p-0 flex justify-center items-start lg:mt-0 mt-5">
+                                {isFetching ? (
+                                    <div className='w-100' >
+                                        <UniversalSkeleton className='' height="35rem" width="100%" />
+                                    </div>
+                                ) : (
+                                    <WhatsappLaunchPreview
+                                        templateDataNew={templateDataNew}
+                                        formData={formData}
+                                        uploadedImage={imagePreview}
+                                    />
+                                )}
                             </div>
                         </div>
                         <div className="flex items-center justify-center mt-5">

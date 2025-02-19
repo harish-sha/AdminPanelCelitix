@@ -6,6 +6,8 @@ import DoNotDisturbOutlinedIcon from '@mui/icons-material/DoNotDisturbOutlined';
 import toast from 'react-hot-toast';
 import InputVariable from './InputVariable';
 import { uploadImageFile } from '../../../apis/whatsapp/whatsapp.js';
+import CustomTooltip from '../../../components/common/CustomTooltip.jsx';
+import { AiOutlineInfoCircle } from 'react-icons/ai';
 
 // Function to extract variables from text (e.g., {{1}}) 
 const extractVariablesFromText = (text) => {
@@ -33,15 +35,17 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
     });
 
     useEffect(() => {
-        setImageState({
-            file: null,
-            preview: null,
-            name: "",
-            uploading: false,
-            uploadedUrl: null,
-            validFileSelected: false,
-        });
-        setInputValues({});
+        if (!templateDataNew) {
+            setInputValues({});
+            setImageState({
+                file: null,
+                preview: null,
+                name: "",
+                uploading: false,
+                uploadedUrl: null,
+                validFileSelected: false,
+            });
+        }
     }, [templateDataNew]);
 
     let variables = [];
@@ -58,10 +62,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         templateDataNew?.components.forEach((component) => {
             if (component.type === "BODY") {
                 const variables = extractVariablesFromText(component.text);
-                const exampleValues = component.example?.body_text?.[0] || [];
-
-                variables.forEach((variable, index) => {
-                    defaultValues[variable] = exampleValues[index] || "";
+                variables.forEach((variable) => {
+                    defaultValues[variable] = "";
                 });
             }
 
@@ -69,10 +71,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 component.buttons.forEach((button) => {
                     if (button.type === "URL") {
                         const variables = extractVariablesFromText(button.url);
-                        const exampleValues = button.example || [];
-
-                        variables.forEach((variable, index) => {
-                            defaultValues[`button${variable}`] = exampleValues[index] || "";
+                        variables.forEach((variable) => {
+                            defaultValues[`button${variable}`] = "";
                         });
                     }
                 });
@@ -80,7 +80,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         });
 
         setInputValues(defaultValues);
-    }, [templateDataNew]);
+    }, [templateDataNew, selectedOption]);
 
     // const handleInputChange = (e, variable) => {
     //     const { value } = e.target;
@@ -100,22 +100,22 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         onInputChange(value, `${type}${variable}`);
     };
 
-    // const handleSelectVariable = (variable, inputKey) => {
-    //     setInputValues((prev) => {
-    //         const updatedValue = prev[inputKey] ? `${prev[inputKey]} {{${variable}}}` : `{{${variable}}}`;
-    //         return { ...prev, [inputKey]: updatedValue };
-    //     });
-    //     onInputChange(`{{${variable}}}`, inputKey);
-    // };
-
     const handleSelectVariable = (variable, inputKey, type = "body") => {
-        setInputValues((prev) => ({
-            ...prev,
-            [`${type}${inputKey}`]: prev[`${type}${inputKey}`]
+        setInputValues((prev) => {
+            const updatedValue = prev[`${type}${inputKey}`]
                 ? `${prev[`${type}${inputKey}`]} {{${variable}}}`
-                : `{{${variable}}}`,
-        }));
-        onInputChange(`{{${variable}}}`, `${type}${inputKey}`);
+                : `{{${variable}}}`;
+
+            // Store the new state
+            const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
+
+            // Use setTimeout to avoid updating parent state in the render phase
+            setTimeout(() => {
+                onInputChange(newState[`${type}${inputKey}`], `${type}${inputKey}`);
+            }, 0);
+
+            return newState;
+        });
     };
 
     const handleImageChange = (e) => {
@@ -195,7 +195,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         toast.success("Image removed successfully.");
     };
 
-
     useEffect(() => {
         console.log("Received fileHeaders in TemplateForm:", fileHeaders);
     }, [fileHeaders]);
@@ -206,11 +205,9 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
 
             <div className='bg-[#128C7E] p-2 rounded-t-md'>
                 <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
-                    {/* Template Category -  {selectedTemplateData.category} */}
                     Template Category - {selectedTemplateData?.category || "N/A"}
                 </h3>
                 <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
-                    {/* Template Type - {selectedTemplateData.type} */}
                     Template Type - {selectedTemplateData?.type || "N/A"}
                 </h3>
             </div>
@@ -223,7 +220,19 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                         const extractedVariables = extractVariablesFromText(component.text);
                         return (
                             <div key={component.id || idx} className="space-y-1.5">
-                                <p className="text-sm text-gray-700 font-medium tracking-wide">Message Parameters:</p>
+                                <div className='flex items-center gap-1' >
+
+                                    <p className="text-sm text-gray-700 font-medium tracking-wide">Message Parameters</p>
+                                    <CustomTooltip
+                                        title="Message parameter should not contain any space"
+                                        placement='right'
+                                        arrow
+                                    >
+                                        <span>
+                                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                                        </span>
+                                    </CustomTooltip>
+                                </div>
                                 {extractedVariables.map((variable, index) => (
                                     <div key={index} className="flex flex-col space-y-2 relative">
                                         <div className='flex items-center gap-2 ' >
@@ -233,14 +242,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                                             <input
                                                 id={`input${variable}`}
                                                 name={`input${variable}`}
-                                                // value={inputValues[variable] || ""}
                                                 value={inputValues[`body${variable}`] || ""}
                                                 placeholder={`Enter value for {{${variable}}}`}
-                                                // onChange={(e) => handleInputChange(e, variable)}
-                                                // onChange={(e) => {
-                                                //     handleInputChange(e, variable);
-                                                //     onInputChange(e.target.value, variable); // Ensure real-time preview update
-                                                // }}
                                                 onChange={(e) => handleInputChange(e, variable, "body")}
                                                 className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                                             />
@@ -264,7 +267,19 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                     if (component.type === 'BUTTONS') {
                         return (
                             <div key={idx} className="space-y-2">
-                                <p className="text-sm text-gray-700 font-medium tracking-wide">URL Parameter:</p>
+                                <div className='flex items-center gap-1' >
+
+                                    <p className="text-sm text-gray-700 font-medium tracking-wide">URL Parameter</p>
+                                    <CustomTooltip
+                                        title="URL parameter should not contain any space"
+                                        placement='right'
+                                        arrow
+                                    >
+                                        <span>
+                                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                                        </span>
+                                    </CustomTooltip>
+                                </div>
                                 {component.buttons.map((button, index) => {
                                     const urlVariables = extractVariablesFromText(button.url);
                                     return (
@@ -278,20 +293,15 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                                                         <input
                                                             id={`buttonInput${variable}`}
                                                             name={`buttonInput${variable}`}
-                                                            // value={inputValues[`button${variable}`] || ''}
                                                             value={inputValues[`button${variable}`] || ""}
                                                             placeholder={`Enter value for {{${variable}}}`}
-                                                            // onChange={(e) => {
-                                                            //     handleInputChange(e, `button${variable}`);
-                                                            //     onInputChange(e.target.value, `button${variable}`); // Ensure real-time update in preview
-                                                            // }}
                                                             onChange={(e) => handleInputChange(e, variable, "button")}
                                                             className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                                                         />
                                                     </div>
                                                     <div className='absolute top-0 right-0  z-50'>
                                                         <InputVariable
-                                                           onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable, "button")}
+                                                            onSelect={(selectedVar) => handleSelectVariable(selectedVar, variable, "button")}
                                                             variables={variables}
                                                         />
                                                     </div>
@@ -309,7 +319,18 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 {/* HEADER Component: Handle Image Upload */}
                 {templateDataNew?.components.some(component => component.type === 'HEADER' && component.format === 'IMAGE') && (
                     <div className="flex flex-col gap-2">
-                        <p className="text-sm text-gray-700 font-medium tracking-wide">Upload Image:</p>
+                        <div className='flex items-center gap-2'>
+                            <p className="text-sm text-gray-700 font-medium tracking-wide">Upload Image</p>
+                            <CustomTooltip
+                                title='Only jpg,jpeg and png allowed (5 MB max)'
+                                placement='right'
+                                arrow
+                            >
+                                <span>
+                                    <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                                </span>
+                            </CustomTooltip>
+                        </div>
                         <div className="flex items-start gap-2">
                             <input
                                 type="file"
@@ -348,7 +369,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                         {imageState.name && (
                             <span className="text-[0.8rem] text-gray-700">{imageState.name}</span>
                         )}
-                        <div className='text-[0.8rem] text-gray-600'>Only jpg,jpeg and png allowed (5 MB max)</div>
+                        {/* <div className='text-[0.8rem] text-gray-600'>Only jpg,jpeg and png allowed (5 MB max)</div> */}
                     </div>
                 )}
 
@@ -356,6 +377,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         </div>
 
     );
-};
+};  
 
 export default TemplateForm;

@@ -3,6 +3,7 @@ import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { MultiSelect } from 'primereact/multiselect';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { RadioButton } from 'primereact/radiobutton';
+import { Dropdown } from 'primereact/dropdown';
 import toast from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 
@@ -31,11 +32,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [addCountryCode, setAddCountryCode] = useState(false);
   const [countryList, setCountryList] = useState([]);
 
-
   const handleChange = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
-    onOptionChange(value); 
+    onOptionChange(value);
 
     // Reset all related states when switching between options
     if (value === "option1") {
@@ -72,6 +72,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     return regex.test(fileName);
   };
 
+  // handle File drop
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
@@ -94,6 +95,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     }
   };
 
+  // handle file change
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
@@ -141,6 +143,36 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     }
   }, [fileHeaders]);
 
+  // Handle file removal
+  const handleRemoveFile = () => {
+    setUploadedFile(null);
+    setIsUploaded(false);
+    setAddCountryCode(false)
+    setSelectedCountryCode('');
+    document.getElementById("fileInput").value = "";
+    toast.success("File removed successfully.");
+  };
+
+  const handleMobileColumnChange = (value) => {
+    setSelectedMobileColumn(value);
+  };
+
+  const handleDragOver = (event) => {
+    event.preventDefault();
+  };
+
+  // Handle change in 'Add Country Code' checkbox
+  const handleAddCountryCodeChange = (e) => {
+    const isChecked = e.target.checked;
+    setAddCountryCode(isChecked);
+
+    if (!isChecked) {
+      setSelectedCountryCode("");
+      setSelectedCountryName("");
+    }
+  };
+
+  // Excel file upload
   const handleFileUpload = async () => {
     if (uploadedFile) {
       if (isUploaded) {
@@ -166,48 +198,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     }
   };
 
-  // Handle file removal
-  const handleRemoveFile = () => {
-    setUploadedFile(null);
-    setIsUploaded(false);
-    setAddCountryCode(false)
-    setSelectedCountryCode('');
-    document.getElementById("fileInput").value = "";
-    toast.success("File removed successfully.");
-  };
-
-  const handleMobileColumnChange = (value) => {
-    setSelectedMobileColumn(value);
-  };
-
-  const handleDragOver = (event) => {
-    event.preventDefault();
-  };
-
-
-  // Apply country code to mobile numbers
-  const handleApplyCountryCode = () => {
-    if (!selectedMobileColumn) {
-      toast.error("Please select a mobile number column.");
-      return;
-    }
-
-    const updatedData = fileData.map((row) => {
-      const updatedRow = { ...row };
-      if (addCountryCode && countryCode && row[selectedMobileColumn]) {
-        updatedRow[selectedMobileColumn] = `${countryCode}${row[selectedMobileColumn]}`;
-      }
-      return updatedRow;
-    });
-
-    setFileData(updatedData);
-  };
-
-  // Handle change in 'Add Country Code' checkbox
-  const handleAddCountryCodeChange = (e) => {
-    setAddCountryCode(e.target.checked);
-  };
-
+  // Get Waba Group List
   useEffect(() => {
     const fetchWabaShowGroupsList = async () => {
       try {
@@ -226,11 +217,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     };
     fetchWabaShowGroupsList();
   }, []);
-
-  const selectGroupOptions = groups.map((group) => ({
-    label: `${group.groupName} (${group.totalCount})`,
-    value: group.groupCode,
-  }));
 
   // Get country list 
   useEffect(() => {
@@ -257,14 +243,9 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     fetchCountryList();
   }, []);
 
-  useEffect(() => {
-    console.log("Updated selectedCountryCode:", selectedCountryCode);
-  }, [selectedCountryCode]);
-
   return (
-    <div className="p-3 bg-gray-100 rounded-lg shadow-md w-full h-full">
+    <div className="p-3 bg-gray-100 rounded-lg shadow-md  h-full ">
       <div>
-
         <h2 className="text-sm font-medium text-gray-800 mb-2 tracking-wide">Choose an Option</h2>
         <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-2">
           {/* Option 1 */}
@@ -290,17 +271,24 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
               <label htmlFor="radioOption3" className="text-gray-700 font-medium text-sm">AI Audience</label>
             </div>
           </label> */}
-
         </div>
       </div>
-
-
 
       {/* Multi-Select Dropdown for Select Group */}
       {selectedOption === "option1" && (
         <div className="flex justify-content-center mt-3">
-          <MultiSelect value={showGroupList} onChange={(e) => setShowGroupList(e.value)} options={selectGroupOptions} optionLabel="label"
-            filter placeholder="Select Groups" maxSelectedLabels={0} className="custom-multiselect" />
+          <MultiSelect
+            className="custom-multiselect"
+            placeholder="Select Groups"
+            maxSelectedLabels={0}
+            optionLabel="label"
+            filter
+            value={showGroupList} onChange={(e) => setShowGroupList(e.value)}
+            options={groups.map((group) => ({
+              label: `${group.groupName} (${group.totalCount})`,
+              value: group.groupCode,
+            }))}
+          />
         </div>
       )}
 
@@ -369,8 +357,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         </div>
       )}
 
-
-      <div className="flex items-start justify-between mt-3 gap-2">
+      {/* Country Code */}
+      <div className="flex items-start lg:flex-nowrap flex-wrap justify-between mt-3 gap-2">
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
             <div className="flex items-center gap-2" >
@@ -385,34 +373,22 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
                 tooltipContent="check the - [ ✔ Add country code ] to apply country code"
                 tooltipPlacement="right"
                 placeholder="Select Country Code"
-                // options={countryList.map(country => ({
-                //   label: `${country.countryName} (+${country.countryCode})`,
-                //   value: country.countryCode,
-                // }))}
+                isSearchable={true}
                 options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName)) // Sorting alphabetically by countryName
+                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
                   .map((country) => ({
                     label: `${country.countryName} (+${country.countryCode})`,
                     value: `${country.countryCode}-${country.countryName}`,
-                    // value: country.countryCode,
                   }))}
-                // value={selectedCountryCode}
                 value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
-
-                // onChange={(value) => setSelectedCountryCode(value)}
                 onChange={(value) => {
-                  if (value) { // Ensure value is not null or undefined
-                    const [code, name] = value.split('-'); // Split only if value is valid
-                    console.log("Selected Value:", value);  // Logs the full value (code-name)
-                    setSelectedCountryCode(code);  // Set the selected country code
-                    setSelectedCountryName(name);  // Set the selected country name
-                    console.log("Updated selectedCountryCode:", code);
-                    console.log("Updated selectedCountryName:", name);
-                    console.log("final value : ", value)
+                  if (value) {
+                    const [code, name] = value.split('-');
+                    setSelectedCountryCode(code);
+                    setSelectedCountryName(name);
                   }
                 }}
                 disabled={!addCountryCode}
-
               />
             </div>
           </div>
@@ -421,7 +397,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         {/* Mobile Column Selection */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
-            <div className="w-full mt-9">
+            <div className="w-full lg:mt-9 mt-2">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"
@@ -438,15 +414,15 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         )}
       </div>
 
-
       {/* Display Table */}
       {selectedOption === "option2" && isUploaded && fileData.length > 0 && (
         <>
           <div className="my-3">
             <p className="text-sm text-gray-700 font-semibold tracking-wide">Total Records in file: {totalRecords} </p>
           </div>
-          <div className="" style={{ maxHeight: '400px', maxWidth: "490px", overflowY: 'auto' }}>
-            <table className="min-w-full table-fixed " style={{ tableLayout: 'fixed' }} >
+
+          <div className="overflow-auto w-full max-w-full" style={{ maxHeight: '400px', maxWidth: '490px' }}>
+            <table className="w-full min-w-max border-collapse"  >
               <thead className="bg-[#128C7E]" >
                 <tr className="" >
                   {columns.map((col, index) => (
@@ -469,7 +445,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
           </div>
         </>
       )}
-
 
       {/* Option Audience */}
       {selectedOption === "option3" && (

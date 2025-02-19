@@ -162,6 +162,16 @@ const AnimatedDropdown = ({
                         },
                     },
                 }}
+                slotProps={{
+                    listbox: {
+                        sx: {
+                            maxHeight: "300px",
+                            overflowY: "auto",
+                            minWidth: "250px",
+                            position: "relative",
+                        },
+                    },
+                }}
             >
                 {/* {options.map((option) => (
                     <Option key={option.value} value={option.value} className="flex font-p items-center justify-between font-serif">
