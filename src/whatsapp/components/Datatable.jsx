@@ -8,6 +8,7 @@ import { styled } from '@mui/material/styles';
 import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
 import { Paper, Typography, Box, Button } from '@mui/material';
 import { getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+import { format } from 'timeago.js'
 import toast from 'react-hot-toast';
 
 
@@ -61,7 +62,7 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const DataTable = ({ id, wabaNumber, name, handleView, handleDuplicate, handleDelete }) => {
+const DataTable = ({ id, wabaNumber, data, name, handleView, handleDuplicate, handleDelete }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [templateData, setTemplateData] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
@@ -88,7 +89,14 @@ const DataTable = ({ id, wabaNumber, name, handleView, handleDuplicate, handleDe
     const formatDate = (dateString) => {
         if (!dateString) return "N/A";
         const date = new Date(dateString);
-        return date.toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", second: "2-digit" });
+        return date.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            // hour: "2-digit",
+            // minute: "2-digit",
+            // second: "2-digit",
+        });
     };
 
     const columns = [
@@ -147,14 +155,25 @@ const DataTable = ({ id, wabaNumber, name, handleView, handleDuplicate, handleDe
     // }));
 
     // Process API response into DataGrid rows
-    const rows = templateData.map((item, index) => ({
+    // const rows = templateData.map((item, index) => ({
+    //     id: item.templateSrno,
+    //     sn: index + 1,
+    //     templateName: item.templateName || "N/A",
+    //     category: item.category || "N/A",
+    //     status: item.status || "N/A",
+    //     type: item.type || "N/A",
+    //     createdDate: new Date(item.createdDate).toLocaleString(),
+    // }));
+
+    const rows = data.map((item, index) => ({
         id: item.templateSrno,
         sn: index + 1,
         templateName: item.templateName || "N/A",
         category: item.category || "N/A",
         status: item.status || "N/A",
         type: item.type || "N/A",
-        createdDate: new Date(item.createdDate).toLocaleString(),
+        createdDate: formatDate(item.createdDate),
+        // createdDate: item.createdDate ? format(new Date(item.createdDate)) : "N/A", // Using timeago.js
     }));
 
 

@@ -7,21 +7,28 @@ import Button from '@mui/material/Button';
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import Box from '@mui/material/Box';
+import { WhatsApp } from '@mui/icons-material';
+import { MdClose } from 'react-icons/md';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import toast from 'react-hot-toast';
+import { FaReply } from 'react-icons/fa6';
+import { BsTelephoneFill } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { Dialog } from 'primereact/dialog';
 
 import DataTable from '../components/Datatable'
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import InputField from '../components/InputField';
 import UniversalDatePicker from '../components/UniversalDatePicker';
 import UniversalButton from "../components/UniversalButton";
-import { WhatsApp } from '@mui/icons-material';
-import { MdClose } from 'react-icons/md';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
 import UniversalSkeleton from '../components/UniversalSkeleton';
 import Loader from '../components/Loader';
 import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp';
 import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
 import '../style.css'
+import whatsappImg from '../../assets/images/whatsappdummy.webp'
+
 
 const ManageTemplate = () => {
     const navigate = useNavigate();
@@ -46,6 +53,17 @@ const ManageTemplate = () => {
     const [wabaList, setWabaList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
     const [apiData, setApiData] = useState([]); // Stores unfiltered API response
+
+    // Reset filters when WABA changes
+    useEffect(() => {
+        setTemplateName("");
+        setSelectedCategory("");
+        setSelectedType("");
+        setSelectedStatus("");
+        setSelectedDate(null);
+        setFilteredData([]);
+        setApiData([]);
+    }, [selectedWaba]);
 
 
 
@@ -96,33 +114,32 @@ const ManageTemplate = () => {
     // ✅ Correct Filtering Function
     const handleSearch = () => {
         if (!selectedWaba) {
-            console.error("Please select a WABA account before searching.");
+            toast.error("Please select a WhatsApp Business Account (WABA) to proceed.");
             return;
         }
-
-        setIsFetching(true); // Show skeleton while filtering
-
-        const filtered = apiData.filter(item => {
-            // Convert values to lowercase & trim spaces
+        setIsFetching(true);
+        const filtered = apiData.filter((item) => {
             const itemCategory = item.category?.toLowerCase().trim() || "";
             const itemType = item.type?.toLowerCase().trim() || "";
             const itemStatus = item.status?.toLowerCase().trim() || "";
             const itemName = item.templateName?.toLowerCase().trim() || "";
-            const itemDate = item.createdDate ? new Date(item.createdDate).toISOString().split('T')[0] : "";
-
+            const itemDate = item.createdDate
+                ? new Date(item.createdDate).toISOString().split("T")[0]
+                : "";
             return (
-                (!selectedCategory || itemCategory === selectedCategory.toLowerCase().trim()) &&
+                (!selectedCategory ||
+                    itemCategory === selectedCategory.toLowerCase().trim()) &&
                 (!selectedType || itemType === selectedType.toLowerCase().trim()) &&
-                (!selectedStatus || itemStatus === selectedStatus.toLowerCase().trim()) &&
-                (!templateName || itemName.includes(templateName.toLowerCase().trim())) &&
-                (!selectedDate || itemDate === new Date(selectedDate).toISOString().split('T')[0])
+                (!selectedStatus ||
+                    itemStatus === selectedStatus.toLowerCase().trim()) &&
+                (!templateName ||
+                    itemName.includes(templateName.toLowerCase().trim())) &&
+                (!selectedDate ||
+                    itemDate === new Date(selectedDate).toISOString().split("T")[0])
             );
         });
-
-        setTimeout(() => {
-            setFilteredData(filtered);
-            setIsFetching(false);
-        }, 500); // Simulating API response delay
+        setFilteredData(filtered);
+        setIsFetching(false);
     };
 
 
@@ -151,10 +168,10 @@ const ManageTemplate = () => {
     };
 
 
-    const handleInputChange = (value) => {
-        // Apply logic for spaces or no spaces here
-        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
-        setValueWithoutSpaces(newValue);
+    // Prevent spaces in InputField
+    const handleInputChange = (e) => {
+        const newValue = e.target.value.replace(/\s/g, ""); // Remove spaces
+        setTemplateName(newValue);
     };
 
     return (
@@ -212,7 +229,7 @@ const ManageTemplate = () => {
                     <CustomTabPanel value={value} index={0} className='' >
 
                         <div className='w-full' >
-                            <div className='flex flex-wrap gap-4 items-center justify-between align-middle  w-full' >
+                            <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full' >
                                 <div>
                                     <h1 className='text-xl font-semibold text-gray-800 mb-4'>Manage Templates</h1>
                                 </div>
@@ -238,7 +255,7 @@ const ManageTemplate = () => {
                             </div>
 
                             <>
-                                <div className='flex flex-wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+                                <div className='flex flex-wrap gap-4 items-end justify-start align-middle pb-5 w-full'>
                                     <div className="w-full sm:w-56">
                                         <UniversalDatePicker
                                             id="manageTemplateDate"
@@ -275,7 +292,8 @@ const ManageTemplate = () => {
                                             name="manageTemplateName"
                                             label="Template Name"
                                             value={templateName}
-                                            onChange={(e) => setTemplateName(e.target.value)}
+                                            // onChange={(e) => setTemplateName(e.target.value)}
+                                            onChange={handleInputChange} // Updated function
                                             tooltipPlacement="right"
                                             tooltipContent="Your templatename should not contain spaces."
                                             placeholder="Template Name"
@@ -345,64 +363,80 @@ const ManageTemplate = () => {
                                             variant="primary"
                                         />
                                     </div>
-
                                 </div>
                                 {isFetching ? (
-                                    <UniversalSkeleton height='35rem' width='100%' />
+                                    <UniversalSkeleton height="35rem" width="100%" />
+                                ) : !selectedWaba ? (
+                                    // Case 1: Initial Load - Ask user to select WABA account
+                                    <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
+                                        <div className="text-center text-blue-500 p-8 shadow-2xl rounded-2xl">
+                                            <span className="text-2xl font-m font-medium tracking-wide">
+                                                Please select a WhatsApp Business Account (WABA) to
+                                                proceed.
+                                            </span>
+                                        </div>
+                                    </div>
                                 ) : filteredData.length === 0 ? (
-                                    <div className="border-2 border-dashed h-[60vh] bg-white border-blue-500 rounded-2xl w-full flex items-center justify-center">
-                                        <div className="text-center text-blue-500 p-8 shadow-2xl rounded-2xl" >
-                                            <span className='text-2xl font-m font-medium tracking-wide'>Select your Waba Account First!</span>
+                                    // Case 2: No data found after filtering
+                                    <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
+                                        <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl">
+                                            <span className="text-2xl font-m font-medium tracking-wide">
+                                                No matching records found. <br /> Please adjust your filters
+                                                and try again.
+                                            </span>
                                         </div>
                                     </div>
                                 ) : (
+                                    // Case 3: Show data in the table
                                     <DataTable
-                                        id='whatsappManageTemplateTable'
-                                        name='whatsappManageTemplateTable'
-                                        // handleView={handleView}
-                                        // handleDuplicate={handleDuplicate}
-                                        // handleDelete={handleDelete}
-                                        handleView={() => { }}
-                                        handleDuplicate={() => { }}
-                                        handleDelete={() => { }}
+                                        id="whatsappManageTemplateTable"
+                                        name="whatsappManageTemplateTable"
+                                        handleView={handleView}
+                                        handleDuplicate={handleDuplicate}
+                                        handleDelete={handleDelete}
+                                        // handleView={() => { }}
+                                        // handleDuplicate={() => { }}
+                                        // handleDelete={() => { }}
                                         wabaNumber={selectedWaba}
-                                        rows={filteredData}
+                                        // rows={filteredData}
+                                        data={filteredData}
                                     />
                                 )}
                             </>
 
                             <Modal open={open} onClose={handleClose} className='modal-view' >
-                                <Box sx={modalStyle} className="rounded-lg" >
-                                    <div className="modal-content my-2 mx-2 rounded-md">
-                                        <div className="fixed top-2  right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
+                                <Box sx={modalStyle} >
+                                    <div className="modal-content p-2 pt-5 rounded-xl">
+                                        <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
                                             <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
                                         </div>
-                                        <div className="modal-body border-2 rounded-lg border-gray-200">
-                                            <div className="row">
-                                                <div className="col-lg-12">
-                                                    <div className="mainbox p-2">
-                                                        <span className="main-icon">
-                                                            <WhatsApp />
-                                                        </span>
-                                                        <div className="imgbox ">
-                                                            <img src="https://y20india.in/wp-content/uploads/2024/05/Best-WhatsApp-Status.jpeg" alt="" />
-                                                        </div>
-                                                        <div className="contentbox text-sm">
-                                                            <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
-                                                            <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
-                                                            <p>Let's continue to paint the digital landscape with creativity, innovation and strategic brilliance!✨✨</p>
-                                                            <p>Here's to a colorful journey ahead!🎉🎊</p>
-                                                            <p>Happy Holi!🎇✨</p>
-                                                            <p>Best Regards,🎊🎉<br />[Team Celitix]</p>
-                                                        </div>
-                                                        <div className="btnbox">
-                                                            <a href="#"><i className="bi bi-telephone-fill mr-2"></i>Contact Us</a>
-                                                        </div>
-                                                        <div className="btnbox">
-                                                            <a href="#"><i className="bi bi-box-arrow-up-right mr-2"></i>Visit Us</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                        <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
+                                            <div className="imgbox">
+                                                <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
+                                            </div>
+                                            <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
+                                                <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
+                                                <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
+                                                <p>Here's to a colorful journey ahead!🎉🎊</p>
+                                                <p>Happy Holi!🎇✨</p>
+                                                <p>Best Regards,🎊🎉</p>
+                                                <p>Team Celitix</p>
+                                            </div>
+                                            <div className='flex flex-col gap-2  '>
+                                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md '>
+                                                    <BsTelephoneFill className='mr-2' />
+                                                    Contact us
+                                                </button>
+                                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md '>
+                                                    <FaExternalLinkAlt className='mr-2' />
+                                                    Visit us
+                                                </button>
+                                                <button
+                                                    className='flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full'
+                                                >
+                                                    <FaReply className='mr-2' />
+                                                    View more
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -431,7 +465,7 @@ const modalStyle = {
     width: '400px',
     bgcolor: 'background.paper',
     boxShadow: 24,
-    p: 4,
+    p: 2,
     borderRadius: "20px"
 };
 
