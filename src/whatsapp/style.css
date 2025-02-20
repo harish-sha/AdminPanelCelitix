@@ -1,6 +1,5 @@
 .control-dots {
   position: absolute !important;
-  /* top: 10px !important; */
   bottom: 0px !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -9,4 +8,12 @@
   z-index: 1 !important;
 }
 
+.p-dialog .p-dialog-header {
+  padding-top: 1rem;
+  padding-bottom: 0.7rem;
+}
 
+.p-dialog .p-dialog-header .p-dialog-title {
+  font-weight: 600;
+  font-size: 1rem;
+}

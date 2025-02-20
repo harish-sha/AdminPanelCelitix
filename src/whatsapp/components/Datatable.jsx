@@ -7,10 +7,19 @@ import usePagination from '@mui/material/usePagination';
 import { styled } from '@mui/material/styles';
 import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
 import { Paper, Typography, Box, Button } from '@mui/material';
-import { getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+import Modal from '@mui/material/Modal';
+import { MdClose } from 'react-icons/md';
+import { FaReply } from 'react-icons/fa6';
+import { BsTelephoneFill } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { format } from 'timeago.js'
 import toast from 'react-hot-toast';
+// import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
 
+
+import { getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+import whatsappImg from '../../assets/images/whatsappdummy.webp'
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -62,10 +71,30 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const DataTable = ({ id, wabaNumber, data, name, handleView, handleDuplicate, handleDelete }) => {
+const DataTable = ({ id, wabaNumber, data, name }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [templateData, setTemplateData] = useState([]);
+    const [selectedRow, setSelectedRow] = useState(null);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+    const [dialogVisible, setDialogVisible] = useState(false);
+
+    const handleView = (row) => {
+        setSelectedRow(row);
+        setDialogVisible(true);
+    };
+
+    const handleClose = () => {
+        setDialogVisible(false);
+    };
+
+
+    const handleDuplicate = (row) => {
+        // Implement duplicate logic here
+    };
+
+    const handleDelete = (row) => {
+        // Implement delete logic here
+    };
 
     // Fetch Templates when WABA number changes
     useEffect(() => {
@@ -145,24 +174,13 @@ const DataTable = ({ id, wabaNumber, data, name, handleView, handleDuplicate, ha
     // const rows = Array.from({ length: 500 }, (_, i) => ({
     //     id: i + 1,
     //     sn: i + 1,
-    //     name: 'Ram',
+    //     templateName: 'Ram',
     //     category: 'Sharma',
     //     status: 66,
     //     type: '5',
     //     health: 'High',
-    //     createdat: '12/10/2024',
+    //     createdDate: '12/10/2024',
     //     action: 'True',
-    // }));
-
-    // Process API response into DataGrid rows
-    // const rows = templateData.map((item, index) => ({
-    //     id: item.templateSrno,
-    //     sn: index + 1,
-    //     templateName: item.templateName || "N/A",
-    //     category: item.category || "N/A",
-    //     status: item.status || "N/A",
-    //     type: item.type || "N/A",
-    //     createdDate: new Date(item.createdDate).toLocaleString(),
     // }));
 
     const rows = data.map((item, index) => ({
@@ -239,51 +257,150 @@ const DataTable = ({ id, wabaNumber, data, name, handleView, handleDuplicate, ha
 
 
     return (
-        <Paper sx={{ height: 558 }}>
-            <DataGrid
-                id={id}
-                name={name}
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[10, 20, 50]}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                checkboxSelection
-                rowHeight={45}
-                slots={{ footer: CustomFooter }}
-                slotProps={{ footer: { totalRecords: rows.length } }}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                disableRowSelectionOnClick
-                // autoPageSize
-                disableColumnResize
-                disableColumnMenu
-                sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        color: "#193cb8",
-                        fontSize: "14px",
-                        fontWeight: "bold !important",
-                    },
-                    "& .MuiDataGrid-row--borderBottom": {
-                        backgroundColor: "#e6f4ff !important",
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                        // display: "none",
-                        color: "#ccc",
-                    },
-                }}
-            />
-        </Paper>
+        <>
+            <Paper sx={{ height: 558 }}>
+                <DataGrid
+                    id={id}
+                    name={name}
+                    rows={rows}
+                    columns={columns}
+                    initialState={{ pagination: { paginationModel } }}
+                    pageSizeOptions={[10, 20, 50]}
+                    pagination
+                    paginationModel={paginationModel}
+                    onPaginationModelChange={setPaginationModel}
+                    checkboxSelection
+                    rowHeight={45}
+                    slots={{ footer: CustomFooter }}
+                    slotProps={{ footer: { totalRecords: rows.length } }}
+                    onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                    disableRowSelectionOnClick
+                    // autoPageSize
+                    disableColumnResize
+                    disableColumnMenu
+                    sx={{
+                        border: 0,
+                        "& .MuiDataGrid-cellCheckbox": {
+                            outline: "none !important",
+                        },
+                        "& .MuiDataGrid-cell": {
+                            outline: "none !important",
+                        },
+                        "& .MuiDataGrid-columnHeaders": {
+                            color: "#193cb8",
+                            fontSize: "14px",
+                            fontWeight: "bold !important",
+                        },
+                        "& .MuiDataGrid-row--borderBottom": {
+                            backgroundColor: "#e6f4ff !important",
+                        },
+                        "& .MuiDataGrid-columnSeparator": {
+                            // display: "none",
+                            color: "#ccc",
+                        },
+                    }}
+                />
+            </Paper>
 
+
+            {/* Mui Dialog */}
+
+            {/* <Modal open={open} onClose={handleClose} className='modal-view'>
+                <Box sx={modalStyle} >
+                    <div className="modal-content p-2 pt-5 rounded-xl">
+                        <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
+                            <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
+                        </div>
+                        <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
+                            <div className="imgbox">
+                                <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
+                            </div>
+                            <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
+                                <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
+                                <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
+                                <p>Here's to a colorful journey ahead!🎉🎊</p>
+                                <p>Happy Holi!🎇✨</p>
+                                <p>Best Regards,🎊🎉</p>
+                                <p>Team Celitix</p>
+                            </div>
+                            <div className='flex flex-col gap-2'>
+                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md '>
+                                    <BsTelephoneFill className='mr-2' />
+                                    Contact us
+                                </button>
+                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md '>
+                                    <FaExternalLinkAlt className='mr-2' />
+                                    Visit us
+                                </button>
+                                <button
+                                    className='flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full'
+                                >
+                                    <FaReply className='mr-2' />
+                                    View more
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </Box>
+            </Modal> */}
+
+            {/* PrimeReact Dialog */}
+            <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "25rem" }} onHide={handleClose} draggable={false}>
+                {/* <div>
+                    <h3>{selectedRow?.templateName}</h3>
+                    <p>Category: {selectedRow?.category}</p>
+                    <p>Status: {selectedRow?.status}</p>
+                    <p>Created At: {selectedRow?.createdDate}</p>
+                </div> */}
+                <div className="modal-content rounded-xl">
+                    <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
+                        <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
+                    </div>
+                    <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
+                        <div className="imgbox">
+                            <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
+                        </div>
+                        <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
+                            <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
+                            <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
+                            <p>Here's to a colorful journey ahead!🎉🎊</p>
+                            <p>Happy Holi!🎇✨</p>
+                            <p>Best Regards,🎊🎉</p>
+                            <p>Team Celitix</p>
+                        </div>
+                        <div className='flex flex-col gap-2'>
+                            <button className='flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md '>
+                                <BsTelephoneFill className='mr-2' />
+                                Contact us
+                            </button>
+                            <button className='flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md '>
+                                <FaExternalLinkAlt className='mr-2' />
+                                Visit us
+                            </button>
+                            <button
+                                className='flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full'
+                            >
+                                <FaReply className='mr-2' />
+                                View more
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Dialog>
+        </>
     );
+};
+
+const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '400px',
+    bgcolor: 'background.paper',
+    boxShadow: 24,
+    p: 2,
+    borderRadius: "20px"
 };
 
 export default DataTable;

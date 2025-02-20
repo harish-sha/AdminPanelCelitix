@@ -12,7 +12,7 @@ import toast from 'react-hot-toast';
 import { SiGoogledocs } from "react-icons/si";
 import clsx from 'clsx';
 
-const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
+const DocsSidebar = ({ isCollapsed, setIsCollapsed }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
     const location = useLocation();
     const dropdownRefs = useRef({});
@@ -70,165 +70,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
             icon: <FaHome />,
             label: 'Home',
             type: "single",
-            to: "/",
-        },
-        {
-            name: 'Dummy',
-            icon: <BlockOutlinedIcon fontSize='' />,
-            label: 'Dummy',
-            type: "single",
-            to: "/dummy",
-        },
-        {
-            name: 'SMS',
-            icon: <LuMessageSquareMore />,
-            label: 'SMS',
-            type: "dropdown",
-            links: [
-                { to: '/sendsms', label: 'Send SMS' },
-                { to: '/smsreports', label: 'Reports' },
-                { to: '/smsdlttemplates', label: 'DLT Template' },
-                { to: '/smswishmanagement', label: 'Wish Management' },
-            ],
-        },
-        {
-            name: 'Two Way SMS',
-            icon: <LuMessageSquareMore />,
-            label: 'Two Way SMS',
-            type: "dropdown",
-            links: [
-                { to: '/managekeywords', label: 'Manage Keyword' },
-                { to: '/twowayreports', label: 'Reports' },
-                { to: '/twowaydlttemplates', label: 'DLT Template' },
-            ],
-        },
-        {
-            name: 'RCS',
-            icon: <LuMessageSquareMore />,
-            label: 'RCS',
-            type: "dropdown",
-            links: [
-                { to: '/sendrcs', label: 'Send RCS' },
-                { to: '/rcsmanagetemplate', label: 'Manage Template' },
-                { to: '/rcslivechats', label: 'Live Chats' },
-                { to: '/rcssuggestionreport', label: 'Suggestion Report' },
-                { to: '/rcsdeliveryreport', label: 'Delivery Report' },
-            ],
-        },
-        {
-            name: 'WhatsApp',
-            icon: <FaWhatsapp />,
-            label: 'WhatsApp',
-            type: "dropdown",
-            links: [
-                { to: '/wlaunchcampaign', label: 'Launch Campaigns' },
-                { to: '/wlivechat', label: 'Live Chats' },
-                { to: '/wmanagecampaign', label: 'Manage Campaigns' },
-                { to: '/managetemplate', label: 'Manage Templates' },
-                { to: '/wmanageoptin', label: 'Manage Optin' },
-                { to: '/wchatwidget', label: 'Chat Widget' },
-                { to: '/wqrcode', label: 'QR Code' },
-                { to: '/wlcsetting', label: 'Live Chats Settings' },
-                { to: '/wmanagewaba', label: 'Manage WABA' },
-                { to: '/wwhatsappconversation', label: 'WhatsApp Conversation' },
-            ],
-        },
-        {
-            name: 'Number Lookup',
-            icon: <LuMessageSquareMore />,
-            label: 'Number Lookup',
-            type: "dropdown",
-            links: [
-                { to: '/hlrlookup', label: 'HLR Lookup' },
-                { to: '/hlrlookupreports', label: 'HLR Lookup Reports' },
-            ],
-        },
-        {
-            name: 'App Authenticator',
-            icon: <SiGoogleauthenticator />,
-            label: 'App Authenticator',
-            type: "dropdown",
-            links: [
-                { to: '/authsettings', label: 'Settings' },
-                { to: '/authreports', label: 'Reports' },
-            ],
-        },
-        {
-            name: 'E-mail',
-            icon: <MdOutlineEmail />,
-            label: 'E-mail',
-            type: "dropdown",
-            links: [
-                { to: '/emailtemplate', label: 'Email Template' },
-                { to: '/emailreports', label: 'Reports' },
-            ],
-        },
-        {
-            name: 'OBD',
-            icon: <MdOutlineEmail />,
-            label: 'OBD',
-            type: "dropdown",
-            links: [
-                { to: '/obdcreatecampaign', label: 'Create Campaign' },
-                { to: '/obdreports', label: 'Reports' },
-                { to: '/obdmanagevoice', label: 'Manage Voice Clips' },
-            ],
-        },
-        {
-            name: 'IBD',
-            icon: <MdOutlineEmail />,
-            label: 'IBD',
-            type: "dropdown",
-            links: [
-                { to: '/ibdcallhistory', label: 'Call History' },
-                { to: '/ibdmanageexecutive', label: 'Manage Executive' },
-                { to: '/ibdivrflow', label: 'IVR Flow' },
-                { to: '/ibdsettings', label: 'Settings' },
-            ],
-        },
-        {
-            name: 'Missed Call',
-            icon: <MdOutlineEmail />,
-            label: 'Missed Call',
-            type: "dropdown",
-            links: [
-                { to: '/ibdcallhistory', label: 'Call History' },
-                { to: '/ibdsettings', label: 'Settings' },
-            ],
-        },
-        {
-            name: 'Click-2-Call',
-            icon: <MdOutlineEmail />,
-            label: 'Click-2-Call',
-            type: "dropdown",
-            links: [
-                { to: '/clicktohistory', label: 'Call History' },
-                { to: '/clicktosettings', label: 'Settings' },
-            ],
-        },
-        {
-            name: 'settings',
-            icon: <FaCog />,
-            label: 'Settings',
-            type: "dropdown",
-            links: [
-                { to: '/mainsettings', label: 'Profile' },
-                { to: '/mainaccount', label: 'Account' },
-            ],
-        },
-        {
-            name: 'apiDocs',
-            icon: <SiGoogledocs />,
-            label: 'Api Docs',
-            type: "single",
-            onClick: () => navigate('/apiDocs')
-        },
-        {
-            name: 'Logout',
-            icon: <FaSignOutAlt />,
-            label: 'Logout',
-            type: "single",
-            onClick: handleLogout
+            to: "whatsappDocs",
         },
     ];
 
@@ -350,7 +192,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed }) => {
     );
 };
 
-export default Sidebar;
+export default DocsSidebar;
 
 
 

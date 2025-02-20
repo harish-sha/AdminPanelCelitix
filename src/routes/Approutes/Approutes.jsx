@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Mainlayout from '../../mainlayout/Mainlayout';
-import Dashboard from '../../mainlayout/dashboard/Dashboard';
+import Dashboard from '../../dashboard/Dashboard';
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
 import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';

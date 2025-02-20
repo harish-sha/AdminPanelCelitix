@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getUserDetails } from "../../../apis/user";
+import { getUserDetails } from "../../../apis/user/user.js";
 import InputField from "../../../components/layout/InputField";
 import toast from "react-hot-toast";
 import Loader from "../../../whatsapp/components/Loader";

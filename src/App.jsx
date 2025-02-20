@@ -16,8 +16,12 @@ const App = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/*" element={<Approutes />} />
-          <Route path="/*" element={<Apiroutes />} />
         </Route>
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/apiDocs/*" element={<Apiroutes />} />
+        </Route>
+
 
         <Route path="*" element={
           <div className='flex items-center justify-center min-h-[100vh]'>

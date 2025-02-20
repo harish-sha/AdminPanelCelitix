@@ -2,20 +2,12 @@ import React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from "react-router-dom";
 import { IoSearch } from "react-icons/io5";
-import Modal from '@mui/material/Modal';
-import Button from '@mui/material/Button';
 import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
 import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import Box from '@mui/material/Box';
-import { WhatsApp } from '@mui/icons-material';
-import { MdClose } from 'react-icons/md';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import toast from 'react-hot-toast';
-import { FaReply } from 'react-icons/fa6';
-import { BsTelephoneFill } from "react-icons/bs";
-import { FaExternalLinkAlt } from "react-icons/fa";
-import { Dialog } from 'primereact/dialog';
 
 import DataTable from '../components/Datatable'
 import AnimatedDropdown from '../components/AnimatedDropdown';
@@ -24,10 +16,9 @@ import UniversalDatePicker from '../components/UniversalDatePicker';
 import UniversalButton from "../components/UniversalButton";
 import UniversalSkeleton from '../components/UniversalSkeleton';
 import Loader from '../components/Loader';
-import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp';
+import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
 import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
 import '../style.css'
-import whatsappImg from '../../assets/images/whatsappdummy.webp'
 
 
 const ManageTemplate = () => {
@@ -36,10 +27,6 @@ const ManageTemplate = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [value, setValue] = useState(0);
-
-    const [valueWithoutSpaces, setValueWithoutSpaces] = useState("");
-    const [open, setOpen] = useState(false);
-    const [selectedRow, setSelectedRow] = useState(null);
 
     // Filters
     const [selectedDate, setSelectedDate] = useState(null);
@@ -52,7 +39,7 @@ const ManageTemplate = () => {
     // Data
     const [wabaList, setWabaList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
-    const [apiData, setApiData] = useState([]); // Stores unfiltered API response
+    const [apiData, setApiData] = useState([]);
 
     // Reset filters when WABA changes
     useEffect(() => {
@@ -65,12 +52,19 @@ const ManageTemplate = () => {
         setApiData([]);
     }, [selectedWaba]);
 
+    const handleChange = (newValue) => {
+        setValue(newValue);
+    };
 
+    const handleInputChange = (e) => {
+        const newValue = e.target.value.replace(/\s/g, "");
+        setTemplateName(newValue);
+    };
 
     // Fetch WABA List
     useEffect(() => {
         const fetchWabaList = async () => {
-            setIsLoading(true); // Show loader while fetching
+            setIsLoading(true);
             try {
                 const response = await getWabaList();
                 if (response) {
@@ -81,7 +75,7 @@ const ManageTemplate = () => {
             } catch (error) {
                 console.error("Error fetching WABA List:", error);
             }
-            setIsLoading(false); // Hide loader after fetching
+            setIsLoading(false);
         };
         fetchWabaList();
     }, []);
@@ -96,7 +90,7 @@ const ManageTemplate = () => {
                 const response = await getWabaTemplateDetails(selectedWaba);
                 if (response) {
                     setApiData(response);
-                    setFilteredData(response); // Initially, show all data
+                    setFilteredData(response);
                 } else {
                     setApiData([]);
                     setFilteredData([]);
@@ -123,9 +117,13 @@ const ManageTemplate = () => {
             const itemType = item.type?.toLowerCase().trim() || "";
             const itemStatus = item.status?.toLowerCase().trim() || "";
             const itemName = item.templateName?.toLowerCase().trim() || "";
-            const itemDate = item.createdDate
-                ? new Date(item.createdDate).toISOString().split("T")[0]
-                : "";
+            const itemDateLocal = new Date(item.createdDate)
+                .toLocaleDateString("en-CA");
+            let selectedDateLocal = "";
+            if (selectedDate) {
+                selectedDateLocal = new Date(selectedDate)
+                    .toLocaleDateString("en-CA");
+            }
             return (
                 (!selectedCategory ||
                     itemCategory === selectedCategory.toLowerCase().trim()) &&
@@ -134,45 +132,16 @@ const ManageTemplate = () => {
                     itemStatus === selectedStatus.toLowerCase().trim()) &&
                 (!templateName ||
                     itemName.includes(templateName.toLowerCase().trim())) &&
-                (!selectedDate ||
-                    itemDate === new Date(selectedDate).toISOString().split("T")[0])
+                (!selectedDate || itemDateLocal === selectedDateLocal)
             );
         });
-        setFilteredData(filtered);
-        setIsFetching(false);
+
+        setTimeout(() => {
+            setFilteredData(filtered);
+            setIsFetching(false);
+        }, 300)
     };
 
-
-
-
-
-    const handleView = (row) => {
-        setSelectedRow(row);
-        setOpen(true);
-    };
-
-    const handleDuplicate = (row) => {
-        // Implement duplicate logic here
-    };
-
-    const handleDelete = (row) => {
-        // Implement delete logic here
-    };
-
-    const handleClose = () => {
-        setOpen(false);
-    };
-
-    const handleChange = (event, newValue) => {
-        setValue(newValue);
-    };
-
-
-    // Prevent spaces in InputField
-    const handleInputChange = (e) => {
-        const newValue = e.target.value.replace(/\s/g, ""); // Remove spaces
-        setTemplateName(newValue);
-    };
 
     return (
         <div className='w-full ' >
@@ -255,7 +224,7 @@ const ManageTemplate = () => {
                             </div>
 
                             <>
-                                <div className='flex flex-wrap gap-4 items-end justify-start align-middle pb-5 w-full'>
+                                <div className='flex flex-wrap gap-4 items-end justify-start  mb-5 w-full'>
                                     <div className="w-full sm:w-56">
                                         <UniversalDatePicker
                                             id="manageTemplateDate"
@@ -292,8 +261,7 @@ const ManageTemplate = () => {
                                             name="manageTemplateName"
                                             label="Template Name"
                                             value={templateName}
-                                            // onChange={(e) => setTemplateName(e.target.value)}
-                                            onChange={handleInputChange} // Updated function
+                                            onChange={handleInputChange}
                                             tooltipPlacement="right"
                                             tooltipContent="Your templatename should not contain spaces."
                                             placeholder="Template Name"
@@ -391,57 +359,11 @@ const ManageTemplate = () => {
                                     <DataTable
                                         id="whatsappManageTemplateTable"
                                         name="whatsappManageTemplateTable"
-                                        handleView={handleView}
-                                        handleDuplicate={handleDuplicate}
-                                        handleDelete={handleDelete}
-                                        // handleView={() => { }}
-                                        // handleDuplicate={() => { }}
-                                        // handleDelete={() => { }}
                                         wabaNumber={selectedWaba}
-                                        // rows={filteredData}
                                         data={filteredData}
                                     />
                                 )}
                             </>
-
-                            <Modal open={open} onClose={handleClose} className='modal-view' >
-                                <Box sx={modalStyle} >
-                                    <div className="modal-content p-2 pt-5 rounded-xl">
-                                        <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
-                                            <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
-                                        </div>
-                                        <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
-                                            <div className="imgbox">
-                                                <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
-                                            </div>
-                                            <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
-                                                <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
-                                                <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
-                                                <p>Here's to a colorful journey ahead!🎉🎊</p>
-                                                <p>Happy Holi!🎇✨</p>
-                                                <p>Best Regards,🎊🎉</p>
-                                                <p>Team Celitix</p>
-                                            </div>
-                                            <div className='flex flex-col gap-2  '>
-                                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md '>
-                                                    <BsTelephoneFill className='mr-2' />
-                                                    Contact us
-                                                </button>
-                                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md '>
-                                                    <FaExternalLinkAlt className='mr-2' />
-                                                    Visit us
-                                                </button>
-                                                <button
-                                                    className='flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full'
-                                                >
-                                                    <FaReply className='mr-2' />
-                                                    View more
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </Box>
-                            </Modal>
                         </div>
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
@@ -456,17 +378,5 @@ const ManageTemplate = () => {
 
     )
 }
-
-const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '400px',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 2,
-    borderRadius: "20px"
-};
 
 export default ManageTemplate

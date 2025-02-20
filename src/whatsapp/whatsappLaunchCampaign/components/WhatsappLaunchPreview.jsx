@@ -85,8 +85,8 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
             headerComponent?.example?.header_handle?.[0] && (
               <div className="mb-2 flex justify-center">
                 <img
-                  // src={headerComponent.example.header_handle[0]}
-                  src={whatsappImg}
+                  src={headerComponent.example.header_handle[0]}
+                  // src={whatsappImg}
                   alt="Template Preview"
                   className="w-full h-48 object-cover rounded-md border border-gray-200  bg-center bg-no-repeat"
                 />
