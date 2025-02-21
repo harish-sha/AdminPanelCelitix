@@ -30,7 +30,7 @@ const WhatsappLaunchCampaign = () => {
     const [fileHeaders, setFileHeaders] = useState([]);
     const [templateList, setTemplateList] = useState([]);
     const [imagePreview, setImagePreview] = useState(null)
-    const [sending, setSending] = useState(false); // State to track campaign submission
+    const [sending, setSending] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
 
 
@@ -154,14 +154,14 @@ const WhatsappLaunchCampaign = () => {
         setSelectedWaba(value);
 
         // Reset all dependent states when WABA changes
-        setSelectedTemplate("");  // Clear selected template
-        setTemplateDataNew(null); // Reset template data
-        setFormData({});  // Clear form inputs
-        setImagePreview(null);  // Remove uploaded image
-        setSelectedOption("option2"); // Reset radio button to default
-        setFileHeaders([]);  // Clear uploaded file headers
-        setTemplateList([]); // Clear template list options
-        setTemplateOptions([]); // Clear dropdown options
+        setSelectedTemplate("");
+        setTemplateDataNew(null);
+        setFormData({});
+        setImagePreview(null);
+        setSelectedOption("option2");
+        setFileHeaders([]);
+        setTemplateList([]);
+        setTemplateOptions([]);
 
         const selectedWabaDetails = wabaList.find((waba) => waba.mobileNo === value);
         setSelectedWabaMobileNo(selectedWabaDetails ? [selectedWabaDetails.mobileNo] : []);
@@ -233,7 +233,7 @@ const WhatsappLaunchCampaign = () => {
                 <>
                     <div className='container-fluid'>
                         <div className="flex flex-wrap">
-                            <div className="col-lg-8 w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
+                            <div className=" w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
                                 <div className='p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 w-full' >
                                     <div className='flex items-center flex-wrap justify-between gap-2 mb-3' >
                                         <div className='flex-1'>
@@ -314,9 +314,9 @@ const WhatsappLaunchCampaign = () => {
                                         )}
                                     </div>
                                 </div>
-                                <div className="lg:flex-1 w-full">
+                                <div className="lg:flex-1 lg:w-0 w-full">
                                     {isFetching ? (
-                                        <UniversalSkeleton className='h-full' height="35rem" width="100%" />
+                                        <UniversalSkeleton className='h-full' height="44.5rem" width="100%" />
                                     ) : (
                                         <RadioButtonLaunchCampaign
                                             onOptionChange={handleOptionChange}
@@ -327,11 +327,10 @@ const WhatsappLaunchCampaign = () => {
                                 </div>
                             </div>
 
-
-                            <div className="col-lg-4 w-full lg:w-1/3  p-0 flex justify-center items-start lg:mt-0 mt-5">
+                            <div className="w-full lg:w-1/3 px-5 lg:mt-0 mt-5 min-h-[80vh]">
                                 {isFetching ? (
-                                    <div className='w-100' >
-                                        <UniversalSkeleton className='' height="35rem" width="100%" />
+                                    <div className='w-full' >
+                                        <UniversalSkeleton className='' height="46rem" width="100%" />
                                     </div>
                                 ) : (
                                     <WhatsappLaunchPreview

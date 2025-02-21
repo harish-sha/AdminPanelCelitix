@@ -15,34 +15,37 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
 
   if (!templateDataNew || !templateDataNew.components) {
     return (
-      <div className='px-3 py-3 rounded-xl flex  bg-gray-200  min-h-100'>
-        <div className="rounded-xl shadow-md bg-gray-100 transition-all duration-300 w-100">
-          <div className='flex items-center justify-between bg-[#128C7E] text-white px-4 py-2 rounded-t-md'>
-            <h2 className='text-md font-medium tracking-wide'>Template Preview</h2>
-            <p className='text-sm'>
-              <WhatsApp />
-            </p>
-          </div>
-          <div className='bg-white rounded-b-md p-3 flex flex-col gap-3'>
-            <img src={whatsappImg} alt="whatsapp-dummy-image" className='w-full h-48 object-cover rounded-md bg-center bg-no-repeat border border-gray-200' />
-            <div className="border border-gray-300 rounded-md p-2 h-30 flex items-center justify-center w-full bg-gray-100 text-center text-sm">
-              No template selected
+      <div className='p-3 rounded-xl flex items-center justify-center h-full  bg-gray-200'>
+        <div className="w-full bg-gray-100 h-full flex items-center justify-center rounded-lg shadow-md" >
+
+          <div className="rounded-xl shadow-md  transition-all ease-in duration-300 w-100">
+            <div className='flex items-center justify-between bg-[#128C7E] text-white px-4 py-2 rounded-t-md'>
+              <h2 className='text-md font-medium tracking-wide'>Template Preview</h2>
+              <p className='text-sm'>
+                <WhatsApp />
+              </p>
             </div>
-            <div className='flex flex-col gap-2  '>
-              <button className='flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md '>
-                <BsTelephoneFill className='mr-2' />
-                Contact us
-              </button>
-              <button className='flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-md '>
-                <FaExternalLinkAlt className='mr-2' />
-                Visit us
-              </button>
-              <button
-                className='flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm w-full'
-              >
-                <FaReply className='mr-2' />
-                View more
-              </button>
+            <div className='bg-white rounded-b-md p-3 flex flex-col gap-3'>
+              <img src={whatsappImg} alt="whatsapp-dummy-image" className='w-full h-48 object-cover rounded-md bg-center bg-no-repeat border border-gray-200' />
+              <div className="border border-gray-300 rounded-md p-2 h-30 flex items-center justify-center w-full bg-gray-100 text-center text-sm">
+                No template selected
+              </div>
+              <div className='flex flex-col gap-2'>
+                <button className='flex items-center justify-center px-4 py-2 bg-blue-500 text-white rounded-md '>
+                  <BsTelephoneFill className='mr-2' />
+                  Contact us
+                </button>
+                <button className='flex items-center justify-center px-4 py-2 bg-green-500 text-white rounded-md '>
+                  <FaExternalLinkAlt className='mr-2' />
+                  Visit us
+                </button>
+                <button
+                  className='flex items-center justify-center px-4 py-2 bg-gray-200 text-gray-800 rounded-md text-sm w-full'
+                >
+                  <FaReply className='mr-2' />
+                  View more
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -62,61 +65,65 @@ const WhatsappLaunchPreview = ({ templateDataNew, formData, uploadedImage }) => 
   );
 
   return (
-    <div className='px-3 py-3 rounded-xl flex  bg-gray-200  min-h-100' >
-      <div className="rounded-xl shadow-md bg-gray-100 transition-all duration-300 w-100">
+    <div className='p-3 rounded-xl flex  items-center justify-center h-full  bg-gray-200' >
 
-        <div className='flex items-center justify-between bg-[#128C7E] text-white px-4 py-2 rounded-t-md'>
-          <h2 className='text-md font-medium tracking-wide'>Template Preview</h2>
-          <p className='text-sm'>
-            <WhatsApp />
-          </p>
-        </div>
 
-        <div className="bg-white rounded-b-md p-3 flex flex-col gap-3">
-          {uploadedImage ? (
-            <div className="mb-2 flex justify-center">
-              <img
-                src={uploadedImage}
-                alt="Uploaded Preview"
-                className="w-full h-48 object-contain border border-gray-200 rounded-md bg-center bg-no-repeat"
-              />
-            </div>
-          ) : (
-            headerComponent?.example?.header_handle?.[0] && (
+      <div className="w-full bg-gray-100 h-full flex items-center  justify-center rounded-lg shadow-md transition-all" >
+
+        <div className="rounded-xl shadow-md  transition-all ease-in duration-300 w-100 ">
+
+          <div className='flex items-center justify-between bg-[#128C7E] text-white px-4 py-2 rounded-t-md'>
+            <h2 className='text-md font-medium tracking-wide'>Template Preview</h2>
+            <p className='text-sm'>
+              <WhatsApp />
+            </p>
+          </div>
+
+          <div className="bg-white rounded-b-md p-3 flex flex-col gap-3">
+            {uploadedImage ? (
               <div className="mb-2 flex justify-center">
                 <img
-                  src={headerComponent.example.header_handle[0]}
-                  // src={whatsappImg}
-                  alt="Template Preview"
-                  className="w-full h-48 object-cover rounded-md border border-gray-200  bg-center bg-no-repeat"
+                  src={uploadedImage}
+                  alt="Uploaded Preview"
+                  className="w-full h-48 object-contain border border-gray-200 rounded-md bg-center bg-no-repeat"
                 />
               </div>
-            )
-          )}
+            ) : (
+              headerComponent?.example?.header_handle?.[0] && (
+                <div className="mb-2 flex justify-center">
+                  <img
+                    src={headerComponent.example.header_handle[0]}
+                    // src={whatsappImg}
+                    alt="Template Preview"
+                    className="w-full h-48 object-contain rounded-md border border-gray-200  bg-center bg-no-repeat"
+                  />
+                </div>
+              )
+            )}
 
-          {bodyComponent && (
-            <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
-              {finalMessage}
-            </div>
-          )}
+            {bodyComponent && (
+              <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
+                {finalMessage}
+              </div>
+            )}
 
 
-          {buttonsComponent && buttonsComponent.buttons.length > 0 && (
-            <div className="mt-1 flex flex-col gap-2">
-              {buttonsComponent && buttonsComponent.buttons.map((button, index) => {
-                let hrefValue = button.url ? replaceVariablesInText(button.url, formData, "button") : `tel:${button.phone_number}`;
+            {buttonsComponent && buttonsComponent.buttons.length > 0 && (
+              <div className="mt-1 flex flex-col gap-2">
+                {buttonsComponent && buttonsComponent.buttons.map((button, index) => {
+                  let hrefValue = button.url ? replaceVariablesInText(button.url, formData, "button") : `tel:${button.phone_number}`;
 
-                return (
-                  <a key={index} href={hrefValue} title={hrefValue} target="_blank" rel="noopener noreferrer" className="bg-blue-400 text-white py-2 px-4 rounded-md text-center block">
-                    {button.text}
-                  </a>
-                );
-              })}
-            </div>
-          )}
+                  return (
+                    <a key={index} href={hrefValue} title={hrefValue} target="_blank" rel="noopener noreferrer" className="bg-blue-400 text-white py-2 px-4 rounded-md text-center block">
+                      {button.text}
+                    </a>
+                  );
+                })}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-
     </div>
   );
 };

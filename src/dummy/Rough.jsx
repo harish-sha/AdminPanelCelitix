@@ -1,211 +1,71 @@
-import React, { useEffect, useState } from "react";
-import IconButton from "@mui/material/IconButton";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import usePagination from "@mui/material/usePagination";
-import { styled } from "@mui/material/styles";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { Paper, Typography, Box, Button } from "@mui/material";
-import { getWabaTemplateDetails } from "../../apis/whatsapp/whatsapp.js";
-import { format } from "timeago.js";
-import toast from "react-hot-toast";
-import { Dialog } from "primereact/dialog";
+const handleSubmitCampaign = async () => {
+    if (!inputValue) {
+        toast.error("Please enter campaign name!");
+        return;
+    }
+    // if (!selectedWaba) {
+    //     toast.error("Please fill all required fields.");
+    //     return;
+    // }
+    // if (!selectedTemplate) {
+    //     toast.error("Please fill all required fields.");
+    //     return;
+    // }
 
-const PaginationList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "8px",
-});
+    const campaignData = {
+        mobileIndex: "0",
+        ContentMessage: formData?.message || "",
+        wabaNumber: selectedWaba,
+        campaignName: inputValue,
+        templateSrno: templateDataNew?.id || "",
+        templateName: selectedTemplate,
+        templateLanguage: templateDataNew?.language || "en",
+        templateCategory: templateDataNew?.category || "Marketing",
+        templateType: templateDataNew?.type || "default",
+        url: "",
+        variables: [],
+        cardsVariables: [],
+        ScheduleCheck: "0",
+        imgCard: imagePreview ? [imagePreview] : [],
+        xlsxpath: "",
+        totalRecords: "5",
+        attachmentfile: "",
+        urlValues: "",
+        urlIndex: 0,
+        isShortUrl: 0,
+        isGroup: 1,
+        countryCode: 91,
+        scheduleDateTime: "0",
+        groupValues: "-1",
+    };
 
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
-    const { items } = usePagination({
-        count: totalPages,
-        page: paginationModel.page + 1,
-        onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-    });
+    try {
+        setSending(true);
+        console.log("🚀 Sending API Request:", campaignData);
 
-    return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-            <PaginationList>
-                {items.map(({ page, type, selected, ...item }, index) => {
-                    let children = null;
+        const response = await sendWhatsappCampaign(campaignData);
 
-                    if (type === "start-ellipsis" || type === "end-ellipsis") {
-                        children = "…";
-                    } else if (type === "page") {
-                        children = (
-                            <Button
-                                key={index}
-                                variant={selected ? "contained" : "outlined"}
-                                size="small"
-                                sx={{ minWidth: "27px" }}
-                                {...item}
-                            >
-                                {page}
-                            </Button>
-                        );
-                    } else {
-                        children = (
-                            <Button key={index} variant="outlined" size="small" {...item}>
-                                {type === "previous" ? "Previous" : "Next"}
-                            </Button>
-                        );
-                    }
+        if (response?.status) {
+            toast.success("Campaign added successfully!");
 
-                    return <li key={index}>{children}</li>;
-                })}
-            </PaginationList>
-        </Box>
-    );
+            setInputValue("");
+            setSelectedTemplate("");
+            setTemplateDataNew(null);
+            setImagePreview(null);
+            setFormData({});
+        } else {
+            toast.error(response?.msg || "Failed to send campaign.");
+        }
+    } catch (error) {
+        toast.error("Error sending campaign.");
+        console.error("❌ API Error:", error);
+    } finally {
+        setSending(false);
+    }
+
+
+    // if (response?.status) {
+    //     toast.success("Campaign added successfully!");
+    //     setTimeout(() => navigate("/campaigns"), 2000); 
+    // }
 };
-
-const DataTable = ({ id, wabaNumber, data, name, handleDuplicate, handleDelete }) => {
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
-    const [selectedRow, setSelectedRow] = useState(null);
-    const [dialogVisible, setDialogVisible] = useState(false);
-
-    const handleView = (row) => {
-        setSelectedRow(row);
-        setDialogVisible(true);
-    };
-
-    const handleClose = () => {
-        setDialogVisible(false);
-    };
-
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-    };
-
-    const columns = [
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-        { field: "templateName", headerName: "Template Name", flex: 1, minWidth: 120 },
-        { field: "category", headerName: "Category", flex: 1, minWidth: 120 },
-        { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-        { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
-        { field: "createdDate", headerName: "Created At", flex: 1, minWidth: 120 },
-        {
-            field: "action",
-            headerName: "Action",
-            flex: 1,
-            minWidth: 150,
-            renderCell: (params) => (
-                <>
-                    <IconButton className="text-xs" onClick={() => handleView(params.row)}>
-                        <VisibilityIcon sx={{ fontSize: "1.2rem", color: "green" }} />
-                    </IconButton>
-                    <IconButton onClick={() => handleDuplicate(params.row)}>
-                        <FileCopyIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-                    </IconButton>
-                    <IconButton onClick={() => handleDelete(params.row)}>
-                        <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "#e31a1a" }} />
-                    </IconButton>
-                </>
-            ),
-        },
-    ];
-
-    const rows = data.map((item, index) => ({
-        id: item.templateSrno,
-        sn: index + 1,
-        templateName: item.templateName || "N/A",
-        category: item.category || "N/A",
-        status: item.status || "N/A",
-        type: item.type || "N/A",
-        createdDate: formatDate(item.createdDate),
-    }));
-
-    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-    const CustomFooter = () => {
-        return (
-            <GridFooterContainer
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: { xs: "center", lg: "space-between" },
-                    alignItems: "center",
-                    padding: 1,
-                    gap: 2,
-                    overflowX: "auto",
-                }}
-            >
-                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
-                    {selectedRows.length > 0 && (
-                        <Typography
-                            variant="body2"
-                            sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
-                        >
-                            {selectedRows.length} Rows Selected
-                        </Typography>
-                    )}
-                    <Typography variant="body2">
-                        Total Records: <span className="font-semibold">{rows.length}</span>
-                    </Typography>
-                </Box>
-
-                <Box sx={{ display: "flex", justifyContent: "center", width: { xs: "100%", sm: "auto" } }}>
-                    <CustomPagination
-                        totalPages={totalPages}
-                        paginationModel={paginationModel}
-                        setPaginationModel={setPaginationModel}
-                    />
-                </Box>
-            </GridFooterContainer>
-        );
-    };
-
-    return (
-        <Paper sx={{ height: 558 }}>
-            <DataGrid
-                id={id}
-                name={name}
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[10, 20, 50]}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                checkboxSelection
-                rowHeight={45}
-                slots={{ footer: CustomFooter }}
-                slotProps={{ footer: { totalRecords: rows.length } }}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                disableRowSelectionOnClick
-                disableColumnResize
-                disableColumnMenu
-                sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": { outline: "none !important" },
-                    "& .MuiDataGrid-cell": { outline: "none !important" },
-                    "& .MuiDataGrid-columnHeaders": { color: "#193cb8", fontSize: "14px", fontWeight: "bold" },
-                    "& .MuiDataGrid-row--borderBottom": { backgroundColor: "#e6f4ff !important" },
-                    "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                }}
-            />
-
-            {/* PrimeReact Dialog */}
-            <Dialog header="Template Details" visible={dialogVisible} style={{ width: "50vw" }} onHide={handleClose}>
-                <div>
-                    <h3>{selectedRow?.templateName}</h3>
-                    <p>Category: {selectedRow?.category}</p>
-                    <p>Status: {selectedRow?.status}</p>
-                    <p>Created At: {selectedRow?.createdDate}</p>
-                </div>
-            </Dialog>
-        </Paper>
-    );
-};
-
-export default DataTable;

@@ -20,13 +20,13 @@ import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsap
 import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
 import '../style.css'
 
-
 const ManageTemplate = () => {
     const navigate = useNavigate();
 
     const [isLoading, setIsLoading] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [value, setValue] = useState(0);
+    const [hasSearched, setHasSearched] = useState(false)
 
     // Filters
     const [selectedDate, setSelectedDate] = useState(null);
@@ -39,7 +39,6 @@ const ManageTemplate = () => {
     // Data
     const [wabaList, setWabaList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
-    const [apiData, setApiData] = useState([]);
 
     // Reset filters when WABA changes
     useEffect(() => {
@@ -49,10 +48,10 @@ const ManageTemplate = () => {
         setSelectedStatus("");
         setSelectedDate(null);
         setFilteredData([]);
-        setApiData([]);
+        setHasSearched(false);
     }, [selectedWaba]);
 
-    const handleChange = (newValue) => {
+    const handleChange = (event, newValue) => {
         setValue(newValue);
     };
 
@@ -80,49 +79,41 @@ const ManageTemplate = () => {
         fetchWabaList();
     }, []);
 
-    // Fetch Templates when WABA is selected
-    useEffect(() => {
-        if (!selectedWaba) return;
-
-        setIsFetching(true);
-        const fetchTemplates = async () => {
-            try {
-                const response = await getWabaTemplateDetails(selectedWaba);
-                if (response) {
-                    setApiData(response);
-                    setFilteredData(response);
-                } else {
-                    setApiData([]);
-                    setFilteredData([]);
-                }
-            } catch (error) {
-                console.error("Error fetching template data:", error);
-                setApiData([]);
-                setFilteredData([]);
-            }
-            setIsFetching(false);
-        };
-        fetchTemplates();
-    }, [selectedWaba]);
-
-    // ✅ Correct Filtering Function
-    const handleSearch = () => {
+    const handleSearch = async () => {
         if (!selectedWaba) {
-            toast.error("Please select a WhatsApp Business Account (WABA) to proceed.");
+            toast.error(
+                "Please select a (WABA) Account to proceed."
+            );
             return;
         }
         setIsFetching(true);
-        const filtered = apiData.filter((item) => {
+        setHasSearched(true);
+        try {
+            const response = await getWabaTemplateDetails(selectedWaba);
+            if (response) {
+                applyFilters(response);
+            } else {
+                setFilteredData([]);
+            }
+        } catch (error) {
+            console.error("Error fetching template data:", error);
+            setFilteredData([]);
+        }
+        setIsFetching(false);
+    };
+
+    const applyFilters = (data) => {
+        const filtered = data.filter((item) => {
             const itemCategory = item.category?.toLowerCase().trim() || "";
             const itemType = item.type?.toLowerCase().trim() || "";
             const itemStatus = item.status?.toLowerCase().trim() || "";
             const itemName = item.templateName?.toLowerCase().trim() || "";
-            const itemDateLocal = new Date(item.createdDate)
-                .toLocaleDateString("en-CA");
+            const itemDateLocal = new Date(item.createdDate).toLocaleDateString(
+                "en-CA"
+            );
             let selectedDateLocal = "";
             if (selectedDate) {
-                selectedDateLocal = new Date(selectedDate)
-                    .toLocaleDateString("en-CA");
+                selectedDateLocal = new Date(selectedDate).toLocaleDateString("en-CA");
             }
             return (
                 (!selectedCategory ||
@@ -135,16 +126,12 @@ const ManageTemplate = () => {
                 (!selectedDate || itemDateLocal === selectedDateLocal)
             );
         });
-
-        setTimeout(() => {
-            setFilteredData(filtered);
-            setIsFetching(false);
-        }, 300)
+        setFilteredData(filtered);
     };
 
 
     return (
-        <div className='w-full ' >
+        <div className='w-full'>
             {isLoading ? (
                 <Loader />
             ) : (
@@ -195,8 +182,7 @@ const ManageTemplate = () => {
                             }}
                         />
                     </Tabs>
-                    <CustomTabPanel value={value} index={0} className='' >
-
+                    <CustomTabPanel value={value} index={0}>
                         <div className='w-full' >
                             <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full' >
                                 <div>
@@ -334,10 +320,10 @@ const ManageTemplate = () => {
                                 </div>
                                 {isFetching ? (
                                     <UniversalSkeleton height="35rem" width="100%" />
-                                ) : !selectedWaba ? (
+                                ) : !hasSearched ? (
                                     // Case 1: Initial Load - Ask user to select WABA account
                                     <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
-                                        <div className="text-center text-blue-500 p-8 shadow-2xl rounded-2xl">
+                                        <div className="text-center text-blue-500 p-8 shadow-2xl shadow-blue-300 rounded-2xl">
                                             <span className="text-2xl font-m font-medium tracking-wide">
                                                 Please select a WhatsApp Business Account (WABA) to
                                                 proceed.
@@ -347,7 +333,7 @@ const ManageTemplate = () => {
                                 ) : filteredData.length === 0 ? (
                                     // Case 2: No data found after filtering
                                     <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
-                                        <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl">
+                                        <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl shadow-red-300">
                                             <span className="text-2xl font-m font-medium tracking-wide">
                                                 No matching records found. <br /> Please adjust your filters
                                                 and try again.
@@ -375,7 +361,6 @@ const ManageTemplate = () => {
 
             )}
         </div>
-
     )
 }
 

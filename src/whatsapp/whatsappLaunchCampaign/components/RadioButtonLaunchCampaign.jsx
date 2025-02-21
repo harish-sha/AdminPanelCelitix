@@ -31,6 +31,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [countryCode, setCountryCode] = useState('');
   const [addCountryCode, setAddCountryCode] = useState(false);
   const [countryList, setCountryList] = useState([]);
+  
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -421,8 +422,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
             <p className="text-sm text-gray-700 font-semibold tracking-wide">Total Records in file: {totalRecords} </p>
           </div>
 
-          <div className="overflow-auto w-full max-w-full" style={{ maxHeight: '400px', maxWidth: '490px' }}>
-            <table className="w-full min-w-max border-collapse"  >
+          <div className="overflow-auto w-full max-w-full" style={{ maxHeight: '400px', maxWidth: 'auto', width: 'auto' }}>
+            <table className="w-full min-w-max border-collapse">
               <thead className="bg-[#128C7E]" >
                 <tr className="" >
                   {columns.map((col, index) => (

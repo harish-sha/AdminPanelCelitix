@@ -5,16 +5,14 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import usePagination from '@mui/material/usePagination';
 import { styled } from '@mui/material/styles';
-import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
+import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
 import { Paper, Typography, Box, Button } from '@mui/material';
-import Modal from '@mui/material/Modal';
 import { MdClose } from 'react-icons/md';
 import { FaReply } from 'react-icons/fa6';
 import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import { format } from 'timeago.js'
 import toast from 'react-hot-toast';
-// import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 
 
@@ -303,49 +301,8 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
             </Paper>
 
 
-            {/* Mui Dialog */}
-
-            {/* <Modal open={open} onClose={handleClose} className='modal-view'>
-                <Box sx={modalStyle} >
-                    <div className="modal-content p-2 pt-5 rounded-xl">
-                        <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
-                            <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
-                        </div>
-                        <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
-                            <div className="imgbox">
-                                <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
-                            </div>
-                            <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
-                                <p>As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻</p>
-                                <p>Wishing our esteemed patrons and partners a Holi filled with the splendor of laughter, the warmth of togetherness and the brightness of positivity.📞📞</p>
-                                <p>Here's to a colorful journey ahead!🎉🎊</p>
-                                <p>Happy Holi!🎇✨</p>
-                                <p>Best Regards,🎊🎉</p>
-                                <p>Team Celitix</p>
-                            </div>
-                            <div className='flex flex-col gap-2'>
-                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md '>
-                                    <BsTelephoneFill className='mr-2' />
-                                    Contact us
-                                </button>
-                                <button className='flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md '>
-                                    <FaExternalLinkAlt className='mr-2' />
-                                    Visit us
-                                </button>
-                                <button
-                                    className='flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full'
-                                >
-                                    <FaReply className='mr-2' />
-                                    View more
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </Box>
-            </Modal> */}
-
             {/* PrimeReact Dialog */}
-            <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "25rem" }} onHide={handleClose} draggable={false}>
+            <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "27rem" }} onHide={handleClose} draggable={false}>
                 {/* <div>
                     <h3>{selectedRow?.templateName}</h3>
                     <p>Category: {selectedRow?.category}</p>
@@ -389,18 +346,6 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
             </Dialog>
         </>
     );
-};
-
-const modalStyle = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    width: '400px',
-    bgcolor: 'background.paper',
-    boxShadow: 24,
-    p: 2,
-    borderRadius: "20px"
 };
 
 export default DataTable;

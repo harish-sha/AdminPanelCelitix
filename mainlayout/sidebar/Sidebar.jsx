@@ -1,26 +1,37 @@
 import React, { useState, useRef, useEffect } from 'react';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import { MdExpandLess, MdExpandMore, MdOutlineEmail } from 'react-icons/md';
-import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
-import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
-import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { FaHome, FaSignOutAlt, FaWhatsapp } from 'react-icons/fa';
-import { SiGoogleauthenticator } from "react-icons/si";
+import { FaCog, FaHome, FaSignOutAlt, FaBars, FaWhatsapp } from 'react-icons/fa';
 import { LuMessageSquareMore } from "react-icons/lu";
+import { SiGoogleauthenticator } from "react-icons/si";
+import { MdExpandLess, MdExpandMore, MdOutlineEmail } from 'react-icons/md';
 import { IoSettingsOutline } from "react-icons/io5";
 import { IoWalletOutline } from "react-icons/io5";
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
-import toast from 'react-hot-toast';
 import clsx from 'clsx';
+import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import ApiOutlinedIcon from '@mui/icons-material/ApiOutlined';
+import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
+import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
+import toast from 'react-hot-toast';
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
+    // const [isCollapsed, setIsCollapsed] = useState(false);
     const [openDropdown, setOpenDropdown] = useState(null);
     const location = useLocation();
     const dropdownRefs = useRef({});
 
-    const navigate = useNavigate();
+    const toggleSidebar = () => {
+        if (!isCollapsed) {
+            setOpenDropdown(null);
+        }
+        setIsCollapsed((prev) => !prev);
+    };
+
+    // ✅ Close dropdowns when sidebar collapses
+    // useEffect(() => {
+    //         if (isCollapsed) setOpenDropdown(null);
+    //     }, [isCollapsed]);
 
     useEffect(() => {
         if (isCollapsed) {
@@ -36,11 +47,18 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
         setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
     };
 
+    // const handleSingleRouteClick = () => {
+    //     setIsCollapsed(true); 
+    //     setOpenDropdown(null);
+    // };
+
     const handleSingleRouteClick = () => {
         if (isMobile) setIsCollapsed(true);
         setOpenDropdown(null);
     };
 
+
+    // const isActiveRoute = (route) => location.pathname.startsWith(route);
     const isActiveRoute = (route) => {
         if (route === "/") {
             return location.pathname === "/";
@@ -48,6 +66,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
         return location.pathname.startsWith(route);
     };
 
+
+    // const navigate = useNavigate();
     const handleLogout = () => {
         localStorage.removeItem("token");
         toast.success("Logged out successfully!");
@@ -56,6 +76,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             window.location.href = "/login";
         }, 1000)
     };
+
 
     useEffect(() => {
         const activeMenu = menuItems.find((item) =>
@@ -78,7 +99,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
         },
         {
             name: 'Dummy',
-            icon: <BlockOutlinedIcon fontSize='20' />,
+            icon: <BlockOutlinedIcon />,
             label: 'Dummy',
             type: "single",
             to: "/dummy",
@@ -238,25 +259,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             to: "/managecontacts",
         },
         {
-            name: 'apiDocs',
-            icon: <DescriptionOutlinedIcon fontSize='20' />,
-            label: 'Api Docs',
-            type: "single",
-            onClick: () => navigate('/apiDocs')
-        },
-        {
             name: 'Logout',
             icon: <FaSignOutAlt />,
             label: 'Logout',
             type: "single",
             onClick: handleLogout
         },
+
     ];
 
     return (
         <div
             className={clsx(
-                "mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed  lg:top-15 top-14  left-0 transition-all duration-300 overflow-y-auto z-9 ",
+                "mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-15  left-0 transition-all duration-300 overflow-y-auto z-99999 ",
                 isMobile
                     ? isCollapsed
                         ? "-translate-x-full w-0"
@@ -267,6 +282,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             )}
             style={{ maxHeight: "calc(100vh - 3.5rem)" }}
         >
+            {/* <div className="flex items-center justify-between px-4 py-2 h-9">
+                <span className={clsx('text-xl font-medium tracking-wider text-gray-800', isCollapsed && 'hidden')}>
+                    Celitix
+                </span>
+                <button
+                    onClick={toggleSidebar}
+                    className={clsx("text-gray-700 focus:outline-none", isCollapsed ? "ml-2" : "ml-0")}
+                >
+                    <FaBars />
+                </button>
+            </div> */}
 
             <nav className="mt-1 ">
                 {menuItems.map((item) => (
@@ -332,6 +358,25 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                             </div>
                         </Tooltip>
                     ) : (
+                        // <Tooltip
+                        //     key={item.name}
+                        //     title={isCollapsed ? item.label : ""}
+                        //     placement="right"
+                        //     arrow
+                        // >
+                        //     <Link
+                        //         to={item.to}
+                        //         onClick={handleSingleRouteClick}
+                        //         className={clsx(
+                        //             "flex items-center gap-4 px-4 py-2 transition-all",
+                        //             isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
+                        //             isCollapsed && "justify-center"
+                        //         )}
+                        //     >
+                        //         <span className="flex-shrink-0">{item.icon}</span>
+                        //         <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
+                        //     </Link>
+                        // </Tooltip>
                         <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
                             {item.onClick ? (
                                 // ✅ Logout Button
@@ -374,12 +419,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
 };
 
 export default Sidebar;
-
-
-
-
-
-
 
 
 
