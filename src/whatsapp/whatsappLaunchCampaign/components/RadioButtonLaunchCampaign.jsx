@@ -31,7 +31,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [countryCode, setCountryCode] = useState('');
   const [addCountryCode, setAddCountryCode] = useState(false);
   const [countryList, setCountryList] = useState([]);
-  
+
+  const [xlsxPath, setXlsxPath] = useState(""); 
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -174,30 +175,67 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   };
 
   // Excel file upload
+  // const handleFileUpload = async () => {
+  //   if (uploadedFile) {
+  //     if (isUploaded) {
+  //       toast.error("File already uploaded. Please select a different one.");
+  //       return;
+  //     }
+  //     setIsUploading(true);
+  //     try {
+  //       const response = await campaignUploadFile(uploadedFile);
+  //       console.log("File uploaded successfully :", response)
+  //       setIsUploaded(true);
+  //       toast.success("File uploaded successfully.");
+  //       setColumns(response.headers);
+  //       setFileData(response.sampleRecords);
+  //       setFileHeaders(response.headers || [])
+  //     } catch (error) {
+  //       toast.error("File upload failed: " + error.message);
+  //     } finally {
+  //       setIsUploading(false);
+  //     }
+  //   } else {
+  //     toast.error("No file selected for upload.");
+  //   }
+  // };
+
   const handleFileUpload = async () => {
-    if (uploadedFile) {
-      if (isUploaded) {
-        toast.error("File already uploaded. Please select a different one.");
-        return;
-      }
-      setIsUploading(true);
-      try {
-        const response = await campaignUploadFile(uploadedFile);
-        console.log("File uploaded successfully :", response)
-        setIsUploaded(true);
-        toast.success("File uploaded successfully.");
-        setColumns(response.headers);
-        setFileData(response.sampleRecords);
-        setFileHeaders(response.headers || [])
-      } catch (error) {
-        toast.error("File upload failed: " + error.message);
-      } finally {
-        setIsUploading(false);
-      }
-    } else {
+    if (!uploadedFile) {
       toast.error("No file selected for upload.");
+      return;
+    }
+
+    if (isUploaded) {
+      toast.error("File already uploaded. Please select a different one.");
+      return;
+    }
+
+    setIsUploading(true);
+
+    try {
+      const response = await campaignUploadFile(uploadedFile);
+
+      if (response?.message === "File Upload Successfully") {
+        setIsUploaded(true);
+        setXlsxPath(response.filepath); // ✅ Store file path in state
+        console.log("xlsxpath - ", response.filepath);
+
+        toast.success("File uploaded successfully.");
+      } else {
+        toast.error(response?.message || "File upload failed.");
+      }
+    } catch (error) {
+      toast.error("File upload failed: " + error.message);
+    } finally {
+      setIsUploading(false);
     }
   };
+
+
+
+
+
 
   // Get Waba Group List
   useEffect(() => {

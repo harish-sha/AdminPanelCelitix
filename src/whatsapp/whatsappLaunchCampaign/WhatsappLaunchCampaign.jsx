@@ -13,7 +13,7 @@ import InputField from '../../components/layout/InputField.jsx';
 import UniversalButton from '../components/UniversalButton.jsx'
 import Loader from '../components/Loader';
 
-const WhatsappLaunchCampaign = () => {
+const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedWaba, setSelectedWaba] = useState("");
@@ -34,79 +34,78 @@ const WhatsappLaunchCampaign = () => {
     const [isFetching, setIsFetching] = useState(false);
 
 
+
+
     const navigate = useNavigate();
 
     const handleSubmitCampaign = async () => {
+        // Step 1: Validate WABA selection
+        if (!selectedWaba) {
+            toast.error("Please select a WhatsApp Business Account (WABA).");
+            return;
+        }
+
         if (!inputValue) {
             toast.error("Please enter campaign name!");
             return;
         }
-        // if (!selectedWaba) {
-        //     toast.error("Please fill all required fields.");
-        //     return;
-        // }
-        // if (!selectedTemplate) {
-        //     toast.error("Please fill all required fields.");
-        //     return;
-        // }
 
-        const campaignData = {
-            mobileIndex: "0",
-            ContentMessage: formData?.message || "",
-            wabaNumber: selectedWaba,
-            campaignName: inputValue,
-            templateSrno: templateDataNew?.id || "",
-            templateName: selectedTemplate,
-            templateLanguage: templateDataNew?.language || "en",
-            templateCategory: templateDataNew?.category || "Marketing",
-            templateType: templateDataNew?.type || "default",
-            url: "",
-            variables: [],
-            cardsVariables: [],
-            ScheduleCheck: "0",
-            imgCard: imagePreview ? [imagePreview] : [],
-            xlsxpath: "",
-            totalRecords: "5",
-            attachmentfile: "",
-            urlValues: "",
-            urlIndex: 0,
-            isShortUrl: 0,
-            isGroup: 1,
-            countryCode: 91,
-            scheduleDateTime: "0",
-            groupValues: "-1",
-        };
-
-        try {
-            setSending(true);
-            console.log("🚀 Sending API Request:", campaignData);
-
-            const response = await sendWhatsappCampaign(campaignData);
-
-            if (response?.status) {
-                toast.success("Campaign added successfully!");
-
-                setInputValue("");
-                setSelectedTemplate("");
-                setTemplateDataNew(null);
-                setImagePreview(null);
-                setFormData({});
-            } else {
-                toast.error(response?.msg || "Failed to send campaign.");
-            }
-        } catch (error) {
-            toast.error("Error sending campaign.");
-            console.error("❌ API Error:", error);
-        } finally {
-            setSending(false);
+        // Step 2: Validate Template selection
+        if (!selectedTemplate) {
+            toast.error("Please select a WhatsApp template.");
+            return;
         }
 
+        // Step 3: Validate Country Code selection (if applicable)
+        if (!selectedCountryCode) {
+            toast.error("Please select a country code.");
+            return;
+        }
 
-        // if (response?.status) {
-        //     toast.success("Campaign added successfully!");
-        //     setTimeout(() => navigate("/campaigns"), 2000); 
-        // }
+        // Step 4: Validate if the user uploaded a contact file
+        if (!xlsxPath) {
+            toast.error("Please upload an Excel file with contact numbers.");
+            return;
+        }
+
+        // Step 5: Validate Mobile Number Column selection
+        if (!selectedMobileColumn) {
+            toast.error("Please select the mobile number column from the uploaded file.");
+            return;
+        }
+
+        // ✅ If all validations pass, prepare data
+        const requestData = {
+            mobileIndex: selectedMobileColumn,
+            ContentMessage: `#${inputValue}#`,
+            wabaNumber: selectedWaba,
+            campaignName: inputValue || "default_campaign",
+            templateSrno: selectedTemplateDetails?.templateSrno || "490",
+            templateName: selectedTemplate,
+            templateLanguage: selectedTemplateDetails?.language || "en",
+            templateCategory: selectedTemplateDetails?.category || "Marketing",
+            templateType: selectedTemplateDetails?.type || "text",
+            variables: Object.values(formData) || [],
+            imgCard: imagePreview ? [imagePreview] : [],
+            xlsxpath: xlsxPath,  // ✅ Corrected file path usage
+            totalRecords: totalRecords || "0",
+            countryCode: selectedCountryCode || 91,
+        };
+
+        // Send API request
+        try {
+            const response = await sendWhatsappCampaign(requestData);
+            if (response?.status === true) {
+                toast.success("Campaign launched successfully!");
+            } else {
+                toast.error(response?.message || "Campaign launch failed.");
+            }
+        } catch (error) {
+            console.error("Error submitting campaign:", error);
+            toast.error("Error launching campaign. Please try again.");
+        }
     };
+
 
 
     const handleOptionChange = (value) => {

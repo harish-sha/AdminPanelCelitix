@@ -48,14 +48,14 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
         return location.pathname.startsWith(route);
     };
 
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        toast.success("Logged out successfully!");
-        // window.location.href = "/login";
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000)
-    };
+    // const handleLogout = () => {
+    //     localStorage.removeItem("token");
+    //     toast.success("Logged out successfully!");
+    //     // window.location.href = "/login";
+    //     setTimeout(() => {
+    //         window.location.href = "/login";
+    //     }, 1000)
+    // };
 
     useEffect(() => {
         const activeMenu = menuItems.find((item) =>
@@ -244,13 +244,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             type: "single",
             onClick: () => navigate('/apiDocs')
         },
-        {
-            name: 'Logout',
-            icon: <FaSignOutAlt />,
-            label: 'Logout',
-            type: "single",
-            onClick: handleLogout
-        },
+        // {
+        //     name: 'Logout',
+        //     icon: <FaSignOutAlt />,
+        //     label: 'Logout',
+        //     type: "single",
+        //     onClick: handleLogout
+        // },
     ];
 
     return (
@@ -289,7 +289,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                                 >
                                     <div className="flex items-center gap-4 h-6">
                                         <span className="flex-shrink-0 text-black">{item.icon}</span>
-                                        <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600] ')}>
+                                        <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600]')}>
                                             {item.label}
                                         </span>
                                     </div>
