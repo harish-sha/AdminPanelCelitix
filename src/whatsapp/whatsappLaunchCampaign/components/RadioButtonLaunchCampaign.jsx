@@ -32,7 +32,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [addCountryCode, setAddCountryCode] = useState(false);
   const [countryList, setCountryList] = useState([]);
 
-  const [xlsxPath, setXlsxPath] = useState(""); 
+  const [xlsxPath, setXlsxPath] = useState("");
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -141,9 +141,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
 
   useEffect(() => {
     if (fileHeaders.length > 0) {
-      onFileUpload(fileHeaders); // Ensure parent gets the update
+      // console.log("📌 Sending Selected Country Code to Parent:", selectedCountryCode);
+      onFileUpload(xlsxPath, fileHeaders, totalRecords, selectedCountryCode, selectedMobileColumn);
     }
-  }, [fileHeaders]);
+  }, [fileHeaders, selectedCountryCode, selectedMobileColumn]); // ✅ Now listens for country code updates
 
   // Handle file removal
   const handleRemoveFile = () => {
@@ -221,6 +222,8 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         setXlsxPath(response.filepath); // ✅ Store file path in state
         console.log("xlsxpath - ", response.filepath);
 
+        onFileUpload(response.filepath, fileHeaders, totalRecords, selectedCountryCode, selectedMobileColumn);
+
         toast.success("File uploaded successfully.");
       } else {
         toast.error(response?.message || "File upload failed.");
@@ -231,10 +234,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       setIsUploading(false);
     }
   };
-
-
-
-
 
 
   // Get Waba Group List
@@ -443,7 +442,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
                 label="Select Mobile Number Field"
                 tooltipContent="Select your mobile number Field!"
                 tooltipPlacement="right"
-                options={columns.map(col => ({ label: col, value: col }))}
+                options={columns.map((col, index) => ({ label: col, value: index }))}
                 value={selectedMobileColumn}
                 onChange={handleMobileColumnChange}
                 placeholder="Select Mobile No."

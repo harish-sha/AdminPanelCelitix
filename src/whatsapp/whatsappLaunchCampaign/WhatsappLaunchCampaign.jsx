@@ -32,13 +32,30 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
     const [imagePreview, setImagePreview] = useState(null)
     const [sending, setSending] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
+    const [selectedLanguage, setSelectedLanguage] = useState(null);
 
-
-
+    const [xlsxPath, setXlsxPath] = useState("");
+    const [totalRecords, setTotalRecords] = useState("")
+    const [selectedCountryCode, setSelectedCountryCode] = useState("");
+    const [selectedMobileColumn, setSelectedMobileColumn] = useState('');
 
     const navigate = useNavigate();
 
     const handleSubmitCampaign = async () => {
+
+        // ✅ Extract Values from API Responses
+        const selectedWabaData = wabaList?.find(waba => waba.mobileNo === selectedWaba);
+        const selectedTemplateData = templateList?.find(template => template.templateName === selectedTemplate);
+
+        // ✅ Generate ContentMessage dynamically based on user input
+        const contentValues = Object.keys(formData)
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true })) // Sort by variable number
+            .map((key) => `#${formData[key]}#`) // Wrap values in `#`
+            .join(","); // Join values with a comma
+
+        console.log("📌 Generated ContentMessage:", contentValues); // Debugging log
+
+
         // Step 1: Validate WABA selection
         if (!selectedWaba) {
             toast.error("Please select a WhatsApp Business Account (WABA).");
@@ -56,41 +73,54 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
             return;
         }
 
-        // Step 3: Validate Country Code selection (if applicable)
-        if (!selectedCountryCode) {
-            toast.error("Please select a country code.");
-            return;
-        }
-
         // Step 4: Validate if the user uploaded a contact file
         if (!xlsxPath) {
             toast.error("Please upload an Excel file with contact numbers.");
             return;
         }
 
+        // Step 3: Validate Country Code selection (if applicable)
+        if (!selectedCountryCode && selectedOption === "option2") {
+            toast.error("Please select a country code.");
+            return;
+        }
+
         // Step 5: Validate Mobile Number Column selection
+        if (!selectedMobileColumn && selectedOption === "option2") {
+            toast.error("Please select the mobile number column from the uploaded file.");
+            return;
+        }
+
         if (!selectedMobileColumn) {
             toast.error("Please select the mobile number column from the uploaded file.");
             return;
         }
 
+        // if (!contentValues) {
+        //     toast.error("Please enter message parameters");
+        //     return;
+        // }
+
+
         // ✅ If all validations pass, prepare data
         const requestData = {
             mobileIndex: selectedMobileColumn,
-            ContentMessage: `#${inputValue}#`,
-            wabaNumber: selectedWaba,
-            campaignName: inputValue || "default_campaign",
-            templateSrno: selectedTemplateDetails?.templateSrno || "490",
+            ContentMessage: contentValues,
+            wabaNumber: selectedWabaData?.wabaSrno,
+            campaignName: inputValue,
+            templateSrno: selectedTemplateData?.templateSrno,
             templateName: selectedTemplate,
-            templateLanguage: selectedTemplateDetails?.language || "en",
-            templateCategory: selectedTemplateDetails?.category || "Marketing",
-            templateType: selectedTemplateDetails?.type || "text",
-            variables: Object.values(formData) || [],
-            imgCard: imagePreview ? [imagePreview] : [],
-            xlsxpath: xlsxPath,  // ✅ Corrected file path usage
-            totalRecords: totalRecords || "0",
-            countryCode: selectedCountryCode || 91,
+            templateLanguage: selectedLanguage,
+            templateCategory: selectedTemplateData?.category,
+            templateType: selectedTemplateData?.type,
+            // variables: Object.values(formData) || [],
+            // imgCard: imagePreview ? [imagePreview] : [],
+            xlsxpath: xlsxPath,
+            totalRecords: totalRecords,
+            countryCode: selectedCountryCode,
         };
+
+        console.log("final data submission", requestData)
 
         // Send API request
         try {
@@ -131,7 +161,6 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
             try {
                 setIsLoading(true);
                 const response = await getWabaList();
-
                 if (response) {
                     setWabaList(response);
                 } else {
@@ -200,10 +229,10 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
             setIsFetching(true);
             try {
                 const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
-                console.log("fetching particular template data : ", response)
 
                 if (response && response.data && response.data.length > 0) {
                     setTemplateDataNew(response.data[0]);
+                    setSelectedLanguage(response.data[0]?.language);
                 } else {
                     toast.error("Failed to load template data!");
                 }
@@ -217,10 +246,40 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
         fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
 
-    const handleFileHeadersUpdate = (headers) => {
-        console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
+    // const handleFileHeadersUpdate = (headers) => {
+    //     console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
+    //     setFileHeaders(headers);
+    // };
+
+    const handleFileHeadersUpdate = (filePath, headers, totalRecords, countryCode, selectedMobileColumn) => {
         setFileHeaders(headers);
+        setTotalRecords(totalRecords);
+        setXlsxPath(filePath); // ✅ Store uploaded file path
+        setSelectedMobileColumn(selectedMobileColumn);
+
+        if (countryCode) {
+            setSelectedCountryCode(countryCode); // ✅ Ensure country code updates properly
+        }
     };
+
+    useEffect(() => {
+        console.log("📌 Updated selectedCountryCode in Parent:", selectedCountryCode);
+    }, [selectedCountryCode]);
+
+
+
+    useEffect(() => {
+        console.log("selected WABA", selectedWaba);
+    }, [selectedWaba]);
+
+
+    useEffect(() => {
+        console.log("Campaign name", inputValue);
+    }, [inputValue]);
+
+    useEffect(() => {
+        console.log("selected template - ", selectedTemplate);
+    }, [selectedTemplate]);
 
     return (
         <div className='max-w-full'>

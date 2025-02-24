@@ -15,15 +15,28 @@ import CarouselTemplatePreview from '../whatsappcreatetemplate/components/Carous
 import CarouselTemplateTypes from '../whatsappcreatetemplate/components/CarouselTemplateTypes.jsx';
 import CarouselInteractiveActions from '../whatsappcreatetemplate/components/CarouselInteractiveActions.jsx';
 import Loader from '../components/Loader.jsx';
+import { getWabaList } from '../../apis/whatsapp/whatsapp.js';
 
 const WhatsappCreateTemplate = () => {
     const navigate = useNavigate();
     const { scrollableContainerRef } = useOutletContext();
 
+    const [wabaList, setWabaList] = useState(null);
+    const [selectedWaba, setSelectedWaba] = useState("");
+
+
+
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
-    const [selectedOption, setSelectedOption] = useState('');
+
+    const [templateName, setTemplateName] = useState('');
+    // const [selectedOption, setSelectedOption] = useState('');
     const [selectedOption2, setSelectedOption2] = useState('');
     const [selectedOption3, setSelectedOption3] = useState('');
+
+    const [selectedLanguage, setSelectedLanguage] = useState('');
+
+    const [selectedCategory, setSelectedCategory] = useState("");
+
 
     const [selectedTemplateType, setSelectedTemplateType] = useState('');
     const [templateHeader, setTemplateHeader] = useState('');
@@ -62,12 +75,6 @@ const WhatsappCreateTemplate = () => {
         setTemplatePreview(updatedPreview);
     };
 
-    const options = [
-        { value: 'WABA1', label: 'WABA1' },
-        { value: 'WABA2', label: 'WABA2' },
-        { value: 'WABA3', label: 'WABA3' },
-    ];
-
     const templateTypeOptions = [
         { value: 'text', label: 'Text' },
         { value: 'image', label: 'Image' },
@@ -77,20 +84,34 @@ const WhatsappCreateTemplate = () => {
         { value: 'carousel', label: 'Carousel' }, // Only for marketing
     ];
 
-    const options2 = [
-        { value: 'utility', label: 'Utility' },
-        { value: 'marketing', label: 'Marketing' },
-        { value: 'authentication', label: 'Authentication' },
-    ];
-
-    const carouselMediaTypeOptions = [
-        { value: 'image', label: 'Image' },
-        { value: 'video', label: 'Video' },
-    ];
-
     const handleDeleteCard = (index) => {
         setCards(cards.filter((_, i) => i !== index));
     };
+
+    // WABA LIST
+    useEffect(() => {
+        const fetchWabaList = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getWabaList();
+                console.log(response);
+
+
+                if (response) {
+                    setWabaList(response);
+                } else {
+                    console.error("Failed to fetch WABA details");
+                    toast.error("Failed to load WABA details!");
+                }
+            } catch (error) {
+                console.error("Error fetching WABA list:", error);
+                toast.error("Error fetching WABA list.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchWabaList();
+    }, []);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -112,7 +133,7 @@ const WhatsappCreateTemplate = () => {
     }, [interactiveAction]);
 
     const handleCategoryChange = (value) => {
-        setSelectedOption2(value);
+        setSelectedCategory(value);
         setSelectedTemplateType('');
     };
 
@@ -186,94 +207,97 @@ const WhatsappCreateTemplate = () => {
     // Submit Function
     const handleSubmit = () => {
         if (
-            selectedOption &&
-            selectedOption2 &&
+            selectedCategory &&
             selectedTemplateType &&
-            valueWithoutSpaces
+            templateName
         ) {
             toast.success('Template submitted successfully!');
-            // navigate('/next-page'); // Replace with the correct navigation route
         } else {
             toast.error('Please fill all required fields before submitting.');
         }
     };
 
     const handleInputChange = (value) => {
-        // Apply logic for spaces or no spaces here
-        const newValue = value.replace(/\s/g, ""); // Example: remove spaces
-        setValueWithoutSpaces(newValue);
+        const newValue = value.replace(/\s/g, "");
+        setTemplateName(newValue);
     };
 
+    useEffect(() => {
+        console.log("selected WABA", selectedWaba);
+    }, [selectedWaba]);
+
+    useEffect(() => {
+        console.log("selected Category", selectedCategory);
+    }, [selectedCategory]);
+
+    useEffect(() => {
+        console.log("selected Template Type", selectedTemplateType);
+    }, [selectedTemplateType]);
+
+    useEffect(() => {
+        console.log("selected carousel media type", carouselMediaType);
+    }, [carouselMediaType]);
+
+    useEffect(() => {
+        console.log("selected language", selectedLanguage);
+    }, [selectedLanguage]);
+
+    useEffect(() => {
+        console.log("template name", templateName);
+    }, [templateName]);
 
 
     return (
         <div className='w-full'>
             {isLoading ? (
                 <>
-                    {/* <div className='w-full'>
-                        <div className='py-5 flex flex-row gap-5'>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                            <div className='w-56'>
-                                <UniversalSkeleton height='3rem' />
-                            </div>
-                        </div>
-                        <div className='flex gap-12 w-full'>
-                            <div className='w-[40%]'>
-                                <UniversalSkeleton height='35rem' width='45%%' />
-                            </div>
-                            <div className='w-[40%]'>
-                                <UniversalSkeleton height='35rem' width='45%%' />
-                            </div>
-                        </div>
-                    </div> */}
                     <Loader />
                 </>
             ) : (
                 <>
                     <div className='w-full'>
-                        <div className='container'>
-                            <h1 className='text-xl font-semibold text-gray-800 mb-4'>
-                                Create Templates
+                        <div className=''>
+                            <h1 className='text-md font-semibold lg:text-start text-center text-gray-800 mb-4'>
+                                Create Template
                             </h1>
-                            <div className='flex gap-4 items-end justify-start align-middle pb-5'>
-                                <div className='w-56'>
+                            <div className='flex gap-4 flex-wrap items-end justify-start align-middle pb-5'>
+                                <div className='w-full sm:w-56'>
                                     <AnimatedDropdown
                                         id='createSelectWaba'
                                         name='createSelectWaba'
                                         label='Select WABA'
                                         tooltipContent='Select your whatsapp business account'
                                         tooltipPlacement='right'
-                                        options={options}
-                                        value={selectedOption}
-                                        onChange={(value) => setSelectedOption(value)}
+                                        options={wabaList?.map((waba) => ({
+                                            value: waba.mobileNo,
+                                            label: waba.name,
+                                        }))}
+                                        value={selectedWaba}
+                                        onChange={(value) => setSelectedWaba(value)}
                                         placeholder='Select WABA'
                                     />
                                 </div>
 
-                                <div className='w-56'>
+                                <div className='w-full sm:w-56'>
                                     <AnimatedDropdown
                                         id='category'
                                         name='category'
                                         label='Category'
                                         tooltipContent='Select category'
                                         tooltipPlacement='right'
-                                        options={options2}
-                                        value={selectedOption2}
-                                        onChange={(value) => setSelectedOption2(value)}
+                                        options={[
+                                            { value: "MARKETING", label: "Marketing" },
+                                            { value: "UTILITY", label: "Utility" },
+                                            { value: "AUTHENTICATION", label: "Authentication" },
+                                        ]}
+                                        value={selectedCategory}
+                                        onChange={(value) => setSelectedCategory(value)}
                                         placeholder='Category'
                                     />
                                 </div>
 
-                                {selectedOption2 && (
-                                    <div className='w-56'>
+                                {selectedCategory && (
+                                    <div className='w-full sm:w-56'>
                                         <AnimatedDropdown
                                             id='templateType'
                                             name='templateType'
@@ -282,7 +306,7 @@ const WhatsappCreateTemplate = () => {
                                             tooltipPlacement='right'
                                             options={templateTypeOptions.filter(
                                                 (option) =>
-                                                    selectedOption2 === 'marketing' ||
+                                                    selectedCategory === 'MARKETING' ||
                                                     option.value !== 'carousel'
                                             )}
                                             value={selectedTemplateType}
@@ -293,56 +317,58 @@ const WhatsappCreateTemplate = () => {
                                 )}
 
                                 {selectedTemplateType === 'carousel' && (
-                                    <div className='w-56'>
+                                    <div className='w-full sm:w-56'>
                                         <AnimatedDropdown
                                             id='carouselMediaType'
                                             name='carouselMediaType'
                                             label='Carousel Media'
                                             tooltipContent='Select Carousel Media'
                                             tooltipPlacement='right'
-                                            options={carouselMediaTypeOptions}
+                                            options={[
+                                                { value: 'image', label: 'Image' },
+                                                { value: 'video', label: 'Video' },
+                                            ]}
                                             value={carouselMediaType}
                                             onChange={handleCarouselMediaTypeChange}
                                             placeholder='Carousel Media '
                                         />
                                     </div>
                                 )}
-                                <div className='w-56'>
+
+                                <div className='w-full sm:w-56'>
                                     <LanguageSelect
                                         id='language'
                                         name='language'
                                         label='Language'
                                         tooltipContent='Select Template language'
                                         tooltipPlacement='right'
-                                        value={selectedOption3}
-                                        onChange={(option) => setSelectedOption3(option.value)}
+                                        value={selectedLanguage}
+                                        onChange={(option) => setSelectedLanguage(option.value)}
                                     />
                                 </div>
-                                <div className='w-56'>
+
+                                <div className='w-full sm:w-56'>
                                     <InputField
                                         id='templateName'
                                         name='templateName'
                                         label='Template Name'
-                                        value={valueWithoutSpaces}
-                                        // onChange={(val) => setValueWithoutSpaces(val)}
-                                        onChange={(e) => handleInputChange(e.target.value)}
-                                        placeholder='Template Name'
-                                        noSpaces={true}
                                         tooltipContent='Your templatename should not contain spaces.'
                                         tooltipPlacement='right'
+                                        onChange={(e) => handleInputChange(e.target.value)}
+                                        value={templateName}
+                                        placeholder='Template Name'
                                     />
                                 </div>
                             </div>
                         </div>
 
-                        {selectedOption && selectedOption2 && selectedTemplateType ? (
+                        {selectedWaba && selectedCategory && selectedTemplateType ? (
                             <div className='flex'>
                                 <div className='w-1/3 px-2 py-0'>
                                     <>
                                         {selectedTemplateType === 'carousel' &&
                                             carouselMediaType ? (
                                             <CarouselTemplateTypes
-                                                // selectedTemplateType={selectedTemplateType}
                                                 templateFormat={templateFormat}
                                                 setTemplateFormat={setTemplateFormat}
                                                 templateFooter={templateFooter}
@@ -379,8 +405,6 @@ const WhatsappCreateTemplate = () => {
                                                 file={file}
                                                 setFile={setFile}
                                                 onPreviewUpdate={handlePreviewUpdate}
-                                            // variables={variables} // Pass variables
-                                            // setVariables={setVariables} // Pass setVariables
                                             />
                                         )}
 
@@ -417,15 +441,15 @@ const WhatsappCreateTemplate = () => {
                                     <div className='w-full mt-6 flex items-center justify-center'>
                                         <button
                                             disabled={
-                                                !selectedOption ||
-                                                !selectedOption2 ||
+                                                !selectedWaba ||
+                                                !selectedCategory ||
                                                 !selectedTemplateType ||
-                                                !valueWithoutSpaces
+                                                !templateName
                                             }
-                                            className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedOption &&
-                                                selectedOption2 &&
+                                            className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                                                selectedCategory &&
                                                 selectedTemplateType &&
-                                                valueWithoutSpaces
+                                                templateName
                                                 ? 'bg-[#212529] hover:bg-[#434851]'
                                                 : 'bg-gray-300 cursor-not-allowed'
                                                 }`}
@@ -447,7 +471,6 @@ const WhatsappCreateTemplate = () => {
                                             setCards={setCards}
                                             selectedCardIndex={selectedCardIndex}
                                             setSelectedCardIndex={setSelectedCardIndex}
-                                            // onAddCard={handleAddCard}
                                             onAddCard={(newCard) => setCards([...cards, newCard])}
                                             onDeleteCard={handleDeleteCard}
                                         />
@@ -464,29 +487,30 @@ const WhatsappCreateTemplate = () => {
                                             phoneTitle={phoneTitle}
                                             urlTitle={urlTitle}
                                             quickReplies={quickReplies}
-                                        // variables={variables} // Pass variables
                                         />
                                     )}
                                 </div>
                             </div>
                         ) : (
                             <>
-                                <div className='w-full text-center py-4 h-96 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg'>
-                                    <p className='text-white text-2xl font-semibold'>
-                                        <WhatsApp
-                                            className='inline-block mr-2'
-                                            sx={{ fontSize: '40px', color: '#22d614' }}
-                                        />
-                                        Please select your WABA, template category, and type to
-                                        begin creating your template.
-                                        {selectedTemplateType === 'carousel' && (
-                                            <>
-                                                <br />
-                                                select the carousel media also for creating the carousel
-                                                cards.
-                                            </>
-                                        )}
-                                    </p>
+                                <div className='border-2 border-dashed p-2 rounded-2xl border-blue-500' >
+                                    <div className='w-full text-center py-4 h-96 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg'>
+                                        <p className='text-white text-2xl font-medium font-m flex items-center gap-2'>
+                                            <WhatsApp
+                                                className='inline-block'
+                                                sx={{ fontSize: '35px', color: '#22d614' }}
+                                            />
+                                            Please select your WABA, template category, and type to
+                                            begin creating your template.
+                                            {selectedTemplateType === 'carousel' && (
+                                                <>
+                                                    <br />
+                                                    select the carousel media also for creating the carousel
+                                                    cards.
+                                                </>
+                                            )}
+                                        </p>
+                                    </div>
                                 </div>
                             </>
                         )}

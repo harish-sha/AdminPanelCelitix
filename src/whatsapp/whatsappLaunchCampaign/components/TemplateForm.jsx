@@ -377,6 +377,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         </div>
 
     );
-};  
+};
 
 export default TemplateForm;

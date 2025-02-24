@@ -70,235 +70,315 @@
 //     // }
 // };
 
+// const handleSubmitCampaign = async () => {
+//     // Step 1: Validate Inputs
+//     if (!selectedWaba) return toast.error("Please select a WhatsApp Business Account (WABA).");
+//     if (!inputValue) return toast.error("Please enter campaign name!");
+//     if (!selectedTemplate) return toast.error("Please select a WhatsApp template.");
+//     if (!selectedCountryCode) return toast.error("Please select a country code.");
+//     if (!xlsxPath) return toast.error("Please upload an Excel file with contact numbers.");
+//     if (!selectedMobileColumn) return toast.error("Please select the mobile number column.");
+
+//     // ✅ Extract Values from API Responses
+//     const selectedWabaData = wabaList?.find(waba => waba.mobileNo === selectedWaba);
+//     const selectedTemplateData = templateList?.find(template => template.templateName === selectedTemplate);
+
+//     if (!selectedWabaData) return toast.error("Invalid WABA selection.");
+//     if (!selectedTemplateData) return toast.error("Invalid Template selection.");
+
+//     // ✅ Prepare requestData
+//     const requestData = {
+//         ContentMessage: `#${inputValue}#`,
+//         wabaNumber: selectedWabaData?.wabaSrno,  // ✅ Get wabaSrno from WABA List
+//         campaignName: inputValue,
+//         templateSrno: selectedTemplateData?.templateSrno,  // ✅ Get templateSrno from Template List
+//         templateName: selectedTemplate,
+//         templateLanguage: selectedTemplateData?.language,  // ✅ Get language from Template Details
+//         templateCategory: selectedTemplateData?.category,  // ✅ Get category from Template Details
+//         templateType: selectedTemplateData?.type,  // ✅ Get type from Template Details
+//     };
+
+//     console.log("Final Data Submission:", requestData);
+
+//     // Send API request
+//     try {
+//         const response = await sendWhatsappCampaign(requestData);
+//         if (response?.status === true) {
+//             toast.success("Campaign launched successfully!");
+//         } else {
+//             toast.error(response?.message || "Campaign launch failed.");
+//         }
+//     } catch (error) {
+//         console.error("Error submitting campaign:", error);
+//         toast.error("Error launching campaign. Please try again.");
+//     }
+// };
+
+const handleSubmitCampaign = async () => {
+    // Step 1: Validate Inputs
+    if (!selectedWaba) return toast.error("Please select a WhatsApp Business Account (WABA).");
+    if (!inputValue) return toast.error("Please enter campaign name!");
+    if (!selectedTemplate) return toast.error("Please select a WhatsApp template.");
+    if (!selectedCountryCode) return toast.error("Please select a country code.");
+    if (!xlsxPath) return toast.error("Please upload an Excel file with contact numbers.");
+    if (!selectedMobileColumn) return toast.error("Please select the mobile number column.");
+
+    // ✅ Extract Values from API Responses
+    const selectedWabaData = wabaList?.find(waba => waba.mobileNo === selectedWaba);
+    const selectedTemplateData = templateList?.find(template => template.templateName === selectedTemplate);
+
+    if (!selectedWabaData) return toast.error("Invalid WABA selection.");
+    if (!selectedTemplateData) return toast.error("Invalid Template selection.");
+
+    console.log("Selected Template Data:", selectedTemplateData); // Debugging line
+
+    // ✅ Ensure correct extraction of language, category, type
+    const templateLanguage = selectedTemplateData?.language ?? "en";  // Default to "en" if undefined
+    const templateCategory = selectedTemplateData?.category ?? "UNKNOWN";
+    const templateType = selectedTemplateData?.type ?? "text";
+
+    console.log("Extracted Language:", templateLanguage); // Debugging line
+
+    // ✅ Prepare requestData
+    const requestData = {
+        ContentMessage: `#${inputValue}#`,
+        wabaNumber: selectedWabaData?.wabaSrno,
+        campaignName: inputValue,
+        templateSrno: selectedTemplateData?.templateSrno,
+        templateName: selectedTemplate,
+        templateLanguage: templateLanguage,  // ✅ Extracted correctly
+        templateCategory: templateCategory,
+        templateType: templateType,
+    };
+
+    console.log("Final Data Submission:", requestData);
+
+    // Send API request
+    try {
+        const response = await sendWhatsappCampaign(requestData);
+        if (response?.status === true) {
+            toast.success("Campaign launched successfully!");
+        } else {
+            toast.error(response?.message || "Campaign launch failed.");
+        }
+    } catch (error) {
+        console.error("Error submitting campaign:", error);
+        toast.error("Error launching campaign. Please try again.");
+    }
+};
 
 
-import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Menu, MenuItem, IconButton } from "@mui/material";
-import PaymentsIcon from "@mui/icons-material/Payments";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import HistoryIcon from '@mui/icons-material/History';
-import LogoutIcon from '@mui/icons-material/Logout';
-import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
-import { useState, useEffect } from "react";
-import { FaBars } from "react-icons/fa";
+
+
+
+import { useEffect, useReducer } from "react";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import toast from "react-hot-toast";
+import { WhatsApp } from "@mui/icons-material";
 
+import AnimatedDropdown from "../components/AnimatedDropdown.jsx";
+import InputField from "../components/InputField.jsx";
+import LanguageSelect from "../components/LanguageSelect.jsx";
+import TemplatePreview from "./components/TemplatePreview.jsx";
+import InteractiveActions from "../whatsappcreatetemplate/components/InteractiveActions.jsx";
+import TemplateTypes from "../whatsappcreatetemplate/components/TemplateTypes.jsx";
+import CarouselTemplatePreview from "../whatsappcreatetemplate/components/CarouselTemplatePreview.jsx";
+import CarouselTemplateTypes from "../whatsappcreatetemplate/components/CarouselTemplateTypes.jsx";
+import CarouselInteractiveActions from "../whatsappcreatetemplate/components/CarouselInteractiveActions.jsx";
+import Loader from "../components/Loader.jsx";
+import { getWabaList } from "../../apis/whatsapp/whatsapp.js";
 
-import AccountInfoModal from "./components/UniversalAccountInfo";
-import CustomTooltip from "../../components/common/CustomTooltip";
-import celitixLogo from '../../assets/images/celitix-cpaas-solution-logo.svg'
+// 🎯 Initial State
+const initialState = {
+    wabaList: null,
+    selectedWaba: "",
+    selectedCategory: "",
+    selectedTemplateType: "",
+    selectedLanguage: "",
+    templateName: "",
+    templateFormat: "",
+    templateHeader: "",
+    templateFooter: "",
+    imageUrl: "",
+    videoUrl: "",
+    documentUrl: "",
+    locationUrl: "",
+    interactiveAction: "none",
+    phoneNumber: "",
+    phoneTitle: "",
+    url: "",
+    urlTitle: "",
+    quickReplies: [],
+    cards: [
+        {
+            mediaType: "image",
+            mediaUrl: "",
+            body: "This is a dummy card body. You can change this content later.",
+            footer: "This is a dummy footer. You can change this content later.",
+            actions: [],
+        },
+    ],
+    isLoading: true,
+};
 
-const Navbar = ({ isCollapsed, setIsCollapsed }) => {
-    const [showModal, setShowModal] = useState(false);
-    const [isSmallScreen, setIsSmallScreen] = useState(window.innerWidth < 768);
-    const [profileAnchorEl, setProfileAnchorEl] = useState(null);
-    const [menuAnchorEl, setMenuAnchorEl] = useState(null);
+// 🎯 Reducer Function
+const reducer = (state, action) => {
+    switch (action.type) {
+        case "SET_WABA_LIST":
+            return { ...state, wabaList: action.payload };
+        case "SET_VALUE":
+            return { ...state, [action.key]: action.payload };
+        case "RESET_INTERACTIVE_ACTIONS":
+            return { ...state, phoneNumber: "", phoneTitle: "", url: "", urlTitle: "", quickReplies: [] };
+        case "ADD_QUICK_REPLY":
+            return state.quickReplies.length < 3
+                ? { ...state, quickReplies: [...state.quickReplies, ""] }
+                : (toast.error("Maximum 3 quick replies allowed"), state);
+        case "REMOVE_QUICK_REPLY":
+            return { ...state, quickReplies: state.quickReplies.filter((_, i) => i !== action.payload) };
+        case "ADD_VARIABLE":
+            return { ...state, [action.key]: `${state[action.key]} {${action.payload}}` };
+        case "ADD_EMOJI":
+            return { ...state, [action.key]: `${state[action.key]}${action.payload}` };
+        case "SET_CARDS":
+            return { ...state, cards: action.payload };
+        default:
+            return state;
+    }
+};
+
+const WhatsappCreateTemplate = () => {
     const navigate = useNavigate();
-    const isMobile = useMediaQuery("(max-width:768px)");
+    const { scrollableContainerRef } = useOutletContext();
+    const [state, dispatch] = useReducer(reducer, initialState);
 
-    // ✅ Detect Screen Resize
+    // Fetch WABA List
     useEffect(() => {
-        const handleResize = () => setIsSmallScreen(window.innerWidth < 768);
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
+        const fetchWabaList = async () => {
+            try {
+                const response = await getWabaList();
+                if (response) {
+                    dispatch({ type: "SET_WABA_LIST", payload: response });
+                } else {
+                    toast.error("Failed to load WABA details!");
+                }
+            } catch (error) {
+                toast.error("Error fetching WABA list.");
+            } finally {
+                dispatch({ type: "SET_VALUE", key: "isLoading", payload: false });
+            }
+        };
+        fetchWabaList();
     }, []);
 
-    // ✅ Sidebar Toggle
-    const toggleSidebar = () => {
-        setIsCollapsed((prev) => !prev);
-    };
-
-    // ✅ Open & Close Profile Dropdown
-    const handleOpenProfileMenu = (event) => {
-        setProfileAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseProfileMenu = () => {
-        setProfileAnchorEl(null);
-    };
-
-    const handleViewProfile = () => {
-        handleCloseProfileMenu();
-        navigate("/profile");
-    };
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        handleCloseProfileMenu();
-        toast.success("Logged out successfully!");
-        // window.location.href = "/login";
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000)
-    };
-
-    // ✅ Open & Close Small Screen Dropdown
-    const handleOpenMenu = (event) => {
-        setMenuAnchorEl(event.currentTarget);
-    };
-
-    const handleCloseMenu = () => {
-        setMenuAnchorEl(null);
+    // Submit Function
+    const handleSubmit = () => {
+        if (state.selectedCategory && state.selectedTemplateType && state.templateName) {
+            toast.success("Template submitted successfully!");
+        } else {
+            toast.error("Please fill all required fields before submitting.");
+        }
     };
 
     return (
-        <nav className="w-full bg-white lg:h-16 md:h-15 h-14 flex items-center px-4">
-            <div className="flex items-center gap-4 ">
-                <button onClick={toggleSidebar} className="text-gray-700 focus:outline-none cursor-pointer">
-                    <FaBars />
-                </button>
-
-                {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
-                <img src={celitixLogo} width={100} height={80} alt="" />
-            </div>
-
-            {/* ✅ Large Screen Navbar Buttons */}
-            {!isSmallScreen ? (
-                <div className="ml-auto flex gap-3" >
-                    <CustomTooltip
-                        title="Account info"
-                        placement="bottom"
-                        arrow
-                    >
-                        <button className="p-2 rounded-full cursor-pointer bg-[#e6f4ff] hover:bg-gray-200" onClick={() => setShowModal(true)}>
-                            <InfoOutlinedIcon className="text-xl text-blue-600" />
-                        </button>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Add Funds"
-                        placement="bottom"
-                        arrow
-                    >
-                        <button className="p-2 cursor-pointer rounded-full bg-[#e6f4ff] hover:bg-gray-200">
-                            <PaymentsIcon className="text-xl text-blue-700" />
-                        </button>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Wallet"
-                        placement="bottom"
-                        arrow
-                    >
-                        <button className="p-2 rounded-full cursor-pointer bg-[#e6f4ff] hover:bg-gray-200">
-                            <AccountBalanceWalletOutlinedIcon className="text-xl text-blue-700" />
-                        </button>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Downloads"
-                        placement="bottom"
-                        arrow
-                    >
-                        <button className="p-2 rounded-full cursor-pointer bg-[#e6f4ff] hover:bg-gray-200">
-                            <FileDownloadOutlinedIcon className="text-xl text-blue-700" />
-                        </button>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Profile"
-                        placement="bottom"
-                        arrow
-                    >
-                        {/* ✅ Profile Button (Dropdown) */}
-                        <button onClick={handleOpenProfileMenu} className="p-2 rounded-full cursor-pointer bg-[#e6f4ff] hover:bg-gray-200">
-                            <AccountCircleRoundedIcon className="text-xl text-blue-700" />
-                        </button>
-                    </CustomTooltip>
-
-                    {/* ✅ Profile Dropdown */}
-                    <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={handleCloseProfileMenu}>
-                        <div className="hover:text-blue-700">
-                            <MenuItem onClick={handleViewProfile} sx={{
-                                fontSize: '15px',
-                                fontWeight: '500'
-                            }}><AccountCircleIcon className="mr-2" fontSize="small" />Profile</MenuItem>
-                        </div>
-                        <div className="hover:text-blue-700">
-                            <MenuItem sx={{
-                                fontSize: '15px',
-                                fontWeight: '500'
-                            }}><SettingsOutlinedIcon className="mr-2" fontSize="small" />Settings</MenuItem>
-                        </div>
-                        <div className="hover:text-blue-700">
-                            <MenuItem sx={{
-                                fontSize: '15px',
-                                fontWeight: '500'
-                            }}><HistoryIcon className="mr-2" fontSize="small" />Transaction History</MenuItem>
-                        </div>
-                        <div className="hover:text-blue-700">
-                            <MenuItem sx={{
-                                fontSize: '15px',
-                                fontWeight: '500'
-                            }} onClick={handleLogout}><LogoutIcon className="mr-2" fontSize="small" />Logout</MenuItem>
-                        </div>
-                    </Menu>
-                </div>
+        <div className="w-full">
+            {state.isLoading ? (
+                <Loader />
             ) : (
-                // ✅ Small Screen Dropdown 
-                <div className="ml-auto" >
-                    <IconButton onClick={handleOpenMenu} className="text-gray-700">
-                        <MoreVertIcon />
-                    </IconButton>
+                <div className="w-full">
+                    <h1 className="text-md font-semibold lg:text-start text-center text-gray-800 mb-4">
+                        Create Template
+                    </h1>
 
-                    {/* ✅ Small Screen Dropdown Menu */}
-                    <Menu anchorEl={menuAnchorEl} open={Boolean(menuAnchorEl)} onClose={handleCloseMenu} style={{ width: "550px!important" }}>
-                        <MenuItem onClick={() => { setShowModal(true); handleCloseMenu(); }} sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} >
-                            <InfoOutlinedIcon className="mr-2" fontSize="small" /> Info
-                        </MenuItem>
-                        <MenuItem onClick={handleCloseMenu} sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} >
-                            <PaymentsIcon className="mr-2" fontSize="small" /> Money
-                        </MenuItem>
-                        <MenuItem onClick={handleCloseMenu} sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} >
-                            <AccountBalanceWalletOutlinedIcon className="mr-2 " fontSize="small" /> Wallet
-                        </MenuItem>
-                        <MenuItem onClick={handleCloseMenu} sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} >
-                            <FileDownloadOutlinedIcon className="mr-2" fontSize="small" /> Download
-                        </MenuItem>
-                        <MenuItem
-                            onClick={handleViewProfile}
-                            sx={{
-                                fontSize: '15px',
-                                fontWeight: '500'
-                            }}
-                        >
-                            <AccountCircleRoundedIcon className="mr-2" fontSize="small" /> Profile
-                        </MenuItem>
-                        <MenuItem sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} >
-                            <SettingsOutlinedIcon className="mr-2" fontSize="small" />Settings</MenuItem>
-                        <MenuItem sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} ><HistoryIcon className="mr-2 " fontSize="small" />Transactions</MenuItem>
-                        <MenuItem sx={{
-                            fontSize: '15px',
-                            fontWeight: '500'
-                        }} onClick={handleLogout}><LogoutIcon className="mr-2" fontSize="small" />Logout</MenuItem>
-                    </Menu>
+                    <div className="flex gap-4 flex-wrap items-end justify-start align-middle pb-5">
+                        {/* WABA Selection */}
+                        <AnimatedDropdown
+                            id="createSelectWaba"
+                            label="Select WABA"
+                            options={state.wabaList?.map((waba) => ({
+                                value: waba.mobileNo,
+                                label: waba.name,
+                            }))}
+                            value={state.selectedWaba}
+                            onChange={(value) => dispatch({ type: "SET_VALUE", key: "selectedWaba", payload: value })}
+                            placeholder="Select WABA"
+                        />
+
+                        {/* Category Selection */}
+                        <AnimatedDropdown
+                            id="category"
+                            label="Category"
+                            options={[
+                                { value: "MARKETING", label: "Marketing" },
+                                { value: "UTILITY", label: "Utility" },
+                                { value: "AUTHENTICATION", label: "Authentication" },
+                            ]}
+                            value={state.selectedCategory}
+                            onChange={(value) => dispatch({ type: "SET_VALUE", key: "selectedCategory", payload: value })}
+                            placeholder="Category"
+                        />
+
+                        {/* Template Type Selection */}
+                        {state.selectedCategory && (
+                            <AnimatedDropdown
+                                id="templateType"
+                                label="Template Type"
+                                options={[
+                                    { value: "text", label: "Text" },
+                                    { value: "image", label: "Image" },
+                                    { value: "video", label: "Video" },
+                                    { value: "document", label: "Document" },
+                                    { value: "location", label: "Location" },
+                                    ...(state.selectedCategory === "MARKETING" ? [{ value: "carousel", label: "Carousel" }] : []),
+                                ]}
+                                value={state.selectedTemplateType}
+                                onChange={(value) => dispatch({ type: "SET_VALUE", key: "selectedTemplateType", payload: value })}
+                                placeholder="Template Type"
+                            />
+                        )}
+
+                        {/* Language Selection */}
+                        <LanguageSelect
+                            id="language"
+                            label="Language"
+                            value={state.selectedLanguage}
+                            onChange={(option) => dispatch({ type: "SET_VALUE", key: "selectedLanguage", payload: option.value })}
+                        />
+
+                        {/* Template Name Input */}
+                        <InputField
+                            id="templateName"
+                            label="Template Name"
+                            onChange={(e) => dispatch({ type: "SET_VALUE", key: "templateName", payload: e.target.value.replace(/\s/g, "") })}
+                            value={state.templateName}
+                            placeholder="Template Name"
+                        />
+                    </div>
+
+                    {/* Preview & Submit */}
+                    {state.selectedWaba && state.selectedCategory && state.selectedTemplateType ? (
+                        <div className="flex">
+                            <TemplatePreview {...state} />
+                            <div className="w-1/3 mt-6 flex items-center justify-center">
+                                <button
+                                    disabled={!state.selectedWaba || !state.selectedCategory || !state.selectedTemplateType || !state.templateName}
+                                    className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${state.selectedWaba && state.selectedCategory && state.selectedTemplateType && state.templateName
+                                        ? "bg-[#212529] hover:bg-[#434851]"
+                                        : "bg-gray-300 cursor-not-allowed"
+                                        }`}
+                                    onClick={handleSubmit}
+                                >
+                                    Submit Template
+                                </button>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="text-gray-500">Please select WABA, category, and template type.</p>
+                    )}
                 </div>
             )}
-
-            {/* ✅ Account Info Modal */}
-            {showModal && <AccountInfoModal show={showModal} handleClose={() => setShowModal(false)} />}
-        </nav>
+        </div>
     );
 };
 
-export default Navbar;
+export default WhatsappCreateTemplate;

@@ -48,7 +48,7 @@ const LanguageSelect = ({
                         color: 'white',
                         borderRadius: '6px',
                         border: '1px solid #ccc',
-                        fontSize: "15px"
+                        fontSize: "14px",
                     }),
                     menu: (provided) => ({
                         ...provided,
