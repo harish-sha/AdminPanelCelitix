@@ -9,6 +9,9 @@ import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Paper, Typography, Box, Button } from '@mui/material';
+import { getWhatsappCampaignReport } from '../../../apis/whatsapp/whatsapp.js';
+import { useState } from 'react';
+import { useEffect } from 'react';
 
 
 const PaginationList = styled("ul")({
@@ -62,7 +65,18 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 };
 
 const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
-    const [selectedRows, setSelectedRows] = React.useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
+    const [campaignData, setCampaignData] = useState([]);
+
+    // Fetch Campaign Data
+    useEffect(() => {
+        const fetchData = async () => {
+            const data = await getWhatsappCampaignReport();
+            setCampaignData(data);
+        };
+        fetchData();
+    }, []);
+
 
     // const paginationModel = { page: 0, pageSize: 10 };
     const [paginationModel, setPaginationModel] = React.useState({
@@ -72,7 +86,7 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
 
     const columns = [
         { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-        { field: 'createdOn', headerName: 'Created On', flex: 1, minWidth: 120 },
+        { field: 'queTime', headerName: 'Created On', flex: 1, minWidth: 120 },
         { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
         { field: 'templateName', headerName: 'Template Name', flex: 1, minWidth: 120 },
         { field: 'templateCategory', headerName: 'Template Category', flex: 1, minWidth: 120 },
@@ -106,29 +120,29 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
         },
     ];
 
-    const rows = [
-        { id: 1, sn: 1, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 2, sn: 2, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 3, sn: 3, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 4, sn: 4, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 5, sn: 5, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 6, sn: 6, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 7, sn: 7, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 8, sn: 8, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 9, sn: 9, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 10, sn: 10, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 11, sn: 11, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 12, sn: 12, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 13, sn: 13, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 14, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 15, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 16, sn: 16, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 17, sn: 17, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 18, sn: 18, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 19, sn: 19, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-        { id: 20, sn: 20, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    // const rows = [
+    //     { id: 1, sn: 1, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 2, sn: 2, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 3, sn: 3, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 4, sn: 4, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 5, sn: 5, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 6, sn: 6, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 7, sn: 7, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 8, sn: 8, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 9, sn: 9, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 10, sn: 10, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 11, sn: 11, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 12, sn: 12, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 13, sn: 13, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 14, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 15, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 16, sn: 16, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 17, sn: 17, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 18, sn: 18, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 19, sn: 19, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
+    //     { id: 20, sn: 20, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
 
-    ];
+    // ];
 
     // use this when you want to create rows dynamically
     // const rows = Array.from({ length: 500 }, (_, i) => ({
@@ -143,6 +157,19 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
     //     totalAudience: '10000',
     //     action: 'True',
     // }));
+
+    const rows = campaignData.map((item, index) => ({
+        id: index + 1, // Unique ID for DataGrid
+        sn: index + 1,
+        queTime: item.queTime || "N/A",
+        campaignName: item.campaignName || "N/A",
+        templateName: item.templateName || "N/A",
+        templateCategory: item.templateCategory || "N/A",
+        templateType: item.templateType || "N/A",
+        status: item.status || "N/A",
+        totalAudience: item.totalAudience || "0",
+        action: "Actions",
+    }));
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 

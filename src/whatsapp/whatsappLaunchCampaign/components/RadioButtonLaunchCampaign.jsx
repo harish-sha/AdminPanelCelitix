@@ -12,7 +12,7 @@ import { getCountryList } from "../../../apis/common/common.js";
 import AnimatedDropdown from "../../components/AnimatedDropdown.jsx"
 import '../whatsappLaunch.css'
 
-function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
+function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange, onUrlIndexChange }) {
   const [selectedOption, setSelectedOption] = useState("option2");
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
@@ -31,7 +31,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
   const [countryCode, setCountryCode] = useState('');
   const [addCountryCode, setAddCountryCode] = useState(false);
   const [countryList, setCountryList] = useState([]);
-
   const [xlsxPath, setXlsxPath] = useState("");
 
   const handleChange = (event) => {
@@ -50,6 +49,15 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       setAddCountryCode(false);
       setIsUploaded(false);
       setFileHeaders([]);
+      onGroupChange("-1");
+      setXlsxPath("");
+      setSelectedMobileColumn("");
+      setSelectedGroups([]);
+      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
+    } else {
+      setSelectedGroups([]);
+      onGroupChange(0);
+      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
     }
 
     if (value === "option2") {
@@ -59,12 +67,15 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       setSelectedMobileColumn('');
       setAddCountryCode(false);
       setFileHeaders([]);
+      onGroupChange("0");
+      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
     }
     if (value === "option3") {
       setSelectedGroups([]);
       setFileData([]);
       setTotalRecords("");
       setSelectedMobileColumn('');
+      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
     }
   };
 
@@ -133,7 +144,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       setFileData(jsonData);
       setColumns(headers);
       setFileHeaders(headers);
-      // setIsUploaded(false); // Reset to "File Selected" if a new file is selected
+      setIsUploaded(false); // Reset to "File Selected" if a new file is selected
       setTotalRecords(jsonData.length);
     };
     reader.readAsBinaryString(file);
@@ -152,6 +163,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
     setIsUploaded(false);
     setAddCountryCode(false)
     setSelectedCountryCode('');
+    setSelectedMobileColumn("");
+    setFileData([]);
+    setTotalRecords("");
+    setXlsxPath("");
     document.getElementById("fileInput").value = "";
     toast.success("File removed successfully.");
   };
@@ -222,6 +237,12 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
         setXlsxPath(response.filepath); // ✅ Store file path in state
         console.log("xlsxpath - ", response.filepath);
 
+        // ✅ Store only sampleRecords instead of full file data
+        setFileData(response.sampleRecords || []);
+        setColumns(response.headers || []);
+        setFileHeaders(response.headers || []);
+        setTotalRecords(response.totalRecords || "");
+
         onFileUpload(response.filepath, fileHeaders, totalRecords, selectedCountryCode, selectedMobileColumn);
 
         toast.success("File uploaded successfully.");
@@ -234,7 +255,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
       setIsUploading(false);
     }
   };
-
 
   // Get Waba Group List
   useEffect(() => {
@@ -321,7 +341,24 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload }) {
             maxSelectedLabels={0}
             optionLabel="label"
             filter
-            value={showGroupList} onChange={(e) => setShowGroupList(e.value)}
+            // value={showGroupList} onChange={(e) => setShowGroupList(e.value)}
+            value={selectedGroups}
+            onChange={(e) => {
+              if (!e.value) {
+                console.error("❌ MultiSelect received undefined value");
+                return;
+              }
+
+              // ✅ Extract group codes correctly
+              const selectedValues = e.value.map((group) => group).filter(Boolean);
+              setSelectedGroups(selectedValues);
+
+              // ✅ Convert array to comma-separated string
+              const groupValues = selectedValues.length > 0 ? selectedValues.join(",") : "-1";
+              console.log("📌 Selected Group Codes:", groupValues);
+
+              onGroupChange(groupValues);
+            }}
             options={groups.map((group) => ({
               label: `${group.groupName} (${group.totalCount})`,
               value: group.groupCode,

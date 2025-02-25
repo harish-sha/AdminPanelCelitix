@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from "react-router-dom";
+import { Dialog } from "primereact/dialog";
+import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 import toast from 'react-hot-toast';
 
 
@@ -13,7 +15,7 @@ import InputField from '../../components/layout/InputField.jsx';
 import UniversalButton from '../components/UniversalButton.jsx'
 import Loader from '../components/Loader';
 
-const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
+const WhatsappLaunchCampaign = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedTemplate, setSelectedTemplate] = useState("");
     const [selectedWaba, setSelectedWaba] = useState("");
@@ -38,95 +40,175 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
     const [totalRecords, setTotalRecords] = useState("")
     const [selectedCountryCode, setSelectedCountryCode] = useState("");
     const [selectedMobileColumn, setSelectedMobileColumn] = useState('');
+    const [isGroup, setIsGroup] = useState(0);
 
-    const navigate = useNavigate();
+
+    const [urlIndex, setUrlIndex] = useState(null);  // ✅ Define state in parent
+
+
+    const [selectedGroups, setSelectedGroups] = useState([]);
+
+    const [testMobileNumber, setTestMobileNumber] = useState("");
+    const [schedule, setSchedule] = useState(false);
+    const [scheduledDateTime, setScheduledDateTime] = useState(null);
+    // const [agreeTerms, setAgreeTerms] = useState(false);
+
+    const [dialogVisible, setDialogVisible] = useState(false);
+
+    // const handleGroupChange = (value) => {
+    //     console.log("📌 isGroup Updated:", value);
+    //     setIsGroup(value);
+    // };
+
+    const handleUrlIndexChange = (index) => {
+        console.log("📌 Updating URL Index in Parent:", index);
+        setUrlIndex(index);  // ✅ Store the updated index
+    };
+
+    const handleGroupChange = (value) => {
+        console.log("📌 isGroup Updated:", value);
+
+        if (Array.isArray(value)) {
+            setIsGroup(1);
+            setSelectedGroups(value);
+        } else if (typeof value === "string") {
+            if (value === "-1") {
+                setIsGroup(1);
+                setSelectedGroups([]);
+            } else if (value.includes(",")) {
+                setIsGroup(1);
+                setSelectedGroups(value.split(",").map(Number));
+            } else {
+                setIsGroup(0);
+                setSelectedGroups([]);
+            }
+        } else if (typeof value === "number") {
+            setIsGroup(1);
+            setSelectedGroups([value]);
+        } else {
+            console.error("Unexpected value type in handleGroupChange:", value);
+        }
+
+        // ✅ If switching to Groups, reset Excel data
+        if (isGroup === 1) {
+            setXlsxPath("");
+            setTotalRecords("");
+            setSelectedCountryCode("");
+            setSelectedMobileColumn("");
+        }
+    };
+
+
+    const handleImageUpload = (imageUrl) => {
+        console.log("Uploaded Image URL:", imageUrl);
+        setImageFile(imageUrl);
+        setImagePreview(imageUrl);
+    };
 
     const handleSubmitCampaign = async () => {
-
-        // ✅ Extract Values from API Responses
-        const selectedWabaData = wabaList?.find(waba => waba.mobileNo === selectedWaba);
-        const selectedTemplateData = templateList?.find(template => template.templateName === selectedTemplate);
-
-        // ✅ Generate ContentMessage dynamically based on user input
-        const contentValues = Object.keys(formData)
-            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true })) // Sort by variable number
-            .map((key) => `#${formData[key]}#`) // Wrap values in `#`
-            .join(","); // Join values with a comma
-
-        console.log("📌 Generated ContentMessage:", contentValues); // Debugging log
-
-
-        // Step 1: Validate WABA selection
         if (!selectedWaba) {
             toast.error("Please select a WhatsApp Business Account (WABA).");
             return;
         }
 
         if (!inputValue) {
-            toast.error("Please enter campaign name!");
+            toast.error("Please enter a campaign name!");
             return;
         }
 
-        // Step 2: Validate Template selection
         if (!selectedTemplate) {
             toast.error("Please select a WhatsApp template.");
             return;
         }
 
-        // Step 4: Validate if the user uploaded a contact file
-        if (!xlsxPath) {
-            toast.error("Please upload an Excel file with contact numbers.");
-            return;
-        }
+        // if (!xlsxPath) {
+        //   toast.error("Please upload an Excel file with contact numbers.");
+        //   return;
+        // }
 
-        // Step 3: Validate Country Code selection (if applicable)
-        if (!selectedCountryCode && selectedOption === "option2") {
-            toast.error("Please select a country code.");
-            return;
-        }
+        // if (!selectedMobileColumn) {
+        //   toast.error(
+        //     "Please select the mobile number column from the uploaded file."
+        //   );
+        //   return;
+        // }
 
-        // Step 5: Validate Mobile Number Column selection
-        if (!selectedMobileColumn && selectedOption === "option2") {
-            toast.error("Please select the mobile number column from the uploaded file.");
-            return;
-        }
+        // ✅ If all validations pass, open the review dialog
+        setDialogVisible(true);
+    };
 
-        if (!selectedMobileColumn) {
-            toast.error("Please select the mobile number column from the uploaded file.");
-            return;
-        }
-
-        // if (!contentValues) {
-        //     toast.error("Please enter message parameters");
+    const handleFinalSubmit = async (event) => {
+        if (event) event.preventDefault();
+        // if (!agreeTerms) {
+        //     toast.error("Please agree to the terms and conditions.");
         //     return;
         // }
 
+        const selectedWabaData = wabaList?.find(
+            (waba) => waba.mobileNo === selectedWaba
+        );
+        const selectedTemplateData = templateList?.find(
+            (template) => template.templateName === selectedTemplate
+        );
 
-        // ✅ If all validations pass, prepare data
+        const contentValues = Object.keys(formData)
+            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+            .map((key) => `#${formData[key]}#`)
+            .join(",");
+
+        // ✅ If using Groups, clear file-related data
+        if (isGroup === 1) {
+            setXlsxPath("");
+            setTotalRecords("");
+            setSelectedCountryCode("");
+            setSelectedMobileColumn("");
+        }
+
+        // ✅ Ensure `groupValues` is formatted correctly
+        const groupValues = isGroup === 1 && selectedGroups.length > 0
+            ? selectedGroups.join(",")
+            : "-1";
+
+        // ✅ Prepare Request Payload
         const requestData = {
             mobileIndex: selectedMobileColumn,
-            ContentMessage: contentValues,
-            wabaNumber: selectedWabaData?.wabaSrno,
+            ContentMessage: contentValues || "",
+            wabaNumber: selectedWabaData?.wabaSrno || "",
             campaignName: inputValue,
-            templateSrno: selectedTemplateData?.templateSrno,
+            templateSrno: selectedTemplateData?.templateSrno || "",
             templateName: selectedTemplate,
             templateLanguage: selectedLanguage,
-            templateCategory: selectedTemplateData?.category,
-            templateType: selectedTemplateData?.type,
-            // variables: Object.values(formData) || [],
-            // imgCard: imagePreview ? [imagePreview] : [],
+            templateCategory: selectedTemplateData?.category || "",
+            templateType: selectedTemplateData?.type || "",
+            url: "",
+            variables: [],
+            ScheduleCheck: "0",
             xlsxpath: xlsxPath,
             totalRecords: totalRecords,
-            countryCode: selectedCountryCode,
+            attachmentfile: imageFile || "",
+            urlValues: "",
+            // urlIndex: 0,
+            urlIndex: urlIndex ?? -1,
+            isShortUrl: 0,
+            isGroup: isGroup,
+            countryCode: selectedCountryCode || "",
+            // scheduleDateTime: schedule ? scheduledDateTime : "0",
+            scheduleDateTime: "0",
+            groupValues,
         };
 
-        console.log("final data submission", requestData)
+        console.log("📌 Final Data Submission:", requestData);
 
-        // Send API request
+        // ✅ Send API request
         try {
             const response = await sendWhatsappCampaign(requestData);
             if (response?.status === true) {
                 toast.success("Campaign launched successfully!");
+                setDialogVisible(false);
+
+                // setTimeout(() => {
+                //     window.location.reload();
+                // }, 1000); // Reload after 2 seconds to allow toast message visibility
             } else {
                 toast.error(response?.message || "Campaign launch failed.");
             }
@@ -137,22 +219,15 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
     };
 
 
-
     const handleOptionChange = (value) => {
         setSelectedOption(value);
         setFormData({});
+        setUrlIndex(null);
     };
 
     const handleInputChange = (value) => {
         const newValue = value.replace(/\s/g, "");
         setInputValue(newValue);
-    };
-
-    const handleInputChangeNew = (value, variable) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [`input${variable}`]: value,
-        }));
     };
 
     // WABA LIST
@@ -246,19 +321,14 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
         fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
 
-    // const handleFileHeadersUpdate = (headers) => {
-    //     console.log("Received fileHeaders in WhatsappLaunchCampaign:", headers);
-    //     setFileHeaders(headers);
-    // };
 
     const handleFileHeadersUpdate = (filePath, headers, totalRecords, countryCode, selectedMobileColumn) => {
         setFileHeaders(headers);
         setTotalRecords(totalRecords);
-        setXlsxPath(filePath); // ✅ Store uploaded file path
+        setXlsxPath(filePath);
         setSelectedMobileColumn(selectedMobileColumn);
-
         if (countryCode) {
-            setSelectedCountryCode(countryCode); // ✅ Ensure country code updates properly
+            setSelectedCountryCode(countryCode);
         }
     };
 
@@ -266,12 +336,9 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
         console.log("📌 Updated selectedCountryCode in Parent:", selectedCountryCode);
     }, [selectedCountryCode]);
 
-
-
     useEffect(() => {
         console.log("selected WABA", selectedWaba);
     }, [selectedWaba]);
-
 
     useEffect(() => {
         console.log("Campaign name", inputValue);
@@ -343,7 +410,6 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
                                             tooltipPlacement='right'
                                             options={templateOptions}
                                             value={selectedTemplate}
-                                            // onChange={(value) => setSelectedTemplate(value)}
                                             onChange={(value) => {
                                                 setSelectedTemplate(value);
                                                 setTemplateDataNew(null);
@@ -361,12 +427,12 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
                                             templateDataNew && (
                                                 <TemplateForm
                                                     templateDataNew={templateDataNew}
-                                                    // onInputChange={handleInputChangeNew}
                                                     onInputChange={(value, variable) => setFormData(prev => ({ ...prev, [variable]: value }))}
-                                                    onImageUpload={setImagePreview}
+                                                    onImageUpload={handleImageUpload}
                                                     selectedOption={selectedOption}
                                                     fileHeaders={fileHeaders}
                                                     selectedTemplateData={selectedTemplateData}
+                                                    onUrlIndexChange={setUrlIndex}
                                                 />
                                             )
                                         )}
@@ -380,6 +446,10 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
                                             onOptionChange={handleOptionChange}
                                             selectedOption={selectedOption}
                                             onFileUpload={handleFileHeadersUpdate}
+                                            onGroupChange={handleGroupChange}
+                                            setSelectedGroups={setSelectedGroups}
+                                            onUrlIndexChange={setUrlIndex}
+
                                         />
                                     )}
                                 </div>
@@ -411,6 +481,107 @@ const WhatsappLaunchCampaign = ({ selectedTemplateDetails }) => {
                             />
                         </div>
                     </div>
+
+                    {/* Dialog Box for Review & Submission */}
+                    <Dialog
+                        header="Review & Confirm"
+                        visible={dialogVisible}
+                        style={{ width: "30rem" }}
+                        onHide={() => setDialogVisible(false)}
+                        draggable={false}
+                    >
+                        <div className="space-y-4">
+                            <div className="p-3 bg-gray-100 text-gray-700 rounded-md shadow-xl space-y-1.5 grid grid-cols-2">
+                                <span className="font-semibold text-sm">WABA Account : </span>
+                                <p className=" text-sm">
+                                    {wabaList?.find((waba) => waba.mobileNo === selectedWaba)?.name || "N/A"}
+                                </p>
+                                <span className="font-semibold text-sm">Template Name : </span>
+                                <p className=" text-sm">
+                                    {selectedTemplate || "N/A"}
+                                </p>
+                                <span className="font-semibold text-sm">Template Type : </span>
+                                <p className=" text-sm">
+                                    {selectedTemplateData?.type || "N/A"}
+                                </p>
+                                <span className="font-semibold text-sm">Template Category : </span>
+                                <p className=" text-sm">
+                                    {selectedTemplateData?.category || "N/A"}
+                                </p>
+                                <span className="font-semibold text-sm">Campaign Name : </span>
+                                <p className=" text-sm w-full break-words">
+                                    {inputValue || "N/A"}
+                                </p>
+                                {/* <span className="font-semibold text-sm">Total Audience : </span>
+                                <p className=" text-sm">
+                                    {totalRecords || "N/A"}
+                                </p> */}
+                            </div>
+                            {/* <div className="flex items-end gap-2">
+                                <div className="w-full sm:w-82">
+                                    <InputField
+                                        id="testMobileNumber"
+                                        name="testMobileNumber"
+                                        label="Test Mobile Number"
+                                        value={testMobileNumber}
+                                        onChange={(e) => setTestMobileNumber(e.target.value)}
+                                        placeholder="Enter mobile number"
+                                        tooltipContent="Enter a mobile number to test the campaign."
+                                        tooltipPlacement="right"
+                                        type="number"
+                                        maxLength="10"
+                                    />
+                                </div>
+                                <UniversalButton
+                                    label="Test Now"
+                                    onClick={() => toast.success("Test message sent!")}
+                                    variant="primary"
+                                />
+                            </div> */}
+                            {/* <div className="flex items-center gap-2">
+                                <Checkbox
+                                    inputId="scheduleCheckbox"
+                                    checked={schedule}
+                                    onChange={(e) => setSchedule(e.checked)}
+                                />
+                                <label htmlFor="scheduleCheckbox" className="text-md">
+                                    Schedule
+                                </label>
+                                {schedule && (
+                                    <Calendar
+                                        id="scheduleDateTime"
+                                        value={scheduledDateTime}
+                                        onChange={(e) => setScheduledDateTime(e.value)}
+                                        showTime
+                                        hourFormat="12"
+                                        minDate={new Date()} 
+                                    />
+                                )}
+                            </div> */}
+                            {/* <div className="flex items-center gap-2">
+                                <Checkbox
+                                    inputId="agreeTermsCheckbox"
+                                    checked={agreeTerms}
+                                    onChange={(e) => setAgreeTerms(e.checked)}
+                                />
+                                <label htmlFor="agreeTermsCheckbox">
+                                    I agree to terms and conditions*
+                                </label>
+                            </div> */}
+                            <div className="flex items-center justify-center" >
+                                {/*final Submit Button */}
+                                <UniversalButton
+                                    label="Send Campaign"
+                                    onClick={(e) => handleFinalSubmit(e)}  // ✅ Pass event to prevent page reload
+                                    style={{
+                                        borderRadius: "40px",
+                                        letterSpacing: "1px",
+                                    }}
+                                    variant="primary"
+                                />
+                            </div>
+                        </div>
+                    </Dialog>
                 </>
             )}
         </div>

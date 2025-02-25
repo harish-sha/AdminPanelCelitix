@@ -22,9 +22,11 @@ const extractVariablesFromText = (text) => {
     return variables;
 };
 
-const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders, selectedTemplateData }) => {
+const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders, selectedTemplateData, onUrlIndexChange }) => {
     const [inputValues, setInputValues] = useState({});
     const [selectedVariable, setSelectedVariable] = useState("");
+    const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+
     const [imageState, setImageState] = useState({
         file: null,
         preview: null,
@@ -50,7 +52,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
 
     let variables = [];
     if (selectedOption === "option1") {
-        variables = ["firstname", "lastname"];
+        variables = ["firstname", "lastname", "mobileno"];
     } else if (selectedOption === "option2" && fileHeaders?.length > 0) {
         variables = fileHeaders;
     }
@@ -108,6 +110,15 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
 
             // Store the new state
             const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
+
+            // ✅ If selecting for BUTTON URL, update `urlIndex`
+            if (type === "button" && fileHeaders.includes(variable)) {
+                const index = fileHeaders.indexOf(variable);
+                console.log("🔹 Selected URL Column:", variable, "Index:", index);
+
+                setUrlIndex(index);  // ✅ Update URL Index state
+                onUrlIndexChange(index);  // ✅ Send updated index to parent component
+            }
 
             // Use setTimeout to avoid updating parent state in the render phase
             setTimeout(() => {

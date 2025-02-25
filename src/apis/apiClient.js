@@ -17,20 +17,25 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   };
 
   // If FormData is used, do not set Content-Type header manually
-  if (options.body instanceof FormData) {
-    delete headers["Content-Type"];
-  } else {
+  // if (options.body instanceof FormData) {
+  //   delete headers["Content-Type"];
+  // } else {
+  //   headers["Content-Type"] = "application/json";
+  // }
+
+  // **Only set JSON Content-Type if NOT using FormData**
+  if (!(options.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
 
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
 
-    const method = options.method || "GET";
+    // const method = options.method || "GET";
 
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,
-      method,
+      method: options.method || "GET",
       headers,
     });
 
