@@ -9,14 +9,14 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import toast from 'react-hot-toast';
 
-import DataTable from '../components/Datatable'
+import DataTable from './components/Datatable.jsx'
 import AnimatedDropdown from '../components/AnimatedDropdown';
 import InputField from '../components/InputField';
 import UniversalDatePicker from '../components/UniversalDatePicker';
 import UniversalButton from "../components/UniversalButton";
 import UniversalSkeleton from '../components/UniversalSkeleton';
 import Loader from '../components/Loader';
-import { getWabaList, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
+import { getWabaList, getWabaTemplate, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
 import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
 import '../style.css'
 
@@ -27,6 +27,11 @@ const ManageTemplate = () => {
     const [isFetching, setIsFetching] = useState(false);
     const [value, setValue] = useState(0);
     const [hasSearched, setHasSearched] = useState(false)
+
+    const [selectedTemplate, setSelectedTemplate] = useState("");
+    const [wabaAccountId, setWabaAccountId] = useState("");
+
+
 
     // Filters
     const [selectedDate, setSelectedDate] = useState(null);
@@ -66,6 +71,7 @@ const ManageTemplate = () => {
             setIsLoading(true);
             try {
                 const response = await getWabaList();
+                console.log("WABA List:", response);
                 if (response) {
                     setWabaList(response);
                 } else {
@@ -78,6 +84,24 @@ const ManageTemplate = () => {
         };
         fetchWabaList();
     }, []);
+
+    useEffect(() => {
+        const fetchTemplateData = async () => {
+            if (!selectedTemplate || !wabaAccountId) return;
+            try {
+                const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+
+                if (response && response.data && response.data.length > 0) {
+                    setTemplateData(response.data[0]);
+                } else {
+                    toast.error("Failed to load template data!");
+                }
+            } catch (error) {
+                toast.error("Error fetching template data.");
+            }
+        };
+        fetchTemplateData();
+    }, [selectedTemplate, wabaAccountId]);
 
     const handleSearch = async () => {
         if (!selectedWaba) {
@@ -346,6 +370,7 @@ const ManageTemplate = () => {
                                         id="whatsappManageTemplateTable"
                                         name="whatsappManageTemplateTable"
                                         wabaNumber={selectedWaba}
+                                        wabaList={wabaList}
                                         data={filteredData}
                                     />
                                 )}

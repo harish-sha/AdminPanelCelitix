@@ -10,6 +10,7 @@ import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid'
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Paper, Typography, Box, Button } from '@mui/material';
 import { getWhatsappCampaignReport } from '../../../apis/whatsapp/whatsapp.js';
+import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { useEffect } from 'react';
 
@@ -64,9 +65,11 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
+const ManageCampaignTable = ({ id, name }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignData, setCampaignData] = useState([]);
+    const navigate = useNavigate(); // Navigation hook
+
 
     // Fetch Campaign Data
     useEffect(() => {
@@ -77,9 +80,31 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
         fetchData();
     }, []);
 
+    const handleView = (row) => {
+        console.log("View campaign:", row)
+    };
 
-    // const paginationModel = { page: 0, pageSize: 10 };
-    const [paginationModel, setPaginationModel] = React.useState({
+
+
+    const handleSummaryReport = (row) => {
+        navigate(`/wcampaigndetailsreport/${row.campaignSrno}`, { state: { campaignName: row.campaignName } });
+    };
+
+    // **Format Date Function** (Ensures proper date format)
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        return date.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            // hour: "2-digit",
+            // minute: "2-digit",
+            // second: "2-digit",
+        });
+    };
+
+    const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 10,
     });
@@ -108,7 +133,7 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
                             }}
                         />
                     </IconButton>
-                    <IconButton onClick={() => handleDuplicate(params.row)}>
+                    <IconButton onClick={() => handleSummaryReport(params.row)}>
                         <DescriptionOutlinedIcon
                             sx={{
                                 fontSize: '1.2rem',
@@ -120,35 +145,12 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
         },
     ];
 
-    // const rows = [
-    //     { id: 1, sn: 1, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 2, sn: 2, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 3, sn: 3, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 4, sn: 4, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 5, sn: 5, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 6, sn: 6, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 7, sn: 7, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 8, sn: 8, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 9, sn: 9, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 10, sn: 10, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 11, sn: 11, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 12, sn: 12, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 13, sn: 13, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 14, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 15, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 16, sn: 16, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 17, sn: 17, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 18, sn: 18, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 19, sn: 19, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 20, sn: 20, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-
-    // ];
 
     // use this when you want to create rows dynamically
     // const rows = Array.from({ length: 500 }, (_, i) => ({
     //     id: i + 1,
     //     sn: i + 1,
-    //     createdOn: '11/05/2024 14:58:39',
+    //     queTime: '11/05/2024 14:58:39',
     //     campaignName: 'Demo',
     //     templateName: 'NewTemplate',
     //     templateCategory: 'Utility',
@@ -159,16 +161,16 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
     // }));
 
     const rows = campaignData.map((item, index) => ({
-        id: index + 1, // Unique ID for DataGrid
+        id: index + 1,
         sn: index + 1,
-        queTime: item.queTime || "N/A",
+        queTime: formatDate(item.queTime) || "N/A",
         campaignName: item.campaignName || "N/A",
         templateName: item.templateName || "N/A",
         templateCategory: item.templateCategory || "N/A",
         templateType: item.templateType || "N/A",
         status: item.status || "N/A",
         totalAudience: item.totalAudience || "0",
-        action: "Actions",
+        campaignSrno: item.campaignSrno,
     }));
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -279,7 +281,6 @@ const ManageCampaignTable = ({ id, name, handleView, handleDuplicate, handleDele
                 }}
             />
         </Paper>
-
     );
 };
 

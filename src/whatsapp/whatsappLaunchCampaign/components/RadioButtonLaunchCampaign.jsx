@@ -152,7 +152,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
 
   useEffect(() => {
     if (fileHeaders.length > 0) {
-      // console.log("📌 Sending Selected Country Code to Parent:", selectedCountryCode);
+      // console.log("Sending Selected Country Code to Parent:", selectedCountryCode);
       onFileUpload(xlsxPath, fileHeaders, totalRecords, selectedCountryCode, selectedMobileColumn);
     }
   }, [fileHeaders, selectedCountryCode, selectedMobileColumn]); // ✅ Now listens for country code updates
@@ -345,7 +345,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
             value={selectedGroups}
             onChange={(e) => {
               if (!e.value) {
-                console.error("❌ MultiSelect received undefined value");
+                console.error("MultiSelect received undefined value");
                 return;
               }
 
@@ -355,7 +355,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
 
               // ✅ Convert array to comma-separated string
               const groupValues = selectedValues.length > 0 ? selectedValues.join(",") : "-1";
-              console.log("📌 Selected Group Codes:", groupValues);
+              console.log("Selected Group Codes:", groupValues);
 
               onGroupChange(groupValues);
             }}

@@ -66,8 +66,6 @@ const WhatsappManageCampaign = () => {
   const [hasSearched, setHasSearched] = useState(false)
 
 
-
-
   const options2 = [
     { value: "utility", label: "Utility" },
     { value: "marketing", label: "Marketing" },
@@ -85,6 +83,7 @@ const WhatsappManageCampaign = () => {
     { value: "document", label: "Document" },
     { value: "carousel", label: "Carousel" },
   ];
+
   const options4 = [
     { value: "pending", label: "Pending" },
     { value: "failed", label: "Failed" },
@@ -151,17 +150,12 @@ const WhatsappManageCampaign = () => {
   }, []);
 
   return (
-
-
-
     <div className='w-full ' >
       {isLoading ? (
-
         <>
           <Loader />
         </>
       ) : (
-
         <Box sx={{ width: '100%' }}>
           <Tabs
             value={value}
@@ -171,7 +165,6 @@ const WhatsappManageCampaign = () => {
             indicatorColor="primary"
           >
             <Tab
-
               label={
                 <span>
                   <CampaignOutlinedIcon size={20} /> Campaign
@@ -192,11 +185,8 @@ const WhatsappManageCampaign = () => {
             <Tab
               label={
                 <span className='flex gap-2 items-center' >
-                  <BsJournalArrowDown size={18} /> Logs
+                  <BsJournalArrowDown size={18} /> API Logs
                 </span>
-                // <span>
-                //   <SummarizeOutlinedIcon size={20} /> Summary
-                // </span>
               }
               {...a11yProps(1)}
               sx={{
@@ -328,8 +318,6 @@ const WhatsappManageCampaign = () => {
                   <ManageCampaignTable
                     id='whatsappManageCampaignTable'
                     name='whatsappManageCampaignTable'
-                    handleView={(row) => console.log("View campaign:", row)}
-                    handleDuplicate={(row) => console.log("Duplicate campaign:", row)}
                   />
                 </div>
               )}
@@ -361,6 +349,8 @@ const WhatsappManageCampaign = () => {
                 <ManageCampaignTable
                   id='whatsappManageCampaignTable'
                   name='whatsappManageCampaignTable'
+                  handleView={(row) => console.log("View campaign:", row)}
+                  handleDuplicate={(row) => console.log("Duplicate campaign:", row)}
                 />
               )} */}
 
@@ -397,7 +387,7 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56" >
+                {/* <div className="w-full sm:w-56" >
                   <AnimatedDropdown
                     id='manageCampaignLogsSource'
                     name='manageCampaignLogsSource'
@@ -409,7 +399,7 @@ const WhatsappManageCampaign = () => {
                     onChange={(value) => setSelectedOptionSourceLogs(value)}
                     placeholder="Source"
                   />
-                </div>
+                </div> */}
 
                 <div className="w-max-content ">
                   <UniversalButton
@@ -422,7 +412,6 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               </div>
-
               {isFetching ? (
                 <div className='' >
                   <UniversalSkeleton height='35rem' width='100%' />

@@ -114,7 +114,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
             // ✅ If selecting for BUTTON URL, update `urlIndex`
             if (type === "button" && fileHeaders.includes(variable)) {
                 const index = fileHeaders.indexOf(variable);
-                console.log("🔹 Selected URL Column:", variable, "Index:", index);
+                console.log("Selected URL Column:", variable, "Index:", index);
 
                 setUrlIndex(index);  // ✅ Update URL Index state
                 onUrlIndexChange(index);  // ✅ Send updated index to parent component

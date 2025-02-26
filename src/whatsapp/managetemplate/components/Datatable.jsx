@@ -14,10 +14,12 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { format } from 'timeago.js'
 import toast from 'react-hot-toast';
 import { Dialog } from 'primereact/dialog';
+import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 
-import { getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
-import whatsappImg from '../../assets/images/whatsappdummy.webp'
+import { getWabaTemplate, getWabaTemplateDetails } from '../../../apis/whatsapp/whatsapp.js';
+import whatsappImg from '../../../assets/images/whatsappdummy.webp';
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -69,17 +71,51 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const DataTable = ({ id, wabaNumber, data, name }) => {
+const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [templateData, setTemplateData] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
     const [dialogVisible, setDialogVisible] = useState(false);
 
-    const handleView = (row) => {
-        setSelectedRow(row);
-        setDialogVisible(true);
+    const [visible, setVisible] = useState(false);
+    const [currentRow, setCurrentRow] = useState(null);
+    const [anchorEl, setAnchorEl] = useState(null); // To track the clicked button
+
+    // const handleView = (row) => {
+    //     setSelectedRow(row);
+    //     setDialogVisible(true);
+    // };
+
+    const handleView = async (row) => {
+        if (!wabaNumber) {
+            toast.error("Please select a WABA account.");
+            return;
+        }
+        const selectedWaba = wabaList.find(waba => waba.mobileNo === wabaNumber);
+        if (!selectedWaba || !selectedWaba.wabaAccountId) {
+            toast.error("WABA Account ID not found for the selected WABA.");
+            return;
+        }
+
+        const wabaAccountId = selectedWaba.wabaAccountId;
+        const templateName = row.templateName;
+
+        try {
+            const response = await getWabaTemplate(wabaAccountId, templateName);
+
+            if (response && response.data.length > 0) {
+                setSelectedRow({ ...row, templateData: response.data[0] });
+                setDialogVisible(true);
+            } else {
+                toast.error("No matching template found.");
+            }
+        } catch (error) {
+            toast.error("Error fetching template preview.");
+            console.error("Error fetching template data:", error);
+        }
     };
+
 
     const handleClose = () => {
         setDialogVisible(false);
@@ -93,6 +129,22 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
     const handleDelete = (row) => {
         // Implement delete logic here
     };
+
+    // const handleDelete = (event, row) => {
+    //     setCurrentRow(row);
+    //     setAnchorEl(event.currentTarget);
+    //     setVisible(true);
+    // };
+
+    // const acceptDelete = () => {
+    //     toast.success(`Template "${currentRow.templateName}" deleted successfully.`);
+    //     setVisible(false);
+    // };
+
+    // const rejectDelete = () => {
+    //     toast.error(`Deletion of "${currentRow.templateName}" was cancelled.`);
+    //     setVisible(false);
+    // };
 
     // Fetch Templates when WABA number changes
     useEffect(() => {
@@ -156,7 +208,7 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
                                 color: 'gray',
                             }} />
                     </IconButton>
-                    <IconButton onClick={() => handleDelete(params.row)}>
+                    <IconButton onClick={(event) => handleDelete(event, params.row)}>
                         <DeleteForeverIcon
                             sx={{
                                 fontSize: '1.2rem',
@@ -302,17 +354,14 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
 
 
             {/* PrimeReact Dialog */}
-            <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "27rem" }} onHide={handleClose} draggable={false}>
-                {/* <div>
+            {/* <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "27rem" }} onHide={handleClose} draggable={false}>
+                <div>
                     <h3>{selectedRow?.templateName}</h3>
                     <p>Category: {selectedRow?.category}</p>
                     <p>Status: {selectedRow?.status}</p>
                     <p>Created At: {selectedRow?.createdDate}</p>
-                </div> */}
+                </div>
                 <div className="modal-content rounded-xl">
-                    <div className="fixed top-2 right-2 cursor-pointer rounded-full bg-gray-100 p-1 text-gray-500 hover:bg-gray-300 hover:text-gray-800">
-                        <span className='cursor-pointer rounded-full bg-gray-200' onClick={handleClose}><MdClose size={20} /></span>
-                    </div>
                     <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
                         <div className="imgbox">
                             <img src={whatsappImg} alt="" className='h-45 w-full rounded-lg' />
@@ -343,7 +392,69 @@ const DataTable = ({ id, wabaNumber, data, name }) => {
                         </div>
                     </div>
                 </div>
+            </Dialog> */}
+
+            {/* Handle View Dialog */}
+            <Dialog header={selectedRow?.templateName} visible={dialogVisible} style={{ width: "27rem" }} onHide={handleClose} draggable={false}>
+                <div className="modal-content rounded-xl">
+                    <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
+                        {selectedRow?.templateData ? (
+                            <>
+                                {/* Image if exists */}
+                                {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "IMAGE") && (
+                                    <div className="imgbox">
+                                        <img
+                                            src={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
+                                            alt="Template Preview"
+                                            className='h-45 w-full rounded-lg object-contain border border-gray-200'
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Text Content */}
+                                <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
+                                    {selectedRow.templateData.components.map((component, index) => (
+                                        // <p key={index}>{component.text || "No content available"}</p>
+                                        <pre className='text-wrap' key={index}>{component.text}</pre>
+                                    ))}
+                                </div>
+
+                                {/* Buttons if exists */}
+                                <div className='flex flex-col gap-2'>
+                                    {selectedRow.templateData.components.some(comp => comp.type === "BUTTONS") && (
+                                        selectedRow.templateData.components.find(comp => comp.type === "BUTTONS").buttons.map((btn, index) => (
+                                            <button
+                                                key={index}
+                                                title={btn.type === "PHONE_NUMBER" ? `Call: ${btn.phone_number}` : `Visit: ${btn.url}`}
+                                                className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${btn.type === "PHONE_NUMBER" ? "bg-blue-500 text-white" : "bg-green-500 text-white"}`}
+                                                onClick={() => btn.type === "PHONE_NUMBER" ? window.location.href = `tel:${btn.phone_number}` : window.open(btn.url, "_blank")}
+                                            >
+                                                {btn.type === "PHONE_NUMBER" ? <BsTelephoneFill className='mr-2' /> : <FaExternalLinkAlt className='mr-2' />}
+                                                {btn.text}
+                                            </button>
+                                        ))
+                                    )}
+                                </div>
+                            </>
+                        ) : (
+                            <p>No template data available.</p>
+                        )}
+                    </div>
+                </div>
             </Dialog>
+
+            {/* Handle Delete Popup */}
+            {/* <ConfirmPopup
+                target={anchorEl}
+                visible={visible}
+                onHide={() => setVisible(false)}
+                message={`Are you sure you want to delete -  ${currentRow?.templateName} ?`}
+                icon={<WarningAmberOutlinedIcon sx={{ color: "red" }} />}
+                accept={acceptDelete}
+                reject={rejectDelete}
+            /> */}
+
+
         </>
     );
 };

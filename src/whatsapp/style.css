@@ -21,3 +21,11 @@
 .css-1u9des2-indicatorSeparator {
   display: none;
 }
+
+/* ======================================== */
+
+.p-confirm-popup-accept {
+  box-shadow: none;
+  background-color: #51a2ff;
+  outline: none;
+}

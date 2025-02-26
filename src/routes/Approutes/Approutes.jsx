@@ -16,6 +16,7 @@ import WhatsappConversation from '../../whatsapp/whatsappConversation/WhatsappCo
 import ProfilePage from '../../mainlayout/navbar/pages/Profile';
 
 import Dummy from '../../dummy/Dummy';
+import CampaignDetailsReport from '../../whatsapp/whatsappManageCampaign/CampaignDetailsReport';
 
 
 const Approutes = () => {
@@ -34,6 +35,7 @@ const Approutes = () => {
                 <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
                 <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
                 <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
+                <Route path="/wcampaigndetailsreport/:campaignSrno" element={<CampaignDetailsReport />} />
                 <Route path="/profile" element={<ProfilePage />} />
             </Route>
             <Route path="/dummy" element={<Dummy />} />

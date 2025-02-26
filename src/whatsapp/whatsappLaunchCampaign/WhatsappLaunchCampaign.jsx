@@ -56,17 +56,17 @@ const WhatsappLaunchCampaign = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
 
     // const handleGroupChange = (value) => {
-    //     console.log("📌 isGroup Updated:", value);
+    //     console.log("isGroup Updated:", value);
     //     setIsGroup(value);
     // };
 
     const handleUrlIndexChange = (index) => {
-        console.log("📌 Updating URL Index in Parent:", index);
+        console.log("Updating URL Index in Parent:", index);
         setUrlIndex(index);  // ✅ Store the updated index
     };
 
     const handleGroupChange = (value) => {
-        console.log("📌 isGroup Updated:", value);
+        console.log("isGroup Updated:", value);
 
         if (Array.isArray(value)) {
             setIsGroup(1);
@@ -106,20 +106,20 @@ const WhatsappLaunchCampaign = () => {
     };
 
     const handleSubmitCampaign = async () => {
-        if (!selectedWaba) {
-            toast.error("Please select a WhatsApp Business Account (WABA).");
-            return;
-        }
+        // if (!selectedWaba) {
+        //     toast.error("Please select a WhatsApp Business Account (WABA).");
+        //     return;
+        // }
 
-        if (!inputValue) {
-            toast.error("Please enter a campaign name!");
-            return;
-        }
+        // if (!inputValue) {
+        //     toast.error("Please enter a campaign name!");
+        //     return;
+        // }
 
-        if (!selectedTemplate) {
-            toast.error("Please select a WhatsApp template.");
-            return;
-        }
+        // if (!selectedTemplate) {
+        //     toast.error("Please select a WhatsApp template.");
+        //     return;
+        // }
 
         // if (!xlsxPath) {
         //   toast.error("Please upload an Excel file with contact numbers.");
@@ -187,7 +187,6 @@ const WhatsappLaunchCampaign = () => {
             totalRecords: totalRecords,
             attachmentfile: imageFile || "",
             urlValues: "",
-            // urlIndex: 0,
             urlIndex: urlIndex ?? -1,
             isShortUrl: 0,
             isGroup: isGroup,
@@ -197,7 +196,7 @@ const WhatsappLaunchCampaign = () => {
             groupValues,
         };
 
-        console.log("📌 Final Data Submission:", requestData);
+        console.log("Final Data Submission:", requestData);
 
         // ✅ Send API request
         try {
@@ -486,39 +485,39 @@ const WhatsappLaunchCampaign = () => {
                     <Dialog
                         header="Review & Confirm"
                         visible={dialogVisible}
-                        style={{ width: "30rem" }}
+                        style={{ width: "35rem" }}
                         onHide={() => setDialogVisible(false)}
                         draggable={false}
                     >
-                        <div className="space-y-4">
-                            <div className="p-3 bg-gray-100 text-gray-700 rounded-md shadow-xl space-y-1.5 grid grid-cols-2">
-                                <span className="font-semibold text-sm">WABA Account : </span>
-                                <p className=" text-sm">
+                        <div className="space-y-5">
+                            <div className="p-3 bg-gray-100 text-md text-gray-800 rounded-md shadow-lg space-y-2 grid grid-cols-2">
+                                <span className="font-semibold font-m">WABA Account : </span>
+                                <p className="">
                                     {wabaList?.find((waba) => waba.mobileNo === selectedWaba)?.name || "N/A"}
                                 </p>
-                                <span className="font-semibold text-sm">Template Name : </span>
-                                <p className=" text-sm">
+                                <span className="font-semibold font-m">Template Name : </span>
+                                <p className="">
                                     {selectedTemplate || "N/A"}
                                 </p>
-                                <span className="font-semibold text-sm">Template Type : </span>
-                                <p className=" text-sm">
+                                <span className="font-semibold font-m">Template Type : </span>
+                                <p className="">
                                     {selectedTemplateData?.type || "N/A"}
                                 </p>
-                                <span className="font-semibold text-sm">Template Category : </span>
-                                <p className=" text-sm">
+                                <span className="font-semibold font-m">Template Category : </span>
+                                <p className="">
                                     {selectedTemplateData?.category || "N/A"}
                                 </p>
-                                <span className="font-semibold text-sm">Campaign Name : </span>
-                                <p className=" text-sm w-full break-words">
+                                <span className="font-semibold font-m">Campaign Name : </span>
+                                <p className="w-full break-words">
                                     {inputValue || "N/A"}
                                 </p>
-                                {/* <span className="font-semibold text-sm">Total Audience : </span>
-                                <p className=" text-sm">
+                                <span className="font-semibold font-m">Total Audience : </span>
+                                <p className="">
                                     {totalRecords || "N/A"}
-                                </p> */}
+                                </p>
                             </div>
                             {/* <div className="flex items-end gap-2">
-                                <div className="w-full sm:w-82">
+                                <div className="flex-1">
                                     <InputField
                                         id="testMobileNumber"
                                         name="testMobileNumber"
@@ -538,7 +537,7 @@ const WhatsappLaunchCampaign = () => {
                                     variant="primary"
                                 />
                             </div> */}
-                            {/* <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-2">
                                 <Checkbox
                                     inputId="scheduleCheckbox"
                                     checked={schedule}
@@ -554,10 +553,10 @@ const WhatsappLaunchCampaign = () => {
                                         onChange={(e) => setScheduledDateTime(e.value)}
                                         showTime
                                         hourFormat="12"
-                                        minDate={new Date()} 
+                                        minDate={new Date()}
                                     />
                                 )}
-                            </div> */}
+                            </div>
                             {/* <div className="flex items-center gap-2">
                                 <Checkbox
                                     inputId="agreeTermsCheckbox"
