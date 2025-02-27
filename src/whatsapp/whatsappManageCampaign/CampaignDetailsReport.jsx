@@ -77,13 +77,9 @@ const CampaignDetailsReport = () => {
     const [filteredData, setFilteredData] = useState([]); // Store filtered data
     const [isFetching, setIsFetching] = useState(false);
 
-
-    const campaignName = location.state?.campaignName || "Campaign Detail Report";
+    const campaignName = location.state?.campaignName || "N/A";
 
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
-
-
-
 
     useEffect(() => {
         const fetchData = async () => {
@@ -151,6 +147,7 @@ const CampaignDetailsReport = () => {
         { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 150 },
         { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 150 },
         { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 150 },
+        { field: "reason", headerName: "Reason", flex: 1, minWidth: 150 },
     ];
 
     const rows = campaignDetails.map((item, index) => ({
@@ -164,6 +161,7 @@ const CampaignDetailsReport = () => {
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
         deliveryStatus: item.deliveryStatus || "-",
+        reason: item.reason || "-",
     }));
 
     // const rows = filteredData.map((item, index) => ({

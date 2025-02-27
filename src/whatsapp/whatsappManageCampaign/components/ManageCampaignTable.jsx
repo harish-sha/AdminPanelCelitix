@@ -65,20 +65,20 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const ManageCampaignTable = ({ id, name }) => {
+const ManageCampaignTable = ({ id, name, data = [] }) => {
     const [selectedRows, setSelectedRows] = useState([]);
-    const [campaignData, setCampaignData] = useState([]);
-    const navigate = useNavigate(); // Navigation hook
+    // const [campaignData, setCampaignData] = useState([]);
+    const navigate = useNavigate();
 
 
     // Fetch Campaign Data
-    useEffect(() => {
-        const fetchData = async () => {
-            const data = await getWhatsappCampaignReport();
-            setCampaignData(data);
-        };
-        fetchData();
-    }, []);
+    // useEffect(() => {
+    //     const fetchData = async () => {
+    //         const data = await getWhatsappCampaignReport();
+    //         setCampaignData(data);
+    //     };
+    //     fetchData();
+    // }, []);
 
     const handleView = (row) => {
         console.log("View campaign:", row)
@@ -160,18 +160,34 @@ const ManageCampaignTable = ({ id, name }) => {
     //     action: 'True',
     // }));
 
-    const rows = campaignData.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        queTime: formatDate(item.queTime) || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaignSrno,
-    }));
+    // const rows = campaignData.map((item, index) => ({
+    //     id: index + 1,
+    //     sn: index + 1,
+    //     // queTime: formatDate(item.queTime) || "N/A",
+    //     queTime: item.queTime || "N/A",
+    //     campaignName: item.campaignName || "N/A",
+    //     templateName: item.templateName || "N/A",
+    //     templateCategory: item.templateCategory || "N/A",
+    //     templateType: item.templateType || "N/A",
+    //     status: item.status || "N/A",
+    //     totalAudience: item.totalAudience || "0",
+    //     campaignSrno: item.campaignSrno,
+    // }));
+
+    const rows = Array.isArray(data)
+        ? data.map((item, index) => ({
+            id: index + 1,
+            sn: index + 1,
+            queTime: item.queTime || "N/A",
+            campaignName: item.campaignName || "N/A",
+            templateName: item.templateName || "N/A",
+            templateCategory: item.templateCategory || "N/A",
+            templateType: item.templateType || "N/A",
+            status: item.status || "N/A",
+            totalAudience: item.totalAudience || "0",
+            campaignSrno: item.campaignSrno,
+        }))
+        : [];
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 

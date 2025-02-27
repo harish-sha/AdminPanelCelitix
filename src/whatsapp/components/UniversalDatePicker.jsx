@@ -15,6 +15,8 @@ const UniversalDatePicker = ({
     tooltipPlacement = 'top',
     error = false,
     errorText = '',
+    minDate,
+    maxDate,
 }) => {
     return (
         <div className='w-full'>
@@ -41,6 +43,8 @@ const UniversalDatePicker = ({
                     name={name}
                     value={value}
                     onChange={onChange}
+                    minDate={minDate}
+                    maxDate={maxDate}
                     format='dd/MM/yyyy'
                     renderInput={(params) => (
                         <div >

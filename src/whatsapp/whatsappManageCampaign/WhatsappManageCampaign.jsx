@@ -3,8 +3,6 @@ import Box from '@mui/material/Box';
 import PropTypes from 'prop-types';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
-import GradingOutlinedIcon from '@mui/icons-material/GradingOutlined';
-import LibraryBooksOutlinedIcon from '@mui/icons-material/LibraryBooksOutlined';
 import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
 import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
@@ -19,7 +17,7 @@ import ManageCampaignTable from './components/ManageCampaignTable';
 import ManageCampaignLogsTable from './components/ManageCampaignLogsTable';
 import { BsJournalArrowDown } from 'react-icons/bs';
 import UniversalSkeleton from '../components/UniversalSkeleton';
-
+import { getWhatsappCampaignReport } from '../../apis/whatsapp/whatsapp.js';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -52,48 +50,23 @@ function a11yProps(index) {
 
 const WhatsappManageCampaign = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = React.useState(0);
-  const [inputValue, setInputValue] = useState("");
+  const [value, setValue] = useState(0);
+  const [campaignName, setCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [selectedDateLogs, setSelectedDateLogs] = useState(null);
-  const [selectedOption2, setSelectedOption2] = useState("");
-  const [selectedOptionSourceLogs, setSelectedOptionSourceLogs] = useState("");
-  const [selectedOption3, setSelectedOption3] = useState("");
-  const [selectedOption4, setSelectedOption4] = useState("");
+  const [campaignCategory, setCampaignCategory] = useState("");
+  const [campaignType, setCampaignType] = useState("");
+  const [campaignStatus, setCampaignStatus] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [hasSearched, setHasSearched] = useState(false)
 
-
-  const options2 = [
-    { value: "utility", label: "Utility" },
-    { value: "marketing", label: "Marketing" },
-    { value: "authentication", label: "Authentication" },
-  ];
-
-  const source = [
-    { value: "api", label: "API" },
-    { value: "gui", label: "GUI" },
-  ];
-
-  const options3 = [
-    { value: "text", label: "Text" },
-    { value: "image", label: "Image" },
-    { value: "document", label: "Document" },
-    { value: "carousel", label: "Carousel" },
-  ];
-
-  const options4 = [
-    { value: "pending", label: "Pending" },
-    { value: "failed", label: "Failed" },
-    { value: "sent", label: "Sent" },
-  ];
-
-
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
+    const newValue = e.target.value.replace(/\s/g, "");
+    setCampaignName(newValue);
   };
+
   const handleInputChangeMobileLogs = (e) => {
     setInputValueMobileLogs(e.target.value);
   };
@@ -106,48 +79,91 @@ const WhatsappManageCampaign = () => {
     console.log("Search Filters:");
     console.log({
       startDate: selectedDate,
-      category: selectedOption2,
-      type: selectedOption3,
-      status: selectedOption4,
-      templateName: inputValue,
+      category: campaignCategory,
+      type: campaignType,
+      status: campaignStatus,
+      campaignName: campaignName,
     });
 
-    // ✅ Show the loader before fetching results
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
-    setIsFetching(false);
+    const formattedFromDate = selectedDate
+      ? new Date(selectedDate).toLocaleDateString('en-GB')
+      : new Date().toLocaleDateString('en-GB');
 
-    // ✅ Here you would fetch the real filtered data from API
-    setFilteredData([]); // Replace this with actual API data
+    const formattedToDate = new Date().toLocaleDateString('en-GB');
+
+    const filters = {
+      fromQueDateTime: formattedFromDate,
+      toQueDateTime: formattedFromDate,
+      campaignName: campaignName.trim(),
+      template_category: campaignCategory || "all",
+    };
+
+    console.log("Filter Params:", filters);
+
+    setIsFetching(true);
+    const data = await getWhatsappCampaignReport(filters);
+
+    // Apply additional filters for campaign type and status
+    const filteredData = data.filter(item => {
+      return (
+        (!campaignType || item.templateType === campaignType) &&
+        (!campaignStatus || item.status === campaignStatus)
+      );
+    });
+    // setFilteredData(Array.isArray(data) ? data : []);
+    setFilteredData(data);
+    setIsFetching(false);
   };
+
+
+  // Fetch initial data - for to load data on page load
+  const fetchInitialData = async () => {
+    const filters = {
+      fromQueDateTime: new Date().toLocaleDateString('en-GB'),
+      toQueDateTime: new Date().toLocaleDateString('en-GB'),
+      campaignName: "",
+      category: "all",
+    };
+
+    setIsFetching(true);
+    const data = await getWhatsappCampaignReport(filters);
+    setFilteredData(data);
+    setIsFetching(false);
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setIsLoading(true);
+      await fetchInitialData();
+      setIsLoading(false);
+    };
+    fetchData();
+  }, []);
+
+  // Fetch initial data - for to load data on page load
 
   const handleShowSearch = async () => {
     console.log("Show Logs:");
     console.log({
       startDate: selectedDateLogs,
       mobileNo: inputValueMobileLogs,
-      source: selectedOptionSourceLogs,
-      // status: selectedOption4,
-      // templateName: inputValue,
     });
 
-    // ✅ Show the loader before fetching results
     setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
+    await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsFetching(false);
 
-    // ✅ Here you would fetch the real filtered data from API
-    setFilteredData([]); // Replace this with actual API data
+    setFilteredData([]);
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     await new Promise((resolve) => setTimeout(resolve, 1000));
+  //     setIsLoading(false);
+  //   };
+  //   fetchData();
+  // }, []);
 
   return (
     <div className='w-full ' >
@@ -230,18 +246,20 @@ const WhatsappManageCampaign = () => {
                     value={selectedDate}
                     onChange={(newValue) => setSelectedDate(newValue)}
                     placeholder="Pick a start date"
-                    tooltipContent="Select the starting date for your project"
+                    tooltipContent="Select a date within the last 3 months."
                     tooltipPlacement="right"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                     error={!selectedDate}
                     errorText="Please select a valid date"
                   />
                 </div>
-                <div className='w-full sm:w-56' >
+                <div className='w-full sm:w-56'>
                   <InputField
                     id="manageCampaignName"
                     name="manageCampaignName"
                     label="Campaign Name"
-                    value={inputValue}
+                    value={campaignName}
                     onChange={handleInputChange}
                     placeholder="Campaign Name"
                     tooltipContent="Your templatename should not contain spaces."
@@ -249,16 +267,20 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56" >
+                <div className="w-full sm:w-56">
                   <AnimatedDropdown
                     id='manageCampaignCategory'
                     name='manageCampaignCategory'
                     label="Category"
                     tooltipContent="Select category"
                     tooltipPlacement="right"
-                    options={options2}
-                    value={selectedOption2}
-                    onChange={(value) => setSelectedOption2(value)}
+                    options={[
+                      { value: "utility", label: "Utility" },
+                      { value: "marketing", label: "Marketing" },
+                      { value: "authentication", label: "Authentication" },
+                    ]}
+                    value={campaignCategory}
+                    onChange={(value) => setCampaignCategory(value)}
                     placeholder="Category"
                   />
                 </div>
@@ -269,9 +291,14 @@ const WhatsappManageCampaign = () => {
                     label="Type"
                     tooltipContent="Select Type"
                     tooltipPlacement="right"
-                    options={options3}
-                    value={selectedOption3}
-                    onChange={(value) => setSelectedOption3(value)}
+                    options={[
+                      { value: "text", label: "Text" },
+                      { value: "image", label: "Image" },
+                      { value: "document", label: "Document" },
+                      { value: "carousel", label: "Carousel" },
+                    ]}
+                    value={campaignType}
+                    onChange={(value) => setCampaignType(value)}
                     placeholder="Type"
                   />
                 </div>
@@ -282,9 +309,13 @@ const WhatsappManageCampaign = () => {
                     label="Status"
                     tooltipContent="Select Status"
                     tooltipPlacement="right"
-                    options={options4}
-                    value={selectedOption4}
-                    onChange={(value) => setSelectedOption4(value)}
+                    options={[
+                      { value: "pending", label: "Pending" },
+                      { value: "failed", label: "Failed" },
+                      { value: "sent", label: "Sent" },
+                    ]}
+                    value={campaignStatus}
+                    onChange={(value) => setCampaignStatus(value)}
                     placeholder="Status"
                   />
                 </div>
@@ -318,6 +349,7 @@ const WhatsappManageCampaign = () => {
                   <ManageCampaignTable
                     id='whatsappManageCampaignTable'
                     name='whatsappManageCampaignTable'
+                    data={filteredData}
                   />
                 </div>
               )}
@@ -349,8 +381,6 @@ const WhatsappManageCampaign = () => {
                 <ManageCampaignTable
                   id='whatsappManageCampaignTable'
                   name='whatsappManageCampaignTable'
-                  handleView={(row) => console.log("View campaign:", row)}
-                  handleDuplicate={(row) => console.log("Duplicate campaign:", row)}
                 />
               )} */}
 
@@ -386,21 +416,6 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-
-                {/* <div className="w-full sm:w-56" >
-                  <AnimatedDropdown
-                    id='manageCampaignLogsSource'
-                    name='manageCampaignLogsSource'
-                    label="Source"
-                    tooltipContent="Select Source"
-                    tooltipPlacement="right"
-                    options={source}
-                    value={selectedOptionSourceLogs}
-                    onChange={(value) => setSelectedOptionSourceLogs(value)}
-                    placeholder="Source"
-                  />
-                </div> */}
-
                 <div className="w-max-content ">
                   <UniversalButton
                     id='manageCampaignLogsShowhBtn'
