@@ -15,7 +15,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     Authorization: `Bearer ${token}`,
     ...options.headers,
   };
-
+  
   // If FormData is used, do not set Content-Type header manually
   if (options.body instanceof FormData) {
     delete headers["Content-Type"];

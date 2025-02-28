@@ -68,48 +68,27 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 
 const CampaignDetailsReport = () => {
     const location = useLocation();
-    const { campaignSrno } = useParams();
+    const { campaignSrno, campaignName } = location.state || {};
+
 
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState([]);
     const [deliveryStatus, setDeliveryStatus] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
-    const [filteredData, setFilteredData] = useState([]); // Store filtered data
+    const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-
-    const campaignName = location.state?.campaignName || "N/A";
-
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
+
+
     useEffect(() => {
+        if (!campaignSrno) return;
         const fetchData = async () => {
             const data = await getWhatsappCampaignDetailsReport(campaignSrno);
             setCampaignDetails(data);
         };
         fetchData();
     }, [campaignSrno]);
-
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         try {
-    //             const response = await getWhatsappCampaignDetailsReport(campaignSrno);
-    //             console.log("Campaign Details Report", response);
-
-    //             if (response?.data && Array.isArray(response.data) && response.data.length > 0) {
-    //                 setCampaignDetails(response.data);
-    //                 setFilteredData(response.data); // Initially show all data
-    //             } else {
-    //                 toast.error("No campaign details found.");
-    //             }
-    //         } catch (error) {
-    //             console.error("Error fetching campaign details:", error);
-    //             toast.error("Error fetching campaign details.");
-    //         }
-    //     };
-    //     fetchData();
-    // }, [campaignSrno]);
-
-
 
     const handleSearch = async () => {
         setIsFetching(true);
@@ -119,30 +98,11 @@ const CampaignDetailsReport = () => {
         }, 500);
     };
 
-    // const handleSearch = () => {
-    //     setIsFetching(true);
-
-    //     let filtered = campaignDetails.filter((item) => {
-    //         const matchesMobile = mobileNumber ? item.mobileNo.includes(mobileNumber.trim()) : true;
-    //         const matchesStatus = deliveryStatus ? item.deliveryStatus.toLowerCase() === deliveryStatus.toLowerCase() : true;
-    //         return matchesMobile && matchesStatus;
-    //     });
-    //     setIsFetching(false);
-    //     setFilteredData(filtered);
-
-    //     if (filtered.length === 0) {
-    //         toast.error("No matching records found. Please adjust filters.");
-    //     }
-    // };
-
-
-
-
     const columns = [
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
         // { field: "wabaNumber", headerName: "WABA Number", width: 150 },
         { field: "mobileNo", headerName: "Mobile Number", flex: 1, minWidth: 150 },
-        { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+        { field: "status", headerName: "Status", flex: 0, minWidth: 120 },
         { field: "deliveryStatus", headerName: "Delivery Status", flex: 1, minWidth: 150 },
         { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 150 },
         { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 150 },
@@ -163,18 +123,6 @@ const CampaignDetailsReport = () => {
         deliveryStatus: item.deliveryStatus || "-",
         reason: item.reason || "-",
     }));
-
-    // const rows = filteredData.map((item, index) => ({
-    //     id: index + 1,
-    //     sn: index + 1,
-    //     mobileNo: item.mobileNo || "N/A",
-    //     status: item.status || "N/A",
-    //     deliveryStatus: item.deliveryStatus || "-",
-    //     sentTime: item.sentTime || "-",
-    //     deliveryTime: item.deliveryTime || "-",
-    //     readTime: item.readTime || "-",
-    // }));
-
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -271,7 +219,6 @@ const CampaignDetailsReport = () => {
                             { value: "failed", label: "Failed" },
                         ]}
                         value={deliveryStatus}
-                        // onChange={(value) => setDeliveryStatus(value)}
                         onChange={setDeliveryStatus}
                         placeholder="Category"
                     />

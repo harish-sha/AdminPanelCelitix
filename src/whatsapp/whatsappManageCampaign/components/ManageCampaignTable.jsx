@@ -13,6 +13,9 @@ import { getWhatsappCampaignReport } from '../../../apis/whatsapp/whatsapp.js';
 import { useNavigate } from "react-router-dom";
 import { useState } from 'react';
 import { useEffect } from 'react';
+import CustomTooltip from '../../../components/common/CustomTooltip.jsx';
+
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
 
 
 const PaginationList = styled("ul")({
@@ -67,28 +70,22 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 
 const ManageCampaignTable = ({ id, name, data = [] }) => {
     const [selectedRows, setSelectedRows] = useState([]);
-    // const [campaignData, setCampaignData] = useState([]);
+    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10, });
     const navigate = useNavigate();
-
-
-    // Fetch Campaign Data
-    // useEffect(() => {
-    //     const fetchData = async () => {
-    //         const data = await getWhatsappCampaignReport();
-    //         setCampaignData(data);
-    //     };
-    //     fetchData();
-    // }, []);
 
     const handleView = (row) => {
         console.log("View campaign:", row)
     };
 
-
-
     const handleSummaryReport = (row) => {
-        navigate(`/wcampaigndetailsreport/${row.campaignSrno}`, { state: { campaignName: row.campaignName } });
+        navigate("/wcampaigndetailsreport", {
+            state: {
+                campaignSrno: row.campaignSrno,
+                campaignName: row.campaignName
+            }
+        });
     };
+
 
     // **Format Date Function** (Ensures proper date format)
     const formatDate = (dateString) => {
@@ -104,10 +101,6 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
         });
     };
 
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 10,
-    });
 
     const columns = [
         { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
@@ -125,21 +118,34 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
             minWidth: 150,
             renderCell: (params) => (
                 <>
-                    <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-                        <InfoOutlinedIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'green'
-                            }}
-                        />
-                    </IconButton>
-                    <IconButton onClick={() => handleSummaryReport(params.row)}>
-                        <DescriptionOutlinedIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'gray',
-                            }} />
-                    </IconButton>
+                    <CustomTooltip
+                        title="View Campaign"
+                        placement="top"
+                        arrow={true}
+                    >
+                        <IconButton className='text-xs' onClick={() => handleView(params.row)}>
+                            <InfoOutlinedIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: 'green'
+                                }}
+                            />
+                        </IconButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                        title="Campaign Detail Report"
+                        placement="top"
+                        arrow={true}
+                    >
+                        <IconButton onClick={() => handleSummaryReport(params.row)}>
+                            <DescriptionOutlinedIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: 'gray',
+                                }}
+                            />
+                        </IconButton>
+                    </CustomTooltip>
                 </>
             ),
         },
@@ -160,24 +166,11 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
     //     action: 'True',
     // }));
 
-    // const rows = campaignData.map((item, index) => ({
-    //     id: index + 1,
-    //     sn: index + 1,
-    //     // queTime: formatDate(item.queTime) || "N/A",
-    //     queTime: item.queTime || "N/A",
-    //     campaignName: item.campaignName || "N/A",
-    //     templateName: item.templateName || "N/A",
-    //     templateCategory: item.templateCategory || "N/A",
-    //     templateType: item.templateType || "N/A",
-    //     status: item.status || "N/A",
-    //     totalAudience: item.totalAudience || "0",
-    //     campaignSrno: item.campaignSrno,
-    // }));
-
     const rows = Array.isArray(data)
         ? data.map((item, index) => ({
             id: index + 1,
             sn: index + 1,
+            // queTime: formatDate(item.queTime) || "N/A",
             queTime: item.queTime || "N/A",
             campaignName: item.campaignName || "N/A",
             templateName: item.templateName || "N/A",
@@ -267,7 +260,10 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
                 onPaginationModelChange={setPaginationModel}
                 checkboxSelection
                 rowHeight={45}
-                slots={{ footer: CustomFooter }}
+                slots={{
+                    footer: CustomFooter,
+                    noRowsOverlay: CustomNoRowsOverlay,
+                }}
                 slotProps={{ footer: { totalRecords: rows.length } }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                 disableRowSelectionOnClick

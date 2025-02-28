@@ -38,7 +38,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
 
     const handleSingleRouteClick = () => {
         if (isMobile) setIsCollapsed(true);
-        setOpenDropdown(null);
+        // setOpenDropdown(null);
     };
 
     const isActiveRoute = (route) => {

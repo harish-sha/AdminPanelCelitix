@@ -111,12 +111,13 @@ const WhatsappManageCampaign = () => {
       );
     });
     // setFilteredData(Array.isArray(data) ? data : []);
-    setFilteredData(data);
+    // setFilteredData(data);
+    setFilteredData(filteredData);
     setIsFetching(false);
   };
 
-
   // Fetch initial data - for to load data on page load
+
   const fetchInitialData = async () => {
     const filters = {
       fromQueDateTime: new Date().toLocaleDateString('en-GB'),
@@ -310,9 +311,12 @@ const WhatsappManageCampaign = () => {
                     tooltipContent="Select Status"
                     tooltipPlacement="right"
                     options={[
+                      { value: "scheduled", label: "Scheduled" },
                       { value: "pending", label: "Pending" },
-                      { value: "failed", label: "Failed" },
-                      { value: "sent", label: "Sent" },
+                      // { value: "failed", label: "Failed" },
+                      // { value: "sent", label: "Sent" },
+                      { value: "cancelled", label: "Cancelled" },
+                      { value: "completed", label: "Completed" },
                     ]}
                     value={campaignStatus}
                     onChange={(value) => setCampaignStatus(value)}
@@ -320,7 +324,7 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
 
-                <div className="w-max-content ">
+                <div className="w-max-content">
                   <UniversalButton
                     id='manageCampaignSearchBtn'
                     name='manageCampaignSearchBtn'
@@ -330,7 +334,7 @@ const WhatsappManageCampaign = () => {
                     variant="primary"
                   />
                 </div>
-                <div className="w-max-content ">
+                <div className="w-max-content">
                   <UniversalButton
                     id='manageCampaignExportBtn'
                     name='manageCampaignExportBtn'
@@ -345,7 +349,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalSkeleton height='35rem' width='100%' />
                 </div>
               ) : (
-                <div className='w-full' >
+                <div className='w-full'>
                   <ManageCampaignTable
                     id='whatsappManageCampaignTable'
                     name='whatsappManageCampaignTable'
@@ -381,6 +385,7 @@ const WhatsappManageCampaign = () => {
                 <ManageCampaignTable
                   id='whatsappManageCampaignTable'
                   name='whatsappManageCampaignTable'
+                  data={filteredData}
                 />
               )} */}
 

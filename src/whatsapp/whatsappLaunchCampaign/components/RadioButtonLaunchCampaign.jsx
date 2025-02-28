@@ -11,6 +11,7 @@ import { campaignUploadFile, getWabaShowGroupsList } from "../../../apis/whatsap
 import { getCountryList } from "../../../apis/common/common.js";
 import AnimatedDropdown from "../../components/AnimatedDropdown.jsx"
 import '../whatsappLaunch.css'
+import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
 
 function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange, onUrlIndexChange }) {
   const [selectedOption, setSelectedOption] = useState("option2");
@@ -437,10 +438,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
             <div className="flex items-center gap-2" >
-              <input type="checkbox" className="h-4 w-4 bg-gray-200 border-gray-300 rounded" onChange={handleAddCountryCodeChange} />
+              <input type="checkbox" className="h-4 w-4 bg-gray-200 border-gray-300 rounded cursor-pointer" onChange={handleAddCountryCodeChange} />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            <div className="w-full mt-4">
+            {/* <div className="w-full mt-4">
               <AnimatedDropdown
                 id="selectCountryCode"
                 name="selectCountryCode"
@@ -448,7 +449,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
                 tooltipContent="check the - [ ✔ Add country code ] to apply country code"
                 tooltipPlacement="right"
                 placeholder="Select Country Code"
-                isSearchable={true}
                 options={countryList
                   .sort((a, b) => a.countryName.localeCompare(b.countryName))
                   .map((country) => ({
@@ -464,6 +464,31 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
                   }
                 }}
                 disabled={!addCountryCode}
+              />
+            </div> */}
+            <div className="w-full mt-4">
+              <DropdownWithSearch
+                id="selectCountryCode"
+                name="selectCountryCode"
+                label="Select Country Code"
+                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
+                tooltipPlacement="right"
+                placeholder="Select Country Code"
+                disabled={!addCountryCode}
+                options={countryList
+                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
+                  .map((country) => ({
+                    label: `${country.countryName} (+${country.countryCode})`,
+                    value: `${country.countryCode}-${country.countryName}`,
+                  }))}
+                value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
+                onChange={(value) => {
+                  if (value) {
+                    const [code, name] = value.split('-');
+                    setSelectedCountryCode(code);
+                    setSelectedCountryName(name);
+                  }
+                }}
               />
             </div>
           </div>

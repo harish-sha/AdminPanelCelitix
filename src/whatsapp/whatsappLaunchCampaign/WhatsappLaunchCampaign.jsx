@@ -4,7 +4,6 @@ import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
 import toast from 'react-hot-toast';
 
-
 import { getWabaList, getWabaTemplate, getWabaTemplateDetails, sendWhatsappCampaign } from '../../apis/whatsapp/whatsapp.js';
 import RadioButtonLaunchCampaign from './components/RadioButtonLaunchCampaign.jsx';
 import UniversalSkeleton from '../../components/common/UniversalSkeleton.jsx'
@@ -41,19 +40,16 @@ const WhatsappLaunchCampaign = () => {
     const [selectedCountryCode, setSelectedCountryCode] = useState("");
     const [selectedMobileColumn, setSelectedMobileColumn] = useState('');
     const [isGroup, setIsGroup] = useState(0);
-
-
-    const [urlIndex, setUrlIndex] = useState(null);  // ✅ Define state in parent
-
+    const [urlIndex, setUrlIndex] = useState(null);
 
     const [selectedGroups, setSelectedGroups] = useState([]);
-
     const [testMobileNumber, setTestMobileNumber] = useState("");
     const [schedule, setSchedule] = useState(false);
-    const [scheduledDateTime, setScheduledDateTime] = useState(null);
+    const [scheduledDateTime, setScheduledDateTime] = useState(new Date());
     // const [agreeTerms, setAgreeTerms] = useState(false);
 
     const [dialogVisible, setDialogVisible] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // const handleGroupChange = (value) => {
     //     console.log("isGroup Updated:", value);
@@ -62,7 +58,7 @@ const WhatsappLaunchCampaign = () => {
 
     const handleUrlIndexChange = (index) => {
         console.log("Updating URL Index in Parent:", index);
-        setUrlIndex(index);  // ✅ Store the updated index
+        setUrlIndex(index);
     };
 
     const handleGroupChange = (value) => {
@@ -98,7 +94,6 @@ const WhatsappLaunchCampaign = () => {
         }
     };
 
-
     const handleImageUpload = (imageUrl) => {
         console.log("Uploaded Image URL:", imageUrl);
         setImageFile(imageUrl);
@@ -122,8 +117,8 @@ const WhatsappLaunchCampaign = () => {
         // }
 
         // if (!xlsxPath) {
-        //   toast.error("Please upload an Excel file with contact numbers.");
-        //   return;
+        //     toast.error("Please upload an Excel file with contact numbers.");
+        //     return;
         // }
 
         // if (!selectedMobileColumn) {
@@ -143,6 +138,8 @@ const WhatsappLaunchCampaign = () => {
         //     toast.error("Please agree to the terms and conditions.");
         //     return;
         // }
+
+        // setIsLoading(true);
 
         const selectedWabaData = wabaList?.find(
             (waba) => waba.mobileNo === selectedWaba
@@ -181,8 +178,7 @@ const WhatsappLaunchCampaign = () => {
             templateCategory: selectedTemplateData?.category || "",
             templateType: selectedTemplateData?.type || "",
             url: "",
-            variables: [],
-            ScheduleCheck: "0",
+            // variables: [],
             xlsxpath: xlsxPath,
             totalRecords: totalRecords,
             attachmentfile: imageFile || "",
@@ -191,8 +187,8 @@ const WhatsappLaunchCampaign = () => {
             isShortUrl: 0,
             isGroup: isGroup,
             countryCode: selectedCountryCode || "",
-            // scheduleDateTime: schedule ? scheduledDateTime : "0",
-            scheduleDateTime: "0",
+            ScheduleCheck: schedule && scheduledDateTime ? "1" : "0",
+            scheduleDateTime: schedule && scheduledDateTime ? scheduledDateTime : "0",
             groupValues,
         };
 
@@ -214,9 +210,10 @@ const WhatsappLaunchCampaign = () => {
         } catch (error) {
             console.error("Error submitting campaign:", error);
             toast.error("Error launching campaign. Please try again.");
+        } finally {
+            // setIsLoading(false);
         }
     };
-
 
     const handleOptionChange = (value) => {
         setSelectedOption(value);
@@ -319,7 +316,6 @@ const WhatsappLaunchCampaign = () => {
         };
         fetchTemplateData();
     }, [selectedTemplate, wabaAccountId]);
-
 
     const handleFileHeadersUpdate = (filePath, headers, totalRecords, countryCode, selectedMobileColumn) => {
         setFileHeaders(headers);
@@ -448,7 +444,6 @@ const WhatsappLaunchCampaign = () => {
                                             onGroupChange={handleGroupChange}
                                             setSelectedGroups={setSelectedGroups}
                                             onUrlIndexChange={setUrlIndex}
-
                                         />
                                     )}
                                 </div>
@@ -457,7 +452,7 @@ const WhatsappLaunchCampaign = () => {
                             <div className="w-full lg:w-1/3 px-5 lg:mt-0 mt-5 min-h-[80vh]">
                                 {isFetching ? (
                                     <div className='w-full' >
-                                        <UniversalSkeleton className='' height="46rem" width="100%" />
+                                        <UniversalSkeleton height="46rem" width="100%" />
                                     </div>
                                 ) : (
                                     <WhatsappLaunchPreview
@@ -554,6 +549,7 @@ const WhatsappLaunchCampaign = () => {
                                         showTime
                                         hourFormat="12"
                                         minDate={new Date()}
+                                        dateFormat='dd/mm/yy'
                                     />
                                 )}
                             </div>
@@ -567,11 +563,11 @@ const WhatsappLaunchCampaign = () => {
                                     I agree to terms and conditions*
                                 </label>
                             </div> */}
-                            <div className="flex items-center justify-center" >
+                            <div className="flex items-center justify-center">
                                 {/*final Submit Button */}
                                 <UniversalButton
                                     label="Send Campaign"
-                                    onClick={(e) => handleFinalSubmit(e)}  // ✅ Pass event to prevent page reload
+                                    onClick={(e) => handleFinalSubmit(e)}
                                     style={{
                                         borderRadius: "40px",
                                         letterSpacing: "1px",

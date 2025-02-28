@@ -101,13 +101,13 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
       ? new Date(
           filters.fromQueDateTime.split("/").reverse().join("-")
         ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB"); 
+      : new Date().toLocaleDateString("en-GB");
 
     const formattedToDate = filters.toQueDateTime
       ? new Date(
           filters.toQueDateTime.split("/").reverse().join("-")
         ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB"); 
+      : new Date().toLocaleDateString("en-GB");
 
     const requestBody = {
       fromQueDateTime: formattedFromDate,
