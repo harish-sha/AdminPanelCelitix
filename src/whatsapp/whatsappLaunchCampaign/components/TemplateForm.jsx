@@ -97,7 +97,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
         const { value } = e.target;
         setInputValues((prev) => ({
             ...prev,
-            [`${type}${variable}`]: value, // Differentiate between body and button variables
+            [`${type}${variable}`]: value,
         }));
         onInputChange(value, `${type}${variable}`);
     };
@@ -108,7 +108,6 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 ? `${prev[`${type}${inputKey}`]} {{${variable}}}`
                 : `{{${variable}}}`;
 
-            // Store the new state
             const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
             // ✅ If selecting for BUTTON URL, update `urlIndex`
@@ -116,8 +115,8 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 const index = fileHeaders.indexOf(variable);
                 console.log("Selected URL Column:", variable, "Index:", index);
 
-                setUrlIndex(index);  // ✅ Update URL Index state
-                onUrlIndexChange(index);  // ✅ Send updated index to parent component
+                setUrlIndex(index);
+                onUrlIndexChange(index);  
             }
 
             // Use setTimeout to avoid updating parent state in the render phase

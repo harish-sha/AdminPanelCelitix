@@ -1,106 +1,83 @@
-import * as React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Paper, Typography, Box, Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import usePagination from '@mui/material/usePagination';
-import { styled } from '@mui/material/styles';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Paper, Typography, Box, Button } from '@mui/material';
-import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import CustomTooltip from '../../../components/common/CustomTooltip.jsx';
-import CustomNoRowsOverlay from './CustomNoRowsOverlay'; // Import the custom overlay component
+import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
+import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
+import { Dialog } from 'primereact/dialog';
+import { MdOutlineDeleteForever } from "react-icons/md";
+import EditNoteIcon from '@mui/icons-material/EditNote';
+import toast from 'react-hot-toast';
 
-const PaginationList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "8px",
-});
+import UniversalButton from '../components/UniversalButton';
+import { getWabaList, createWabaAccount } from '../../apis/whatsapp/whatsapp';
+import Loader from '../components/Loader';
 
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
-    const { items } = usePagination({
-        count: totalPages,
-        page: paginationModel.page + 1,
-        onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-    });
+const WhatsappManageWaba = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [wabaList, setWabaList] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedWaba, setSelectedWaba] = useState(null);
+    const [showCreateModal, setShowCreateModal] = useState(false);
+    const [newWabaName, setNewWabaName] = useState("");
 
-    return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-            <PaginationList>
-                {items.map(({ page, type, selected, ...item }, index) => {
-                    let children = null;
-
-                    if (type === "start-ellipsis" || type === "end-ellipsis") {
-                        children = "…";
-                    } else if (type === "page") {
-                        children = (
-                            <Button
-                                key={index}
-                                variant={selected ? "contained" : "outlined"}
-                                size="small"
-                                sx={{ minWidth: "27px" }}
-                                {...item}
-                            >
-                                {page}
-                            </Button>
-                        );
-                    } else {
-                        children = (
-                            <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
-                                {type === "previous" ? "Previous" : "Next"}
-                            </Button>
-                        );
-                    }
-
-                    return <li key={index}>{children}</li>;
-                })}
-            </PaginationList>
-        </Box>
-    );
-};
-
-const ManageCampaignTable = ({ id, name, data = [] }) => {
-    const [selectedRows, setSelectedRows] = useState([]);
-    const navigate = useNavigate();
-
-    const handleView = (row) => {
-        console.log("View campaign:", row)
+    // Facebook Login Simulation
+    const handleFacebookLogin = () => {
+        console.log("Logging in with Facebook...");
+        setIsLoggedIn(true); // Simulate successful login
     };
 
-    const handleSummaryReport = (row) => {
-        const encodedSrno = btoa(row.campaignSrno);
-        navigate(`/wcampaigndetailsreport/${encodedSrno}`, { state: { campaignName: row.campaignName } });
+    // Fetch WABA List
+    useEffect(() => {
+        if (!isLoggedIn) return;
+
+        const fetchWabaList = async () => {
+            try {
+                setIsLoading(true);
+                const response = await getWabaList();
+                if (response?.length > 0) {
+                    setWabaList(response);
+                } else {
+                    toast.error("No WABA accounts found. Please create one.");
+                }
+            } catch (error) {
+                toast.error("Error fetching WABA list.");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchWabaList();
+    }, [isLoggedIn]);
+
+    // Handle WABA Creation
+    const handleCreateWaba = async () => {
+        if (!newWabaName) {
+            toast.error("Please enter a valid WABA name.");
+            return;
+        }
+
+        try {
+            const response = await createWabaAccount({ name: newWabaName });
+            if (response?.success) {
+                toast.success("WABA Account Created Successfully!");
+                setShowCreateModal(false);
+                setNewWabaName("");
+                setWabaList([...wabaList, response.waba]); // Add new WABA to list
+            } else {
+                toast.error("Failed to create WABA account.");
+            }
+        } catch (error) {
+            toast.error("Error creating WABA.");
+        }
     };
 
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-        });
-    };
-
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 10,
-    });
-
+    // Table Columns
     const columns = [
-        { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-        { field: 'queTime', headerName: 'Created On', flex: 1, minWidth: 120 },
-        { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
-        { field: 'templateName', headerName: 'Template Name', flex: 1, minWidth: 120 },
-        { field: 'templateCategory', headerName: 'Template Category', flex: 1, minWidth: 120 },
-        { field: 'templateType', headerName: 'Template Type', flex: 1, minWidth: 120 },
-        { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-        { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
+        { field: 'wabaName', headerName: 'WABA Name', flex: 1, minWidth: 120 },
+        { field: 'wabaNumber', headerName: 'WABA Mobile No.', flex: 1, minWidth: 120 },
+        { field: 'createdOn', headerName: 'Created On', flex: 1, minWidth: 120 },
+        { field: 'expiryDate', headerName: 'Expiry Date', flex: 1, minWidth: 120 },
         {
             field: 'action',
             headerName: 'Action',
@@ -108,162 +85,86 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
             minWidth: 150,
             renderCell: (params) => (
                 <>
-                    <CustomTooltip
-                        title="View Campaign"
-                        placement="top"
-                        arrow={true}
-                    >
-                        <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-                            <InfoOutlinedIcon
-                                sx={{
-                                    fontSize: '1.2rem',
-                                    color: 'green'
-                                }}
-                            />
-                        </IconButton>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Campaign Detail Report"
-                        placement="top"
-                        arrow={true}
-                    >
-                        <IconButton onClick={() => handleSummaryReport(params.row)}>
-                            <DescriptionOutlinedIcon
-                                sx={{
-                                    fontSize: '1.2rem',
-                                    color: 'gray',
-                                }}
-                            />
-                        </IconButton>
-                    </CustomTooltip>
+                    <IconButton onClick={() => setSelectedWaba(params.row)}>
+                        <VisibilityIcon sx={{ fontSize: '1.2rem', color: 'blue' }} />
+                    </IconButton>
+                    <IconButton onClick={() => toast.info("Editing WABA...")}>
+                        <EditNoteIcon sx={{ fontSize: '1.2rem', color: 'gray' }} />
+                    </IconButton>
+                    <IconButton onClick={() => toast.error("Deleting WABA...")}>
+                        <MdOutlineDeleteForever sx={{ fontSize: '1.2rem', color: 'red' }} />
+                    </IconButton>
                 </>
             ),
         },
     ];
 
-    const rows = Array.isArray(data)
-        ? data.map((item, index) => ({
-            id: index + 1,
-            sn: index + 1,
-            queTime: item.queTime || "N/A",
-            campaignName: item.campaignName || "N/A",
-            templateName: item.templateName || "N/A",
-            templateCategory: item.templateCategory || "N/A",
-            templateType: item.templateType || "N/A",
-            status: item.status || "N/A",
-            totalAudience: item.totalAudience || "0",
-            campaignSrno: item.campaignSrno,
-        }))
-        : [];
-
-    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-    const CustomFooter = () => {
-        return (
-            <GridFooterContainer
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: {
-                        xs: "center", lg: "space-between"
-                    },
-                    alignItems: "center",
-                    padding: 1,
-                    gap: 2,
-                    overflowX: "auto",
-                }}
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                        gap: 1.5,
-                    }}
-                >
-                    {selectedRows.length > 0 && (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                borderRight: "1px solid #ccc",
-                                paddingRight: "10px",
-                            }}
-                        >
-                            {selectedRows.length} Rows Selected
-                        </Typography>
-                    )}
-
-                    <Typography variant="body2">
-                        Total Records: <span className='font-semibold'>{rows.length}</span>
-                    </Typography>
-                </Box>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: { xs: "100%", sm: "auto" },
-                    }}
-                >
-                    <CustomPagination
-                        totalPages={totalPages}
-                        paginationModel={paginationModel}
-                        setPaginationModel={setPaginationModel}
-                    />
-                </Box>
-            </GridFooterContainer >
-        );
-    };
+    // Format Data for DataGrid
+    const rows = wabaList.map((waba, index) => ({
+        id: index + 1,
+        wabaName: waba.name || 'N/A',
+        wabaNumber: waba.mobileNo || 'N/A',
+        createdOn: waba.insertTime || 'N/A',
+        expiryDate: waba.expiryDate || 'N/A',
+    }));
 
     return (
-        <Paper sx={{ height: 558 }}
-            id={id}
-            name={name}
-        >
-            <DataGrid
-                id={id}
-                name={name}
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[10, 20, 50]}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                checkboxSelection
-                rowHeight={45}
-                slots={{
-                    footer: CustomFooter,
-                    noRowsOverlay: CustomNoRowsOverlay, // Use the custom overlay
-                }}
-                slotProps={{ footer: { totalRecords: rows.length } }}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                disableRowSelectionOnClick
-                disableColumnResize
-                disableColumnMenu
-                sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        color: "#193cb8",
-                        fontSize: "14px",
-                        fontWeight: "bold !important",
-                    },
-                    "& .MuiDataGrid-row--borderBottom": {
-                        backgroundColor: "#e6f4ff !important",
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                        color: "#ccc",
-                    },
-                }}
-            />
-        </Paper>
+        <div className='relative'>
+            {!isLoggedIn ? (
+                <div className='w-full flex items-center justify-center h-[80vh]'>
+                    <div className='text-center p-10 rounded-xl shadow-md bg-white space-y-3'>
+                        <h1 className='font-semibold text-xl'>No account connected yet!</h1>
+                        <p className='mb-6 font-medium'>Login with Facebook to continue.</p>
+                        <Button variant="contained" color="primary" onClick={handleFacebookLogin}>
+                            Login with Facebook
+                        </Button>
+                    </div>
+                </div>
+            ) : isLoading ? (
+                <Loader />
+            ) : (
+                <Paper sx={{ height: 550, padding: 2 }}>
+                    <Box className="flex justify-between mb-4">
+                        <Typography variant="h6">Manage WABA Accounts</Typography>
+                        <Button variant="contained" color="primary" onClick={() => setShowCreateModal(true)}>
+                            Create WABA
+                        </Button>
+                    </Box>
+
+                    {wabaList.length === 0 ? (
+                        <Typography>No WABA accounts found. Click "Create WABA" to add one.</Typography>
+                    ) : (
+                        <DataGrid rows={rows} columns={columns} pageSizeOptions={[10, 20, 50]} pagination />
+                    )}
+                </Paper>
+            )}
+
+            {/* Create WABA Modal */}
+            <Dialog header="Create WABA Account" visible={showCreateModal} onHide={() => setShowCreateModal(false)} className="w-[30rem]">
+                <div className="p-6 space-y-4">
+                    <Typography>Enter the name of the new WABA account:</Typography>
+                    <input
+                        type="text"
+                        value={newWabaName}
+                        onChange={(e) => setNewWabaName(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md"
+                    />
+                    <Button variant="contained" color="primary" fullWidth onClick={handleCreateWaba}>
+                        Create WABA
+                    </Button>
+                </div>
+            </Dialog>
+        </div>
     );
 };
 
-export default ManageCampaignTable;
+export default WhatsappManageWaba;
+
+
+
+
+
+
+
+
+

@@ -13,12 +13,12 @@ import AnimatedDropdown from "../../components/AnimatedDropdown.jsx"
 import '../whatsappLaunch.css'
 import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
 
-function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange, onUrlIndexChange }) {
+function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange, onUrlIndexChange, groups, setGroups }) {
   const [selectedOption, setSelectedOption] = useState("option2");
   const [selectedGroups, setSelectedGroups] = useState([]);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [showGroupList, setShowGroupList] = useState([]);
-  const [groups, setGroups] = useState([]);
+  // const [groups, setGroups] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isUploading, setIsUploading] = useState(false);
   const [isUploaded, setIsUploaded] = useState(false);
@@ -263,7 +263,9 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       try {
         const response = await getWabaShowGroupsList();
         console.log("waba group list", response)
-        if (response) {
+        // if (response) {
+        //   setGroups(response);
+        if (response && Array.isArray(response)) {
           setGroups(response);
         } else {
           console.error("Failed to fetch WABA Group List!");
@@ -276,6 +278,13 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
     };
     fetchWabaShowGroupsList();
   }, []);
+
+  useEffect(() => {
+    if (groups.length > 0) {
+      console.log("✅ Groups are available:", groups);
+    }
+  }, [groups]);
+
 
   // Get country list 
   useEffect(() => {
@@ -351,7 +360,10 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
               }
 
               // ✅ Extract group codes correctly
-              const selectedValues = e.value.map((group) => group).filter(Boolean);
+              // const selectedValues = e.value.map((group) => group).filter(Boolean);
+              // setSelectedGroups(selectedValues);
+
+              let selectedValues = Array.isArray(e.value) ? e.value : [e.value];
               setSelectedGroups(selectedValues);
 
               // ✅ Convert array to comma-separated string
@@ -362,7 +374,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
             }}
             options={groups.map((group) => ({
               label: `${group.groupName} (${group.totalCount})`,
-              value: group.groupCode,
+              value: group.groupCode, 
             }))}
           />
         </div>

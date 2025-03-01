@@ -14,6 +14,18 @@ import InputField from '../../components/layout/InputField.jsx';
 import UniversalButton from '../components/UniversalButton.jsx'
 import Loader from '../components/Loader';
 
+const extractVariablesFromText = (text) => {
+    const regex = /{{(\d+)}}/g;
+    let match;
+    const variables = [];
+    while ((match = regex.exec(text)) !== null) {
+        if (!variables.includes(match[1])) {
+            variables.push(match[1]);
+        }
+    }
+    return variables;
+};
+
 const WhatsappLaunchCampaign = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedTemplate, setSelectedTemplate] = useState("");
@@ -34,6 +46,9 @@ const WhatsappLaunchCampaign = () => {
     const [sending, setSending] = useState(false);
     const [isFetching, setIsFetching] = useState(false);
     const [selectedLanguage, setSelectedLanguage] = useState(null);
+
+    const [groups, setGroups] = useState([]);
+
 
     const [xlsxPath, setXlsxPath] = useState("");
     const [totalRecords, setTotalRecords] = useState("")
@@ -61,38 +76,66 @@ const WhatsappLaunchCampaign = () => {
         setUrlIndex(index);
     };
 
+    // const handleGroupChange = (value) => {
+    //     console.log("isGroup Updated:", value);
+
+    //     if (Array.isArray(value)) {
+    //         setIsGroup(1);
+    //         setSelectedGroups(value);
+    //     } else if (typeof value === "string") {
+    //         if (value === "-1") {
+    //             setIsGroup(1);
+    //             setSelectedGroups([]);
+    //         } else if (value.includes(",")) {
+    //             setIsGroup(1);
+    //             setSelectedGroups(value.split(",").map(Number));
+    //         } else {
+    //             setIsGroup(0);
+    //             setSelectedGroups([]);
+    //         }
+    //     } else if (typeof value === "number") {
+    //         setIsGroup(1);
+    //         setSelectedGroups([value]);
+    //     } else {
+    //         console.error("Unexpected value type in handleGroupChange:", value);
+    //     }
+
+    //     // ✅ If switching to Groups, reset Excel data
+    //     if (isGroup === 1) {
+    //         setXlsxPath("");
+    //         setTotalRecords("");
+    //         setSelectedCountryCode("");
+    //         setSelectedMobileColumn("");
+    //     }
+    // };
+
     const handleGroupChange = (value) => {
         console.log("isGroup Updated:", value);
 
+        let updatedGroups = [];
+
         if (Array.isArray(value)) {
-            setIsGroup(1);
-            setSelectedGroups(value);
+            updatedGroups = value;
         } else if (typeof value === "string") {
             if (value === "-1") {
-                setIsGroup(1);
-                setSelectedGroups([]);
+                updatedGroups = [];
             } else if (value.includes(",")) {
-                setIsGroup(1);
-                setSelectedGroups(value.split(",").map(Number));
+                updatedGroups = value.split(",").map(Number);
             } else {
-                setIsGroup(0);
-                setSelectedGroups([]);
+                updatedGroups = [Number(value)];
             }
         } else if (typeof value === "number") {
-            setIsGroup(1);
-            setSelectedGroups([value]);
+            updatedGroups = [value];
         } else {
             console.error("Unexpected value type in handleGroupChange:", value);
         }
 
-        // ✅ If switching to Groups, reset Excel data
-        if (isGroup === 1) {
-            setXlsxPath("");
-            setTotalRecords("");
-            setSelectedCountryCode("");
-            setSelectedMobileColumn("");
-        }
+        setIsGroup(updatedGroups.length > 0 ? 1 : 0);
+        setSelectedGroups(updatedGroups);
+
+        console.log("✅ Updated Selected Groups:", updatedGroups);
     };
+
 
     const handleImageUpload = (imageUrl) => {
         console.log("Uploaded Image URL:", imageUrl);
@@ -141,17 +184,27 @@ const WhatsappLaunchCampaign = () => {
 
         // setIsLoading(true);
 
-        const selectedWabaData = wabaList?.find(
-            (waba) => waba.mobileNo === selectedWaba
-        );
-        const selectedTemplateData = templateList?.find(
-            (template) => template.templateName === selectedTemplate
-        );
+        const selectedWabaData = wabaList?.find((waba) => waba.mobileNo === selectedWaba);
+        const selectedTemplateData = templateList?.find((template) => template.templateName === selectedTemplate);
 
-        const contentValues = Object.keys(formData)
-            .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
-            .map((key) => `#${formData[key]}#`)
-            .join(",");
+
+        // ✅ Extract only BODY variables from templateDataNew
+        const bodyVariables = templateDataNew?.components
+            ?.filter(component => component.type === "BODY")
+            ?.flatMap(component => extractVariablesFromText(component.text));
+
+        console.log("Extracted BODY Variables:", bodyVariables);
+        console.log("Current formData:", formData);
+
+        const contentValues = bodyVariables
+            ?.map((variable) => {
+                const key = `body${variable}`;
+                const value = formData[key] || "";
+                return value.replace(/{{(.*?)}}/g, "#$1#");
+            })
+            ?.join(",");
+
+        console.log("Final ContentMessage:", contentValues);
 
         // ✅ If using Groups, clear file-related data
         if (isGroup === 1) {
@@ -162,9 +215,44 @@ const WhatsappLaunchCampaign = () => {
         }
 
         // ✅ Ensure `groupValues` is formatted correctly
-        const groupValues = isGroup === 1 && selectedGroups.length > 0
-            ? selectedGroups.join(",")
-            : "-1";
+        const groupValues = isGroup === 1 && selectedGroups.length > 0 ? selectedGroups.join(",") : "-1";
+
+        // ✅ Debugging: Check selected option
+        console.log("Selected Option:", selectedOption);
+        console.log("Selected Groups:", selectedGroups);
+        console.log("Groups Data:", groups);
+        console.log("Uploaded File Total Records:", totalRecords);
+
+        // ✅ Ensure groups data is available before using it
+        if (selectedOption === "option1" && (!groups || groups.length === 0)) {
+            console.error("Groups data is not available.");
+            toast.error("Error: Group data is missing. Please wait for data to load.");
+            return;
+        }
+
+        let finalTotalRecords = 0;
+
+        if (selectedOption === "option1") {
+            console.log("🚀 Selected Groups:", selectedGroups);
+            console.log("📌 Available Groups:", groups);
+
+            finalTotalRecords = selectedGroups
+                .map(groupCode => {
+                    const group = groups.find(g => g.groupCode === groupCode);
+                    console.log(`🔍 Group Found: ${groupCode}, TotalCount: ${group?.totalCount}`);
+                    return group ? parseInt(group.totalCount, 10) : 0;
+                })
+                .reduce((acc, count) => acc + count, 0);
+        } else if (selectedOption === "option2") {
+            finalTotalRecords = totalRecords || 0;
+        }
+
+        console.log("📝 Final Total Records:", finalTotalRecords);
+
+        if (!finalTotalRecords) {
+            toast.error("Total records cannot be zero. Please check your selection.");
+            return;
+        }
 
         // ✅ Prepare Request Payload
         const requestData = {
@@ -178,9 +266,10 @@ const WhatsappLaunchCampaign = () => {
             templateCategory: selectedTemplateData?.category || "",
             templateType: selectedTemplateData?.type || "",
             url: "",
-            // variables: [],
+            variables: [],
             xlsxpath: xlsxPath,
-            totalRecords: totalRecords,
+            // totalRecords: totalRecords,
+            totalRecords: finalTotalRecords, // ✅ Correct total records value
             attachmentfile: imageFile || "",
             urlValues: "",
             urlIndex: urlIndex ?? -1,
@@ -248,6 +337,26 @@ const WhatsappLaunchCampaign = () => {
         fetchWabaList();
     }, []);
 
+    // Fetch Template Details
+    const fetchTemplateDetails = async (wabaNumber) => {
+        try {
+            const response = await getWabaTemplateDetails(wabaNumber);
+            if (response) {
+                setTemplateList(response);
+                setTemplateOptions(
+                    response.map((template) => ({
+                        value: template.templateName,
+                        label: template.templateName,
+                    }))
+                );
+            } else {
+                toast.error("Failed to load templates!");
+            }
+        } catch (error) {
+            toast.error("Error fetching template details.");
+        }
+    };
+
     // Handle WABA selection
     const handleWabaSelect = async (value) => {
         setSelectedWaba(value);
@@ -267,25 +376,6 @@ const WhatsappLaunchCampaign = () => {
         setWabaAccountId(selectedWabaDetails?.wabaAccountId || "");
         if (selectedWabaDetails) {
             await fetchTemplateDetails(selectedWabaDetails.mobileNo);
-        }
-    };
-
-    const fetchTemplateDetails = async (wabaNumber) => {
-        try {
-            const response = await getWabaTemplateDetails(wabaNumber);
-            if (response) {
-                setTemplateList(response);
-                setTemplateOptions(
-                    response.map((template) => ({
-                        value: template.templateName,
-                        label: template.templateName,
-                    }))
-                );
-            } else {
-                toast.error("Failed to load templates!");
-            }
-        } catch (error) {
-            toast.error("Error fetching template details.");
         }
     };
 
@@ -444,6 +534,8 @@ const WhatsappLaunchCampaign = () => {
                                             onGroupChange={handleGroupChange}
                                             setSelectedGroups={setSelectedGroups}
                                             onUrlIndexChange={setUrlIndex}
+                                            groups={groups} // ✅ Pass groups here
+                                            setGroups={setGroups} // ✅ Allow updating from child component
                                         />
                                     )}
                                 </div>

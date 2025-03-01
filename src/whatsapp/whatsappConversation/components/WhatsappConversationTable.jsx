@@ -1,11 +1,14 @@
 import * as React from 'react';
 import { useState } from 'react';
 import { IconButton, Paper, Typography, Box, Button, Tooltip, Popover, } from '@mui/material';
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import usePagination from '@mui/material/usePagination';
 import { styled } from '@mui/material/styles';
+
+
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
+
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -226,7 +229,10 @@ const WhatsappConversationTable = ({ id, name }) => {
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
                 rowHeight={45}
-                slots={{ footer: CustomFooter }}
+                slots={{
+                    footer: CustomFooter,
+                    noRowsOverlay: CustomNoRowsOverlay,
+                }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                 disableRowSelectionOnClick
                 disableColumnResize

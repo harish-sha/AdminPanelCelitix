@@ -17,6 +17,9 @@ import { Dialog } from 'primereact/dialog';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
+
+
 
 import { getWabaTemplate, getWabaTemplateDetails } from '../../../apis/whatsapp/whatsapp.js';
 import whatsappImg from '../../../assets/images/whatsappdummy.webp';
@@ -321,7 +324,10 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                     onPaginationModelChange={setPaginationModel}
                     checkboxSelection
                     rowHeight={45}
-                    slots={{ footer: CustomFooter }}
+                    slots={{
+                        footer: CustomFooter,
+                        noRowsOverlay: CustomNoRowsOverlay,
+                    }}
                     slotProps={{ footer: { totalRecords: rows.length } }}
                     onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                     disableRowSelectionOnClick
