@@ -135,6 +135,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                 { to: '/wlcsetting', label: 'Live Chats Settings' },
                 { to: '/wmanagewaba', label: 'Manage WABA' },
                 { to: '/wwhatsappconversation', label: 'WhatsApp Conversation' },
+                { to: '/wwhatsappmanageagent', label: 'Manage Agent' },
+                { to: '/wwhatsappbot', label: 'Manage Bot' },
             ],
         },
         {

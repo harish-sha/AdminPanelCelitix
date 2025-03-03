@@ -51,7 +51,7 @@ const AnimatedDropdown = ({
                 name={name}
                 value={value}
                 // onChange={(e, selectedValue) => onChange(selectedValue)} // Update value
-                onChange={(e, selectedValue) => handleChange(selectedValue)} // Update value
+                onChange={(e, selectedValue) => handleChange(selectedValue)}
                 placeholder={placeholder}
                 indicator={<KeyboardArrowDown />}
                 disabled={disabled}
@@ -71,6 +71,7 @@ const AnimatedDropdown = ({
                             overflowY: "auto",
                             minWidth: "250px",
                             position: "relative",
+                            zIndex: 1300
                         },
                     },
                 }}

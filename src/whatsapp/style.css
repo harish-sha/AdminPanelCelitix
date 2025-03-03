@@ -34,4 +34,36 @@
   display: none;
 }
 
+.css-1dune0f-MuiInputBase-input-MuiOutlinedInput-input {
+  padding: 6.5px 10px !important;
+}
+
 /* ==================================================== */
+
+/* Autocomplete manage agent tempalte assgin */
+
+.css-o5oj2-MuiAutocomplete-root .MuiOutlinedInput-root {
+  padding: 0px 50px 0px 0px !important;
+}
+.css-16yb58i-MuiButtonBase-root-MuiChip-root {
+  height: 25px !important;
+  margin-top: 5px !important;
+}
+
+.MuiAutocomplete-hasPopupIcon.MuiAutocomplete-hasClearIcon.css-o5oj2-MuiAutocomplete-root
+  .MuiOutlinedInput-root {
+  border-radius: 5px !important;
+}
+.MuiAutocomplete-hasPopupIcon.css-o5oj2-MuiAutocomplete-root
+  .MuiOutlinedInput-root:hover {
+  border: none !important;
+  outline: none !important;
+}
+
+/* Autocomplete manage agent tempalte assgin */
+
+.whatsappChatWidgetBox {
+  background-image: url("src/assets/images/bgimage-chatwidgetwhatsapp.png");
+  object-fit: cover;
+  background-size: cover;
+}

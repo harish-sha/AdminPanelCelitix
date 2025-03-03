@@ -18,6 +18,15 @@ import ProfilePage from '../../mainlayout/navbar/pages/Profile';
 import Dummy from '../../dummy/Dummy';
 import CampaignDetailsReport from '../../whatsapp/whatsappManageCampaign/CampaignDetailsReport';
 
+import ManageAgent from '../../whatsapp/manageagent/ManageAgent';
+
+
+import Recharge from '../../managefunds/recharge/Recharge';
+import Transactions from '../../managefunds/transactions/Transactions';
+import ManageContacts from '../../managecontacts/ManageContacts';
+import WhatsappBot from '../../whatsapp/WhatsappBot/WhatsappBot';
+import Settings from '../../mainlayout/navbar/pages/Settings';
+
 
 const Approutes = () => {
     return (
@@ -37,7 +46,20 @@ const Approutes = () => {
                 <Route path="/wwhatsappconversation" element={<WhatsappConversation />} />
                 <Route path="/wcampaigndetailsreport" element={<CampaignDetailsReport />} />
                 <Route path="/wcampaigndetailsreport" element={<CampaignDetailsReport />} />
+                <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
+                <Route path="/wwhatsappbot" element={<WhatsappBot />} />
+
                 <Route path="/profile" element={<ProfilePage />} />
+
+                <Route path="/settings" element={<Settings />} />
+
+
+                {/* Manage Funds Route Start */}
+                <Route path="/recharge" element={<Recharge />} />
+                <Route path="/transactions" element={<Transactions />} />
+                {/* Manage Funds Route End */}
+                <Route path="/managecontacts" element={<ManageContacts />} />
+
             </Route>
             <Route path="/dummy" element={<Dummy />} />
 
