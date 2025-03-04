@@ -4,7 +4,7 @@ import { useMediaQuery, Menu, MenuItem, IconButton } from "@mui/material";
 import { FaBars } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-import AccountInfoModal from "./components/UniversalAccountInfo";
+// import AccountInfoModal from "./components/UniversalAccountInfo";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 
@@ -38,6 +38,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         handleProfileMenu();
         navigate("/profile");
     }, [navigate]);
+
+    const handleViewSetting = useCallback(() => {
+        handleProfileMenu();
+        navigate("/settings")
+    }, [navigate])
 
     const handleLogout = useCallback(() => {
         localStorage.removeItem("token");
@@ -88,7 +93,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => handleProfileMenu()}>
                         {[
                             { text: "Profile", icon: <AccountIcon />, action: handleViewProfile },
-                            { text: "Settings", icon: <SettingsIcon /> },
+                            { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
                             { text: "Transaction History", icon: <HistoryIcon /> },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
                         ].map(({ text, icon, action }, idx) => (
@@ -113,7 +118,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                             { text: "Wallet", icon: <WalletIcon /> },
                             { text: "Download", icon: <DownloadIcon /> },
                             { text: "Profile", icon: <ProfileIcon />, action: handleViewProfile },
-                            { text: "Settings", icon: <SettingsIcon /> },
+                            { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
                             { text: "Transactions", icon: <HistoryIcon /> },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
                         ].map(({ text, icon, action }, idx) => (

@@ -212,16 +212,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                 { to: '/clicktosettings', label: 'Settings' },
             ],
         },
-        {
-            name: 'settings',
-            icon: <IoSettingsOutline />,
-            label: 'Settings',
-            type: "dropdown",
-            links: [
-                { to: '/mainsettings', label: 'Profile' },
-                { to: '/mainaccount', label: 'Account' },
-            ],
-        },
+        // {
+        //     name: 'settings',
+        //     icon: <IoSettingsOutline />,
+        //     label: 'Settings',
+        //     type: "dropdown",
+        //     links: [
+        //         { to: '/mainsettings', label: 'Profile' },
+        //         { to: '/mainaccount', label: 'Account' },
+        //     ],
+        // },
         {
             name: 'managefunds',
             icon: <IoWalletOutline />,

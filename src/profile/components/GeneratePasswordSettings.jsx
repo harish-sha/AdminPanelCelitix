@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
-import CustomTooltip from '../../../components/common/CustomTooltip';
+import CustomTooltip from '../../components/common/CustomTooltip';
+
 
 const GeneratePasswordSettings = ({ label, id, name, tooltipContent = "", tooltipPlacement = "top"}) => {
     const [password, setPassword] = useState('');

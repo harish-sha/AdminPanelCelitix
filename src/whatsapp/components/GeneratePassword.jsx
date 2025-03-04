@@ -7,7 +7,15 @@ import { AiOutlineInfoCircle } from 'react-icons/ai';
 import toast from 'react-hot-toast';
 import ContentCopyOutlinedIcon from '@mui/icons-material/ContentCopyOutlined';
 
-const GeneratePassword = ({ label, id, name, tooltipContent = "", tooltipPlacement = "top" }) => {
+const GeneratePassword = ({
+  label,
+  id,
+  name,
+  tooltipContent = "",
+  tooltipPlacement = "top",
+  onPasswordGenerate,
+
+}) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
 
@@ -27,6 +35,7 @@ const GeneratePassword = ({ label, id, name, tooltipContent = "", tooltipPlaceme
   const handleGeneratePassword = () => {
     const newPassword = generateRandomPassword();
     setPassword(newPassword);
+    onPasswordGenerate?.(newPassword); // ✅ Send password back to parent component
   };
 
   const handleCopyPassword = () => {

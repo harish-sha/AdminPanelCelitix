@@ -15,7 +15,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     Authorization: `Bearer ${token}`,
     ...options.headers,
   };
-  
+
   // If FormData is used, do not set Content-Type header manually
   if (options.body instanceof FormData) {
     delete headers["Content-Type"];
@@ -37,6 +37,8 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       localStorage.removeItem("token");
       window.location.href = "/login";
       return null;
+    } else if (response.status === 400) {
+      return await response.json();
     }
 
     if (!response.ok) {

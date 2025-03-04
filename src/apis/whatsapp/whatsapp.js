@@ -7,6 +7,7 @@ export const getWabaList = async () => {
   });
 };
 
+
 // Get All Template Details
 export const getWabaTemplateDetails = async (wabaNumber) => {
   return await fetchWithAuth(

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { getUserDetails } from "../../../apis/user/user.js";
-import InputField from "../../../components/layout/InputField";
+import { getUserDetails } from "../../apis/user/user";
 import toast from "react-hot-toast";
-import Loader from "../../../whatsapp/components/Loader";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import InputField from "../../components/layout/InputField";
+import Loader from "../../whatsapp/components/Loader";
+import UniversalButton from "../../whatsapp/components/UniversalButton";
 
 const Profile = () => {
     const [userData, setUserData] = useState(null);
@@ -71,7 +71,7 @@ const Profile = () => {
                         <InputField id="companyName" name="companyName" label="Company Name" value={formData.companyName} onChange={handleChange} readOnly disabled />
 
                     </div>
-                    {/* <div className="mt-6 flex justify-center">
+                    <div className="mt-6 flex justify-center">
                         <UniversalButton
                             id="profile_Save"
                             name="profile_Save"
@@ -79,7 +79,7 @@ const Profile = () => {
                         >
                             Save
                         </UniversalButton>
-                    </div> */}
+                    </div>
                 </div>
             ) : (
                 <p className="text-center text-gray-500 mt-4">Failed to load user details.</p>

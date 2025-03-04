@@ -1,7 +1,13 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+
+// mainlayou
 import Mainlayout from '../../mainlayout/Mainlayout';
+
+// dashboard
 import Dashboard from '../../dashboard/Dashboard';
+
+// Whatsapp
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
 import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
@@ -13,26 +19,33 @@ import WhatsappQrCode from '../../whatsapp/whatsappQrcode/WhatsappQrCode';
 import WhatsappLiveChatSettings from '../../whatsapp/whatsappLiveChatSetting/WhatsappLiveChatSettings';
 import WhatsappManageWaba from '../../whatsapp/whatsappManageWaba/WhatsappManageWaba';
 import WhatsappConversation from '../../whatsapp/whatsappConversation/WhatsappConversation';
-import ProfilePage from '../../mainlayout/navbar/pages/Profile';
-
-import Dummy from '../../dummy/Dummy';
 import CampaignDetailsReport from '../../whatsapp/whatsappManageCampaign/CampaignDetailsReport';
-
 import ManageAgent from '../../whatsapp/manageagent/ManageAgent';
+import WhatsappBot from '../../whatsapp/WhatsappBot/WhatsappBot';
 
+// dummy
+import Dummy from '../../dummy/Dummy';
 
+// manage funds
 import Recharge from '../../managefunds/recharge/Recharge';
 import Transactions from '../../managefunds/transactions/Transactions';
+
+// manage contacts
 import ManageContacts from '../../managecontacts/ManageContacts';
-import WhatsappBot from '../../whatsapp/WhatsappBot/WhatsappBot';
-import Settings from '../../mainlayout/navbar/pages/Settings';
+
+// profile
+import Settings from '../../profile/pages/Settings';
+import ProfilePage from "../../profile/pages/Profile"
 
 
 const Approutes = () => {
     return (
         <Routes>
             <Route path="/" element={<Mainlayout />}>
+                {/* dashboard */}
                 <Route path="/" element={<Dashboard />} />
+
+                {/* whatsapp */}
                 <Route path="/managetemplate" element={<ManageTemplate />} />
                 <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
                 <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
@@ -49,15 +62,15 @@ const Approutes = () => {
                 <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
                 <Route path="/wwhatsappbot" element={<WhatsappBot />} />
 
+                {/* profile */}
                 <Route path="/profile" element={<ProfilePage />} />
-
                 <Route path="/settings" element={<Settings />} />
 
-
-                {/* Manage Funds Route Start */}
+                {/* manage funds */}
                 <Route path="/recharge" element={<Recharge />} />
                 <Route path="/transactions" element={<Transactions />} />
-                {/* Manage Funds Route End */}
+
+                {/* manage contacts */}
                 <Route path="/managecontacts" element={<ManageContacts />} />
 
             </Route>

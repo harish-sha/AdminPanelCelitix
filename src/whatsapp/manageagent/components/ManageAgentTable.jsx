@@ -42,13 +42,24 @@ import {
   getAgentList,
   getWorkingHours,
   updateAgentStatus,
-  saveWorkingHours
+  saveWorkingHours,
+  getTemplateList,
+  saveCheckedAssignTemplate
 } from "../../../apis/Agent/Agent.js";
 import CustomTooltip from "../../components/CustomTooltip";
 import toast from "react-hot-toast";
 import InputField from "../../components/InputField.jsx";
 import GeneratePassword from "../../components/GeneratePassword.jsx";
 import RadioGroupFieldupdown from "../../components/RadioGroupFieldupdown.jsx";
+import { getWabaList } from "../../../apis/whatsapp/whatsapp.js";
+import { RadioButton } from 'primereact/radiobutton';
+import UniversalLabel from "../../components/UniversalLabel.jsx";
+
+import { FaTrash } from "react-icons/fa";
+import { MdOutlineDeleteForever } from "react-icons/md";
+
+
+
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
@@ -171,7 +182,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
   const [editagentmobile, setEditAgentMobile] = useState('');
   const [editagentemail, setEditAgentEmail] = useState('');
 
-
+  const [isLoading, setIsLoading] = useState(true);
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedAgentId, setSelectedAgentId] = useState(null);
@@ -183,6 +194,14 @@ const ManageAgentTable = ({ id, name, visible }) => {
   const [workingHoursDialog, setWorkingHoursDialog] = useState(false);
   const [workingHours, setWorkingHours] = useState({});
   const [isWorkingHoursEnabled, setIsWorkingHoursEnabled] = useState(true);
+
+  const [wabaList, setWabaList] = useState([]);
+  const [wabaTemplates, setWabaTemplates] = useState([]); // Stores multiple WABA-Template selections
+
+  const [templateList, setTemplateList] = useState([]);
+  const [selectedWaba, setSelectedWaba] = useState(null);
+
+  const [selectedOption, setSelectedOption] = useState("option2");
 
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
@@ -198,37 +217,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     setSelectedAgentName(name);
     setDeleteDialogVisible(true);
   };
-
-  const whatsappRedio = [
-    { value: "option1", label: "Enable" },
-    { value: "option2", label: "Disable" },
-  ];
-
-  const selectWABAOptions = [
-    { label: "WABA 1", value: "WABA 1" },
-    { label: "WABA 2", value: "WABA 2" },
-    { label: "WABA 3", value: "WABA 3" },
-    { label: "WABA 4", value: "WABA 4" },
-    { label: "WABA 5", value: "WABA 5" },
-  ];
-
-  const top100Films = [
-    { label: "Tamplate 1", value: "Tamplate 1" },
-    { label: "Tamplate 2", value: "Tamplate 2" },
-    { label: "Tamplate 3", value: "Tamplate 3" },
-    { label: "Tamplate 4", value: "Tamplate 4" },
-    { label: "Tamplate 5", value: "Tamplate 5" },
-    { label: "Tamplate 6", value: "Tamplate 6" },
-    { label: "Tamplate 7", value: "Tamplate 7" },
-    { label: "Tamplate 8", value: "Tamplate 8" },
-    { label: "Tamplate 9", value: "Tamplate 9" },
-    { label: "Tamplate 10", value: "Tamplate 10" },
-    { label: "Tamplate 11", value: "Tamplate 11" },
-    { label: "Tamplate 12", value: "Tamplate 12" },
-    { label: "Tamplate 13", value: "Tamplate 13" },
-    { label: "Tamplate 14", value: "Tamplate 14" },
-    { label: "Tamplate 15", value: "Tamplate 15" },
-  ];
 
   // GET AGENT LIST
   useEffect(() => {
@@ -251,6 +239,89 @@ const ManageAgentTable = ({ id, name, visible }) => {
     };
     fetchAgentList();
   }, []);
+
+  // ================================================
+
+  // GET WABA LIST
+  useEffect(() => {
+    const fetchWabaList = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getWabaList();
+        if (response) {
+          setWabaList(response);
+        } else {
+          console.error("Failed to fetch WABA details");
+          toast.error("Failed to load WABA details!");
+        }
+      } catch (error) {
+        console.error("Error fetching WABA list:", error);
+        toast.error("Error fetching WABA list.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchWabaList();
+  }, []);
+
+  // Fetch template list when a WABA is selected
+  useEffect(() => {
+    if (selectedWaba) {
+      const fetchTemplateList = async () => {
+        setIsLoading(true);
+        const templates = await getTemplateList(selectedWaba);
+        setTemplateList(templates);
+        setIsLoading(false);
+      };
+      fetchTemplateList();
+    } else {
+      setTemplateList([]);
+    }
+  }, [selectedWaba]);
+
+  // Add a new WABA selection
+  // const addWabaSelection = () => {
+  //   setWabaTemplates([...wabaTemplates, { wabaSrno: null, templates: [], templateList: [] }]);
+  // };
+
+  const addWabaSelection = () => {
+    setWabaTemplates((prev) => [
+      ...prev,
+      { wabaSrno: null, templates: [], templateList: [] },
+    ]);
+  };
+
+
+  // Handle WABA selection and fetch templates for the selected WABA
+  const handleWabaChange = async (index, wabaSrno) => {
+    const templateList = await getTemplateList(wabaSrno);
+    const updatedWabaTemplates = [...wabaTemplates];
+    updatedWabaTemplates[index] = { wabaSrno, templates: [], templateList };
+    setWabaTemplates(updatedWabaTemplates);
+  };
+
+  // Handle template selection
+  const handleTemplateChange = (index, selectedTemplates) => {
+    const updatedWabaTemplates = [...wabaTemplates];
+    updatedWabaTemplates[index].templates = selectedTemplates;
+    setWabaTemplates(updatedWabaTemplates);
+  };
+
+  // Delete a WABA selection
+  // const removeWabaSelection = (index) => {
+  //   const updatedWabaTemplates = wabaTemplates.filter((_, i) => i !== index);
+  //   setWabaTemplates(updatedWabaTemplates);
+  // };
+  const removeWabaSelection = (index) => {
+    if (wabaTemplates.length === 1) {
+      toast.error("At least one WABA selection is required.");
+      return;
+    }
+    setWabaTemplates(wabaTemplates.filter((_, i) => i !== index));
+  };
+
+
+  // =====================================
 
   // Handle Agent Status Update
   const handleStatusChange = async (srNo, currentStatus) => {
@@ -423,10 +494,22 @@ const ManageAgentTable = ({ id, name, visible }) => {
     console.log("reply");
   };
 
-  const handleAssign = () => {
+  const handleAssign = (row) => {
+    setSelectedAgentId(row.id);
+    setSelectedAgentName(row.name);
     setManageAssign(true);
-    console.log("Assign");
+    console.log("agent select for assign", row);
   };
+
+  // const handleAssign = (row) => {
+  //   setSelectedAgentId(row.id);
+  //   setSelectedAgentName(row.name);
+  //   setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
+  //   setManageAssign(true);
+  //   console.log("agent select for assign", row);
+  // };
+
+
 
   const handleEdit = () => {
     setManageAgentEdit(true);
@@ -610,6 +693,64 @@ const ManageAgentTable = ({ id, name, visible }) => {
       </GridFooterContainer>
     );
   };
+
+  useEffect(() => {
+    console.log("selected WABA", selectedWaba);
+  }, [selectedWaba]);
+
+  const handleChangeOption = (event) => {
+    const value = event.target.value;
+    setSelectedOption(value);
+  };
+
+  // Save API call
+  const handleSaveAssignments = async () => {
+    if (!selectedAgentId) {
+      toast.error("No agent selected.");
+      return;
+    }
+
+    if (wabaTemplates.length === 0) {
+      toast.error("Please assign at least one WABA and template.");
+      return;
+    }
+
+    const requestData = wabaTemplates
+      .filter((entry) => entry.wabaSrno && entry.templates.length > 0)
+      .map((entry) => ({
+        wabaSrNo: entry.wabaSrno.toString(),
+        templateList: entry.templates.map((t) => t.sr_no.toString()),
+      }));
+
+    if (requestData.length === 0) {
+      toast.error("No valid WABA-Template pairs to save.");
+      return;
+    }
+
+
+    // 🔍 Log Request Data Before API Call
+    console.log("Request Body for the assigning template:", JSON.stringify(requestData, null, 2));
+
+    try {
+      setIsLoading(true);
+
+      const response = await saveCheckedAssignTemplate(selectedAgentId, requestData);
+
+      if (response?.statusCode === 200) {
+        toast.success("Templates assigned successfully!");
+        setManageAssign(false); // Close the dialog
+      } else {
+        toast.error("Failed to assign templates.");
+      }
+    } catch (error) {
+      console.error("Error saving assignments:", error);
+      toast.error("Error saving assignments.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+
 
   return (
     <>
@@ -837,9 +978,13 @@ const ManageAgentTable = ({ id, name, visible }) => {
 
         {/* Assign Template to agent start */}
         <Dialog
-          header="WhatsApp"
+          // header="WhatsApp"
           visible={ManageAssign}
           onHide={() => setManageAssign(false)}
+          header={`Assign Templates - ${selectedAgentName}`}
+          // visible={visible}
+          // onClose
+
           className="w-[50rem]"
           draggable={false}
           modal
@@ -872,71 +1017,160 @@ const ManageAgentTable = ({ id, name, visible }) => {
                   }}
                 />
                 {/* <Tab
-                            label={
-                                <span>
-                                    <LibraryBooksOutlinedIcon size={20} /> Library
-                                </span>
-                            }
-                            {...a11yProps(1)}
-                            sx={{
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                color: 'text.secondary',
-                                '&:hover': {
-                                    color: 'primary.main',
-                                    backgroundColor: '#f0f4ff',
-                                    borderRadius: '8px',
-                                },
-                            }}
-                        /> */}
+                  label={
+                    <span>
+                      <LibraryBooksOutlinedIcon size={20} /> Library
+                    </span>
+                  }
+                  {...a11yProps(1)}
+                  sx={{
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    color: 'text.secondary',
+                    '&:hover': {
+                      color: 'primary.main',
+                      backgroundColor: '#f0f4ff',
+                      borderRadius: '8px',
+                    },
+                  }}
+                /> */}
               </Tabs>
               <CustomTabPanel value={value} index={0} className="">
-                <RadioGroupField
-                  options={whatsappRedio}
-                  id="whatsappredio"
-                  name="whatsappredio"
-                />
+                {/* <div className="flex flex-wrap sm:grid-cols-2 gap-4 mb-5 mt-2">
+                  <div className="flex items-center justify-center gap-2 cursor-pointer" >
+                    <RadioButton
+                      inputId="radioOption1"
+                      name="radioGroup"
+                      value="option1"
+                      onChange={handleChangeOption}
+                      checked={selectedOption === 'option1'}
+                    />
+                    <label htmlFor="radioOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Enable</label>
+                  </div>
+                  <div className="flex items-center justify-center gap-2" >
+                    <RadioButton
+                      inputId="radioOption2"
+                      name="radioGroup"
+                      value="option2"
+                      onChange={handleChangeOption}
+                      checked={selectedOption === 'option2'}
+                    />
+                    <label htmlFor="radioOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
+                  </div>
+                </div> */}
 
-                <div className="w-full flex flex-wrap gap-2 space-y-2">
+                {/* <div className="w-full flex flex-wrap gap-2  items-end">
                   <div className="flex-1">
                     <AnimatedDropdown
-                      options={selectWABAOptions}
                       id="selectWABA"
                       name="selectWABA"
-                      value={selectwaba}
-                      onChange={(value) => setSelectWaba(value)}
+                      label='Select WABA'
+                      tooltipContent='Select your whatsapp business account '
+                      tooltipPlacement='right'
+                      value={selectedWaba}
+                      options={wabaList?.map((waba) => ({
+                        value: waba.wabaSrno,
+                        label: waba.name,
+                      }))}
+                      onChange={(value) => setSelectedWaba(value)}
                     />
                   </div>
 
                   <div className="flex-1">
+                    <UniversalLabel
+                      text="Select template"
+                      tooltipContent="Select templates which you want to assign"
+                      tooltipPlacement="right"
+                      className="block text-sm font-medium text-gray-700"
+                    />
+
                     <Autocomplete
                       multiple
-                      id="tags-outlined"
-                      options={top100Films}
-                      getOptionLabel={(option) => option.label}
-                      // defaultValue={[top100Films[13]]}
+                      id="template-selector"
+                      options={templateList}
+                      getOptionLabel={(option) => option.template_name}
                       disableCloseOnSelect
                       filterSelectedOptions
                       renderInput={(params) => (
-                        <TextField
-                          {...params}
-                          // label="filterSelectedOptions"
-                          placeholder="Search Templates"
-                        />
+                        <TextField {...params} placeholder="Search Templates" />
                       )}
                     />
+                  </div>
+                </div> */}
+                <div className="w-full flex flex-col gap-4">
+                  {wabaTemplates.map((entry, index) => (
+                    <div key={index} className="flex flex-wrap gap-2 items-end p-2.5 rounded-md relative border border-gray-200 transition-all">
+                      {/* WABA Selection Dropdown */}
+                      <div className="flex-1">
+                        <AnimatedDropdown
+                          id={`selectWABA-${index}`}
+                          name={`selectWABA-${index}`}
+                          label="Select WABA"
+                          tooltipContent="Select your WhatsApp Business Account"
+                          tooltipPlacement="right"
+                          value={entry.wabaSrno}
+                          options={wabaList.map((waba) => ({
+                            value: waba.wabaSrno,
+                            label: waba.name,
+                          }))}
+                          onChange={(value) => handleWabaChange(index, value)}
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <UniversalLabel
+                          text="Select Template"
+                          tooltipContent="Select templates to assign"
+                          tooltipPlacement="right"
+                          className="block text-sm font-medium text-gray-700"
+                        />
+                        <Autocomplete
+                          multiple
+                          id={`template-selector-${index}`}
+                          options={entry.templateList}
+                          getOptionLabel={(option) => option.template_name}
+                          disableCloseOnSelect
+                          filterSelectedOptions
+                          value={entry.templates}
+                          onChange={(_, newValue) => handleTemplateChange(index, newValue)}
+                          renderInput={(params) => (
+                            <TextField {...params} placeholder="Search Templates" />
+                          )}
+                        />
+                      </div>
+                      <button
+                        onClick={() => removeWabaSelection(index)}
+                        className="rounded-full p-1 hover:bg-gray-200"
+                      >
+                        <MdOutlineDeleteForever
+                          className='text-red-500 cursor-pointer hover:text-red-600'
+                          size={22}
+                        />
+                      </button>
+                    </div>
+                  ))}
+                  <div className="flex justify-center items-center gap-4">
+                    <button
+                      onClick={addWabaSelection}
+                      className="bg-blue-400 text-sm w-max text-white px-4 py-2 rounded-md hover:bg-blue-500 transition cursor-pointer"
+                    >
+                      Add More
+                    </button>
+                    <button
+                      onClick={handleSaveAssignments}
+                      className="bg-blue-400 text-sm w-max text-white px-4 py-2 rounded-md hover:bg-blue-500 transition cursor-pointer"
+                      disabled={isLoading}
+                    >
+                      {isLoading ? "Saving..." : "Save"}
+                    </button>
                   </div>
                 </div>
               </CustomTabPanel>
               {/* <CustomTabPanel value={value} index={1}>
-                        hello world 2
-                    </CustomTabPanel> */}
+                hello world 2
+              </CustomTabPanel> */}
             </Box>
 
-            {/* Save Button */}
-            <div className="flex justify-center">
-              <Button label="Save" className="p-button-primary" />
-            </div>
+
           </div>
         </Dialog >
         {/* Assign Template to agent End */}
