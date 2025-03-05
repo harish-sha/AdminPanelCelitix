@@ -10,7 +10,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import CancelOutlinedIcon from '@mui/icons-material/CancelOutlined';
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import {
   DataGrid,
   GridFooterContainer,
@@ -44,7 +44,8 @@ import {
   updateAgentStatus,
   saveWorkingHours,
   getTemplateList,
-  saveCheckedAssignTemplate
+  saveCheckedAssignTemplate,
+  getAssignedTemplatesByAgentId,
 } from "../../../apis/Agent/Agent.js";
 import CustomTooltip from "../../components/CustomTooltip";
 import toast from "react-hot-toast";
@@ -52,14 +53,11 @@ import InputField from "../../components/InputField.jsx";
 import GeneratePassword from "../../components/GeneratePassword.jsx";
 import RadioGroupFieldupdown from "../../components/RadioGroupFieldupdown.jsx";
 import { getWabaList } from "../../../apis/whatsapp/whatsapp.js";
-import { RadioButton } from 'primereact/radiobutton';
+import { RadioButton } from "primereact/radiobutton";
 import UniversalLabel from "../../components/UniversalLabel.jsx";
 
 import { FaTrash } from "react-icons/fa";
 import { MdOutlineDeleteForever } from "react-icons/md";
-
-
-
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
@@ -166,29 +164,31 @@ const CustomPagination = ({
 
 const ManageAgentTable = ({ id, name, visible }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // handle reply
   const [reply, setReply] = useState(false);
   const [isActiveAgentOn, setIsActiveAgentOn] = useState(true);
   const [isInactiveAgentOn, setIsInactiveAgentOn] = useState(true);
   const [inactiveReply, setInactiveReply] = useState("");
   const [activeReply, setActiveReply] = useState("");
+
+  // handle assign
   const [ManageAssign, setManageAssign] = useState(false);
-  const [selectwaba, setSelectWaba] = useState(null);
   const [value, setValue] = useState(0);
   const [agentList, setAgentList] = useState([]);
-
   const [manageagentedit, setManageAgentEdit] = useState(false);
 
-  const [editagentname, setEditAgentName] = useState('');
-  const [editagentmobile, setEditAgentMobile] = useState('');
-  const [editagentemail, setEditAgentEmail] = useState('');
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+  // Agent
+  const [editagentname, setEditAgentName] = useState("");
+  const [editagentmobile, setEditAgentMobile] = useState("");
+  const [editagentemail, setEditAgentEmail] = useState("");
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [selectedAgentName, setSelectedAgentName] = useState("");
-  const [editselecteddepartment, setEditSelectedDepartment] = useState("");
 
+  // department
+  const [editselecteddepartment, setEditSelectedDepartment] = useState("");
+  const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
 
   // Agent working hours and edit
   const [workingHoursDialog, setWorkingHoursDialog] = useState(false);
@@ -196,20 +196,17 @@ const ManageAgentTable = ({ id, name, visible }) => {
   const [isWorkingHoursEnabled, setIsWorkingHoursEnabled] = useState(true);
 
   const [wabaList, setWabaList] = useState([]);
-  const [wabaTemplates, setWabaTemplates] = useState([]); // Stores multiple WABA-Template selections
-
+  const [wabaTemplates, setWabaTemplates] = useState([]);
   const [templateList, setTemplateList] = useState([]);
   const [selectedWaba, setSelectedWaba] = useState(null);
-
   const [selectedOption, setSelectedOption] = useState("option2");
-
+  const [isSaving, setIsSaving] = useState(false);
   const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
-
   const departmentedit = [
-    { label: 'Department 1', value: 'dept1' },
-    { label: 'Department 2', value: 'dept2' },
-    { label: 'Department 3', value: 'dept3' },
+    { label: "Department 1", value: "dept1" },
+    { label: "Department 2", value: "dept2" },
+    { label: "Department 3", value: "dept3" },
   ];
 
   const handleOpenDeleteDialog = (id, name) => {
@@ -224,6 +221,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
       try {
         // setIsLoading(true);
         const response = await getAgentList();
+        console.log("get agent list", response)
         if (response?.data) {
           setAgentList(response.data);
         } else {
@@ -279,11 +277,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
   }, [selectedWaba]);
 
-  // Add a new WABA selection
-  // const addWabaSelection = () => {
-  //   setWabaTemplates([...wabaTemplates, { wabaSrno: null, templates: [], templateList: [] }]);
-  // };
-
   const addWabaSelection = () => {
     setWabaTemplates((prev) => [
       ...prev,
@@ -291,13 +284,30 @@ const ManageAgentTable = ({ id, name, visible }) => {
     ]);
   };
 
-
-  // Handle WABA selection and fetch templates for the selected WABA
   const handleWabaChange = async (index, wabaSrno) => {
-    const templateList = await getTemplateList(wabaSrno);
-    const updatedWabaTemplates = [...wabaTemplates];
-    updatedWabaTemplates[index] = { wabaSrno, templates: [], templateList };
-    setWabaTemplates(updatedWabaTemplates);
+    try {
+      setIsLoading(true);
+      console.log(`🔄 Fetching templates for WABA: ${wabaSrno}`);
+
+      // Fetch available templates for the selected WABA
+      const templateList = await getTemplateList(wabaSrno);
+      console.log(`Templates for WABA ${wabaSrno}:`, templateList);
+
+      setWabaTemplates((prev) => {
+        const updatedTemplates = [...prev];
+        updatedTemplates[index] = {
+          wabaSrno,
+          templates: prev[index]?.templates || [], // Keep previously assigned templates
+          templateList,
+        };
+        return updatedTemplates;
+      });
+    } catch (error) {
+      console.error("Error fetching templates:", error);
+      toast.error("Error fetching template list.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Handle template selection
@@ -307,11 +317,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     setWabaTemplates(updatedWabaTemplates);
   };
 
-  // Delete a WABA selection
-  // const removeWabaSelection = (index) => {
-  //   const updatedWabaTemplates = wabaTemplates.filter((_, i) => i !== index);
-  //   setWabaTemplates(updatedWabaTemplates);
-  // };
   const removeWabaSelection = (index) => {
     if (wabaTemplates.length === 1) {
       toast.error("At least one WABA selection is required.");
@@ -319,7 +324,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
     setWabaTemplates(wabaTemplates.filter((_, i) => i !== index));
   };
-
 
   // =====================================
 
@@ -335,7 +339,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
 
     try {
       const response = await updateAgentStatus(srNo, newStatus);
-      console.log("API response:", response);
+      console.log("API response for the agent status:", response);
 
       if (response?.statusCode === 200) {
         setAgentList((prevAgents) =>
@@ -420,7 +424,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
   };
 
-  // Save agent working hour 
+  // Save agent working hour
   const handleSaveWorkingHours = async () => {
     const schedule = {};
     let hasValidationError = false;
@@ -431,8 +435,12 @@ const ManageAgentTable = ({ id, name, visible }) => {
           hasValidationError = true;
         }
         schedule[day.toLowerCase()] = {
-          starttime: workingHours[day].start ? workingHours[day].start.format("HH:mm") : null,
-          endTime: workingHours[day].end ? workingHours[day].end.format("HH:mm") : null,
+          starttime: workingHours[day].start
+            ? workingHours[day].start.format("HH:mm")
+            : null,
+          endTime: workingHours[day].end
+            ? workingHours[day].end.format("HH:mm")
+            : null,
           status: 1,
         };
       } else {
@@ -494,13 +502,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     console.log("reply");
   };
 
-  const handleAssign = (row) => {
-    setSelectedAgentId(row.id);
-    setSelectedAgentName(row.name);
-    setManageAssign(true);
-    console.log("agent select for assign", row);
-  };
-
   // const handleAssign = (row) => {
   //   setSelectedAgentId(row.id);
   //   setSelectedAgentName(row.name);
@@ -509,13 +510,84 @@ const ManageAgentTable = ({ id, name, visible }) => {
   //   console.log("agent select for assign", row);
   // };
 
+  const handleAssign = async (row) => {
+    if (!row || !row.id) {
+      toast.error("No agent selected.");
+      return;
+    }
 
+    setSelectedAgentId(row.id);
+    setSelectedAgentName(row.name);
+    setManageAssign(true);
+    setIsLoading(true);
+
+    console.log("Agent selected for assign:", row);
+
+    try {
+      // Fetch assigned templates for the selected agent
+      const response = await getAssignedTemplatesByAgentId(row.id);
+      console.log("Raw API Response:", response);
+
+      // Ensure response data exists and is an array
+      if (!response || !Array.isArray(response)) {
+        console.error("Invalid API response structure:", response);
+        toast.error("Unexpected API response format.");
+        setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
+        return;
+      }
+
+      if (response.length > 0) {
+        console.log("Assigned templates exist, processing...");
+
+        const formattedAssignments = await Promise.all(
+          response.map(async (entry) => {
+            const availableTemplates = await getTemplateList(entry.wabaSrNo);
+
+            // Extract assigned templates
+            const assignedTemplates = entry.templates.map((t) => {
+              const matchedTemplate = availableTemplates.find(
+                (temp) => temp.sr_no === t.templateSrNo
+              );
+              return {
+                sr_no: t.templateSrNo,
+                template_name: matchedTemplate
+                  ? matchedTemplate.template_name
+                  : `Template ${t.templateSrNo}`,
+              };
+            });
+
+            return {
+              wabaSrno: entry.wabaSrNo,
+              templates: assignedTemplates,
+              templateList: availableTemplates, // All available templates for this WABA
+            };
+          })
+        );
+
+        console.log(
+          "Final assigned templates for UI:",
+          formattedAssignments
+        );
+        setWabaTemplates(formattedAssignments);
+      } else {
+        console.log(
+          "No assigned templates found, adding a default empty pair."
+        );
+        setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
+      }
+    } catch (error) {
+      console.error("Error fetching assigned templates:", error);
+      toast.error("Error fetching assigned templates.");
+      setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleEdit = () => {
     setManageAgentEdit(true);
     console.log("Edit");
   };
-
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -573,7 +645,11 @@ const ManageAgentTable = ({ id, name, visible }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip placement="top" arrow title="Working Hours">
-            <IconButton onClick={() => handleOpenWorkingHoursDialog(params.row.id, params.row.name)}>
+            <IconButton
+              onClick={() =>
+                handleOpenWorkingHoursDialog(params.row.id, params.row.name)
+              }
+            >
               <AccessTimeOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -617,7 +693,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
               />
             </IconButton>
           </CustomTooltip>
-
         </>
       ),
     },
@@ -727,14 +802,19 @@ const ManageAgentTable = ({ id, name, visible }) => {
       return;
     }
 
-
-    // 🔍 Log Request Data Before API Call
-    console.log("Request Body for the assigning template:", JSON.stringify(requestData, null, 2));
+    // Log Request Data Before API Call
+    console.log(
+      "Request Body for the assigning template:",
+      JSON.stringify(requestData, null, 2)
+    );
 
     try {
-      setIsLoading(true);
+      setIsSaving(true);
 
-      const response = await saveCheckedAssignTemplate(selectedAgentId, requestData);
+      const response = await saveCheckedAssignTemplate(
+        selectedAgentId,
+        requestData
+      );
 
       if (response?.statusCode === 200) {
         toast.success("Templates assigned successfully!");
@@ -746,16 +826,13 @@ const ManageAgentTable = ({ id, name, visible }) => {
       console.error("Error saving assignments:", error);
       toast.error("Error saving assignments.");
     } finally {
-      setIsLoading(false);
+      setIsSaving(false);
     }
   };
-
-
 
   return (
     <>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
-
         {/* Table Start */}
         <Paper sx={{ height: 558 }} id={id} name={name}>
           <DataGrid
@@ -801,7 +878,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
           />
         </Paper>
         {/* Table End */}
-
 
         {/* Auto Reply start */}
         <Dialog
@@ -859,7 +935,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
         </Dialog>
         {/* Auto Reply end */}
 
-
         {/* Manage agents working hours start */}
         <Dialog
           header={`Working Hours - ${selectedAgentName}`}
@@ -870,7 +945,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
         >
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <div className="space-y-2">
-              {/* ✅ If working hours are not assigned, show a message + Assign Now button */}
+              {/* If working hours are not assigned, show a message + Assign Now button */}
               {workingHours === null ? (
                 <div className="flex flex-col items-center justify-center text-gray-500 text-lg space-y-5 mt-5">
                   <p>{selectedAgentName} has not assigned working hours</p>
@@ -913,11 +988,16 @@ const ManageAgentTable = ({ id, name, visible }) => {
                         onChange={() =>
                           setWorkingHours((prev) => ({
                             ...prev,
-                            [day]: { ...prev[day], enabled: !prev[day].enabled },
+                            [day]: {
+                              ...prev[day],
+                              enabled: !prev[day].enabled,
+                            },
                           }))
                         }
                       />
-                      <span className="font-semibold text-blue-600 text-sm">{day}</span>
+                      <span className="font-semibold text-blue-600 text-sm">
+                        {day}
+                      </span>
                     </div>
 
                     {/* Time Inputs when Enabled */}
@@ -957,8 +1037,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 ))
               )}
 
-
-              {/* ✅ Show Save Button only if there are working hours to update */}
+              {/*  Show Save Button only if there are working hours to update */}
               {workingHours !== null && (
                 <div className="flex justify-center mt-4">
                   <UniversalButton
@@ -970,11 +1049,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 </div>
               )}
             </div>
-
           </LocalizationProvider>
-        </Dialog >
+        </Dialog>
         {/* Manage agents working hours End */}
-
 
         {/* Assign Template to agent start */}
         <Dialog
@@ -1058,48 +1135,12 @@ const ManageAgentTable = ({ id, name, visible }) => {
                     <label htmlFor="radioOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Disable</label>
                   </div>
                 </div> */}
-
-                {/* <div className="w-full flex flex-wrap gap-2  items-end">
-                  <div className="flex-1">
-                    <AnimatedDropdown
-                      id="selectWABA"
-                      name="selectWABA"
-                      label='Select WABA'
-                      tooltipContent='Select your whatsapp business account '
-                      tooltipPlacement='right'
-                      value={selectedWaba}
-                      options={wabaList?.map((waba) => ({
-                        value: waba.wabaSrno,
-                        label: waba.name,
-                      }))}
-                      onChange={(value) => setSelectedWaba(value)}
-                    />
-                  </div>
-
-                  <div className="flex-1">
-                    <UniversalLabel
-                      text="Select template"
-                      tooltipContent="Select templates which you want to assign"
-                      tooltipPlacement="right"
-                      className="block text-sm font-medium text-gray-700"
-                    />
-
-                    <Autocomplete
-                      multiple
-                      id="template-selector"
-                      options={templateList}
-                      getOptionLabel={(option) => option.template_name}
-                      disableCloseOnSelect
-                      filterSelectedOptions
-                      renderInput={(params) => (
-                        <TextField {...params} placeholder="Search Templates" />
-                      )}
-                    />
-                  </div>
-                </div> */}
                 <div className="w-full flex flex-col gap-4">
                   {wabaTemplates.map((entry, index) => (
-                    <div key={index} className="flex flex-wrap gap-2 items-end p-2.5 rounded-md relative border border-gray-200 transition-all">
+                    <div
+                      key={index}
+                      className="flex flex-wrap gap-2 items-end p-2.5 rounded-md relative border border-gray-200 transition-all"
+                    >
                       {/* WABA Selection Dropdown */}
                       <div className="flex-1">
                         <AnimatedDropdown
@@ -1131,9 +1172,14 @@ const ManageAgentTable = ({ id, name, visible }) => {
                           disableCloseOnSelect
                           filterSelectedOptions
                           value={entry.templates}
-                          onChange={(_, newValue) => handleTemplateChange(index, newValue)}
+                          onChange={(_, newValue) =>
+                            handleTemplateChange(index, newValue)
+                          }
                           renderInput={(params) => (
-                            <TextField {...params} placeholder="Search Templates" />
+                            <TextField
+                              {...params}
+                              placeholder="Search Templates"
+                            />
                           )}
                         />
                       </div>
@@ -1142,7 +1188,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
                         className="rounded-full p-1 hover:bg-gray-200"
                       >
                         <MdOutlineDeleteForever
-                          className='text-red-500 cursor-pointer hover:text-red-600'
+                          className="text-red-500 cursor-pointer hover:text-red-600"
                           size={22}
                         />
                       </button>
@@ -1158,9 +1204,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
                     <button
                       onClick={handleSaveAssignments}
                       className="bg-blue-400 text-sm w-max text-white px-4 py-2 rounded-md hover:bg-blue-500 transition cursor-pointer"
-                      disabled={isLoading}
+                      disabled={isSaving}
                     >
-                      {isLoading ? "Saving..." : "Save"}
+                      {isSaving ? "Saving..." : "Save"}
                     </button>
                   </div>
                 </div>
@@ -1169,12 +1215,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 hello world 2
               </CustomTabPanel> */}
             </Box>
-
-
           </div>
-        </Dialog >
+        </Dialog>
         {/* Assign Template to agent End */}
-
 
         {/* Edit Agent Start */}
         <Dialog
@@ -1185,7 +1228,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
           draggable={false}
           modal
         >
-          <div className='space-y-3'>
+          <div className="space-y-3">
             {/* Agent Name */}
             <InputField
               label="Agent Name"
@@ -1196,7 +1239,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
               type="text"
               placeholder="Enter Agent Name"
             />
-            <div className='grid lg:grid-cols-2 grid-cols-1 gap-3'>
+            <div className="grid lg:grid-cols-2 grid-cols-1 gap-3">
               {/* Agent Email */}
               <InputField
                 label="Agent Email"
@@ -1230,7 +1273,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
               placeholder="Enter Password"
             />
 
-            <div className='mb-2'>
+            <div className="mb-2">
               <AnimatedDropdown
                 label="Department"
                 id="departmentedit"
@@ -1245,12 +1288,12 @@ const ManageAgentTable = ({ id, name, visible }) => {
               name="editassign"
               label="Assign"
               options={[
-                { label: 'Auto', value: 'Auto' },
-                { label: 'Manual', value: 'Manual' },
-                { label: 'All', value: 'All' }
+                { label: "Auto", value: "Auto" },
+                { label: "Manual", value: "Manual" },
+                { label: "All", value: "All" },
               ]}
             />
-            <div className='flex justify-center mt-2'>
+            <div className="flex justify-center mt-2">
               <UniversalButton
                 label="Submit"
                 id="editsubmit"
@@ -1258,11 +1301,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
                 variant="primary"
               />
             </div>
-
           </div>
-        </Dialog >
+        </Dialog>
         {/* Edit Agent End */}
-
 
         {/* Delete Agent Start */}
         <Dialog
@@ -1281,7 +1322,7 @@ const ManageAgentTable = ({ id, name, visible }) => {
             <CancelOutlinedIcon
               sx={{
                 fontSize: 64,
-                color: '#ff3f3f'
+                color: "#ff3f3f",
               }}
             />
           </div>
@@ -1305,18 +1346,17 @@ const ManageAgentTable = ({ id, name, visible }) => {
             />
             <UniversalButton
               label="Delete"
-              style={{
-                // backgroundColor: "red",
-              }}
+              style={
+                {
+                  // backgroundColor: "red",
+                }
+              }
               onClick={handleDeleteAgent}
             />
           </div>
         </Dialog>
         {/* Delete Agent End */}
-
-
-      </LocalizationProvider >
-
+      </LocalizationProvider>
     </>
   );
 };
