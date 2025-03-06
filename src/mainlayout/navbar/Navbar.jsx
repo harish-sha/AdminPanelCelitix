@@ -10,6 +10,7 @@ import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 
 import {
     AccountBalanceWalletOutlined as WalletIcon,
+    PersonPinCircleOutlined as IpAddress,
     FileDownloadOutlined as DownloadIcon,
     AccountCircleRounded as ProfileIcon,
     SettingsOutlined as SettingsIcon,
@@ -20,6 +21,7 @@ import {
     History as HistoryIcon,
     Logout as LogoutIcon,
 } from "@mui/icons-material";
+
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     const [showModal, setShowModal] = useState(false);
@@ -37,6 +39,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     const handleViewProfile = useCallback(() => {
         handleProfileMenu();
         navigate("/profile");
+    }, [navigate]);
+
+    const handleLoginDetails = useCallback(() => {
+        handleProfileMenu();
+        navigate("/loginIpdetails");
     }, [navigate]);
 
     const handleViewSetting = useCallback(() => {
@@ -93,6 +100,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => handleProfileMenu()}>
                         {[
                             { text: "Profile", icon: <AccountIcon />, action: handleViewProfile },
+                            { text: "Login Details", icon: <IpAddress sx={{fontSize:26}} />, action: handleLoginDetails },
                             { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
                             { text: "Transaction History", icon: <HistoryIcon /> },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
@@ -118,6 +126,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                             { text: "Wallet", icon: <WalletIcon /> },
                             { text: "Download", icon: <DownloadIcon /> },
                             { text: "Profile", icon: <ProfileIcon />, action: handleViewProfile },
+                            { text: "Login Details", icon: <IpAddress />, action: handleLoginDetails },
                             { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
                             { text: "Transactions", icon: <HistoryIcon /> },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
