@@ -695,6 +695,7 @@ const ManageAgent = () => {
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
                     className="w-[30rem]"
+                    draggable={false}
                   >
                     <InputField
                       label="Department Name"
@@ -722,6 +723,7 @@ const ManageAgent = () => {
                     visible={deleteDialog}
                     onHide={() => setDeleteDialog(false)}
                     className="w-[25rem]"
+                    draggable={false}
                   >
                     <Typography variant="body1" className="text-center">
                       Are you sure you want to delete <br />

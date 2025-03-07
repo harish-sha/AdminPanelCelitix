@@ -10,8 +10,8 @@ import * as XLSX from 'xlsx';
 import { campaignUploadFile, getWabaShowGroupsList } from "../../../apis/whatsapp/whatsapp.js";
 import { getCountryList } from "../../../apis/common/common.js";
 import AnimatedDropdown from "../../components/AnimatedDropdown.jsx"
-import '../whatsappLaunch.css'
 import DropdownWithSearch from "../../components/DropdownWithSearch.jsx";
+import '../whatsappLaunch.css'
 
 function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange, onUrlIndexChange, groups, setGroups }) {
   const [selectedOption, setSelectedOption] = useState("option2");
@@ -54,11 +54,11 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       setXlsxPath("");
       setSelectedMobileColumn("");
       setSelectedGroups([]);
-      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
+      if (onUrlIndexChange) onUrlIndexChange(null); // Reset URL index
     } else {
       setSelectedGroups([]);
       onGroupChange(0);
-      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
+      if (onUrlIndexChange) onUrlIndexChange(null); // Reset URL index
     }
 
     if (value === "option2") {
@@ -69,14 +69,14 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       setAddCountryCode(false);
       setFileHeaders([]);
       onGroupChange("0");
-      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
+      if (onUrlIndexChange) onUrlIndexChange(null); //Reset URL index
     }
     if (value === "option3") {
       setSelectedGroups([]);
       setFileData([]);
       setTotalRecords("");
       setSelectedMobileColumn('');
-      if (onUrlIndexChange) onUrlIndexChange(null); // ✅ Reset URL index
+      if (onUrlIndexChange) onUrlIndexChange(null); //Reset URL index
     }
   };
 
@@ -145,7 +145,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       setFileData(jsonData);
       setColumns(headers);
       setFileHeaders(headers);
-      setIsUploaded(false); // Reset to "File Selected" if a new file is selected
+      setIsUploaded(false); 
       setTotalRecords(jsonData.length);
     };
     reader.readAsBinaryString(file);
@@ -156,7 +156,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       // console.log("Sending Selected Country Code to Parent:", selectedCountryCode);
       onFileUpload(xlsxPath, fileHeaders, totalRecords, selectedCountryCode, selectedMobileColumn);
     }
-  }, [fileHeaders, selectedCountryCode, selectedMobileColumn]); // ✅ Now listens for country code updates
+  }, [fileHeaders, selectedCountryCode, selectedMobileColumn]); //Now listens for country code updates
 
   // Handle file removal
   const handleRemoveFile = () => {
@@ -192,31 +192,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
   };
 
   // Excel file upload
-  // const handleFileUpload = async () => {
-  //   if (uploadedFile) {
-  //     if (isUploaded) {
-  //       toast.error("File already uploaded. Please select a different one.");
-  //       return;
-  //     }
-  //     setIsUploading(true);
-  //     try {
-  //       const response = await campaignUploadFile(uploadedFile);
-  //       console.log("File uploaded successfully :", response)
-  //       setIsUploaded(true);
-  //       toast.success("File uploaded successfully.");
-  //       setColumns(response.headers);
-  //       setFileData(response.sampleRecords);
-  //       setFileHeaders(response.headers || [])
-  //     } catch (error) {
-  //       toast.error("File upload failed: " + error.message);
-  //     } finally {
-  //       setIsUploading(false);
-  //     }
-  //   } else {
-  //     toast.error("No file selected for upload.");
-  //   }
-  // };
-
   const handleFileUpload = async () => {
     if (!uploadedFile) {
       toast.error("No file selected for upload.");
@@ -235,10 +210,9 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
 
       if (response?.message === "File Upload Successfully") {
         setIsUploaded(true);
-        setXlsxPath(response.filepath); // ✅ Store file path in state
+        setXlsxPath(response.filepath); 
         console.log("xlsxpath - ", response.filepath);
 
-        // ✅ Store only sampleRecords instead of full file data
         setFileData(response.sampleRecords || []);
         setColumns(response.headers || []);
         setFileHeaders(response.headers || []);
@@ -263,8 +237,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       try {
         const response = await getWabaShowGroupsList();
         console.log("waba group list", response)
-        // if (response) {
-        //   setGroups(response);
         if (response && Array.isArray(response)) {
           setGroups(response);
         } else {
@@ -281,10 +253,9 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
 
   useEffect(() => {
     if (groups.length > 0) {
-      console.log("✅ Groups are available:", groups);
+      console.log("Groups are available:", groups);
     }
   }, [groups]);
-
 
   // Get country list 
   useEffect(() => {
@@ -293,7 +264,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
         setIsLoading(true);
 
         const response = await getCountryList();
-        // console.log("Country List:", response);
         if (response) {
           // getCountryList(response);
           setCountryList(response);
@@ -359,10 +329,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
                 return;
               }
 
-              // ✅ Extract group codes correctly
-              // const selectedValues = e.value.map((group) => group).filter(Boolean);
-              // setSelectedGroups(selectedValues);
-
               let selectedValues = Array.isArray(e.value) ? e.value : [e.value];
               setSelectedGroups(selectedValues);
 
@@ -374,7 +340,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
             }}
             options={groups.map((group) => ({
               label: `${group.groupName} (${group.totalCount})`,
-              value: group.groupCode, 
+              value: group.groupCode,
             }))}
           />
         </div>
@@ -453,31 +419,6 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
               <input type="checkbox" className="h-4 w-4 bg-gray-200 border-gray-300 rounded cursor-pointer" onChange={handleAddCountryCodeChange} />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            {/* <div className="w-full mt-4">
-              <AnimatedDropdown
-                id="selectCountryCode"
-                name="selectCountryCode"
-                label="Select Country Code"
-                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
-                tooltipPlacement="right"
-                placeholder="Select Country Code"
-                options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
-                  .map((country) => ({
-                    label: `${country.countryName} (+${country.countryCode})`,
-                    value: `${country.countryCode}-${country.countryName}`,
-                  }))}
-                value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
-                onChange={(value) => {
-                  if (value) {
-                    const [code, name] = value.split('-');
-                    setSelectedCountryCode(code);
-                    setSelectedCountryName(name);
-                  }
-                }}
-                disabled={!addCountryCode}
-              />
-            </div> */}
             <div className="w-full mt-4">
               <DropdownWithSearch
                 id="selectCountryCode"

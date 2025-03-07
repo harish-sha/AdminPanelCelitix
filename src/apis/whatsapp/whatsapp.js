@@ -82,9 +82,6 @@ export const sendWhatsappCampaign = async (campaignData) => {
     const response = await fetchWithAuth("/proCpaasRest/sendWhatsappCampaign", {
       method: "POST",
       body: JSON.stringify(campaignData),
-      headers: {
-        "Content-Type": "application/json",
-      },
     });
 
     return response;
@@ -165,4 +162,51 @@ export const getWhatsappCampaignDetailsReport = async (campaignSrno) => {
   }
 };
 
+// waba profile details
+export const getwabadetails = async (wabaNumber) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapp/getBusinessProfileDetails?wabaNumber=${wabaNumber}`,
+    {
+      method: "POST",
+    }
+  );
+};
 
+// update waba profile
+export const updateWabaDetails = async (data, phone) => {
+  try {
+    const response = await fetchWithAuth(
+      `/proCpaasRest/whatsapp/UpdateBusinessProfileDetails?wabaNumber=${phone}`,
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
+
+    // if (response && response.status) {
+    //   return response;
+    // } else {
+    //   throw new Error(response?.msg || "Image upload failed.");
+    // }
+    return response;
+  } catch (error) {
+    console.error("Error uploading image:", error);
+    throw error;
+  }
+};
+
+export const getWhatsappLogReport = async (logdata) => {
+  try {
+    const response = await fetchWithAuth(
+      "/proCpaasRest/whatsapp/getWhatsappLogReport",
+      {
+        method: "POST",
+        body: JSON.stringify(logdata),
+      }
+    );
+    return response || [];
+  } catch (error) {
+    console.error("Error fetching whatsapp log report:", error);
+    return [];
+  }
+};

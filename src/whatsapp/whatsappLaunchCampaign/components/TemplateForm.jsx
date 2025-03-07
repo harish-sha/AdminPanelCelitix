@@ -25,7 +25,7 @@ const extractVariablesFromText = (text) => {
 const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedOption, fileHeaders, selectedTemplateData, onUrlIndexChange }) => {
     const [inputValues, setInputValues] = useState({});
     const [selectedVariable, setSelectedVariable] = useState("");
-    const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+    const [urlIndex, setUrlIndex] = useState(null); //Stores the selected URL column index
 
     const [imageState, setImageState] = useState({
         file: null,
@@ -116,7 +116,7 @@ const TemplateForm = ({ templateDataNew, onInputChange, onImageUpload, selectedO
                 console.log("Selected URL Column:", variable, "Index:", index);
 
                 setUrlIndex(index);
-                onUrlIndexChange(index);  
+                onUrlIndexChange(index);
             }
 
             // Use setTimeout to avoid updating parent state in the render phase

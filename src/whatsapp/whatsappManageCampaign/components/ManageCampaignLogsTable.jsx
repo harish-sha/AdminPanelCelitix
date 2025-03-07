@@ -61,7 +61,7 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const ManageCampaignLogsTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
+const ManageCampaignLogsTable = ({ id, name, handleView, handleDuplicate, handleDelete, data = [] }) => {
     const [selectedRows, setSelectedRows] = React.useState([]);
 
     // const paginationModel = { page: 0, pageSize: 10 };

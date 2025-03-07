@@ -46,6 +46,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         navigate("/loginIpdetails");
     }, [navigate]);
 
+    const handleTransactionHistory = useCallback(() => {
+        handleProfileMenu();
+        navigate("/transactions");
+    }, [navigate]);
+
     const handleViewSetting = useCallback(() => {
         handleProfileMenu();
         navigate("/settings")
@@ -100,9 +105,9 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <Menu anchorEl={profileAnchorEl} open={Boolean(profileAnchorEl)} onClose={() => handleProfileMenu()}>
                         {[
                             { text: "Profile", icon: <AccountIcon />, action: handleViewProfile },
-                            { text: "Login Details", icon: <IpAddress sx={{fontSize:26}} />, action: handleLoginDetails },
+                            { text: "Login Details", icon: <IpAddress sx={{ fontSize: 26 }} />, action: handleLoginDetails },
                             { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
-                            { text: "Transaction History", icon: <HistoryIcon /> },
+                            { text: "Transaction History", icon: <HistoryIcon />, action: handleTransactionHistory },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
                         ].map(({ text, icon, action }, idx) => (
                             <MenuItem key={idx} sx={{ fontSize: "15px", fontWeight: "500" }} onClick={action}>
@@ -128,7 +133,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                             { text: "Profile", icon: <ProfileIcon />, action: handleViewProfile },
                             { text: "Login Details", icon: <IpAddress />, action: handleLoginDetails },
                             { text: "Settings", icon: <SettingsIcon />, action: handleViewSetting },
-                            { text: "Transactions", icon: <HistoryIcon /> },
+                            { text: "Transactions", icon: <HistoryIcon />, action: handleTransactionHistory },
                             { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
                         ].map(({ text, icon, action }, idx) => (
                             <MenuItem key={idx} sx={{ fontSize: "15px", fontWeight: "500" }} onClick={action}>

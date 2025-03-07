@@ -247,6 +247,7 @@ const ManageTemplate = () => {
                                             tooltipPlacement="right"
                                             error={!selectedDate}
                                             errorText="Please select a valid date"
+                                            maxDate={new Date()}
                                         />
                                     </div>
                                     <div className="w-full sm:w-56">
@@ -265,7 +266,7 @@ const ManageTemplate = () => {
                                             placeholder="Select WABA"
                                         />
                                     </div>
-                                    <div className='w-full sm:w-56' >
+                                    <div className='w-full sm:w-56'>
                                         <InputField
                                             id="manageTemplateName"
                                             name="manageTemplateName"
@@ -278,7 +279,7 @@ const ManageTemplate = () => {
                                         />
                                     </div>
 
-                                    <div className="w-full sm:w-56" >
+                                    <div className="w-full sm:w-56">
                                         <AnimatedDropdown
                                             id='manageTemplateCategory'
                                             name='manageTemplateCategory'
@@ -344,26 +345,26 @@ const ManageTemplate = () => {
                                 </div>
                                 {isFetching ? (
                                     <UniversalSkeleton height="35rem" width="100%" />
-                                // ) : !hasSearched ? (
-                                //     // Case 1: Initial Load - Ask user to select WABA account
-                                //     <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
-                                //         <div className="text-center text-blue-500 p-8 shadow-2xl shadow-blue-300 rounded-2xl">
-                                //             <span className="text-2xl font-m font-medium tracking-wide">
-                                //                 Please select a WhatsApp Business Account (WABA) to
-                                //                 proceed.
-                                //             </span>
-                                //         </div>
-                                //     </div>
-                                // ) : filteredData.length === 0 ? (
-                                //     // Case 2: No data found after filtering
-                                //     <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
-                                //         <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl shadow-red-300">
-                                //             <span className="text-2xl font-m font-medium tracking-wide">
-                                //                 No matching records found. <br /> Please adjust your filters
-                                //                 and try again.
-                                //             </span>
-                                //         </div>
-                                //     </div>
+                                    // ) : !hasSearched ? (
+                                    //     // Case 1: Initial Load - Ask user to select WABA account
+                                    //     <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
+                                    //         <div className="text-center text-blue-500 p-8 shadow-2xl shadow-blue-300 rounded-2xl">
+                                    //             <span className="text-2xl font-m font-medium tracking-wide">
+                                    //                 Please select a WhatsApp Business Account (WABA) to
+                                    //                 proceed.
+                                    //             </span>
+                                    //         </div>
+                                    //     </div>
+                                    // ) : filteredData.length === 0 ? (
+                                    //     // Case 2: No data found after filtering
+                                    //     <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
+                                    //         <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl shadow-red-300">
+                                    //             <span className="text-2xl font-m font-medium tracking-wide">
+                                    //                 No matching records found. <br /> Please adjust your filters
+                                    //                 and try again.
+                                    //             </span>
+                                    //         </div>
+                                    //     </div>
                                 ) : (
                                     // Case 3: Show data in the table
                                     <DataTable

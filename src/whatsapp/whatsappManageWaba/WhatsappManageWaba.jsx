@@ -24,7 +24,7 @@ import InputField from '../../components/layout/InputField';
 // import AnimatedDropdown from '../components/AnimatedDropdown';
 import CustomTooltip from '../components/CustomTooltip';
 import AnimatedDropdown from '../components/AnimatedDropdown';
-import { getWabaList } from '../../apis/whatsapp/whatsapp';
+import { getWabaList, getwabadetails, updateWabaDetails } from '../../apis/whatsapp/whatsapp';
 import Loader from '../components/Loader';
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
@@ -102,6 +102,13 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [wabaList, setWabaList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedWaba, setSelectedWaba] = useState(null);
+
+  const [wabaCreatebtn, setWabaCreatebtn] = useState(false);
+
+  const [wabadetails, setwabadetails] = useState(null);
+  const [editWebsite1, seteditWebsite1] = useState("");
+  const [editWebsite2, seteditWebsite2] = useState("");
+
 
 
 
@@ -189,13 +196,35 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image removed successfully.");
   };
 
-  const handleView = (waba) => {
+  // const handleView = (waba) => {
+  //   setSelectedWaba(waba);
+  //   setView(true);
+  // };
+
+  const handleView = async (waba) => {
+    console.log("View button clicked for waba:", waba);
     setSelectedWaba(waba);
+    const details = await getwabadetails(waba.wabaNumber);
+    console.log(details.data);
+    setwabadetails(details.data[0]);
     setView(true);
   };
-  const handleEdit = () => {
+
+
+  // const handleEdit = () => {
+  //   setWabaEdit(true);
+  // };
+
+
+  const handleEdit = async (row) => {
     setWabaEdit(true);
+    setSelectedWaba(row);
   };
+
+  const handleWabaCreate = (e) => {
+    setWabaCreatebtn(true);
+  };
+
   const handleSync = () => {
     console.log("Sync clicked");
   };
@@ -212,6 +241,23 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleRowSelection = (ids) => {
     setSelectedRows(ids);
   };
+
+  const updateDetails = async () => {
+    // console.log([editWebsite1, editWebsite2]);
+    const website = [editWebsite1, editWebsite2]
+
+    const data = {
+      "messaging_product": "whatsapp",
+      "description": description,
+      "email": email,
+      "profilePic": null,
+      "address": address,
+      "websites": website,
+    }
+
+    const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
+    console.log(updateData || "No data found");
+  }
 
   const columns = [
     { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
@@ -272,7 +318,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 }} />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip
+          {/* <CustomTooltip
             title="Delete WABA"
             placement="top"
             arrow
@@ -283,7 +329,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 size={20}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
         </>
       ),
     },
@@ -291,28 +337,49 @@ const WhatsappManageWaba = ({ id, name }) => {
 
 
   // WABA LIST
+  // useEffect(() => {
+  //   if (!isLoggedIn)
+  //     return;
+  //   const fetchWabaList = async () => {
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await getWabaList();
+  //       if (response?.length > 0) {
+  //         setWabaList(response);
+  //       } else {
+  //         console.error("Failed to fetch WABA details");
+  //         toast.error("Failed to load WABA details!");
+  //       }
+  //     } catch (error) {
+  //       console.error("Error fetching WABA list:", error);
+  //       toast.error("Error fetching WABA list.");
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
+  //   fetchWabaList();
+  // }, [isLoggedIn]);
+  
+
+  // WABA LIST
   useEffect(() => {
-    if (!isLoggedIn)
-      return;
     const fetchWabaList = async () => {
       try {
         setIsLoading(true);
         const response = await getWabaList();
-        if (response?.length > 0) {
-          setWabaList(response);
-        } else {
-          console.error("Failed to fetch WABA details");
-          toast.error("Failed to load WABA details!");
-        }
+        console.log("Fetched WABA List:", response);
+        setWabaList(response?.length > 0 ? response : []);
       } catch (error) {
         console.error("Error fetching WABA list:", error);
         toast.error("Error fetching WABA list.");
+        setWabaList([]);
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchWabaList();
-  }, [isLoggedIn]);
+  }, []);
 
   // const rows = Array.from({ length: 500 }, (_, i) => ({
   //   id: i + 1,
@@ -405,407 +472,382 @@ const WhatsappManageWaba = ({ id, name }) => {
 
   return (
     <div className=''>
-      {!isLoggedIn &&
-        <div className='w-full flex items-center justify-center h-[80vh]'>
-          <div className='text-center p-10 rounded-xl shadow-md bg-white space-y-3'>
-            <h1 className='font-semibold text-xl'>No account connected yet!</h1>
-            <p className='mb-6 font-medium'>Login with Facebook to start launching campaign and analyse phone number quality.</p>
-            <a href="#signup" className='p-2.5 text-[1.1rem] bg-[#4267b2] text-white rounded-lg tracking-wide font-medium cursor-pointer' onClick={handleFacebookLogin}>Login with Facebook</a>
-          </div>
-        </div>
-      }
-
       {isLoading ? (
         <>
           <Loader />
         </>
-      ) : (
+      ) : rows.length > 0 ? (
         <>
-          {/* {isLoggedIn && ( */}
-
-          <div>
-            <div className="flex flex-wrap gap-4 items-end justify-end align-middle mb-3 w-full">
-              <div className="w-max-content ">
-                <UniversalButton
-                  label="Create WABA"
-                  id="mainwabacreate"
-                  name="mainwabacreate"
-                />
-              </div>
+          <div className="flex flex-wrap gap-4 items-end justify-end align-middle mb-3 w-full">
+            <div className="w-max-content ">
+              <UniversalButton
+                label="Create WABA"
+                id="mainwabacreate"
+                name="mainwabacreate"
+                onClick={handleWabaCreate}
+              />
             </div>
-            {/* <div className="flex flex-wrap gap-4 items-end justify-start align-middle pb-3 w-full">
-                <div className="w-full sm:w-48">
-                  <UniversalDatePicker
-                    label='Created On'
-                    id="mainwabacreatedon"
-                    name="mainwabacreatedon"
-                    placeholder="Select a date"
-                    tooltipContent="Select a date"
-                  />
-                </div>
-                <div className="w-full sm:w-48">
-                  <InputField
-                    label="WABA Name"
-                    placeholder="Enter WABA Name"
-                    id="mainwabaname"
-                    name="mainwabaname"
-                    type="text"
-                    tooltipContent="Enter WABA Name"
-                  />
-                </div>
-                <div className="w-full sm:w-48">
-                  <InputField
-                    label="WABA Number"
-                    placeholder="Enter WABA Number"
-                    id="mainwabanumber"
-                    name="mainwabanumber"
-                    type="number"
-                    tooltipContent="Enter WABA Number"
-                  />
-                </div>
-                <div className="w-max-content ">
-                  <UniversalButton
-                    label="Search"
-                    id="mainwabasearch"
-                    name="mainwabasearch"
-                  />
-                </div>
-
-              </div> */}
-
-            <div style={{ transition: 'filter 0.3s ease' }}>
-
-              <Paper sx={{ height: 558 }}
+          </div>
+          <div style={{ transition: 'filter 0.3s ease' }}>
+            <Paper sx={{ height: 558 }}
+              id={id}
+              name={name}
+            >
+              <DataGrid
                 id={id}
                 name={name}
-              >
-                <DataGrid
-                  id={id}
-                  name={name}
-                  rows={rows}
-                  columns={columns}
-                  initialState={{ pagination: { paginationModel } }}
-                  pageSizeOptions={[10, 20, 50]}
-                  pagination
-                  paginationModel={paginationModel}
-                  onPaginationModelChange={setPaginationModel}
-                  // checkboxSelection
-                  rowHeight={45}
-                  slots={{ footer: CustomFooter }}
-                  slotProps={{ footer: { totalRecords: rows.length } }}
-                  onRowSelectionModelChange={(ids) => handleRowSelection(ids)}
-                  disableRowSelectionOnClick
-                  // autoPageSize
-                  disableColumnResize
-                  disableColumnMenu
-                  sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": {
-                      outline: "none !important",
-                    },
-                    "& .MuiDataGrid-cell": {
-                      outline: "none !important",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                      color: "#193cb8",
-                      fontSize: "14px",
-                      fontWeight: "bold !important",
-                    },
-                    "& .MuiDataGrid-row--borderBottom": {
-                      backgroundColor: "#e6f4ff !important",
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                      // display: "none",
-                      color: "#ccc",
-                    },
-                  }}
-                />
-              </Paper>
-
-
-              <Dialog
-                // header={selectedWaba?.wabaName || "WABA Profile"}
-                header={"WABA Profile"}
-                visible={view}
-                onHide={() => setView(false)}
-                //   className="w-[28rem]"
-                className="w-[30rem] rounded-lg shadow-lg"
-                draggable={false}
-                modal
-              >
-                <div className="p-5 bg-white rounded-lg space-y-4 shadow-md">
-                  {/* Header Section */}
-                  <div className="flex items-center justify-between border-b border-gray-400 pb-3">
-                    <div>
-                      <h1 className="font-semibold text-2xl text-gray-800">{selectedWaba?.wabaName || "WABA Profile"}</h1>
-                      <p className="text-sm text-gray-500">Hey there! I am using WhatsApp.</p>
-                    </div>
-                    <img
-                      src={logo}
-                      alt="Company Logo"
-                      className="w-20 h-20 rounded-full shadow-md"
-                    />
-                  </div>
-
-                  {/* Contact Section */}
-                  <div className="space-y-1">
-                    <p className="text-sm text-gray-500">WABA Number</p>
-                    <p className="font-bold text-lg text-gray-700">
-                      {selectedWaba?.wabaNumber || "N/A"}
-                    </p>
-                    <a
-                      href="https://wa.aisensy.com/+919251006460"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-sm hover:underline"
-                    >
-                      wa.aisensy.com/+919251006460
-                    </a>
-                  </div>
-
-                  {/* Description Section */}
-                  <div className='space-y-1' >
-                    <p className="font-semibold text-gray-800">Description</p>
-                    <p className="text-gray-600 text-sm leading-relaxed min-h-20 max-h-40 overflow-y-auto text-justify">
-                      Boost your business with Proactive Digital’s cutting-edge Digital Marketing
-                      strategies. Specializing in Bulk SMS, Voice Call services, and Web solutions,
-                      we’re committed to driving measurable results and maximizing your ROI.
-                      Our innovative approach integrates advanced technologies and personalized
-                      strategies to elevate your brand’s online presence.
-                    </p>
-                  </div>
-
-                  {/* Email Section */}
-                  <div>
-                    <p className="font-semibold text-gray-800">Email</p>
-                    <a
-                      href="mailto:support@proactivesms.in"
-                      className="text-blue-500 text-sm hover:underline"
-                    >
-                      support@proactivesms.in
-                    </a>
-                  </div>
-
-                  {/* Website Section */}
-                  <div>
-                    <p className="font-semibold text-gray-800">Website</p>
-                    <a
-                      href="https://www.proactivesms.in"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-500 text-sm hover:underline"
-                    >
-                      https://www.proactivesms.in
-                    </a>
-                  </div>
-                </div>
-              </Dialog>
-
-
-              <Dialog
-                header="Business Profile"
-                visible={wabaedit}
-                onHide={() => {
-                  setWabaEdit(false);
+                rows={rows}
+                columns={columns}
+                initialState={{ pagination: { paginationModel } }}
+                pageSizeOptions={[10, 20, 50]}
+                pagination
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                // checkboxSelection
+                rowHeight={45}
+                slots={{ footer: CustomFooter }}
+                slotProps={{ footer: { totalRecords: rows.length } }}
+                onRowSelectionModelChange={(ids) => handleRowSelection(ids)}
+                disableRowSelectionOnClick
+                // autoPageSize
+                disableColumnResize
+                disableColumnMenu
+                sx={{
+                  border: 0,
+                  "& .MuiDataGrid-cellCheckbox": {
+                    outline: "none !important",
+                  },
+                  "& .MuiDataGrid-cell": {
+                    outline: "none !important",
+                  },
+                  "& .MuiDataGrid-columnHeaders": {
+                    color: "#193cb8",
+                    fontSize: "14px",
+                    fontWeight: "bold !important",
+                  },
+                  "& .MuiDataGrid-row--borderBottom": {
+                    backgroundColor: "#e6f4ff !important",
+                  },
+                  "& .MuiDataGrid-columnSeparator": {
+                    // display: "none",
+                    color: "#ccc",
+                  },
                 }}
-                draggable={false}
-                className="w-[50rem]"
-                modal
-              >
-                <div className="p-2 space-y-4">
-
-                  {/* Profile Picture Section */}
-                  <div className='flex flex-col lg:items-start items-center' >
-
-                    <UniversalLabel
-                      text="Profile Picture"
-                      tooltipContent="Max size of 5MB allowed. Image size of 640x640 is recommended. Images with a height or width of less than 192px may cause issues."
-                      tooltipPlacement="top"
-                      className='font-semibold text-gray-700 tracking-wide'
-                      id="profilepicture"
-                      name="profilepicture"
-                    />
-
-                    <div className="flex items-center space-x-4 mt-2">
-                      {/* Image Preview */}
-                      {preview ? (
-                        <img
-                          src={preview}
-                          alt="Company Logo"
-                          className="w-20 h-20 rounded-xl shadow-md p-1 object-cover"
-                        />
-                      ) : (
-                        <div className="w-20 h-20 flex rounded-xl p-1 items-center justify-center bg-gray-200 shadow-md">
-                          <span className="text-gray-500 text-sm">No Image</span>
-                        </div>
-                      )}
-
-                      <div className="flex space-x-2">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          ref={fileInputRef}
-                          className="hidden"
-                          onChange={handleFileChange}
-                        />
-                        <CustomTooltip
-                          title="Upload image"
-                          placement="top"
-                          arrow
-                        >
-                          <button
-                            onClick={handleSelectFile}
-                            className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer`}
-                          >
-                            <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
-                          </button>
-                        </CustomTooltip>
-
-                        {preview && (
-                          <CustomTooltip
-                            title="remove image"
-                            placement="top"
-                            arrow
-                          >
-                            <button
-                              onClick={handleDeleteImage}
-                              className="p-2 focus:outline-none hover:bg-gray-200 rounded-full cursor-pointer"
-                            >
-                              <MdOutlineDeleteForever
-                                className="text-red-500 cursor-pointer hover:text-red-600"
-                                size={20}
-                              />
-                            </button>
-                          </CustomTooltip>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Form Fields */}
-                  <div className="grid lg:grid-cols-2 gap-4 md:grid-cols-2">
-                    <div>
-                      <InputField
-                        label="Description"
-                        id="description"
-                        name="description"
-                        tooltipContent='Description of the business. Maximum of 256 characters.'
-                        tooltipPlacement='top'
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        className="w-full"
-                        placeholder="Enter business description"
-                        labelStyle={{ fontWeight: 'bold' }}
-                        readOnly={false}
-
-                      />
-                    </div>
-                    <div>
-                      <InputField
-                        id="address"
-                        name="address"
-                        label="Address"
-                        tooltipContent='Address of the business. Maximum of 256 characters.'
-                        tooltipPlacement='top'
-                        value={address}
-                        onChange={(e) => setAddress(e.target.value)}
-                        className="w-full"
-                        placeholder="Enter business address"
-                        labelStyle={{ fontWeight: 'bold' }}
-                        readOnly={false}
-                      />
-                    </div>
-                    <div>
-                      <InputField
-                        id="email"
-                        name="email"
-                        label="Email"
-                        tooltipContent=' Email address (in valid email format) to contact the business. Maximum of 128 characters.'
-                        tooltipPlacement='top'
-                        value={email}
-                        className="w-full"
-                        onChange={(e) => setEmail(e.target.value)}
-                        labelStyle={{ fontWeight: 'bold' }}
-                        placeholder='Enter email address'
-                        readOnly={false}
-
-                      />
-                    </div>
-                    <div>
-                      <AnimatedDropdown
-                        id="vertical"
-                        name="vertical"
-                        label="Vertical"
-                        tooltipContent='Industry of the business.Maximum of 256 characters.'
-                        tooltipPlacement='top'
-                        value={vertical}
-                        options={[
-                          { label: "PROF_SERVICES1", value: "PROF_SERVICES1" },
-                          { label: "TECH", value: "TECH" },
-                          { label: "ECOMMERCE", value: "ECOMMERCE" },
-                        ]}
-                        onChange={(e) => setVertical(e.value)}
-                        className="w-full"
-                        placeholder="Select vertical"
-                      />
-                    </div>
-                    <div>
-                      <InputField
-                        id="website1"
-                        name="website1"
-                        label="Websites"
-                        tooltipContent='URLs (including http:// or https://) associated with the business (e.g., website, Facebook Page, Instagram). Maximum of 2 websites with a maximum of 256 characters each.'
-                        tooltipPlacement='top'
-                        className="w-full"
-                        placeholder="Enter URL Address"
-                        labelStyle={{ fontWeight: 'bold' }}
-                        readOnly={false}
-
-                      />
-                    </div>
-                    <div className='flex items-end space-x-2'>
-                      <InputField
-                        id="website2"
-                        name="website2"
-                        className="w-full"
-                        placeholder="Enter URL Address"
-                        readOnly={false}
-
-                      />
-                    </div>
-                  </div>
+              />
+            </Paper>
 
 
-                  {/* Action Buttons */}
-                  <div className="flex justify-center space-x-3 mt-4">
-                    <UniversalButton
-                      id="editsave"
-                      name="editsave"
-                      label="Save"
-                      onClick={() => {
-                        setWabaEdit(false);
-                        toast.success("Profile updated Successfully");
-                      }}
-                    />
-                    <UniversalButton
-                      id="editcancel"
-                      name="editcancel"
-                      label="Cancel"
-                      onClick={() => {
-                        setWabaEdit(false);
-                        toast.error("No changes.");
-                      }}
-                    />
-                  </div>
+
+          </div>
+        </>
+      ) : (
+        <div className='w-full flex items-center justify-center h-[80vh]'>
+          <div className='text-center p-10 rounded-xl shadow-md bg-white space-y-3'>
+            <h1 className='font-semibold text-xl'>No account connected yet!</h1>
+            <p className='mb-6 font-medium'>Login with Facebook to start launching campaigns and analyse phone number quality.</p>
+            <a href="#signup" className='p-2.5 text-[1.1rem] bg-[#4267b2] text-white rounded-lg tracking-wide font-medium cursor-pointer' onClick={handleFacebookLogin}>Login with Facebook</a>
+          </div>
+        </div>
+      )}
+
+      <Dialog
+        // header={selectedWaba?.wabaName || "WABA Profile"}
+        header={"WABA Profile"}
+        visible={view}
+        onHide={() => setView(false)}
+        //   className="w-[28rem]"
+        className="w-[30rem] rounded-lg shadow-lg"
+        draggable={false}
+        modal
+      >
+        <div className="p-5 bg-white rounded-lg space-y-4 shadow-md">
+          {/* Header Section */}
+          <div className="flex items-center justify-between border-b border-gray-400 pb-3">
+            <div>
+              <h1 className="font-semibold text-2xl text-gray-800">{selectedWaba?.wabaName || "WABA Profile"}</h1>
+              <p className="text-sm text-gray-500">{wabadetails?.about}</p>
+            </div>
+            <img
+              src={wabadetails?.profile_picture_url || logo}
+              alt="Company Logo"
+              className="w-20 h-20 rounded-full shadow-md"
+            />
+          </div>
+
+          {/* Contact Section */}
+          <div className="space-y-1">
+            <p className="text-sm text-gray-500">WABA Number</p>
+            <p className="font-bold text-lg text-gray-700">
+              {selectedWaba?.wabaNumber || "N/A"}
+            </p>
+            <a
+              href="https://wa.aisensy.com/+919251006460"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-500 text-sm hover:underline"
+            >
+              wa.celitix.com/+917230000091
+            </a>
+          </div>
+
+          {/* Description Section */}
+          <div className='space-y-1' >
+            <p className="font-semibold text-gray-800">Description</p>
+            <p className="text-gray-600 text-sm leading-relaxed min-h-20 max-h-32 overflow-y-auto text-justify">
+              {wabadetails?.description || "Hey there, I'm using WhatsApp."}
+            </p>
+          </div>
+
+          {/* Email Section */}
+          <div>
+            <p className="font-semibold text-gray-800">Email</p>
+            <a
+              href={`mailto:${wabadetails?.email}`}
+              className="text-blue-500 text-sm hover:underline"
+            >
+              {wabadetails?.email}
+            </a>
+          </div>
+
+          {/* Website Section */}
+          <div>
+            <p className="font-semibold text-gray-800">Website</p>
+            {wabadetails?.websites?.map((website, index) => (
+              <div key={index}>
+                <a
+                  href={website}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 text-sm hover:underline"
+                >
+                  {website}
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Business Profile"
+        visible={wabaedit}
+        onHide={() => {
+          setWabaEdit(false);
+        }}
+        draggable={false}
+        className="w-[50rem]"
+        modal
+      >
+        <div className="p-2 space-y-4">
+
+          {/* Profile Picture Section */}
+          <div className='flex flex-col lg:items-start items-center' >
+
+            <UniversalLabel
+              text="Profile Picture"
+              tooltipContent="Max size of 5MB allowed. Image size of 640x640 is recommended. Images with a height or width of less than 192px may cause issues."
+              tooltipPlacement="top"
+              className='font-semibold text-gray-700 tracking-wide'
+              id="profilepicture"
+              name="profilepicture"
+            />
+
+            <div className="flex items-center space-x-4 mt-2">
+              {/* Image Preview */}
+              {preview ? (
+                <img
+                  src={preview}
+                  alt="Company Logo"
+                  className="w-20 h-20 rounded-xl shadow-md p-1 object-cover"
+                />
+              ) : (
+                <div className="w-20 h-20 flex rounded-xl p-1 items-center justify-center bg-gray-200 shadow-md">
+                  <span className="text-gray-500 text-sm">No Image</span>
                 </div>
-              </Dialog >
+              )}
+
+              <div className="flex space-x-2">
+                <input
+                  type="file"
+                  accept="image/*"
+                  ref={fileInputRef}
+                  className="hidden"
+                  onChange={handleFileChange}
+                />
+                <CustomTooltip
+                  title="Upload image"
+                  placement="top"
+                  arrow
+                >
+                  <button
+                    onClick={handleSelectFile}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer`}
+                  >
+                    <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
+                  </button>
+                </CustomTooltip>
+
+                {preview && (
+                  <CustomTooltip
+                    title="remove image"
+                    placement="top"
+                    arrow
+                  >
+                    <button
+                      onClick={handleDeleteImage}
+                      className="p-2 focus:outline-none hover:bg-gray-200 rounded-full cursor-pointer"
+                    >
+                      <MdOutlineDeleteForever
+                        className="text-red-500 cursor-pointer hover:text-red-600"
+                        size={20}
+                      />
+                    </button>
+                  </CustomTooltip>
+                )}
+              </div>
             </div>
           </div>
 
-          {/* )} */}
-        </>
-      )}
+          {/* Form Fields */}
+          <div className="grid lg:grid-cols-2 gap-4 md:grid-cols-2">
+            <div>
+              <InputField
+                label="Description"
+                id="description"
+                name="description"
+                tooltipContent='Description of the business. Maximum of 256 characters.'
+                tooltipPlacement='top'
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full"
+                placeholder="Enter business description"
+                labelStyle={{ fontWeight: 'bold' }}
+                readOnly={false}
 
+              />
+            </div>
+            <div>
+              <InputField
+                id="address"
+                name="address"
+                label="Address"
+                tooltipContent='Address of the business. Maximum of 256 characters.'
+                tooltipPlacement='top'
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                className="w-full"
+                placeholder="Enter business address"
+                labelStyle={{ fontWeight: 'bold' }}
+                readOnly={false}
+              />
+            </div>
+            <div>
+              <InputField
+                id="email"
+                name="email"
+                label="Email"
+                tooltipContent=' Email address (in valid email format) to contact the business. Maximum of 128 characters.'
+                tooltipPlacement='top'
+                value={email}
+                className="w-full"
+                onChange={(e) => setEmail(e.target.value)}
+                labelStyle={{ fontWeight: 'bold' }}
+                placeholder='Enter email address'
+                readOnly={false}
+
+              />
+            </div>
+            <div>
+              <AnimatedDropdown
+                id="vertical"
+                name="vertical"
+                label="Vertical"
+                tooltipContent='Industry of the business.Maximum of 256 characters.'
+                tooltipPlacement='top'
+                value={vertical}
+                options={[
+                  { label: "PROF_SERVICES1", value: "PROF_SERVICES1" },
+                  { label: "TECH", value: "TECH" },
+                  { label: "ECOMMERCE", value: "ECOMMERCE" },
+                ]}
+                onChange={(e) => setVertical(e.value)}
+                className="w-full"
+                placeholder="Select vertical"
+              />
+            </div>
+            <div>
+              <InputField
+                id="website1"
+                name="website1"
+                label="Websites"
+                tooltipContent='URLs (including http:// or https://) associated with the business (e.g., website, Facebook Page, Instagram). Maximum of 2 websites with a maximum of 256 characters each.'
+                tooltipPlacement='top'
+                className="w-full"
+                placeholder="Enter URL Address"
+                labelStyle={{ fontWeight: 'bold' }}
+                readOnly={false}
+                value={editWebsite1}
+                onChange={(e) => seteditWebsite1(e.target.value)}
+
+              />
+            </div>
+            <div className='flex items-end space-x-2'>
+              <InputField
+                id="website2"
+                name="website2"
+                className="w-full"
+                placeholder="Enter URL Address"
+                readOnly={false}
+                value={editWebsite2}
+                onChange={(e) => seteditWebsite2(e.target.value)}
+              />
+            </div>
+          </div>
+
+
+          {/* Action Buttons */}
+          <div className="flex justify-center space-x-3 mt-4">
+            <UniversalButton
+              id="editsave"
+              name="editsave"
+              label="Save"
+              onClick={() => {
+                setWabaEdit(false);
+                updateDetails();
+                toast.success("Profile updated Successfully");
+              }}
+            />
+            <UniversalButton
+              id="editcancel"
+              name="editcancel"
+              label="Cancel"
+              onClick={() => {
+                setWabaEdit(false);
+                toast.error("No changes.");
+              }}
+            />
+          </div>
+        </div>
+      </Dialog >
+
+
+      <Dialog
+        header="Create Waba"
+        visible={wabaCreatebtn}
+        onHide={() => {
+          setWabaCreatebtn(false);
+        }}
+        draggable={false}
+        className="w-[50rem]"
+        modal
+      >
+        <div className='text-center p-10 rounded-xl shadow-md bg-white space-y-3'>
+          <h1 className='font-semibold text-xl'>Add Another Account</h1>
+          <p className='mb-6 font-medium'>To add another WABA account, link the new account through Facebook.</p>
+          <a href="#signup" className='p-2.5 text-[1.1rem] bg-[#4267b2] text-white rounded-lg tracking-wide font-medium cursor-pointer' onClick={handleFacebookLogin}>Login with Facebook</a>
+        </div>
+
+      </Dialog >
     </div>
   );
 };

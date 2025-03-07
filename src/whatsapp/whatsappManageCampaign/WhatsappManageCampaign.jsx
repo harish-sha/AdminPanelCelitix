@@ -17,7 +17,8 @@ import ManageCampaignTable from './components/ManageCampaignTable';
 import ManageCampaignLogsTable from './components/ManageCampaignLogsTable';
 import { BsJournalArrowDown } from 'react-icons/bs';
 import UniversalSkeleton from '../components/UniversalSkeleton';
-import { getWhatsappCampaignReport } from '../../apis/whatsapp/whatsapp.js';
+import { getWhatsappCampaignReport, getWhatsappLogReport } from '../../apis/whatsapp/whatsapp.js';
+import toast from 'react-hot-toast';
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -54,12 +55,13 @@ const WhatsappManageCampaign = () => {
   const [campaignName, setCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
-  const [selectedDateLogs, setSelectedDateLogs] = useState(null);
+  const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
   const [campaignCategory, setCampaignCategory] = useState("");
   const [campaignType, setCampaignType] = useState("");
   const [campaignStatus, setCampaignStatus] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
+  const [logsData, setLogsData] = useState([]);
   const [hasSearched, setHasSearched] = useState(false)
 
   const handleInputChange = (e) => {
@@ -116,8 +118,8 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-  // Fetch initial data - for to load data on page load
 
+  // Fetch initial data - for to load data on page load
   const fetchInitialData = async () => {
     const filters = {
       fromQueDateTime: new Date().toLocaleDateString('en-GB'),
@@ -143,7 +145,9 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
 
-  const handleShowSearch = async () => {
+
+
+  const handleShowLogs = async () => {
     console.log("Show Logs:");
     console.log({
       startDate: selectedDateLogs,
@@ -151,10 +155,26 @@ const WhatsappManageCampaign = () => {
     });
 
     setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsFetching(false);
+    const fetchLogsReport = async () => {
 
-    setFilteredData([]);
+
+      const formattedFromDateLogs = selectedDateLogs
+        ? new Date(selectedDateLogs).toLocaleDateString('en-GB')
+        : new Date().toLocaleDateString('en-GB');
+
+
+      const logdata = {
+        fromDate: formattedFromDateLogs,
+        mobileNo: "917230000091",
+        source: "",
+      }
+      setIsFetching(true);
+
+      const response = await getWhatsappLogReport(logdata);
+      console.log("whatsapp log report", response[0])
+    };
+    setLogsData(response)
+    setIsFetching(false);
   };
 
   // useEffect(() => {
@@ -406,6 +426,8 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                     error={!selectedDateLogs}
                     errorText="Please select a valid date"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div className='w-full sm:w-56' >
@@ -427,7 +449,7 @@ const WhatsappManageCampaign = () => {
                     name='manageCampaignLogsShowhBtn'
                     label="Show"
                     icon={<IoSearch />}
-                    onClick={handleShowSearch}
+                    onClick={handleShowLogs}
                     variant="primary"
                   />
                 </div>
@@ -441,6 +463,7 @@ const WhatsappManageCampaign = () => {
                   <ManageCampaignLogsTable
                     id='whatsappManageCampaignLogsTable'
                     name='whatsappManageCampaignLogsTable'
+                    data={logsData}
                   />
                 </div>
               )}

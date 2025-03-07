@@ -37,12 +37,19 @@ import ManageContacts from '../../managecontacts/ManageContacts';
 import Settings from '../../profile/pages/Settings';
 import ProfilePage from "../../profile/pages/Profile"
 import LoginIpDetails from '../../profile/pages/LoginIpDetails';
+import RcsDeliveryReport from '../../rcs/RcsDeliveryReport/RcsDeliveryReport';
+import RcsLiveChat from '../../rcs/RcsLiveChat/RcsLiveChat';
+import RcsManageBot from '../../rcs/RcsManageBot/RcsManageBot';
+import RcsManageTemplate from '../../rcs/RcsManageTemplate/RcsManageTemplate';
+import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionReport';
+import SendRcs from '../../rcs/SendRcs/SendRcs';
 
 
 const Approutes = () => {
     return (
         <Routes>
             <Route path="/" element={<Mainlayout />}>
+            
                 {/* dashboard */}
                 <Route path="/" element={<Dashboard />} />
 
@@ -62,6 +69,14 @@ const Approutes = () => {
                 <Route path="/wcampaigndetailsreport" element={<CampaignDetailsReport />} />
                 <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
                 <Route path="/wwhatsappbot" element={<WhatsappBot />} />
+
+                {/* RCS */}
+                <Route path="/rsendrcs" element={<SendRcs />} />
+                <Route path="/rmanagetemplate" element={<RcsManageTemplate />} />
+                <Route path="/rsuggesstionreport" element={<RcsSuggesstionReport />} />
+                <Route path="/rdeliveryreport" element={<RcsDeliveryReport />} />
+                <Route path="/rlivechat" element={<RcsLiveChat />} />
+                <Route path="/rmanagebot" element={<RcsManageBot />} />
 
                 {/* profile */}
                 <Route path="/profile" element={<ProfilePage />} />
