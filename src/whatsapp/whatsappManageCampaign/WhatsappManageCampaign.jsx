@@ -1,24 +1,37 @@
-import React, { useEffect, useState } from 'react'
-import Box from '@mui/material/Box';
-import PropTypes from 'prop-types';
-import Tabs from '@mui/material/Tabs';
-import Tab from '@mui/material/Tab';
-import CampaignOutlinedIcon from '@mui/icons-material/CampaignOutlined';
-import SummarizeOutlinedIcon from '@mui/icons-material/SummarizeOutlined';
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import React, { useEffect, useState } from "react";
+import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
+import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import SearchOffIcon from "@mui/icons-material/SearchOff";
+import { BsJournalArrowDown } from "react-icons/bs";
+import Box from "@mui/material/Box";
+import PropTypes from "prop-types";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import { IoSearch } from "react-icons/io5";
+import toast from "react-hot-toast";
+import { Typography } from "@mui/material";
+import FormGroup from "@mui/material/FormGroup";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import Checkbox from "@mui/material/Checkbox";
 
-import InputField from '../../components/layout/InputField'
-import Loader from '../components/Loader';
-import UniversalDatePicker from '../components/UniversalDatePicker';
-import AnimatedDropdown from '../components/AnimatedDropdown';
-import UniversalButton from '../components/UniversalButton';
-import ManageCampaignTable from './components/ManageCampaignTable';
-import ManageCampaignLogsTable from './components/ManageCampaignLogsTable';
-import { BsJournalArrowDown } from 'react-icons/bs';
-import UniversalSkeleton from '../components/UniversalSkeleton';
-import { getWhatsappCampaignReport, getWhatsappLogReport } from '../../apis/whatsapp/whatsapp.js';
-import toast from 'react-hot-toast';
+
+import InputField from "../../components/layout/InputField";
+import Loader from "../components/Loader";
+import UniversalDatePicker from "../components/UniversalDatePicker";
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import UniversalButton from "../components/UniversalButton";
+import ManageCampaignTable from "./components/ManageCampaignTable";
+import ManageCampaignLogsTable from "./components/ManageCampaignLogsTable";
+import UniversalSkeleton from "../components/UniversalSkeleton";
+import {
+  getWhatsappCampaignReport,
+  getWhatsappLogReport,
+  getSummaryReport,
+  getWabaList
+} from "../../apis/whatsapp/whatsapp.js";
+import CampaignLogCard from "./components/CampaignLogCard.jsx";
+import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -45,7 +58,7 @@ CustomTabPanel.propTypes = {
 function a11yProps(index) {
   return {
     id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
   };
 }
 
@@ -62,7 +75,14 @@ const WhatsappManageCampaign = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [logsData, setLogsData] = useState([]);
-  const [hasSearched, setHasSearched] = useState(false)
+  const [WabaList, setWabaList] = useState([]);
+  const [isMonthWise, setIsMonthWise] = useState(false);
+  const [fromDate, setfromDate] = useState(new Date());
+  const [toDate, settoDate] = useState(new Date());
+  const [summaryReport, setSummaryReport] = useState([]);
+  const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [hasSearched, setHasSearched] = useState(false);
 
   const handleInputChange = (e) => {
     const newValue = e.target.value.replace(/\s/g, "");
@@ -88,10 +108,10 @@ const WhatsappManageCampaign = () => {
     });
 
     const formattedFromDate = selectedDate
-      ? new Date(selectedDate).toLocaleDateString('en-GB')
-      : new Date().toLocaleDateString('en-GB');
+      ? new Date(selectedDate).toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB");
 
-    const formattedToDate = new Date().toLocaleDateString('en-GB');
+    const formattedToDate = new Date().toLocaleDateString("en-GB");
 
     const filters = {
       fromQueDateTime: formattedFromDate,
@@ -106,7 +126,7 @@ const WhatsappManageCampaign = () => {
     const data = await getWhatsappCampaignReport(filters);
 
     // Apply additional filters for campaign type and status
-    const filteredData = data.filter(item => {
+    const filteredData = data.filter((item) => {
       return (
         (!campaignType || item.templateType === campaignType) &&
         (!campaignStatus || item.status === campaignStatus)
@@ -118,12 +138,11 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-
   // Fetch initial data - for to load data on page load
   const fetchInitialData = async () => {
     const filters = {
-      fromQueDateTime: new Date().toLocaleDateString('en-GB'),
-      toQueDateTime: new Date().toLocaleDateString('en-GB'),
+      fromQueDateTime: new Date().toLocaleDateString("en-GB"),
+      toQueDateTime: new Date().toLocaleDateString("en-GB"),
       campaignName: "",
       category: "all",
     };
@@ -143,9 +162,28 @@ const WhatsappManageCampaign = () => {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const fetchWabaList = async () => {
+      try {
+        setIsLoading(true);
+        const response = await getWabaList();
+        if (response) {
+          setWabaList(response);
+        } else {
+          console.error("Failed to fetch WABA details");
+          // toast.error("Failed to load WABA details!");
+        }
+      } catch (error) {
+        console.error("Error fetching WABA list:", error);
+        // toast.error("Error fetching WABA list.");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchWabaList();
+  }, []);
+
   // Fetch initial data - for to load data on page load
-
-
 
   const handleShowLogs = async () => {
     console.log("Show Logs:");
@@ -155,45 +193,95 @@ const WhatsappManageCampaign = () => {
     });
 
     setIsFetching(true);
-    const fetchLogsReport = async () => {
+    const formattedFromDateLogs = selectedDateLogs
+      ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB");
 
-
-      const formattedFromDateLogs = selectedDateLogs
-        ? new Date(selectedDateLogs).toLocaleDateString('en-GB')
-        : new Date().toLocaleDateString('en-GB');
-
-
-      const logdata = {
-        fromDate: formattedFromDateLogs,
-        mobileNo: "917230000091",
-        source: "",
-      }
-      setIsFetching(true);
-
-      const response = await getWhatsappLogReport(logdata);
-      console.log("whatsapp log report", response[0])
+    const logdata = {
+      fromDate: formattedFromDateLogs,
+      mobileNo: "917230000091",
+      source: "",
     };
-    setLogsData(response)
+
+    try {
+      const response = await getWhatsappLogReport(logdata);
+      console.log("whatsapp log report", response);
+      setLogsData(response);
+    } catch (error) {
+      console.error("Error fetching logs:", error);
+      toast.error("failed to fetch logs. Please try again");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleSummary = async () => {
+    let result;
+
+    if (!selectedWaBaNumber) {
+      toast.error("Please select a WABA Account.");
+      return;
+    }
+
+    setIsFetching(true);
+
+
+    let FinalFromDate = new Date(
+      new Date(selectedMonth).getFullYear(),
+      new Date(selectedMonth).getMonth(),
+      1
+    ).toLocaleDateString("en-GB");
+
+    let FinalToDate = new Date(
+      new Date(
+        new Date(selectedMonth).getFullYear(),
+        new Date(selectedMonth).getMonth() + 1,
+        0
+      )
+    );
+
+    if (isMonthWise) {
+      result = await getSummaryReport({
+        fromDate: FinalFromDate,
+        summaryType: "waba,date,type,country",
+        toDate: FinalToDate.toLocaleDateString("en-GB"),
+        whatsappTypes: null,
+        wabaNumber: selectedWaBaNumber,
+      });
+    } else {
+      result = await getSummaryReport({
+        fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+        summaryType: "waba,date,type,country",
+        toDate: new Date(toDate).toLocaleDateString("en-GB"),
+        whatsappTypes: null,
+        wabaNumber: selectedWaBaNumber,
+      });
+    }
+
+    const formattedResult = result.map((item) => ({
+      ...item,
+      marketing: item.marketing.toFixed(1),
+      utility: item.utility.toFixed(1),
+      categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+      userCharge: item.userCharge.toFixed(1),
+    }));
+
+    setSummaryReport(formattedResult);
+
+    // setSummaryReport(result);
     setIsFetching(false);
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     await new Promise((resolve) => setTimeout(resolve, 1000));
-  //     setIsLoading(false);
-  //   };
-  //   fetchData();
-  // }, []);
+
 
   return (
-    <div className='w-full ' >
+    <div className="w-full ">
       {isLoading ? (
         <>
           <Loader />
         </>
       ) : (
-        <Box sx={{ width: '100%' }}>
+        <Box sx={{ width: "100%" }}>
           <Tabs
             value={value}
             onChange={handleChange}
@@ -209,31 +297,31 @@ const WhatsappManageCampaign = () => {
               }
               {...a11yProps(0)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
             <Tab
               label={
-                <span className='flex gap-2 items-center' >
+                <span className="flex gap-2 items-center">
                   <BsJournalArrowDown size={18} /> API Logs
                 </span>
               }
               {...a11yProps(1)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
@@ -245,20 +333,20 @@ const WhatsappManageCampaign = () => {
               }
               {...a11yProps(2)}
               sx={{
-                textTransform: 'none',
-                fontWeight: 'bold',
-                color: 'text.secondary',
-                '&:hover': {
-                  color: 'primary.main',
-                  backgroundColor: '#f0f4ff',
-                  borderRadius: '8px',
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
                 },
               }}
             />
           </Tabs>
-          <CustomTabPanel value={value} index={0} className='' >
-            <div className='w-full' >
-              <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+          <CustomTabPanel value={value} index={0} className="">
+            <div className="w-full">
+              <div className="flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     id="manageCampaignDate"
@@ -275,7 +363,7 @@ const WhatsappManageCampaign = () => {
                     errorText="Please select a valid date"
                   />
                 </div>
-                <div className='w-full sm:w-56'>
+                <div className="w-full sm:w-56">
                   <InputField
                     id="manageCampaignName"
                     name="manageCampaignName"
@@ -290,8 +378,8 @@ const WhatsappManageCampaign = () => {
 
                 <div className="w-full sm:w-56">
                   <AnimatedDropdown
-                    id='manageCampaignCategory'
-                    name='manageCampaignCategory'
+                    id="manageCampaignCategory"
+                    name="manageCampaignCategory"
                     label="Category"
                     tooltipContent="Select category"
                     tooltipPlacement="right"
@@ -307,8 +395,8 @@ const WhatsappManageCampaign = () => {
                 </div>
                 <div className="w-full sm:w-56">
                   <AnimatedDropdown
-                    id='manageCampaignType'
-                    name='manageCampaignType'
+                    id="manageCampaignType"
+                    name="manageCampaignType"
                     label="Type"
                     tooltipContent="Select Type"
                     tooltipPlacement="right"
@@ -325,8 +413,8 @@ const WhatsappManageCampaign = () => {
                 </div>
                 <div className="w-full sm:w-56">
                   <AnimatedDropdown
-                    id='manageCampaignStatus'
-                    name='manageCampaignStatus'
+                    id="manageCampaignStatus"
+                    name="manageCampaignStatus"
                     label="Status"
                     tooltipContent="Select Status"
                     tooltipPlacement="right"
@@ -346,8 +434,8 @@ const WhatsappManageCampaign = () => {
 
                 <div className="w-max-content">
                   <UniversalButton
-                    id='manageCampaignSearchBtn'
-                    name='manageCampaignSearchBtn'
+                    id="manageCampaignSearchBtn"
+                    name="manageCampaignSearchBtn"
                     label="Search"
                     icon={<IoSearch />}
                     onClick={handleSearch}
@@ -356,23 +444,27 @@ const WhatsappManageCampaign = () => {
                 </div>
                 <div className="w-max-content">
                   <UniversalButton
-                    id='manageCampaignExportBtn'
-                    name='manageCampaignExportBtn'
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
                     label="Export"
-                    icon={<IosShareOutlinedIcon sx={{ marginBottom: '3px', fontSize: '1.1rem' }} />}
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
                     variant="primary"
                   />
                 </div>
               </div>
               {isFetching ? (
-                <div className='' >
-                  <UniversalSkeleton height='35rem' width='100%' />
+                <div className="">
+                  <UniversalSkeleton height="35rem" width="100%" />
                 </div>
               ) : (
-                <div className='w-full'>
+                <div className="w-full">
                   <ManageCampaignTable
-                    id='whatsappManageCampaignTable'
-                    name='whatsappManageCampaignTable'
+                    id="whatsappManageCampaignTable"
+                    name="whatsappManageCampaignTable"
                     data={filteredData}
                   />
                 </div>
@@ -408,17 +500,16 @@ const WhatsappManageCampaign = () => {
                   data={filteredData}
                 />
               )} */}
-
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <div className='w-full' >
-              <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+            <div className="w-full">
+              <div className="flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     id="manageCampaignLogsDate"
                     name="manageCampaignLogsDate"
-                    label="Created On"
+                    label="Delivered On"
                     value={selectedDateLogs}
                     onChange={(newValue) => setSelectedDateLogs(newValue)}
                     placeholder="Pick a start date"
@@ -430,11 +521,11 @@ const WhatsappManageCampaign = () => {
                     maxDate={new Date()}
                   />
                 </div>
-                <div className='w-full sm:w-56' >
+                <div className="w-full sm:w-56">
                   <InputField
                     id="manageCampaignLogsNumber"
                     name="manageCampaignLogsNumber"
-                    type='number'
+                    type="number"
                     label="Mobile No."
                     value={inputValueMobileLogs}
                     onChange={handleInputChangeMobileLogs}
@@ -445,8 +536,8 @@ const WhatsappManageCampaign = () => {
                 </div>
                 <div className="w-max-content ">
                   <UniversalButton
-                    id='manageCampaignLogsShowhBtn'
-                    name='manageCampaignLogsShowhBtn'
+                    id="manageCampaignLogsShowhBtn"
+                    name="manageCampaignLogsShowhBtn"
                     label="Show"
                     icon={<IoSearch />}
                     onClick={handleShowLogs}
@@ -454,35 +545,167 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               </div>
-              {isFetching ? (
-                <div className='' >
-                  <UniversalSkeleton height='35rem' width='100%' />
+              {/* {isFetching ? (
+                <div className="">
+                  <UniversalSkeleton height="25rem" width="100%" />
                 </div>
               ) : (
-                <div className='w-full'>
+                <div className="w-full">
                   <ManageCampaignLogsTable
-                    id='whatsappManageCampaignLogsTable'
-                    name='whatsappManageCampaignLogsTable'
+                    id="whatsappManageCampaignLogsTable"
+                    name="whatsappManageCampaignLogsTable"
                     data={logsData}
                   />
+                </div>
+              )} */}
+
+              {isFetching ? (
+                <div className="">
+                  <UniversalSkeleton height="25rem" width="100%" />
+                </div>
+              ) : (
+                <div className="w-full">
+                  <Box>
+                    {logsData.length === 0 ? (
+                      <Box className="flex justify-center space-y-2 items-center min-h-60 flex-col text-gray-500 border rounded-2xl">
+                        <SearchOffIcon
+                          className="text-red-400 mb-2"
+                          fontSize="large"
+                        />
+                        <p className="text-2xl text-blue-500">
+                          No Data Available
+                        </p>
+                        <p className="text-lg">
+                          "No logs have been recorded yet. Start tracking your
+                          campaigns to see data here."
+                        </p>
+                      </Box>
+                    ) : (
+                      logsData.map((log, index) => (
+                        <CampaignLogCard key={index} log={log} />
+                      ))
+                    )}
+                  </Box>
                 </div>
               )}
             </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
-            <div className='w-full' >
-              <h1 className='text-xl font-semibold text-gray-800 mb-4'>Summary</h1>
+            <div className="w-full">
+              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+                {isMonthWise ? (
+                  <>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="Month and Year"
+                        value={selectedMonth}
+                        views={["month", "year"]}
+                        onChange={(newValue) => setSelectedMonth(newValue)}
+                        placeholder="Pick a month"
+                        tooltipContent="Select the month"
+                        tooltipPlacement="right"
+                        error={!selectedMonth}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid month"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="From Date"
+                        value={fromDate}
+                        onChange={(newValue) => setfromDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the current date"
+                        tooltipPlacement="right"
+                        error={!fromDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageToDate"
+                        name="manageToDate"
+                        label="To Date"
+                        value={toDate}
+                        onChange={(newValue) => settoDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the date you want to search from."
+                        tooltipPlacement="right"
+                        error={!settoDate}
+                        errorText="Please select a valid date"
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                      />
+                    </div>
+                  </>
+                )}
+                <div className="w-full sm:w-56">
+                  <AnimatedDropdown
+                    id="manageWaBaAccount"
+                    name="manageWaBaAccount"
+                    label="WaBa Account"
+                    tooltipContent="Select Status"
+                    tooltipPlacement="right"
+                    options={WabaList?.map((waba) => ({
+                      value: waba.wabaSrno,
+                      label: waba.name,
+                    }))}
+                    value={selectedWaBaNumber}
+                    onChange={(value) => setSelectedWaBaNumber(value)}
+                    placeholder="Waba Account"
+                  />
+                </div>
+                <div className="w-full sm:w-35 flex items-center justify-center">
+                  <FormGroup>
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      label="Month Wise"
+                      value={isMonthWise}
+                      onClick={(e) => setIsMonthWise(e.target.checked)}
+                    />
+                  </FormGroup>
+                </div>
+                <div className="w-full sm:w-56">
+                  <UniversalButton
+                    id="manageCampaignLogsShowhBtn"
+                    name="manageCampaignLogsShowhBtn"
+                    label="Show"
+                    icon={<IoSearch />}
+                    onClick={handleSummary}
+                    variant="primary"
+                  />
+                </div>
+              </div>
+              {isFetching ? (
+                <div className="">
+                  <UniversalSkeleton height="35rem" width="100%" />
+                </div>
+              ) : (
+                <div className="w-full">
+                  <ManageSummaryTable
+                    id="whatsAppSummaryReport"
+                    name="whatsAppSummaryReport"
+                    data={summaryReport}
+                    isMonthWise={isMonthWise}
+                  />
+                </div>
+              )}
             </div>
           </CustomTabPanel>
         </Box>
-
       )}
     </div>
+  );
+};
 
-
-  )
-}
-
-
-
-export default WhatsappManageCampaign
+export default WhatsappManageCampaign;

@@ -134,17 +134,13 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
 };
 
 // Get Whatsapp Campaign Details Report
-export const getWhatsappCampaignDetailsReport = async (campaignSrno) => {
+export const getWhatsappCampaignDetailsReport = async (data) => {
   try {
     const response = await fetchWithAuth(
       "/proCpaasRest/whatsapp/whatsappCampaginDetailsReport",
       {
         method: "POST",
-        body: JSON.stringify({
-          campSrno: campaignSrno,
-          mobno: "",
-          status: "status",
-        }),
+        body: JSON.stringify(data),
       }
     );
 
@@ -155,7 +151,7 @@ export const getWhatsappCampaignDetailsReport = async (campaignSrno) => {
       return [];
     }
 
-    return response.data || [];
+    return response;
   } catch (error) {
     console.error("Error fetching campaign details report:", error);
     return [];
@@ -195,6 +191,7 @@ export const updateWabaDetails = async (data, phone) => {
   }
 };
 
+// fetch log report
 export const getWhatsappLogReport = async (logdata) => {
   try {
     const response = await fetchWithAuth(
@@ -208,5 +205,21 @@ export const getWhatsappLogReport = async (logdata) => {
   } catch (error) {
     console.error("Error fetching whatsapp log report:", error);
     return [];
+  }
+};
+
+// fetch Summary Report
+export const getSummaryReport = async (data) => {
+  try {
+    const response = await fetchWithAuth(
+      "/proCpaasRest/whatsapp/getSummeryReport",
+      {
+        method: "POST",
+        body: JSON.stringify(data),
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error fetching summary report:", error);
   }
 };

@@ -17,6 +17,7 @@ const UniversalDatePicker = ({
     errorText = '',
     minDate,
     maxDate,
+    views
 }) => {
     return (
         <div className='w-full'>
@@ -45,6 +46,7 @@ const UniversalDatePicker = ({
                     onChange={onChange}
                     minDate={minDate}
                     maxDate={maxDate}
+                    views={views}
                     format='dd/MM/yyyy'
                     renderInput={(params) => (
                         <div >

@@ -4,7 +4,7 @@ import { useMediaQuery, Menu, MenuItem, IconButton } from "@mui/material";
 import { FaBars } from "react-icons/fa";
 import toast from "react-hot-toast";
 
-// import AccountInfoModal from "./components/UniversalAccountInfo";
+import UniversalAccountInfo from "../../profile/components/UniversalAccountInfo";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 
@@ -145,7 +145,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             )}
 
             {/* ✅ Account Info Modal */}
-            {/* {showModal && <AccountInfoModal show={showModal} handleClose={() => setShowModal(false)} />} */}
+            {showModal && <UniversalAccountInfo show={showModal} handleClose={() => setShowModal(false)} />}
+            {/* {showModal && <UniversalAccountInfo show={showModal} handleClose={() => setShowModal(false)} />} */}
         </nav>
     );
 };

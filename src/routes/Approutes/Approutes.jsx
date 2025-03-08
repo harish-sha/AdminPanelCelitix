@@ -49,7 +49,7 @@ const Approutes = () => {
     return (
         <Routes>
             <Route path="/" element={<Mainlayout />}>
-            
+
                 {/* dashboard */}
                 <Route path="/" element={<Dashboard />} />
 
@@ -80,6 +80,8 @@ const Approutes = () => {
 
                 {/* profile */}
                 <Route path="/profile" element={<ProfilePage />} />
+
+                {/* Settings */}
                 <Route path="/settings" element={<Settings />} />
                 <Route path="/loginIpdetails" element={<LoginIpDetails />} />
 

@@ -12,9 +12,9 @@ import {
     GridPagination,
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import { Paper, Typography, Box, Button } from "@mui/material";
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
 
-import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import { Paper, Typography, Box, Button } from "@mui/material";
 import { useState } from "react";
 
 const PaginationList = styled("ul")({
@@ -78,52 +78,85 @@ const CustomPagination = ({
     );
 };
 
-const ManageCampaignLogsTable = ({ id, name, data = [] }) => {
+const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
     const [selectedRows, setSelectedRows] = useState([]);
+    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
-    // const paginationModel = { page: 0, pageSize: 10 };
-    const [paginationModel, setPaginationModel] = useState({
-        page: 0,
-        pageSize: 10,
-    });
+    let columns = [];
+    let rows = [];
 
-    const columns = [
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-        { field: "userId", headerName: "User", flex: 1, minWidth: 120 },
-        { field: "total", headerName: "Total", flex: 1, minWidth: 120 },
-        { field: "busy", headerName: "Busy", flex: 1, minWidth: 120 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 120 },
-        { field: "block", headerName: "Block", flex: 1, minWidth: 120 },
-        { field: "submitted", headerName: "Submitted", flex: 1, minWidth: 120 },
-        {
-            field: "chargedUnit",
-            headerName: "Charged Unit",
-            flex: 1,
-            minWidth: 120,
-        },
-        { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
-        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 120 },
-        { field: "read", headerName: "Read", flex: 1, minWidth: 120 },
-        { field: "undelivered", headerName: "Undelivered", flex: 1, minWidth: 120 },
-        { field: "queDate", headerName: "Sent Date", flex: 1, minWidth: 120 },
-    ];
+    if (isMonthWise) {
+        columns = [
+            { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+            { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
+            { field: "month", headerName: "Month", flex: 1, minWidth: 120 },
+            { field: "year", headerName: "Year", flex: 1, minWidth: 120 },
+            { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+            { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
+            { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
+            {
+                field: "userCharge",
+                headerName: "User Charge",
+                flex: 1,
+                minWidth: 120,
+            },
+        ];
 
-    const rows = data.map((item, index) => ({
-        sn: index + 1,
-        id: item.UserSrno,
-        userId: item.userId,
-        total: item.total,
-        busy: item.busy,
-        failed: item.failed,
-        block: item.block,
-        submitted: item.submitted,
-        chargedUnit: item.chargedUnit,
-        sent: item.sent,
-        delivered: item.delivered,
-        read: item.read,
-        undelivered: item.undelivered,
-        queDate: item.queDate,
-    }));
+        rows = Array.isArray(data)
+            ? data.map((item, index) => ({
+                id: index + 1,
+                sn: index + 1,
+                displayName: item.displayName,
+                month: item.month,
+                year: item.year,
+                country: item.country,
+                type: item.whatsappType,
+                count: item.count,
+                userCharge: item.userCharge,
+            }))
+            : [];
+    } else {
+        columns = [
+            { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+            { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
+            { field: "sentDate", headerName: "Sent Date", flex: 1, minWidth: 120 },
+            { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+            { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
+            { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
+            {
+                field: "userCharge",
+                headerName: "User Charge",
+                flex: 1,
+                minWidth: 120,
+            },
+        ];
+        rows = Array.isArray(data)
+            ? data.map((item, index) => ({
+                id: index + 1,
+                sn: index + 1,
+                displayName: item.displayName,
+                sentDate: item.sentDate,
+                country: item.country,
+                type: item.whatsappType,
+                count: item.count,
+                userCharge: item.userCharge,
+            }))
+            : [];
+    }
+
+    // "marketing": 1.0000,
+    // "whatsappType": "MARKETING",
+    // "utility": 2.0000,
+    // "country": "IN",
+    // "displayName": "Proactive_Celitix",
+    // "userCharge": 26.0,
+    // "month": "January",
+    // "year": 2025,
+    // "categoryCreditUsage": 2,
+    // "countryCode": "IN",
+    // "count": 2,
+    // "sentDate": "2025-01-01",
+    // "offWhatSrno": 1
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -131,7 +164,7 @@ const ManageCampaignLogsTable = ({ id, name, data = [] }) => {
         return (
             <GridFooterContainer
                 sx={{
-                    display: "none",
+                    display: "flex",
                     flexWrap: "wrap",
                     justifyContent: {
                         xs: "center",
@@ -186,7 +219,7 @@ const ManageCampaignLogsTable = ({ id, name, data = [] }) => {
     };
 
     return (
-        <Paper sx={{ height: 107 }} id={id} name={name}>
+        <Paper sx={{ height: 558 }} id={id} name={name}>
             <DataGrid
                 id={id}
                 name={name}
@@ -197,8 +230,8 @@ const ManageCampaignLogsTable = ({ id, name, data = [] }) => {
                 pagination
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                // checkboxSelection
-                rowHeight={50}
+                checkboxSelection
+                rowHeight={45}
                 slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
                 slotProps={{ footer: { totalRecords: rows.length } }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
@@ -232,5 +265,4 @@ const ManageCampaignLogsTable = ({ id, name, data = [] }) => {
     );
 };
 
-export default ManageCampaignLogsTable;
-
+export default ManageSummaryTable;
