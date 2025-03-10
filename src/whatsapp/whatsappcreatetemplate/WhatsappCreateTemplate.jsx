@@ -20,24 +20,15 @@ import { getWabaList } from '../../apis/whatsapp/whatsapp.js';
 const WhatsappCreateTemplate = () => {
     const navigate = useNavigate();
     const { scrollableContainerRef } = useOutletContext();
-
     const [wabaList, setWabaList] = useState(null);
     const [selectedWaba, setSelectedWaba] = useState("");
-
-
-
     const [valueWithoutSpaces, setValueWithoutSpaces] = useState('');
-
     const [templateName, setTemplateName] = useState('');
     // const [selectedOption, setSelectedOption] = useState('');
     const [selectedOption2, setSelectedOption2] = useState('');
     const [selectedOption3, setSelectedOption3] = useState('');
-
     const [selectedLanguage, setSelectedLanguage] = useState('');
-
     const [selectedCategory, setSelectedCategory] = useState("");
-
-
     const [selectedTemplateType, setSelectedTemplateType] = useState('');
     const [templateHeader, setTemplateHeader] = useState('');
     const [templateFormat, setTemplateFormat] = useState('');
@@ -48,7 +39,6 @@ const WhatsappCreateTemplate = () => {
     const [locationUrl, setLocationUrl] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [file, setFile] = useState(null);
-
     const [selectedCardIndex, setSelectedCardIndex] = useState(0);
 
     const [interactiveAction, setInteractiveAction] = useState('none');

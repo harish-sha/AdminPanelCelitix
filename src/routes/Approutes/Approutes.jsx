@@ -9,7 +9,7 @@ import Dashboard from '../../dashboard/Dashboard';
 
 // Whatsapp
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
-import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
+// import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
 import WhatsappLiveChat from '../../whatsapp/livechat/WhatsappLiveChat';
 import WhatsappManageCampaign from '../../whatsapp/whatsappManageCampaign/WhatsappManageCampaign';
@@ -43,6 +43,7 @@ import RcsManageBot from '../../rcs/RcsManageBot/RcsManageBot';
 import RcsManageTemplate from '../../rcs/RcsManageTemplate/RcsManageTemplate';
 import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionReport';
 import SendRcs from '../../rcs/SendRcs/SendRcs';
+import WhatsappCreateTemplate from '../../whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate';
 
 
 const Approutes = () => {
@@ -55,7 +56,7 @@ const Approutes = () => {
 
                 {/* whatsapp */}
                 <Route path="/managetemplate" element={<ManageTemplate />} />
-                <Route path="/createtemplate" element={<Whatsappcreatetemplate />} />
+                <Route path="/createtemplate" element={<WhatsappCreateTemplate />} />
                 <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
                 <Route path="/wlivechat" element={<WhatsappLiveChat />} />
                 <Route path="/wmanagecampaign" element={<WhatsappManageCampaign />} />

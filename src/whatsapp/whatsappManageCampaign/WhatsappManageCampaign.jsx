@@ -197,6 +197,8 @@ const WhatsappManageCampaign = () => {
       ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB");
 
+    // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
+
     const logdata = {
       fromDate: formattedFromDateLogs,
       mobileNo: "917230000091",

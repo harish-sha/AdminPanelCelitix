@@ -1,0 +1,42 @@
+{
+  "name": "templatenew_march",
+  "category": "MARKETING",
+  "language": "en",
+  "wabaMobile": "917230000091",
+  "whatsappSrno": 1,
+  "components": [
+    {
+      "type": "BODY",
+      "text": "Hello dear Mr. {{1}},to resolve your issue please connect with us",
+      "example": {
+        "body_text": [["Saurabh"]]
+      }
+    },
+    {
+      "type": "BUTTONS",
+      "buttons": [
+        {
+          "type": "PHONE_NUMBER",
+          "text": "Call Us",
+          "phone_number": "917889379345"
+        },
+        {
+          "type": "URL",
+          "text": "Connect on web",
+          "url": "https://yoursite.com/{{1}}",
+          "example": ["https://www.yoursite.com/dynamic-url-example"]
+        },
+        {
+          "type": "QUICK_REPLY",
+          "text": "Renew Membership"
+        },
+        {
+          "type": "QUICK_REPLY",
+          "text": "Cancel Membership"
+        }
+      ]
+    }
+  ]
+}
+
+
