@@ -377,6 +377,9 @@ const ManageAgent = () => {
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
+      // setTimeout(() => {
+      //     window.location.reload();
+      // }, 800); // Reload after 2 seconds to allow toast message visibility
     }
   };
 

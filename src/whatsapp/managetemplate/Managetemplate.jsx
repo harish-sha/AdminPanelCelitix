@@ -236,21 +236,6 @@ const ManageTemplate = () => {
                             <>
                                 <div className='flex flex-wrap gap-4 items-end justify-start  mb-5 w-full'>
                                     <div className="w-full sm:w-56">
-                                        <UniversalDatePicker
-                                            id="manageTemplateDate"
-                                            name="manageTemplateDate"
-                                            label="Start Date"
-                                            value={selectedDate}
-                                            onChange={setSelectedDate}
-                                            placeholder="Pick a start date"
-                                            tooltipContent="Select the starting date for your project"
-                                            tooltipPlacement="right"
-                                            error={!selectedDate}
-                                            errorText="Please select a valid date"
-                                            maxDate={new Date()}
-                                        />
-                                    </div>
-                                    <div className="w-full sm:w-56">
                                         <AnimatedDropdown
                                             id='manageTemplateWaba'
                                             name='manageTemplateWaba'
@@ -264,6 +249,21 @@ const ManageTemplate = () => {
                                             value={selectedWaba}
                                             onChange={setSelectedWaba}
                                             placeholder="Select WABA"
+                                        />
+                                    </div>
+                                    <div className="w-full sm:w-56">
+                                        <UniversalDatePicker
+                                            id="manageTemplateDate"
+                                            name="manageTemplateDate"
+                                            label="Creation Date"
+                                            value={selectedDate}
+                                            onChange={setSelectedDate}
+                                            placeholder="Pick a start date"
+                                            tooltipContent="Select the starting date for your project"
+                                            tooltipPlacement="right"
+                                            error={!selectedDate}
+                                            errorText="Please select a valid date"
+                                            maxDate={new Date()}
                                         />
                                     </div>
                                     <div className='w-full sm:w-56'>

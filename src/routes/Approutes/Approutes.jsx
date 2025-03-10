@@ -9,7 +9,6 @@ import Dashboard from '../../dashboard/Dashboard';
 
 // Whatsapp
 import ManageTemplate from '../../whatsapp/managetemplate/Managetemplate';
-// import Whatsappcreatetemplate from '../../whatsapp/whatsappcreatetemplate/whatsappcreatetemplate';
 import WhatsappLaunchCampaign from '../../whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign';
 import WhatsappLiveChat from '../../whatsapp/livechat/WhatsappLiveChat';
 import WhatsappManageCampaign from '../../whatsapp/whatsappManageCampaign/WhatsappManageCampaign';

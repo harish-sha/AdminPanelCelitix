@@ -13,6 +13,10 @@
       }
     },
     {
+      "type": "FOOTER",
+      "text": "Not interested in any of our sales? Tap Stop Promotions"
+    },
+    {
       "type": "BUTTONS",
       "buttons": [
         {
@@ -38,5 +42,3 @@
     }
   ]
 }
-
-

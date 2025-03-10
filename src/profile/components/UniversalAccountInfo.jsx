@@ -267,7 +267,7 @@ function AccountInfoModal({ show, handleClose }) {
             <thead className="bg-blue-500 text-white text-center">
               <tr>
                 <th className="p-3">Service</th>
-                <th className="p-3">Credits</th>
+                {/* <th className="p-3">Credits</th> */}
                 <th className="p-3">Created On</th>
                 <th className="p-3">Plan Expiry</th>
                 <th className="p-3">Pricing</th>
@@ -277,7 +277,7 @@ function AccountInfoModal({ show, handleClose }) {
               {accountData.map((item, index) => (
                 <tr key={index} className="even:bg-gray-100 hover:bg-blue-50 transition">
                   <td className="p-3">{item.service}</td>
-                  <td className="p-3">{item.credits}</td>
+                  {/* <td className="p-3">{item.credits}</td> */}
                   <td className="p-3">{item.createdOn}</td>
                   <td className="p-3">{item.expiry}</td>
                   <td className="p-3">{item.pricing}</td>

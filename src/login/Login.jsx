@@ -15,8 +15,7 @@ const Login = () => {
         setLoading(true);
 
         // const apiUrl = import.meta.env.VITE_API_BASE_URL;
-        // const apiUrl = "/api";
-        const apiUrl = "http://95.216.43.170:8080";
+        const apiUrl = "/api";
         console.log("API URL: ", apiUrl);
 
         try {

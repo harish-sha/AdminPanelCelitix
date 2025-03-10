@@ -359,7 +359,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   //   };
   //   fetchWabaList();
   // }, [isLoggedIn]);
-  
+
 
   // WABA LIST
   useEffect(() => {
@@ -847,7 +847,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           <a href="#signup" className='p-2.5 text-[1.1rem] bg-[#4267b2] text-white rounded-lg tracking-wide font-medium cursor-pointer' onClick={handleFacebookLogin}>Login with Facebook</a>
         </div>
 
-      </Dialog >
+      </Dialog>
     </div>
   );
 };
