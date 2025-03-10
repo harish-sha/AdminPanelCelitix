@@ -13,7 +13,8 @@ export default defineConfig(({ mode }) => {
     server: {
       proxy: {
         "/api": {
-          target: "http://95.216.43.170:8080",
+          // target: "http://95.216.43.170:8080",
+          target: process.env.VITE_API_BASE_URL || "http://95.216.43.170:8080",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),
