@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import InputWithLabel from "../components/InputWithLabel";
 import InputField from "../components/InputField";
-import ColorPicker from '../components/colorPicker';
+// import ColorPicker from '../components/colorPicker';
+import ColorPicker from '../components/ColorPicker'
 import RadioGroupFieldupdown from "../components/RadioGroupFieldupdown";
 import UniversalTextArea from "../components/UniversalTextArea";
 import UniversalButton from "../components/UniversalButton";
@@ -282,7 +283,11 @@ const WhatsappChatWidget = () => {
           </Box>
 
           {/* Chat Body */}
-          <Box sx={{ padding: 2, backgroundColor: "#f9f9f9", minHeight: "100px", textAlign: "center", }} className="whatsappChatWidgetBox ">
+          <Box sx={{ padding: 2, backgroundColor: "#f9f9f9", minHeight: "100px", textAlign: "center", }}
+
+          // className="whatsappChatWidgetBox"
+
+          >
             <Typography
               variant="body2"
               sx={{
