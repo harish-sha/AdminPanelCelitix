@@ -1,5 +1,10 @@
-Rect + vite
-tailwind
-react router dom 
-mui
-bg-[#212529]
+# Generate a private key
+openssl genpkey -algorithm RSA -out localhost.key
+
+# Generate a certificate signing request (CSR)
+openssl req -new -key localhost.key -out localhost.csr
+
+# Generate a self-signed certificate
+openssl x509 -req -days 365 -in localhost.csr -signkey localhost.key -out localhost.crt
+
+

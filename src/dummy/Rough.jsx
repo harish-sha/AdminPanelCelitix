@@ -1,299 +1,179 @@
-import * as React from 'react';
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import usePagination from '@mui/material/usePagination';
-import { styled } from '@mui/material/styles';
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
-import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Paper, Typography, Box, Button } from '@mui/material';
-import { getWhatsappCampaignReport } from '../../../apis/whatsapp/whatsapp.js';
-import { useNavigate } from "react-router-dom";
-import { useState } from 'react';
-import { useEffect } from 'react';
-import CustomTooltip from '../../../components/common/CustomTooltip.jsx';
 
-import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
+import React, { useState, useEffect } from 'react';
+import { classNames } from 'primereact/utils';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { IconField } from 'primereact/iconfield';
+import { InputIcon } from 'primereact/inputicon';
+import { Dropdown } from 'primereact/dropdown';
+import { MultiSelect } from 'primereact/multiselect';
+import { Tag } from 'primereact/tag';
+import { TriStateCheckbox } from 'primereact/tristatecheckbox';
+import { CustomerService } from './service/CustomerService';
 
-
-const PaginationList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "8px",
-});
-
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
-    const { items } = usePagination({
-        count: totalPages,
-        page: paginationModel.page + 1,
-        onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+export default function BasicFilterDemo() {
+    const [customers, setCustomers] = useState(null);
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+        representative: { value: null, matchMode: FilterMatchMode.IN },
+        status: { value: null, matchMode: FilterMatchMode.EQUALS },
+        verified: { value: null, matchMode: FilterMatchMode.EQUALS }
     });
+    const [loading, setLoading] = useState(true);
+    const [globalFilterValue, setGlobalFilterValue] = useState('');
+    const [representatives] = useState([
+        { name: 'Amy Elsner', image: 'amyelsner.png' },
+        { name: 'Anna Fali', image: 'annafali.png' },
+        { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
+        { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
+        { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
+        { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
+        { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
+        { name: 'Onyama Limba', image: 'onyamalimba.png' },
+        { name: 'Stephen Shaw', image: 'stephenshaw.png' },
+        { name: 'XuXue Feng', image: 'xuxuefeng.png' }
+    ]);
+    const [statuses] = useState(['unqualified', 'qualified', 'new', 'negotiation', 'renewal']);
 
-    return (
-        <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-            <PaginationList>
-                {items.map(({ page, type, selected, ...item }, index) => {
-                    let children = null;
+    const getSeverity = (status) => {
+        switch (status) {
+            case 'unqualified':
+                return 'danger';
 
-                    if (type === "start-ellipsis" || type === "end-ellipsis") {
-                        children = "…";
-                    } else if (type === "page") {
-                        children = (
-                            <Button
-                                key={index}
-                                variant={selected ? "contained" : "outlined"}
-                                size="small"
-                                sx={{ minWidth: "27px" }}
-                                {...item}
-                            >
-                                {page}
-                            </Button>
-                        );
-                    } else {
-                        children = (
-                            <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
-                                {type === "previous" ? "Previous" : "Next"}
-                            </Button>
-                        );
-                    }
+            case 'qualified':
+                return 'success';
 
-                    return <li key={index}>{children}</li>;
-                })}
-            </PaginationList>
-        </Box>
-    );
-};
+            case 'new':
+                return 'info';
 
-const ManageCampaignTable = ({ id, name, data = [] }) => {
-    const [selectedRows, setSelectedRows] = useState([]);
-    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10, });
-    const navigate = useNavigate();
+            case 'negotiation':
+                return 'warning';
 
-    const handleView = (row) => {
-        console.log("View campaign:", row)
+            case 'renewal':
+                return null;
+        }
     };
 
-    const handleSummaryReport = (row) => {
-        navigate("/wcampaigndetailsreport", {
-            state: {
-                campaignSrno: row.campaignSrno,
-                campaignName: row.campaignName
-            }
+    useEffect(() => {
+        CustomerService.getCustomersMedium().then((data) => {
+            setCustomers(getCustomers(data));
+            setLoading(false);
+        });
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const getCustomers = (data) => {
+        return [...(data || [])].map((d) => {
+            d.date = new Date(d.date);
+
+            return d;
         });
     };
 
+    const onGlobalFilterChange = (e) => {
+        const value = e.target.value;
+        let _filters = { ...filters };
 
-    // **Format Date Function** (Ensures proper date format)
-    const formatDate = (dateString) => {
-        if (!dateString) return "N/A";
-        const date = new Date(dateString);
-        return date.toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            // hour: "2-digit",
-            // minute: "2-digit",
-            // second: "2-digit",
-        });
+        _filters['global'].value = value;
+
+        setFilters(_filters);
+        setGlobalFilterValue(value);
     };
 
-
-    const columns = [
-        { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-        { field: 'queTime', headerName: 'Created On', flex: 1, minWidth: 120 },
-        { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
-        { field: 'templateName', headerName: 'Template Name', flex: 1, minWidth: 120 },
-        { field: 'templateCategory', headerName: 'Template Category', flex: 1, minWidth: 120 },
-        { field: 'templateType', headerName: 'Template Type', flex: 1, minWidth: 120 },
-        { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-        { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
-        {
-            field: 'action',
-            headerName: 'Action',
-            flex: 1,
-            minWidth: 150,
-            renderCell: (params) => (
-                <>
-                    <CustomTooltip
-                        title="View Campaign"
-                        placement="top"
-                        arrow={true}
-                    >
-                        <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-                            <InfoOutlinedIcon
-                                sx={{
-                                    fontSize: '1.2rem',
-                                    color: 'green'
-                                }}
-                            />
-                        </IconButton>
-                    </CustomTooltip>
-                    <CustomTooltip
-                        title="Campaign Detail Report"
-                        placement="top"
-                        arrow={true}
-                    >
-                        <IconButton onClick={() => handleSummaryReport(params.row)}>
-                            <DescriptionOutlinedIcon
-                                sx={{
-                                    fontSize: '1.2rem',
-                                    color: 'gray',
-                                }}
-                            />
-                        </IconButton>
-                    </CustomTooltip>
-                </>
-            ),
-        },
-    ];
-
-
-    // use this when you want to create rows dynamically
-    // const rows = Array.from({ length: 500 }, (_, i) => ({
-    //     id: i + 1,
-    //     sn: i + 1,
-    //     queTime: '11/05/2024 14:58:39',
-    //     campaignName: 'Demo',
-    //     templateName: 'NewTemplate',
-    //     templateCategory: 'Utility',
-    //     templateType: 'Text',
-    //     status: 'Pending',
-    //     totalAudience: '10000',
-    //     action: 'True',
-    // }));
-
-    const rows = Array.isArray(data)
-        ? data.map((item, index) => ({
-            id: index + 1,
-            sn: index + 1,
-            // queTime: formatDate(item.queTime) || "N/A",
-            queTime: item.queTime || "N/A",
-            campaignName: item.campaignName || "N/A",
-            templateName: item.templateName || "N/A",
-            templateCategory: item.templateCategory || "N/A",
-            templateType: item.templateType || "N/A",
-            status: item.status || "N/A",
-            totalAudience: item.totalAudience || "0",
-            campaignSrno: item.campaignSrno,
-        }))
-        : [];
-
-    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-    const CustomFooter = () => {
+    const renderHeader = () => {
         return (
-            <GridFooterContainer
-                sx={{
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: {
-                        xs: "center", lg: "space-between"
-                    },
-                    alignItems: "center",
-                    padding: 1,
-                    gap: 2,
-                    overflowX: "auto",
-                }
-                }
-            >
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                        gap: 1.5,
-                    }}
-                >
-                    {selectedRows.length > 0 && (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                borderRight: "1px solid #ccc",
-                                paddingRight: "10px",
-                            }}
-                        >
-                            {selectedRows.length} Rows Selected
-                        </Typography>
-                    )}
-
-                    <Typography variant="body2">
-                        Total Records: <span className='font-semibold'>{rows.length}</span>
-                    </Typography>
-                </Box>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: { xs: "100%", sm: "auto" },
-                    }}
-                >
-                    <CustomPagination
-                        totalPages={totalPages}
-                        paginationModel={paginationModel}
-                        setPaginationModel={setPaginationModel}
-                    />
-                </Box>
-            </GridFooterContainer >
+            <div className="flex justify-content-end">
+                <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search" />
+                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
+                </IconField>
+            </div>
         );
     };
 
+    const countryBodyTemplate = (rowData) => {
+        return (
+            <div className="flex align-items-center gap-2">
+                <img alt="flag" src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png" className={`flag flag-${rowData.country.code}`} style={{ width: '24px' }} />
+                <span>{rowData.country.name}</span>
+            </div>
+        );
+    };
+
+    const representativeBodyTemplate = (rowData) => {
+        const representative = rowData.representative;
+
+        return (
+            <div className="flex align-items-center gap-2">
+                <img alt={representative.name} src={`https://primefaces.org/cdn/primereact/images/avatar/${representative.image}`} width="32" />
+                <span>{representative.name}</span>
+            </div>
+        );
+    };
+
+    const representativesItemTemplate = (option) => {
+        return (
+            <div className="flex align-items-center gap-2">
+                <img alt={option.name} src={`https://primefaces.org/cdn/primereact/images/avatar/${option.image}`} width="32" />
+                <span>{option.name}</span>
+            </div>
+        );
+    };
+
+    const statusBodyTemplate = (rowData) => {
+        return <Tag value={rowData.status} severity={getSeverity(rowData.status)} />;
+    };
+
+    const statusItemTemplate = (option) => {
+        return <Tag value={option} severity={getSeverity(option)} />;
+    };
+
+    const verifiedBodyTemplate = (rowData) => {
+        return <i className={classNames('pi', { 'true-icon pi-check-circle': rowData.verified, 'false-icon pi-times-circle': !rowData.verified })}></i>;
+    };
+
+    const representativeRowFilterTemplate = (options) => {
+        return (
+            <MultiSelect
+                value={options.value}
+                options={representatives}
+                itemTemplate={representativesItemTemplate}
+                onChange={(e) => options.filterApplyCallback(e.value)}
+                optionLabel="name"
+                placeholder="Any"
+                className="p-column-filter"
+                maxSelectedLabels={1}
+                style={{ minWidth: '14rem' }}
+            />
+        );
+    };
+
+    const statusRowFilterTemplate = (options) => {
+        return (
+            <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterApplyCallback(e.value)} itemTemplate={statusItemTemplate} placeholder="Select One" className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
+        );
+    };
+
+    const verifiedRowFilterTemplate = (options) => {
+        return <TriStateCheckbox value={options.value} onChange={(e) => options.filterApplyCallback(e.value)} />;
+    };
+
+    const header = renderHeader();
 
     return (
-        <Paper sx={{ height: 558 }}
-            id={id}
-            name={name}
-        >
-            <DataGrid
-                id={id}
-                name={name}
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[10, 20, 50]}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                checkboxSelection
-                rowHeight={45}
-                slots={{
-                    footer: CustomFooter,
-                    noRowsOverlay: CustomNoRowsOverlay,
-                }}
-                slotProps={{ footer: { totalRecords: rows.length } }}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                disableRowSelectionOnClick
-                // autoPageSize
-                disableColumnResize
-                disableColumnMenu
-                sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        color: "#193cb8",
-                        fontSize: "14px",
-                        fontWeight: "bold !important",
-                    },
-                    "& .MuiDataGrid-row--borderBottom": {
-                        backgroundColor: "#e6f4ff !important",
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                        // display: "none",
-                        color: "#ccc",
-                    },
-                }}
-            />
-        </Paper>
+        <div className="card">
+            <DataTable value={customers} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row" loading={loading}
+                globalFilterFields={['name', 'country.name', 'representative.name', 'status']} header={header} emptyMessage="No customers found.">
+                <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: '12rem' }} />
+                <Column header="Country" filterField="country.name" style={{ minWidth: '12rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" />
+                <Column header="Agent" filterField="representative" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '14rem' }}
+                    body={representativeBodyTemplate} filter filterElement={representativeRowFilterTemplate} />
+                <Column field="status" header="Status" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusRowFilterTemplate} />
+                <Column field="verified" header="Verified" dataType="boolean" style={{ minWidth: '6rem' }} body={verifiedBodyTemplate} filter filterElement={verifiedRowFilterTemplate} />
+            </DataTable>
+        </div>
     );
-};
-
-export default ManageCampaignTable;
+}

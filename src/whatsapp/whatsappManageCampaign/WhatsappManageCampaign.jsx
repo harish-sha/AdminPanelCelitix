@@ -201,7 +201,7 @@ const WhatsappManageCampaign = () => {
 
     const logdata = {
       fromDate: formattedFromDateLogs,
-      mobileNo: "917230000091",
+      mobileNo: null,
       source: "",
     };
 
