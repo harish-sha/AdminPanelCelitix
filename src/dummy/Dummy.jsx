@@ -102,16 +102,171 @@
 
 // export default Dummy;
 
-import React from "react";
-import CommonTable from "../components/layout/CommonTable";
+// import React from "react";
+// import CommonTable from "../components/layout/CommonTable";
 
-const Dummy = () => {
+// const Dummy = () => {
+
+//     return (
+//         <div className="w-250 p-5" >
+//             <CommonTable />
+//         </div>
+//     )
+// }
+
+// export default Dummy
+
+import React, { useState, useEffect } from "react";
+import { Galleria } from "primereact/galleria";
+import { RadioButton } from "primereact/radiobutton";
+import { Dialog } from "primereact/dialog";
+
+export default function Dummy() {
+    const [position, setPosition] = useState("bottom");
+    const [visible, setVisible] = useState(false);
+    const positionOptions = [
+        {
+            label: "Bottom",
+            value: "bottom",
+        },
+        {
+            label: "Top",
+            value: "top",
+        },
+        {
+            label: "Left",
+            value: "left",
+        },
+        {
+            label: "Right",
+            value: "right",
+        },
+    ];
+    const responsiveOptions = [
+        {
+            breakpoint: "991px",
+            numVisible: 4,
+        },
+        {
+            breakpoint: "767px",
+            numVisible: 3,
+        },
+        {
+            breakpoint: "575px",
+            numVisible: 1,
+        },
+    ];
+
+    const images = [
+        {
+            itemImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1.jpg",
+            thumbnailImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1s.jpg",
+
+            alt: "Description for Image 1",
+            title: "Title 1",
+        },
+        {
+            itemImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1.jpg",
+            thumbnailImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1s.jpg",
+
+            alt: "Description for Image 1",
+            title: "Title 2",
+        },
+        {
+            itemImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1.jpg",
+            thumbnailImageSrc:
+                "https://primefaces.org/cdn/primereact/images/galleria/galleria1s.jpg",
+            alt: "Description for Image 1",
+            title: "Title 3",
+        },
+        {
+            itemImageSrc:
+                "https://images.unsplash.com/reserve/bOvf94dPRxWu0u3QsPjF_tree.jpg?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmF0dXJhbHxlbnwwfHwwfHx8MA%3D%3D",
+            thumbnailImageSrc:
+                "https://images.unsplash.com/reserve/bOvf94dPRxWu0u3QsPjF_tree.jpg?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8bmF0dXJhbHxlbnwwfHwwfHx8MA%3D%3D",
+            alt: "Description for Image 1",
+            title: "Title 4",
+        },
+        {
+            itemImageSrc:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvFAO85i_zS0sDQIzUnj5_0GWwTtxeWpyMnw&s",
+            thumbnailImageSrc:
+                "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTvFAO85i_zS0sDQIzUnj5_0GWwTtxeWpyMnw&s",
+            alt: "Description for Image 1",
+            title: "Title 5",
+        },
+        {
+            itemImageSrc:
+                "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg",
+            thumbnailImageSrc:
+                "https://hatrabbits.com/wp-content/uploads/2017/01/random.jpg",
+
+            alt: "Description for Image 1",
+            title: "Title 6",
+        },
+    ];
+
+    const thumbnailTemplate = (item) => {
+        return (
+            <img
+                src={item.thumbnailImageSrc}
+                alt={item.alt}
+                style={{
+                    maxHeight: "100px",
+                    width: "100%",
+                    display: "block",
+                }}
+            />
+        );
+    };
+
+    const itemTemplate = (item) => {
+        return (
+
+            <img
+                src={item.itemImageSrc}
+                alt={item.alt}
+                style={{
+                    maxWidth: "100%",
+                    maxHeight: "100%",
+                    height: "450px",
+                    width: "100%",
+                    objectFit: "contain",
+                    display: "block",
+                }}
+            />
+        );
+    };
 
     return (
-        <div className="w-250 p-5" >
-            <CommonTable />
-        </div>
-    )
-}
+        <>
+            <button onClick={() => setVisible(true)}>Click me</button>
+            <Dialog
+                visible={visible}
+                style={{
+                    width: "40rem",
+                    overflow: "hidden"
+                }}
+                onHide={() => setVisible(false)}
+                draggable={false}
+            >
+                <Galleria
+                    value={images}
+                    item={itemTemplate}
+                    numVisible={5}
+                    showItemNavigators
+                    showItemNavigatorsOnHover
+                    showIndicators
+                    showThumbnails={true}
+                    thumbnail={thumbnailTemplate}
 
-export default Dummy
+                />
+            </Dialog>
+        </>
+    );
+}

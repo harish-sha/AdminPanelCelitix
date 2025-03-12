@@ -67,3 +67,15 @@
   object-fit: cover;
   background-size: cover;
 }
+
+/* =================== */
+.p-galleria .p-galleria-thumbnail-container {
+  background: rgb(0 0 0 / 90%);
+  padding: 0.4rem 0rem;
+}
+
+/* ========================= */
+.p-radiobutton.p-highlight .p-radiobutton-box {
+  border-color: #2cdd7b;
+  background: #2cdd7b;
+}

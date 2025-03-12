@@ -8,6 +8,32 @@ import Box from '@mui/material/Box';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import toast from 'react-hot-toast';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import FormControl from '@mui/material/FormControl';
+import Radio from '@mui/material/Radio';
+import FormLabel from '@mui/material/FormLabel';
+import RadioGroup from '@mui/material/RadioGroup';
+import Typography from '@mui/material/Typography';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import HdrStrongOutlinedIcon from '@mui/icons-material/HdrStrongOutlined';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import CardTravelOutlinedIcon from '@mui/icons-material/CardTravelOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import { BreadCrumb } from 'primereact/breadcrumb';
+import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
+import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import MovieFilterOutlinedIcon from '@mui/icons-material/MovieFilterOutlined';
+import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
+import HouseOutlinedIcon from '@mui/icons-material/HouseOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
+
 
 import DataTable from './components/Datatable.jsx'
 import AnimatedDropdown from '../components/AnimatedDropdown';
@@ -19,6 +45,7 @@ import Loader from '../components/Loader';
 import { getWabaList, getWabaTemplate, getWabaTemplateDetails } from '../../apis/whatsapp/whatsapp.js';
 import { CustomTabPanel, a11yProps } from './components/CustomTabPanel';
 import '../style.css'
+import { RadioButton } from 'primereact/radiobutton';
 
 const ManageTemplate = () => {
     const navigate = useNavigate();
@@ -44,6 +71,75 @@ const ManageTemplate = () => {
     // Data
     const [wabaList, setWabaList] = useState([]);
     const [filteredData, setFilteredData] = useState([]);
+
+    // Library Filters
+    const [selectedLibraryCategory, setSelectedLibraryCategory] = useState("");
+    const [selectedIndustry, setSelectedIndustry] = useState("");
+
+    const [selectedOptionCategory, setSelectedOptionCategory] = useState("marketing");
+    const [selectedOptionIndustry, setSelectedOptionIndustry] = useState("ecommerce");
+    const [showAllIndustries, setShowAllIndustries] = useState(false);
+
+
+    const handleChangeOptionsCategory = (event) => {
+        setSelectedOptionCategory(event.target.value);
+    };
+
+    const handleChangeOptionsIndustry = (event) => {
+        setSelectedOptionIndustry(event.target.value);
+    };
+
+    // Dynamic template counts (Replace this with API data)
+    const templateCounts = {
+        marketing: 30,
+        utility: 26,
+        authentication: 28,
+        ecommerce: 30,
+        financial: 26,
+        education: 28,
+        banking: 28,
+        healthcare: 22,
+        logistics: 18,
+        retail: 35,
+        corporate: 21,
+        entertainment: 19,
+        travel: 23,
+        food: 27,
+        real_estate: 20,
+        manufacturing: 25,
+        science: 17
+    };
+
+    // Categories Data (Dynamic count)
+    const categories = [
+        { id: "marketing", label: `Marketing (${templateCounts.marketing})` },
+        { id: "utility", label: `Utility (${templateCounts.utility})` },
+        { id: "authentication", label: `Authentication (${templateCounts.authentication})` }
+    ];
+
+    // Industries Data (first 4 are visible, rest are hidden)
+    const industries = [
+        { id: "ecommerce", label: `E-commerce (${templateCounts.ecommerce})`, icon: <ShoppingCartOutlinedIcon fontSize='small' /> },
+        { id: "financial", label: `Financial (${templateCounts.financial})`, icon: <CardTravelOutlinedIcon fontSize='small' /> },
+        { id: "education", label: `Education (${templateCounts.education})`, icon: <SchoolOutlinedIcon fontSize='small' /> },
+        { id: "banking", label: `Banking (${templateCounts.banking})`, icon: <AccountBalanceOutlinedIcon fontSize='small' /> },
+        { id: "healthcare", label: `Healthcare (${templateCounts.healthcare})`, icon: <HealthAndSafetyOutlinedIcon fontSize='small' /> },
+        { id: "logistics", label: `Logistics (${templateCounts.logistics})`, icon: <LocalShippingOutlinedIcon fontSize='small' /> },
+        { id: "retail", label: `Retail (${templateCounts.retail})`, icon: <StorefrontOutlinedIcon fontSize='small' /> },
+        { id: "corporate", label: `Corporate (${templateCounts.corporate})`, icon: <WorkOutlineOutlinedIcon fontSize='small' /> },
+        { id: "entertainment", label: `Entertainment (${templateCounts.entertainment})`, icon: <MovieFilterOutlinedIcon fontSize='small' /> },
+        { id: "travel", label: `Travel (${templateCounts.travel})`, icon: <PublicOutlinedIcon fontSize='small' /> },
+        { id: "food", label: `Food & Beverage (${templateCounts.food})`, icon: <RestaurantOutlinedIcon fontSize='small' /> },
+        { id: "real_estate", label: `Real Estate (${templateCounts.real_estate})`, icon: <HouseOutlinedIcon fontSize='small' /> },
+        { id: "manufacturing", label: `Manufacturing (${templateCounts.manufacturing})`, icon: <SettingsOutlinedIcon fontSize='small' /> },
+        { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> },
+        // { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> },
+        // { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> },
+        // { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> },
+        // { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> },
+        // { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> }
+    ];
+
 
     // Reset filters when WABA changes
     useEffect(() => {
@@ -379,8 +475,101 @@ const ManageTemplate = () => {
                         </div>
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
-                        <div className='w-full' >
-                            <h1 className='text-xl font-semibold text-gray-800 mb-4'>Libraries</h1>
+                        <div className='w-full'>
+                            {/* <h1 className='text-xl font-semibold text-gray-800 mb-4'>Libraries</h1> */}
+                            <div className='flex gap-3 min-h-[83vh] flex-wrap'>
+
+                                <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-67'>
+                                    {/* categrories */}
+                                    {/* <HdrStrongOutlinedIcon /> */}
+                                    <div className='text-gray-600 font-medium text-md mb-2'>Categories</div>
+                                    <div className='' >
+                                        {categories.map((category) => (
+                                            <div
+                                                key={category.id}
+                                                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
+                                                                            ${selectedOptionCategory === category.id ? 'bg-white' : 'bg-transparent'}`}
+                                            >
+                                                <RadioButton
+                                                    inputId={`radio_${category.id}`}
+                                                    name="radioGroupCategory"
+                                                    value={category.id}
+                                                    onChange={handleChangeOptionsCategory}
+                                                    checked={selectedOptionCategory === category.id}
+                                                />
+                                                <label
+                                                    htmlFor={`radio_${category.id}`}
+                                                    className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id ? 'text-green-600' : 'text-gray-700'}`}
+                                                >
+                                                    {category.label}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Industries */}
+                                    <div className='mt-2 ' >
+                                        <div className='text-gray-600 font-medium text-md mb-2'>Industries</div>
+                                        <div className='h-150 overflow-auto' >
+                                            {industries.slice(0, showAllIndustries ? industries.length : 4).map((industry) => (
+                                                <div
+                                                    key={industry.id}
+                                                    className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                                                                                    ${selectedOptionIndustry === industry.id ? 'bg-white' : 'bg-transparent'}`}
+                                                >
+                                                    <RadioButton
+                                                        inputId={`radio_${industry.id}`}
+                                                        name="radioGroupIndustry"
+                                                        value={industry.id}
+                                                        onChange={handleChangeOptionsIndustry}
+                                                        checked={selectedOptionIndustry === industry.id}
+                                                    />
+                                                    <label
+                                                        htmlFor={`radio_${industry.id}`}
+                                                        className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
+                                                                                        ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-00'}`}
+                                                    >
+                                                        {industry.icon} {industry.label}
+                                                    </label>
+                                                </div>
+                                            ))}
+
+                                            {/* View More Button */}
+                                            {!showAllIndustries && industries.length > 4 && (
+                                                <div className='flex justify-center mt-1' >
+
+                                                    <button
+                                                        className="mt-2 text-blue-500 text-sm font-medium cursor-pointer hover:underline"
+                                                        onClick={() => setShowAllIndustries(true)}
+                                                    >
+                                                        View More Industries
+                                                    </button>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className='bg-white flex-2 rounded-md p-2'>
+                                    {/* <Grid item xs={12} sm={8}>
+                                        <Paper elevation={3} sx={{ padding: 2 }}>
+                                            Template Samples
+                                            <div>
+                                                {filteredData.map((template, index) => (
+                                                    <div key={index} className="template-sample">
+                                                        <Typography variant="body1">{template.templateName}</Typography>
+                                                        <Typography variant="body2" color="textSecondary">
+                                                            {template.category} - {template.type}
+                                                        </Typography>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        </Paper>
+                                    </Grid> */}
+                                    <div>
+                                        Template Samples
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </CustomTabPanel>
                 </Box>

@@ -1,179 +1,152 @@
+import React, { useState } from 'react';
+import { RadioButton } from 'primereact/radiobutton';
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import CardTravelOutlinedIcon from '@mui/icons-material/CardTravelOutlined';
+import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
+import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
+import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
+import MovieFilterOutlinedIcon from '@mui/icons-material/MovieFilterOutlined';
+import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
+import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
+import HouseOutlinedIcon from '@mui/icons-material/HouseOutlined';
+import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 
-import React, { useState, useEffect } from 'react';
-import { classNames } from 'primereact/utils';
-import { FilterMatchMode, FilterOperator } from 'primereact/api';
-import { DataTable } from 'primereact/datatable';
-import { Column } from 'primereact/column';
-import { InputText } from 'primereact/inputtext';
-import { IconField } from 'primereact/iconfield';
-import { InputIcon } from 'primereact/inputicon';
-import { Dropdown } from 'primereact/dropdown';
-import { MultiSelect } from 'primereact/multiselect';
-import { Tag } from 'primereact/tag';
-import { TriStateCheckbox } from 'primereact/tristatecheckbox';
-import { CustomerService } from './service/CustomerService';
+const ManageTemplate = () => {
+    const [selectedOptionCategory, setSelectedOptionCategory] = useState("marketing");
+    const [selectedOptionIndustry, setSelectedOptionIndustry] = useState("ecommerce");
+    const [showAllIndustries, setShowAllIndustries] = useState(false);
 
-export default function BasicFilterDemo() {
-    const [customers, setCustomers] = useState(null);
-    const [filters, setFilters] = useState({
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        'country.name': { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-        representative: { value: null, matchMode: FilterMatchMode.IN },
-        status: { value: null, matchMode: FilterMatchMode.EQUALS },
-        verified: { value: null, matchMode: FilterMatchMode.EQUALS }
-    });
-    const [loading, setLoading] = useState(true);
-    const [globalFilterValue, setGlobalFilterValue] = useState('');
-    const [representatives] = useState([
-        { name: 'Amy Elsner', image: 'amyelsner.png' },
-        { name: 'Anna Fali', image: 'annafali.png' },
-        { name: 'Asiya Javayant', image: 'asiyajavayant.png' },
-        { name: 'Bernardo Dominic', image: 'bernardodominic.png' },
-        { name: 'Elwin Sharvill', image: 'elwinsharvill.png' },
-        { name: 'Ioni Bowcher', image: 'ionibowcher.png' },
-        { name: 'Ivan Magalhaes', image: 'ivanmagalhaes.png' },
-        { name: 'Onyama Limba', image: 'onyamalimba.png' },
-        { name: 'Stephen Shaw', image: 'stephenshaw.png' },
-        { name: 'XuXue Feng', image: 'xuxuefeng.png' }
-    ]);
-    const [statuses] = useState(['unqualified', 'qualified', 'new', 'negotiation', 'renewal']);
-
-    const getSeverity = (status) => {
-        switch (status) {
-            case 'unqualified':
-                return 'danger';
-
-            case 'qualified':
-                return 'success';
-
-            case 'new':
-                return 'info';
-
-            case 'negotiation':
-                return 'warning';
-
-            case 'renewal':
-                return null;
-        }
+    const handleChangeOptionsCategory = (event) => {
+        setSelectedOptionCategory(event.target.value);
     };
 
-    useEffect(() => {
-        CustomerService.getCustomersMedium().then((data) => {
-            setCustomers(getCustomers(data));
-            setLoading(false);
-        });
-    }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const getCustomers = (data) => {
-        return [...(data || [])].map((d) => {
-            d.date = new Date(d.date);
-
-            return d;
-        });
+    const handleChangeOptionsIndustry = (event) => {
+        setSelectedOptionIndustry(event.target.value);
     };
 
-    const onGlobalFilterChange = (e) => {
-        const value = e.target.value;
-        let _filters = { ...filters };
-
-        _filters['global'].value = value;
-
-        setFilters(_filters);
-        setGlobalFilterValue(value);
+    // Dynamic template counts (Replace this with API data)
+    const templateCounts = {
+        marketing: 30,
+        utility: 26,
+        authentication: 28,
+        ecommerce: 30,
+        financial: 26,
+        education: 28,
+        banking: 28,
+        healthcare: 22,
+        logistics: 18,
+        retail: 35,
+        corporate: 21,
+        entertainment: 19,
+        travel: 23,
+        food: 27,
+        real_estate: 20,
+        manufacturing: 25,
+        science: 17
     };
 
-    const renderHeader = () => {
-        return (
-            <div className="flex justify-content-end">
-                <IconField iconPosition="left">
-                    <InputIcon className="pi pi-search" />
-                    <InputText value={globalFilterValue} onChange={onGlobalFilterChange} placeholder="Keyword Search" />
-                </IconField>
-            </div>
-        );
-    };
+    // Categories Data (Dynamic count)
+    const categories = [
+        { id: "marketing", label: `Marketing (${templateCounts.marketing})` },
+        { id: "utility", label: `Utility (${templateCounts.utility})` },
+        { id: "authentication", label: `Authentication (${templateCounts.authentication})` }
+    ];
 
-    const countryBodyTemplate = (rowData) => {
-        return (
-            <div className="flex align-items-center gap-2">
-                <img alt="flag" src="https://primefaces.org/cdn/primereact/images/flag/flag_placeholder.png" className={`flag flag-${rowData.country.code}`} style={{ width: '24px' }} />
-                <span>{rowData.country.name}</span>
-            </div>
-        );
-    };
-
-    const representativeBodyTemplate = (rowData) => {
-        const representative = rowData.representative;
-
-        return (
-            <div className="flex align-items-center gap-2">
-                <img alt={representative.name} src={`https://primefaces.org/cdn/primereact/images/avatar/${representative.image}`} width="32" />
-                <span>{representative.name}</span>
-            </div>
-        );
-    };
-
-    const representativesItemTemplate = (option) => {
-        return (
-            <div className="flex align-items-center gap-2">
-                <img alt={option.name} src={`https://primefaces.org/cdn/primereact/images/avatar/${option.image}`} width="32" />
-                <span>{option.name}</span>
-            </div>
-        );
-    };
-
-    const statusBodyTemplate = (rowData) => {
-        return <Tag value={rowData.status} severity={getSeverity(rowData.status)} />;
-    };
-
-    const statusItemTemplate = (option) => {
-        return <Tag value={option} severity={getSeverity(option)} />;
-    };
-
-    const verifiedBodyTemplate = (rowData) => {
-        return <i className={classNames('pi', { 'true-icon pi-check-circle': rowData.verified, 'false-icon pi-times-circle': !rowData.verified })}></i>;
-    };
-
-    const representativeRowFilterTemplate = (options) => {
-        return (
-            <MultiSelect
-                value={options.value}
-                options={representatives}
-                itemTemplate={representativesItemTemplate}
-                onChange={(e) => options.filterApplyCallback(e.value)}
-                optionLabel="name"
-                placeholder="Any"
-                className="p-column-filter"
-                maxSelectedLabels={1}
-                style={{ minWidth: '14rem' }}
-            />
-        );
-    };
-
-    const statusRowFilterTemplate = (options) => {
-        return (
-            <Dropdown value={options.value} options={statuses} onChange={(e) => options.filterApplyCallback(e.value)} itemTemplate={statusItemTemplate} placeholder="Select One" className="p-column-filter" showClear style={{ minWidth: '12rem' }} />
-        );
-    };
-
-    const verifiedRowFilterTemplate = (options) => {
-        return <TriStateCheckbox value={options.value} onChange={(e) => options.filterApplyCallback(e.value)} />;
-    };
-
-    const header = renderHeader();
+    // Industries Data (first 4 are visible, rest are hidden)
+    const industries = [
+        { id: "ecommerce", label: `E-commerce (${templateCounts.ecommerce})`, icon: <ShoppingCartOutlinedIcon fontSize='small' /> },
+        { id: "financial", label: `Financial (${templateCounts.financial})`, icon: <CardTravelOutlinedIcon fontSize='small' /> },
+        { id: "education", label: `Education (${templateCounts.education})`, icon: <SchoolOutlinedIcon fontSize='small' /> },
+        { id: "banking", label: `Banking (${templateCounts.banking})`, icon: <AccountBalanceOutlinedIcon fontSize='small' /> },
+        { id: "healthcare", label: `Healthcare (${templateCounts.healthcare})`, icon: <HealthAndSafetyOutlinedIcon fontSize='small' /> },
+        { id: "logistics", label: `Logistics (${templateCounts.logistics})`, icon: <LocalShippingOutlinedIcon fontSize='small' /> },
+        { id: "retail", label: `Retail (${templateCounts.retail})`, icon: <StorefrontOutlinedIcon fontSize='small' /> },
+        { id: "corporate", label: `Corporate (${templateCounts.corporate})`, icon: <WorkOutlineOutlinedIcon fontSize='small' /> },
+        { id: "entertainment", label: `Entertainment (${templateCounts.entertainment})`, icon: <MovieFilterOutlinedIcon fontSize='small' /> },
+        { id: "travel", label: `Travel (${templateCounts.travel})`, icon: <PublicOutlinedIcon fontSize='small' /> },
+        { id: "food", label: `Food & Beverage (${templateCounts.food})`, icon: <RestaurantOutlinedIcon fontSize='small' /> },
+        { id: "real_estate", label: `Real Estate (${templateCounts.real_estate})`, icon: <HouseOutlinedIcon fontSize='small' /> },
+        { id: "manufacturing", label: `Manufacturing (${templateCounts.manufacturing})`, icon: <SettingsOutlinedIcon fontSize='small' /> },
+        { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> }
+    ];
 
     return (
-        <div className="card">
-            <DataTable value={customers} paginator rows={10} dataKey="id" filters={filters} filterDisplay="row" loading={loading}
-                globalFilterFields={['name', 'country.name', 'representative.name', 'status']} header={header} emptyMessage="No customers found.">
-                <Column field="name" header="Name" filter filterPlaceholder="Search by name" style={{ minWidth: '12rem' }} />
-                <Column header="Country" filterField="country.name" style={{ minWidth: '12rem' }} body={countryBodyTemplate} filter filterPlaceholder="Search by country" />
-                <Column header="Agent" filterField="representative" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '14rem' }}
-                    body={representativeBodyTemplate} filter filterElement={representativeRowFilterTemplate} />
-                <Column field="status" header="Status" showFilterMenu={false} filterMenuStyle={{ width: '14rem' }} style={{ minWidth: '12rem' }} body={statusBodyTemplate} filter filterElement={statusRowFilterTemplate} />
-                <Column field="verified" header="Verified" dataType="boolean" style={{ minWidth: '6rem' }} body={verifiedBodyTemplate} filter filterElement={verifiedRowFilterTemplate} />
-            </DataTable>
+        <div className='w-full'>
+            <div className='flex gap-3 min-h-[83vh] flex-wrap'>
+
+                {/* Categories Section */}
+                <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-60'>
+                    <div className='text-gray-500 font-medium text-md mb-1'>Categories</div>
+                    <div>
+                        {categories.map((category) => (
+                            <div
+                                key={category.id}
+                                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                                    ${selectedOptionCategory === category.id ? 'bg-gray-800' : 'bg-transparent'}`}
+                            >
+                                <RadioButton
+                                    inputId={`radio_${category.id}`}
+                                    name="radioGroupCategory"
+                                    value={category.id}
+                                    onChange={handleChangeOptionsCategory}
+                                    checked={selectedOptionCategory === category.id}
+                                />
+                                <label
+                                    htmlFor={`radio_${category.id}`}
+                                    className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id ? 'text-green-600' : 'text-gray-700'}`}
+                                >
+                                    {category.label}
+                                </label>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Industries Section */}
+                    <div className='mt-2'>
+                        <div className='text-gray-500 font-medium text-md mb-1'>Industries</div>
+                        <div>
+                            {industries.slice(0, showAllIndustries ? industries.length : 4).map((industry) => (
+                                <div
+                                    key={industry.id}
+                                    className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                                        ${selectedOptionIndustry === industry.id ? 'bg-gray-800' : 'bg-transparent'}`}
+                                >
+                                    <RadioButton
+                                        inputId={`radio_${industry.id}`}
+                                        name="radioGroupIndustry"
+                                        value={industry.id}
+                                        onChange={handleChangeOptionsIndustry}
+                                        checked={selectedOptionIndustry === industry.id}
+                                    />
+                                    <label
+                                        htmlFor={`radio_${industry.id}`}
+                                        className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
+                                            ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-700'}`}
+                                    >
+                                        {industry.icon} {industry.label}
+                                    </label>
+                                </div>
+                            ))}
+
+                            {/* View More Button */}
+                            {!showAllIndustries && industries.length > 4 && (
+                                <button
+                                    className="mt-2 text-blue-500 text-sm font-medium cursor-pointer hover:underline"
+                                    onClick={() => setShowAllIndustries(true)}
+                                >
+                                    View More
+                                </button>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
-}
+};
+
+export default ManageTemplate;

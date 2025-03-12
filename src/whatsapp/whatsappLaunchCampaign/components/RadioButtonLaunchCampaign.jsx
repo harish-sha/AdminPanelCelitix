@@ -145,7 +145,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
       setFileData(jsonData);
       setColumns(headers);
       setFileHeaders(headers);
-      setIsUploaded(false); 
+      setIsUploaded(false);
       setTotalRecords(jsonData.length);
     };
     reader.readAsBinaryString(file);
@@ -210,7 +210,7 @@ function RadioButtonLaunchCampaign({ onOptionChange, onFileUpload, onGroupChange
 
       if (response?.message === "File Upload Successfully") {
         setIsUploaded(true);
-        setXlsxPath(response.filepath); 
+        setXlsxPath(response.filepath);
         console.log("xlsxpath - ", response.filepath);
 
         setFileData(response.sampleRecords || []);
