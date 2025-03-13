@@ -33,6 +33,9 @@ import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
 import HouseOutlinedIcon from '@mui/icons-material/HouseOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
 import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
+import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
+import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 
 
 import DataTable from './components/Datatable.jsx'
@@ -79,6 +82,9 @@ const ManageTemplate = () => {
     const [selectedOptionCategory, setSelectedOptionCategory] = useState("marketing");
     const [selectedOptionIndustry, setSelectedOptionIndustry] = useState("ecommerce");
     const [showAllIndustries, setShowAllIndustries] = useState(false);
+
+    const [searchActive, setSearchActive] = useState(false);
+
 
 
     const handleChangeOptionsCategory = (event) => {
@@ -249,6 +255,106 @@ const ManageTemplate = () => {
         setFilteredData(filtered);
     };
 
+    // Dummy Templates Data (Add this inside the ManageTemplate component)
+    const dummyTemplates = [
+        {
+            id: 1, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 2, name: "Payment Reminder", category: "utility", industry: "banking",
+            header: "Payment Reminder ⚠️",
+            body: "Your monthly subscription payment of ₹999 is due. Avoid service disruption by paying now.",
+            button: { type: "cta", text: "Pay Now", link: "#" }
+        },
+        {
+            id: 3, name: "Appointment Booking", category: "authentication", industry: "healthcare",
+            header: "Your Appointment is Booked! ✅",
+            body: "Your appointment with Dr. Sharma is confirmed for 5th March, 10:00 AM. Location: XYZ Clinic.",
+            button: { type: "quick_reply", text: "Reschedule" }
+        },
+        {
+            id: 4, name: "Discount Offer", category: "marketing", industry: "retail",
+            header: "Limited Time Offer! 🔥",
+            body: "Get 20% OFF on your next purchase! Use code *SAVE20* at checkout.",
+            button: { type: "cta", text: "Shop Now", link: "#" }
+        },
+        {
+            id: 5, name: "Subscription Expiry Alert", category: "utility", industry: "education",
+            header: "Subscription Expiring Soon! ⏳",
+            body: "Your premium access to Online Courses will expire in 3 days. Renew now to continue learning!",
+            button: { type: "cta", text: "Renew Now", link: "#" }
+        },
+        {
+            id: 6, name: "New Product Launch", category: "marketing", industry: "ecommerce",
+            header: "Introducing Our New Product! 🚀",
+            body: "Meet the all-new SmartWatch X with advanced features. Pre-order now!",
+            button: { type: "cta", text: "Pre-Order Now", link: "#" }
+        },
+        {
+            id: 7, name: "Customer Support Response", category: "utility", industry: "corporate",
+            header: "We Received Your Query 📨",
+            body: "Our support team is reviewing your request. Expect a response within 24 hours.",
+            button: { type: "quick_reply", text: "Contact Support" }
+        },
+        {
+            id: 8, name: "Flight Booking Confirmation", category: "authentication", industry: "travel",
+            header: "Your Flight is Confirmed! ✈️",
+            body: "Flight AI-123 from Delhi to Mumbai is confirmed for 10th March. Check-in starts 24 hours before departure.",
+            button: { type: "cta", text: "View Ticket", link: "#" }
+        },
+        {
+            id: 9, name: "Food Order Update", category: "utility", industry: "food",
+            header: "Your Order is Being Prepared 🍕",
+            body: "Your food order will be ready in 15 minutes. Get ready to enjoy your meal!",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 10, name: "Event Reminder", category: "marketing", industry: "entertainment",
+            header: "Reminder: Music Concert Tonight 🎶",
+            body: "Don't forget! Your ticket for the Coldplay Concert is valid for 7:00 PM tonight. See you there!",
+            button: { type: "quick_reply", text: "View Details" }
+        },
+        {
+            id: 11, name: "Loan Application Status", category: "authentication", industry: "banking",
+            header: "Loan Application Approved! 🎉",
+            body: "Congrats! Your loan application has been approved. Check the details and next steps here.",
+            button: { type: "cta", text: "View Status", link: "#" }
+        },
+        {
+            id: 12, name: "Health Checkup Reminder", category: "utility", industry: "healthcare",
+            header: "Time for Your Health Checkup! 🏥",
+            body: "Stay healthy! It's time for your routine checkup. Book an appointment now.",
+            button: { type: "cta", text: "Book Now", link: "#" }
+        }
+    ];
+
+    // Updated Templates Display UI (Add this inside your JSX)
+    <div className="grid grid-cols-3 gap-4 mt-4">
+        {dummyTemplates
+            .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
+            .map(template => (
+                <div key={template.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+                    <h3 className="font-semibold text-gray-700">{template.header}</h3>
+                    <p className="text-sm text-gray-500 mt-2">{template.body}</p>
+                    <div className="mt-3">
+                        {template.button.type === "cta" ? (
+                            <a href={template.button.link} className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 transition-all">
+                                {template.button.text}
+                            </a>
+                        ) : (
+                            <button className="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 transition-all">
+                                {template.button.text}
+                            </button>
+                        )}
+                    </div>
+                </div>
+            ))}
+    </div>
+
+
 
     return (
         <div className='w-full'>
@@ -256,7 +362,53 @@ const ManageTemplate = () => {
                 <Loader />
             ) : (
 
-                <Box sx={{ width: '100%' }}>
+
+
+                <Box sx={{
+                    width: '100%',
+                    maxHeight: '91vh',
+                    overflow: 'hidden'
+                }} >
+                    <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full mb-2' >
+                        <div>
+                            <h1 className='text-xl font-semibold text-gray-700'>Manage Templates</h1>
+                        </div>
+                        <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 `}>
+                            <input
+                                type="text"
+                                className={`border border-gray-300 rounded-lg px-4 py-2 text-sm transition-all duration-300 ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
+                                placeholder="Search templates (status, name etc.)"
+                                onBlur={() => setSearchActive(false)}
+                            />
+                            <IoSearch
+                                className="absolute right-3 text-gray-600 cursor-pointer"
+                                size={22}
+                                color='green'
+                                onClick={() => setSearchActive(true)}
+                            />
+                        </div>
+                        <div className='flex gap-2'>
+                            <div className="w-max-content">
+                                <UniversalButton
+                                    id='manageTemplateAddNewBtn'
+                                    name='manageTemplateAddNewBtn'
+                                    label="Add New"
+                                    onClick={() => navigate("/createtemplate")}
+                                    variant="primary"
+                                    icon={<AddOutlinedIcon fontSize='small' />}
+                                />
+                            </div>
+                            <div className="w-max-content ">
+                                <UniversalButton
+                                    id='syncStatusBtn'
+                                    name='syncStatusBtn'
+                                    label="Sync Status"
+                                    variant="primary"
+                                    icon={<SyncOutlinedIcon fontSize='small' />}
+                                />
+                            </div>
+                        </div>
+                    </div>
                     <Tabs
                         value={value}
                         onChange={handleChange}
@@ -268,7 +420,7 @@ const ManageTemplate = () => {
 
                             label={
                                 <span>
-                                    <GradingOutlinedIcon size={20} /> Templates
+                                    <ExploreOutlinedIcon size={20} /> Explore
                                 </span>
                             }
                             {...a11yProps(0)}
@@ -286,7 +438,7 @@ const ManageTemplate = () => {
                         <Tab
                             label={
                                 <span>
-                                    <LibraryBooksOutlinedIcon size={20} /> Library
+                                    <LibraryBooksOutlinedIcon size={20} /> All Templates
                                 </span>
                             }
                             {...a11yProps(1)}
@@ -303,8 +455,107 @@ const ManageTemplate = () => {
                         />
                     </Tabs>
                     <CustomTabPanel value={value} index={0}>
+                        <div className='flex gap-3 flex-wrap min-h-[90vh]'>
+                            <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-70 overflow-scroll'>
+                                {/* categrories */}
+                                <div>
+                                    <label className='text-gray-600 font-medium text-md mb-2'>Categories</label>
+                                    {categories.map((category) => (
+                                        <div
+                                            key={category.id}
+                                            className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
+                                                                            ${selectedOptionCategory === category.id ? 'bg-white' : 'bg-transparent'}`}
+                                        >
+                                            <RadioButton
+                                                inputId={`radio_${category.id}`}
+                                                name="radioGroupCategory"
+                                                value={category.id}
+                                                onChange={handleChangeOptionsCategory}
+                                                checked={selectedOptionCategory === category.id}
+                                            />
+                                            <label
+                                                htmlFor={`radio_${category.id}`}
+                                                className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id ? 'text-green-600' : 'text-gray-700'}`}
+                                            >
+                                                {category.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
+
+
+                                {/* Industries */}
+                                <div className="mt-2">
+                                    <label className="text-gray-600 font-medium text-md mb-2">Industries</label>
+                                    <div className={`overflow-y-auto transition-all duration-500 ${showAllIndustries ? 'max-h-[400px]' : 'max-h-[200px]'} rounded-md`}>
+                                        {industries.map((industry, index) => (
+                                            <div
+                                                key={industry.id}
+                                                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                    ${selectedOptionIndustry === industry.id ? 'bg-white' : 'bg-transparent'}`}
+                                            >
+                                                <RadioButton
+                                                    inputId={`radio_${industry.id}`}
+                                                    name="radioGroupIndustry"
+                                                    value={industry.id}
+                                                    onChange={handleChangeOptionsIndustry}
+                                                    checked={selectedOptionIndustry === industry.id}
+                                                />
+                                                <label
+                                                    htmlFor={`radio_${industry.id}`}
+                                                    className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
+                        ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-700'}`}
+                                                >
+                                                    {industry.icon} {industry.label}
+                                                </label>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {industries.length > 4 && (
+                                        <div className="flex justify-center mt-2">
+                                            <button
+                                                className="text-blue-500 text-sm font-medium cursor-pointer hover:underline transition-all duration-300"
+                                                onClick={() => setShowAllIndustries(!showAllIndustries)}
+                                            >
+                                                {showAllIndustries ? "View Less Industries" : "View More Industries"}
+                                            </button>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                            {/* Fixed Layout for Template Section */}
+                            <div className="bg-white flex-2 rounded-md p-2 overflow-auto">
+                                <div>
+                                    <h2 className="text-xl font-semibold text-gray-800">Template Samples</h2>
+                                    <div className="grid grid-cols-2 gap-4 mt-4 max-h-[500px] overflow-auto">
+                                        {dummyTemplates
+                                            .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
+                                            .map(template => (
+                                                <div key={template.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+                                                    <h3 className="font-semibold text-gray-700">{template.header}</h3>
+                                                    <p className="text-sm text-gray-500 mt-2">{template.body}</p>
+                                                    <div className="mt-3">
+                                                        {template.button.type === "cta" ? (
+                                                            <a href={template.button.link} className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 transition-all">
+                                                                {template.button.text}
+                                                            </a>
+                                                        ) : (
+                                                            <button className="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 transition-all">
+                                                                {template.button.text}
+                                                            </button>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </CustomTabPanel>
+                    <CustomTabPanel value={value} index={1}>
                         <div className='w-full' >
-                            <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full' >
+                            {/* <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full' >
                                 <div>
                                     <h1 className='text-xl font-semibold text-gray-800 mb-4'>Manage Templates</h1>
                                 </div>
@@ -327,7 +578,7 @@ const ManageTemplate = () => {
                                         />
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
 
                             <>
                                 <div className='flex flex-wrap gap-4 items-end justify-start  mb-5 w-full'>
@@ -474,105 +725,8 @@ const ManageTemplate = () => {
                             </>
                         </div>
                     </CustomTabPanel>
-                    <CustomTabPanel value={value} index={1}>
-                        <div className='w-full'>
-                            {/* <h1 className='text-xl font-semibold text-gray-800 mb-4'>Libraries</h1> */}
-                            <div className='flex gap-3 min-h-[83vh] flex-wrap'>
-
-                                <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-67'>
-                                    {/* categrories */}
-                                    {/* <HdrStrongOutlinedIcon /> */}
-                                    <div className='text-gray-600 font-medium text-md mb-2'>Categories</div>
-                                    <div className='' >
-                                        {categories.map((category) => (
-                                            <div
-                                                key={category.id}
-                                                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
-                                                                            ${selectedOptionCategory === category.id ? 'bg-white' : 'bg-transparent'}`}
-                                            >
-                                                <RadioButton
-                                                    inputId={`radio_${category.id}`}
-                                                    name="radioGroupCategory"
-                                                    value={category.id}
-                                                    onChange={handleChangeOptionsCategory}
-                                                    checked={selectedOptionCategory === category.id}
-                                                />
-                                                <label
-                                                    htmlFor={`radio_${category.id}`}
-                                                    className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id ? 'text-green-600' : 'text-gray-700'}`}
-                                                >
-                                                    {category.label}
-                                                </label>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    {/* Industries */}
-                                    <div className='mt-2 ' >
-                                        <div className='text-gray-600 font-medium text-md mb-2'>Industries</div>
-                                        <div className='h-150 overflow-auto' >
-                                            {industries.slice(0, showAllIndustries ? industries.length : 4).map((industry) => (
-                                                <div
-                                                    key={industry.id}
-                                                    className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
-                                                                                    ${selectedOptionIndustry === industry.id ? 'bg-white' : 'bg-transparent'}`}
-                                                >
-                                                    <RadioButton
-                                                        inputId={`radio_${industry.id}`}
-                                                        name="radioGroupIndustry"
-                                                        value={industry.id}
-                                                        onChange={handleChangeOptionsIndustry}
-                                                        checked={selectedOptionIndustry === industry.id}
-                                                    />
-                                                    <label
-                                                        htmlFor={`radio_${industry.id}`}
-                                                        className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
-                                                                                        ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-00'}`}
-                                                    >
-                                                        {industry.icon} {industry.label}
-                                                    </label>
-                                                </div>
-                                            ))}
-
-                                            {/* View More Button */}
-                                            {!showAllIndustries && industries.length > 4 && (
-                                                <div className='flex justify-center mt-1' >
-
-                                                    <button
-                                                        className="mt-2 text-blue-500 text-sm font-medium cursor-pointer hover:underline"
-                                                        onClick={() => setShowAllIndustries(true)}
-                                                    >
-                                                        View More Industries
-                                                    </button>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className='bg-white flex-2 rounded-md p-2'>
-                                    {/* <Grid item xs={12} sm={8}>
-                                        <Paper elevation={3} sx={{ padding: 2 }}>
-                                            Template Samples
-                                            <div>
-                                                {filteredData.map((template, index) => (
-                                                    <div key={index} className="template-sample">
-                                                        <Typography variant="body1">{template.templateName}</Typography>
-                                                        <Typography variant="body2" color="textSecondary">
-                                                            {template.category} - {template.type}
-                                                        </Typography>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        </Paper>
-                                    </Grid> */}
-                                    <div>
-                                        Template Samples
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </CustomTabPanel>
                 </Box>
+
 
             )}
         </div>

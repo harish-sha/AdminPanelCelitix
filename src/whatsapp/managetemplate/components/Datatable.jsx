@@ -18,11 +18,13 @@ import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
+import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
 
 
 
 import { getWabaTemplate, getWabaTemplateDetails } from '../../../apis/whatsapp/whatsapp.js';
 import whatsappImg from '../../../assets/images/whatsappdummy.webp';
+import CustomTooltip from '../../components/CustomTooltip.jsx';
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -133,6 +135,10 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
         // Implement delete logic here
     };
 
+    const handleApi = (row) => {
+
+    }
+
     // const handleDelete = (event, row) => {
     //     setCurrentRow(row);
     //     setAnchorEl(event.currentTarget);
@@ -196,28 +202,60 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
             minWidth: 150,
             renderCell: (params) => (
                 <>
-                    <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-                        <VisibilityIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'green'
-                            }}
-                        />
-                    </IconButton>
-                    <IconButton onClick={() => handleDuplicate(params.row)}>
-                        <FileCopyIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: 'gray',
-                            }} />
-                    </IconButton>
-                    <IconButton onClick={(event) => handleDelete(event, params.row)}>
-                        <DeleteForeverIcon
-                            sx={{
-                                fontSize: '1.2rem',
-                                color: '#e31a1a',
-                            }} />
-                    </IconButton>
+                    <CustomTooltip
+                        title="View"
+                        placement="top"
+                        arrow
+                    >
+                        <IconButton className='text-xs' onClick={() => handleView(params.row)}>
+                            <VisibilityIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: 'green'
+                                }}
+                            />
+                        </IconButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                        title="Duplicate"
+                        placement="top"
+                        arrow
+                    >
+                        <IconButton onClick={() => handleDuplicate(params.row)}>
+                            <FileCopyIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: 'gray',
+                                }} />
+                        </IconButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                        title="CURL"
+                        placement="top"
+                        arrow
+                    >
+                        <IconButton onClick={(event) => handleApi(event, params.row)}>
+                            <TerminalOutlinedIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: '#000',
+                                }} />
+                        </IconButton>
+                    </CustomTooltip>
+                    <CustomTooltip
+                        title="Delete"
+                        placement="top"
+                        arrow
+                    >
+                        <IconButton onClick={(event) => handleDelete(event, params.row)}>
+                            <DeleteForeverIcon
+                                sx={{
+                                    fontSize: '1.2rem',
+                                    color: '#e31a1a',
+                                }} />
+                        </IconButton>
+                    </CustomTooltip>
+
                 </>
             ),
         },

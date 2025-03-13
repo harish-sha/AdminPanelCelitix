@@ -1,152 +1,102 @@
-import React, { useState } from 'react';
-import { RadioButton } from 'primereact/radiobutton';
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
-import CardTravelOutlinedIcon from '@mui/icons-material/CardTravelOutlined';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-import HealthAndSafetyOutlinedIcon from '@mui/icons-material/HealthAndSafetyOutlined';
-import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
-import StorefrontOutlinedIcon from '@mui/icons-material/StorefrontOutlined';
-import WorkOutlineOutlinedIcon from '@mui/icons-material/WorkOutlineOutlined';
-import MovieFilterOutlinedIcon from '@mui/icons-material/MovieFilterOutlined';
-import PublicOutlinedIcon from '@mui/icons-material/PublicOutlined';
-import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
-import HouseOutlinedIcon from '@mui/icons-material/HouseOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
+// Add to your existing `ManageTemplate` component
 
-const ManageTemplate = () => {
-    const [selectedOptionCategory, setSelectedOptionCategory] = useState("marketing");
-    const [selectedOptionIndustry, setSelectedOptionIndustry] = useState("ecommerce");
-    const [showAllIndustries, setShowAllIndustries] = useState(false);
+// Update View More/Less Industries Button
+<div className='flex justify-center mt-1'>
+    <button
+        className="mt-2 text-blue-500 text-sm font-medium cursor-pointer hover:underline transition-all duration-300"
+        onClick={() => setShowAllIndustries(!showAllIndustries)}
+    >
+        {showAllIndustries ? "View Less Industries" : "View More Industries"}
+    </button>
+</div>
 
-    const handleChangeOptionsCategory = (event) => {
-        setSelectedOptionCategory(event.target.value);
-    };
+// Animated Search Bar Implementation (Add inside your `div` where "search" is written)
+const [searchActive, setSearchActive] = useState(false);
 
-    const handleChangeOptionsIndustry = (event) => {
-        setSelectedOptionIndustry(event.target.value);
-    };
+<div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-64" : "w-12"}`}>
+    <input
+        type="text"
+        className={`border border-gray-300 rounded-lg px-4 py-2 text-sm transition-all duration-300 ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"}`}
+        placeholder="Search templates..."
+        onBlur={() => setSearchActive(false)}
+    />
+    <IoSearch
+        className="absolute right-3 text-gray-600 cursor-pointer"
+        size={20}
+        onClick={() => setSearchActive(true)}
+    />
+</div>
 
-    // Dynamic template counts (Replace this with API data)
-    const templateCounts = {
-        marketing: 30,
-        utility: 26,
-        authentication: 28,
-        ecommerce: 30,
-        financial: 26,
-        education: 28,
-        banking: 28,
-        healthcare: 22,
-        logistics: 18,
-        retail: 35,
-        corporate: 21,
-        entertainment: 19,
-        travel: 23,
-        food: 27,
-        real_estate: 20,
-        manufacturing: 25,
-        science: 17
-    };
 
-    // Categories Data (Dynamic count)
-    const categories = [
-        { id: "marketing", label: `Marketing (${templateCounts.marketing})` },
-        { id: "utility", label: `Utility (${templateCounts.utility})` },
-        { id: "authentication", label: `Authentication (${templateCounts.authentication})` }
-    ];
+{/* Industry List with View More/View Less Toggle */ }
+{/* Industry List with Scrollable Expansion */ }
+<div className="mt-2">
+    <div className="text-gray-600 font-medium text-md mb-2">Industries</div>
 
-    // Industries Data (first 4 are visible, rest are hidden)
-    const industries = [
-        { id: "ecommerce", label: `E-commerce (${templateCounts.ecommerce})`, icon: <ShoppingCartOutlinedIcon fontSize='small' /> },
-        { id: "financial", label: `Financial (${templateCounts.financial})`, icon: <CardTravelOutlinedIcon fontSize='small' /> },
-        { id: "education", label: `Education (${templateCounts.education})`, icon: <SchoolOutlinedIcon fontSize='small' /> },
-        { id: "banking", label: `Banking (${templateCounts.banking})`, icon: <AccountBalanceOutlinedIcon fontSize='small' /> },
-        { id: "healthcare", label: `Healthcare (${templateCounts.healthcare})`, icon: <HealthAndSafetyOutlinedIcon fontSize='small' /> },
-        { id: "logistics", label: `Logistics (${templateCounts.logistics})`, icon: <LocalShippingOutlinedIcon fontSize='small' /> },
-        { id: "retail", label: `Retail (${templateCounts.retail})`, icon: <StorefrontOutlinedIcon fontSize='small' /> },
-        { id: "corporate", label: `Corporate (${templateCounts.corporate})`, icon: <WorkOutlineOutlinedIcon fontSize='small' /> },
-        { id: "entertainment", label: `Entertainment (${templateCounts.entertainment})`, icon: <MovieFilterOutlinedIcon fontSize='small' /> },
-        { id: "travel", label: `Travel (${templateCounts.travel})`, icon: <PublicOutlinedIcon fontSize='small' /> },
-        { id: "food", label: `Food & Beverage (${templateCounts.food})`, icon: <RestaurantOutlinedIcon fontSize='small' /> },
-        { id: "real_estate", label: `Real Estate (${templateCounts.real_estate})`, icon: <HouseOutlinedIcon fontSize='small' /> },
-        { id: "manufacturing", label: `Manufacturing (${templateCounts.manufacturing})`, icon: <SettingsOutlinedIcon fontSize='small' /> },
-        { id: "science", label: `Science & Research (${templateCounts.science})`, icon: <ScienceOutlinedIcon fontSize='small' /> }
-    ];
+    {/* Scrollable Industry List with max height */}
+    <div className={`overflow-y-auto transition-all duration-500 ${showAllIndustries ? 'max-h-[400px]' : 'max-h-[200px]'} border rounded-md p-2`}>
+        {industries.map((industry, index) => (
+            <div
+                key={industry.id}
+                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                    ${selectedOptionIndustry === industry.id ? 'bg-white' : 'bg-transparent'}`}
+            >
+                <RadioButton
+                    inputId={`radio_${industry.id}`}
+                    name="radioGroupIndustry"
+                    value={industry.id}
+                    onChange={handleChangeOptionsIndustry}
+                    checked={selectedOptionIndustry === industry.id}
+                />
+                <label
+                    htmlFor={`radio_${industry.id}`}
+                    className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
+                        ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-700'}`}
+                >
+                    {industry.icon} {industry.label}
+                </label>
+            </div>
+        ))}
+    </div>
 
-    return (
-        <div className='w-full'>
-            <div className='flex gap-3 min-h-[83vh] flex-wrap'>
+    {/* View More / View Less Button (Placed Outside to Prevent Shifting Content) */}
+    {industries.length > 4 && (
+        <div className="flex justify-center mt-2">
+            <button
+                className="text-blue-500 text-sm font-medium cursor-pointer hover:underline transition-all duration-300"
+                onClick={() => setShowAllIndustries(!showAllIndustries)}
+            >
+                {showAllIndustries ? "View Less Industries" : "View More Industries"}
+            </button>
+        </div>
+    )}
+</div>
 
-                {/* Categories Section */}
-                <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-60'>
-                    <div className='text-gray-500 font-medium text-md mb-1'>Categories</div>
-                    <div>
-                        {categories.map((category) => (
-                            <div
-                                key={category.id}
-                                className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
-                                    ${selectedOptionCategory === category.id ? 'bg-gray-800' : 'bg-transparent'}`}
-                            >
-                                <RadioButton
-                                    inputId={`radio_${category.id}`}
-                                    name="radioGroupCategory"
-                                    value={category.id}
-                                    onChange={handleChangeOptionsCategory}
-                                    checked={selectedOptionCategory === category.id}
-                                />
-                                <label
-                                    htmlFor={`radio_${category.id}`}
-                                    className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id ? 'text-green-600' : 'text-gray-700'}`}
-                                >
-                                    {category.label}
-                                </label>
-                            </div>
-                        ))}
-                    </div>
-
-                    {/* Industries Section */}
-                    <div className='mt-2'>
-                        <div className='text-gray-500 font-medium text-md mb-1'>Industries</div>
-                        <div>
-                            {industries.slice(0, showAllIndustries ? industries.length : 4).map((industry) => (
-                                <div
-                                    key={industry.id}
-                                    className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
-                                        ${selectedOptionIndustry === industry.id ? 'bg-gray-800' : 'bg-transparent'}`}
-                                >
-                                    <RadioButton
-                                        inputId={`radio_${industry.id}`}
-                                        name="radioGroupIndustry"
-                                        value={industry.id}
-                                        onChange={handleChangeOptionsIndustry}
-                                        checked={selectedOptionIndustry === industry.id}
-                                    />
-                                    <label
-                                        htmlFor={`radio_${industry.id}`}
-                                        className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
-                                            ${selectedOptionIndustry === industry.id ? 'text-green-600' : 'text-gray-700'}`}
-                                    >
-                                        {industry.icon} {industry.label}
-                                    </label>
-                                </div>
-                            ))}
-
-                            {/* View More Button */}
-                            {!showAllIndustries && industries.length > 4 && (
-                                <button
-                                    className="mt-2 text-blue-500 text-sm font-medium cursor-pointer hover:underline"
-                                    onClick={() => setShowAllIndustries(true)}
-                                >
-                                    View More
+{/* Fixed Layout for Template Section */ }
+<div className="bg-white flex-2 rounded-md p-2 overflow-auto">
+    <div>
+        <h2 className="text-xl font-semibold text-gray-800">Template Samples</h2>
+        <div className="grid grid-cols-2 gap-4 mt-4 max-h-[500px] overflow-auto">
+            {dummyTemplates
+                .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
+                .map(template => (
+                    <div key={template.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+                        <h3 className="font-semibold text-gray-700">{template.header}</h3>
+                        <p className="text-sm text-gray-500 mt-2">{template.body}</p>
+                        <div className="mt-3">
+                            {template.button.type === "cta" ? (
+                                <a href={template.button.link} className="bg-blue-500 text-white text-sm px-4 py-2 rounded-md hover:bg-blue-600 transition-all">
+                                    {template.button.text}
+                                </a>
+                            ) : (
+                                <button className="bg-gray-200 text-gray-700 text-sm px-4 py-2 rounded-md hover:bg-gray-300 transition-all">
+                                    {template.button.text}
                                 </button>
                             )}
                         </div>
                     </div>
-                </div>
-            </div>
+                ))}
         </div>
-    );
-};
+    </div>
+</div>
 
-export default ManageTemplate;

@@ -42,6 +42,7 @@ const UniversalButton = ({
                     <span className='loader'></span>
                 ) : (
                     <>
+                        {/* {icon && <span>{icon}</span>} */}
                         {icon && <span>{icon}</span>}
                         {label}
                     </>
