@@ -36,6 +36,8 @@ import ScienceOutlinedIcon from '@mui/icons-material/ScienceOutlined';
 import ExploreOutlinedIcon from '@mui/icons-material/ExploreOutlined';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import KeyboardArrowRightOutlinedIcon from '@mui/icons-material/KeyboardArrowRightOutlined';
+import ArrowForwardIosOutlinedIcon from '@mui/icons-material/ArrowForwardIosOutlined';
 
 
 import DataTable from './components/Datatable.jsx'
@@ -265,7 +267,7 @@ const ManageTemplate = () => {
         },
         {
             id: 2, name: "Payment Reminder", category: "utility", industry: "banking",
-            header: "Payment Reminder ⚠️",
+            header: "Payment Reminder",
             body: "Your monthly subscription payment of ₹999 is due. Avoid service disruption by paying now.",
             button: { type: "cta", text: "Pay Now", link: "#" }
         },
@@ -328,7 +330,175 @@ const ManageTemplate = () => {
             header: "Time for Your Health Checkup! 🏥",
             body: "Stay healthy! It's time for your routine checkup. Book an appointment now.",
             button: { type: "cta", text: "Book Now", link: "#" }
-        }
+        },
+        {
+            id: 13, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 14, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 15, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
+        {
+            id: 16, name: "Order Confirmation", category: "marketing", industry: "ecommerce",
+            header: "Your Order is Confirmed! 🎉",
+            body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
+            button: { type: "cta", text: "Track Order", link: "#" }
+        },
     ];
 
     // Updated Templates Display UI (Add this inside your JSX)
@@ -336,7 +506,7 @@ const ManageTemplate = () => {
         {dummyTemplates
             .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
             .map(template => (
-                <div key={template.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+                <div key={template.id} className="p-4 border border-gray-50 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
                     <h3 className="font-semibold text-gray-700">{template.header}</h3>
                     <p className="text-sm text-gray-500 mt-2">{template.body}</p>
                     <div className="mt-3">
@@ -361,9 +531,6 @@ const ManageTemplate = () => {
             {isLoading ? (
                 <Loader />
             ) : (
-
-
-
                 <Box sx={{
                     width: '100%',
                     maxHeight: '91vh',
@@ -373,7 +540,8 @@ const ManageTemplate = () => {
                         <div>
                             <h1 className='text-xl font-semibold text-gray-700'>Manage Templates</h1>
                         </div>
-                        <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 `}>
+                        {/* search templates and status */}
+                        {/* <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 `}>
                             <input
                                 type="text"
                                 className={`border border-gray-300 rounded-lg px-4 py-2 text-sm transition-all duration-300 ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
@@ -386,6 +554,34 @@ const ManageTemplate = () => {
                                 color='green'
                                 onClick={() => setSearchActive(true)}
                             />
+                        </div> */}
+                        {/* Search Templates and Status */}
+                        {/* Search Templates and Status */}
+                        <div className="relative flex items-center transition-all duration-300">
+                            <div
+                                className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
+            ${searchActive ? "w-80 px-2" : "w-12"} 
+            ${!searchActive ? "animate-rotate-glow border-green-500" : ""}`}
+                            >
+                                <input
+                                    type="text"
+                                    className={`border-none rounded-lg px-4 py-2 text-sm transition-all duration-300 
+                ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
+                                    placeholder="Search templates (status, name etc.)"
+                                    onBlur={() => setSearchActive(false)}
+                                />
+                                <IoSearch
+                                    className="absolute right-3 text-gray-600 cursor-pointer"
+                                    size={22}
+                                    color='green'
+                                    onClick={() => setSearchActive(true)}
+                                />
+                            </div>
+
+                            {/* Show text beside when search bar is collapsed */}
+                            {!searchActive && (
+                                <span className="ml-3 text-gray-500 transition-opacity duration-300 animate-fade-in">Search Templates</span>
+                            )}
                         </div>
                         <div className='flex gap-2'>
                             <div className="w-max-content">
@@ -458,8 +654,8 @@ const ManageTemplate = () => {
                         <div className='flex gap-3 flex-wrap min-h-[90vh]'>
                             <div className='bg-[#e6f4ff] flex flex-col rounded-md py-2 px-2 shadow-md w-70 overflow-scroll'>
                                 {/* categrories */}
-                                <div>
-                                    <label className='text-gray-600 font-medium text-md mb-2'>Categories</label>
+                                <div className='' >
+                                    <label className='text-gray-600 font-medium text-md'>Categories</label>
                                     {categories.map((category) => (
                                         <div
                                             key={category.id}
@@ -487,7 +683,7 @@ const ManageTemplate = () => {
                                 {/* Industries */}
                                 <div className="mt-2">
                                     <label className="text-gray-600 font-medium text-md mb-2">Industries</label>
-                                    <div className={`overflow-y-auto transition-all duration-500 ${showAllIndustries ? 'max-h-[400px]' : 'max-h-[200px]'} rounded-md`}>
+                                    <div className={`overflow-y-auto transition-all duration-300 ${showAllIndustries ? 'max-h-[400px]' : 'max-h-[300px]'} rounded-md`}>
                                         {industries.map((industry, index) => (
                                             <div
                                                 key={industry.id}
@@ -527,12 +723,20 @@ const ManageTemplate = () => {
                             {/* Fixed Layout for Template Section */}
                             <div className="bg-white flex-2 rounded-md p-2 overflow-auto">
                                 <div>
-                                    <h2 className="text-xl font-semibold text-gray-800">Template Samples</h2>
-                                    <div className="grid grid-cols-2 gap-4 mt-4 max-h-[500px] overflow-auto">
+                                    <div className='flex justify-between py-2' >
+
+                                        <h2 className="text-sm font-semibold text-gray-500">Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12</h2>
+                                        <h2 className="text-sm font-semibold text-green-500">Marketing <KeyboardArrowRightOutlinedIcon /> <ShoppingCartOutlinedIcon fontSize='small' />  E-commerce</h2>
+                                        <div></div>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-4 mt-2 max-h-[74vh] border-t-2 border-gray-400
+                                     
+                                    pt-2 overflow-auto">
                                         {dummyTemplates
                                             .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
                                             .map(template => (
-                                                <div key={template.id} className="p-4 border rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 bg-white">
+                                                <div key={template.id} className="p-4 border-2 border-gray-300 hover:border-2 hover:border-green-500 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-500 bg-white ">
                                                     <h3 className="font-semibold text-gray-700">{template.header}</h3>
                                                     <p className="text-sm text-gray-500 mt-2">{template.body}</p>
                                                     <div className="mt-3">

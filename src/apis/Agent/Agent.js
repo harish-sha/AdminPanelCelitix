@@ -137,6 +137,21 @@ export const addAgent = async (agentData) => {
 };
 
 // Edit Agent
+export const editAgent = async (agentEditData) => {
+  try {
+    const response = await fetchWithAuth(
+      "/proCpaasRest/agent/editAgentByAgentSrNo",
+      {
+        method: "POST",
+        body: JSON.stringify(agentEditData),
+      }
+    );
+    return response;
+  } catch (error) {
+    console.error("Error Editing agent:", error);
+    return { statusCode: 500, message: "Internal Server Error" };
+  }
+};
 
 // Fetch Template List based on selected WABA
 export const getTemplateList = async (wabaSrno) => {

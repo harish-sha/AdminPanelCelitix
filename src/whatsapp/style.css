@@ -79,3 +79,39 @@
   border-color: #2cdd7b;
   background: #2cdd7b;
 }
+
+/* ============================================== */
+/* @keyframes rotate-glow {
+  0% {
+    box-shadow: 0px 0px 3px rgba(34, 197, 94, 0.5);
+  }
+  25% {
+    box-shadow: 2px 2px 5px rgba(34, 197, 94, 0.7);
+  }
+  50% {
+    box-shadow: 0px 0px 10px rgba(34, 197, 94, 0.9);
+  }
+  75% {
+    box-shadow: -2px -2px 5px rgba(34, 197, 94, 0.7);
+  }
+  100% {
+    box-shadow: 0px 0px 3px rgba(34, 197, 94, 0.5);
+  }
+}
+
+.animate-rotate-glow {
+  animation: rotate-glow 1.5s infinite linear;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-in-out;
+} */

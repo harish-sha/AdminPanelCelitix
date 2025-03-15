@@ -34,6 +34,8 @@ import {
 } from "../../apis/Agent/Agent";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
+import { RadioButton } from "primereact/radiobutton";
+import UniversalLabel from "../components/UniversalLabel";
 
 const ManageAgent = () => {
   const [adddepartment, setAddDepartment] = useState(false);
@@ -67,6 +69,9 @@ const ManageAgent = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+
+  const [selectedOption, setSelectedOption] = useState("all");
+
 
 
   // Department LIST
@@ -562,6 +567,12 @@ const ManageAgent = () => {
     );
   };
 
+  const handleChange = (event) => {
+    const value = event.target.value;
+    setSelectedOption(value);
+    // onOptionChange(value);
+  }
+
   return (
     <div>
       {isLoading ? (
@@ -822,7 +833,7 @@ const ManageAgent = () => {
                   filter
                 />
               </div>
-              <RadioGroupFieldupdown
+              {/* <RadioGroupFieldupdown
                 id="assign"
                 name="assign"
                 label="Assign"
@@ -831,7 +842,37 @@ const ManageAgent = () => {
                   { label: "Manual", value: "Manual" },
                   { label: "All", value: "All" },
                 ]}
+              /> */}
+              <UniversalLabel
+                text="Assign"
+                tooltipContent='Select selection for assign'
+                tooltipPlacement="right"
               />
+              <div className="flex mt-2 gap-3" >
+                {/* Option 1 */}
+                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
+                  <div className="flex items-center justify-center gap-2 cursor-pointer" >
+                    <RadioButton inputId="radioOptionAuto" name="radioGroup" value="auto" onChange={handleChange} checked={selectedOption === 'auto'} />
+                    <label htmlFor="radioOptionAuto" className="text-gray-700 font-medium text-sm cursor-pointer">Auto</label>
+                  </div>
+                </label>
+
+                {/* Option 2 */}
+                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
+                  <div className="flex items-center justify-center gap-2" >
+                    <RadioButton inputId="radioOptionManual" name="radioGroup" value="manual" onChange={handleChange} checked={selectedOption === 'manual'} />
+                    <label htmlFor="radioOptionManual" className="text-gray-700 font-medium text-sm cursor-pointer">Manual</label>
+                  </div>
+                </label>
+
+                {/* Option 3 */}
+                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
+                  <div className="flex items-center justify-center gap-2 " >
+                    <RadioButton inputId="radioOptionAll" name="radioGroup" value="all" onChange={handleChange} checked={selectedOption === 'all'} />
+                    <label htmlFor="radioOptionAll" className="text-gray-700 font-medium text-sm">All</label>
+                  </div>
+                </label>
+              </div>
               <div className="flex justify-center ">
                 <UniversalButton
                   label={isSubmitting ? "Adding..." : "Submit"}

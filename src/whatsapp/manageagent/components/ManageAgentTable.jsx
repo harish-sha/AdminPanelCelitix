@@ -238,8 +238,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     fetchAgentList();
   }, []);
 
-  // ================================================
-
   // GET WABA LIST
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -324,8 +322,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
     setWabaTemplates(wabaTemplates.filter((_, i) => i !== index));
   };
-
-  // =====================================
 
   // Handle Agent Status Update
   const handleStatusChange = async (srNo, currentStatus) => {
@@ -502,14 +498,6 @@ const ManageAgentTable = ({ id, name, visible }) => {
     console.log("reply");
   };
 
-  // const handleAssign = (row) => {
-  //   setSelectedAgentId(row.id);
-  //   setSelectedAgentName(row.name);
-  //   setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
-  //   setManageAssign(true);
-  //   console.log("agent select for assign", row);
-  // };
-
   const handleAssign = async (row) => {
     if (!row || !row.id) {
       toast.error("No agent selected.");
@@ -584,9 +572,9 @@ const ManageAgentTable = ({ id, name, visible }) => {
     }
   };
 
-  const handleEdit = () => {
+  const handleEdit = (row) => {
     setManageAgentEdit(true);
-    console.log("Edit");
+    console.log("Edit", row);
   };
 
   const columns = [

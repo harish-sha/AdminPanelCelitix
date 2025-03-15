@@ -184,7 +184,6 @@ const WhatsappManageCampaign = () => {
   }, []);
 
   // Fetch initial data - for to load data on page load
-
   const handleShowLogs = async () => {
     console.log("Show Logs:");
     console.log({

@@ -94,6 +94,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [view, setView] = useState(false);
   const [wabaedit, setWabaEdit] = useState(false);
   const [description, setDescription] = useState("");
+  const [about, setAbout] = useState("");
   const [address, setAddress] = useState("");
   const [email, setEmail] = useState("");
   const [vertical, setVertical] = useState(null);
@@ -685,6 +686,15 @@ const WhatsappManageWaba = ({ id, name }) => {
               {wabadetails?.email}
             </a>
           </div>
+          {/* Address Section */}
+          <div>
+            <p className="font-semibold text-gray-800">Address</p>
+            <p
+              className="text-gray-600 text-sm"
+            >
+              {wabadetails?.address}
+            </p>
+          </div>
 
           {/* Website Section */}
           <div>
@@ -785,7 +795,24 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
           </div>
 
+
           {/* Form Fields */}
+          <div>
+            <InputField
+              label="About"
+              id="about"
+              name="about"
+              tooltipContent='About Your Business. Maximum of 139 characters.'
+              tooltipPlacement='top'
+              value={about}
+              onChange={(e) => setAbout(e.target.value)}
+              className="w-full"
+              placeholder="About Your Business"
+              labelStyle={{ fontWeight: 'bold' }}
+              readOnly={false}
+              maxLength="139"
+            />
+          </div>
           <div className="grid lg:grid-cols-2 gap-4 md:grid-cols-2">
             <div>
               <InputField
@@ -800,6 +827,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 placeholder="Enter business description"
                 labelStyle={{ fontWeight: 'bold' }}
                 readOnly={false}
+                maxLength="256"
 
               />
             </div>
@@ -843,7 +871,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 tooltipPlacement='top'
                 value={vertical}
                 options={[
-                  { label: "PROF_SERVICES1", value: "PROF_SERVICES1" },
+                  { label: "PROF_SERVICES", value: "PROF_SERVICES" },
                   { label: "TECH", value: "TECH" },
                   { label: "ECOMMERCE", value: "ECOMMERCE" },
                 ]}
