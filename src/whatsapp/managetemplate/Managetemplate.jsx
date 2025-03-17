@@ -536,7 +536,7 @@ const ManageTemplate = () => {
                     maxHeight: '91vh',
                     overflow: 'hidden'
                 }} >
-                    <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full mb-2' >
+                    <div className='flex flex-wrap gap-4 items-center justify-between w-full mb-2 ' >
                         <div>
                             <h1 className='text-xl font-semibold text-gray-700'>Manage Templates</h1>
                         </div>
@@ -556,31 +556,29 @@ const ManageTemplate = () => {
                             />
                         </div> */}
                         {/* Search Templates and Status */}
-                        {/* Search Templates and Status */}
-                        <div className="relative flex items-center transition-all duration-300">
+                        <div className="relative flex items-center transition-all duration-500 w-120">
                             <div
                                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
-            ${searchActive ? "w-80 px-2" : "w-12"} 
-            ${!searchActive ? "animate-rotate-glow border-green-500" : ""}`}
+            ${searchActive ? "w-80 " : "w-0"} 
+            ${!searchActive ? "animate-rotate-glow" : ""}`}
                             >
                                 <input
                                     type="text"
-                                    className={`border-none rounded-lg px-4 py-2 text-sm transition-all duration-300 
-                ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
+                                    className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300 
+                ${searchActive ? "border border-gray-400 outline-none w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
                                     placeholder="Search templates (status, name etc.)"
                                     onBlur={() => setSearchActive(false)}
                                 />
                                 <IoSearch
-                                    className="absolute right-3 text-gray-600 cursor-pointer"
+                                    className="absolute right-4 text-gray-600 cursor-pointer"
                                     size={22}
                                     color='green'
                                     onClick={() => setSearchActive(true)}
                                 />
                             </div>
 
-                            {/* Show text beside when search bar is collapsed */}
                             {!searchActive && (
-                                <span className="ml-3 text-gray-500 transition-opacity duration-300 animate-fade-in">Search Templates</span>
+                                <span className="ml-2 text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">Search Templates</span>
                             )}
                         </div>
                         <div className='flex gap-2'>
@@ -727,7 +725,8 @@ const ManageTemplate = () => {
 
                                         <h2 className="text-sm font-semibold text-gray-500">Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12</h2>
                                         <h2 className="text-sm font-semibold text-green-500">Marketing <KeyboardArrowRightOutlinedIcon /> <ShoppingCartOutlinedIcon fontSize='small' />  E-commerce</h2>
-                                        <div></div>
+                                        {/* <div></div> */}
+                                        <span></span>
                                     </div>
 
                                     <div className="grid grid-cols-3 gap-4 mt-2 max-h-[74vh] border-t-2 border-gray-400

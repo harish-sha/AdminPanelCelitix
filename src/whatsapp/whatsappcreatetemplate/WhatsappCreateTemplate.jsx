@@ -483,7 +483,7 @@ const WhatsappCreateTemplate = () => {
                             </div>
                         ) : (
                             <>
-                                <div className='border-2 border-dashed p-2 rounded-2xl border-blue-500' >
+                                <div className=' rounded-2xl border-blue-500' >
                                     <div className='w-full text-center py-4 h-96 flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg shadow-lg'>
                                         <p className='text-white text-2xl font-medium font-m flex items-center gap-2'>
                                             <WhatsApp

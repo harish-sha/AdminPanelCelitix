@@ -285,7 +285,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                                 <button
                                     onClick={() => handleDropdownClick(item.name)}
                                     className={clsx(
-                                        'flex items-center justify-between w-full px-4 cursor-pointer py-2  hover:bg-[#e6f4ff] transition-all text-left',
+                                        'flex items-center justify-between w-full px-4 cursor-pointer py-2  hover:bg-[#e6f4ff] transition-all duration-300 text-left',
                                         isActiveRoute(`/${item.name}`) && 'bg-[#6b728075]',
                                         isCollapsed && 'justify-center'
                                     )}

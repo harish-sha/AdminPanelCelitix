@@ -3,6 +3,8 @@ import { Paper, Typography, Box, Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
+import { FaWhatsapp } from 'react-icons/fa';
+
 
 
 
@@ -294,15 +296,30 @@ const WhatsappManageWaba = ({ id, name }) => {
   // };
 
 
+  // const handleEdit = async (row) => {
+  //   setWabaEdit(true);
+  //   setSelectedWaba(row);
+  // };
+
   const handleEdit = async (row) => {
     setWabaEdit(true);
     setSelectedWaba(row);
+    console.log(row)
+    const details = await getwabadetails(row.wabaNumber);
+    const wabaDetails = details.data[0];
+    setAbout(wabaDetails.about);
+    setDescription(wabaDetails.description);
+    setAddress(wabaDetails.address);
+    setEmail(wabaDetails.email);
+    setVertical(wabaDetails.vertical);
+    seteditWebsite1(wabaDetails.websites[0] || "");
+    seteditWebsite2(wabaDetails.websites[1] || "");
+    setPreview(wabaDetails.profile_picture_url || null);
   };
 
   const handleWabaCreate = (e) => {
     setWabaCreatebtn(true);
   };
-
   const handleSync = () => {
     console.log("Sync clicked");
   };
@@ -326,6 +343,7 @@ const WhatsappManageWaba = ({ id, name }) => {
 
     const data = {
       "messaging_product": "whatsapp",
+      "about": about,
       "description": description,
       "email": email,
       "profilePic": null,
@@ -346,8 +364,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     { field: 'expiryDate', headerName: 'Expiry Date', flex: 1, minWidth: 120 },
     { field: 'wabaAccountId', headerName: 'WABA Account ID', flex: 1, minWidth: 120 },
     { field: 'phoneNumberId', headerName: 'Phone Number ID', flex: 1, minWidth: 120 },
-
-    // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
     {
       field: 'action',
       headerName: 'Action',
@@ -413,32 +429,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     },
   ];
 
-
-  // WABA LIST
-  // useEffect(() => {
-  //   if (!isLoggedIn)
-  //     return;
-  //   const fetchWabaList = async () => {
-  //     try {
-  //       setIsLoading(true);
-  //       const response = await getWabaList();
-  //       if (response?.length > 0) {
-  //         setWabaList(response);
-  //       } else {
-  //         console.error("Failed to fetch WABA details");
-  //         toast.error("Failed to load WABA details!");
-  //       }
-  //     } catch (error) {
-  //       console.error("Error fetching WABA list:", error);
-  //       toast.error("Error fetching WABA list.");
-  //     } finally {
-  //       setIsLoading(false);
-  //     }
-  //   };
-  //   fetchWabaList();
-  // }, [isLoggedIn]);
-
-
   // WABA LIST
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -459,19 +449,10 @@ const WhatsappManageWaba = ({ id, name }) => {
     fetchWabaList();
   }, []);
 
-  // const rows = Array.from({ length: 500 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   wabaName: 'Demo',
-  //   wabaNumber: '9876543210',
-  //   createdOn: '9876543210',
-  //   status: 'Pending',
-  //   action: 'True',
-  // }));
-
   // Map API Data to DataGrid Rows
   const rows = wabaList.map((waba, index) => ({
     id: index + 1,
+    // id: waba.wabaSrno,
     sn: index + 1,
     wabaName: waba.name || 'N/A',
     wabaNumber: waba.mobileNo || 'N/A',
@@ -544,10 +525,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   };
 
 
-
-
-
-
   return (
     <div className=''>
       {isLoading ? (
@@ -556,8 +533,15 @@ const WhatsappManageWaba = ({ id, name }) => {
         </>
       ) : rows.length > 0 ? (
         <>
-          <div className="flex flex-wrap gap-4 items-end justify-end align-middle mb-3 w-full">
-            <div className="w-max-content ">
+          <div className="flex flex-wrap gap-4 items-center justify-between mb-4 w-full">
+            <div>
+
+              <label className='text-xl font-semibold text-green-500'>Manage Waba Accounts </label>
+            </div>
+            <div className='text-3xl font-semibold text-green-500 border p-2 rounded-2xl' >
+              <FaWhatsapp />
+            </div>
+            <div className="w-max-content">
               <UniversalButton
                 label="Create WABA"
                 id="mainwabacreate"
@@ -628,12 +612,12 @@ const WhatsappManageWaba = ({ id, name }) => {
         </div>
       )}
 
+      {/* Waba Profile */}
       <Dialog
         // header={selectedWaba?.wabaName || "WABA Profile"}
         header={"WABA Profile"}
         visible={view}
         onHide={() => setView(false)}
-        //   className="w-[28rem]"
         className="w-[30rem] rounded-lg shadow-lg"
         draggable={false}
         modal
@@ -715,6 +699,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         </div>
       </Dialog>
 
+      {/* Update waba profile */}
       <Dialog
         header="Business Profile"
         visible={wabaedit}
