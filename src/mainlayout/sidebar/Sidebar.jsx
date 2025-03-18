@@ -296,12 +296,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                                             {item.label}
                                         </span>
                                     </div>
-                                    <div className={clsx(isCollapsed && '', 'text-gray-800')}>
+                                    <div
+                                        className={clsx(
+                                            isCollapsed && '',
+                                            'text-gray-800 transition-transform duration-300',
+                                            openDropdown === item.name ? 'rotate-180' : 'rotate-0'
+                                        )}
+                                    >
                                         {!isCollapsed && (openDropdown === item.name ? <MdExpandLess /> : <MdExpandMore />)}
                                     </div>
+
                                 </button>
 
-                                {/* ✅ Dropdown Content */}
+                                {/*Dropdown Content */}
                                 <div
                                     ref={(el) => (dropdownRefs[item.name] = el)}
                                     style={{
@@ -337,7 +344,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                     ) : (
                         <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
                             {item.onClick ? (
-                                // ✅ Logout Button
+                                //  Logout Button
                                 <button
                                     onClick={() => {
                                         item.onClick();
@@ -353,7 +360,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
                                     <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
                                 </button>
                             ) : (
-                                // ✅ Normal Navigation Link
+                                //  Normal Navigation Link
                                 <Link
                                     to={item.to}
                                     onClick={handleSingleRouteClick}

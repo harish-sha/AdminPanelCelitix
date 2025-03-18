@@ -443,7 +443,33 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                 <div className="modal-content rounded-xl">
                     <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
                         {selectedRow?.templateData ? (
+
+
                             <>
+
+                                {/* Document if exists */}
+                                {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "DOCUMENT") && (
+                                    <div className="docbox">
+                                        <iframe
+                                            src={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
+                                            title="Document Preview"
+                                            className="w-full h-64 border border-gray-200 rounded-lg"
+                                        />
+                                        <a
+                                            href={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="text-blue-600 text-sm hover:underline"
+                                        >
+                                            View Document in new tab
+                                        </a>
+
+
+                                        
+                                    </div>
+                                )}
+
+
                                 {/* Image if exists */}
                                 {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "IMAGE") && (
                                     <div className="imgbox">
@@ -458,7 +484,6 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                                 {/* Text Content */}
                                 <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
                                     {selectedRow.templateData.components.map((component, index) => (
-                                        // <p key={index}>{component.text || "No content available"}</p>
                                         <pre className='text-wrap' key={index}>{component.text}</pre>
                                     ))}
                                 </div>

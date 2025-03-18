@@ -556,7 +556,7 @@ const ManageTemplate = () => {
                             />
                         </div> */}
                         {/* Search Templates and Status */}
-                        <div className="relative flex items-center transition-all duration-500 w-120">
+                        <div className="relative flex items-center transition-all duration-500 w-120 h-0">
                             <div
                                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
             ${searchActive ? "w-80 " : "w-0"} 
@@ -721,21 +721,20 @@ const ManageTemplate = () => {
                             {/* Fixed Layout for Template Section */}
                             <div className="bg-white flex-2 rounded-md p-2 overflow-auto">
                                 <div>
-                                    <div className='flex justify-between py-2' >
+                                    <div className='flex justify-between py-2 px-2' >
 
                                         <h2 className="text-sm font-semibold text-gray-500">Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12</h2>
                                         <h2 className="text-sm font-semibold text-green-500">Marketing <KeyboardArrowRightOutlinedIcon /> <ShoppingCartOutlinedIcon fontSize='small' />  E-commerce</h2>
                                         {/* <div></div> */}
-                                        <span></span>
+                                        {/* <div></div> */}
+                                        {/* <span></span> */}
                                     </div>
 
-                                    <div className="grid grid-cols-3 gap-4 mt-2 max-h-[74vh] border-t-2 border-gray-400
-                                     
-                                    pt-2 overflow-auto">
+                                    <div className="grid grid-cols-3 gap-4 mt-2 max-h-[74vh] border-t-2 border-gray-400 pt-2 overflow-auto">
                                         {dummyTemplates
                                             .filter(template => template.category === selectedOptionCategory && template.industry === selectedOptionIndustry)
                                             .map(template => (
-                                                <div key={template.id} className="p-4 border-2 border-gray-300 hover:border-2 hover:border-green-500 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-500 bg-white ">
+                                                <div key={template.id} className="p-4 border-2 border-gray-200 hover:border-2 hover:border-green-500 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-500 bg-white ">
                                                     <h3 className="font-semibold text-gray-700">{template.header}</h3>
                                                     <p className="text-sm text-gray-500 mt-2">{template.body}</p>
                                                     <div className="mt-3">
@@ -758,31 +757,6 @@ const ManageTemplate = () => {
                     </CustomTabPanel>
                     <CustomTabPanel value={value} index={1}>
                         <div className='w-full' >
-                            {/* <div className='flex flex-wrap gap-4 items-center justify-between align-middle w-full' >
-                                <div>
-                                    <h1 className='text-xl font-semibold text-gray-800 mb-4'>Manage Templates</h1>
-                                </div>
-                                <div className='flex gap-2'>
-                                    <div className="w-max-content">
-                                        <UniversalButton
-                                            id='manageTemplateAddNewBtn'
-                                            name='manageTemplateAddNewBtn'
-                                            label="Add New"
-                                            onClick={() => navigate("/createtemplate")}
-                                            variant="primary"
-                                        />
-                                    </div>
-                                    <div className="w-max-content ">
-                                        <UniversalButton
-                                            id='syncStatusBtn'
-                                            name='syncStatusBtn'
-                                            label="Sync Status"
-                                            variant="primary"
-                                        />
-                                    </div>
-                                </div>
-                            </div> */}
-
                             <>
                                 <div className='flex flex-wrap gap-4 items-end justify-start  mb-5 w-full'>
                                     <div className="w-full sm:w-56">

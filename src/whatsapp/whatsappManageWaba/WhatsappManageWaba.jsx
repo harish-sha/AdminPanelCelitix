@@ -5,6 +5,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
 import { FaWhatsapp } from 'react-icons/fa';
 
+import { FaMapMarkerAlt, FaGlobe, FaEnvelope } from "react-icons/fa";
+
 
 
 
@@ -524,6 +526,12 @@ const WhatsappManageWaba = ({ id, name }) => {
     );
   };
 
+  const website =
+    wabadetails?.websites?.length > 0
+      ? wabadetails.websites[0].replace("https://www.", "").replace(/\/$/, "")
+      : "";
+  const phoneNumber = selectedWaba?.wabaNumber || "";
+  const whatsappLinkPreview = `wa.${website}/${phoneNumber}`;
 
   return (
     <div className=''>
@@ -614,88 +622,105 @@ const WhatsappManageWaba = ({ id, name }) => {
 
       {/* Waba Profile */}
       <Dialog
-        // header={selectedWaba?.wabaName || "WABA Profile"}
-        header={"WABA Profile"}
         visible={view}
         onHide={() => setView(false)}
-        className="w-[30rem] rounded-lg shadow-lg"
-        draggable={false}
+        className="w-[35rem] max-w-full p-0"
         modal
+        draggable={false}
       >
-        <div className="p-5 bg-white rounded-lg space-y-4 shadow-md">
-          {/* Header Section */}
-          <div className="flex items-center justify-between border-b border-gray-400 pb-3">
+        <div className="bg-white rounded-2xl shadow-2xl p-5 relative border border-gray-200">
+          {/* Profile Header */}
+          <div className="flex items-center justify-between pb-5 border-b">
             <div>
-              <h1 className="font-semibold text-2xl text-gray-800">{selectedWaba?.wabaName || "WABA Profile"}</h1>
-              <p className="text-sm text-gray-500">{wabadetails?.about}</p>
+              <h1 className="font-semibold text-3xl text-gray-900">
+                {selectedWaba?.wabaName || "WABA Profile"}
+              </h1>
+              <p className="text-gray-500 text-sm mt-1">{wabadetails?.about}</p>
             </div>
-            <img
-              src={wabadetails?.profile_picture_url || logo}
-              alt="Company Logo"
-              className="w-20 h-20 rounded-full shadow-md"
-            />
+            <div className="relative">
+              <img
+                src={wabadetails?.profile_picture_url || logo}
+                alt="Profile"
+                className="w-24 h-24 rounded-full border-4 border-blue-400 shadow-lg"
+              />
+              <span className="absolute bottom-1 right-1 bg-green-500 w-5 h-5 rounded-full border border-white"></span>
+            </div>
           </div>
 
           {/* Contact Section */}
-          <div className="space-y-1">
-            <p className="text-sm text-gray-500">WABA Number</p>
-            <p className="font-bold text-lg text-gray-700">
-              {selectedWaba?.wabaNumber || "N/A"}
+          <div className="mt-4">
+            {/* <p className="text-gray-500 text-sm">WABA Number</p> */}
+            <p className="font-semibold text-lg text-gray-800 flex items-center gap-2 mb-1">
+              <FaWhatsapp className="text-green-500" />
+              {/* {selectedWaba?.wabaNumber || "N/A"} */}
+              {phoneNumber}
             </p>
+            {/* <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 text-sm hover:underline"
+            >
+              {whatsappLinkPreview}
+            </a> */}
             <a
-              href="https://wa.aisensy.com/+919251006460"
+              href={`https://wa.me/${selectedWaba?.wabaNumber}`}
               target="_blank"
               rel="noopener noreferrer"
               className="text-blue-500 text-sm hover:underline"
             >
-              wa.celitix.com/+917230000091
+              {whatsappLinkPreview}
             </a>
           </div>
 
-          {/* Description Section */}
-          <div className='space-y-1' >
+          {/* Description */}
+          <div className="mt-5 p-4 bg-gray-50 rounded-lg shadow-inner border border-gray-200">
             <p className="font-semibold text-gray-800">Description</p>
-            <p className="text-gray-600 text-sm leading-relaxed min-h-20 max-h-32 overflow-y-auto text-justify">
+            <p className="text-gray-700 text-sm leading-relaxed min-h-20 max-h-32 overflow-y-auto">
               {wabadetails?.description || "Hey there, I'm using WhatsApp."}
             </p>
           </div>
 
-          {/* Email Section */}
-          <div>
-            <p className="font-semibold text-gray-800">Email</p>
-            <a
-              href={`mailto:${wabadetails?.email}`}
-              className="text-blue-500 text-sm hover:underline"
-            >
-              {wabadetails?.email}
-            </a>
-          </div>
-          {/* Address Section */}
-          <div>
-            <p className="font-semibold text-gray-800">Address</p>
-            <p
-              className="text-gray-600 text-sm"
-            >
-              {wabadetails?.address}
-            </p>
-          </div>
+          {/* Email */}
+          {wabadetails?.email && (
+            <div className="flex items-center gap-3 mt-4">
+              <FaEnvelope className="text-gray-600" />
+              <a
+                href={`mailto:${wabadetails.email}`}
+                className="text-blue-600 text-sm hover:underline"
+              >
+                {wabadetails.email}
+              </a>
+            </div>
+          )}
 
-          {/* Website Section */}
-          <div>
-            <p className="font-semibold text-gray-800">Website</p>
-            {wabadetails?.websites?.map((website, index) => (
-              <div key={index}>
-                <a
-                  href={website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 text-sm hover:underline"
-                >
-                  {website}
-                </a>
-              </div>
-            ))}
-          </div>
+          {/* Address */}
+          {wabadetails?.address && (
+            <div className="flex items-center gap-3 mt-4">
+              <FaMapMarkerAlt className="text-red-500" />
+              <p className="text-gray-700 text-sm">{wabadetails.address || "N/A"}</p>
+            </div>
+          )}
+
+          {/* Website */}
+          {wabadetails?.websites?.length > 0 && (
+            <div className="mt-4">
+              <p className="font-semibold text-gray-800">Website</p>
+              {wabadetails.websites.map((website, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <FaGlobe className="text-blue-500" />
+                  <a
+                    href={website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-600 text-sm hover:underline py-2"
+                  >
+                    {website.replace("https://", "")}
+                  </a>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </Dialog>
 
