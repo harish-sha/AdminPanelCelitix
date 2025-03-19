@@ -114,12 +114,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             label: 'RCS',
             type: "dropdown",
             links: [
-                { to: '/rsendrcs', label: 'Send RCS' },
-                { to: '/rmanagetemplate', label: 'Manage Template' },
-                { to: '/rsuggesstionreport', label: 'Suggestion Report' },
-                { to: '/rlivechat', label: 'Live Chats' },
-                { to: '/rdeliveryreport', label: 'Delivery Report' },
-                { to: '/rmanagebot', label: 'Manage Bot' },
+                { to: '/sendrcs', label: 'Send RCS' },
+                { to: '/rcsmanagetemplate', label: 'Manage Template' },
+                { to: '/rcslivechats', label: 'Live Chats' },
+                { to: '/rcssuggestionreport', label: 'Suggestion Report' },
+                { to: '/rcsdeliveryreport', label: 'Delivery Report' },
+                { to: '/rcsmanagebot', label: 'Manage Bot' },
             ],
         },
         {

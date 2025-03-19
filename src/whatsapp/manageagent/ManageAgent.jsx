@@ -34,8 +34,6 @@ import {
 } from "../../apis/Agent/Agent";
 import toast from "react-hot-toast";
 import Loader from "../components/Loader";
-import { RadioButton } from "primereact/radiobutton";
-import UniversalLabel from "../components/UniversalLabel";
 
 const ManageAgent = () => {
   const [adddepartment, setAddDepartment] = useState(false);
@@ -69,9 +67,6 @@ const ManageAgent = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
-
-  const [selectedOption, setSelectedOption] = useState("all");
-
 
 
   // Department LIST
@@ -382,9 +377,6 @@ const ManageAgent = () => {
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
-      // setTimeout(() => {
-      //     window.location.reload();
-      // }, 800); // Reload after 2 seconds to allow toast message visibility
     }
   };
 
@@ -567,12 +559,6 @@ const ManageAgent = () => {
     );
   };
 
-  const handleChange = (event) => {
-    const value = event.target.value;
-    setSelectedOption(value);
-    // onOptionChange(value);
-  }
-
   return (
     <div>
       {isLoading ? (
@@ -581,7 +567,7 @@ const ManageAgent = () => {
         </>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between mb-5  mt-4 w-full">
+          <div className="flex flex-wrap items-center justify-between w-full mt-4 mb-5">
             <h1 className="text-xl font-medium">Manage Agent</h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
@@ -604,7 +590,7 @@ const ManageAgent = () => {
           </div>
 
           {/* Manage Agent Table */}
-          <ManageAgentTable />
+          <ManageAgentTable deptList={departmentList} />
 
           {/* Add Department dialog start  */}
           <Dialog
@@ -643,7 +629,7 @@ const ManageAgent = () => {
               </TabPanel>
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
-                  <div className="card flex justify-content-center mb-4">
+                  <div className="flex mb-4 card justify-content-center">
                     <DropdownWithSearch
                       label="Department List"
                       tooltipContent="Select Department"
@@ -709,7 +695,6 @@ const ManageAgent = () => {
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
                     className="w-[30rem]"
-                    draggable={false}
                   >
                     <InputField
                       label="Department Name"
@@ -737,7 +722,6 @@ const ManageAgent = () => {
                     visible={deleteDialog}
                     onHide={() => setDeleteDialog(false)}
                     className="w-[25rem]"
-                    draggable={false}
                   >
                     <Typography variant="body1" className="text-center">
                       Are you sure you want to delete <br />
@@ -786,7 +770,7 @@ const ManageAgent = () => {
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
               />
-              <div className="grid grid-cols-2 lg:flex-nowrap flex-wrap gap-3">
+              <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
                 <InputField
                   label="Email"
                   id="email"
@@ -833,7 +817,7 @@ const ManageAgent = () => {
                   filter
                 />
               </div>
-              {/* <RadioGroupFieldupdown
+              <RadioGroupFieldupdown
                 id="assign"
                 name="assign"
                 label="Assign"
@@ -842,37 +826,7 @@ const ManageAgent = () => {
                   { label: "Manual", value: "Manual" },
                   { label: "All", value: "All" },
                 ]}
-              /> */}
-              <UniversalLabel
-                text="Assign"
-                tooltipContent='Select selection for assign'
-                tooltipPlacement="right"
               />
-              <div className="flex mt-2 gap-3" >
-                {/* Option 1 */}
-                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center justify-center gap-2 cursor-pointer" >
-                    <RadioButton inputId="radioOptionAuto" name="radioGroup" value="auto" onChange={handleChange} checked={selectedOption === 'auto'} />
-                    <label htmlFor="radioOptionAuto" className="text-gray-700 font-medium text-sm cursor-pointer">Auto</label>
-                  </div>
-                </label>
-
-                {/* Option 2 */}
-                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center justify-center gap-2" >
-                    <RadioButton inputId="radioOptionManual" name="radioGroup" value="manual" onChange={handleChange} checked={selectedOption === 'manual'} />
-                    <label htmlFor="radioOptionManual" className="text-gray-700 font-medium text-sm cursor-pointer">Manual</label>
-                  </div>
-                </label>
-
-                {/* Option 3 */}
-                <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center justify-center gap-2 " >
-                    <RadioButton inputId="radioOptionAll" name="radioGroup" value="all" onChange={handleChange} checked={selectedOption === 'all'} />
-                    <label htmlFor="radioOptionAll" className="text-gray-700 font-medium text-sm">All</label>
-                  </div>
-                </label>
-              </div>
               <div className="flex justify-center ">
                 <UniversalButton
                   label={isSubmitting ? "Adding..." : "Submit"}

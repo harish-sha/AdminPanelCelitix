@@ -14,7 +14,8 @@ const GeneratePassword = ({
   tooltipContent = "",
   tooltipPlacement = "top",
   onPasswordGenerate,
-
+  value,
+  onChange
 }) => {
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
@@ -34,12 +35,11 @@ const GeneratePassword = ({
 
   const handleGeneratePassword = () => {
     const newPassword = generateRandomPassword();
-    setPassword(newPassword);
-    onPasswordGenerate?.(newPassword); // ✅ Send password back to parent component
+    onChange(newPassword);
   };
 
   const handleCopyPassword = () => {
-    navigator.clipboard.writeText(password).then(() => {
+    navigator.clipboard.writeText(value).then(() => {
       toast.success('Password copied to clipboard!');
     }).catch(() => {
       toast.error('Failed to copy password.');
@@ -63,19 +63,19 @@ const GeneratePassword = ({
         </div>
       )}
 
-      <div className='flex gap-2 flex-wrap'>
+      <div className='flex flex-wrap gap-2'>
         {/* Input with eye icon inside a bordered container */}
-        <div className="flex-1 flex items-center border border-gray-300  bg-gray-200 rounded-md shadow-md">
+        <div className="flex items-center flex-1 bg-gray-200 border border-gray-300 rounded-md shadow-md">
           <input
             id={id}
             name={name}
             type={showPassword ? 'text' : 'password'}
-            value={password}
+            value={value}
             readOnly
             className="flex-1 p-1.5 h-[2.10rem] bg-gray-200 focus:outline-none text-sm cursor-not-allowed"
             placeholder="Your password"
           />
-          <div onClick={handleTogglePassword} className='cursor-pointer pr-2' >
+          <div onClick={handleTogglePassword} className='pr-2 cursor-pointer' >
             {showPassword ? <VisibilityOff fontSize='small' /> : <Visibility fontSize='small' />}
           </div>
         </div>
@@ -87,7 +87,7 @@ const GeneratePassword = ({
         >
           <button
             onClick={handleCopyPassword}
-            className="bg-transparent  hover:bg-gray-200 p-1 shadow-2xl rounded-full focus:outline-none cursor-pointer"
+            className="p-1 bg-transparent rounded-full shadow-2xl cursor-pointer hover:bg-gray-200 focus:outline-none"
           >
             <ContentCopyOutlinedIcon sx={{
               fontSize: '1.2rem',

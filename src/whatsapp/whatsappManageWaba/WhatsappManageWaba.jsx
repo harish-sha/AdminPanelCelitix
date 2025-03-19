@@ -809,7 +809,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <FaEnvelope className="text-gray-600 text-lg" />
                 <a
                   href={`mailto:${wabadetails.email}`}
-                  className="text-gray-600 text-md hover:underline"
+                  className="text-gray-600 text-sm hover:underline"
                 >
                   {wabadetails.email}
                 </a>
@@ -818,7 +818,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             {wabadetails?.address && (
               <div className="flex items-center gap-3 mt-4 text-gray-800">
                 <FaMapMarkerAlt className="text-blue-500 text-lg" />
-                <p className="text-md">{wabadetails.address || "N/A"}</p>
+                <p className="text-sm">{wabadetails.address || "N/A"}</p>
               </div>
             )}
             {wabadetails?.websites?.length > 0 && (

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 // import UniversalButton from "../../../components/common/UniversalButton";
@@ -7,13 +7,25 @@ import { Box, Button, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import usePagination from "@mui/material/usePagination";
 import styled from "styled-components";
+import {
+  getRcsRate,
+  getWhatsAppRate,
+  getaccountInfo,
+  getSmsRate,
+} from "../../apis/user/user";
 
+import { getCountryList } from "../../apis/common/common";
 
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
+const CustomPagination = ({
+  totalPages,
+  paginationModel,
+  setPaginationModel,
+}) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page + 1,
-    onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    onChange: (_, newPage) =>
+      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
   });
 
   const PaginationList = styled("ul")({
@@ -46,7 +58,13 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
             );
           } else {
             children = (
-              <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                {...item}
+                sx={{}}
+              >
                 {type === "previous" ? "Previous" : "Next"}
               </Button>
             );
@@ -65,16 +83,65 @@ function AccountInfoModal({ show, handleClose }) {
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [rcsrate, setRcsRate] = useState([]);
+  const [whatsapprate, setWhatsAppRate] = useState([]);
+  const [accountInfo, setAccountInfo] = useState([]);
+  const [countryList, setCountryList] = useState([]);
 
-  // Account Data
-  const accountData = [
-    { service: "SMS", credits: 25000, createdOn: "25/04/2023", expiry: "15/02/2024", pricing: "0.20 INR/Credit" },
-    { service: "Two Way SMS", credits: 25000, createdOn: "25/04/2023", expiry: "15/02/2024", pricing: "0.20 INR" },
+  useEffect(() => {
+    async function getRcsRateData() {
+      const data = await getRcsRate();
+      setRcsRate(data);
+    }
+
+    async function getWhatsAppRateDate() {
+      const data = await getWhatsAppRate();
+      setWhatsAppRate(data);
+    }
+
+    async function getaccountInfoData() {
+      const data = await getaccountInfo();
+      setAccountInfo(Array(data));
+    }
+
+    async function getCountryListData() {
+      const data = await getCountryList();
+      setCountryList(data);
+    }
+
+    getRcsRateData();
+    getWhatsAppRateDate();
+    getaccountInfoData();
+    getCountryListData();
+  }, []);
+
+  const accountrows = [
     {
+      sn: 1,
+      id: 1,
+      service: "SMS",
+      created_on: accountInfo[0]?.smsUpdateTime,
+      pricing: `${accountInfo[0]?.smsRate} INR/Credit`,
+    },
+    {
+      sn: 2,
+      id: 2,
+      service: "Two Way SMS",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 3,
+      id: 3,
+      service: "OBD",
+      created_on: accountInfo[0]?.voiceUpdateTime,
+      pricing: `${accountInfo[0]?.voiceRate15Sec} INR/Credit`,
+    },
+    {
+      sn: 4,
+      id: 4,
       service: "RCS",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
+      created_on: rcsrate[0]?.update_time,
       pricing: (
         <button onClick={() => setShowRcsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -82,108 +149,138 @@ function AccountInfoModal({ show, handleClose }) {
       ),
     },
     {
+      sn: 5,
+      id: 5,
+      service: "Email",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 6,
+      id: 6,
       service: "WhatsApp",
-      credits: 25000,
-      createdOn: "25/04/2023",
-      expiry: "15/02/2024",
+      created_on: whatsapprate[0]?.updateTime,
       pricing: (
         <button onClick={() => setShowWhatsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
         </button>
       ),
     },
+    {
+      sn: 7,
+      id: 7,
+      service: "IBD",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 8,
+      id: 8,
+      service: "MissedCall",
+      created_on: "-",
+      pricing: "-",
+    },
+    {
+      sn: 9,
+      id: 9,
+      service: "C2C",
+      created_on: "-",
+      pricing: "-",
+    },
   ];
 
-  // RCS Pricing Data
-  const rcsPricingData = [
-    { id: 1, country: "India", countryCode: "+91", rate: "0.30" },
-    { id: 2, country: "USA", countryCode: "+1", rate: "0.50" },
-    { id: 3, country: "UK", countryCode: "+44", rate: "0.45" },
-    { id: 4, country: "Canada", countryCode: "+1", rate: "0.40" },
-  ];
-
-  // Handle Search
-  const handleSearch = () => {
-    const filtered = rcsPricingData.filter(
+  // Handle RCS Search
+  const handleRcsSearch = () => {
+    const filtered = rcsrate.filter(
       (item) =>
-        item.country.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.countryCode.includes(searchTerm)
+        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item?.ISO_code?.toString().includes(searchTerm.toString())
     );
     setFilteredData(filtered);
+    console.log(filtered);
+    setSearchTerm("");
   };
 
-  const rows = Array.from({ length: 8 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    name: 'Demo',
-    email: 'Demo@gmail.com',
-    mobile: '1234567890',
-    status: 'Pending',
-    totalAudience: '10000',
-    action: 'True',
-  }));
+  // Handle RCS Search
+  const handleWhatsAppSearch = () => {
+    console.log(searchTerm);
+    const filtered = whatsapprate.filter(
+      (item) =>
+        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item?.ISO_code?.toString().includes(searchTerm.toString())
+    );
+    setFilteredData(filtered);
+    console.log(filtered);
+    setSearchTerm("");
+  };
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
-  const columns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'name', headerName: 'Name', flex: 1, minWidth: 120 },
-    { field: 'email', headerName: 'Email', flex: 1, minWidth: 120 },
-    { field: 'mobile', headerName: 'Mobile', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-    {
-      field: 'action',
-      headerName: 'Action',
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params) => (
-        <>
-          {/* <IconButton onClick={() => handleReply(params.row)}>
-                    <ReplyIcon
-                        sx={{
-                            fontSize: '1.2rem',
-                            color: 'gray',
-                        }} />
-                </IconButton>
-                <IconButton onClick={() => handleSchedule(params.row)}>
-                    <AccessTimeOutlinedIcon
-                        sx={{
-                            fontSize: '1.2rem',
-                            color: 'gray',
-                        }} />
-                </IconButton>
-                <IconButton onClick={() => handleAssign(params.row)}>
-                    <SettingsOutlinedIcon
-                        sx={{
-                            fontSize: '1.2rem',
-                            color: 'gray',
-                        }} />
-                </IconButton>
-                <IconButton className='no-xs' onClick={() => handleDelete(params.row)}>
-                    <DeleteIcon
-                        sx={{
-                            fontSize: '1.2rem',
-                            color: 'green'
-                        }}
-                    />
-                </IconButton>
-                <IconButton onClick={() => handleEdit(params.row)}>
-                    <EditNoteIcon
-                        sx={{
-                            fontSize: '1.2rem',
-                            color: 'gray',
-                        }} />
-                </IconButton> */}
+  const accountcolumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
 
-        </>
-      ),
+    { field: "created_on", headerName: "Created On", flex: 1, minWidth: 80 },
+    // { field: "plan_expiry", headerName: "Plan Expiry", flex: 1, minWidth: 80 },
+    {
+      field: "pricing",
+      headerName: "Pricing",
+      flex: 1,
+      minWidth: 80,
+      renderCell: (params) => params.value,
     },
   ];
 
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+  const WhatsAppcolumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "countryName", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "countryCode", headerName: "Country Code", flex: 1, minWidth: 120 },
+    {
+      field: "transactional",
+      headerName: "Utility (INR/Credit)",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "promotional",
+      headerName: "Marketing (INR/Credit)",
+      flex: 1,
+      minWidth: 120,
+    },
+  ];
+
+  const Rcscolumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "country_name", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "ISO_code", headerName: "Country Code", flex: 1, minWidth: 120 },
+    { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
+  ];
+
+  const whatsApprows = Array.isArray(whatsapprate)
+    ? whatsapprate?.map((item, index) => ({
+        id: index + 1,
+        sn: index + 1,
+        countryName: item.countryName ?? "-",
+        countryCode: item.isoCode ?? "-",
+        transactional: item.transactional,
+        promotional: item.promotional,
+      }))
+    : [];
+
+  const rcsrows = Array.isArray(rcsrate)
+    ? rcsrate?.map((item, index) => ({
+        id: index + 1,
+        sn: index + 1,
+        country_name: item.country_name,
+        ISO_code: "+" + item.ISO_code,
+        rate: item.rate,
+      }))
+    : [];
+
+  // const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
@@ -192,14 +289,14 @@ function AccountInfoModal({ show, handleClose }) {
           display: "flex",
           flexWrap: "wrap",
           justifyContent: {
-            xs: "center", lg: "space-between"
+            xs: "center",
+            lg: "space-between",
           },
           alignItems: "center",
           padding: 0,
           gap: 2,
           overflowX: "auto",
-        }
-        }
+        }}
       >
         {/* <Box
                 sx={{
@@ -239,7 +336,7 @@ function AccountInfoModal({ show, handleClose }) {
                     setPaginationModel={setPaginationModel}
                 />
             </Box> */}
-      </GridFooterContainer >
+      </GridFooterContainer>
     );
   };
 
@@ -254,38 +351,60 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        {/* Account Expiry Badge */}
         <div className="flex justify-end mb-3">
-          <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-md font-medium">
-            Account Expiry: 25/02/2024
+          <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
+            Account Expiry: {accountInfo[0]?.expiryDate}
           </span>
         </div>
 
-        {/* Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full bg-gray-50 shadow-lg rounded-lg overflow-hidden">
-            <thead className="bg-blue-500 text-white text-center">
-              <tr>
-                <th className="p-3">Service</th>
-                {/* <th className="p-3">Credits</th> */}
-                <th className="p-3">Created On</th>
-                <th className="p-3">Plan Expiry</th>
-                <th className="p-3">Pricing</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-300 text-center">
-              {accountData.map((item, index) => (
-                <tr key={index} className="even:bg-gray-100 hover:bg-blue-50 transition">
-                  <td className="p-3">{item.service}</td>
-                  {/* <td className="p-3">{item.credits}</td> */}
-                  <td className="p-3">{item.createdOn}</td>
-                  <td className="p-3">{item.expiry}</td>
-                  <td className="p-3">{item.pricing}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
+          <Paper sx={{ height: "auto" }}>
+            <DataGrid
+              rows={accountrows}
+              columns={accountcolumns}
+              initialState={{ pagination: { paginationModel } }}
+              pageSizeOptions={[10, 20, 50]}
+              pagination
+              paginationModel={paginationModel}
+              onPaginationModelChange={setPaginationModel}
+              // checkboxSelection
+              rowHeight={45}
+              slots={{ footer: CustomFooter }}
+              // slotProps={{ footer: { totalRecords: rows.length } }}
+              onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+              disableRowSelectionOnClick
+              // autoPageSize
+              disableColumnResize
+              disableColumnMenu
+              sx={{
+                border: 0,
+                "& .MuiDataGrid-cellCheckbox": {
+                  outline: "none !important",
+                },
+                "& .MuiDataGrid-cell": {
+                  outline: "none !important",
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                  color: "#193cb8",
+                  fontSize: "14px",
+                  fontWeight: "bold !important",
+                },
+                "& .MuiDataGrid-row--borderBottom": {
+                  backgroundColor: "#e6f4ff !important",
+                },
+                "& .MuiDataGrid-columnSeparator": {
+                  // display: "none",
+                  color: "#ccc",
+                },
+              }}
+            />
+          </Paper>
+        ) : (
+          <h1>
+            Your account is expired. Please contact Admin to activate your
+            account.
+          </h1>
+        )}
       </Dialog>
 
       {/* RCS Pricing Modal */}
@@ -296,9 +415,9 @@ function AccountInfoModal({ show, handleClose }) {
         onHide={() => setShowRcsPricing(false)}
         modal
         draggable={false}
+        disabled
       >
-        {/* Search Input */}
-        <div className="mb-4 flex items-center space-x-3">
+        <div className="flex items-center mb-4 space-x-3">
           <input
             type="text"
             placeholder="Country Name or Code"
@@ -308,42 +427,51 @@ function AccountInfoModal({ show, handleClose }) {
           />
           <UniversalButton
             label="Search"
-            className="bg-blue-600 text-white px-4 py-2 rounded-md"
-            onClick={handleSearch}
+            className="px-4 py-2 text-white bg-blue-600 rounded-md"
+            onClick={handleRcsSearch}
           />
         </div>
-
-        {/* Pricing Table */}
-        <div className="overflow-x-auto">
-          <table className="w-full bg-gray-50 shadow-lg rounded-lg overflow-hidden">
-            <thead className="bg-blue-500 text-white text-center">
-              <tr>
-                <th className="p-3">S.No</th>
-                <th className="p-3">Country</th>
-                <th className="p-3">Country Code</th>
-                <th className="p-3">Rate (INR/Credit)</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-300 text-center">
-              {filteredData.length > 0 ? (
-                filteredData.map((item, index) => (
-                  <tr key={item.id} className="even:bg-gray-100 hover:bg-blue-50 transition">
-                    <td className="p-3">{index + 1}</td>
-                    <td className="p-3">{item.country}</td>
-                    <td className="p-3">{item.countryCode}</td>
-                    <td className="p-3">{item.rate}</td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="4" className="p-3 text-gray-500">
-                    No matching records found.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <Paper sx={{ height: "auto" }}>
+          <DataGrid
+            rows={rcsrows}
+            columns={Rcscolumns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[10, 20, 50]}
+            pagination
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{ footer: CustomFooter }}
+            // slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+            disableRowSelectionOnClick
+            // autoPageSize
+            disableColumnResize
+            disableColumnMenu
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-cellCheckbox": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-cell": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                color: "#193cb8",
+                fontSize: "14px",
+                fontWeight: "bold !important",
+              },
+              "& .MuiDataGrid-row--borderBottom": {
+                backgroundColor: "#e6f4ff !important",
+              },
+              "& .MuiDataGrid-columnSeparator": {
+                // display: "none",
+                color: "#ccc",
+              },
+            }}
+          />
+        </Paper>
       </Dialog>
 
       <Dialog
@@ -354,12 +482,25 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        <Paper sx={{ height: "auto" }}
-
-        >
+        <div className="flex items-center mb-4 space-x-3">
+          <input
+            type="text"
+            placeholder="Country Name or Code"
+            className="w-full p-2 border rounded-md"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <UniversalButton
+            label="Search"
+            className="px-4 py-2 text-white bg-blue-600 rounded-md"
+            onClick={handleWhatsAppSearch}
+            disabled
+          />
+        </div>
+        <Paper sx={{ height: "auto" }}>
           <DataGrid
-            rows={rows}
-            columns={columns}
+            rows={whatsApprows}
+            columns={WhatsAppcolumns}
             initialState={{ pagination: { paginationModel } }}
             pageSizeOptions={[10, 20, 50]}
             pagination

@@ -1,7 +1,7 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 
-// mainlayou
+// mainlayout
 import Mainlayout from '../../mainlayout/Mainlayout';
 
 // dashboard
@@ -36,12 +36,11 @@ import ManageContacts from '../../managecontacts/ManageContacts';
 import Settings from '../../profile/pages/Settings';
 import ProfilePage from "../../profile/pages/Profile"
 import LoginIpDetails from '../../profile/pages/LoginIpDetails';
-import RcsDeliveryReport from '../../rcs/RcsDeliveryReport/RcsDeliveryReport';
-import RcsLiveChat from '../../rcs/RcsLiveChat/RcsLiveChat';
-import RcsManageBot from '../../rcs/RcsManageBot/RcsManageBot';
-import RcsManageTemplate from '../../rcs/RcsManageTemplate/RcsManageTemplate';
-import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionReport';
-import SendRcs from '../../rcs/SendRcs/SendRcs';
+// import RcsDeliveryReport from '../../rcs/RcsDeliveryReport/RcsDeliveryReport';
+// import RcsLiveChat from '../../rcs/RcsLiveChat/RcsLiveChat';
+// import RcsManageBot from '../../rcs/RcsManageBot/RcsManageBot';
+// import RcsManageTemplate from '../../rcs/RcsManageTemplate/RcsManageTemplate';
+// import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionReport';
 import WhatsappCreateTemplate from '../../whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate';
 
 // Admin
@@ -58,19 +57,35 @@ import Blacklist from '../../admin/blacklist/blacklist';
 import ManageNotifications from '../../admin/manageNotifications.jsx/manageNotifications';
 import ManageRouting from '../../admin/manageRouting/ManageRouting';
 import AddUser from '../../admin/manageUser/pages/AddUser';
-// import SendRcs from '../../rcs/sendRcs/SendRcs';
-// import ManageTemplateRcs from '../../rcs/manageTemplate/ManageTemplateRcs';
-// import SuggestionReportRcs from '../../rcs/suggestionReport/SuggestionReportRcs';
-// import DeliveryreportRcs from '../../rcs/deliveryReport/DeliveryreportRcs';
-// import ManageBotRcs from '../../rcs/manageBot/ManageBotRcs';
-// import AddTemplateRcs from '../../rcs/manageTemplate/pages/AddTemplateRcs';
+
+// sms
+import SmsReports from '../../sms/smsReports/SmsReports';
+import SendSms from '../../sms/smsSend/SendSms';
+import SmsDLTtemplate from '../../sms/smsDlttemplate/SmsDLTtemplate';
+import SmsWishManagement from '../../sms/smsWishManagement/SmsWishManagement';
+import Smscampaigndetaillogs from '../../sms/smsReports/pages/smscampaigndetaillogs';
+import SmsAttachmentdetaillog from '../../sms/smsReports/pages/SmsAttachmentdetaillog';
+
+// RCS
+import SendRcs from '../../rcs/SendRcs/SendRcs';
+import ManageTemplateRcs from '../../rcs/manageTemplate/ManageTemplateRcs';
+import SuggestionReportRcs from '../../rcs/suggestionReport/SuggestionReportRcs';
+import DeliveryreportRcs from '../../rcs/deliveryReport/DeliveryreportRcs';
+import ManageBotRcs from '../../rcs/manageBot/ManageBotRcs';
+import AddTemplateRcs from '../../rcs/manageTemplate/pages/AddTemplateRcs';
 
 
+// Download
+import Download from '../../profile/pages/Download';
+import RcsLiveChat from '../../rcs/rcslivechat/RcsLiveChat';
 
 const Approutes = () => {
     return (
         <Routes>
             <Route path="/" element={<Mainlayout />}>
+
+                {/* dashboard */}
+                <Route path="/" element={<Dashboard />} />
 
                 {/* admin */}
                 <Route path="/manageuser" element={<ManageUser />} />
@@ -88,8 +103,13 @@ const Approutes = () => {
                 <Route path="/blacklist" element={<Blacklist />} />
                 <Route path="/managenotifications" element={<ManageNotifications />} />
 
-                {/* dashboard */}
-                <Route path="/" element={<Dashboard />} />
+                {/* SMS */}
+                <Route path="/sendsms" element={<SendSms />} />
+                <Route path="/smsreports" element={<SmsReports />} />
+                <Route path="/smscampaigndetaillogs" element={<Smscampaigndetaillogs />} />
+                <Route path="/smsAttachmentdetaillog" element={<SmsAttachmentdetaillog />} />
+                <Route path="/smsdlttemplates" element={<SmsDLTtemplate />} />
+                <Route path="/smswishmanagement" element={<SmsWishManagement />} />
 
                 {/* whatsapp */}
                 <Route path="/managetemplate" element={<ManageTemplate />} />
@@ -109,19 +129,23 @@ const Approutes = () => {
                 <Route path="/wwhatsappbot" element={<WhatsappBot />} />
 
                 {/* RCS */}
-                <Route path="/rsendrcs" element={<SendRcs />} />
-                <Route path="/rmanagetemplate" element={<RcsManageTemplate />} />
-                <Route path="/rsuggesstionreport" element={<RcsSuggesstionReport />} />
-                <Route path="/rdeliveryreport" element={<RcsDeliveryReport />} />
-                <Route path="/rlivechat" element={<RcsLiveChat />} />
-                <Route path="/rmanagebot" element={<RcsManageBot />} />
+                <Route path="/sendrcs" element={<SendRcs />} />
+                <Route path="/rcsmanagetemplate" element={<ManageTemplateRcs />} />
+                <Route path="/rcsaddtemplatercs" element={<AddTemplateRcs />} />
+                <Route path="/rcssuggestionreport" element={<SuggestionReportRcs />} />
+                <Route path="/rcsdeliveryreport" element={<DeliveryreportRcs />} />
+                <Route path="/rcsmanagebot" element={<ManageBotRcs />} />
+                <Route path="/rcslivechats" element={<RcsLiveChat />} />
+
+
 
                 {/* profile */}
                 <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/download" element={<Download />} />
+                <Route path="/loginIpdetails" element={<LoginIpDetails />} />
 
                 {/* Settings */}
                 <Route path="/settings" element={<Settings />} />
-                <Route path="/loginIpdetails" element={<LoginIpDetails />} />
 
                 {/* manage funds */}
                 <Route path="/recharge" element={<Recharge />} />

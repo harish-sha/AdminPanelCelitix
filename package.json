@@ -22,7 +22,7 @@
     "@mui/x-date-pickers": "^7.25.0",
     "@tailwindcss/vite": "^4.0.0",
     "autoprefixer": "^10.4.20",
-    "axios": "^1.7.9",
+    "axios": "^1.8.3",
     "clear": "^0.1.0",
     "cors": "^2.8.5",
     "date-fns": "^2.30.0",
