@@ -136,7 +136,6 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
     };
 
     const handleApi = (row) => {
-
     }
 
     // const handleDelete = (event, row) => {
@@ -459,13 +458,10 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                                             href={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-blue-600 text-sm hover:underline"
+                                            className="text-blue-600 text-sm hover:underline flex items-center justify-center mt-3"
                                         >
                                             View Document in new tab
                                         </a>
-
-
-                                        
                                     </div>
                                 )}
 

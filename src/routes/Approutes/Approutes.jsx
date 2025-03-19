@@ -44,11 +44,49 @@ import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionR
 import SendRcs from '../../rcs/SendRcs/SendRcs';
 import WhatsappCreateTemplate from '../../whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate';
 
+// Admin
+import ManageUser from '../../admin/manageUser/ManageUser';
+import ManageDltTemplate from '../../admin/manageDltTemplate/ManageDltTemplate';
+import ManageVoiceClips from '../../admin/manageVoiceClips/ManageVoiceClips';
+import ManagePlan from '../../admin/managePlan/ManagePlan';
+import AccountManager from '../../admin/accountManager/AccountManager';
+import GraphMain from '../../admin/graphMain/GraphMain';
+import GraphUserWise from '../../admin/graphUserWise/GraphUserWise';
+import ManageSMPP from '../../admin/manageSMPP.jsx/ManageSMPP';
+import ManagePrefix from '../../admin/managePrefix/managePrefix';
+import Blacklist from '../../admin/blacklist/blacklist';
+import ManageNotifications from '../../admin/manageNotifications.jsx/manageNotifications';
+import ManageRouting from '../../admin/manageRouting/ManageRouting';
+import AddUser from '../../admin/manageUser/pages/AddUser';
+// import SendRcs from '../../rcs/sendRcs/SendRcs';
+// import ManageTemplateRcs from '../../rcs/manageTemplate/ManageTemplateRcs';
+// import SuggestionReportRcs from '../../rcs/suggestionReport/SuggestionReportRcs';
+// import DeliveryreportRcs from '../../rcs/deliveryReport/DeliveryreportRcs';
+// import ManageBotRcs from '../../rcs/manageBot/ManageBotRcs';
+// import AddTemplateRcs from '../../rcs/manageTemplate/pages/AddTemplateRcs';
+
+
 
 const Approutes = () => {
     return (
         <Routes>
             <Route path="/" element={<Mainlayout />}>
+
+                {/* admin */}
+                <Route path="/manageuser" element={<ManageUser />} />
+                <Route path="/manageadduser" element={<AddUser />} />
+                <Route path="/managedlttemplate" element={<ManageDltTemplate />} />
+                <Route path="/managevoiceclips" element={<ManageVoiceClips />} />
+                <Route path="/manageplan" element={<ManagePlan />} />
+                <Route path="/accountmanager" element={<AccountManager />} />
+                <Route path="/GraphMain" element={<GraphMain />} />
+                <Route path="/graphuserwise" element={<GraphUserWise />} />
+                <Route path="/manageSMPP" element={<ManageSMPP />} />
+                <Route path="/managerouting" element={<ManageRouting />} />
+                <Route path="/SMPPerrorcode" element={<ManageSMPP />} />
+                <Route path="/manageprefix" element={<ManagePrefix />} />
+                <Route path="/blacklist" element={<Blacklist />} />
+                <Route path="/managenotifications" element={<ManageNotifications />} />
 
                 {/* dashboard */}
                 <Route path="/" element={<Dashboard />} />

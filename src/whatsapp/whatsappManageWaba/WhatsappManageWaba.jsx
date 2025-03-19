@@ -3,9 +3,14 @@ import { Paper, Typography, Box, Button } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
-import { FaWhatsapp } from 'react-icons/fa';
 
-import { FaMapMarkerAlt, FaGlobe, FaEnvelope } from "react-icons/fa";
+import { motion } from "framer-motion";
+import {
+  FaWhatsapp,
+  FaEnvelope,
+  FaMapMarkerAlt,
+  FaGlobe,
+} from "react-icons/fa";
 
 
 
@@ -621,7 +626,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       )}
 
       {/* Waba Profile */}
-      <Dialog
+      {/* <Dialog
         visible={view}
         onHide={() => setView(false)}
         className="w-[35rem] max-w-full p-0"
@@ -629,7 +634,6 @@ const WhatsappManageWaba = ({ id, name }) => {
         draggable={false}
       >
         <div className="bg-white rounded-2xl shadow-2xl p-5 relative border border-gray-200">
-          {/* Profile Header */}
           <div className="flex items-center justify-between pb-5 border-b">
             <div>
               <h1 className="font-semibold text-3xl text-gray-900">
@@ -646,23 +650,11 @@ const WhatsappManageWaba = ({ id, name }) => {
               <span className="absolute bottom-1 right-1 bg-green-500 w-5 h-5 rounded-full border border-white"></span>
             </div>
           </div>
-
-          {/* Contact Section */}
           <div className="mt-4">
-            {/* <p className="text-gray-500 text-sm">WABA Number</p> */}
             <p className="font-semibold text-lg text-gray-800 flex items-center gap-2 mb-1">
               <FaWhatsapp className="text-green-500" />
-              {/* {selectedWaba?.wabaNumber || "N/A"} */}
               {phoneNumber}
             </p>
-            {/* <a
-              href={whatsappLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-blue-600 text-sm hover:underline"
-            >
-              {whatsappLinkPreview}
-            </a> */}
             <a
               href={`https://wa.me/${selectedWaba?.wabaNumber}`}
               target="_blank"
@@ -673,7 +665,6 @@ const WhatsappManageWaba = ({ id, name }) => {
             </a>
           </div>
 
-          {/* Description */}
           <div className="mt-5 p-4 bg-gray-50 rounded-lg shadow-inner border border-gray-200">
             <p className="font-semibold text-gray-800">Description</p>
             <p className="text-gray-700 text-sm leading-relaxed min-h-20 max-h-32 overflow-y-auto">
@@ -681,7 +672,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             </p>
           </div>
 
-          {/* Email */}
+
           {wabadetails?.email && (
             <div className="flex items-center gap-3 mt-4">
               <FaEnvelope className="text-gray-600" />
@@ -694,7 +685,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
           )}
 
-          {/* Address */}
+
           {wabadetails?.address && (
             <div className="flex items-center gap-3 mt-4">
               <FaMapMarkerAlt className="text-red-500" />
@@ -702,7 +693,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
           )}
 
-          {/* Website */}
+
           {wabadetails?.websites?.length > 0 && (
             <div className="mt-4">
               <p className="font-semibold text-gray-800">Website</p>
@@ -722,6 +713,138 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
           )}
         </div>
+      </Dialog> */}
+      <Dialog
+        visible={view}
+        onHide={() => setView(false)}
+        className="w-[34rem] max-w-full p-0"
+        modal
+        draggable={false}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.3 }}
+          className="bg-gradient-to-b from-white to-gray-50 rounded-2xl shadow-xl overflow-hidden border border-gray-200 relative"
+        >
+          {/* <div className="absolute inset-0 opacity-100">
+            <svg
+              width="100%"
+              height="100%"
+              viewBox="0 0 1440 1720"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <defs>
+                <pattern
+                  id="whatsappPattern"
+                  width="40"
+                  height="40"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="5"
+                    fill="rgba(37, 211, 102, 0.15)"
+                  />
+                  <circle
+                    cx="30"
+                    cy="30"
+                    r="5"
+                    fill="rgba(37, 211, 102, 0.15)"
+                  />
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#whatsappPattern)" />
+            </svg>
+          </div> */}
+
+          <div className="bg-gradient-to-r from-purple-400 to-blue-300 p-6 text-white flex flex-col items-center rounded-t-2xl">
+            <motion.img
+              src={wabadetails?.profile_picture_url || logo}
+              alt="Profile"
+              className="w-24 h-24 rounded-full border-4 border-white shadow-lg"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              transition={{ duration: 0.3 }}
+            />
+            <h1 className="mt-3 font-semibold text-2xl">
+              {selectedWaba?.wabaName || "WhatsApp Profile"}
+            </h1>
+            <p className="text-sm opacity-90">
+              {wabadetails?.about || "Business WhatsApp Profile"}
+            </p>
+          </div>
+
+          <div className="p-6 relative z-10">
+            <div className="flex flex-col items-center gap-2">
+              <p className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                <FaWhatsapp className="text-[#25D366] text-lg" />{" "}
+                {selectedWaba?.wabaNumber || "N/A"}
+              </p>
+              <a
+                href={`https://wa.me/${selectedWaba?.wabaNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#25D366] text-sm hover:underline"
+              >
+                {whatsappLinkPreview}
+              </a>
+            </div>
+
+            <motion.div
+              className="mt-5 p-4 bg-white rounded-lg border border-gray-300 text-gray-700 text-sm leading-relaxed overflow-y-auto shadow-sm"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <p className="font-semibold text-gray-900">Description</p>
+              <p>
+                {wabadetails?.description || "Hey there, I'm using WhatsApp."}
+              </p>
+            </motion.div>
+
+            {wabadetails?.email && (
+              <div className="flex items-center gap-3 mt-6 text-gray-800">
+                <FaEnvelope className="text-gray-600 text-lg" />
+                <a
+                  href={`mailto:${wabadetails.email}`}
+                  className="text-gray-600 text-md hover:underline"
+                >
+                  {wabadetails.email}
+                </a>
+              </div>
+            )}
+            {wabadetails?.address && (
+              <div className="flex items-center gap-3 mt-4 text-gray-800">
+                <FaMapMarkerAlt className="text-blue-500 text-lg" />
+                <p className="text-md">{wabadetails.address || "N/A"}</p>
+              </div>
+            )}
+            {wabadetails?.websites?.length > 0 && (
+              <div className="mt-6">
+                <p className="font-semibold text-sm text-gray-900 mb-2">
+                  Websites
+                </p>
+                <div className="grid grid-cols-1 gap-2">
+                  {wabadetails.websites.map((website, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <FaGlobe className="text-[#128C7E] text-lg" />
+                      <a
+                        href={website}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-gray-800 text-sm hover:underline truncate w-full"
+                      >
+                        {website.replace("https://", "")}
+                      </a>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        </motion.div>
       </Dialog>
 
       {/* Update waba profile */}
