@@ -11,7 +11,7 @@ import WhatsappManageContactsTable from "./components/WhatsappManageContactsTabl
 import { Dialog } from "primereact/dialog";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Dropdown } from "primereact/dropdown";
-import { IconButton } from "@mui/material";
+import { Box, IconButton, Paper } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import RadioGroupField from "../whatsapp/components/RadioGroupField";
@@ -20,6 +20,8 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../whatsapp/components/UniversalSkeleton";
+import usePagination from "@mui/material/usePagination";
+import { styled } from "@mui/material/styles";
 import {
   addContact,
   addGrp,
@@ -36,6 +38,9 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CustomNoRowsOverlay from "../whatsapp/components/CustomNoRowsOverlay";
 import { campaignUploadFile } from "../apis/whatsapp/whatsapp";
 import { eslintUseValue } from "@mui/x-data-grid/internals";
+import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { Typography, Button } from "@mui/material";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -84,6 +89,11 @@ const ManageContacts = () => {
   const [updateContactDetails, setUpdateContactDetails] = useState("");
   const [updatedContactDetails, setUpdatedContactDetails] = useState({});
   const [updateContactVisible, setUpdateContactVisible] = useState(false);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 5,
+  });
+  const [selectedRows, setSelectedRows] = useState([]);
 
   async function getGrpListData() {
     const res = await getGrpList();
@@ -435,9 +445,185 @@ const ManageContacts = () => {
     await getGrpListData();
   };
 
+  const CustomFooter = () => {
+    return (
+      <GridFooterContainer
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: {
+            xs: "center",
+            lg: "space-between",
+          },
+          alignItems: "center",
+          padding: 1,
+          gap: 2,
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
+          {selectedRows.length > 0 && (
+            <Typography
+              variant="body2"
+              sx={{
+                borderRight: "1px solid #ccc",
+                paddingRight: "10px",
+              }}
+            >
+              {selectedRows.length} Rows Selected
+            </Typography>
+          )}
+
+          <Typography variant="body2">
+            Total Records: <span className="font-semibold">{rows.length}</span>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          <CustomPagination
+            totalPages={totalPages}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          />
+        </Box>
+      </GridFooterContainer>
+    );
+  };
+
+  const PaginationList = styled("ul")({
+    listStyle: "none",
+    padding: 0,
+    margin: 0,
+    display: "flex",
+    gap: "8px",
+  });
+
+  const CustomPagination = ({
+    totalPages,
+    paginationModel,
+    setPaginationModel,
+  }) => {
+    const { items } = usePagination({
+      count: totalPages,
+      page: paginationModel.page + 1,
+      onChange: (_, newPage) =>
+        setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    });
+
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
+        <PaginationList>
+          {items.map(({ page, type, selected, ...item }, index) => {
+            let children = null;
+
+            if (type === "start-ellipsis" || type === "end-ellipsis") {
+              children = "…";
+            } else if (type === "page") {
+              children = (
+                <Button
+                  key={index}
+                  variant={selected ? "contained" : "outlined"}
+                  size="small"
+                  sx={{ minWidth: "27px" }}
+                  {...item}
+                >
+                  {page}
+                </Button>
+              );
+            } else {
+              children = (
+                <Button
+                  key={index}
+                  variant="outlined"
+                  size="small"
+                  {...item}
+                  sx={{}}
+                >
+                  {type === "previous" ? "Previous" : "Next"}
+                </Button>
+              );
+            }
+
+            return <li key={index}>{children}</li>;
+          })}
+        </PaginationList>
+      </Box>
+    );
+  };
+
+  const contactColumns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "groupName", headerName: "Group Name", flex: 1, minWidth: 120 },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 200,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip placement="top" arrow title="Edit">
+            <IconButton
+              onClick={() => {
+                setUpdateGrpId(params.row);
+                setEditGrpVisible(true);
+                setGroupName(params.row.groupName);
+              }}
+            >
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip placement="top" arrow title="Delete">
+            <IconButton
+              className="no-xs"
+              onClick={() => {
+                setDeleteGrpId(params.row);
+                setDeleteDialogVisible(true);
+              }}
+            >
+              <DeleteForeverIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "#e31a1a",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
+
+  const rows = Array.isArray(grpList)
+    ? grpList?.map((grp, index) => ({
+      id: grp.groupCode,
+      sn: index + 1,
+      groupName: grp.groupName,
+    }))
+    : [];
+
+  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
+      <div className="flex flex-wrap align-middle justify-end w-full gap-4 items-end pb-1">
         {/* Name Input Field */}
 
         <div className="w-max-content">
@@ -462,18 +648,22 @@ const ManageContacts = () => {
           <UniversalButton id="exportbtn" name="exportbtn" label="Export" />
         </div>
       </div>
-      <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+      <div className="flex flex--wrap align-middle justify-start w-full gap-4 items-end pb-5">
         <div className="w-full sm:w-56">
-          <div className="flex items-center gap-2 mb-2">
-            <label className="text-sm font-medium text-gray-700">User</label>
+          {/* <div className="flex gap-2 items-center mb-2">
+            <label className="text-gray-700 text-sm font-medium">User</label>
 
             <CustomTooltip title="Select User" placement="right" arrow>
               <span>
                 <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
               </span>
             </CustomTooltip>
-          </div>
+          </div> */}
           <AnimatedDropdown
+            label="Groups"
+            tooltipContent="Please select atleast one group"
+            tooltipPlacement="right"
+            arrow
             className="custom-multiselect"
             placeholder="Select Groups"
             optionLabel="name"
@@ -525,7 +715,7 @@ const ManageContacts = () => {
           />
         </div>
 
-        <div className="w-max-content ">
+        <div className="w-max-content">
           <UniversalButton
             id="managegroupSearchBtn"
             name="managegroupSearchBtn"
@@ -536,7 +726,7 @@ const ManageContacts = () => {
             disabled={isFetching}
           />
         </div>
-        <div className="w-max-content ">
+        <div className="w-max-content">
           <UniversalButton
             id="managegroupdeletebtn"
             name="managegroupdeletebtn"
@@ -593,7 +783,7 @@ const ManageContacts = () => {
               </TabPanel>
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
-                  <div className="flex card justify-content-center">
+                  <div className="flex card justify-content-center mb-2">
                     <DropdownWithSearch
                       options={grpList?.map((item) => ({
                         value: item.groupCode,
@@ -609,47 +799,54 @@ const ManageContacts = () => {
                       className="w-full md:w-14rem"
                     />
                   </div>
-                  <table className="w-full my-2 text-left border border-gray-300">
-                    <thead className="bg-gray-100 border-b-2 border-gray-300">
-                      <tr>
-                        <th className="px-4 py-1 border-r">Group Name</th>
-                        <th className="px-4 py-1">Action</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {grpList?.map((group, index) => (
-                        <tr
-                          key={index}
-                          className="h-10 border-b border-gray-300"
-                        >
-                          <td className="px-4 py-1 border-r">
-                            {group.groupName}
-                          </td>
-                          <td className="flex gap-3 px-4 py-1">
-                            <IconButton className="no-xs">
-                              <DeleteIcon
-                                sx={{ fontSize: "1.2rem", color: "green" }}
-                                onClick={() => {
-                                  setDeleteGrpId(group);
-                                  setDeleteDialogVisible(true);
-                                }}
-                              />
-                            </IconButton>
 
-                            <IconButton>
-                              <EditNoteIcon
-                                sx={{ fontSize: "1.2rem", color: "gray" }}
-                                onClick={() => {
-                                  setUpdateGrpId(group);
-                                  setEditGrpVisible(true);
-                                }}
-                              />
-                            </IconButton>
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+                  <Paper
+                    sx={{ height: 333 }}
+                    id={"ManageGroup"}
+                    name={"ManageGroup"}
+                  >
+                    <DataGrid
+                      id={"ManageGroup"}
+                      name={"ManageGroup"}
+                      rows={rows}
+                      columns={contactColumns}
+                      initialState={{ pagination: { paginationModel } }}
+                      pageSizeOptions={[10, 20, 50]}
+                      pagination
+                      paginationModel={paginationModel}
+                      onPaginationModelChange={setPaginationModel}
+                      // checkboxSelection
+                      rowHeight={45}
+                      slots={{ footer: CustomFooter }}
+                      slotProps={{ footer: { totalRecords: rows.length } }}
+                      // onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                      disableRowSelectionOnClick
+                      // autoPageSize
+                      disableColumnResize
+                      disableColumnMenu
+                      sx={{
+                        border: 0,
+                        "& .MuiDataGrid-cellCheckbox": {
+                          outline: "none !important",
+                        },
+                        "& .MuiDataGrid-cell": {
+                          outline: "none !important",
+                        },
+                        "& .MuiDataGrid-columnHeaders": {
+                          color: "#193cb8",
+                          fontSize: "14px",
+                          fontWeight: "bold !important",
+                        },
+                        "& .MuiDataGrid-row--borderBottom": {
+                          backgroundColor: "#e6f4ff !important",
+                        },
+                        "& .MuiDataGrid-columnSeparator": {
+                          // display: "none",
+                          color: "#ccc",
+                        },
+                      }}
+                    />
+                  </Paper>
                 </div>
               </TabPanel>
             </TabView>
@@ -690,7 +887,7 @@ const ManageContacts = () => {
 
             {selectedddImportContact === "option1" && (
               <div>
-                <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+                <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
                   <InputField
                     placeholder="Enter first name.."
                     id="userfirstname"
@@ -844,7 +1041,7 @@ const ManageContacts = () => {
             {selectedddImportContact === "option2" && (
               <div className="importcontacts">
                 {/* Your content for Import Contacts */}
-                <div className="mt-2 file-upload">
+                <div className="file-upload mt-2">
                   <div
                     className="file-upload-container"
                     onDrop={handleFileDrop}
@@ -858,20 +1055,19 @@ const ManageContacts = () => {
                       name="fileInput"
                       accept=".xls,.xlsx,.xlsm"
                     />
-                    <div className="flex items-center justify-center gap-2">
+                    <div className="flex justify-center gap-2 items-center">
                       <label
                         htmlFor="fileInput"
-                        className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500"
+                        className="bg-blue-400 rounded-lg text-center text-sm text-white cursor-pointer file-upload-button font-medium hover:bg-blue-500 inline-block px-3 py-2 tracking-wider"
                       >
                         Choose or Drop File
                       </label>
-                      <div className="upload-button-container ">
+                      <div className="upload-button-container">
                         <button
                           onClick={handleFileUpload}
                           disabled={isUploading}
-                          className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                            isUploading ? "disabled" : ""
-                          }`}
+                          className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                            }`}
                         >
                           <FileUploadOutlinedIcon
                             sx={{ color: "white", fontSize: "23px" }}
@@ -879,20 +1075,20 @@ const ManageContacts = () => {
                         </button>
                       </div>
                     </div>
-                    <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
+                    <p className="text-[0.8rem] text-gray-400 file-upload-text mt-2 tracking-wide">
                       Max 3 lacs records & mobile number should be with country
                       code. <br />
                       Supported File Formats: .xlsx
                     </p>
                     <div className="mt-3">
                       {uploadedFile ? (
-                        <div className="flex items-center justify-center gap-1 file-upload-info">
-                          <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
+                        <div className="flex justify-center file-upload-info gap-1 items-center">
+                          <p className="text-green-500 text-sm file-upload-feedback file-upload-feedback-success font-[500]">
                             {isUploaded ? "File Uploaded: " : "File Selected: "}
                             <strong>{uploadedFile.name}</strong>
                           </p>
                           <button
-                            className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
+                            className="p-1.5 rounded-2xl cursor-pointer file-remove-button hover:bg-gray-200"
                             onClick={handleRemoveFile}
                           >
                             <MdOutlineDeleteForever
@@ -902,14 +1098,14 @@ const ManageContacts = () => {
                           </button>
                         </div>
                       ) : (
-                        <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
+                        <p className="text-gray-500 text-sm file-upload-feedback file-upload-feedback-error font-semibold tracking-wide">
                           No file uploaded yet!
                         </p>
                       )}
                     </div>
                     {importContactFormVisible && (
                       <div>
-                        <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+                        <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
                           {/* <InputField
                             placeholder="Enter first name.."
                             id="userfirstname"
@@ -1131,7 +1327,7 @@ const ManageContacts = () => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="flex items-center justify-center">
+        <div className="flex justify-center items-center">
           {/* <ErrorOutlineOutlinedIcon
                   sx={{
                     fontSize: 64,
@@ -1145,11 +1341,11 @@ const ManageContacts = () => {
           />
         </div>
         <div className="p-4 text-center">
-          <p className="text-[1.1rem] font-semibold text-gray-700">
+          <p className="text-[1.1rem] text-gray-700 font-semibold">
             Are you sure you want to delete the group <br />
             <span className="text-green-500">"{deleteGrpId?.groupName}"</span>
           </p>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="text-gray-500 text-sm mt-2">
             This action is irreversible.
           </p>
         </div>
@@ -1177,11 +1373,14 @@ const ManageContacts = () => {
       <Dialog
         header="Edit Group Name"
         visible={editGrpVisible}
-        onHide={() => setEditGrpVisible(false)}
+        onHide={() => {
+          setEditGrpVisible(false);
+          setGroupName("");
+        }}
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="flex gap-1.5 flex-col">
+        <div className="flex flex-col gap-1.5">
           <InputField
             label="New Group Name"
             id="name"
@@ -1212,7 +1411,7 @@ const ManageContacts = () => {
         draggable={false}
       >
         <div>
-          <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+          <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
             <InputField
               placeholder="Enter first name.."
               id="userfirstname"

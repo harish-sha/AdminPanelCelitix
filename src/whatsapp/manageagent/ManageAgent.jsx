@@ -568,7 +568,7 @@ const ManageAgent = () => {
       ) : (
         <>
           <div className="flex flex-wrap items-center justify-between w-full mt-4 mb-5">
-            <h1 className="text-xl font-medium">Manage Agent</h1>
+            <h1 className="text-xl font-semibold text-gray-700">Manage Agent</h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
                 <UniversalButton

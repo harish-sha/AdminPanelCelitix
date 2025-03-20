@@ -62,15 +62,13 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
-    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${
-      checked ? "bg-blue-400" : "bg-gray-300"
-    }`}
+    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${checked ? "bg-blue-400" : "bg-gray-300"
+      }`}
     onClick={() => onChange(!checked)}
   >
     <div
-      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${
-        checked ? "translate-x-5" : ""
-      }`}
+      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${checked ? "translate-x-5" : ""
+        }`}
     />
   </button>
 );
@@ -613,9 +611,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -634,7 +632,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       minWidth: 200,
       renderCell: (params) => (
         <>
-          <CustomTooltip arrow title="Auto Reply" placement="top">
+          {/* <CustomTooltip arrow title="Auto Reply" placement="top">
             <IconButton onClick={() => handleReply(params.row)}>
               <ReplyIcon
                 sx={{
@@ -643,7 +641,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 }}
               />
             </IconButton>
-          </CustomTooltip>
+          </CustomTooltip> */}
           <CustomTooltip placement="top" arrow title="Working Hours">
             <IconButton
               onClick={() =>
@@ -901,16 +899,15 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
         {/* Table End */}
 
         {/* Auto Reply start */}
-        <Dialog
+        {/* <Dialog
           header="Auto-reply"
           draggable={false}
           visible={reply}
           className="w-[35rem]"
           onHide={() => setReply(false)}
         >
-          {/* Active Agent Auto-Reply Section */}
           <div className="mb-4">
-            <div className="flex justify-between items-center bg-[#E6F4FF] text-blue-800 px-3 py-2 rounded-t">
+            <div className="flex bg-[#E6F4FF] justify-between rounded-t text-blue-800 items-center px-3 py-2">
               <span className="text-sm font-semibold">
                 Active Agent Auto-Reply
               </span>
@@ -920,20 +917,18 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               />
             </div>
             {isActiveAgentOn && (
-              <div className="p-3 border border-gray-300 rounded-b">
+              <div className="border border-gray-300 p-3 rounded-b">
                 <InputText
                   placeholder="Set Auto Reply"
                   value={activeReply}
                   onChange={(e) => setActiveReply(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="border border-gray-300 p-2 rounded w-full"
                 />
               </div>
             )}
           </div>
-
-          {/* Inactive Agent Auto-Reply Section */}
           <div className="mb-2">
-            <div className="flex justify-between items-center bg-[#E6F4FF] text-blue-800 px-3 py-2 rounded-t">
+            <div className="flex bg-[#E6F4FF] justify-between rounded-t text-blue-800 items-center px-3 py-2">
               <span className="text-sm font-semibold">
                 Inactive Agent Auto-Reply
               </span>
@@ -943,17 +938,17 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               />
             </div>
             {isInactiveAgentOn && (
-              <div className="p-3 border border-gray-300 rounded-b">
+              <div className="border border-gray-300 p-3 rounded-b">
                 <InputText
                   placeholder="Set Auto Reply"
                   value={inactiveReply}
                   onChange={(e) => setInactiveReply(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded"
+                  className="border border-gray-300 p-2 rounded w-full"
                 />
               </div>
             )}
           </div>
-        </Dialog>
+        </Dialog> */}
         {/* Auto Reply end */}
 
         {/* Manage agents working hours start */}
@@ -968,10 +963,10 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
             <div className="space-y-2">
               {/* If working hours are not assigned, show a message + Assign Now button */}
               {workingHours === null ? (
-                <div className="flex flex-col items-center justify-center mt-5 space-y-5 text-lg text-gray-500">
+                <div className="flex flex-col justify-center text-gray-500 text-lg items-center mt-5 space-y-5">
                   <p>{selectedAgentName} has not assigned working hours</p>
                   <button
-                    className="bg-blue-400 text-white px-3 py-2 rounded-md hover:bg-blue-500 cursor-pointer text-[1rem]"
+                    className="bg-blue-400 rounded-md text-[1rem] text-white cursor-pointer hover:bg-blue-500 px-3 py-2"
                     onClick={() =>
                       setWorkingHours({
                         Monday: { enabled: false, start: null, end: null },
@@ -991,16 +986,16 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 Object.keys(workingHours).map((day) => (
                   <div
                     key={day}
-                    className="flex flex-wrap items-center justify-between gap-2 p-2 bg-white rounded-lg shadow-md"
+                    className="flex flex-wrap bg-white justify-between p-2 rounded-lg shadow-md gap-2 items-center"
                   >
                     {/* Toggle Open/Closed */}
                     <div className="flex items-center space-x-2">
                       <Switch
                         sx={{
                           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                            {
-                              backgroundColor: "#34C759",
-                            },
+                          {
+                            backgroundColor: "#34C759",
+                          },
                           "& .MuiSwitch-switchBase.Mui-checked": {
                             color: "#34C759",
                           },
@@ -1016,7 +1011,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                           }))
                         }
                       />
-                      <span className="text-sm font-semibold text-blue-600">
+                      <span className="text-blue-600 text-sm font-semibold">
                         {day}
                       </span>
                     </div>
@@ -1048,8 +1043,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                         />
                       </div>
                     ) : (
-                      <div className="flex items-center justify-center w-10 p-2 pr-10">
-                        <span className="text-sm font-semibold text-gray-400">
+                      <div className="flex justify-center p-2 w-10 items-center pr-10">
+                        <span className="text-gray-400 text-sm font-semibold">
                           Closed
                         </span>
                       </div>
@@ -1134,8 +1129,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 /> */}
               </Tabs>
               <CustomTabPanel value={value} index={0} className="">
-                {/* <div className="flex flex-wrap gap-4 mt-2 mb-5 sm:grid-cols-2">
-                  <div className="flex items-center justify-center gap-2 cursor-pointer" >
+                {/* <div className="flex flex-wrap gap-4 mb-5 mt-2 sm:grid-cols-2">
+                  <div className="flex justify-center cursor-pointer gap-2 items-center" >
                     <RadioButton
                       inputId="radioOption1"
                       name="radioGroup"
@@ -1143,9 +1138,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option1'}
                     />
-                    <label htmlFor="radioOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Enable</label>
+                    <label htmlFor="radioOption1" className="text-gray-700 text-sm cursor-pointer font-medium">Enable</label>
                   </div>
-                  <div className="flex items-center justify-center gap-2" >
+                  <div className="flex justify-center gap-2 items-center" >
                     <RadioButton
                       inputId="radioOption2"
                       name="radioGroup"
@@ -1153,14 +1148,14 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option2'}
                     />
-                    <label htmlFor="radioOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Disable</label>
+                    <label htmlFor="radioOption2" className="text-gray-700 text-sm cursor-pointer font-medium">Disable</label>
                   </div>
                 </div> */}
                 <div className="flex flex-col w-full gap-4">
                   {wabaTemplates.map((entry, index) => (
                     <div
                       key={index}
-                      className="flex flex-wrap gap-2 items-end p-2.5 rounded-md relative border border-gray-200 transition-all"
+                      className="flex flex-wrap border border-gray-200 p-2.5 rounded-md gap-2 items-end relative transition-all"
                     >
                       {/* WABA Selection Dropdown */}
                       <div className="flex-1">
@@ -1183,7 +1178,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                           text="Select Template"
                           tooltipContent="Select templates to assign"
                           tooltipPlacement="right"
-                          className="block text-sm font-medium text-gray-700"
+                          className="text-gray-700 text-sm block font-medium"
                         />
                         <Autocomplete
                           multiple
@@ -1215,16 +1210,16 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       </button>
                     </div>
                   ))}
-                  <div className="flex items-center justify-center gap-4">
+                  <div className="flex justify-center gap-4 items-center">
                     <button
                       onClick={addWabaSelection}
-                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
+                      className="bg-blue-400 rounded-md text-sm text-white w-max cursor-pointer hover:bg-blue-500 px-4 py-2 transition"
                     >
                       Add More
                     </button>
                     <button
                       onClick={handleSaveAssignments}
-                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
+                      className="bg-blue-400 rounded-md text-sm text-white w-max cursor-pointer hover:bg-blue-500 px-4 py-2 transition"
                       disabled={isSaving}
                     >
                       {isSaving ? "Saving..." : "Save"}
@@ -1369,7 +1364,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
           className="w-[30rem]"
           draggable={false}
         >
-          <div className="flex items-center justify-center">
+          <div className="flex justify-center items-center">
             {/* <ErrorOutlineOutlinedIcon
             sx={{
               fontSize: 64,
@@ -1383,11 +1378,11 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
             />
           </div>
           <div className="p-4 text-center">
-            <p className="text-[1.1rem] font-semibold text-gray-700">
+            <p className="text-[1.1rem] text-gray-700 font-semibold">
               Are you sure you want to delete the agent <br />
               <span className="text-green-500">"{selectedAgentName}"</span>
             </p>
-            <p className="mt-2 text-sm text-gray-500">
+            <p className="text-gray-500 text-sm mt-2">
               This action is irreversible.
             </p>
           </div>

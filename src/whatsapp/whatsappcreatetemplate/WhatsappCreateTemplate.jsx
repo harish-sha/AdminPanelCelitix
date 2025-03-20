@@ -362,10 +362,10 @@ const WhatsappCreateTemplate = () => {
         <>
           <div className="w-full">
             <div className="">
-              <h1 className="mb-4 font-semibold text-center text-gray-800 text-md lg:text-start">
+              <h1 className="text-center text-gray-800 text-md font-semibold lg:text-start mb-4">
                 Create Template
               </h1>
-              <div className="flex flex-wrap items-end justify-start gap-4 pb-5 align-middle">
+              <div className="flex flex-wrap align-middle justify-start gap-4 items-end pb-5">
                 <div className="w-full sm:w-56">
                   {/* <AnimatedDropdown
                     id="createSelectWaba"
@@ -582,7 +582,7 @@ const WhatsappCreateTemplate = () => {
                       />
                     )}
                   </>
-                  <div className="flex items-center justify-center w-full mt-6">
+                  <div className="flex justify-center w-full items-center mt-6">
                     <button
                       disabled={
                         !selectedWaba ||
@@ -639,9 +639,9 @@ const WhatsappCreateTemplate = () => {
               </div>
             ) : (
               <>
-                <div className="p-2 border-2 border-blue-500 border-dashed rounded-2xl">
-                  <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg h-96 bg-gradient-to-r from-blue-500 to-purple-500">
-                    <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
+                <div className="border-2 border-blue-500 border-dashed p-2 rounded-2xl">
+                  <div className="flex bg-gradient-to-r h-96 justify-center rounded-lg shadow-lg text-center w-full from-blue-500 items-center py-4 to-purple-500">
+                    <p className="flex text-2xl text-white font-m font-medium gap-2 items-center">
                       <WhatsApp
                         className="inline-block"
                         sx={{ fontSize: "35px", color: "#22d614" }}

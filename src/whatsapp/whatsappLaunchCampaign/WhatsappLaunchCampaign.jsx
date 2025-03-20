@@ -144,10 +144,12 @@ const WhatsappLaunchCampaign = () => {
       }
     }
 
-    // console.log("ad" , varLength);
-    // console.log("Objl", formData)
+    const filterObj = Object.fromEntries(
+      Object.entries(formData).filter(([key, value]) => value !== "")
+    );
 
-    if (varLength !== Object.keys(formData).length) {
+
+    if (varLength !== Object.keys(filterObj).length) {
       toast.error("Please enter a all variable values!");
       return;
     }

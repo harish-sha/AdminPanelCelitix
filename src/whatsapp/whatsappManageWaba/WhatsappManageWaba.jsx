@@ -370,6 +370,7 @@ const WhatsappManageWaba = ({ id, name }) => {
     { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
     { field: 'expiryDate', headerName: 'Expiry Date', flex: 1, minWidth: 120 },
     { field: 'wabaAccountId', headerName: 'WABA Account ID', flex: 1, minWidth: 120 },
+    { field: 'health', headerName: 'Health', flex: 1, minWidth: 120 },
     { field: 'phoneNumberId', headerName: 'Phone Number ID', flex: 1, minWidth: 120 },
     {
       field: 'action',
