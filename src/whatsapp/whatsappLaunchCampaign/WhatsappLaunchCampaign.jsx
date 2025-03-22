@@ -181,7 +181,7 @@ const WhatsappLaunchCampaign = () => {
   };
 
   const handleFinalSubmit = async (event) => {
-    if (event) event.preventDefault();
+    // if (event) event.preventDefault();
 
     const selectedWabaData = wabaList?.find(
       (waba) => waba.mobileNo === selectedWaba
@@ -240,6 +240,10 @@ const WhatsappLaunchCampaign = () => {
     }
 
     setTotalRecords(finalTotalRecords);
+    if (schedule && scheduledDateTime < new Date()) {
+      toast.error("Scheduled date and time cannot be in the past.");
+      return;
+    }
 
     if (!finalTotalRecords) {
       toast.error("Total records cannot be zero. Please check your selection.");
@@ -680,7 +684,7 @@ const WhatsappLaunchCampaign = () => {
                 {/*final Submit Button */}
                 <UniversalButton
                   label="Send Campaign"
-                  onClick={(e) => handleFinalSubmit(e)}
+                  onClick={handleFinalSubmit}
                   style={{
                     borderRadius: "40px",
                     letterSpacing: "1px",

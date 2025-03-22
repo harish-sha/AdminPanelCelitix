@@ -166,6 +166,7 @@ const CustomPagination = ({
 const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [updateStatus, setUpdateStatus] = useState(false);
 
   // handle reply
   const [reply, setReply] = useState(false);
@@ -340,20 +341,15 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
   // Handle Agent Status Update
   const handleStatusChange = async (srNo, currentStatus) => {
+    console.log(currentStatus);
     const agent = agentList.find((agent) => agent.sr_no === srNo);
     const agentName = agent ? agent.name : "Unknown Agent"; // Default to prevent undefined
 
     try {
-      const response = await updateAgentStatus(srNo, currentStatus);
+      const response = await updateAgentStatus(srNo, Number(currentStatus));
 
       if (response?.statusCode === 200) {
-        setAgentList((prevAgents) =>
-          prevAgents.map((agent) =>
-            agent.sr_no === srNo
-              ? { ...agent, status: currentStatus === 1 ? 0 : 1 }
-              : agent
-          )
-        );
+        await fetchAgentList();
 
         toast.success(`${agentName} status updated successfully`);
       } else {
@@ -601,11 +597,15 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
         <CustomTooltip
           arrow
           placement="top"
-          title={params.value === 1 ? "Active" : "Inactive"}
+          title={params.row.status === 1 ? "Active" : "Inactive"}
+
         >
           <Switch
-            checked={params.value === 1}
-            onChange={() => handleStatusChange(params.row.id, params.value)}
+            checked={params.row.status}
+            // value={setUpdateStatus}
+            onChange={(e) => {
+              handleStatusChange(params.row.id, e.target.checked);
+            }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",

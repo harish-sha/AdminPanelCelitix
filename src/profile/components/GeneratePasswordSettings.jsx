@@ -14,7 +14,7 @@ const GeneratePasswordSettings = ({ label, id, name, tooltipContent = "", toolti
   };
 
   const generateRandomPassword = (length = 8) => {
-    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    const charset = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@*';
     let generated = '';
     for (let i = 0; i < length; i++) {
       generated += charset.charAt(Math.floor(Math.random() * charset.length));

@@ -47,6 +47,7 @@ const UniversalDatePicker = ({
                     minDate={minDate}
                     maxDate={maxDate}
                     views={views}
+                    defaultValue={new Date()}
                     format='dd/MM/yyyy'
                     renderInput={(params) => (
                         <div >

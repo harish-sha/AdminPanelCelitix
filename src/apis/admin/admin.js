@@ -1,5 +1,6 @@
 import { fetchWithAuth } from "../apiClient";
 
+// fetch all users
 export const fetchAllUsers = async (data) => {
   return await fetchWithAuth("/proCpaasRest/user/getUserList", {
     method: "POST",
@@ -7,6 +8,7 @@ export const fetchAllUsers = async (data) => {
   });
 };
 
+// fetch user by sr no
 export const fetchUserbySrno = async (srNo) => {
   return await fetchWithAuth("/proCpaasRest/user/getuserdetailsById", {
     method: "POST",
@@ -14,6 +16,7 @@ export const fetchUserbySrno = async (srNo) => {
   });
 };
 
+// update user by srno
 export const updateUserbySrno = async (data) => {
   return await fetchWithAuth("/proCpaasRest/user/updateUserById", {
     method: "POST",

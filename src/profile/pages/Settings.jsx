@@ -13,6 +13,7 @@ import GeneratePasswordSettings from "../components/GeneratePasswordSettings";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import outlined from "@material-tailwind/react/theme/components/timeline/timelineIconColors/outlined";
 import { getApiKey, updateApiKey } from "../../apis/settings/setting";
+import NetworkLockedOutlinedIcon from '@mui/icons-material/NetworkLockedOutlined';
 import toast from "react-hot-toast";
 
 function CustomTabPanel(props) {
@@ -84,28 +85,32 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
-            variant="fullWidth"
+          // variant="fullWidth"
           >
             <Tab
               label={
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  <span
-                    style={{
-                      paddingRight: "0.5rem",
-                      borderRight: "1px solid #ccc",
-                      display: "flex",
-                      alignItems: "center",
-                    }}
-                  >
-                    <PasswordOutlinedIcon fontSize="small" />
-                  </span>
-                  <span>Change Password</span>
+                // <span
+                //   style={{
+                //     display: "flex",
+                //     alignItems: "center",
+                //     gap: "0.5rem",
+                //   }}
+                // >
+                //   <span
+                //     style={{
+                //       paddingRight: "0.5rem",
+                //       borderRight: "1px solid #ccc",
+                //       display: "flex",
+                //       alignItems: "center",
+                //     }}
+                //   >
+                //     <PasswordOutlinedIcon fontSize="small" />
+                //   </span>
+                //   <span>Change Password</span>
+                // </span>
+
+                <span>
+                  <PasswordOutlinedIcon fontSize="small" /> Change Password
                 </span>
               }
               {...a11yProps(0)}
@@ -143,6 +148,40 @@ const Settings = () => {
                 </span>
               }
               {...a11yProps(1)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      paddingRight: "0.5rem",
+                      borderRight: "1px solid #ccc",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <NetworkLockedOutlinedIcon size={18} />
+                  </span>
+                  <span>IP Restrictions</span>
+                </span>
+              }
+              {...a11yProps(2)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",

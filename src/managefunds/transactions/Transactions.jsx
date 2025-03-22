@@ -15,6 +15,11 @@ import { MultiSelect } from 'primereact/multiselect';
 import CustomTooltip from '../../components/common/CustomTooltip';
 import { AiOutlineInfoCircle } from 'react-icons/ai';
 import UniversalSkeleton from '../../whatsapp/components/UniversalSkeleton';
+import { DataTable } from "../../components/layout/DataTable";
+import { fetchTransactions } from "../../apis/settings/setting";
+
+import toast from 'react-hot-toast';
+
 
 function CustomTabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -39,7 +44,7 @@ function a11yProps(index) {
     };
 }
 const Transactions = () => {
-    const [value, setValue] = useState(0); 
+    const [value, setValue] = useState(0);
     const [isLoading, setIsLoading] = useState(true);
     const [isFetching, setIsFetching] = useState(false);
     const [filteredData, setFilteredData] = useState([]);
@@ -55,6 +60,89 @@ const Transactions = () => {
     const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
     const [selectedOptionServiceSummary, setSelectedOptionServiceSummary] = useState("");
     const [selectedOptionTypeSummary, setSelectedOptionTypeSummary] = useState("");
+
+    const [filterData, setFilterData] = useState({
+        rechargeType: 0,
+        toDate: new Date().toLocaleDateString("en-GB"),
+        startDate: new Date().toLocaleDateString("en-GB"),
+    });
+    const [transactionalData, setTransactionalData] = useState([]);
+
+    const handleSearch = async () => {
+        try {
+            setIsFetching(true)
+            const res = await fetchTransactions(filterData);
+            setTransactionalData(res);
+        }
+        catch (e) {
+            toast.error("Something went wring!")
+        }
+        finally {
+            setIsFetching(false)
+        }
+    };
+
+    useEffect(() => {
+        handleSearch();
+    }, []);
+
+    const columns = [
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+        { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
+        {
+            field: "rechargeDate",
+            headerName: "Recharge Data",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "before",
+            headerName: "Amount Before Recharge",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "amount",
+            headerName: "Amount Recharged",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "after",
+            headerName: "Amount After Recharge",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "type",
+            headerName: "Recharge Type",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "gst",
+            headerName: "Gst Amount",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "balance",
+            headerName: "Total Amount",
+            flex: 1,
+            minWidth: 120,
+        },
+        { field: "remark", headerName: "Remarks", flex: 1, minWidth: 120 },
+    ];
+
+    console.log(transactionalData);
+    const rows = Array.isArray(transactionalData)
+        ? transactionalData.map((item, index) => ({
+            ...item,
+            sn: index + 1,
+            id: index + 1,
+        }))
+        : [];
+
 
     const multiHistory = [
         { name: 'New York', code: 'NY' },
@@ -190,7 +278,7 @@ const Transactions = () => {
                             }}
                         />
 
-                        <Tab
+                        {/* <Tab
                             label={
                                 <span className="flex gap-2 items-center">
                                     <BsJournalArrowDown size={18} /> Transaction Summary
@@ -207,7 +295,7 @@ const Transactions = () => {
                                     borderRadius: '8px',
                                 },
                             }}
-                        />
+                        /> */}
                     </Tabs>
                     <div className="w-max-content">
                         <UniversalButton
@@ -222,7 +310,7 @@ const Transactions = () => {
                 <CustomTabPanel value={value} index={0} className='' >
                     <div className='w-full' >
                         <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
-                            <div className="w-full sm:w-56">
+                            {/* <div className="w-full sm:w-56">
                                 <div className="flex items-center gap-2 mb-2">
                                     <label className="text-sm font-medium text-gray-700">User</label>
 
@@ -247,19 +335,23 @@ const Transactions = () => {
                                     filter
 
                                 />
-                            </div>
+                            </div> */}
                             <div className="w-full sm:w-56">
                                 <UniversalDatePicker
                                     id="transactionshistoryfrom"
                                     name="transactionshistoryfrom"
                                     label="From"
-                                    value={selectedHistoryFrom}
-                                    onChange={(newValue) => setSelectedHistoryFrom(newValue)}
                                     placeholder="Pick a start date"
                                     tooltipContent="Select the starting date for your project"
                                     tooltipPlacement="right"
-                                    error={!selectedHistoryFrom}
                                     errorText="Please select a valid date"
+                                    value={setFilterData.startDate}
+                                    onChange={(newValue) => {
+                                        setFilterData({
+                                            ...filterData,
+                                            startDate: new Date(newValue).toLocaleDateString("en-GB"),
+                                        });
+                                    }}
                                 />
                             </div>
                             <div className="w-full sm:w-56">
@@ -267,17 +359,21 @@ const Transactions = () => {
                                     id="transactionshistoryto"
                                     name="transactionshistoryto"
                                     label="To"
-                                    value={selectedHistoryTo}
-                                    onChange={(newValue) => setSelectedHistoryTo(newValue)}
                                     placeholder="Pick a start date"
                                     tooltipContent="Select the starting date for your project"
                                     tooltipPlacement="right"
-                                    error={!selectedHistoryTo}
                                     errorText="Please select a valid date"
+                                    value={setFilterData.toDate}
+                                    onChange={(newValue) => {
+                                        setFilterData({
+                                            ...filterData,
+                                            toDate: new Date(newValue).toLocaleDateString("en-GB"),
+                                        });
+                                    }}
                                 />
                             </div>
 
-                            <div className="w-full sm:w-56" >
+                            {/* <div className="w-full sm:w-56" >
                                 <AnimatedDropdown
                                     id='transactionshistoryservice'
                                     name='transactionshistoryservice'
@@ -289,18 +385,28 @@ const Transactions = () => {
                                     onChange={(value) => setSelectedHistoryService(value)}
                                     placeholder="Service"
                                 />
-                            </div>
-                            <div className="w-full sm:w-56" >
+                            </div> */}
+                            <div className="w-full sm:w-56">
                                 <AnimatedDropdown
-                                    id='transactionshistorytype'
-                                    name='transactionshistorytype'
+                                    id="transactionshistorytype"
+                                    name="transactionshistorytype"
                                     label="Type"
                                     tooltipContent="Select type"
                                     tooltipPlacement="right"
-                                    options={options3}
-                                    value={selectedHistoryType}
-                                    onChange={(value) => setSelectedHistoryType(value)}
+                                    options={[
+                                        { value: 0, label: "All" },
+                                        { value: 1, label: "Recharge" },
+                                        { value: 3, label: "Credit" },
+                                        { value: 4, label: "Debit" },
+                                    ]}
                                     placeholder="Type"
+                                    value={filterData.rechargeType}
+                                    onChange={(value) => {
+                                        setFilterData({
+                                            ...filterData,
+                                            rechargeType: value,
+                                        });
+                                    }}
                                 />
                             </div>
 
@@ -311,7 +417,7 @@ const Transactions = () => {
                                     name='manageCampaignSearchBtn'
                                     label={isFetching ? "Searching..." : "Search"}
                                     icon={<IoSearch />}
-                                    onClick={handleSearchHistory}
+                                    onClick={handleSearch}
                                     variant="primary"
                                     disabled={isFetching}
                                 />
@@ -319,21 +425,24 @@ const Transactions = () => {
 
                         </div>
                         {isFetching ? (
-                            <div className='' >
-                                <UniversalSkeleton height='35rem' width='100%' />
+                            <div className="">
+                                <UniversalSkeleton height="35rem" width="100%" />
                             </div>
                         ) : (
-                            <div className='w-full' >
-                                <TransactionsHistoryTable
-                                    id='transactionshistorytable'
-                                    name='transactionshistorytable'
+                            <div className="w-full">
+
+                                <DataTable
+                                    id="transactionshistorytable"
+                                    name="transactionshistorytable"
+                                    col={columns}
+                                    rows={rows}
                                 />
                             </div>
                         )}
 
                     </div>
                 </CustomTabPanel>
-                <CustomTabPanel value={value} index={1}>
+                {/* <CustomTabPanel value={value} index={1}>
                     <div className='w-full' >
                         <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
                             <div className="w-full sm:w-56">
@@ -422,7 +531,6 @@ const Transactions = () => {
                                 <UniversalButton
                                     id='manageCampaignLogsShowhBtn'
                                     name='manageCampaignLogsShowhBtn'
-                                    // label="Show"
                                     label={isFetching ? "Searching..." : "Search"}
                                     icon={<IoSearch />}
                                     onClick={handleSearchSummary}
@@ -445,7 +553,7 @@ const Transactions = () => {
                             </div>
                         )}
                     </div>
-                </CustomTabPanel>
+                </CustomTabPanel> */}
             </Box>
 
         </div>

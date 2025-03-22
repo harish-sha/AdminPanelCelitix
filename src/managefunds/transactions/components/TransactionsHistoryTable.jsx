@@ -83,30 +83,6 @@ const TransactionsHistoryTable = ({ id, name, handleView, handleDuplicate, handl
         { field: 'remarks', headerName: 'Remarks', flex: 1, minWidth: 120 },
     ];
 
-    // const rows = [
-    //     { id: 1, sn: 1, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 2, sn: 2, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 3, sn: 3, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 4, sn: 4, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 5, sn: 5, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 6, sn: 6, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 7, sn: 7, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 8, sn: 8, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 9, sn: 9, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 10, sn: 10, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 11, sn: 11, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 12, sn: 12, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 13, sn: 13, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 14, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 15, sn: 14, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 16, sn: 16, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 17, sn: 17, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 18, sn: 18, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 19, sn: 19, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-    //     { id: 20, sn: 20, createdOn: '11/05/2024 14:58:39', campaignName: 'Demo', templateName: 'NewTemplate', templateCategory: 'Utility', templateType: 'Text', status: 'Pending', totalAudience: '10000', action: 'True' },
-
-    // ];
-
     // use this when you want to create rows dynamically
     const rows = Array.from({ length: 500 }, (_, i) => ({
         id: i + 1,
@@ -120,7 +96,7 @@ const TransactionsHistoryTable = ({ id, name, handleView, handleDuplicate, handl
         rechargetype: 'Credit',
         resource: 'Admin',
         remarks: 'Demo account testing lorem ipsum dolor sit amet..',
-        
+
     }));
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

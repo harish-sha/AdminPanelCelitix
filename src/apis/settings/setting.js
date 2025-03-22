@@ -23,3 +23,13 @@ export const fetchIpDetails = async () => {
     method: "POST",
   });
 };
+
+// fetch transaction history
+export const fetchTransactions = async (filterData) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/accountInfo/rechargeHistory?startDate=${filterData.startDate}&toDate=${filterData.toDate}&rechargeType=${filterData.rechargeType}`,
+    {
+      method: "POST",
+    }
+  );
+};

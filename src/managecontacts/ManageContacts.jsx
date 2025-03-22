@@ -41,6 +41,7 @@ import { eslintUseValue } from "@mui/x-data-grid/internals";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { Typography, Button } from "@mui/material";
+import { ManageSearch } from "@mui/icons-material";
 
 const ManageContacts = () => {
   const [selectedMultiGroup, setSelectedMultiGroup] = useState(null);
@@ -65,6 +66,7 @@ const ManageContacts = () => {
   const [manageContactFirst, setMmanageContactFirst] = useState("");
   const [manageContactMobile, setManageContactMobile] = useState("");
   const [allContacts, setAllContacts] = useState([]);
+  const [filterContacts, setFilterContacts] = useState([]);
   const [grpList, setGrpList] = useState([]);
   const [addContactDetails, setAddContactDetails] = useState({
     firstName: "",
@@ -253,18 +255,45 @@ const ManageContacts = () => {
       toast.error("Please select group");
       return;
     }
+    try {
+      setIsFetching(true);
+      const res = await getContactListByGrpId({
+        groupSrNo: selectedMultiGroup,
+        status: selectedStatus,
+      });
 
-    setIsFetching(true);
-    const res = await getContactListByGrpId({
-      groupSrNo: selectedMultiGroup,
-      status: selectedStatus,
-    });
-    if (!res.flag) {
-      setAllContacts([]);
+      if (res.flag === false) {
+        setAllContacts([]);
+        setFilterContacts([]);
+      }
+      setAllContacts(res);
+
+      if (res.length > 0) {
+        //filter data name and ContactNumber
+        const filteredData =
+          res.filter(
+            (contact) =>
+              (contact?.firstName
+                ?.toLowerCase()
+                .includes(manageContactFirst.toLowerCase()) ||
+                contact?.lastName
+                  ?.toLowerCase()
+                  .includes(manageContactFirst.toLowerCase())) &&
+              contact?.mobileno
+                .toLowerCase()
+                .includes(manageContactMobile.toLowerCase())
+          ) ?? [];
+
+        setFilterContacts(filteredData);
+      } else {
+        setFilterContacts(res);
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("Something went wrong");
+    } finally {
+      setIsFetching(false);
     }
-    setAllContacts(res);
-
-    setIsFetching(false);
   };
 
   // handle File drop
@@ -371,18 +400,6 @@ const ManageContacts = () => {
     console.log(res);
   };
 
-  useEffect(() => {
-    console.log("updateContactDetails", updateContactDetails);
-    setUpdatedContactDetails({
-      srNo: updateContactDetails.srno,
-      firstName: updateContactDetails.firstName,
-      lastName: updateContactDetails.lastName,
-      mobileNo: updateContactDetails.mobileno,
-      activeStatus: updateContactDetails.status === "Active" ? 1 : 0,
-      uniqueId: updateContactDetails.uniqueid,
-    });
-  }, [updateContactDetails]);
-
   // Excel file upload
   const handleFileUpload = async () => {
     if (uploadedFile) {
@@ -437,8 +454,9 @@ const ManageContacts = () => {
   };
 
   const handleGrpDelete = async () => {
+    console.log(deleteGrpId);
     if (!deleteGrpId) return;
-    const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.groupCode);
+    const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.id);
     toast.success(res.message);
     setDeleteDialogVisible(false);
     setaddGroupVisible(false);
@@ -623,7 +641,7 @@ const ManageContacts = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap align-middle justify-end w-full gap-4 items-end pb-1">
+      <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
         {/* Name Input Field */}
 
         <div className="w-max-content">
@@ -648,28 +666,25 @@ const ManageContacts = () => {
           <UniversalButton id="exportbtn" name="exportbtn" label="Export" />
         </div>
       </div>
-      <div className="flex flex--wrap align-middle justify-start w-full gap-4 items-end pb-5">
+      <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
         <div className="w-full sm:w-56">
-          {/* <div className="flex gap-2 items-center mb-2">
-            <label className="text-gray-700 text-sm font-medium">User</label>
+          <div className="flex items-center gap-2 mb-2">
+            <label className="text-sm font-medium text-gray-700">Group</label>
 
             <CustomTooltip title="Select User" placement="right" arrow>
               <span>
                 <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
               </span>
             </CustomTooltip>
-          </div> */}
+          </div>
           <AnimatedDropdown
-            label="Groups"
-            tooltipContent="Please select atleast one group"
-            tooltipPlacement="right"
-            arrow
             className="custom-multiselect"
             placeholder="Select Groups"
             optionLabel="name"
             options={grpList?.map((item) => ({
               value: item.groupCode,
-              label: item.groupName,
+              label: `${item.groupName} (${item.totalCount})`,
+
             }))}
             value={selectedMultiGroup}
             onChange={(e) => setSelectedMultiGroup(e)}
@@ -715,7 +730,7 @@ const ManageContacts = () => {
           />
         </div>
 
-        <div className="w-max-content">
+        <div className="w-max-content ">
           <UniversalButton
             id="managegroupSearchBtn"
             name="managegroupSearchBtn"
@@ -726,7 +741,7 @@ const ManageContacts = () => {
             disabled={isFetching}
           />
         </div>
-        <div className="w-max-content">
+        <div className="w-max-content ">
           <UniversalButton
             id="managegroupdeletebtn"
             name="managegroupdeletebtn"
@@ -739,7 +754,7 @@ const ManageContacts = () => {
         <UniversalSkeleton height="35rem" width="100%" />
       ) : (
         <WhatsappManageContactsTable
-          allContacts={allContacts}
+          allContacts={filterContacts}
           updateContactData={updateContactData}
           setUpdateContactDetails={setUpdateContactDetails}
           setUpdateContactVisible={setUpdateContactVisible}
@@ -783,7 +798,7 @@ const ManageContacts = () => {
               </TabPanel>
               <TabPanel header="Manage" rightIcon="pi pi-user ml-2">
                 <div className="m-0">
-                  <div className="flex card justify-content-center mb-2">
+                  <div className="flex mb-2 card justify-content-center">
                     <DropdownWithSearch
                       options={grpList?.map((item) => ({
                         value: item.groupCode,
@@ -887,7 +902,7 @@ const ManageContacts = () => {
 
             {selectedddImportContact === "option1" && (
               <div>
-                <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
+                <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
                   <InputField
                     placeholder="Enter first name.."
                     id="userfirstname"
@@ -1041,7 +1056,7 @@ const ManageContacts = () => {
             {selectedddImportContact === "option2" && (
               <div className="importcontacts">
                 {/* Your content for Import Contacts */}
-                <div className="file-upload mt-2">
+                <div className="mt-2 file-upload">
                   <div
                     className="file-upload-container"
                     onDrop={handleFileDrop}
@@ -1055,14 +1070,14 @@ const ManageContacts = () => {
                       name="fileInput"
                       accept=".xls,.xlsx,.xlsm"
                     />
-                    <div className="flex justify-center gap-2 items-center">
+                    <div className="flex items-center justify-center gap-2">
                       <label
                         htmlFor="fileInput"
-                        className="bg-blue-400 rounded-lg text-center text-sm text-white cursor-pointer file-upload-button font-medium hover:bg-blue-500 inline-block px-3 py-2 tracking-wider"
+                        className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500"
                       >
                         Choose or Drop File
                       </label>
-                      <div className="upload-button-container">
+                      <div className="upload-button-container ">
                         <button
                           onClick={handleFileUpload}
                           disabled={isUploading}
@@ -1075,20 +1090,20 @@ const ManageContacts = () => {
                         </button>
                       </div>
                     </div>
-                    <p className="text-[0.8rem] text-gray-400 file-upload-text mt-2 tracking-wide">
+                    <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
                       Max 3 lacs records & mobile number should be with country
                       code. <br />
                       Supported File Formats: .xlsx
                     </p>
                     <div className="mt-3">
                       {uploadedFile ? (
-                        <div className="flex justify-center file-upload-info gap-1 items-center">
-                          <p className="text-green-500 text-sm file-upload-feedback file-upload-feedback-success font-[500]">
+                        <div className="flex items-center justify-center gap-1 file-upload-info">
+                          <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
                             {isUploaded ? "File Uploaded: " : "File Selected: "}
                             <strong>{uploadedFile.name}</strong>
                           </p>
                           <button
-                            className="p-1.5 rounded-2xl cursor-pointer file-remove-button hover:bg-gray-200"
+                            className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
                             onClick={handleRemoveFile}
                           >
                             <MdOutlineDeleteForever
@@ -1098,14 +1113,14 @@ const ManageContacts = () => {
                           </button>
                         </div>
                       ) : (
-                        <p className="text-gray-500 text-sm file-upload-feedback file-upload-feedback-error font-semibold tracking-wide">
+                        <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
                           No file uploaded yet!
                         </p>
                       )}
                     </div>
                     {importContactFormVisible && (
                       <div>
-                        <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
+                        <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
                           {/* <InputField
                             placeholder="Enter first name.."
                             id="userfirstname"
@@ -1327,7 +1342,7 @@ const ManageContacts = () => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="flex justify-center items-center">
+        <div className="flex items-center justify-center">
           {/* <ErrorOutlineOutlinedIcon
                   sx={{
                     fontSize: 64,
@@ -1341,11 +1356,11 @@ const ManageContacts = () => {
           />
         </div>
         <div className="p-4 text-center">
-          <p className="text-[1.1rem] text-gray-700 font-semibold">
+          <p className="text-[1.1rem] font-semibold text-gray-700">
             Are you sure you want to delete the group <br />
             <span className="text-green-500">"{deleteGrpId?.groupName}"</span>
           </p>
-          <p className="text-gray-500 text-sm mt-2">
+          <p className="mt-2 text-sm text-gray-500">
             This action is irreversible.
           </p>
         </div>
@@ -1380,7 +1395,7 @@ const ManageContacts = () => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="flex flex-col gap-1.5">
+        <div className="flex gap-1.5 flex-col">
           <InputField
             label="New Group Name"
             id="name"
@@ -1411,7 +1426,7 @@ const ManageContacts = () => {
         draggable={false}
       >
         <div>
-          <div className="flex-wrap grid grid-cols-2 gap-3 lg:flex-nowrap">
+          <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
             <InputField
               placeholder="Enter first name.."
               id="userfirstname"
