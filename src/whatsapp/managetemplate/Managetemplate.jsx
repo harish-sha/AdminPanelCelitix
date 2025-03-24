@@ -658,7 +658,7 @@ const ManageTemplate = () => {
                                         <div
                                             key={category.id}
                                             className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
-                                                                            ${selectedOptionCategory === category.id ? 'bg-white' : 'bg-transparent'}`}
+                     ${selectedOptionCategory === category.id ? 'bg-white' : 'bg-transparent'}`}
                                         >
                                             <RadioButton
                                                 inputId={`radio_${category.id}`}

@@ -345,6 +345,39 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
         );
     };
 
+    const getBtnCss = (type) => {
+        switch (type) {
+            case "PHONE_NUMBER":
+                return "bg-blue-500 text-white";
+            case "QUICK_REPLY":
+                return "text-gray-800 bg-gray-200";
+            default:
+                return "bg-green-500 text-white";
+        }
+    };
+
+    const getBtnIcon = (type) => {
+        switch (type) {
+            case "PHONE_NUMBER":
+                return <BsTelephoneFill className="mr-2" />;
+            case "QUICK_REPLY":
+                return <FaReply className="mr-2" />;
+            default:
+                return <FaExternalLinkAlt className="mr-2" />;
+        }
+    };
+
+    const getBtnTitle = (type, phone, url, text) => {
+        switch (type) {
+            case "PHONE_NUMBER":
+                return `Contact us: ${phone}`;
+            case "QUICK_REPLY":
+                return `View more: ${text}`;
+            default:
+                return `Visit us: ${url}`;
+        }
+    };
+
 
     return (
         <>
@@ -486,7 +519,7 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
 
                                 {/* Buttons if exists */}
                                 <div className='flex flex-col gap-2'>
-                                    {selectedRow.templateData.components.some(comp => comp.type === "BUTTONS") && (
+                                    {/* {selectedRow.templateData.components.some(comp => comp.type === "BUTTONS") && (
                                         selectedRow.templateData.components.find(comp => comp.type === "BUTTONS").buttons.map((btn, index) => (
                                             <button
                                                 key={index}
@@ -498,7 +531,39 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                                                 {btn.text}
                                             </button>
                                         ))
-                                    )}
+                                    )} */}
+                                    {selectedRow.templateData.components.some(
+                                        (comp) => comp.type === "BUTTONS"
+                                    ) &&
+                                        selectedRow.templateData.components
+                                            .find((comp) => comp.type === "BUTTONS")
+                                            .buttons.map((btn, index) => (
+                                                <button
+                                                    key={index}
+                                                    //   title={
+                                                    //     btn.type === "PHONE_NUMBER"
+                                                    //       ? `Call: ${btn.phone_number}`
+                                                    //       : `Visit: ${btn.url}`
+                                                    //   }
+                                                    title={getBtnTitle(
+                                                        btn.type,
+                                                        btn.phone_number,
+                                                        btn.url,
+                                                        btn.text
+                                                    )}
+                                                    className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(
+                                                        btn.type
+                                                    )}`}
+                                                    onClick={() =>
+                                                        btn.type === "PHONE_NUMBER"
+                                                            ? (window.location.href = `tel:${btn.phone_number}`)
+                                                            : window.open(btn.url, "_blank")
+                                                    }
+                                                >
+                                                    {getBtnIcon(btn.type)}
+                                                    {btn.text}
+                                                </button>
+                                            ))}
                                 </div>
                             </>
                         ) : (

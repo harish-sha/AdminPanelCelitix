@@ -1,12 +1,11 @@
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { Paper, Typography, Box, Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { Paper, Typography, Box, Button, Drawer } from "@mui/material";
 import { useState } from "react";
 
-// import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
+import { IPDetailsDrawer } from "./IPDetailsDrawer";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -71,116 +70,271 @@ const CustomPagination = ({
 
 const ManageIpDetailsTable = ({ id, name, data = [] }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [selectedRow, setSelectedRow] = useState(null);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
-  const navigate = useNavigate();
 
   const handleView = (row) => {
-    console.log("View campaign:", row);
+    console.log("view details:", row);
+    setSelectedRow(row);
   };
 
-  const handleSummaryReport = (row) => {
-    navigate("/wcampaigndetailsreport", {
-      state: {
-        campaignSrno: row.campaignSrno,
-        campaignName: row.campaignName,
-      },
-    });
-  };
 
- 
+  // const columns = [
+  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+  //   {
+  //     field: "user_id",
+  //     headerName: "User ID",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   { field: "ip", headerName: "IP", flex: 1, minWidth: 120 },
+  //   {
+  //     field: "insert_time",
+  //     headerName: "Insert Time",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "city",
+  //     headerName: "City",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "postal",
+  //     headerName: "Postal Code",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "region",
+  //     headerName: "Region",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "region_code",
+  //     headerName: "Region Code",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "network",
+  //     headerName: "Network",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "version",
+  //     headerName: "IP Version",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_code",
+  //     headerName: "Country Code",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_tld",
+  //     headerName: "Country TLD",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_capital",
+  //     headerName: "Country Capital",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "continent_code",
+  //     headerName: "Continent Code",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_name",
+  //     headerName: "Country Name",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "in_eu",
+  //     headerName: "In EU",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_code_iso3",
+  //     headerName: "Country Code ISO3",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_calling_code",
+  //     headerName: "Country Calling Code",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "currency",
+  //     headerName: "Currency",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_area",
+  //     headerName: "Currenty Area",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "country_population",
+  //     headerName: "Country Popluation",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "languages",
+  //     headerName: "Languages",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "currency_name",
+  //     headerName: "Currency Name",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+
+  //   {
+  //     field: "latitude",
+  //     headerName: "Latitude",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "longitude",
+  //     headerName: "Longitude",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "timezone",
+  //     headerName: "Timezone",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "asn",
+  //     headerName: "ASN",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "utc_offset",
+  //     headerName: "UTC Offset",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  //   {
+  //     field: "org",
+  //     headerName: "Organization",
+  //     flex: 1,
+  //     minWidth: 150,
+  //   },
+  // ];
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    {
+      field: "user_id",
+      headerName: "User ID",
+      flex: 1,
+      minWidth: 120,
+    },
     { field: "ip", headerName: "IP", flex: 1, minWidth: 120 },
     {
-      field: "city",
-      headerName: "City",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "region",
-      headerName: "Region",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "reginon_code",
-      headerName: "Region Code",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "country_code",
-      headerName: "Country Code",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "country_name",
-      headerName: "Country Name",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "country_code_iso3",
-      headerName: "Country Code ISO3",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "postal",
-      headerName: "Postal",
+      field: "insert_time",
+      headerName: "Insert Time",
       flex: 1,
       minWidth: 150,
     },
     {
-      field: "latitude",
-      headerName: "Latitude",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: "longitude",
-      headerName: "Longitude",
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: "timezone",
-      headerName: "Timezone",
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: "asn",
-      headerName: "ASN",
-      flex: 1,
-      minWidth: 150,
-    },
-    {
-      field: "org",
-      headerName: "Organization",
-      flex: 1,
-      minWidth: 150,
+      minWidth: 120,
+      renderCell: (params) => (
+        <Button
+          size="small"
+          variant="outlined"
+          onClick={() => handleView(params.row)}
+        >
+          View Details
+        </Button>
+      ),
     },
   ];
 
+  // for table
+
+  // const rows = Array.isArray(data)
+  //   ? data.map((item, index) => {
+  //       let moreDetails = {};
+
+  //       try {
+  //         moreDetails =
+  //           item.moreDetails && item.moreDetails !== "null"
+  //             ? JSON.parse(item.moreDetails)
+  //             : {};
+  //       } catch (error) {
+  //         console.error("Error parsing moredetails:", error);
+  //       }
+
+  //       return columns.reduce(
+  //         (acc, col) => ({
+  //           ...acc,
+  //           id: index + 1,
+  //           sn: index + 1,
+  //           [col.field]: item[col.field] ?? moreDetails[col.field] ?? "-",
+  //         }),
+  //         {}
+  //       );
+  //     })
+  //   : [];
+
+  // for the drawer
+
   const rows = Array.isArray(data)
     ? data.map((item, index) => {
-        return columns.reduce(
-          (acc, col) => ({
-            ...acc,
-            id: index + 1,
-            sn: index + 1,
-            [col.field]: item[col.field] ?? "-",
-          }),
-          {}
-        );
-      })
+      let moreDetails = {};
+
+      try {
+        moreDetails =
+          item.moreDetails && item.moreDetails !== "null"
+            ? JSON.parse(item.moreDetails)
+            : {};
+      } catch (error) {
+        console.error("Error parsing moreDetails:", error);
+      }
+
+      const row = {
+        id: index + 1,
+        sn: index + 1,
+        ip: item.ip ?? "-",
+        user_id: item.user_id ?? "-",
+        insert_time: item.insert_time ?? "-",
+        ...moreDetails,
+      };
+
+      return row;
+    })
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -244,52 +398,58 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        checkboxSelection
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
-        }}
-        slotProps={{ footer: { totalRecords: rows.length } }}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        // autoPageSize
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cellCheckbox": {
-            outline: "none !important",
-          },
-          "& .MuiDataGrid-cell": {
-            outline: "none !important",
-          },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": {
-            // display: "none",
-            color: "#ccc",
-          },
-        }}
-      />
-    </Paper>
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          initialState={{ pagination: { paginationModel } }}
+          pageSizeOptions={[10, 20, 50]}
+          pagination
+          paginationModel={paginationModel}
+          onPaginationModelChange={setPaginationModel}
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          slotProps={{ footer: { totalRecords: rows.length } }}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cellCheckbox": {
+              outline: "none !important",
+            },
+            "& .MuiDataGrid-cell": {
+              outline: "none !important",
+            },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": {
+              color: "#ccc",
+            },
+          }}
+        />
+      </Paper>
+      {selectedRow && (
+        <IPDetailsDrawer
+          row={selectedRow}
+          open={!!selectedRow}
+          onClose={() => setSelectedRow(null)}
+        />
+      )}
+    </>
   );
 };
 
