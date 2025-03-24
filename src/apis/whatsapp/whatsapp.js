@@ -239,3 +239,30 @@ export const sendTemplatetoApi = async (data) => {
     console.error("Error fetching summary report:", error);
   }
 };
+
+export const getConversationReport = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapp/getConversationReport?wabaSrno=${data.wabaSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const syncStatus = async (srno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapptemplate/sync?wabaSrno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const refreshWhatsApp = async (srno) => {
+  return await fetchWithAuth(
+    `proCpaasRest/whatsapptemplate/refreshWabaDetails?wabaSrno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};

@@ -1,22 +1,17 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  Switch,
-  Typography,
-} from "@mui/material";
+import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { useNavigate } from "react-router-dom";
 import usePagination from "@mui/material/usePagination/usePagination";
 import styled from "styled-components";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import { MdOutlineDeleteForever } from "react-icons/md";
+import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import { Dialog } from "primereact/dialog";
-import InputField from "../../../whatsapp/components/InputField";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
+import InputField from "../../../whatsapp/components/InputField";
+import UniversalTextArea from "../../../whatsapp/components/UniversalTextArea";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 
 const PaginationList = styled("ul")({
@@ -79,53 +74,93 @@ const CustomPagination = ({
   );
 };
 
-const ManagePlanTable = ({ id, name }) => {
+const SMPPErrorCodeTable = ({ id, name }) => {
+  const [selectedRows, setSelectedRows] = useState([]);
+  const [smpperrorcodeedit, setSMPPErrorCodeEdit] = useState(false);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [manageCreatePlan, setManageCreatePlan] = useState(false);
-  const [plantypeoptionedit, setPlantypeoptionedit] = useState(null);
-  const [isChecked, setIsChecked] = useState(true);
 
-  const planeditOptions = [
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
-
-  const handleToggle = () => {
-    setIsChecked((prev) => !prev);
+  const handleSMPPErrorEdit = () => {
+    setSMPPErrorCodeEdit(true);
   };
 
-  const handleEdit = () => {
-    setManageCreatePlan(true);
+  const serviceOptions = [
+    { value: "Service1", label: "Service1" },
+    { value: "Service2", label: "Service2" },
+    { value: "Service3", label: "Service3" },
+  ];
+  const handleServiceEdit = (service) => {
+    console.log(service);
+  };
+  const displaytypeOptions = [
+    { value: "Display1", label: "Display1" },
+    { value: "Display2", label: "Display2" },
+    { value: "Display3", label: "Display3" },
+  ];
+  const handleDisplaytyperEdit = (display) => {
+    console.log(display);
+  };
+  const displayreasonOptions = [
+    { value: "Vendor1", label: "Vendor1" },
+    { value: "Vendor2", label: "Vendor2" },
+    { value: "Vendor3", label: "Vendor3" },
+  ];
+  const handleDisplayreasonEdit = (reason) => {
+    console.log(reason);
   };
 
   const rows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
     sn: i + 1,
-    userplan: "demo",
-    plantype: "	Promotional",
-    status: "pending",
-    ndnc: "pending",
-    opencontent: "pending.",
-    openmobile: "pending",
+    service: "Service",
+    vendorecstatus: "UNDELIV",
+    vendorec: "000",
+    vendorecdescription: "Delivered",
+    displayecstatus: "UNDELIV",
+    displayec: "000",
+    displayecdescription: "Delivered",
+    cbondnd: "No",
+    cbondelivery: "No",
   }));
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-    { field: "userplan", headerName: "Plan Name", flex: 1, minWidth: 80 },
-    { field: "plantype", headerName: "Plan Type", flex: 1, minWidth: 100 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 100 },
-    { field: "ndnc", headerName: "NDNC", flex: 1, minWidth: 100 },
+    { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
     {
-      field: "opencontent",
-      headerName: "Open content",
+      field: "vendorecstatus",
+      headerName: "Vendor EC Status",
       flex: 1,
-      minWidth: 100,
+      minWidth: 120,
     },
-    { field: "openmobile", headerName: "Open Mobile", flex: 1, minWidth: 100 },
+    { field: "vendorec", headerName: "Vendor EC", flex: 1, minWidth: 90 },
+    {
+      field: "vendorecdescription",
+      headerName: "Vendor EC Description",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "displayecstatus",
+      headerName: "Display EC Status",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "displayec", headerName: "Display EC", flex: 1, minWidth: 100 },
+    {
+      field: "displayecdescription",
+      headerName: "Display EC Description",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "cbondnd", headerName: "CB On DND", flex: 1, minWidth: 80 },
+    {
+      field: "cbondelivery",
+      headerName: "CB On Delivery",
+      flex: 1,
+      minWidth: 80,
+    },
     {
       field: "action",
       headerName: "Action",
@@ -133,8 +168,8 @@ const ManagePlanTable = ({ id, name }) => {
       minWidth: 100,
       renderCell: (params) => (
         <>
-          <CustomTooltip title="Edit Plan" placement="top" arrow>
-            <IconButton onClick={() => handleEdit(params.row)}>
+          <CustomTooltip title="Edit Routing" placement="top" arrow>
+            <IconButton onClick={() => handleSMPPErrorEdit(params.row)}>
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -143,10 +178,10 @@ const ManagePlanTable = ({ id, name }) => {
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Delete Plan" placement="top" arrow>
+          <CustomTooltip title="Delete Routing" placement="top" arrow>
             <IconButton
               className="no-xs"
-              onClick={() => handleDelete(params.row)}
+              onClick={() => handleSMPPErrorDelete(params.row)}
             >
               <MdOutlineDeleteForever
                 className="text-red-500 cursor-pointer hover:text-red-600"
@@ -160,6 +195,7 @@ const ManagePlanTable = ({ id, name }) => {
   ];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
   const CustomFooter = () => {
     return (
       <GridFooterContainer
@@ -249,85 +285,70 @@ const ManagePlanTable = ({ id, name }) => {
           }}
         />
       </Paper>
-
       <Dialog
-        header="Create Plan"
-        visible={manageCreatePlan}
-        onHide={() => setManageCreatePlan(false)}
-        className="lg:w-[30rem] md:w-[25rem] w-[20rem]"
+        header="Vendor Error Code Mapping"
+        visible={smpperrorcodeedit}
+        onHide={() => setSMPPErrorCodeEdit(false)}
+        className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
         draggable={false}
       >
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
+            <AnimatedDropdown
+              label="Service"
+              options={serviceOptions}
+              id="serviceedit"
+              name="serviceedit"
+              onChange={handleServiceEdit}
+            />
             <InputField
-              label="Plan Name"
-              id="createplannameedit"
-              name="createplannameedit"
-              placeholder="Enter Plan Name"
+              label="Vendor Error Code"
+              id="vendorerrorcodeedit"
+              name="vendorerrorcodeedit"
+              placeholder="Enter Vendor Error Code"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <InputField
+              label="Vendor Error Status"
+              id="vendorerrorstatusedit"
+              name="vendorerrorstatusedit"
+              placeholder="Vendor Error Status"
+            />
+            <UniversalTextArea
+              label="Vendor Error Code Description"
+              id="vendorerrorcodedescriptionedit"
+              name="vendorerrorcodedescriptionedit"
+              placeholder="Vendor Error Code Description"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
+            <AnimatedDropdown
+              label="Display Type"
+              options={displaytypeOptions}
+              id="displaytypeedit"
+              name="displaytypeedit"
+              onChange={handleDisplaytyperEdit}
             />
             <AnimatedDropdown
-              label="Plan Type"
-              options={planeditOptions}
-              id="createplantypeedit"
-              name="createplantypeedit"
-              value={plantypeoptionedit}
-              onChange={(newValue) => setPlantypeoptionedit(newValue)}
-            />
-          </div>
-          <div className="flex items-center">
-            <p>Allow Plan Time Bound Feature</p>
-            <div>
-              <CustomTooltip arrow placement="top" title="Allow/ Disallow">
-                <Switch
-                  checked={isChecked}
-                  onChange={handleToggle}
-                  sx={{
-                    "& .MuiSwitch-switchBase.Mui-checked": {
-                      color: "#34C759",
-                    },
-                    "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                      {
-                        backgroundColor: "#34C759",
-                      },
-                  }}
-                />
-              </CustomTooltip>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <InputField
-              label="Order Queue Size"
-              id="createplanorderqueuesizeedit"
-              name="createplanorderqueuesizeedit"
-              placeholder="Enter Order Queue Size"
-            />
-            <InputField
-              label="Initial Queue Size"
-              id="createplaninitialqueuesizeedit"
-              name="createplaninitialqueuesizeedit"
-              placeholder="Enter Initial Queue Size"
+              label="Display Reason"
+              options={displayreasonOptions}
+              id="displayreasonedit"
+              name="displayreasonedit"
+              onChange={handleDisplayreasonEdit}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <InputField
-              label="Trigger Queue Size"
-              id="createplantriggerqueuesizeedit"
-              name="createplantriggerqueuesizeedit"
-              placeholder="Enter Trigger Queue Size"
-            />
-            <InputField
-              label="Character Limit"
-              id="createplancharlimitedit"
-              name="createplancharlimitedit"
-              placeholder="Enter Character Limit"
+              label="Display Error Code"
+              id="displayerrorcodeedit"
+              name="displayerrorcodeedit"
+              placeholder="Display Error Code"
+              readOnly="true"
             />
           </div>
-          <div className="flex items-center justify-center">
-            <UniversalButton
-              label="Save"
-              id="createplansavebtn"
-              name="createplansavebtn"
-            />
+          <div className="flex justify-center">
+            <UniversalButton label="Save" id="saveedit" name="saveedit" />
           </div>
         </div>
       </Dialog>
@@ -335,4 +356,4 @@ const ManagePlanTable = ({ id, name }) => {
   );
 };
 
-export default ManagePlanTable;
+export default SMPPErrorCodeTable;

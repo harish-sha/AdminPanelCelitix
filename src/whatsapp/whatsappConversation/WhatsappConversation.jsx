@@ -1,44 +1,54 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { IoSearch } from "react-icons/io5";
-import toast from 'react-hot-toast';
-
-
-import AnimatedDropdown from '../components/AnimatedDropdown';
-import UniversalDatePicker from '../components/UniversalDatePicker';
-import InputField from '../components/InputField';
 import { HiOutlineChat } from "react-icons/hi";
-import WhatsappConversationTable from './components/WhatsappConversationTable';
-import UniversalButton from '../components/UniversalButton';
-import UniversalSkeleton from '../components/UniversalSkeleton';
-import Loader from '../components/Loader';
-import { getWabaList } from '../../apis/whatsapp/whatsapp.js';
+import toast from "react-hot-toast";
 
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import UniversalDatePicker from "../components/UniversalDatePicker";
+import InputField from "../components/InputField";
+import WhatsappConversationTable from "./components/WhatsappConversationTable";
+import UniversalButton from "../components/UniversalButton";
+import UniversalSkeleton from "../components/UniversalSkeleton";
+import Loader from "../components/Loader";
+
+import {
+  getConversationReport,
+  getWabaList,
+} from "../../apis/whatsapp/whatsapp.js";
 
 const WhatsappConversation = () => {
-  const [selectedWaba, setSelectedWaba] = useState('');
-  const [selectedDateFrom, setSelectedDateFrom] = useState(null);
-  const [selectedDateTo, setSelectedDateTo] = useState(null);
-  const [inputMobile, setInputMobile] = useState("");
   const [isFetching, setIsFetching] = useState(false);
-  const [filteredData, setFilteredData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [wabaList, setWabaList] = useState(null);
+  const [wabaList, setWabaList] = useState([]);
+  const [data, setData] = useState(null);
+  const [filters, setFilters] = useState({
+    wabaSrno: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    mobileNo: "",
+    page: 0,
+  });
 
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPage, setTotalPage] = useState(1);
+  const [isMobileSearched, setIsMobileSearched] = useState(false);
 
-  // WABA LIST
+  // Fetch WABA List
   useEffect(() => {
     const fetchWabaList = async () => {
+      setIsLoading(true);
       try {
-        setIsLoading(true);
         const response = await getWabaList();
         if (response) {
           setWabaList(response);
         } else {
-          console.error("Failed to fetch WABA details");
           toast.error("Failed to load WABA details!");
         }
       } catch (error) {
-        console.error("Error fetching WABA list:", error);
         toast.error("Error fetching WABA list.");
       } finally {
         setIsLoading(false);
@@ -47,140 +57,142 @@ const WhatsappConversation = () => {
     fetchWabaList();
   }, []);
 
-  // ✅ Handle Search Click
-  const handleSearch = async () => {
-    console.log("🔍 Search Filters:");
-    console.log({
-      waba: selectedWaba,
-      FromDate: selectedDateFrom,
-      ToDate: selectedDateTo,
-      mobileNumber: inputMobile,
-    });
+  // Format Date
+  const formatDate = (date) => date.toISOString().split("T")[0];
 
-    if (!selectedDateFrom || !selectedDateTo) {
-      alert("Please select a valid date range.");
-      return;
+  // Handle Search Click
+  const handleSearch = async () => {
+    if (!filters.wabaSrno) return toast.error("Please select WABA");
+
+    const isNewSearch = filters.mobileNo && !isMobileSearched;
+    const page = isNewSearch ? 0 : currentPage;
+
+    if (isNewSearch) {
+      setIsMobileSearched(true);
+      // setPaginationModel({ page: 0, pageSize: 10 });
     }
 
-    setIsFetching(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setIsFetching(false);
-    setFilteredData([]);
+    // console.log("isNewSearch" + isNewSearch);
+
+    try {
+      setIsFetching(true);
+
+      const formattedData = {
+        ...filters,
+        fromDate: formatDate(filters?.fromDate),
+        toDate: formatDate(filters?.toDate),
+        mobileNo: filters?.mobileNo || "",
+        page,
+      };
+
+      const res = await getConversationReport(formattedData);
+      setData(res);
+      setTotalPage(res?.total || 0);
+    } catch (e) {
+      toast.error("Error fetching WhatsApp Conversation");
+    } finally {
+      setIsFetching(false);
+    }
   };
 
+  useEffect(() => {
+    handleSearch();
+  }, [currentPage]);
 
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {isLoading ? (
-        <>
-          <Loader />
-        </>
+        <Loader />
       ) : (
         <>
-          <div className='flex  justify-center gap-1' >
-            <div className='pt-1' >
-              <HiOutlineChat
-                className='text-2xl text-green-600'
-              />
-            </div>
-            <h1 className='text-xl text-center font-m font-semibold text-green-600 mb-5'> Whatsapp Conversation</h1>
+          <div className="flex justify-center gap-1">
+            <HiOutlineChat className="text-2xl text-green-600" />
+            <h1 className="mb-5 text-xl font-semibold text-green-600">
+              Whatsapp Conversation
+            </h1>
           </div>
-          <div className="flex flex-wrap gap-4 items-end justify-start align-middle mb-5 w-full">
+
+          <div className="flex items-end gap-4 mb-5">
             {/* Select WABA Dropdown */}
-            <div className="w-full sm:w-56">
-              <AnimatedDropdown
-                id="wabadropdown"
-                name="wabadropdown"
-                label="Select WABA"
-                placeholder="Select WABA"
-                options={wabaList?.map((waba) => ({
-                  value: waba.mobileNo,
-                  label: waba.name,
-                }))}
-                value={selectedWaba}
-                onChange={(value) => setSelectedWaba(value)}
-              />
-            </div>
+            <AnimatedDropdown
+              id="wabadropdown"
+              label="Select WABA"
+              placeholder="Select WABA"
+              options={wabaList.map((waba) => ({
+                value: waba.wabaSrno,
+                label: waba.name,
+              }))}
+              value={filters.wabaSrno}
+              onChange={(value) =>
+                setFilters((prev) => ({ ...prev, wabaSrno: value }))
+              }
+            />
 
             {/* From Date Picker */}
-            <div className="w-full sm:w-56">
-              <UniversalDatePicker
-                id="conversationfrom"
-                name="conversationfrom"
-                label="From Date"
-                value={selectedDateFrom}
-                onChange={(newValue) => setSelectedDateFrom(newValue)}
-                error={!selectedDateFrom}
-                errorText="Please select a valid date"
-              />
-            </div>
+            <UniversalDatePicker
+              id="conversationfrom"
+              label="From Date"
+              value={filters.fromDate}
+              onChange={(value) =>
+                setFilters((prev) => ({ ...prev, fromDate: value }))
+              }
+            />
 
             {/* To Date Picker */}
-            <div className="w-full sm:w-56">
-              <UniversalDatePicker
-                id="conversationto"
-                name="conversationto"
-                label="To Date"
-                value={selectedDateTo}
-                onChange={(newValue) => setSelectedDateTo(newValue)}
-                error={!selectedDateTo}
-                errorText="Please select a valid date"
-              />
-            </div>
+            <UniversalDatePicker
+              id="conversationto"
+              label="To Date"
+              value={filters.toDate}
+              onChange={(value) =>
+                setFilters((prev) => ({ ...prev, toDate: value }))
+              }
+            />
 
             {/* Mobile Number Input Field */}
-            <div className="w-full sm:w-56">
-              <InputField
-                id="conversationmobile"
-                name="conversationmobile"
-                label="Mobile Number"
-                value={inputMobile}
-                type="number"
-                onChange={(e) => setInputMobile(e.target.value)}
-                placeholder="Enter Mobile Number"
-              />
-            </div>
+            <InputField
+              id="conversationmobile"
+              label="Mobile Number"
+              type="number"
+              placeholder="Enter Mobile Number"
+              value={filters.mobileNo}
+              onChange={(e) =>
+                setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
+              }
+            />
 
             {/* Search Button */}
-            <div className="w-max-content">
-              <UniversalButton
-                id="conversationsearch"
-                name="conversationsearch"
-                label={isFetching ? "Searching..." : "Search"}
-                icon={<IoSearch />}
-                onClick={handleSearch}
-                disabled={isFetching}
-              />
-            </div>
+            <UniversalButton
+              id="conversationsearch"
+              label={isFetching ? "Searching..." : "Search"}
+              icon={<IoSearch />}
+              onClick={handleSearch}
+              disabled={isFetching}
+            />
 
             {/* Export Button */}
-            <div className="w-max-content">
-              <UniversalButton
-                id="conversationexport"
-                name="conversationexport"
-                label="Export"
-                onClick={() => console.log("Export Clicked")} // ✅ Add function for export
-              />
-            </div>
+            <UniversalButton
+              id="conversationexport"
+              label="Export"
+              onClick={() => console.log("Export Clicked")}
+            />
           </div>
 
-          {/* ✅ Show Loader or Table */}
+          {/* Show Loader or Table */}
           {isFetching ? (
-            <div className="w-full">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
+            <UniversalSkeleton height="35rem" width="100%" />
           ) : (
-            <div className="w-full">
-              <WhatsappConversationTable
-                id="whatsappManageCampaignTable"
-                name="whatsappManageCampaignTable"
-              />
-            </div>
+            <WhatsappConversationTable
+              data={data}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              setCurrentPage={setCurrentPage}
+              totalPage={totalPage}
+            />
           )}
         </>
       )}
     </div>
-  )
-}
+  );
+};
 
-export default WhatsappConversation
+export default WhatsappConversation;

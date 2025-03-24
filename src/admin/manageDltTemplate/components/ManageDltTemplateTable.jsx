@@ -312,4 +312,3 @@ const ManageDltTemplateTable = ({ id, name }) => {
 }
 
 export default ManageDltTemplateTable
-

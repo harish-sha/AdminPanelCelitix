@@ -13,6 +13,7 @@ import {
   getaccountInfo,
   getSmsRate,
 } from "../../apis/user/user";
+import Loader from "../../whatsapp/components/Loader";
 
 import { getCountryList } from "../../apis/common/common";
 
@@ -82,26 +83,32 @@ function AccountInfoModal({ show, handleClose }) {
   const [showWhatsPricing, setShowWhatsPricing] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
+  const [filteredWhatsAppData, setFilteredWhatsAppData] = useState([]);
   const [selectedRows, setSelectedRows] = useState([]);
   const [rcsrate, setRcsRate] = useState([]);
   const [whatsapprate, setWhatsAppRate] = useState([]);
   const [accountInfo, setAccountInfo] = useState([]);
   const [countryList, setCountryList] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
 
   useEffect(() => {
     async function getRcsRateData() {
       const data = await getRcsRate();
       setRcsRate(data);
+      setFilteredData(data);
     }
 
     async function getWhatsAppRateDate() {
       const data = await getWhatsAppRate();
       setWhatsAppRate(data);
+      setFilteredWhatsAppData(data);
     }
 
     async function getaccountInfoData() {
+      setIsFetching(true);
       const data = await getaccountInfo();
       setAccountInfo(Array(data));
+      setIsFetching(false);
     }
 
     async function getCountryListData() {
@@ -197,20 +204,18 @@ function AccountInfoModal({ show, handleClose }) {
         item?.ISO_code?.toString().includes(searchTerm.toString())
     );
     setFilteredData(filtered);
-    console.log(filtered);
     setSearchTerm("");
   };
 
   // Handle RCS Search
   const handleWhatsAppSearch = () => {
-    console.log(searchTerm);
+    console.log(whatsapprate);
     const filtered = whatsapprate.filter(
       (item) =>
-        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
-        item?.ISO_code?.toString().includes(searchTerm.toString())
+        item.countryName.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item?.isoCode?.toString().includes(searchTerm.toString())
     );
-    setFilteredData(filtered);
-    console.log(filtered);
+    setFilteredWhatsAppData(filtered);
     setSearchTerm("");
   };
 
@@ -237,7 +242,12 @@ function AccountInfoModal({ show, handleClose }) {
   const WhatsAppcolumns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "countryName", headerName: "Country", flex: 1, minWidth: 120 },
-    { field: "countryCode", headerName: "Country Code", flex: 1, minWidth: 120 },
+    {
+      field: "countryCode",
+      headerName: "Country Code",
+      flex: 1,
+      minWidth: 120,
+    },
     {
       field: "transactional",
       headerName: "Utility (INR/Credit)",
@@ -259,8 +269,8 @@ function AccountInfoModal({ show, handleClose }) {
     { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
   ];
 
-  const whatsApprows = Array.isArray(whatsapprate)
-    ? whatsapprate?.map((item, index) => ({
+  const whatsApprows = Array.isArray(filteredWhatsAppData)
+    ? filteredWhatsAppData?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
         countryName: item.countryName ?? "-",
@@ -270,8 +280,8 @@ function AccountInfoModal({ show, handleClose }) {
       }))
     : [];
 
-  const rcsrows = Array.isArray(rcsrate)
-    ? rcsrate?.map((item, index) => ({
+  const rcsrows = Array.isArray(filteredData)
+    ? filteredData?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
         country_name: item.country_name,
@@ -351,59 +361,65 @@ function AccountInfoModal({ show, handleClose }) {
         modal
         draggable={false}
       >
-        <div className="flex justify-end mb-3">
-          <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
-            Account Expiry: {accountInfo[0]?.expiryDate}
-          </span>
-        </div>
-
-        {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
-          <Paper sx={{ height: "auto" }}>
-            <DataGrid
-              rows={accountrows}
-              columns={accountcolumns}
-              initialState={{ pagination: { paginationModel } }}
-              pageSizeOptions={[10, 20, 50]}
-              pagination
-              paginationModel={paginationModel}
-              onPaginationModelChange={setPaginationModel}
-              // checkboxSelection
-              rowHeight={45}
-              slots={{ footer: CustomFooter }}
-              // slotProps={{ footer: { totalRecords: rows.length } }}
-              onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-              disableRowSelectionOnClick
-              // autoPageSize
-              disableColumnResize
-              disableColumnMenu
-              sx={{
-                border: 0,
-                "& .MuiDataGrid-cellCheckbox": {
-                  outline: "none !important",
-                },
-                "& .MuiDataGrid-cell": {
-                  outline: "none !important",
-                },
-                "& .MuiDataGrid-columnHeaders": {
-                  color: "#193cb8",
-                  fontSize: "14px",
-                  fontWeight: "bold !important",
-                },
-                "& .MuiDataGrid-row--borderBottom": {
-                  backgroundColor: "#e6f4ff !important",
-                },
-                "& .MuiDataGrid-columnSeparator": {
-                  // display: "none",
-                  color: "#ccc",
-                },
-              }}
-            />
-          </Paper>
+        {isFetching ? (
+          <Loader />
         ) : (
-          <h1>
-            Your account is expired. Please contact Admin to activate your
-            account.
-          </h1>
+          <>
+            <div className="flex justify-end mb-3">
+              <span className="px-3 py-1 font-medium text-blue-700 bg-blue-100 rounded-md">
+                Account Expiry: {accountInfo[0]?.expiryDate}
+              </span>
+            </div>
+
+            {new Date() < new Date(accountInfo[0]?.expiryDate) ? (
+              <Paper sx={{ height: "auto" }}>
+                <DataGrid
+                  rows={accountrows}
+                  columns={accountcolumns}
+                  initialState={{ pagination: { paginationModel } }}
+                  pageSizeOptions={[10, 20, 50]}
+                  pagination
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  // checkboxSelection
+                  rowHeight={45}
+                  slots={{ footer: CustomFooter }}
+                  // slotProps={{ footer: { totalRecords: rows.length } }}
+                  onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                  disableRowSelectionOnClick
+                  // autoPageSize
+                  disableColumnResize
+                  disableColumnMenu
+                  sx={{
+                    border: 0,
+                    "& .MuiDataGrid-cellCheckbox": {
+                      outline: "none !important",
+                    },
+                    "& .MuiDataGrid-cell": {
+                      outline: "none !important",
+                    },
+                    "& .MuiDataGrid-columnHeaders": {
+                      color: "#193cb8",
+                      fontSize: "14px",
+                      fontWeight: "bold !important",
+                    },
+                    "& .MuiDataGrid-row--borderBottom": {
+                      backgroundColor: "#e6f4ff !important",
+                    },
+                    "& .MuiDataGrid-columnSeparator": {
+                      // display: "none",
+                      color: "#ccc",
+                    },
+                  }}
+                />
+              </Paper>
+            ) : (
+              <h1>
+                Your account is expired. Please contact Admin to activate your
+                account.
+              </h1>
+            )}
+          </>
         )}
       </Dialog>
 
@@ -412,7 +428,10 @@ function AccountInfoModal({ show, handleClose }) {
         header="RCS Price"
         visible={showRcsPricing}
         style={{ width: "50vw" }}
-        onHide={() => setShowRcsPricing(false)}
+        onHide={() => {
+          setShowRcsPricing(false);
+          setFilteredData(rcsrate);
+        }}
         modal
         draggable={false}
         disabled
@@ -478,7 +497,10 @@ function AccountInfoModal({ show, handleClose }) {
         header="WhatsApp Price"
         visible={showWhatsPricing}
         style={{ width: "50vw" }}
-        onHide={() => setShowWhatsPricing(false)}
+        onHide={() => {
+          setShowWhatsPricing(false);
+          setFilteredWhatsAppData(whatsapprate);
+        }}
         modal
         draggable={false}
       >
@@ -494,7 +516,6 @@ function AccountInfoModal({ show, handleClose }) {
             label="Search"
             className="px-4 py-2 text-white bg-blue-600 rounded-md"
             onClick={handleWhatsAppSearch}
-            disabled
           />
         </div>
         <Paper sx={{ height: "auto" }}>

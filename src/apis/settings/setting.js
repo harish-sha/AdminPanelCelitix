@@ -7,6 +7,12 @@ export const getApiKey = async () => {
   });
 };
 
+export const getOldApiKey = async () => {
+  return await fetchWithAuth(`/proCpaasRest/settings/getApikey`, {
+    method: "POST",
+  });
+};
+
 // Update API KEY
 export const updateApiKey = async (newAPIKey) => {
   return await fetchWithAuth(
@@ -32,4 +38,10 @@ export const fetchTransactions = async (filterData) => {
       method: "POST",
     }
   );
+};
+
+export const fetchBalance = async () => {
+  return await fetchWithAuth("/proCpaasRest/user/getAccountBalanceByUser", {
+    method: "POST",
+  });
 };

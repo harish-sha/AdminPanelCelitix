@@ -1,16 +1,15 @@
-import React, { useState } from 'react'
-import { IoSearch } from 'react-icons/io5';
-import InputField from '../../whatsapp/components/InputField';
-import AnimatedDropdown from '../../whatsapp/components/AnimatedDropdown';
-import UniversalButton from '../../whatsapp/components/UniversalButton';
-import DropdownWithSearch from '../../whatsapp/components/DropdownWithSearch';
-import ManageDltTemplateTable from './components/ManageDltTemplateTable';
-import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
+import React, { useState } from "react";
+import { IoSearch } from "react-icons/io5";
+import InputField from "../../whatsapp/components/InputField";
+import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
+import UniversalButton from "../../whatsapp/components/UniversalButton";
+import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
+import ManageDltTemplateTable from "./components/ManageDltTemplateTable";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { Dialog } from 'primereact/dialog';
-import { toast } from 'react-hot-toast';
-import * as XLSX from 'xlsx';
-
+import { Dialog } from "primereact/dialog";
+import { toast } from "react-hot-toast";
+import * as XLSX from "xlsx";
 
 const ManageDltTemplate = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -24,18 +23,17 @@ const ManageDltTemplate = () => {
   const [fileData, setFileData] = useState([]);
   const [columns, setColumns] = useState([]);
 
-
   const statusOptions = [
-    { label: 'Active', value: 'active' },
-    { label: 'Inactive', value: 'inactive' },
+    { label: "Active", value: "active" },
+    { label: "Inactive", value: "inactive" },
   ];
   const userids = [
-    { label: 'demopro', value: 'demopro' },
-    { label: 'prodemo', value: 'prodemo' },
+    { label: "demopro", value: "demopro" },
+    { label: "prodemo", value: "prodemo" },
   ];
   const importusers = [
-    { label: 'demopro', value: 'demopro' },
-    { label: 'prodemo', value: 'prodemo' },
+    { label: "demopro", value: "demopro" },
+    { label: "prodemo", value: "prodemo" },
   ];
 
   const handleImport = (id, name) => {
@@ -48,16 +46,18 @@ const ManageDltTemplate = () => {
     const file = event.dataTransfer.files[0];
 
     if (file) {
-      const validExtensions = ['.xls', '.xlsx', '.xlsm'];
-      const fileExtension = file.name.split('.').pop();
+      const validExtensions = [".xls", ".xlsx", ".xlsm"];
+      const fileExtension = file.name.split(".").pop();
 
       if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split('.')[0])) {
+        if (isValidFileName(file.name.split(".")[0])) {
           setUploadedFile(file);
           setIsUploaded(false);
           parseFile(file);
         } else {
-          toast.error("File name can only contain alphanumeric characters, underscores, or hyphens.");
+          toast.error(
+            "File name can only contain alphanumeric characters, underscores, or hyphens."
+          );
         }
       } else {
         toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
@@ -73,16 +73,18 @@ const ManageDltTemplate = () => {
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
-      const validExtensions = ['.xls', '.xlsx', '.xlsm'];
-      const fileExtension = file.name.split('.').pop();
+      const validExtensions = [".xls", ".xlsx", ".xlsm"];
+      const fileExtension = file.name.split(".").pop();
 
       if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split('.')[0])) {
+        if (isValidFileName(file.name.split(".")[0])) {
           setUploadedFile(file);
           setIsUploaded(false);
           parseFile(file);
         } else {
-          toast.error("File name can only contain alphanumeric characters, underscores, or hyphens.");
+          toast.error(
+            "File name can only contain alphanumeric characters, underscores, or hyphens."
+          );
         }
       } else {
         toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
@@ -118,7 +120,7 @@ const ManageDltTemplate = () => {
   const parseFile = (file) => {
     const reader = new FileReader();
     reader.onload = () => {
-      const workbook = XLSX.read(reader.result, { type: 'binary' });
+      const workbook = XLSX.read(reader.result, { type: "binary" });
       const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
       const jsonData = XLSX.utils.sheet_to_json(firstSheet);
       // const headers = Object.keys(jsonData[0]);
@@ -149,24 +151,21 @@ const ManageDltTemplate = () => {
     toast.success("File removed successfully.");
   };
 
-
-
   return (
-    <div className='w-full'>
+    <div className="w-full">
       {/* {isLoading ? (
         <>
           <Loader />
         </>
       ) : ( */}
       <div>
-
         <div className="flex flex-wrap gap-2 items-end pb-3 w-full">
           {/* Mobile Number Input Field */}
           <div className="w-40">
             <InputField
               id="templateid"
               name="templateid"
-              type='number'
+              type="number"
               label="Template ID"
               placeholder="Enter Template ID"
             />
@@ -199,7 +198,7 @@ const ManageDltTemplate = () => {
               name="templatestatus"
               value={statusOption}
               onChange={(newValue) => setStatusOption(newValue)}
-              placeholder='Select Status'
+              placeholder="Select Status"
             />
           </div>
 
@@ -259,8 +258,7 @@ const ManageDltTemplate = () => {
         className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
         draggable={false}
       >
-        <div className='space-y-4'>
-        <div className='grid grid-cols-2 gap-4'>
+        <div className="grid grid-cols-2 gap-4">
           <DropdownWithSearch
             label="Select User"
             placeholder="Select User"
@@ -275,7 +273,7 @@ const ManageDltTemplate = () => {
             id="importentityid"
             name="importentityid"
             placeholder="Enter Entity ID"
-            type='number'
+            type="number"
           />
         </div>
         <div>
@@ -293,33 +291,37 @@ const ManageDltTemplate = () => {
                 name="fileInput"
                 accept=".xls,.xlsx,.xlsm"
               />
-              <div className="flex items-center justify-center gap-2" >
-                <label htmlFor="fileInput" className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider">
+              <div className="flex items-center justify-center gap-2">
+                <label
+                  htmlFor="fileInput"
+                  className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
+                >
                   Choose or Drop File
                 </label>
                 <div className="upload-button-container ">
                   <button
                     onClick={handleFileUpload}
                     disabled={isUploading}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? 'disabled' : ''}`}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                      isUploading ? "disabled" : ""
+                    }`}
                   >
-                    <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
+                    <FileUploadOutlinedIcon
+                      sx={{ color: "white", fontSize: "23px" }}
+                    />
                   </button>
                 </div>
               </div>
               <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                Max 3 lacs records & mobile number should be with country code. <br />
+                Max 3 lacs records & mobile number should be with country code.{" "}
+                <br />
                 Supported File Formats: .xlsx
               </p>
-              <div className="mt-3" >
+              <div className="mt-3">
                 {uploadedFile ? (
                   <div className="file-upload-info flex items-center justify-center  gap-1">
                     <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                      {isUploaded ? (
-                        "File Uploaded: "
-                      ) : (
-                        "File Selected: "
-                      )}
+                      {isUploaded ? "File Uploaded: " : "File Selected: "}
                       <strong>{uploadedFile.name}</strong>
                     </p>
                     <button
@@ -327,7 +329,7 @@ const ManageDltTemplate = () => {
                       onClick={handleRemoveFile}
                     >
                       <MdOutlineDeleteForever
-                        className='text-red-500 cursor-pointer hover:text-red-600'
+                        className="text-red-500 cursor-pointer hover:text-red-600"
                         size={20}
                       />
                     </button>
@@ -341,22 +343,11 @@ const ManageDltTemplate = () => {
             </div>
           </div>
         </div>
-        <div className='flex justify-center'>
-          <UniversalButton
-            label="Save"
-            id="dlttemplateimportsave"
-            name="dlttemplateimportsave"
-          />
-        </div>
-        </div>
       </Dialog>
-
 
       {/* )} */}
     </div>
-
-
-  )
-}
+  );
+};
 
 export default ManageDltTemplate;

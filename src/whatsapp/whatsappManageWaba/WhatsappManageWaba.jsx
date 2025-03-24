@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Paper, Typography, Box, Button } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import SyncOutlinedIcon from '@mui/icons-material/SyncOutlined';
+import React, { useState, useEffect, useRef } from "react";
+import { Paper, Typography, Box, Button } from "@mui/material";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 
 import { motion } from "framer-motion";
 import {
@@ -12,38 +12,39 @@ import {
   FaGlobe,
 } from "react-icons/fa";
 
-
-
-
-import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
-import usePagination from '@mui/material/usePagination';
-import { styled } from '@mui/material/styles';
-import { Dialog } from 'primereact/dialog';
+import {
+  DataGrid,
+  GridFooterContainer,
+  GridPagination,
+} from "@mui/x-data-grid";
+import usePagination from "@mui/material/usePagination";
+import { styled } from "@mui/material/styles";
+import { Dialog } from "primereact/dialog";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditNoteIcon from '@mui/icons-material/EditNote';
-import toast from 'react-hot-toast';
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import toast from "react-hot-toast";
 
-
-
-import UniversalButton from '../components/UniversalButton';
-import UniversalLabel from '../components/UniversalLabel';
-import InputField from '../../components/layout/InputField';
+import UniversalButton from "../components/UniversalButton";
+import UniversalLabel from "../components/UniversalLabel";
+import InputField from "../../components/layout/InputField";
 // import AnimatedDropdown from '../components/AnimatedDropdown';
-import CustomTooltip from '../components/CustomTooltip';
-import AnimatedDropdown from '../components/AnimatedDropdown';
-import { getWabaList, getwabadetails, updateWabaDetails } from '../../apis/whatsapp/whatsapp';
-import Loader from '../components/Loader';
+import CustomTooltip from "../components/CustomTooltip";
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import {
+  getWabaList,
+  getwabadetails,
+  updateWabaDetails,
+  refreshWhatsApp,
+} from "../../apis/whatsapp/whatsapp";
+import Loader from "../components/Loader";
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
-
-
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
 const RECOMMENDED_DIMENSION = 640; // Recommended 640px width/height
-
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -53,11 +54,16 @@ const PaginationList = styled("ul")({
   gap: "8px",
 });
 
-const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
+const CustomPagination = ({
+  totalPages,
+  paginationModel,
+  setPaginationModel,
+}) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page + 1,
-    onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    onChange: (_, newPage) =>
+      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
   });
 
   return (
@@ -82,7 +88,13 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
             );
           } else {
             children = (
-              <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
+              <Button
+                key={index}
+                variant="outlined"
+                size="small"
+                {...item}
+                sx={{}}
+              >
                 {type === "previous" ? "Previous" : "Next"}
               </Button>
             );
@@ -95,10 +107,9 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
   );
 };
 
-
 const WhatsappManageWaba = ({ id, name }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [isSdkLoaded, setIsSdkLoaded] = useState(false)
+  const [isSdkLoaded, setIsSdkLoaded] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [view, setView] = useState(false);
   const [wabaedit, setWabaEdit] = useState(false);
@@ -109,7 +120,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [vertical, setVertical] = useState("");
   const [websites, setWebsites] = useState([""]);
   const [preview, setPreview] = useState(null);
-  const [file, setFile] = useState(null)
+  const [file, setFile] = useState(null);
   const [wabaList, setWabaList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedWaba, setSelectedWaba] = useState(null);
@@ -119,9 +130,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [wabadetails, setwabadetails] = useState(null);
   const [editWebsite1, seteditWebsite1] = useState("");
   const [editWebsite2, seteditWebsite2] = useState("");
-
-
-
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -138,10 +146,11 @@ const WhatsappManageWaba = ({ id, name }) => {
 
       img.onload = () => {
         if (img.width < MIN_DIMENSION || img.height < MIN_DIMENSION) {
-          toast.error(`Image too small. Minimum size required: ${MIN_DIMENSION}px x ${MIN_DIMENSION}px.`);
+          toast.error(
+            `Image too small. Minimum size required: ${MIN_DIMENSION}px x ${MIN_DIMENSION}px.`
+          );
           resolve(false);
-        }
-        else {
+        } else {
           resolve(true);
         }
         URL.revokeObjectURL(objectURL);
@@ -167,7 +176,9 @@ const WhatsappManageWaba = ({ id, name }) => {
     }
 
     if (selectedFile.size > MAX_FILE_SIZE) {
-      toast.error("File size exceeds 5MB limit. Please upload a smaller image.");
+      toast.error(
+        "File size exceeds 5MB limit. Please upload a smaller image."
+      );
       return;
     }
 
@@ -217,7 +228,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         js.id = scriptId;
         js.src = "https://connect.facebook.net/en_US/sdk.js";
         js.async = true;
-        js.defer = true
+        js.defer = true;
         js.onload = () => {
           console.log("Facebook SDK script loaded.");
           if (window.fbAsyncInit) {
@@ -240,7 +251,9 @@ const WhatsappManageWaba = ({ id, name }) => {
     window.FB.getLoginStatus((response) => {
       console.log("FB Login Status:", response);
       if (response.status === "unknown") {
-        console.warn("FB.init() might not have completed. Retrying login in 2s...");
+        console.warn(
+          "FB.init() might not have completed. Retrying login in 2s..."
+        );
         // setTimeout(() => {
         //   handleFacebookLogin();
         // }, 2000);
@@ -297,11 +310,9 @@ const WhatsappManageWaba = ({ id, name }) => {
     setView(true);
   };
 
-
   // const handleEdit = () => {
   //   setWabaEdit(true);
   // };
-
 
   // const handleEdit = async (row) => {
   //   setWabaEdit(true);
@@ -311,7 +322,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleEdit = async (row) => {
     setWabaEdit(true);
     setSelectedWaba(row);
-    console.log(row)
+    console.log(row);
     const details = await getwabadetails(row.wabaNumber);
     const wabaDetails = details.data[0];
     setAbout(wabaDetails.about);
@@ -327,8 +338,20 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleWabaCreate = (e) => {
     setWabaCreatebtn(true);
   };
-  const handleSync = () => {
-    console.log("Sync clicked");
+
+  const handleSync = async (data) => {
+    if (!data.wabaSrno) return toast.error("Please select a WABA");
+    try {
+      const res = await refreshWhatsApp(data?.wabaSrno);
+      if (res.status) {
+        toast.success("Refreshed Successfully");
+      } else {
+        toast.error("Error Refreshing Data");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Error Refreshing Data");
+    }
   };
   const handleDelete = (row) => {
     console.log("Delete clicked");
@@ -340,81 +363,96 @@ const WhatsappManageWaba = ({ id, name }) => {
 
   const updateDetails = async () => {
     // console.log([editWebsite1, editWebsite2]);
-    const website = [editWebsite1, editWebsite2]
+    const website = [editWebsite1, editWebsite2];
 
     const data = {
-      "messaging_product": "whatsapp",
-      "about": about,
-      "description": description,
-      "email": email,
-      "profilePic": null,
-      "address": address,
-      "websites": website,
-      "vertical": vertical,
-    }
+      messaging_product: "whatsapp",
+      about: about,
+      description: description,
+      email: email,
+      profilePic: null,
+      address: address,
+      websites: website,
+      vertical: vertical,
+    };
 
     const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
     console.log(updateData || "No data found");
-  }
+  };
 
   const columns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'wabaName', headerName: 'WABA Name', flex: 1, minWidth: 120 },
-    { field: 'wabaNumber', headerName: 'WABA Mobile No.', flex: 1, minWidth: 120 },
-    { field: 'createdOn', headerName: 'Created On', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-    { field: 'messaging_limit', headerName: 'Messaging Limit', flex: 1, minWidth: 120 },
-    { field: 'quality', headerName: 'Quality', flex: 1, minWidth: 120 },
-    { field: 'expiryDate', headerName: 'Expiry Date', flex: 1, minWidth: 120 },
-    { field: 'wabaAccountId', headerName: 'WABA Account ID', flex: 1, minWidth: 120 },
-    { field: 'health', headerName: 'Health', flex: 1, minWidth: 120 },
-    { field: 'phoneNumberId', headerName: 'Phone Number ID', flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "wabaName", headerName: "WABA Name", flex: 1, minWidth: 120 },
     {
-      field: 'action',
-      headerName: 'Action',
+      field: "wabaNumber",
+      headerName: "WABA Mobile No.",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "messaging_limit",
+      headerName: "Messaging Limit",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
+    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
+    {
+      field: "wabaAccountId",
+      headerName: "WABA Account ID",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
+    {
+      field: "phoneNumberId",
+      headerName: "Phone Number ID",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "action",
+      headerName: "Action",
       flex: 1,
       minWidth: 150,
       renderCell: (params) => (
         <>
-          <CustomTooltip
-            title="View Profile"
-            placement="top"
-            arrow
-          >
-            <IconButton className='no-xs' onClick={() => handleView(params.row)}>
+          <CustomTooltip title="View Profile" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleView(params.row)}
+            >
               <VisibilityIcon
                 sx={{
-                  fontSize: '1.2rem',
-                  color: 'green'
+                  fontSize: "1.2rem",
+                  color: "green",
                 }}
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip
-            title="Sync Status"
-            placement="top"
-            arrow
-          >
-            <IconButton className='no-xs' onClick={() => handleSync(params.row)}>
+          <CustomTooltip title="Sync Status" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleSync(params.row)}
+            >
               <SyncOutlinedIcon
                 sx={{
-                  fontSize: '1.2rem',
-                  color: 'green'
+                  fontSize: "1.2rem",
+                  color: "green",
                 }}
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip
-            title="Edit Profile"
-            placement="top"
-            arrow
-          >
+          <CustomTooltip title="Edit Profile" placement="top" arrow>
             <IconButton onClick={() => handleEdit(params.row)}>
               <EditNoteIcon
                 sx={{
-                  fontSize: '1.2rem',
-                  color: 'gray',
-                }} />
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
             </IconButton>
           </CustomTooltip>
           {/* <CustomTooltip
@@ -459,33 +497,32 @@ const WhatsappManageWaba = ({ id, name }) => {
     id: index + 1,
     // id: waba.wabaSrno,
     sn: index + 1,
-    wabaName: waba.name || 'N/A',
-    wabaNumber: waba.mobileNo || 'N/A',
-    createdOn: waba.insertTime || 'N/A',
-    expiryDate: waba.expiryDate || 'N/A',
-    status: waba.status || 'N/A',
-    wabaAccountId: waba.wabaAccountId || 'N/A',
-    phoneNumberId: waba.phoneNumberId || 'N/A',
+    wabaName: waba.name || "N/A",
+    wabaNumber: waba.mobileNo || "N/A",
+    createdOn: waba.insertTime || "N/A",
+    expiryDate: waba.expiryDate || "N/A",
+    status: waba.status || "N/A",
+    wabaAccountId: waba.wabaAccountId || "N/A",
+    phoneNumberId: waba.phoneNumberId || "N/A",
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
-
       <GridFooterContainer
         sx={{
           display: "flex",
           flexWrap: "wrap",
           justifyContent: {
-            xs: "center", lg: "space-between"
+            xs: "center",
+            lg: "space-between",
           },
           alignItems: "center",
           padding: 1,
           gap: 2,
           overflowX: "auto",
-        }
-        }
+        }}
       >
         <Box
           sx={{
@@ -508,7 +545,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className='font-semibold'>{rows.length}</span>
+            Total Records: <span className="font-semibold">{rows.length}</span>
           </Typography>
         </Box>
 
@@ -525,7 +562,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             setPaginationModel={setPaginationModel}
           />
         </Box>
-      </GridFooterContainer >
+      </GridFooterContainer>
     );
   };
 
@@ -537,7 +574,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const whatsappLinkPreview = `wa.${website}/${phoneNumber}`;
 
   return (
-    <div className=''>
+    <div className="">
       {isLoading ? (
         <>
           <Loader />
@@ -546,10 +583,11 @@ const WhatsappManageWaba = ({ id, name }) => {
         <>
           <div className="flex flex-wrap justify-between w-full gap-4 items-center mb-4">
             <div>
-
-              <label className='text-green-500 text-xl font-semibold'>Manage Waba Accounts </label>
+              <label className="text-green-500 text-xl font-semibold">
+                Manage Waba Accounts{" "}
+              </label>
             </div>
-            <div className='border p-2 rounded-2xl text-3xl text-green-500 font-semibold' >
+            <div className="border p-2 rounded-2xl text-3xl text-green-500 font-semibold">
               <FaWhatsapp />
             </div>
             <div className="w-max-content">
@@ -561,11 +599,8 @@ const WhatsappManageWaba = ({ id, name }) => {
               />
             </div>
           </div>
-          <div style={{ transition: 'filter 0.3s ease' }}>
-            <Paper sx={{ height: 558 }}
-              id={id}
-              name={name}
-            >
+          <div style={{ transition: "filter 0.3s ease" }}>
+            <Paper sx={{ height: 558 }} id={id} name={name}>
               <DataGrid
                 id={id}
                 name={name}
@@ -608,17 +643,23 @@ const WhatsappManageWaba = ({ id, name }) => {
                 }}
               />
             </Paper>
-
-
-
           </div>
         </>
       ) : (
-        <div className='flex h-[80vh] justify-center w-full items-center'>
-          <div className='bg-white p-10 rounded-xl shadow-md text-center space-y-3'>
-            <h1 className='text-xl font-semibold'>No account connected yet!</h1>
-            <p className='font-medium mb-6'>Login with Facebook to start launching campaigns and analyse phone number quality.</p>
-            <a href="#signup" className='bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide' onClick={handleFacebookLogin}>Login with Facebook</a>
+        <div className="flex h-[80vh] justify-center w-full items-center">
+          <div className="bg-white p-10 rounded-xl shadow-md text-center space-y-3">
+            <h1 className="text-xl font-semibold">No account connected yet!</h1>
+            <p className="font-medium mb-6">
+              Login with Facebook to start launching campaigns and analyse phone
+              number quality.
+            </p>
+            <a
+              href="#signup"
+              className="bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide"
+              onClick={handleFacebookLogin}
+            >
+              Login with Facebook
+            </a>
           </div>
         </div>
       )}
@@ -769,15 +810,13 @@ const WhatsappManageWaba = ({ id, name }) => {
         modal
       >
         <div className="p-2 space-y-4">
-
           {/* Profile Picture Section */}
-          <div className='flex flex-col items-center lg:items-start'>
-
+          <div className="flex flex-col items-center lg:items-start">
             <UniversalLabel
               text="Profile Picture"
               tooltipContent="Max size of 5MB allowed. Image size of 640x640 is recommended. Images with a height or width of less than 192px may cause issues."
               tooltipPlacement="top"
-              className='text-gray-700 font-semibold tracking-wide'
+              className="text-gray-700 font-semibold tracking-wide"
               id="profilepicture"
               name="profilepicture"
             />
@@ -804,25 +843,19 @@ const WhatsappManageWaba = ({ id, name }) => {
                   className="hidden"
                   onChange={handleFileChange}
                 />
-                <CustomTooltip
-                  title="Upload image"
-                  placement="top"
-                  arrow
-                >
+                <CustomTooltip title="Upload image" placement="top" arrow>
                   <button
                     onClick={handleSelectFile}
                     className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer`}
                   >
-                    <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
+                    <FileUploadOutlinedIcon
+                      sx={{ color: "white", fontSize: "23px" }}
+                    />
                   </button>
                 </CustomTooltip>
 
                 {preview && (
-                  <CustomTooltip
-                    title="remove image"
-                    placement="top"
-                    arrow
-                  >
+                  <CustomTooltip title="remove image" placement="top" arrow>
                     <button
                       onClick={handleDeleteImage}
                       className="p-2 rounded-full cursor-pointer focus:outline-none hover:bg-gray-200"
@@ -838,20 +871,19 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
           </div>
 
-
           {/* Form Fields */}
           <div>
             <InputField
               label="About"
               id="about"
               name="about"
-              tooltipContent='About Your Business. Maximum of 139 characters.'
-              tooltipPlacement='top'
+              tooltipContent="About Your Business. Maximum of 139 characters."
+              tooltipPlacement="top"
               value={about}
               onChange={(e) => setAbout(e.target.value)}
               className="w-full"
               placeholder="About Your Business"
-              labelStyle={{ fontWeight: 'bold' }}
+              labelStyle={{ fontWeight: "bold" }}
               readOnly={false}
               maxLength="139"
             />
@@ -862,16 +894,15 @@ const WhatsappManageWaba = ({ id, name }) => {
                 label="Description"
                 id="description"
                 name="description"
-                tooltipContent='Description of the business. Maximum of 256 characters.'
-                tooltipPlacement='top'
+                tooltipContent="Description of the business. Maximum of 256 characters."
+                tooltipPlacement="top"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full"
                 placeholder="Enter business description"
-                labelStyle={{ fontWeight: 'bold' }}
+                labelStyle={{ fontWeight: "bold" }}
                 readOnly={false}
                 maxLength="256"
-
               />
             </div>
             <div>
@@ -879,13 +910,13 @@ const WhatsappManageWaba = ({ id, name }) => {
                 id="address"
                 name="address"
                 label="Address"
-                tooltipContent='Address of the business. Maximum of 256 characters.'
-                tooltipPlacement='top'
+                tooltipContent="Address of the business. Maximum of 256 characters."
+                tooltipPlacement="top"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
                 className="w-full"
                 placeholder="Enter business address"
-                labelStyle={{ fontWeight: 'bold' }}
+                labelStyle={{ fontWeight: "bold" }}
                 readOnly={false}
               />
             </div>
@@ -894,15 +925,14 @@ const WhatsappManageWaba = ({ id, name }) => {
                 id="email"
                 name="email"
                 label="Email"
-                tooltipContent=' Email address (in valid email format) to contact the business. Maximum of 128 characters.'
-                tooltipPlacement='top'
+                tooltipContent=" Email address (in valid email format) to contact the business. Maximum of 128 characters."
+                tooltipPlacement="top"
                 value={email}
                 className="w-full"
                 onChange={(e) => setEmail(e.target.value)}
-                labelStyle={{ fontWeight: 'bold' }}
-                placeholder='Enter email address'
+                labelStyle={{ fontWeight: "bold" }}
+                placeholder="Enter email address"
                 readOnly={false}
-
               />
             </div>
             <div>
@@ -910,8 +940,8 @@ const WhatsappManageWaba = ({ id, name }) => {
                 id="vertical"
                 name="vertical"
                 label="Vertical"
-                tooltipContent='Industry of the business.Maximum of 256 characters.'
-                tooltipPlacement='top'
+                tooltipContent="Industry of the business.Maximum of 256 characters."
+                tooltipPlacement="top"
                 value={vertical}
                 options={[
                   { label: "Professional Services", value: "PROF_SERVICES" },
@@ -934,7 +964,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                   { label: "Restaurant", value: "RESTAURANT" },
                   { label: "Not a Business", value: "NOT_A_BIZ" },
                   { label: "Other", value: "OTHER" },
-                  { label: "Undefined", value: "UNDEFINED" }
+                  { label: "Undefined", value: "UNDEFINED" },
                 ]}
                 onChange={(value) => setVertical(value)}
                 className="w-full"
@@ -946,18 +976,17 @@ const WhatsappManageWaba = ({ id, name }) => {
                 id="website1"
                 name="website1"
                 label="Websites"
-                tooltipContent='URLs (including http:// or https://) associated with the business (e.g., website, Facebook Page, Instagram). Maximum of 2 websites with a maximum of 256 characters each.'
-                tooltipPlacement='top'
+                tooltipContent="URLs (including http:// or https://) associated with the business (e.g., website, Facebook Page, Instagram). Maximum of 2 websites with a maximum of 256 characters each."
+                tooltipPlacement="top"
                 className="w-full"
                 placeholder="Enter URL Address"
-                labelStyle={{ fontWeight: 'bold' }}
+                labelStyle={{ fontWeight: "bold" }}
                 readOnly={false}
                 value={editWebsite1}
                 onChange={(e) => seteditWebsite1(e.target.value)}
-
               />
             </div>
-            <div className='flex items-end space-x-2'>
+            <div className="flex items-end space-x-2">
               <InputField
                 id="website2"
                 name="website2"
@@ -969,7 +998,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               />
             </div>
           </div>
-
 
           {/* Action Buttons */}
           <div className="flex justify-center mt-4 space-x-3">
@@ -994,8 +1022,7 @@ const WhatsappManageWaba = ({ id, name }) => {
             />
           </div>
         </div>
-      </Dialog >
-
+      </Dialog>
 
       <Dialog
         header="Create Waba"
@@ -1007,16 +1034,22 @@ const WhatsappManageWaba = ({ id, name }) => {
         className="w-[50rem]"
         modal
       >
-        <div className='bg-white p-10 rounded-xl shadow-md text-center space-y-3'>
-          <h1 className='text-xl font-semibold'>Add Another Account</h1>
-          <p className='font-medium mb-6'>To add another WABA account, link the new account through Facebook.</p>
-          <a href="#signup" className='bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide' onClick={handleFacebookLogin}>Login with Facebook</a>
+        <div className="bg-white p-10 rounded-xl shadow-md text-center space-y-3">
+          <h1 className="text-xl font-semibold">Add Another Account</h1>
+          <p className="font-medium mb-6">
+            To add another WABA account, link the new account through Facebook.
+          </p>
+          <a
+            href="#signup"
+            className="bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide"
+            onClick={handleFacebookLogin}
+          >
+            Login with Facebook
+          </a>
         </div>
-
       </Dialog>
     </div>
   );
 };
-
 
 export default WhatsappManageWaba;

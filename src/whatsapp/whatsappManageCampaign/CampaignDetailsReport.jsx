@@ -161,7 +161,7 @@ const CampaignDetailsReport = () => {
         reason: item.reason || "-",
     }));
 
-    const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
+    const totalPages = Math.floor(totalPage / paginationModel.pageSize);
 
     const CustomFooter = () => {
         return (
@@ -289,9 +289,6 @@ const CampaignDetailsReport = () => {
                         rows={rows}
                         columns={columns}
                         initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
                         checkboxSelection
                         rowHeight={45}
                         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}

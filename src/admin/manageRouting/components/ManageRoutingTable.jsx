@@ -1,14 +1,21 @@
-import { Box, Button, Paper, styled, Typography } from "@mui/material";
+import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import IconButton from "@mui/material/IconButton";
 import React, { useState } from "react";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
-import usePagination from "@mui/material/usePagination";
-import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import usePagination from "@mui/material/usePagination/usePagination";
+import styled from "styled-components";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { MdOutlineDeleteForever } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 
+const PaginationList = styled("ul")({
+  listStyle: "none",
+  padding: 0,
+  margin: 0,
+  display: "flex",
+  gap: "8px",
+});
 const CustomPagination = ({
   totalPages,
   paginationModel,
@@ -19,14 +26,6 @@ const CustomPagination = ({
     page: paginationModel.page + 1,
     onChange: (_, newPage) =>
       setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-  });
-
-  const PaginationList = styled("ul")({
-    listStyle: "none",
-    padding: 0,
-    margin: 0,
-    display: "flex",
-    gap: "8px",
   });
 
   return (
@@ -70,45 +69,41 @@ const CustomPagination = ({
   );
 };
 
-const AttachmentLogsTbaleSms = ({ id, name }) => {
+const ManageRoutingTable = ({ id, name }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+
   const navigate = useNavigate();
-
-  const handleDetailed = () => {
-    navigate("/smsAttachmentdetaillog");
-  };
-
-  const handleDownload = () => {
-    navigate("/download");
+  const handleEditRouting = () => {
+    navigate("/editrouting");
   };
 
   const rows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
     sn: i + 1,
-    campaignname: "XYZ",
-    date: "27/09/2023",
-    totalclicks: "6",
+    servicename: "Service",
+    assignservice: "Operator1",
+    status: "pending",
   }));
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     {
-      field: "campaignname",
-      headerName: "Campaign Name",
+      field: "servicename",
+      headerName: "Service Name",
+      flex: 1,
+      minWidth: 130,
+    },
+    {
+      field: "assignservice",
+      headerName: "Assign Service",
       flex: 1,
       minWidth: 120,
     },
-    { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
-    {
-      field: "totalclicks",
-      headerName: "Total clicks",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
     {
       field: "action",
       headerName: "Action",
@@ -116,22 +111,9 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
       minWidth: 100,
       renderCell: (params) => (
         <>
-          <CustomTooltip title="Detailed Log" placement="top" arrow>
-            <IconButton
-              className="no-xs"
-              onClick={() => handleDetailed(params.row)}
-            >
-              <DescriptionOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "green",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip title="Download" placement="top" arrow>
-            <IconButton onClick={() => handleDownload(params.row)}>
-              <DownloadForOfflineOutlinedIcon
+          <CustomTooltip title="Edit Routing" placement="top" arrow>
+            <IconButton onClick={() => handleEditRouting(params.row)}>
+              <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
                   color: "gray",
@@ -139,11 +121,24 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
               />
             </IconButton>
           </CustomTooltip>
+          <CustomTooltip title="Delete Routing" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleDelete(params.row)}
+            >
+              <MdOutlineDeleteForever
+                className="text-red-500 cursor-pointer hover:text-red-600"
+                size={20}
+              />
+            </IconButton>
+          </CustomTooltip>
         </>
       ),
     },
   ];
+
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
   const CustomFooter = () => {
     return (
       <GridFooterContainer
@@ -195,6 +190,7 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
       </GridFooterContainer>
     );
   };
+
   return (
     <div>
       <Paper sx={{ height: 558 }} id={id} name={name}>
@@ -214,6 +210,7 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          // checkboxSelection
           disableRowSelectionOnClick
           disableColumnResize
           disableColumnMenu
@@ -236,4 +233,4 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
   );
 };
 
-export default AttachmentLogsTbaleSms;
+export default ManageRoutingTable;
