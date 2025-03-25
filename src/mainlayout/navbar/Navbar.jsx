@@ -85,11 +85,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   );
 
   return (
-    <nav className="w-full bg-white h-14 lg:h-16 md:h-15 flex items-center px-4">
+    <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
       <div className="flex items-center gap-4">
         <button
           onClick={toggleSidebar}
-          className="text-gray-700 focus:outline-none cursor-pointer"
+          className="text-gray-700 cursor-pointer focus:outline-none"
         >
           <FaBars />
         </button>
@@ -98,7 +98,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
       </div>
 
       {!isMobile ? (
-        <div className="ml-auto flex gap-3">
+        <div className="flex gap-3 ml-auto">
           {[
             {
               title: "Account Info",
