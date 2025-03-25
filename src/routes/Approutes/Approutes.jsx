@@ -61,6 +61,7 @@ import AddService from "../../admin/manageSMPP.jsx/pages/AddService";
 import AddRouting from "../../admin/manageRouting/pages/AddRouting";
 import EditRouting from "../../admin/manageRouting/pages/EditRouting";
 import SMPPErrorCode from "../../admin/smmpErrorCode/SMPPErrorCode";
+import AddOperator from '../../admin/managePrefix/pages/AddOperator';
 
 // sms
 import SmsReports from "../../sms/smsReports/SmsReports";
@@ -108,6 +109,7 @@ const Approutes = () => {
         <Route path="/editrouting" element={<EditRouting />} />
         <Route path="/SMPPerrorcode" element={<SMPPErrorCode />} />
         <Route path="/addservice" element={<AddService />} />
+        <Route path="/addoperator" element={<AddOperator />} />
 
         {/* SMS */}
         <Route path="/sendsms" element={<SendSms />} />
