@@ -37,7 +37,6 @@ const WhatsappConversation = () => {
   const [totalPage, setTotalPage] = useState(1);
   const [isMobileSearched, setIsMobileSearched] = useState(false);
 
-  const isFirstRender = useRef(true);
 
   // Fetch WABA List
   useEffect(() => {
