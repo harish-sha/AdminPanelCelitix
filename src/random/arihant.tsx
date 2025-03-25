@@ -24,14 +24,12 @@ function NodeComponent({
   onDelete,
   isConnecting,
   setIsVisible,
-  isStarting,
 }: {
   id: string;
   data: any;
   onDelete: (id: string) => void;
   isConnecting: boolean;
   setIsVisible: any;
-  isStarting?: boolean;
 }) {
   return (
     <div className="relative w-40 p-2 bg-white border border-gray-300 rounded shadow-md">
@@ -122,7 +120,17 @@ const Arihant = () => {
 
   const deleteNode = useCallback(
     (nodeId: string) => {
-      setNodes((nds) => nds.filter((node) => node.id !== nodeId));
+      setNodes((nds) => {
+        const updatedNodes = nds.filter((node) => node.id !== nodeId);
+
+        const reorderedNodes = updatedNodes.map((node, index) => ({
+          ...node,
+          id: (index + 1).toString(),
+        }));
+
+        setNodeId(reorderedNodes.length + 1);
+        return reorderedNodes;
+      });
 
       setEdges((eds) =>
         eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
@@ -132,6 +140,7 @@ const Arihant = () => {
     },
     [setNodes, setEdges]
   );
+
   const reset = () => {
     setNodes(initialNodes);
     setEdges(initialEdges);
