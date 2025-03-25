@@ -77,7 +77,6 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
   });
 
   const handleView = (row) => {
-    console.log("view details:", row);
     setSelectedRow(row);
   };
 

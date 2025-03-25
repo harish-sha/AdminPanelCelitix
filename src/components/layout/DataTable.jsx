@@ -76,7 +76,6 @@ export const DataTable = ({
   setSelectedRows,
   selectedRows,
 }) => {
-  console.log("Rows", rows);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,

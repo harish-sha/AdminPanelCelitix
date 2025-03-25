@@ -88,10 +88,6 @@ export default function WhatsappLiveChat() {
   };
 
   useEffect(() => {
-    console.log(agentName + selectedAgentList + selectedGroupList);
-  }, [agentName, selectedAgentList, selectedGroupList]);
-
-  useEffect(() => {
     async function fetchWaba() {
       const res = await getWabaList();
       setWaba(res);
@@ -100,18 +96,12 @@ export default function WhatsappLiveChat() {
     fetchWaba();
   }, []);
 
-  useEffect(() => {
-    console.log(search);
-  }, [search]);
   function deleteImages(index) {
     setSelectedImage((prev) => {
       const newSelectedImage = [...prev];
       newSelectedImage.splice(index, 1);
       return newSelectedImage;
     });
-
-    // To see the updated state, use useEffect
-    console.log("Deleted Index:", index);
   }
 
   const sendMessage = () => {
@@ -135,9 +125,6 @@ export default function WhatsappLiveChat() {
     }
   };
 
-  useEffect(() => {
-    console.log(selectedImage);
-  }, [selectedImage]);
 
   const items = [
     {

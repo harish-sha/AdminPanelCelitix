@@ -191,9 +191,7 @@ const TemplateForm = ({
     }
     setImageState((prev) => ({ ...prev, uploading: true }));
     try {
-      console.log("Uploading image:", imageState.file);
       const response = await uploadImageFile(imageState.file);
-      console.log("Upload Response:", response);
       if (response.status) {
         toast.success("Image uploaded successfully!");
         setImageState((prev) => ({

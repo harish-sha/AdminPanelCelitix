@@ -72,9 +72,7 @@ const ManageAgent = () => {
   // Department LIST
   const fetchDepartmentList = async () => {
     try {
-
       const response = await getDepartmentList();
-      console.log("Fetched Department List Response:", response);
       if (response?.statusCode === 200 && Array.isArray(response.data)) {
         setDepartmentList(response.data);
       } else {
@@ -101,11 +99,6 @@ const ManageAgent = () => {
     };
     fetchData();
   }, []);
-
-  // check the value which is correct selected
-  useEffect(() => {
-    console.log("department selected", selectedadddepartment);
-  }, [selectedadddepartment]);
 
   const handleAddDepartment = async () => {
     if (!newDepartmentName.trim()) {
@@ -137,8 +130,6 @@ const ManageAgent = () => {
   };
 
   const handleEditClick = async (department) => {
-    console.log("Clicked Department Data:", department);
-
     if (!department || !department.id) {
       toast.error("Invalid department selected.");
       return;
@@ -148,7 +139,6 @@ const ManageAgent = () => {
       const response = await getDepartmentBySrNo(department.id);
 
       if (response?.statusCode === 200 && response.data) {
-        console.log("Fetched Department for Edit:", response.data);
         setSelectedDepartmentData(response.data);
         setEditedDepartmentName(response.data.departmentName);
         setEditDialog(true);
@@ -191,17 +181,10 @@ const ManageAgent = () => {
     setIsProcessing(true);
 
     try {
-      console.log("Editing Department:", {
-        srno: selectedDepartmentData.departmentId,
-        name: editedDepartmentName.trim(),
-      });
-
       const response = await editDepartment(
         selectedDepartmentData.departmentId,
         editedDepartmentName.trim()
       );
-
-      console.log("Edit Response:", response);
 
       if (
         response?.statusCode === 200 &&
@@ -237,7 +220,6 @@ const ManageAgent = () => {
       return;
     }
 
-    console.log("Correctly Selected Department for Deletion:", selectedDept);
     setSelectedDepartmentData(selectedDept);
     setDeleteDialog(true);
   };
@@ -252,13 +234,9 @@ const ManageAgent = () => {
     setIsProcessing(true);
 
     try {
-      console.log("Deleting Department:", selectedDepartmentData.departmentId);
-
       const response = await deleteDepartment(
         selectedDepartmentData.departmentId
       );
-
-      console.log("Delete Response:", response);
 
       if (response?.statusCode === 200) {
         toast.success(
@@ -323,16 +301,10 @@ const ManageAgent = () => {
       departmentName: department.departmentName,
       agentCode: "",
     };
-
-    console.log("Sending Add Agent Request:", agentData);
-
     try {
       setIsSubmitting(true);
 
       const response = await addAgent(agentData);
-      //console.log("Agent data", agentData);
-
-      console.log("API Response:", response);
 
       if (response?.statusCode === 201) {
         toast.success("Agent added successfully.");
@@ -351,8 +323,6 @@ const ManageAgent = () => {
       }
       else {
         let errorMessage = response?.message || "Failed to add agent.";
-
-        console.log("API Error Message:", errorMessage);
 
         if (errorMessage.includes("Email already exist")) {
           toast.error("Email already exists. Please use another.");
@@ -373,7 +343,6 @@ const ManageAgent = () => {
         errorMessage = error.message;
       }
 
-      console.log("Extracted Error Message:", errorMessage);
       toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);

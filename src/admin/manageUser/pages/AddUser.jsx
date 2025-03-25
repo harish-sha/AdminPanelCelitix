@@ -34,11 +34,10 @@ const AddUser = () => {
     { value: "Reseller", label: "Reseller" },
   ];
 
-  // Effect to update readOnly state and clear input field
+
   useEffect(() => {
-    console.log("User Type Changed:", userType); // Debugging log
-    setIsReadOnly(userType !== "Reseller"); // If "Reseller" is selected, make editable
-    setAccountUrl(""); // Clear input field when selection changes
+    setIsReadOnly(userType !== "Reseller");
+    setAccountUrl(""); 
   }, [userType]);
 
   const handleChangeEnablePostpaid = (event) => {
@@ -52,9 +51,9 @@ const AddUser = () => {
   ];
 
   return (
-    <div className="p-6 bg-white shadow-md rounded-lg">
-      <h1 className="text-xl font-semibold mb-4">Login Info:</h1>
-      <div className="grid lg:grid-cols-2 gap-4">
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h1 className="mb-4 text-xl font-semibold">Login Info:</h1>
+      <div className="grid gap-4 lg:grid-cols-2">
         <InputField label="User ID *"
           id="userid"
           name="userid"
@@ -71,8 +70,8 @@ const AddUser = () => {
         />
       </div>
 
-      <h2 className="text-lg font-semibold mt-6 mb-4">Personal Details:</h2>
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+      <h2 className="mt-6 mb-4 text-lg font-semibold">Personal Details:</h2>
+      <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
         <InputField label="First Name *"
           id="firstname"
           name="firstname"
@@ -149,8 +148,8 @@ const AddUser = () => {
         />
       </div>
 
-      <h2 className="text-lg font-semibold mt-6 mb-4">Account Details:</h2>
-      <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+      <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>
+      <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
         <div className="flex flex-wrap gap-2 mb-2">
           <div className="flex gap-2">
             <AnimatedDropdown
@@ -158,10 +157,9 @@ const AddUser = () => {
               id="userType"
               name="userType"
               options={useroption}
-              value={userType} // Ensure correct value is set
+              value={userType} 
               onChange={(selected) => {
-                console.log("Dropdown selected:", selected); // Debugging log
-                setUserType(selected); // Correctly update the state
+                setUserType(selected);
               }}
             />
             <div className="min-w-max">
@@ -178,12 +176,12 @@ const AddUser = () => {
           </div>
           {userType === "Reseller" && (
             <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <UniversalLabel
                   text="Postpaid"
                   id="enablepostpaid"
                   name="enablepostpaid"
-                  className="text-gray-700 font-medium text-sm"
+                  className="text-sm font-medium text-gray-700"
                 />
               </div>
               {/* Option 1 */}
@@ -197,7 +195,7 @@ const AddUser = () => {
                 />
                 <label
                   htmlFor="enablepostpaidOption1"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   Yes
                 </label>
@@ -213,7 +211,7 @@ const AddUser = () => {
                 />
                 <label
                   htmlFor="enablepostpaidOption2"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   No
                 </label>

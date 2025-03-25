@@ -50,7 +50,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
   const openwidget = [
@@ -59,7 +58,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange2 = (event) => {
     setSelectedOpenWidget(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
   const reopenwidget = [
@@ -68,7 +66,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange3 = (event) => {
     setSelectedReopenWidget(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
 

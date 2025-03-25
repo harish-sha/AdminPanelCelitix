@@ -92,7 +92,7 @@ const SMPPErrorCodeTable = ({ id, name }) => {
     { value: "Service3", label: "Service3" },
   ];
   const handleServiceEdit = (service) => {
-    console.log(service);
+    console.log("handleServiceEdit", service);
   };
   const displaytypeOptions = [
     { value: "Display1", label: "Display1" },
@@ -100,7 +100,7 @@ const SMPPErrorCodeTable = ({ id, name }) => {
     { value: "Display3", label: "Display3" },
   ];
   const handleDisplaytyperEdit = (display) => {
-    console.log(display);
+    console.log("handleDisplaytyperEdit" + display);
   };
   const displayreasonOptions = [
     { value: "Vendor1", label: "Vendor1" },
@@ -108,7 +108,7 @@ const SMPPErrorCodeTable = ({ id, name }) => {
     { value: "Vendor3", label: "Vendor3" },
   ];
   const handleDisplayreasonEdit = (reason) => {
-    console.log(reason);
+    console.log("handleDisplayreasonEdit" , reason);
   };
 
   const rows = Array.from({ length: 20 }, (_, i) => ({

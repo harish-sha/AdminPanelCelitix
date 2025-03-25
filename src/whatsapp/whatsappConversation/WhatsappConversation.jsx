@@ -70,10 +70,7 @@ const WhatsappConversation = () => {
 
     if (isNewSearch) {
       setIsMobileSearched(true);
-      // setPaginationModel({ page: 0, pageSize: 10 });
     }
-
-    // console.log("isNewSearch" + isNewSearch);
 
     try {
       setIsFetching(true);

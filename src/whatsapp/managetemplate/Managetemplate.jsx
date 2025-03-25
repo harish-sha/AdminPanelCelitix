@@ -239,7 +239,6 @@ const ManageTemplate = () => {
       setIsLoading(true);
       try {
         const response = await getWabaList();
-        console.log("WABA List:", response);
         if (response) {
           setWabaList(response);
         } else {
@@ -321,7 +320,6 @@ const ManageTemplate = () => {
 
   const handleSyncTemplate = async () => {
     try {
-      console.log("syncWabaId", syncWabaId);
       const res = await syncStatus(syncWabaId);
       toast(
         `InsertCount: ${res.InsertCount}, \nApproved: ${res.Approved},\nRejectedCount: ${res.Rejected}, \nInsertCount: ${res.InsertCount}, \nDuplicateCount: ${res.DuplicateCount}`
@@ -708,20 +706,20 @@ const ManageTemplate = () => {
       .map((template) => (
         <div
           key={template.id}
-          className="bg-white border border-gray-50 p-4 rounded-lg shadow-md duration-300 hover:shadow-lg transition-shadow"
+          className="p-4 transition-shadow duration-300 bg-white border rounded-lg shadow-md border-gray-50 hover:shadow-lg"
         >
-          <h3 className="text-gray-700 font-semibold">{template.header}</h3>
-          <p className="text-gray-500 text-sm mt-2">{template.body}</p>
+          <h3 className="font-semibold text-gray-700">{template.header}</h3>
+          <p className="mt-2 text-sm text-gray-500">{template.body}</p>
           <div className="mt-3">
             {template.button.type === "cta" ? (
               <a
                 href={template.button.link}
-                className="bg-blue-500 rounded-md text-sm text-white hover:bg-blue-600 px-4 py-2 transition-all"
+                className="px-4 py-2 text-sm text-white transition-all bg-blue-500 rounded-md hover:bg-blue-600"
               >
                 {template.button.text}
               </a>
             ) : (
-              <button className="bg-gray-200 rounded-md text-gray-700 text-sm hover:bg-gray-300 px-4 py-2 transition-all">
+              <button className="px-4 py-2 text-sm text-gray-700 transition-all bg-gray-200 rounded-md hover:bg-gray-300">
                 {template.button.text}
               </button>
             )}
@@ -742,9 +740,9 @@ const ManageTemplate = () => {
             overflow: "hidden",
           }}
         >
-          <div className="flex flex-wrap justify-between w-full gap-4 items-center mb-2">
+          <div className="flex flex-wrap items-center justify-between w-full gap-4 mb-2">
             <div>
-              <h1 className="text-gray-700 text-xl font-semibold">
+              <h1 className="text-xl font-semibold text-gray-700">
                 Manage Templates
               </h1>
             </div>
@@ -757,14 +755,14 @@ const ManageTemplate = () => {
                                 onBlur={() => setSearchActive(false)}
                             />
                             <IoSearch
-                                className="text-gray-600 absolute cursor-pointer right-3"
+                                className="absolute text-gray-600 cursor-pointer right-3"
                                 size={22}
                                 color='green'
                                 onClick={() => setSearchActive(true)}
                             />
                         </div> */}
             {/* Search Templates and Status */}
-            <div className="flex h-0 w-120 duration-500 items-center relative transition-all">
+            <div className="relative flex items-center h-0 transition-all duration-500 w-120">
               <div
                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
             ${searchActive ? "w-80 " : "w-0"} 
@@ -782,7 +780,7 @@ const ManageTemplate = () => {
                   onBlur={() => setSearchActive(false)}
                 />
                 <IoSearch
-                  className="text-gray-600 absolute cursor-pointer right-4"
+                  className="absolute text-gray-600 cursor-pointer right-4"
                   size={22}
                   color="green"
                   onClick={() => setSearchActive(true)}
@@ -790,7 +788,7 @@ const ManageTemplate = () => {
               </div>
 
               {!searchActive && (
-                <span className="text-gray-500 text-sm animate-fade-in duration-300 ml-2 transition-opacity">
+                <span className="ml-2 text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">
                   Search Templates
                 </span>
               )}
@@ -869,7 +867,7 @@ const ManageTemplate = () => {
               <div className="flex flex-col bg-[#e6f4ff] rounded-md shadow-md w-70 overflow-scroll px-2 py-2">
                 {/* categrories */}
                 <div className="">
-                  <label className="text-gray-600 text-md font-medium">
+                  <label className="font-medium text-gray-600 text-md">
                     Categories
                   </label>
                   {categories.map((category) => (
@@ -905,7 +903,7 @@ const ManageTemplate = () => {
 
                 {/* Industries */}
                 <div className="mt-2">
-                  <label className="text-gray-600 text-md font-medium mb-2">
+                  <label className="mb-2 font-medium text-gray-600 text-md">
                     Industries
                   </label>
                   <div
@@ -948,7 +946,7 @@ const ManageTemplate = () => {
                   {industries.length > 4 && (
                     <div className="flex justify-center mt-2">
                       <button
-                        className="text-blue-500 text-sm cursor-pointer duration-300 font-medium hover:underline transition-all"
+                        className="text-sm font-medium text-blue-500 transition-all duration-300 cursor-pointer hover:underline"
                         onClick={() => setShowAllIndustries(!showAllIndustries)}
                       >
                         {showAllIndustries
@@ -960,13 +958,13 @@ const ManageTemplate = () => {
                 </div>
               </div>
               {/* Fixed Layout for Template Section */}
-              <div className="flex-2 bg-white p-2 rounded-md overflow-auto">
+              <div className="p-2 overflow-auto bg-white rounded-md flex-2">
                 <div>
                   <div className="flex justify-between px-2 py-2">
-                    <h2 className="text-gray-500 text-sm font-semibold">
+                    <h2 className="text-sm font-semibold text-gray-500">
                       Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12
                     </h2>
-                    <h2 className="text-green-500 text-sm font-semibold">
+                    <h2 className="text-sm font-semibold text-green-500">
                       Marketing <KeyboardArrowRightOutlinedIcon />{" "}
                       <ShoppingCartOutlinedIcon fontSize="small" /> E-commerce
                     </h2>
@@ -985,24 +983,24 @@ const ManageTemplate = () => {
                       .map((template) => (
                         <div
                           key={template.id}
-                          className="bg-white border-2 border-gray-200 p-4 rounded-lg shadow-md duration-500 hover:border-2 hover:border-green-500 hover:shadow-xl transition-shadow"
+                          className="p-4 transition-shadow duration-500 bg-white border-2 border-gray-200 rounded-lg shadow-md hover:border-2 hover:border-green-500 hover:shadow-xl"
                         >
-                          <h3 className="text-gray-700 font-semibold">
+                          <h3 className="font-semibold text-gray-700">
                             {template.header}
                           </h3>
-                          <p className="text-gray-500 text-sm mt-2">
+                          <p className="mt-2 text-sm text-gray-500">
                             {template.body}
                           </p>
                           <div className="mt-3">
                             {template.button.type === "cta" ? (
                               <a
                                 href={template.button.link}
-                                className="bg-blue-500 rounded-md text-sm text-white hover:bg-blue-600 px-4 py-2 transition-all"
+                                className="px-4 py-2 text-sm text-white transition-all bg-blue-500 rounded-md hover:bg-blue-600"
                               >
                                 {template.button.text}
                               </a>
                             ) : (
-                              <button className="bg-gray-200 rounded-md text-gray-700 text-sm hover:bg-gray-300 px-4 py-2 transition-all">
+                              <button className="px-4 py-2 text-sm text-gray-700 transition-all bg-gray-200 rounded-md hover:bg-gray-300">
                                 {template.button.text}
                               </button>
                             )}
@@ -1017,7 +1015,7 @@ const ManageTemplate = () => {
           <CustomTabPanel value={value} index={1}>
             <div className="w-full">
               <>
-                <div className="flex flex-wrap justify-start w-full gap-4 items-end mb-5">
+                <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
                   <div className="w-full sm:w-56">
                     <AnimatedDropdown
                       id="manageTemplateWaba"
@@ -1132,8 +1130,8 @@ const ManageTemplate = () => {
                   // ) : !hasSearched ? (
                   //     // Case 1: Initial Load - Ask user to select WABA account
                   //     <div className="flex bg-white border-2 border-blue-500 border-dashed h-[55vh] justify-center rounded-2xl w-full items-center">
-                  //         <div className="p-8 rounded-2xl shadow-2xl shadow-blue-300 text-blue-500 text-center">
-                  //             <span className="text-2xl font-m font-medium tracking-wide">
+                  //         <div className="p-8 text-center text-blue-500 shadow-2xl rounded-2xl shadow-blue-300">
+                  //             <span className="text-2xl font-medium tracking-wide font-m">
                   //                 Please select a WhatsApp Business Account (WABA) to
                   //                 proceed.
                   //             </span>
@@ -1142,8 +1140,8 @@ const ManageTemplate = () => {
                   // ) : filteredData.length === 0 ? (
                   //     // Case 2: No data found after filtering
                   //     <div className="flex bg-white border-2 border-dashed border-red-500 h-[55vh] justify-center rounded-2xl w-full items-center">
-                  //         <div className="p-8 rounded-2xl shadow-2xl shadow-red-300 text-center text-red-500">
-                  //             <span className="text-2xl font-m font-medium tracking-wide">
+                  //         <div className="p-8 text-center text-red-500 shadow-2xl rounded-2xl shadow-red-300">
+                  //             <span className="text-2xl font-medium tracking-wide font-m">
                   //                 No matching records found. <br /> Please adjust your filters
                   //                 and try again.
                   //             </span>
