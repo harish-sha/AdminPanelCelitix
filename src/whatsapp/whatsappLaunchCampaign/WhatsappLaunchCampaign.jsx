@@ -280,7 +280,6 @@ const WhatsappLaunchCampaign = () => {
     // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
-      console.log(requestData);
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setIsLoading(false);

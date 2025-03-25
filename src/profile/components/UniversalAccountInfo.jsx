@@ -209,7 +209,6 @@ function AccountInfoModal({ show, handleClose }) {
 
   // Handle RCS Search
   const handleWhatsAppSearch = () => {
-    console.log(whatsapprate);
     const filtered = whatsapprate.filter(
       (item) =>
         item.countryName.toLowerCase()?.includes(searchTerm.toLowerCase()) ||

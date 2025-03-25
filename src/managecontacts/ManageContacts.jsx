@@ -147,7 +147,6 @@ const ManageContacts = () => {
   ];
   const handleOptionChange = (event) => {
     setSelectedAddImportContact(event.target.value);
-    // console.log("Selected Option:", event.target.value);
   };
   const addwish = [
     { value: "Yes", label: "Yes" },
@@ -220,7 +219,6 @@ const ManageContacts = () => {
       };
 
       const res = await importContact(data);
-      console.log(res);
       // if (res.flag) {
       //   setAddContactDetails({});
       //   setSelectedMultiGroupContact("");
@@ -289,7 +287,6 @@ const ManageContacts = () => {
         setFilterContacts(res);
       }
     } catch (err) {
-      console.log(err);
       toast.error("Something went wrong");
     } finally {
       setIsFetching(false);
@@ -394,10 +391,7 @@ const ManageContacts = () => {
       ...updatedContactDetails,
     };
 
-    // console.log(data);
-    // console.log("Contact Updated Successfully");
     const res = await updateContactsDetails(data);
-    console.log(res);
   };
 
   // Excel file upload
@@ -410,7 +404,6 @@ const ManageContacts = () => {
       setIsUploading(true);
       try {
         const response = await uploadContactFile(uploadedFile);
-        console.log(response);
         setIsUploaded(true);
         toast.success("File uploaded successfully.");
         setColumns(response.headers);
@@ -454,7 +447,6 @@ const ManageContacts = () => {
   };
 
   const handleGrpDelete = async () => {
-    console.log(deleteGrpId);
     if (!deleteGrpId) return;
     const res = await deleteGrp(deleteGrpId.groupName, deleteGrpId.id);
     toast.success(res.message);

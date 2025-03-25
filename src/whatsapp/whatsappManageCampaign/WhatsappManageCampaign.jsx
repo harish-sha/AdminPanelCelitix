@@ -98,15 +98,6 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSearch = async () => {
-    console.log("Search Filters:");
-    console.log({
-      startDate: selectedDate,
-      category: campaignCategory,
-      type: campaignType,
-      status: campaignStatus,
-      campaignName: campaignName,
-    });
-
     const formattedFromDate = selectedDate
       ? new Date(selectedDate).toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB");
@@ -119,8 +110,6 @@ const WhatsappManageCampaign = () => {
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
     };
-
-    console.log("Filter Params:", filters);
 
     setIsFetching(true);
     const data = await getWhatsappCampaignReport(filters);
@@ -185,12 +174,6 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
   const handleShowLogs = async () => {
-    console.log("Show Logs:");
-    console.log({
-      startDate: selectedDateLogs,
-      mobileNo: inputValueMobileLogs,
-    });
-
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
@@ -206,7 +189,6 @@ const WhatsappManageCampaign = () => {
 
     try {
       const response = await getWhatsappLogReport(logdata);
-      console.log("whatsapp log report", response);
       setLogsData(response);
     } catch (error) {
       console.error("Error fetching logs:", error);
@@ -310,7 +292,7 @@ const WhatsappManageCampaign = () => {
             />
             <Tab
               label={
-                <span className="flex gap-2 items-center">
+                <span className="flex items-center gap-2">
                   <BsJournalArrowDown size={18} /> API Logs
                 </span>
               }
@@ -347,7 +329,7 @@ const WhatsappManageCampaign = () => {
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div className="w-full">
-              <div className="flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
+              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     id="manageCampaignDate"
@@ -476,8 +458,8 @@ const WhatsappManageCampaign = () => {
               ) : !hasSearched ? (
                 // Case 1: Initial Load - Ask user to select WABA account
                 <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
-                  <div className="text-center text-blue-500 p-8 shadow-2xl shadow-blue-300 rounded-2xl">
-                    <span className="text-2xl font-m font-medium tracking-wide">
+                  <div className="p-8 text-center text-blue-500 shadow-2xl shadow-blue-300 rounded-2xl">
+                    <span className="text-2xl font-medium tracking-wide font-m">
                       Please select a WhatsApp Business Account (WABA) to
                       proceed.
                     </span>
@@ -486,8 +468,8 @@ const WhatsappManageCampaign = () => {
               ) : filteredData.length === 0 ? (
                 // Case 2: No data found after filtering
                 <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
-                  <div className="text-center text-red-500 p-8 shadow-2xl rounded-2xl shadow-red-300">
-                    <span className="text-2xl font-m font-medium tracking-wide">
+                  <div className="p-8 text-center text-red-500 shadow-2xl rounded-2xl shadow-red-300">
+                    <span className="text-2xl font-medium tracking-wide font-m">
                       No matching records found. <br /> Please adjust your filters
                       and try again.
                     </span>
@@ -505,7 +487,7 @@ const WhatsappManageCampaign = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="w-full">
-              <div className="flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
+              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     id="manageCampaignLogsDate"
@@ -568,9 +550,9 @@ const WhatsappManageCampaign = () => {
                 <div className="w-full">
                   <Box>
                     {logsData.length === 0 ? (
-                      <Box className="flex justify-center space-y-2 items-center min-h-60 flex-col text-gray-500 border rounded-2xl">
+                      <Box className="flex flex-col items-center justify-center space-y-2 text-gray-500 border min-h-60 rounded-2xl">
                         <SearchOffIcon
-                          className="text-red-400 mb-2"
+                          className="mb-2 text-red-400"
                           fontSize="large"
                         />
                         <p className="text-2xl text-blue-500">
@@ -666,7 +648,7 @@ const WhatsappManageCampaign = () => {
                     placeholder="Waba Account"
                   />
                 </div>
-                <div className="w-full sm:w-35 flex items-center justify-center">
+                <div className="flex items-center justify-center w-full sm:w-35">
                   <FormGroup>
                     <FormControlLabel
                       control={<Checkbox />}

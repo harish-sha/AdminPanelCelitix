@@ -193,13 +193,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image uploaded successfully.");
   };
 
-  // useEffect to perform side effects when isLoggedIn changes
-  useEffect(() => {
-    if (isLoggedIn) {
-      console.log("User logged in. You can now fetch or display table data.");
-    }
-  }, [isLoggedIn]);
-
   useEffect(() => {
     const loadFacebookSDK = () => {
       if (window.FB) {
@@ -302,10 +295,8 @@ const WhatsappManageWaba = ({ id, name }) => {
   // };
 
   const handleView = async (waba) => {
-    console.log("View button clicked for waba:", waba);
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
-    console.log(details.data);
     setwabadetails(details.data[0]);
     setView(true);
   };
@@ -322,7 +313,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleEdit = async (row) => {
     setWabaEdit(true);
     setSelectedWaba(row);
-    console.log(row);
     const details = await getwabadetails(row.wabaNumber);
     const wabaDetails = details.data[0];
     setAbout(wabaDetails.about);
@@ -353,16 +343,12 @@ const WhatsappManageWaba = ({ id, name }) => {
       toast.error("Error Refreshing Data");
     }
   };
-  const handleDelete = (row) => {
-    console.log("Delete clicked");
-  };
 
   const handleRowSelection = (ids) => {
     setSelectedRows(ids);
   };
 
   const updateDetails = async () => {
-    // console.log([editWebsite1, editWebsite2]);
     const website = [editWebsite1, editWebsite2];
 
     const data = {
@@ -377,7 +363,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     };
 
     const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
-    console.log(updateData || "No data found");
   };
 
   const columns = [
@@ -478,7 +463,6 @@ const WhatsappManageWaba = ({ id, name }) => {
       try {
         setIsLoading(true);
         const response = await getWabaList();
-        console.log("Fetched WABA List:", response);
         setWabaList(response?.length > 0 ? response : []);
       } catch (error) {
         console.error("Error fetching WABA list:", error);
@@ -581,13 +565,13 @@ const WhatsappManageWaba = ({ id, name }) => {
         </>
       ) : rows.length > 0 ? (
         <>
-          <div className="flex flex-wrap justify-between w-full gap-4 items-center mb-4">
+          <div className="flex flex-wrap items-center justify-between w-full gap-4 mb-4">
             <div>
-              <label className="text-green-500 text-xl font-semibold">
+              <label className="text-xl font-semibold text-green-500">
                 Manage Waba Accounts{" "}
               </label>
             </div>
-            <div className="border p-2 rounded-2xl text-3xl text-green-500 font-semibold">
+            <div className="p-2 text-3xl font-semibold text-green-500 border rounded-2xl">
               <FaWhatsapp />
             </div>
             <div className="w-max-content">
@@ -647,9 +631,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         </>
       ) : (
         <div className="flex h-[80vh] justify-center w-full items-center">
-          <div className="bg-white p-10 rounded-xl shadow-md text-center space-y-3">
+          <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
             <h1 className="text-xl font-semibold">No account connected yet!</h1>
-            <p className="font-medium mb-6">
+            <p className="mb-6 font-medium">
               Login with Facebook to start launching campaigns and analyse phone
               number quality.
             </p>
@@ -676,7 +660,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="bg-gradient-to-b border border-gray-200 rounded-2xl shadow-xl from-white overflow-hidden relative to-gray-50"
+          className="relative overflow-hidden border border-gray-200 shadow-xl bg-gradient-to-b rounded-2xl from-white to-gray-50"
         >
           {/* <div className="absolute inset-0 opacity-100">
             <svg
@@ -710,16 +694,16 @@ const WhatsappManageWaba = ({ id, name }) => {
             </svg>
           </div> */}
 
-          <div className="flex flex-col bg-gradient-to-r p-6 rounded-t-2xl text-white from-purple-400 items-center to-blue-300">
+          <div className="flex flex-col items-center p-6 text-white bg-gradient-to-r rounded-t-2xl from-purple-400 to-blue-300">
             <motion.img
               src={wabadetails?.profile_picture_url || logo}
               alt="Profile"
-              className="border-4 border-white h-24 rounded-full shadow-lg w-24"
+              className="w-24 h-24 border-4 border-white rounded-full shadow-lg"
               initial={{ scale: 0.8 }}
               animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
             />
-            <h1 className="text-2xl font-semibold mt-3">
+            <h1 className="mt-3 text-2xl font-semibold">
               {selectedWaba?.wabaName || "WhatsApp Profile"}
             </h1>
             <p className="text-sm opacity-90">
@@ -727,9 +711,9 @@ const WhatsappManageWaba = ({ id, name }) => {
             </p>
           </div>
 
-          <div className="p-6 relative z-10">
-            <div className="flex flex-col gap-2 items-center">
-              <p className="flex text-gray-900 text-lg font-medium gap-2 items-center">
+          <div className="relative z-10 p-6">
+            <div className="flex flex-col items-center gap-2">
+              <p className="flex items-center gap-2 text-lg font-medium text-gray-900">
                 <FaWhatsapp className="text-[#25D366] text-lg" />{" "}
                 {selectedWaba?.wabaNumber || "N/A"}
               </p>
@@ -744,48 +728,48 @@ const WhatsappManageWaba = ({ id, name }) => {
             </div>
 
             <motion.div
-              className="bg-white border border-gray-300 p-4 rounded-lg shadow-sm text-gray-700 text-sm leading-relaxed mt-5 overflow-y-auto"
+              className="p-4 mt-5 overflow-y-auto text-sm leading-relaxed text-gray-700 bg-white border border-gray-300 rounded-lg shadow-sm"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.5 }}
             >
-              <p className="text-gray-900 font-semibold">Description</p>
+              <p className="font-semibold text-gray-900">Description</p>
               <p>
                 {wabadetails?.description || "Hey there, I'm using WhatsApp."}
               </p>
             </motion.div>
 
             {wabadetails?.email && (
-              <div className="flex text-gray-800 gap-3 items-center mt-6">
-                <FaEnvelope className="text-gray-600 text-lg" />
+              <div className="flex items-center gap-3 mt-6 text-gray-800">
+                <FaEnvelope className="text-lg text-gray-600" />
                 <a
                   href={`mailto:${wabadetails.email}`}
-                  className="text-gray-600 text-sm hover:underline"
+                  className="text-sm text-gray-600 hover:underline"
                 >
                   {wabadetails.email}
                 </a>
               </div>
             )}
             {wabadetails?.address && (
-              <div className="flex text-gray-800 gap-3 items-center mt-4">
-                <FaMapMarkerAlt className="text-blue-500 text-lg" />
+              <div className="flex items-center gap-3 mt-4 text-gray-800">
+                <FaMapMarkerAlt className="text-lg text-blue-500" />
                 <p className="text-sm">{wabadetails.address || "N/A"}</p>
               </div>
             )}
             {wabadetails?.websites?.length > 0 && (
               <div className="mt-6">
-                <p className="text-gray-900 text-sm font-semibold mb-2">
+                <p className="mb-2 text-sm font-semibold text-gray-900">
                   Websites
                 </p>
                 <div className="grid grid-cols-1 gap-2">
                   {wabadetails.websites.map((website, index) => (
-                    <div key={index} className="flex gap-2 items-center">
+                    <div key={index} className="flex items-center gap-2">
                       <FaGlobe className="text-[#128C7E] text-lg" />
                       <a
                         href={website}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-gray-800 text-sm w-full hover:underline truncate"
+                        className="w-full text-sm text-gray-800 truncate hover:underline"
                       >
                         {website.replace("https://", "")}
                       </a>
@@ -816,7 +800,7 @@ const WhatsappManageWaba = ({ id, name }) => {
               text="Profile Picture"
               tooltipContent="Max size of 5MB allowed. Image size of 640x640 is recommended. Images with a height or width of less than 192px may cause issues."
               tooltipPlacement="top"
-              className="text-gray-700 font-semibold tracking-wide"
+              className="font-semibold tracking-wide text-gray-700"
               id="profilepicture"
               name="profilepicture"
             />
@@ -827,11 +811,11 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <img
                   src={preview}
                   alt="Company Logo"
-                  className="h-20 p-1 rounded-xl shadow-md w-20 object-cover"
+                  className="object-cover w-20 h-20 p-1 shadow-md rounded-xl"
                 />
               ) : (
-                <div className="flex bg-gray-200 h-20 justify-center p-1 rounded-xl shadow-md w-20 items-center">
-                  <span className="text-gray-500 text-sm">No Image</span>
+                <div className="flex items-center justify-center w-20 h-20 p-1 bg-gray-200 shadow-md rounded-xl">
+                  <span className="text-sm text-gray-500">No Image</span>
                 </div>
               )}
 
@@ -1034,9 +1018,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         className="w-[50rem]"
         modal
       >
-        <div className="bg-white p-10 rounded-xl shadow-md text-center space-y-3">
+        <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
           <h1 className="text-xl font-semibold">Add Another Account</h1>
-          <p className="font-medium mb-6">
+          <p className="mb-6 font-medium">
             To add another WABA account, link the new account through Facebook.
           </p>
           <a

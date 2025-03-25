@@ -55,12 +55,12 @@ export const IPDetailsDrawer = ({ row, open, onClose }) => {
           <Divider className="mb-4" />
 
           {/* Content */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-3 gap-4 mt-4">
             {Object.entries(row).map(([key, value]) => {
               return (
                 <div
                   key={key}
-                  className="bg-gray-100 rounded-xl px-2 py-2 flex items-start gap-3 shadow-sm"
+                  className="flex items-start gap-3 px-2 py-2 bg-gray-100 shadow-sm rounded-xl"
                 >
                   {/* Icon */}
                   <div className="mt-1">
@@ -71,13 +71,13 @@ export const IPDetailsDrawer = ({ row, open, onClose }) => {
 
                   {/* Data */}
                   <div className="text-sm">
-                    <div className="text-gray-600 font-medium capitalize">
+                    <div className="font-medium text-gray-600 capitalize">
                       {key.replace(/_/g, " ")}
                     </div>
-                    {/* <div className="text-gray-800 font-semibold break-all">
+                    {/* <div className="font-semibold text-gray-800 break-all">
                       {value || "-"}
                     </div> */}
-                    <div className="text-gray-800 font-semibold break-all">
+                    <div className="font-semibold text-gray-800 break-all">
                       {value === true
                         ? "Yes"
                         : value === false

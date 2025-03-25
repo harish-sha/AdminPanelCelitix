@@ -21,8 +21,6 @@ const ImagePreview = ({
       });
     });
     setFinalImages(finalImages);
-
-    console.log(finalImages);
   }, [images]);
 
   const thumbnailTemplate = (item) => {
