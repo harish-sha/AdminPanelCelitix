@@ -1,18 +1,18 @@
-import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import React, { useState } from "react";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
+import { DataGrid, GridFooterContainer } from '@mui/x-data-grid'
+import React, { useState } from 'react'
+import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import { useNavigate } from "react-router-dom";
-import usePagination from "@mui/material/usePagination/usePagination";
-import styled from "styled-components";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
-import { Dialog } from "primereact/dialog";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import InputField from "../../../whatsapp/components/InputField";
-import UniversalTextArea from "../../../whatsapp/components/UniversalTextArea";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import { useNavigate } from 'react-router-dom';
+import usePagination from '@mui/material/usePagination/usePagination';
+import styled from 'styled-components';
+import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
+import { Dialog } from 'primereact/dialog';
+import AnimatedDropdown from '../../../whatsapp/components/AnimatedDropdown';
+import InputField from '../../../whatsapp/components/InputField';
+import UniversalTextArea from '../../../whatsapp/components/UniversalTextArea';
+import UniversalButton from '../../../whatsapp/components/UniversalButton';
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -87,29 +87,30 @@ const SMPPErrorCodeTable = ({ id, name }) => {
   };
 
   const serviceOptions = [
-    { value: "Service1", label: "Service1" },
-    { value: "Service2", label: "Service2" },
-    { value: "Service3", label: "Service3" },
+    { value: 'Service1', label: 'Service1' },
+    { value: 'Service2', label: 'Service2' },
+    { value: 'Service3', label: 'Service3' },
   ];
   const handleServiceEdit = (service) => {
     console.log(service);
   };
   const displaytypeOptions = [
-    { value: "Display1", label: "Display1" },
-    { value: "Display2", label: "Display2" },
-    { value: "Display3", label: "Display3" },
+    { value: 'Display1', label: 'Display1' },
+    { value: 'Display2', label: 'Display2' },
+    { value: 'Display3', label: 'Display3' },
   ];
   const handleDisplaytyperEdit = (display) => {
     console.log(display);
   };
   const displayreasonOptions = [
-    { value: "Vendor1", label: "Vendor1" },
-    { value: "Vendor2", label: "Vendor2" },
-    { value: "Vendor3", label: "Vendor3" },
+    { value: 'Vendor1', label: 'Vendor1' },
+    { value: 'Vendor2', label: 'Vendor2' },
+    { value: 'Vendor3', label: 'Vendor3' },
   ];
   const handleDisplayreasonEdit = (reason) => {
     console.log(reason);
   };
+
 
   const rows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
@@ -128,39 +129,14 @@ const SMPPErrorCodeTable = ({ id, name }) => {
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
     { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
-    {
-      field: "vendorecstatus",
-      headerName: "Vendor EC Status",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "vendorecstatus", headerName: "Vendor EC Status", flex: 1, minWidth: 120 },
     { field: "vendorec", headerName: "Vendor EC", flex: 1, minWidth: 90 },
-    {
-      field: "vendorecdescription",
-      headerName: "Vendor EC Description",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "displayecstatus",
-      headerName: "Display EC Status",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "vendorecdescription", headerName: "Vendor EC Description", flex: 1, minWidth: 120 },
+    { field: "displayecstatus", headerName: "Display EC Status", flex: 1, minWidth: 120 },
     { field: "displayec", headerName: "Display EC", flex: 1, minWidth: 100 },
-    {
-      field: "displayecdescription",
-      headerName: "Display EC Description",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "displayecdescription", headerName: "Display EC Description", flex: 1, minWidth: 120 },
     { field: "cbondnd", headerName: "CB On DND", flex: 1, minWidth: 80 },
-    {
-      field: "cbondelivery",
-      headerName: "CB On Delivery",
-      flex: 1,
-      minWidth: 80,
-    },
+    { field: "cbondelivery", headerName: "CB On Delivery", flex: 1, minWidth: 80 },
     {
       field: "action",
       headerName: "Action",
@@ -197,6 +173,7 @@ const SMPPErrorCodeTable = ({ id, name }) => {
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
+
     return (
       <GridFooterContainer
         sx={{
@@ -292,8 +269,8 @@ const SMPPErrorCodeTable = ({ id, name }) => {
         className="lg:w-[40rem] md:w-[30rem] w-[20rem]"
         draggable={false}
       >
-        <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+        <div className='space-y-4'>
+          <div className='grid grid-cols-2 gap-4'>
             <AnimatedDropdown
               label="Service"
               options={serviceOptions}
@@ -305,10 +282,10 @@ const SMPPErrorCodeTable = ({ id, name }) => {
               label="Vendor Error Code"
               id="vendorerrorcodeedit"
               name="vendorerrorcodeedit"
-              placeholder="Enter Vendor Error Code"
+              placeholder='Enter Vendor Error Code'
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className='grid grid-cols-2 gap-4'>
             <InputField
               label="Vendor Error Status"
               id="vendorerrorstatusedit"
@@ -320,9 +297,10 @@ const SMPPErrorCodeTable = ({ id, name }) => {
               id="vendorerrorcodedescriptionedit"
               name="vendorerrorcodedescriptionedit"
               placeholder="Vendor Error Code Description"
+
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className='grid grid-cols-2 gap-4'>
             <AnimatedDropdown
               label="Display Type"
               options={displaytypeOptions}
@@ -338,7 +316,7 @@ const SMPPErrorCodeTable = ({ id, name }) => {
               onChange={handleDisplayreasonEdit}
             />
           </div>
-          <div className="grid grid-cols-2 gap-4">
+          <div className='grid grid-cols-2 gap-4'>
             <InputField
               label="Display Error Code"
               id="displayerrorcodeedit"
@@ -347,13 +325,28 @@ const SMPPErrorCodeTable = ({ id, name }) => {
               readOnly="true"
             />
           </div>
-          <div className="flex justify-center">
-            <UniversalButton label="Save" id="saveedit" name="saveedit" />
+          <div className="">
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" name="refundOnDelivery" className="form-checkbox" />
+              <span className='text-sm'>Refund For On Delivery Account</span>
+            </label>
+            <label className="flex items-center space-x-2">
+              <input type="checkbox" name="dndRefund" className="form-checkbox" />
+              <span className='text-sm'>DND Refund</span>
+            </label>
+          </div>
+
+          <div className='flex justify-center'>
+            <UniversalButton
+              label="Save"
+              id="saveedit"
+              name="saveedit"
+            />
           </div>
         </div>
       </Dialog>
     </div>
-  );
-};
+  )
+}
 
-export default SMPPErrorCodeTable;
+export default SMPPErrorCodeTable
