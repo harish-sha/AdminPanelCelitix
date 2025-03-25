@@ -180,7 +180,7 @@ const Transactions = () => {
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulating API Call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setIsLoading(false);
         };
         fetchData();
@@ -197,7 +197,7 @@ const Transactions = () => {
     const handleShowSearch = async () => {
         console.log("Show Logs:");
         setIsFetching(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulating API Call
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsFetching(false);
         setFilteredData([]); // Reset data
     };
@@ -214,14 +214,10 @@ const Transactions = () => {
             service: selectedHistoryService,
             type: selectedHistoryType,
         });
-
-        // ✅ Show the loader before fetching results
         setIsFetching(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsFetching(false);
-
-        // ✅ Here you would fetch the real filtered data from API
-        setFilteredData([]); // Replace this with actual API data
+        setFilteredData([]);
     };
 
     const handleSearchSummary = async () => {
@@ -233,13 +229,9 @@ const Transactions = () => {
             service: selectedOptionServiceSummary,
             type: selectedOptionTypeSummary,
         });
-
-        // ✅ Show the loader before fetching results
         setIsFetching(true);
         await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
         setIsFetching(false);
-
-        // ✅ Here you would fetch the real filtered data from API
         setFilteredData([]); // Replace this with actual API data
     };
 

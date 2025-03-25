@@ -83,10 +83,10 @@ const AccountManagerTable = ({ id, name }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [addAccountedit, setAddAccountedit] = useState(false);
     const [addAccountview, setAddAccountview] = useState(false);
- 
+
     const [employeeidviewStatus, setEmployeeidviewStatus] = useState("disable");
     const [employeeideditStatus, setEmployeeidEditStatus] = useState("disable");
-   
+
 
 
     const handleChangeEmployeeidViewStatus = (event) => {
@@ -95,7 +95,7 @@ const AccountManagerTable = ({ id, name }) => {
     const handleChangeEmployeeidEditStatus = (event) => {
         setEmployeeidEditStatus(event.target.value);
     }
-   
+
 
     const handleEdit = () => {
         setAddAccountedit(true);
@@ -445,7 +445,7 @@ const AccountManagerTable = ({ id, name }) => {
                     </div>
                 </div>
             </Dialog>
-           
+
         </div>
     );
 };
