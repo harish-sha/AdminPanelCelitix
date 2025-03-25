@@ -24,12 +24,14 @@ function NodeComponent({
   onDelete,
   isConnecting,
   setIsVisible,
+  connectionType,
 }: {
   id: string;
   data: any;
   onDelete: (id: string) => void;
   isConnecting: boolean;
   setIsVisible: any;
+  connectionType: string;
 }) {
   return (
     <div className="relative w-40 p-2 bg-white border border-gray-300 rounded shadow-md">
@@ -62,13 +64,16 @@ function NodeComponent({
       <Handle
         type="target"
         position={Position.Top}
-        className={`${data.type == "starting" ? "hidden" : ""}`}
+        className={`${data.type == "starting" ? "hidden" : ""} `}
+        style={{
+          background: connectionType === "source" ? "green" : "blue",
+        }}
       />
       <Handle
         type="source"
         position={Position.Bottom}
         style={{
-          background: isConnecting ? "green" : "blue",
+          background: connectionType === "target" ? "green" : "blue",
         }}
       />
     </div>
@@ -83,6 +88,7 @@ const Arihant = () => {
   const [type, setType] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
+  const [connectionType, setConnectionType] = useState("");
 
   const onConnect = useCallback(
     (connection: { source: any; target: any }) => {
@@ -156,6 +162,7 @@ const Arihant = () => {
           onDelete={deleteNode}
           isConnecting={isConnecting}
           setIsVisible={setIsVisible}
+          connectionType={connectionType}
         />
       ),
       image: (node) => (
@@ -165,6 +172,7 @@ const Arihant = () => {
           onDelete={deleteNode}
           isConnecting={isConnecting}
           setIsVisible={setIsVisible}
+          connectionType={connectionType}
         />
       ),
       video: (node) => (
@@ -174,6 +182,7 @@ const Arihant = () => {
           onDelete={deleteNode}
           isConnecting={isConnecting}
           setIsVisible={setIsVisible}
+          connectionType={connectionType}
         />
       ),
       document: (node) => (
@@ -183,6 +192,7 @@ const Arihant = () => {
           onDelete={deleteNode}
           isConnecting={isConnecting}
           setIsVisible={setIsVisible}
+          connectionType={connectionType}
         />
       ),
       starting: (node) => (
@@ -192,6 +202,7 @@ const Arihant = () => {
           onDelete={deleteNode}
           isConnecting={isConnecting}
           setIsVisible={setIsVisible}
+          connectionType={connectionType}
         />
       ),
     }),
@@ -202,10 +213,6 @@ const Arihant = () => {
     setType(node.type);
     setSelectedNodeId(node.id);
   };
-
-  useEffect(() => {
-    console.log("2", isVisible);
-  }, [isVisible]);
 
   return (
     <>
@@ -220,8 +227,14 @@ const Arihant = () => {
             onNodeClick={onNodeClick}
             deleteKeyCode={"Backspace"}
             nodeTypes={nodeTypes}
-            onConnectStart={() => setIsConnecting(true)}
-            onConnectEnd={() => setIsConnecting(false)}
+            onConnectStart={(event, { handleType }) => {
+              setIsConnecting(true);
+              setConnectionType(handleType);
+            }}
+            onConnectEnd={() => {
+              setIsConnecting(false);
+              setConnectionType("");
+            }}
             fitView
           >
             <Background />
