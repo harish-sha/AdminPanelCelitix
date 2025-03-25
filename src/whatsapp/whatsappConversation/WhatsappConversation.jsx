@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineChat } from "react-icons/hi";
 import toast from "react-hot-toast";
@@ -22,7 +22,7 @@ const WhatsappConversation = () => {
   const [wabaList, setWabaList] = useState([]);
   const [data, setData] = useState(null);
   const [filters, setFilters] = useState({
-    wabaSrno: "",
+    wabaSrno: 1,
     fromDate: new Date(),
     toDate: new Date(),
     mobileNo: "",
@@ -36,6 +36,8 @@ const WhatsappConversation = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
   const [isMobileSearched, setIsMobileSearched] = useState(false);
+
+  const isFirstRender = useRef(true);
 
   // Fetch WABA List
   useEffect(() => {
