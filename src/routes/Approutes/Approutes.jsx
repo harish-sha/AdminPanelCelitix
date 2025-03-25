@@ -82,6 +82,9 @@ import AddTemplateRcs from "../../rcs/manageTemplate/pages/AddTemplateRcs";
 import Download from "../../profile/pages/Download";
 import RcsLiveChat from "../../rcs/rcslivechat/RcsLiveChat";
 
+import Random from "../../random/reactFlow";
+import Arihant from "../../random/arihant";
+
 const Approutes = () => {
   return (
     <Routes>
@@ -175,11 +178,14 @@ const Approutes = () => {
       </Route>
       <Route path="/dummy" element={<Dummy />} />
 
+      <Route path="/flow" element={<Random />} />
+      <Route path="/arihant" element={<Arihant />} />
+
       <Route
         path="*"
         element={
           <div className="flex items-center justify-center min-h-[100vh]">
-            <span className="text-3xl text-gray-700 font-semibold">
+            <span className="text-3xl font-semibold text-gray-700">
               404 Not Found
             </span>
           </div>
