@@ -78,10 +78,16 @@ import SuggestionReportRcs from "../../rcs/suggestionReport/SuggestionReportRcs"
 import DeliveryreportRcs from "../../rcs/deliveryReport/DeliveryreportRcs";
 import ManageBotRcs from "../../rcs/manageBot/ManageBotRcs";
 import AddTemplateRcs from "../../rcs/manageTemplate/pages/AddTemplateRcs";
+import RcsLiveChat from "../../rcs/rcslivechat/RcsLiveChat";
 
 // Download
 import Download from "../../profile/pages/Download";
-import RcsLiveChat from "../../rcs/rcslivechat/RcsLiveChat";
+
+// Two-Way-SMS
+import TwowayMangeKeyword from "../../twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
+import TwowayReports from "../../twowaysms/twowayReports/TwowayReports";
+import TwowayIntegration from "../../twowaysms/twowayIntegration/TwowayIntegration";
+
 
 const Approutes = () => {
   return (
@@ -124,6 +130,11 @@ const Approutes = () => {
         />
         <Route path="/smsdlttemplates" element={<SmsDLTtemplate />} />
         <Route path="/smswishmanagement" element={<SmsWishManagement />} />
+
+        {/* Two-Way-SMS */}
+        <Route path="/managekeywords" element={<TwowayMangeKeyword />} />
+        <Route path="/twowayreports" element={<TwowayReports />} />
+        <Route path="/twowaydlttemplates" element={<TwowayIntegration />} />
 
         {/* whatsapp */}
         <Route path="/managetemplate" element={<ManageTemplate />} />
