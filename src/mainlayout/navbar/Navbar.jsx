@@ -107,7 +107,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           </svg>
         </label> */}
         <input className="toggle-checkbox" id="toggle" type="checkbox" checked={isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
-        <label className="hamburger" for="toggle">
+        <label className="hamburger" htmlFor="toggle">
           <div className="bar"></div>
           <div className="bar"></div>
           <div className="bar"></div>
