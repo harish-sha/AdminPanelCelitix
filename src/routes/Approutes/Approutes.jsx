@@ -21,6 +21,7 @@ import WhatsappConversation from "../../whatsapp/whatsappConversation/WhatsappCo
 import CampaignDetailsReport from "../../whatsapp/whatsappManageCampaign/CampaignDetailsReport";
 import ManageAgent from "../../whatsapp/manageagent/ManageAgent";
 import WhatsappBot from "../../whatsapp/WhatsappBot/WhatsappBot";
+import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -150,6 +151,7 @@ const Approutes = () => {
         />
         <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
         <Route path="/wwhatsappbot" element={<WhatsappBot />} />
+        <Route path="/createwhatsappbot" element={<CreateWhatsAppBot />} />
 
         {/* RCS */}
         <Route path="/sendrcs" element={<SendRcs />} />
