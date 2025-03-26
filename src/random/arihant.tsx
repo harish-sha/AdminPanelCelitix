@@ -14,6 +14,10 @@ import "@xyflow/react/dist/style.css";
 import { Button } from "@/components/ui/button";
 import { Dialog } from "primereact/dialog";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import { FileNodeContent } from "./components/file";
+import { TextNodeContent } from "./components/text";
+import toast from "react-hot-toast";
+import { StartingNodeContent } from "./components/starting";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -54,11 +58,12 @@ function NodeComponent({
       </button>
 
       <div className="font-medium text-center">
+        {data.type === "starting" && <p>Starting Node ({id})</p>}
         {data.type === "text" && <p>Text Node ({id})</p>}
         {data.type === "image" && <p>Image Node ({id})</p>}
         {data.type === "video" && <p>Video Node ({id})</p>}
         {data.type === "document" && <p>Document Node ({id})</p>}
-        {data.type === "starting" && <p>Starting Node ({id})</p>}
+        {data.type === "audio" && <p>Audio Node ({id})</p>}
       </div>
 
       <Handle
@@ -103,7 +108,7 @@ const Arihant = () => {
       );
 
       if (isSourceAlreadyConnected || isTargetAlreadyConnected) {
-        alert("This connection is not allowed!");
+        toast.error("This connection is not allowed!");
         return;
       }
 
@@ -205,6 +210,16 @@ const Arihant = () => {
           connectionType={connectionType}
         />
       ),
+      audio: (node) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+        />
+      ),
     }),
     [deleteNode, isConnecting]
   );
@@ -247,16 +262,19 @@ const Arihant = () => {
           <Button onClick={() => addNode("text")}> Add Text Node</Button>
           <Button onClick={() => addNode("image")}> Add Image Node</Button>
           <Button onClick={() => addNode("video")}> Add Video Node</Button>
-          <Button onClick={() => addNode("document")}>
-            {" "}
-            Add Document Node
-          </Button>
+          <Button onClick={() => addNode("document")}>Add Document Node</Button>
+          <Button onClick={() => addNode("audio")}>Add Audio Node</Button>
           <Button onClick={reset}> Reset</Button>
         </div>
       </div>
 
       <Dialog
-        header="Add Node Details"
+        header={
+          <>
+            <h1>Add Node Details</h1>
+            <p className="text-sm">(Short desc of the node)</p>
+          </>
+        }
         visible={isVisible}
         onHide={() => {
           setType("");
@@ -265,10 +283,20 @@ const Arihant = () => {
         style={{ width: "50vw" }}
         draggable={false}
       >
-        <>
-          <h1>{type}</h1>
-          <Button onClick={() => deleteNode(selectedNodeId)}>Delete</Button>
-        </>
+        <div className="flex flex-col gap-2">
+          {type === "text" ? (
+            <TextNodeContent />
+          ) : ["document", "audio", "video", "image"].includes(type) ? (
+            <FileNodeContent accept={type} />
+          ) : type === "starting" ? (
+            <StartingNodeContent />
+          ) : null}
+
+          <div className="flex gap-2">
+            <Button onClick={() => {}}>Save</Button>
+            <Button onClick={() => setIsVisible(false)}>Cancel</Button>
+          </div>
+        </div>
       </Dialog>
     </>
   );
