@@ -22,6 +22,7 @@ import {
   Logout as LogoutIcon,
 } from "@mui/icons-material";
 import { fetchBalance } from "../../apis/settings/setting";
+import { collapse } from "@material-tailwind/react";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const [showModal, setShowModal] = useState(false);
@@ -43,6 +44,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     () => setIsCollapsed((prev) => !prev),
     [setIsCollapsed]
   );
+
 
   const handleProfileMenu = useCallback(
     (event) => setProfileAnchorEl(event?.currentTarget || null),
@@ -84,15 +86,34 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     []
   );
 
+
+  useEffect(() => {
+    console.log("isCollapsed", isCollapsed);
+  }, [isCollapsed]);
+
   return (
     <nav className="flex items-center w-full px-4 bg-white h-14 lg:h-16 md:h-15">
       <div className="flex items-center gap-4">
-        <button
+        {/* <button
           onClick={toggleSidebar}
           className="text-gray-700 cursor-pointer focus:outline-none"
-        >
-          <FaBars />
-        </button>
+        > */}
+        {/* <FaBars /> */}
+        {/* <label className="hamburger">
+          <input type="checkbox" checked={!isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
+          <svg viewBox="0 0 32 32">
+            <path className="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+            <path className="line" d="M7 16 27 16"></path>
+          </svg>
+        </label> */}
+        <input className="toggle-checkbox" id="toggle" type="checkbox" checked={isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
+        <label className="hamburger" for="toggle">
+          <div className="bar"></div>
+          <div className="bar"></div>
+          <div className="bar"></div>
+        </label>
+
+        {/* </button> */}
         {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
         <img src={celitixLogo} width={100} height={80} alt="Celitix Logo" />
       </div>
@@ -179,7 +200,14 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         // ✅ Small Screen Dropdown
         <div className="ml-auto">
           <IconButton onClick={handleMenu} className="text-gray-700">
-            <MoreIcon />
+            {/* <MoreIcon /> */}
+            <label className="hamburger">
+              <input type="checkbox" checked={Boolean(menuAnchorEl)} onChange={(event) => (event?.currentTarget || null)} />
+              <svg viewBox="0 0 32 32">
+                <path className="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                <path className="line" d="M7 16 27 16"></path>
+              </svg>
+            </label>
           </IconButton>
 
           {/* Small Screen Dropdown Menu */}

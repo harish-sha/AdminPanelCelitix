@@ -179,7 +179,7 @@ const Transactions = () => {
     useEffect(() => {
         const fetchData = async () => {
             setIsLoading(true);
-            await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulating API Call
+            await new Promise((resolve) => setTimeout(resolve, 1000));
             setIsLoading(false);
         };
         fetchData();
@@ -195,7 +195,7 @@ const Transactions = () => {
 
     const handleShowSearch = async () => {
         setIsFetching(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulating API Call
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsFetching(false);
         setFilteredData([]); // Reset data
     };
@@ -204,23 +204,36 @@ const Transactions = () => {
     };
 
     const handleSearchHistory = async () => {
+        console.log("Search Filters:");
+        console.log({
+            user: selectedMultiHistory,
+            dateFrom: selectedHistoryFrom,
+            dateTo: selectedHistoryTo,
+            service: selectedHistoryService,
+            type: selectedHistoryType,
+        });
+
         // ✅ Show the loader before fetching results
         setIsFetching(true);
-        await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
+        await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsFetching(false);
-
-        // ✅ Here you would fetch the real filtered data from API
-        setFilteredData([]); // Replace this with actual API data
+        setFilteredData([]);
     };
 
     const handleSearchSummary = async () => {
+        console.log("Search Filters:");
+        console.log({
+            user: selectedMultiSummary,
+            dateFrom: selectedFromSummary,
+            dateTo: selectedToSummary,
+            service: selectedOptionServiceSummary,
+            type: selectedOptionTypeSummary,
+        });
 
         // ✅ Show the loader before fetching results
         setIsFetching(true);
         await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
         setIsFetching(false);
-
-        // ✅ Here you would fetch the real filtered data from API
         setFilteredData([]); // Replace this with actual API data
     };
 

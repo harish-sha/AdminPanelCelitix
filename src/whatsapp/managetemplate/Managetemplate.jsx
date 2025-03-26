@@ -771,11 +771,10 @@ const ManageTemplate = () => {
                 <input
                   type="text"
                   className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300 
-                ${
-                  searchActive
-                    ? "border border-gray-400 outline-none w-full opacity-100"
-                    : "w-0 opacity-0"
-                } focus:outline-none`}
+                ${searchActive
+                      ? "border border-gray-400 outline-none w-full opacity-100"
+                      : "w-0 opacity-0"
+                    } focus:outline-none`}
                   placeholder="Search templates (status, name etc.)"
                   onBlur={() => setSearchActive(false)}
                 />
@@ -874,11 +873,10 @@ const ManageTemplate = () => {
                     <div
                       key={category.id}
                       className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl  transition-shadow duration-300 flex items-center gap-2 
-                     ${
-                       selectedOptionCategory === category.id
-                         ? "bg-white"
-                         : "bg-transparent"
-                     }`}
+                     ${selectedOptionCategory === category.id
+                          ? "bg-white"
+                          : "bg-transparent"
+                        }`}
                     >
                       <RadioButton
                         inputId={`radio_${category.id}`}
@@ -889,11 +887,10 @@ const ManageTemplate = () => {
                       />
                       <label
                         htmlFor={`radio_${category.id}`}
-                        className={`font-medium text-sm cursor-pointer ${
-                          selectedOptionCategory === category.id
-                            ? "text-green-600"
-                            : "text-gray-700"
-                        }`}
+                        className={`font-medium text-sm cursor-pointer ${selectedOptionCategory === category.id
+                          ? "text-green-600"
+                          : "text-gray-700"
+                          }`}
                       >
                         {category.label}
                       </label>
@@ -907,19 +904,17 @@ const ManageTemplate = () => {
                     Industries
                   </label>
                   <div
-                    className={`overflow-y-auto transition-all duration-300 ${
-                      showAllIndustries ? "max-h-[400px]" : "max-h-[300px]"
-                    } rounded-md`}
+                    className={`overflow-y-auto transition-all duration-300 ${showAllIndustries ? "max-h-[400px]" : "max-h-[300px]"
+                      } rounded-md`}
                   >
                     {industries.map((industry, index) => (
                       <div
                         key={industry.id}
                         className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
-                    ${
-                      selectedOptionIndustry === industry.id
-                        ? "bg-white"
-                        : "bg-transparent"
-                    }`}
+                    ${selectedOptionIndustry === industry.id
+                            ? "bg-white"
+                            : "bg-transparent"
+                          }`}
                       >
                         <RadioButton
                           inputId={`radio_${industry.id}`}
@@ -931,11 +926,10 @@ const ManageTemplate = () => {
                         <label
                           htmlFor={`radio_${industry.id}`}
                           className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
-                        ${
-                          selectedOptionIndustry === industry.id
-                            ? "text-green-600"
-                            : "text-gray-700"
-                        }`}
+                        ${selectedOptionIndustry === industry.id
+                              ? "text-green-600"
+                              : "text-gray-700"
+                            }`}
                         >
                           {industry.icon} {industry.label}
                         </label>

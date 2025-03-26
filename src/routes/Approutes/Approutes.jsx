@@ -62,6 +62,7 @@ import AddService from "../../admin/manageSMPP.jsx/pages/AddService";
 import AddRouting from "../../admin/manageRouting/pages/AddRouting";
 import EditRouting from "../../admin/manageRouting/pages/EditRouting";
 import SMPPErrorCode from "../../admin/smmpErrorCode/SMPPErrorCode";
+import AddOperator from '../../admin/managePrefix/pages/AddOperator';
 
 // sms
 import SmsReports from "../../sms/smsReports/SmsReports";
@@ -78,10 +79,16 @@ import SuggestionReportRcs from "../../rcs/suggestionReport/SuggestionReportRcs"
 import DeliveryreportRcs from "../../rcs/deliveryReport/DeliveryreportRcs";
 import ManageBotRcs from "../../rcs/manageBot/ManageBotRcs";
 import AddTemplateRcs from "../../rcs/manageTemplate/pages/AddTemplateRcs";
+import RcsLiveChat from "../../rcs/rcslivechat/RcsLiveChat";
 
 // Download
 import Download from "../../profile/pages/Download";
-import RcsLiveChat from "../../rcs/rcslivechat/RcsLiveChat";
+
+// Two-Way-SMS
+import TwowayMangeKeyword from "../../twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
+import TwowayReports from "../../twowaysms/twowayReports/TwowayReports";
+import TwowayIntegration from "../../twowaysms/twowayIntegration/TwowayIntegration";
+
 
 import Arihant from "../../random/arihant";
 
@@ -111,6 +118,7 @@ const Approutes = () => {
         <Route path="/editrouting" element={<EditRouting />} />
         <Route path="/SMPPerrorcode" element={<SMPPErrorCode />} />
         <Route path="/addservice" element={<AddService />} />
+        <Route path="/addoperator" element={<AddOperator />} />
 
         {/* SMS */}
         <Route path="/sendsms" element={<SendSms />} />
@@ -125,6 +133,11 @@ const Approutes = () => {
         />
         <Route path="/smsdlttemplates" element={<SmsDLTtemplate />} />
         <Route path="/smswishmanagement" element={<SmsWishManagement />} />
+
+        {/* Two-Way-SMS */}
+        <Route path="/managekeywords" element={<TwowayMangeKeyword />} />
+        <Route path="/twowayreports" element={<TwowayReports />} />
+        <Route path="/twowaydlttemplates" element={<TwowayIntegration />} />
 
         {/* whatsapp */}
         <Route path="/managetemplate" element={<ManageTemplate />} />
