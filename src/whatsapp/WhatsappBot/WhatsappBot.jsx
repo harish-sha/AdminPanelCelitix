@@ -5,8 +5,10 @@ import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { DataTable } from "@/components/layout/DataTable";
 import UniversalButton from "../components/UniversalButton";
+import { useNavigate } from "react-router-dom";
 
 const WhatsappBot = () => {
+  const navigate = useNavigate();
   const col = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "name", headerName: "Name", flex: 1, minWidth: 120 },
@@ -52,6 +54,10 @@ const WhatsappBot = () => {
     name: "Country Name",
     createdOn: "Created On",
   }));
+
+  function handleNavigate() {
+    navigate("/createwhatsappbot");
+  }
   return (
     <div>
       <div className="flex items-center justify-between w-full gap-2 pb-3">
@@ -60,6 +66,7 @@ const WhatsappBot = () => {
           id="addwhatsappbot"
           name="addwhatsappbot"
           label="Add Bot"
+          onClick={handleNavigate}
         />
       </div>
       <DataTable col={col} rows={rows} id="whatsappBot" name="whatsappBot" />
