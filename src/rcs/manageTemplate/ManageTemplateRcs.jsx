@@ -102,31 +102,6 @@ const ManageTemplateRcs = () => {
     handleFetchTempData();
   }, []);
 
-  // useEffect(() => {
-  //   const fetchTemplateDataDetails = async () => {
-  //     console.log("TempId", typeof templateid);
-  //     // if (!templateid) {
-  //     //   toast.error("Please select template");
-  //     //   return;
-  //     // }
-  //     try {
-  //       const res = await fetchTemplateDetails(templateid);
-  //       const tempName = summaryFilterData.find(
-  //         (item) => item.srno == templateid
-  //       );
-
-  //       setTemplateDetails({
-  //         ...res[0],
-  //         templateName: tempName.templateName,
-  //       });
-  //     } catch (err) {
-  //       console.log(err);
-  //       toast.error("Something went wrong");
-  //     }
-  //   };
-
-  //   fetchTemplateDataDetails();
-  // }, [templateid]);
 
   const fetchTemplateDataDetails = async (data) => {
     if (!data) {
@@ -182,7 +157,6 @@ const ManageTemplateRcs = () => {
 
   const handleTemplateDelete = async () => {
     try {
-      console.log(templateid);
       // const res = await deleteTemplate(templateid);
       toast.success("Template Deleted Successfully");
       setTemplateDeleteVisible(false);

@@ -16,7 +16,6 @@ const Login = () => {
 
         // const apiUrl = import.meta.env.VITE_API_BASE_URL;
         const apiUrl = "/api";
-        console.log("API URL: ", apiUrl);
 
         try {
             const response = await fetch(`${apiUrl}/proCpaasRest/auth/login`, {
@@ -26,16 +25,12 @@ const Login = () => {
             });
 
             const data = await response.json();
-            console.log("Login API Response:", data);
 
             if (!response.ok || !data.token) {
                 throw new Error("Authentication failed! No valid token received.");
             }
 
-            console.log("Received Token:", data.token);
-
             localStorage.setItem("token", data.token);
-            console.log("Token saved in localStorage:", localStorage.getItem("token"));
 
             toast.success("Login Successful!");
             navigate("/");
@@ -48,9 +43,9 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex justify-center items-center bg-gray-100">
-            <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+            <div className="p-6 bg-white rounded-lg shadow-lg w-96">
+                <h2 className="mb-4 text-2xl font-semibold text-center">Login</h2>
                 <form onSubmit={handleLogin} className="space-y-4">
                     <InputField
                         id="userId"
@@ -180,7 +175,7 @@ export default Login;
 //             <Header />
 //             <div className="login-container">
 //                 <div className="container">
-//                     <div className="row flex">
+//                     <div className="flex row">
 //                         <div className="col-md-6">
 //                             <form onSubmit={handleLogin} className="form-signin">
 //                                 <h1>Sign In</h1>

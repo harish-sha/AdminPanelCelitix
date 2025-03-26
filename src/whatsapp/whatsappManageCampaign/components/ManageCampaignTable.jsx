@@ -74,7 +74,7 @@ const ManageCampaignTable = ({ id, name, data = [] }) => {
     const navigate = useNavigate();
 
     const handleView = (row) => {
-        console.log("View campaign:", row)
+        console.log("handleView:", row)
     };
 
     const handleSummaryReport = (row) => {

@@ -134,7 +134,6 @@ const Transactions = () => {
         { field: "remark", headerName: "Remarks", flex: 1, minWidth: 120 },
     ];
 
-    console.log(transactionalData);
     const rows = Array.isArray(transactionalData)
         ? transactionalData.map((item, index) => ({
             ...item,
@@ -195,7 +194,6 @@ const Transactions = () => {
     };
 
     const handleShowSearch = async () => {
-        console.log("Show Logs:");
         setIsFetching(true);
         await new Promise((resolve) => setTimeout(resolve, 1500));
         setIsFetching(false);
@@ -253,7 +251,7 @@ const Transactions = () => {
                     >
                         <Tab
                             label={
-                                <span className="flex gap-2 items-center">
+                                <span className="flex items-center gap-2">
                                     <AccountBalanceWalletOutlinedIcon fontSize="small" /> Transaction History
                                 </span>
                             }
@@ -272,7 +270,7 @@ const Transactions = () => {
 
                         {/* <Tab
                             label={
-                                <span className="flex gap-2 items-center">
+                                <span className="flex items-center gap-2">
                                     <BsJournalArrowDown size={18} /> Transaction Summary
                                 </span>
                             }
@@ -301,7 +299,7 @@ const Transactions = () => {
                 </div>
                 <CustomTabPanel value={value} index={0} className='' >
                     <div className='w-full' >
-                        <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+                        <div className='flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap' >
                             {/* <div className="w-full sm:w-56">
                                 <div className="flex items-center gap-2 mb-2">
                                     <label className="text-sm font-medium text-gray-700">User</label>
@@ -436,7 +434,7 @@ const Transactions = () => {
                 </CustomTabPanel>
                 {/* <CustomTabPanel value={value} index={1}>
                     <div className='w-full' >
-                        <div className='flex flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full' >
+                        <div className='flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap' >
                             <div className="w-full sm:w-56">
                                 <div className="flex items-center gap-2 mb-2">
                                     <label className="text-sm font-medium text-gray-700">User</label>

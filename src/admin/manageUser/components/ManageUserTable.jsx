@@ -272,7 +272,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       srno: selectedId,
       ...updateDetails,
     };
-    console.log(data);
   };
 
   // assignService
@@ -289,7 +288,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   const handleWhatsappAddCredit = () => {
-    console.log("hello world");
+    console.log("handleWhatsAppCredit");
   };
 
   const handleChangewhatsapp = (event) => {
@@ -311,7 +310,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   const handleRcsAddCredit = () => {
-    console.log("hello world");
+    console.log("handleRcsCredit");
   };
 
   const handleChangercs = (event) => {
@@ -504,7 +503,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   useEffect(() => {
-    console.log("User Type Changed:", userType);
     setIsReadOnly(userType !== "Reseller");
     setAccountUrl("");
   }, [userType]);
@@ -1236,8 +1234,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="max-w-md mx-auto bg-gradient-to-r from-white to-gray-100 shadow-xl rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
+        <div className="max-w-md p-6 mx-auto rounded-lg shadow-xl bg-gradient-to-r from-white to-gray-100">
+          <h2 className="mb-4 text-xl font-semibold text-center text-gray-800">
             Mobile Numbers
           </h2>
 
@@ -1258,7 +1256,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   // </IconButton>
                   <MdOutlineDeleteForever
                     onClick={() => removeMobileNumber(index)}
-                    className="text-red-500 cursor-pointer hover:text-red-600 absolute right-2"
+                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
                     size={20}
                   />
                 )}
@@ -1312,7 +1310,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         draggable={false}
       >
         <div className="space-y-3">
-          <div className="grid lg:grid-cols-2 gap-4 mb-2">
+          <div className="grid gap-4 mb-2 lg:grid-cols-2">
             <InputField
               label="User ID"
               id="viewuserid"
@@ -1329,18 +1327,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             />
           </div>
           <div className="flex gap-2">
-            {/* <AnimatedDropdown
-                    label="User Type"
-                    id="viewuserType"
-                    name="viewuserType"
-                    options={useroption}
-                    value={userType} // Ensure correct value is set
-                    onChange={(selected) => {
-                      console.log("Dropdown selected:", selected); // Debugging log
-                      setUserType(selected); // Correctly update the state
-                    }}
-                  /> */}
-
             <InputField
               label="User Type"
               id="viewuserType"
@@ -1358,12 +1344,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           </div>
           {userType === "Reseller" && (
             <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <UniversalLabel
                   text="Enable Postpaid"
                   id="viewenablepostpaid"
                   name="viewenablepostpaid"
-                  className="text-gray-700 font-medium text-sm"
+                  className="text-sm font-medium text-gray-700"
                   readOnly="true"
                 />
               </div>
@@ -1376,7 +1362,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption1"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   Yes
                 </label>
@@ -1389,7 +1375,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption2"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   No
                 </label>
@@ -1408,13 +1394,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           )}
 
-          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4">
-            <div className="flex justify-center items-center">
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
               <UniversalLabel
                 text="Status"
                 id="vieweditstatus"
                 name="vieweditstatus"
-                className="text-gray-700 font-medium text-sm"
+                className="text-sm font-medium text-gray-700"
               />
             </div>
             {/* Option 1 */}
@@ -1426,7 +1412,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="viewstatusOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Enable
               </label>
@@ -1440,14 +1426,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="viewstatusOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Disable
               </label>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
               label="First Name"
               id="viewfirstname"
@@ -1561,7 +1547,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             />
             <Tab
               label={
-                <span className="flex gap-2 items-center">
+                <span className="flex items-center gap-2">
                   <BsJournalArrowDown size={18} />
                   RCS
                 </span>
@@ -1713,9 +1699,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="whatsaapOption1"
@@ -1726,7 +1712,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="whatsaapOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -1744,7 +1730,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="whatsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -1762,7 +1748,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               {whatsappStatus === "enable" && (
                 <>
                   <div id="whatsapptable">
-                    <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                       <AnimatedDropdown
                         id="whatsappcountryselect"
                         name="whatsappcountryselect"
@@ -1858,9 +1844,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={1}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="rcsOption1"
@@ -1871,7 +1857,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="rcsOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -1889,7 +1875,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="rcsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -1908,7 +1894,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               {rcsStatus === "enable" && (
                 <>
                   <div id="rcstable">
-                    <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                       <AnimatedDropdown
                         id="rcscountryselect"
                         name="rcscountryselect"
@@ -1987,9 +1973,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={2}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="smsOption1"
@@ -2000,7 +1986,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="smsOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2018,7 +2004,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="smsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2028,7 +2014,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
               {smsStatus === "enable" && (
                 <div>
-                  <div className="flex lg:w-100 md:w-100 mb-2">
+                  <div className="flex mb-2 lg:w-100 md:w-100">
                     <Checkbox
                       id="smsstatus"
                       name="smsstatus"
@@ -2092,9 +2078,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={3}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="obdOption1"
@@ -2105,7 +2091,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="obdOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2123,7 +2109,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="obdOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2133,7 +2119,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
               {obdStatus === "enable" && (
                 <div>
-                  <div className="flex lg:w-100 md:w-100 mb-2">
+                  <div className="flex mb-2 lg:w-100 md:w-100">
                     <Checkbox
                       id="obdstatusobd"
                       name="obdstatusobd"
@@ -2171,7 +2157,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   </div>
 
                   <div className=" lg:w-100 md:w-100">
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
                       <div className="flex items-center gap-2">
                         <RadioButton
@@ -2183,7 +2169,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="obdrateOption1"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           @ 15 sec
                         </label>
@@ -2199,7 +2185,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="obdrateOption2"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           @ 30 sec
                         </label>
@@ -2231,9 +2217,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={4}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="twowayOption1"
@@ -2244,7 +2230,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="twowayOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2262,7 +2248,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="twowayOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2271,7 +2257,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {twowayStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="twowayselect"
                       name="twowayselect"
@@ -2302,9 +2288,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={5}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="misscallOption1"
@@ -2315,7 +2301,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="misscallOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2333,7 +2319,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="misscallOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2342,7 +2328,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {misscallStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="misscallselect"
                       name="misscallselect"
@@ -2373,9 +2359,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={6}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="clickOption1"
@@ -2386,7 +2372,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="clickOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2404,7 +2390,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="clickOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2413,7 +2399,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {clickStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full lg:w-100 md:w-100">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap lg:w-100 md:w-100">
                     <InputField
                       id="clickrate"
                       name="clickrate"
@@ -2436,9 +2422,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
           <CustomTabPanel value={value} index={7}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="emailOption1"
@@ -2449,7 +2435,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="emailOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2467,7 +2453,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="emailOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2476,7 +2462,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {emailStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="emailselect"
                       name="emailselect"
@@ -2507,9 +2493,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={8}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="ibdOption1"
@@ -2520,7 +2506,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="ibdOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2538,7 +2524,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="ibdOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2547,7 +2533,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {ibdStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="ibdselect"
                       name="ibdselect"
@@ -2565,7 +2551,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                   </div>
                   <div className=" lg:w-100 md:w-100">
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
                       <div className="flex items-center gap-2">
                         <RadioButton
@@ -2577,7 +2563,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="ibdpulseOption1"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           Enable
                         </label>
@@ -2593,7 +2579,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="ibdpulseOption2"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           Disable
                         </label>
@@ -2637,7 +2623,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             placeholder="Enter Old key"
             readOnly
           />
-          <div className="flex gap-2 items-end">
+          <div className="flex items-end gap-2">
             <div className="flex-1 ">
               <InputField
                 id="newapikey"
@@ -2653,7 +2639,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             <div>
               <button
                 onClick={handleGenerateAPIKey}
-                className="bg-blue-400 hover:bg-blue-500 text-white text-sm py-2 px-2 rounded-md shadow-md focus:outline-none"
+                className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
               >
                 Generate Key
               </button>
@@ -2716,9 +2702,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
           {/* Option 1 */}
-          <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="userreportOption1"
@@ -2729,7 +2715,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="userreportOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Enable
               </label>
@@ -2747,7 +2733,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="userreportOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Disable
               </label>

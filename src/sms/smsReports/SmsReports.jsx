@@ -120,8 +120,6 @@ const SmsReports = () => {
     if (e.checked) _campaigncolumns.push(e.value);
     else _campaigncolumns.splice(_campaigncolumns.indexOf(e.value), 1);
 
-    console.log(_campaigncolumns);
-
     setCampaignColumns(_campaigncolumns);
   };
 
@@ -548,7 +546,6 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
-      console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
         {
