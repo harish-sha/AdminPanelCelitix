@@ -29,7 +29,7 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
           required
         />
       </div>
-      {value && <img src={value} alt={value} height={200} width={200} />}
+      {value && <iframe src={value}></iframe>}
       <InputField
         label="Caption text"
         id="captionText"
