@@ -20,6 +20,7 @@
     "@mui/styled-engine-sc": "^6.4.0",
     "@mui/x-data-grid": "^7.24.1",
     "@mui/x-date-pickers": "^7.25.0",
+    "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.0",
     "@xyflow/react": "^12.4.4",
