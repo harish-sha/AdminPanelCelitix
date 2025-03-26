@@ -1,10 +1,11 @@
 import { Input } from "@/components/ui/input";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import InputField from "@/whatsapp/components/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { Label } from "@/components/ui/label";
 
-export const FileNodeContent = ({ accept }: { accept: string }) => {
+export const FileNodeContent = ({ accept }: { accept?: string | null }) => {
+  console.log(accept);
   const [value, setValue] = useState("");
 
   const handleFileUpload = (event: any) => {
@@ -13,9 +14,6 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
     setValue(URL.createObjectURL(file));
   };
 
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-col gap-2 text-black">
@@ -29,7 +27,7 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
           required
         />
       </div>
-      {value && <iframe src={value}></iframe>}
+      {value && <img src={value} alt={value} height={200} width={200} />}
       <InputField
         label="Caption text"
         id="captionText"
