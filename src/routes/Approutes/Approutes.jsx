@@ -21,6 +21,7 @@ import WhatsappConversation from "../../whatsapp/whatsappConversation/WhatsappCo
 import CampaignDetailsReport from "../../whatsapp/whatsappManageCampaign/CampaignDetailsReport";
 import ManageAgent from "../../whatsapp/manageagent/ManageAgent";
 import WhatsappBot from "../../whatsapp/WhatsappBot/WhatsappBot";
+import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -36,11 +37,6 @@ import ManageContacts from "../../managecontacts/ManageContacts";
 import Settings from "../../profile/pages/Settings";
 import ProfilePage from "../../profile/pages/Profile";
 import LoginIpDetails from "../../profile/pages/LoginIpDetails";
-// import RcsDeliveryReport from '../../rcs/RcsDeliveryReport/RcsDeliveryReport';
-// import RcsLiveChat from '../../rcs/RcsLiveChat/RcsLiveChat';
-// import RcsManageBot from '../../rcs/RcsManageBot/RcsManageBot';
-// import RcsManageTemplate from '../../rcs/RcsManageTemplate/RcsManageTemplate';
-// import RcsSuggesstionReport from '../../rcs/RcsSuggesstionReport/RcsSuggesstionReport';
 import WhatsappCreateTemplate from "../../whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate";
 
 // Admin
@@ -88,6 +84,8 @@ import TwowayMangeKeyword from "../../twowaysms/twowayMangeKeyword/TwowayMangeKe
 import TwowayReports from "../../twowaysms/twowayReports/TwowayReports";
 import TwowayIntegration from "../../twowaysms/twowayIntegration/TwowayIntegration";
 
+
+import Arihant from "../../random/arihant";
 
 const Approutes = () => {
   return (
@@ -161,6 +159,7 @@ const Approutes = () => {
         />
         <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
         <Route path="/wwhatsappbot" element={<WhatsappBot />} />
+        <Route path="/createwhatsappbot" element={<CreateWhatsAppBot />} />
 
         {/* RCS */}
         <Route path="/sendrcs" element={<SendRcs />} />
@@ -188,11 +187,13 @@ const Approutes = () => {
       </Route>
       <Route path="/dummy" element={<Dummy />} />
 
+      <Route path="/arihant" element={<Arihant />} />
+
       <Route
         path="*"
         element={
           <div className="flex items-center justify-center min-h-[100vh]">
-            <span className="text-3xl text-gray-700 font-semibold">
+            <span className="text-3xl font-semibold text-gray-700">
               404 Not Found
             </span>
           </div>

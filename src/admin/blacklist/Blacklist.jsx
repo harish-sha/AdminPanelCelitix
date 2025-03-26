@@ -32,11 +32,11 @@ const Blacklist = () => {
   const [blockmobileaddnumber, setBlockmobileaddnumber] = useState(false);
   const [blockmobileImportnumber, setBlockmobileImportnumber] = useState(false);
   const [blockmobileaddnumbecheck, setBlockMobileAddNumberCheck] = useState([]);
-   const [isUploading, setIsUploading] = useState(false);
-    const [uploadedFile, setUploadedFile] = useState(null);
-    const [isUploaded, setIsUploaded] = useState(false);
-      const [fileData, setFileData] = useState([]);
-      const [column, setColumn] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const [fileData, setFileData] = useState([]);
+  const [column, setColumn] = useState([]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -82,8 +82,8 @@ const Blacklist = () => {
     event.preventDefault();
   };
 
-   // handle file change
-   const handleFileChange = (event) => {
+  // handle file change
+  const handleFileChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const validExtensions = [".xls", ".xlsx", ".xlsm"];
@@ -163,168 +163,168 @@ const Blacklist = () => {
     document.getElementById("fileInput").value = "";
     toast.success("File removed successfully.");
   };
-    // block mobile
+  // block mobile
 
-    // block content
-    const [blockaddcontent, setBlockAddContent] = useState(false);
-    const [blockcontentaddcheck, setBlockContentAddCheck] = useState([]);
-    const BlockContentAddContentChange = (e) => {
-      const { value, checked } = e.target;
-  
-      setBlockContentAddCheck((prevColumns) =>
-        checked
-          ? [...prevColumns, value]
-          : prevColumns.filter((col) => col !== value)
-      );
-    };
-       // block content
-      //  block Senderid
-      const [blockaddsenderid, setBlockAddSenderid] = useState(false);
-      const [blockaddsenderidcheck, setBlockAddSenderidCheck] = useState([]);
-      const [blockseriesImportnumber, setBlockseriesImportnumber] = useState(false);
-      const BlockAddSenderidChange = (e) => {
-        const { value, checked } = e.target;
-    
-        setBlockAddSenderidCheck((prevColumns) =>
-          checked
-            ? [...prevColumns, value]
-            : prevColumns.filter((col) => col !== value)
-        );
-      };
-      //  block Senderid
-      // block Series
-      const [blockaddseries, setBlockaddseries] = useState(false);
-      const [blockseriesaddcheck, setBlockseriesaddcheck]=useState([]);
+  // block content
+  const [blockaddcontent, setBlockAddContent] = useState(false);
+  const [blockcontentaddcheck, setBlockContentAddCheck] = useState([]);
+  const BlockContentAddContentChange = (e) => {
+    const { value, checked } = e.target;
 
-      const [isUploadingSeries, setIsUploadingSeries] = useState(false);
-      const [uploadedFileSeries, setUploadedFileSeries] = useState(null);
-      const [isUploadedSeries, setIsUploadedSeries] = useState(false);
-        const [fileDataSeries, setFileDataSeries] = useState([]);
-        const [columnSeries, setColumnSeries] = useState([]);
-      const BlockAddSeriesChange = (e) => {
-        const { value, checked } = e.target;
-    
-        setBlockseriesaddcheck((prevColumns) =>
-          checked
-            ? [...prevColumns, value]
-            : prevColumns.filter((col) => col !== value)
-        );
-      };
+    setBlockContentAddCheck((prevColumns) =>
+      checked
+        ? [...prevColumns, value]
+        : prevColumns.filter((col) => col !== value)
+    );
+  };
+  // block content
+  //  block Senderid
+  const [blockaddsenderid, setBlockAddSenderid] = useState(false);
+  const [blockaddsenderidcheck, setBlockAddSenderidCheck] = useState([]);
+  const [blockseriesImportnumber, setBlockseriesImportnumber] = useState(false);
+  const BlockAddSenderidChange = (e) => {
+    const { value, checked } = e.target;
 
-    
-  
-    
-  
-    const handleFileDropSeries = (event) => {
-      event.preventDefault();
-      const file = event.dataTransfer.files[0];
-  
-      if (file) {
-        const validExtensions = [".xls", ".xlsx", ".xlsm"];
-        const fileExtension = file.name.split(".").pop();
-  
-        if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-          if (isValidFileName(file.name.split(".")[0])) {
-            setUploadedFileSeries(file);
-            setIsUploadedSeries(false);
-            parseFileSeries(file);
-          } else {
-            toast.error(
-              "File name can only contain alphanumeric characters, underscores, or hyphens."
-            );
-          }
+    setBlockAddSenderidCheck((prevColumns) =>
+      checked
+        ? [...prevColumns, value]
+        : prevColumns.filter((col) => col !== value)
+    );
+  };
+  //  block Senderid
+  // block Series
+  const [blockaddseries, setBlockaddseries] = useState(false);
+  const [blockseriesaddcheck, setBlockseriesaddcheck] = useState([]);
+
+  const [isUploadingSeries, setIsUploadingSeries] = useState(false);
+  const [uploadedFileSeries, setUploadedFileSeries] = useState(null);
+  const [isUploadedSeries, setIsUploadedSeries] = useState(false);
+  const [fileDataSeries, setFileDataSeries] = useState([]);
+  const [columnSeries, setColumnSeries] = useState([]);
+  const BlockAddSeriesChange = (e) => {
+    const { value, checked } = e.target;
+
+    setBlockseriesaddcheck((prevColumns) =>
+      checked
+        ? [...prevColumns, value]
+        : prevColumns.filter((col) => col !== value)
+    );
+  };
+
+
+
+
+
+  const handleFileDropSeries = (event) => {
+    event.preventDefault();
+    const file = event.dataTransfer.files[0];
+
+    if (file) {
+      const validExtensions = [".xls", ".xlsx", ".xlsm"];
+      const fileExtension = file.name.split(".").pop();
+
+      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
+        if (isValidFileName(file.name.split(".")[0])) {
+          setUploadedFileSeries(file);
+          setIsUploadedSeries(false);
+          parseFileSeries(file);
         } else {
-          toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
+          toast.error(
+            "File name can only contain alphanumeric characters, underscores, or hyphens."
+          );
         }
+      } else {
+        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
       }
-    };
-  
-    const handleDragOverSeries = (event) => {
-      event.preventDefault();
-    };
-  
-     // handle file change
-     const handleFileChangeSeries = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const validExtensions = [".xls", ".xlsx", ".xlsm"];
-        const fileExtension = file.name.split(".").pop();
-  
-        if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-          if (isValidFileName(file.name.split(".")[0])) {
-            setUploadedFileSeries(file);
-            setIsUploadedSeries(false);
-            parseFileSeries(file);
-          } else {
-            toast.error(
-              "File name can only contain alphanumeric characters, underscores, or hyphens."
-            );
-          }
+    }
+  };
+
+  const handleDragOverSeries = (event) => {
+    event.preventDefault();
+  };
+
+  // handle file change
+  const handleFileChangeSeries = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const validExtensions = [".xls", ".xlsx", ".xlsm"];
+      const fileExtension = file.name.split(".").pop();
+
+      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
+        if (isValidFileName(file.name.split(".")[0])) {
+          setUploadedFileSeries(file);
+          setIsUploadedSeries(false);
+          parseFileSeries(file);
         } else {
-          toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
+          toast.error(
+            "File name can only contain alphanumeric characters, underscores, or hyphens."
+          );
         }
+      } else {
+        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
       }
+    }
+  };
+
+  const handleFileUploadSeries = async () => {
+    if (!uploadedFileSeries) {
+      toast.error("No file selected for upload.");
+      return;
+    }
+    if (isUploadedSeries) {
+      toast.error("File already uploaded. Please select a different one.");
+      return;
+    }
+    setIsUploadingSeries(true);
+    try {
+      setIsUploadedSeries(true);
+      toast.success("File uploaded successfully!");
+    } catch (error) {
+      toast.error("File upload failed. Please try again.");
+    } finally {
+      setIsUploadingSeries(false);
+    }
+  };
+
+  const isValidFileNameSeries = (fileName) => {
+    const regex = /^[a-zA-Z0-9_-]+$/;
+    return regex.test(fileName);
+  };
+
+  const parseFileSeries = (file) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const workbook = XLSX.read(reader.result, { type: "binary" });
+      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+      // const headers = Object.keys(jsonData[0]);
+      const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
+      // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
+      // console.log("Extracted headers:", headers);
+
+      setFileDataSeries(jsonData);
+      setColumnSeries(headers);
+      // setFileHeaders(headers);
+      setIsUploadedSeries(false); // Reset to "File Selected" if a new file is selected
+      // setTotalRecords(jsonData.length);
     };
-  
-    const handleFileUploadSeries = async () => {
-      if (!uploadedFileSeries) {
-        toast.error("No file selected for upload.");
-        return;
-      }
-      if (isUploadedSeries) {
-        toast.error("File already uploaded. Please select a different one.");
-        return;
-      }
-      setIsUploadingSeries(true);
-      try {
-        setIsUploadedSeries(true);
-        toast.success("File uploaded successfully!");
-      } catch (error) {
-        toast.error("File upload failed. Please try again.");
-      } finally {
-        setIsUploadingSeries(false);
-      }
-    };
-  
-    const isValidFileNameSeries = (fileName) => {
-      const regex = /^[a-zA-Z0-9_-]+$/;
-      return regex.test(fileName);
-    };
-  
-    const parseFileSeries = (file) => {
-      const reader = new FileReader();
-      reader.onload = () => {
-        const workbook = XLSX.read(reader.result, { type: "binary" });
-        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-        // const headers = Object.keys(jsonData[0]);
-        const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-        // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-        // console.log("Extracted headers:", headers);
-  
-        setFileDataSeries(jsonData);
-        setColumnSeries(headers);
-        // setFileHeaders(headers);
-        setIsUploadedSeries(false); // Reset to "File Selected" if a new file is selected
-        // setTotalRecords(jsonData.length);
-      };
-      reader.readAsBinaryString(file);
-    };
-  
-    // Handle file removal
-    const handleRemoveFileSeries = () => {
-      setUploadedFileSeries(null);
-      setIsUploadedSeries(false);
-      // setAddCountryCode(false)
-      // setSelectedCountryCode('');
-      // setSelectedMobileColumn("");
-      // setFileData([]);
-      // setTotalRecords("");
-      // setXlsxPath("");
-      document.getElementById("fileInput").value = "";
-      toast.success("File removed successfully.");
-    };
-           // block Series
+    reader.readAsBinaryString(file);
+  };
+
+  // Handle file removal
+  const handleRemoveFileSeries = () => {
+    setUploadedFileSeries(null);
+    setIsUploadedSeries(false);
+    // setAddCountryCode(false)
+    // setSelectedCountryCode('');
+    // setSelectedMobileColumn("");
+    // setFileData([]);
+    // setTotalRecords("");
+    // setXlsxPath("");
+    document.getElementById("fileInput").value = "";
+    toast.success("File removed successfully.");
+  };
+  // block Series
   return (
     <div>
       <Box sx={{ width: "100%" }}>
@@ -582,71 +582,70 @@ const Blacklist = () => {
             className="lg:w-[30rem] md:w-[25rem] w-[20rem]"
             draggable={false}
           >
-             <div className="file-upload mt-2">
-            <div
-              className="file-upload-container"
-              onDrop={handleFileDrop}
-              onDragOver={handleDragOver}
-            >
-              <input
-                type="file"
-                onChange={handleFileChange}
-                className="hidden"
-                id="fileInput"
-                name="fileInput"
-                accept=".xls,.xlsx,.xlsm"
-              />
-              <div className="flex items-center justify-center gap-2">
-                <label
-                  htmlFor="fileInput"
-                  className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
-                >
-                  Choose or Drop File
-                </label>
-                <div className="upload-button-container ">
-                  <button
-                    onClick={handleFileUpload}
-                    disabled={isUploading}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                      isUploading ? "disabled" : ""
-                    }`}
+            <div className="file-upload mt-2">
+              <div
+                className="file-upload-container"
+                onDrop={handleFileDrop}
+                onDragOver={handleDragOver}
+              >
+                <input
+                  type="file"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="fileInput"
+                  name="fileInput"
+                  accept=".xls,.xlsx,.xlsm"
+                />
+                <div className="flex items-center justify-center gap-2">
+                  <label
+                    htmlFor="fileInput"
+                    className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
                   >
-                    <FileUploadOutlinedIcon
-                      sx={{ color: "white", fontSize: "23px" }}
-                    />
-                  </button>
-                </div>
-              </div>
-              <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                Max 3 lacs records & mobile number should be with country code.{" "}
-                <br />
-                Supported File Formats: .xlsx
-              </p>
-              <div className="mt-3">
-                {uploadedFile ? (
-                  <div className="file-upload-info flex items-center justify-center  gap-1">
-                    <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                      {isUploaded ? "File Uploaded: " : "File Selected: "}
-                      <strong>{uploadedFile.name}</strong>
-                    </p>
+                    Choose or Drop File
+                  </label>
+                  <div className="upload-button-container ">
                     <button
-                      className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                      onClick={handleRemoveFile}
+                      onClick={handleFileUpload}
+                      disabled={isUploading}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                        }`}
                     >
-                      <MdOutlineDeleteForever
-                        className="text-red-500 cursor-pointer hover:text-red-600"
-                        size={20}
+                      <FileUploadOutlinedIcon
+                        sx={{ color: "white", fontSize: "23px" }}
                       />
                     </button>
                   </div>
-                ) : (
-                  <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
-                    No file uploaded yet!
-                  </p>
-                )}
+                </div>
+                <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
+                  Max 3 lacs records & mobile number should be with country code.{" "}
+                  <br />
+                  Supported File Formats: .xlsx
+                </p>
+                <div className="mt-3">
+                  {uploadedFile ? (
+                    <div className="file-upload-info flex items-center justify-center  gap-1">
+                      <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
+                        {isUploaded ? "File Uploaded: " : "File Selected: "}
+                        <strong>{uploadedFile.name}</strong>
+                      </p>
+                      <button
+                        className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
+                        onClick={handleRemoveFile}
+                      >
+                        <MdOutlineDeleteForever
+                          className="text-red-500 cursor-pointer hover:text-red-600"
+                          size={20}
+                        />
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
+                      No file uploaded yet!
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
           </Dialog>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
@@ -694,7 +693,7 @@ const Blacklist = () => {
                     id="blockcontentdelete"
                     name="blockcontentdelete"
                     variant="primary"
-                    
+
                   />
                 </div>
               </div>
@@ -793,7 +792,7 @@ const Blacklist = () => {
           </Dialog>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
-        <div className="w-full">
+          <div className="w-full">
             <div className="flex items-end justify-between w-full gap-2 pb-5 align-middle flex--wrap">
               <div className='flex items-end gap-2'>
                 <div className="w-full sm:w-40">
@@ -837,7 +836,7 @@ const Blacklist = () => {
                     id="blocksenderiddelete"
                     name="blocksenderiddelete"
                     variant="primary"
-                    
+
                   />
                 </div>
               </div>
@@ -861,8 +860,8 @@ const Blacklist = () => {
           ) : (
             <div className="w-full">
               <DataTable
-              id="blocksenderidtable"
-              name="blocksenderidtable"
+                id="blocksenderidtable"
+                name="blocksenderidtable"
                 rows={rows}
                 col={columns}
               />
@@ -931,7 +930,7 @@ const Blacklist = () => {
           </Dialog>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
-        <div className="w-full">
+          <div className="w-full">
             <div className="flex items-end justify-between w-full gap-2 pb-5 align-middle flex--wrap">
               <div className='flex items-end gap-2'>
                 <div className="w-full sm:w-40">
@@ -995,7 +994,7 @@ const Blacklist = () => {
                     id="blockseriesimport"
                     name="blockseriesimport"
                     variant="primary"
-                   onClick={() => setBlockseriesImportnumber(true)}
+                    onClick={() => setBlockseriesImportnumber(true)}
                   />
                 </div>
               </div>
@@ -1008,8 +1007,8 @@ const Blacklist = () => {
           ) : (
             <div className="w-full">
               <DataTable
-              id="blockseriestable"
-              name="blockseriestable"
+                id="blockseriestable"
+                name="blockseriestable"
                 rows={rows}
                 col={columns}
               />
@@ -1102,71 +1101,70 @@ const Blacklist = () => {
             className="lg:w-[30rem] md:w-[25rem] w-[20rem]"
             draggable={false}
           >
-             <div className="file-upload mt-2">
-            <div
-              className="file-upload-container"
-              onDrop={handleFileDropSeries}
-              onDragOver={handleDragOverSeries}
-            >
-              <input
-                type="file"
-                onChange={handleFileChangeSeries}
-                className="hidden"
-                id="fileInput"
-                name="fileInput"
-                accept=".xls,.xlsx,.xlsm"
-              />
-              <div className="flex items-center justify-center gap-2">
-                <label
-                  htmlFor="fileInput"
-                  className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
-                >
-                  Choose or Drop File
-                </label>
-                <div className="upload-button-container ">
-                  <button
-                    onClick={handleFileUploadSeries}
-                    disabled={isUploadingSeries}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                      isUploadingSeries ? "disabled" : ""
-                    }`}
+            <div className="file-upload mt-2">
+              <div
+                className="file-upload-container"
+                onDrop={handleFileDropSeries}
+                onDragOver={handleDragOverSeries}
+              >
+                <input
+                  type="file"
+                  onChange={handleFileChangeSeries}
+                  className="hidden"
+                  id="fileInput"
+                  name="fileInput"
+                  accept=".xls,.xlsx,.xlsm"
+                />
+                <div className="flex items-center justify-center gap-2">
+                  <label
+                    htmlFor="fileInput"
+                    className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
                   >
-                    <FileUploadOutlinedIcon
-                      sx={{ color: "white", fontSize: "23px" }}
-                    />
-                  </button>
-                </div>
-              </div>
-              <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                Max 3 lacs records & mobile number should be with country code.{" "}
-                <br />
-                Supported File Formats: .xlsx
-              </p>
-              <div className="mt-3">
-                {uploadedFileSeries ? (
-                  <div className="file-upload-info flex items-center justify-center  gap-1">
-                    <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                      {isUploaded ? "File Uploaded: " : "File Selected: "}
-                      <strong>{uploadedFileSeries.name}</strong>
-                    </p>
+                    Choose or Drop File
+                  </label>
+                  <div className="upload-button-container ">
                     <button
-                      className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                      onClick={handleRemoveFileSeries}
+                      onClick={handleFileUploadSeries}
+                      disabled={isUploadingSeries}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploadingSeries ? "disabled" : ""
+                        }`}
                     >
-                      <MdOutlineDeleteForever
-                        className="text-red-500 cursor-pointer hover:text-red-600"
-                        size={20}
+                      <FileUploadOutlinedIcon
+                        sx={{ color: "white", fontSize: "23px" }}
                       />
                     </button>
                   </div>
-                ) : (
-                  <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
-                    No file uploaded yet!
-                  </p>
-                )}
+                </div>
+                <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
+                  Max 3 lacs records & mobile number should be with country code.{" "}
+                  <br />
+                  Supported File Formats: .xlsx
+                </p>
+                <div className="mt-3">
+                  {uploadedFileSeries ? (
+                    <div className="file-upload-info flex items-center justify-center  gap-1">
+                      <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
+                        {isUploaded ? "File Uploaded: " : "File Selected: "}
+                        <strong>{uploadedFileSeries.name}</strong>
+                      </p>
+                      <button
+                        className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
+                        onClick={handleRemoveFileSeries}
+                      >
+                        <MdOutlineDeleteForever
+                          className="text-red-500 cursor-pointer hover:text-red-600"
+                          size={20}
+                        />
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
+                      No file uploaded yet!
+                    </p>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
           </Dialog>
         </CustomTabPanel>
       </Box>
