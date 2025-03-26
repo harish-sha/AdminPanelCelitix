@@ -61,7 +61,7 @@ const InputField = ({
         className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${
           error ? "border-red-500" : "border-gray-300"
         }`}
-        accept
+        accept={accept}
       />
 
       {error && <p className="mt-1 text-sm text-red-500">{errorText}</p>}
