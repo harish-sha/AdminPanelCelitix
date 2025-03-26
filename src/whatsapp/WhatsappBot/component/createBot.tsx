@@ -272,7 +272,17 @@ const CreateWhatsAppBot = () => {
         header={
           <>
             <h1>Add Node Details</h1>
-            <p className="text-sm">(Short desc of the node)</p>
+            {type === "text" ? (
+              <p className="text-sm">(Enter the text for the node)</p>
+            ) : ["document", "audio", "video", "image"].includes(type) ? (
+              <p className="text-sm">
+                (Upload supporting document for the node)
+              </p>
+            ) : type === "starting" ? (
+              <p className="text-sm">
+                (Select the keyword which will start the conversation)
+              </p>
+            ) : null}
           </>
         }
         visible={isVisible}
