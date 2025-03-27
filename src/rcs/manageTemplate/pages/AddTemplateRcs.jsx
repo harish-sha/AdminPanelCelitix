@@ -52,40 +52,61 @@ const AddTemplateRcs = () => {
       locationtitle: [],
     };
 
-    Object.values(btnData).forEach((item) => {
-      if (item.type) {
-        if (!item.value || !item.title) {
-          toast.error(`Please fill all the fields for ${item.type}`);
-          return;
-        }
-      }
-      
-      switch (item.type) {
-        case "Url Action":
-          suggestions.website.push(item.value);
-          suggestions.websitetitle.push(item.title);
-          break;
-        case "Dialer Action":
-          suggestions.mobile.push(item.value);
-          suggestions.mobiletitle.push(item.title);
-          break;
-        case "Reply":
-          suggestions.replybtn.push(item.value);
-          suggestions.replybtntitle.push(item.title);
-          break;
-        case "Share Location":
-          suggestions.locationtitle.push(item.title);
-          break;
-        case "View Location":
-          suggestions.addresstitle.push(item.title);
-          suggestions.addressLatitude.push(item.value.split(",")[0]);
-          suggestions.addressLongitude.push(item.value.split(",")[1]);
-          break;
-        default:
-          break;
+    let hasError = false;
+
+    Object.values(btnData).forEach(({ type, value, title }) => {
+      if (type && (!value || !title)) {
+        toast.error(`Please fill all the fields for ${type}`);
+        hasError = true;
+        return;
+      } else {
+        const actions = {
+          "Url Action": () => {
+            suggestions.website.push(value);
+            suggestions.websitetitle.push(title);
+          },
+          "Dialer Action": () => {
+            suggestions.mobile.push(value);
+            suggestions.mobiletitle.push(title);
+          },
+          Reply: () => {
+            suggestions.replybtn.push(value);
+            suggestions.replybtntitle.push(title);
+          },
+          "Share Location": () => {
+            suggestions.locationtitle.push(title);
+          },
+          "View Location": () => {
+            const [latitude, longitude] = value.split(",");
+            suggestions.addresstitle.push(title);
+            suggestions.addressLatitude.push(latitude);
+            suggestions.addressLongitude.push(longitude);
+          },
+        };
+
+        actions[type]?.();
       }
     });
 
+    if (
+      !inputData.agentId ||
+      !inputData.templateName ||
+      !inputData.templateType
+    ) {
+      return toast.error("Please fill all the fields");
+    }
+
+    if (hasError) return;
+
+    const data = {
+      ...inputData,
+      ...suggestions,
+      variables: [],
+    };
+
+    console.log("Api Requested Data", data);
+
+    // Continue with API request or further processing
   };
 
   return (
