@@ -18,6 +18,7 @@ const InputField = ({
   style = {},
   maxLength = "",
   accept = "",
+  required = false,
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;

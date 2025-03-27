@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
+import toast from "react-hot-toast";
 
 export const SuggestedActions = ({ btnOptions, setBtnData }) => {
   const [selectedAction, setSelectedAction] = useState({
@@ -37,14 +38,18 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
     setSelectedAction((prev) => ({ ...prev, [index]: newValue }));
     setInputData((prev) => ({
       ...prev,
-      [index]: { title: "", value: "" },
+      [index]: { title: "", value: "", type: newValue },
     }));
   };
 
   const handleInputChange = (index, field, val) => {
     setInputData((prev) => ({
       ...prev,
-      [index]: { ...prev[index], [field]: val, type: selectedAction[index] },
+      [index]: {
+        ...prev[index],
+        [field]: val || "",
+        type: selectedAction[index],
+      },
     }));
   };
 
@@ -227,6 +232,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
                   handleInputChange("dropdown4", "value", e.target.value)
                 }
                 className="p-2 border"
+                required
               />
             )}
           </div>

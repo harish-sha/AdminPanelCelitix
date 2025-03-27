@@ -5,6 +5,7 @@ import UniversalButton from "@/whatsapp/components/UniversalButton";
 import { IoSearch } from "react-icons/io5";
 import { Variables } from "../components/Variables";
 import { SuggestedActions } from "../components/SuggestedActions";
+import toast from "react-hot-toast";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -52,6 +53,13 @@ const AddTemplateRcs = () => {
     };
 
     Object.values(btnData).forEach((item) => {
+      if (item.type) {
+        if (!item.value || !item.title) {
+          toast.error(`Please fill all the fields for ${item.type}`);
+          return;
+        }
+      }
+      
       switch (item.type) {
         case "Url Action":
           suggestions.website.push(item.value);
