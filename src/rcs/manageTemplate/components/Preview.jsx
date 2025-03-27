@@ -17,18 +17,21 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
     setPree({
       variables,
       messageContent: messageContent || "Message Content Goes Here...",
-      filteredBtnData: filteredBtnData || [
-        {
-          type: "Url Action",
-          value: "#",
-          title: "Visit Us",
-        },
-        {
-          type: "Dialer Action",
-          value: "+91XXXXXXXXXX",
-          title: "Call Us",
-        },
-      ],
+      filteredBtnData:
+        filteredBtnData.length > 0
+          ? filteredBtnData
+          : [
+              {
+                type: "Url Action",
+                value: "#",
+                title: "Visit Us",
+              },
+              {
+                type: "Dialer Action",
+                value: "+91XXXXXXXXXX",
+                title: "Call Us",
+              },
+            ],
     });
   }, [variables, messageContent, btnData]);
 
