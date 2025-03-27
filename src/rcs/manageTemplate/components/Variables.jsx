@@ -80,15 +80,16 @@ export const Variables = ({
             key={variable.id}
             className="flex items-center w-full gap-5 px-1 mt-2"
           >
-            <label htmlFor="" className="w-14">{`{{${index + 1}}}`}</label>
+            <label htmlFor={`templateVariable ${index}`} className="w-4">{`[${
+              index + 1
+            }]`}</label>
             <input
-              id="templateVariable"
-              name="templateVariable"
+              id={`templateVariable ${index}`}
+              name={`templateVariable ${index}`}
               type="text"
               value={variable.value}
               onChange={
                 (e) => handleVariableChange(variable.id, e.target.value)
-                // console.log(e.target.value)
               }
               placeholder={`Enter value for [${variable.id}]`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
