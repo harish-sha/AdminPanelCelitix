@@ -109,13 +109,13 @@ export default function WhatsappLiveChat() {
       const updatedChats = chats.map((chat) =>
         chat.id === activeChat.id
           ? {
-              ...chat,
-              messages: [
-                ...chat.messages,
-                { text: selectedImage[0], sender: "You" },
-                { text: "Auto-reply: Got it!", sender: activeChat.name },
-              ],
-            }
+            ...chat,
+            messages: [
+              ...chat.messages,
+              { text: selectedImage[0], sender: "You" },
+              { text: "Auto-reply: Got it!", sender: activeChat.name },
+            ],
+          }
           : chat
       );
       setChats(updatedChats);
@@ -167,9 +167,8 @@ export default function WhatsappLiveChat() {
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <div
-        className={`w-full md:w-1/3 bg-white border-r overflow-hidden ${
-          activeChat ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-1/3 bg-white border-r overflow-hidden ${activeChat ? "hidden md:block" : "block"
+          }`}
       >
         {/* <h2 className="text-xl font-bold">Chats</h2> */}
 
@@ -203,21 +202,19 @@ export default function WhatsappLiveChat() {
           <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
             <button
               onClick={() => setBtnOption("active")}
-              className={`p-2 transition-all duration-300 rounded-lg ${
-                btnOption === "active"
-                  ? "bg-blue-500 text-white scale-105 shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "active"
+                ? "bg-blue-500 text-white scale-105 shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-300"
+                }`}
             >
               Active
             </button>
             <button
               onClick={() => setBtnOption("close")}
-              className={`p-2 transition-all duration-300 rounded-lg ${
-                btnOption === "close"
-                  ? "bg-blue-500 text-white scale-105 shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-300"
-              }`}
+              className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "close"
+                ? "bg-blue-500 text-white scale-105 shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-300"
+                }`}
             >
               Close
             </button>
@@ -228,9 +225,8 @@ export default function WhatsappLiveChat() {
           {chats.map((chat) => (
             <div
               key={chat.id}
-              className={`p-3 border-b cursor-pointer select-none ${
-                activeChat?.id === chat.id ? "bg-gray-300" : ""
-              }`}
+              className={`p-3 border-b cursor-pointer select-none ${activeChat?.id === chat.id ? "bg-gray-300" : ""
+                }`}
               onClick={() => setActiveChat(chat)}
             >
               <div className="flex items-center justify-between">
@@ -293,11 +289,10 @@ export default function WhatsappLiveChat() {
             {activeChat.messages.map((msg, index) => (
               <div
                 key={index}
-                className={`p-2 rounded-lg max-w-xs ${
-                  msg.sender === "You"
-                    ? "bg-blue-500 text-white self-end"
-                    : "bg-gray-200 text-black self-start"
-                }`}
+                className={`p-2 rounded-lg max-w-xs ${msg.sender === "You"
+                  ? "bg-blue-500 text-white self-end"
+                  : "bg-gray-200 text-black self-start"
+                  }`}
               >
                 {msg.text}
               </div>

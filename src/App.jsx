@@ -2,7 +2,7 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Approutes from './routes/Approutes/Approutes'
 import GlobalToaster from './components/GlobalToaster'
-import Apiroutes from './routes/Apiroutes/Apiroutes'
+import Apiroutes from './routes/Apiroutes/Apiroutes';
 import Login from './login/Login';
 import PrivateRoute from './routes/Auth/PrivateRoute';
 import AuthRoute from './routes/Auth/AuthRoute';
@@ -16,12 +16,8 @@ const App = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/*" element={<Approutes />} />
+          <Route path="/docs/*" element={<Apiroutes />} />
         </Route>
-
-        <Route element={<PrivateRoute />}>
-          <Route path="/apiDocs/*" element={<Apiroutes />} />
-        </Route>
-
 
         <Route path="*" element={
           <div className='flex items-center justify-center min-h-[100vh]'>

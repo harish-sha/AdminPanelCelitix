@@ -268,7 +268,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             icon: <DescriptionOutlinedIcon fontSize='20' />,
             label: 'Api Docs',
             type: "single",
-            onClick: () => navigate('/apiDocs')
+            onClick: () => navigate('/docs')
         },
         // {
         //     name: 'Logout',

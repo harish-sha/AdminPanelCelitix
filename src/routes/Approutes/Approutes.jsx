@@ -92,102 +92,101 @@ const Approutes = () => {
     <Routes>
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
-        <Route path="/" element={<Dashboard />} />
+        <Route index element={<Dashboard />} />
 
         {/* admin */}
-        <Route path="/manageuser" element={<ManageUser />} />
-        <Route path="/manageadduser" element={<AddUser />} />
-        <Route path="/managedlttemplate" element={<ManageDltTemplate />} />
-        <Route path="/managevoiceclips" element={<ManageVoiceClips />} />
-        <Route path="/manageplan" element={<ManagePlan />} />
-        <Route path="/accountmanager" element={<AccountManager />} />
-        <Route path="/GraphMain" element={<GraphMain />} />
-        <Route path="/graphuserwise" element={<GraphUserWise />} />
-        <Route path="/manageSMPP" element={<ManageSMPP />} />
-        <Route path="/managerouting" element={<ManageRouting />} />
-        <Route path="/SMPPerrorcode" element={<ManageSMPP />} />
-        <Route path="/manageprefix" element={<ManagePrefix />} />
-        <Route path="/blacklist" element={<Blacklist />} />
-        <Route path="/managenotifications" element={<ManageNotifications />} />
-        <Route path="/addrouting" element={<AddRouting />} />
-        <Route path="/editrouting" element={<EditRouting />} />
-        <Route path="/SMPPerrorcode" element={<SMPPErrorCode />} />
-        <Route path="/addservice" element={<AddService />} />
-        <Route path="/addoperator" element={<AddOperator />} />
+        <Route path="manageuser" element={<ManageUser />} />
+        <Route path="manageadduser" element={<AddUser />} />
+        <Route path="managedlttemplate" element={<ManageDltTemplate />} />
+        <Route path="managevoiceclips" element={<ManageVoiceClips />} />
+        <Route path="manageplan" element={<ManagePlan />} />
+        <Route path="accountmanager" element={<AccountManager />} />
+        <Route path="GraphMain" element={<GraphMain />} />
+        <Route path="graphuserwise" element={<GraphUserWise />} />
+        <Route path="manageSMPP" element={<ManageSMPP />} />
+        <Route path="managerouting" element={<ManageRouting />} />
+        <Route path="manageprefix" element={<ManagePrefix />} />
+        <Route path="blacklist" element={<Blacklist />} />
+        <Route path="managenotifications" element={<ManageNotifications />} />
+        <Route path="addrouting" element={<AddRouting />} />
+        <Route path="editrouting" element={<EditRouting />} />
+        <Route path="SMPPerrorcode" element={<SMPPErrorCode />} />
+        <Route path="addservice" element={<AddService />} />
+        <Route path="addoperator" element={<AddOperator />} />
 
         {/* SMS */}
-        <Route path="/sendsms" element={<SendSms />} />
-        <Route path="/smsreports" element={<SmsReports />} />
+        <Route path="sendsms" element={<SendSms />} />
+        <Route path="smsreports" element={<SmsReports />} />
         <Route
-          path="/smscampaigndetaillogs"
+          path="smscampaigndetaillogs"
           element={<Smscampaigndetaillogs />}
         />
         <Route
-          path="/smsAttachmentdetaillog"
+          path="smsAttachmentdetaillog"
           element={<SmsAttachmentdetaillog />}
         />
-        <Route path="/smsdlttemplates" element={<SmsDLTtemplate />} />
-        <Route path="/smswishmanagement" element={<SmsWishManagement />} />
+        <Route path="smsdlttemplates" element={<SmsDLTtemplate />} />
+        <Route path="smswishmanagement" element={<SmsWishManagement />} />
 
         {/* Two-Way-SMS */}
-        <Route path="/managekeywords" element={<TwowayMangeKeyword />} />
-        <Route path="/twowayreports" element={<TwowayReports />} />
-        <Route path="/twowaydlttemplates" element={<TwowayIntegration />} />
+        <Route path="managekeywords" element={<TwowayMangeKeyword />} />
+        <Route path="twowayreports" element={<TwowayReports />} />
+        <Route path="twowaydlttemplates" element={<TwowayIntegration />} />
 
         {/* whatsapp */}
-        <Route path="/managetemplate" element={<ManageTemplate />} />
-        <Route path="/createtemplate" element={<WhatsappCreateTemplate />} />
-        <Route path="/wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
-        <Route path="/wlivechat" element={<WhatsappLiveChat />} />
-        <Route path="/wmanagecampaign" element={<WhatsappManageCampaign />} />
-        <Route path="/wmanageoptin" element={<WhatsappManageOptin />} />
-        <Route path="/wchatwidget" element={<WhatsappChatWidget />} />
-        <Route path="/wqrcode" element={<WhatsappQrCode />} />
-        <Route path="/wlcsetting" element={<WhatsappLiveChatSettings />} />
-        <Route path="/wmanagewaba" element={<WhatsappManageWaba />} />
+        <Route path="managetemplate" element={<ManageTemplate />} />
+        <Route path="createtemplate" element={<WhatsappCreateTemplate />} />
+        <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
+        <Route path="wlivechat" element={<WhatsappLiveChat />} />
+        <Route path="wmanagecampaign" element={<WhatsappManageCampaign />} />
+        <Route path="wmanageoptin" element={<WhatsappManageOptin />} />
+        <Route path="wchatwidget" element={<WhatsappChatWidget />} />
+        <Route path="wqrcode" element={<WhatsappQrCode />} />
+        <Route path="wlcsetting" element={<WhatsappLiveChatSettings />} />
+        <Route path="wmanagewaba" element={<WhatsappManageWaba />} />
         <Route
-          path="/wwhatsappconversation"
+          path="wwhatsappconversation"
           element={<WhatsappConversation />}
         />
         <Route
-          path="/wcampaigndetailsreport"
+          path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
         />
         <Route
-          path="/wcampaigndetailsreport"
+          path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
         />
-        <Route path="/wwhatsappmanageagent" element={<ManageAgent />} />
-        <Route path="/wwhatsappbot" element={<WhatsappBot />} />
-        <Route path="/createwhatsappbot" element={<CreateWhatsAppBot />} />
+        <Route path="wwhatsappmanageagent" element={<ManageAgent />} />
+        <Route path="wwhatsappbot" element={<WhatsappBot />} />
+        <Route path="createwhatsappbot" element={<CreateWhatsAppBot />} />
 
         {/* RCS */}
-        <Route path="/sendrcs" element={<SendRcs />} />
-        <Route path="/rcsmanagetemplate" element={<ManageTemplateRcs />} />
-        <Route path="/rcsaddtemplatercs" element={<AddTemplateRcs />} />
-        <Route path="/rcssuggestionreport" element={<SuggestionReportRcs />} />
-        <Route path="/rcsdeliveryreport" element={<DeliveryreportRcs />} />
-        <Route path="/rcsmanagebot" element={<ManageBotRcs />} />
-        <Route path="/rcslivechats" element={<RcsLiveChat />} />
+        <Route path="sendrcs" element={<SendRcs />} />
+        <Route path="rcsmanagetemplate" element={<ManageTemplateRcs />} />
+        <Route path="rcsaddtemplatercs" element={<AddTemplateRcs />} />
+        <Route path="rcssuggestionreport" element={<SuggestionReportRcs />} />
+        <Route path="rcsdeliveryreport" element={<DeliveryreportRcs />} />
+        <Route path="rcsmanagebot" element={<ManageBotRcs />} />
+        <Route path="rcslivechats" element={<RcsLiveChat />} />
 
         {/* profile */}
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/download" element={<Download />} />
-        <Route path="/loginIpdetails" element={<LoginIpDetails />} />
+        <Route path="profile" element={<ProfilePage />} />
+        <Route path="download" element={<Download />} />
+        <Route path="loginIpdetails" element={<LoginIpDetails />} />
 
         {/* Settings */}
-        <Route path="/settings" element={<Settings />} />
+        <Route path="settings" element={<Settings />} />
 
         {/* manage funds */}
-        <Route path="/recharge" element={<Recharge />} />
-        <Route path="/transactions" element={<Transactions />} />
+        <Route path="recharge" element={<Recharge />} />
+        <Route path="transactions" element={<Transactions />} />
 
         {/* manage contacts */}
-        <Route path="/managecontacts" element={<ManageContacts />} />
+        <Route path="managecontacts" element={<ManageContacts />} />
       </Route>
-      <Route path="/dummy" element={<Dummy />} />
+      <Route path="dummy" element={<Dummy />} />
 
-      <Route path="/arihant" element={<Arihant />} />
+      <Route path="arihant" element={<Arihant />} />
 
       <Route
         path="*"
