@@ -13,10 +13,25 @@ export const Variables = ({
   const [btnDisabled, setBtnDisabled] = useState(false);
 
   const addVariable = () => {
+    const newVariableLength = 3;
+
+    if (messageContent.length + newVariableLength > 1024) {
+      return;
+    }
+
     const newVariable = { id: `${variablesData.length + 1}`, value: "" };
     const updatedVariables = [...variablesData, newVariable];
     setVariablesData(updatedVariables);
-    setMessageContent((prev) => `${prev}[${newVariable.id}]`);
+
+    setMessageContent((prev) => {
+      const newMessage = `${prev}[${newVariable.id}]`;
+
+      if (newMessage.length > 1024) {
+        return prev;
+      }
+
+      return newMessage;
+    });
 
     // if (allowSingleVariable) {
     //   setBtnDisabled(true);
@@ -49,6 +64,13 @@ export const Variables = ({
     setMessageContent(updatedTemplateFormat);
   };
 
+  const handleContentMessagee = (value) => {
+    if (value.length > 1024) {
+      return;
+    }
+    setMessageContent(value);
+  };
+
   useEffect(() => {
     setVariables(variablesData);
   }, [variablesData, setVariables]);
@@ -62,10 +84,15 @@ export const Variables = ({
         maxRows={10}
         className="w-full p-2 resize-none"
         value={messageContent}
-        onChange={(e) => setMessageContent(e.target.value)}
+        onChange={(e) => {
+          handleContentMessagee(e.target.value);
+        }}
       />
 
-      <div className="flex items-center justify-end">
+      <div className="flex items-center justify-between">
+        <p className={messageContent?.length > 1024 ? "text-red-500" : ""}>
+          {messageContent?.length}/1024
+        </p>
         <button
           onClick={addVariable}
           disabled={btnDisabled}
@@ -89,8 +116,8 @@ export const Variables = ({
               name={`templateVariable ${index}`}
               type="text"
               value={variable.value}
-              onChange={
-                (e) => handleVariableChange(variable.id, e.target.value)
+              onChange={(e) =>
+                handleVariableChange(variable.id, e.target.value)
               }
               placeholder={`Enter value for [${variable.id}]`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
