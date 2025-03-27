@@ -52,7 +52,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
     setBtnData(inputData);
   }, [inputData, setBtnData]);
 
-  const InputBox = ["Url Action", "Dialer Action", "View Location"];
+  const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
   return (
     <div className="flex flex-col gap-2 p-2 border">
