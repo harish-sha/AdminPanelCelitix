@@ -60,16 +60,16 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
   const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
   return (
-    <div className="flex flex-col gap-2 p-2 border">
+    <div className="grid grid-cols-2 gap-2">
       <div>
         <AnimatedDropdown
-          label={`Suggested Action `}
+          label={`Suggested Action 1 `}
           options={btnOptions}
           value={selectedAction.dropdown1}
           onChange={(newValue) => {
             handleDropdownChange("dropdown1", newValue);
           }}
-          placeholder={`Select Action`}
+          placeholder={`Select Action 1`}
         />
         {selectedAction.dropdown1 && (
           <div className="flex gap-2">
@@ -107,13 +107,13 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
       </div>
       <div>
         <AnimatedDropdown
-          label={`Suggested Action `}
+          label={`Suggested Action 2 `}
           options={btnOptions}
           value={selectedAction.dropdown2}
           onChange={(newValue) => {
             handleDropdownChange("dropdown2", newValue);
           }}
-          placeholder={`Select Action`}
+          placeholder={`Select Action 2`}
         />
 
         {selectedAction.dropdown2 && (
@@ -152,13 +152,13 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
       </div>
       <div>
         <AnimatedDropdown
-          label={`Suggested Action `}
+          label={`Suggested Action 3 `}
           options={btnOptions}
           value={selectedAction.dropdown3}
           onChange={(newValue) => {
             handleDropdownChange("dropdown3", newValue);
           }}
-          placeholder={`Select Action`}
+          placeholder={`Select Action 3`}
         />
         {selectedAction.dropdown3 && (
           <div className="flex gap-2">
@@ -173,7 +173,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
               }
               className="p-2 border"
             />
-            {InputBox.includes(selectedAction.dropdown2) && (
+            {InputBox.includes(selectedAction.dropdown3) && (
               <InputField
                 id="value"
                 name="value"
@@ -195,13 +195,13 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
       </div>
       <div>
         <AnimatedDropdown
-          label={`Suggested Action `}
+          label={`Suggested Action 4`}
           options={btnOptions}
           value={selectedAction.dropdown4}
           onChange={(newValue) => {
             handleDropdownChange("dropdown4", newValue);
           }}
-          placeholder={`Select Action`}
+          placeholder={`Select Action 4`}
         />
         {selectedAction.dropdown4 && (
           <div className="flex gap-2">
@@ -217,7 +217,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
               className="p-2 border"
             />
 
-            {InputBox.includes(selectedAction.dropdown2) && (
+            {InputBox.includes(selectedAction.dropdown4) && (
               <InputField
                 id="value"
                 name="value"
