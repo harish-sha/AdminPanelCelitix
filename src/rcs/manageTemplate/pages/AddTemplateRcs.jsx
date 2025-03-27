@@ -6,6 +6,7 @@ import { IoSearch } from "react-icons/io5";
 import { Variables } from "../components/Variables";
 import { SuggestedActions } from "../components/SuggestedActions";
 import toast from "react-hot-toast";
+import { Preview } from "../components/Preview";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -57,37 +58,41 @@ const AddTemplateRcs = () => {
     let hasError = false;
 
     Object.values(btnData).forEach(({ type, value, title }) => {
-      if (type && (!value || !title)) {
+      if (
+        !type ||
+        (!value && type !== "Share Location") ||
+        (!title && type !== "Share Location")
+      ) {
         toast.error(`Please fill all the fields for ${type}`);
         hasError = true;
         return;
-      } else {
-        const actions = {
-          "Url Action": () => {
-            suggestions.website.push(value);
-            suggestions.websitetitle.push(title);
-          },
-          "Dialer Action": () => {
-            suggestions.mobile.push(value);
-            suggestions.mobiletitle.push(title);
-          },
-          Reply: () => {
-            suggestions.replybtn.push(value);
-            suggestions.replybtntitle.push(title);
-          },
-          "Share Location": () => {
-            suggestions.locationtitle.push(title);
-          },
-          "View Location": () => {
-            const [latitude, longitude] = value.split(",");
-            suggestions.addresstitle.push(title);
-            suggestions.addressLatitude.push(latitude);
-            suggestions.addressLongitude.push(longitude);
-          },
-        };
-
-        actions[type]?.();
       }
+
+      const actions = {
+        "Url Action": () => {
+          suggestions.website.push(value);
+          suggestions.websitetitle.push(title);
+        },
+        "Dialer Action": () => {
+          suggestions.mobile.push(value);
+          suggestions.mobiletitle.push(title);
+        },
+        Reply: () => {
+          suggestions.replybtn.push(value);
+          suggestions.replybtntitle.push(title);
+        },
+        "Share Location": () => {
+          suggestions.locationtitle.push(title);
+        },
+        "View Location": () => {
+          const [latitude, longitude] = value.split(",");
+          suggestions.addresstitle.push(title);
+          suggestions.addressLatitude.push(latitude);
+          suggestions.addressLongitude.push(longitude);
+        },
+      };
+
+      actions[type]?.();
     });
 
     if (
@@ -100,7 +105,7 @@ const AddTemplateRcs = () => {
 
     variables.map((item, index) => {
       if (item.id && !item.value) {
-        toast.error(`Please fill all the fields for [${item.id}]`);
+        toast.error(`Please fill the fields for variable [${item.id}]`);
         hasError = true;
         return;
       }
@@ -189,7 +194,13 @@ const AddTemplateRcs = () => {
             btnData={btnData}
           />
         </div>
-        <div className="w-full border">Preview goes here</div>
+        <div className="w-full p-2 border">
+          <Preview
+            btnData={btnData}
+            variables={variables}
+            messageContent={messageContent}
+          />
+        </div>
       </div>
       <div className="mt-3 place-items-center">
         <UniversalButton
