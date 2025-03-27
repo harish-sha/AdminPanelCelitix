@@ -39,26 +39,27 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
       </div>
       <div className="flex flex-col justify-between gap-10">
         {pree?.messageContent && (
-          <div className="">
-            <p>{pree?.messageContent}</p>
+          <div className="overflow-y-scroll max-h-40 max-w-[525px]">
+            <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+              {pree?.messageContent}
+            </pre>
           </div>
         )}
 
-        <div className="flex flex-col gap-2 ">
+        <div className="flex flex-col gap-2 w-full max-w-[500px]">
           {pree?.filteredBtnData?.length > 0 &&
             pree?.filteredBtnData?.map((item, index) => (
               <button
                 key={index}
                 title={item.value}
-                className="flex items-center justify-center w-full px-4 py-2 text-white bg-green-500 rounded-md"
+                className="flex items-center justify-center w-full px-4 py-2 text-white break-words whitespace-normal bg-green-500 rounded-md"
               >
-                <FaExternalLinkAlt className="mr-2" />
-                {item.title}
+                <FaExternalLinkAlt className="flex-shrink-0 mr-2" />
+                <span className="truncate">{item.title}</span>
               </button>
             ))}
         </div>
       </div>
-      {/* <pre>{JSON.stringify(pree, null, 2)}</pre> */}
     </div>
   );
 };
