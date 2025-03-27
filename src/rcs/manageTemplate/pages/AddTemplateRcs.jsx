@@ -14,6 +14,8 @@ const AddTemplateRcs = () => {
     templateType: "",
   });
   const [btnData, setBtnData] = useState([]);
+  const [variables, setVariables] = useState([]);
+  const [messageContent, setMessageContent] = useState("");
 
   const btnOptions = [
     {
@@ -96,12 +98,21 @@ const AddTemplateRcs = () => {
       return toast.error("Please fill all the fields");
     }
 
+    variables.map((item, index) => {
+      if (item.id && !item.value) {
+        toast.error(`Please fill all the fields for [${item.id}]`);
+        hasError = true;
+        return;
+      }
+    });
+
     if (hasError) return;
 
     const data = {
       ...inputData,
       ...suggestions,
-      variables: [],
+      messageContent,
+      variables,
     };
 
     console.log("Api Requested Data", data);
@@ -165,7 +176,12 @@ const AddTemplateRcs = () => {
       <div className="flex items-center justify-between gap-5">
         <div className="w-full p-2 border">
           <h1>Text Template</h1>
-          <Variables />
+          <Variables
+            variables={variables}
+            setVariables={setVariables}
+            messageContent={messageContent}
+            setMessageContent={setMessageContent}
+          />
           <p>Suggested Actions</p>
           <SuggestedActions
             btnOptions={btnOptions}
