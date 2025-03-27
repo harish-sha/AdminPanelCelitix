@@ -85,7 +85,11 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
                 id="value"
                 name="value"
                 label="value"
-                placeholder="Enter value"
+                placeholder={
+                  selectedAction.dropdown1 === "View Location"
+                    ? "lat,long"
+                    : "Enter value"
+                }
                 value={inputData.dropdown1.value}
                 onChange={(e) =>
                   handleInputChange("dropdown1", "value", e.target.value)
@@ -121,17 +125,23 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
               className="p-2 border"
             />
 
-            <InputField
-              id="value"
-              name="value"
-              label="value"
-              placeholder="Enter value"
-              value={inputData.dropdown2.value}
-              onChange={(e) =>
-                handleInputChange("dropdown2", "value", e.target.value)
-              }
-              className="p-2 border"
-            />
+            {InputBox.includes(selectedAction.dropdown2) && (
+              <InputField
+                id="value"
+                name="value"
+                label="value"
+                placeholder={
+                  selectedAction.dropdown2 === "View Location"
+                    ? "lat,long"
+                    : "Enter value"
+                }
+                value={inputData.dropdown2.value}
+                onChange={(e) =>
+                  handleInputChange("dropdown2", "value", e.target.value)
+                }
+                className="p-2 border"
+              />
+            )}
           </div>
         )}
       </div>
@@ -158,18 +168,23 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
               }
               className="p-2 border"
             />
-
-            <InputField
-              id="value"
-              name="value"
-              label="value"
-              placeholder="Enter value"
-              value={inputData.dropdown3.value}
-              onChange={(e) =>
-                handleInputChange("dropdown3", "value", e.target.value)
-              }
-              className="p-2 border"
-            />
+            {InputBox.includes(selectedAction.dropdown2) && (
+              <InputField
+                id="value"
+                name="value"
+                label="value"
+                placeholder={
+                  selectedAction.dropdown3 === "View Location"
+                    ? "lat,long"
+                    : "Enter value"
+                }
+                value={inputData.dropdown3.value}
+                onChange={(e) =>
+                  handleInputChange("dropdown3", "value", e.target.value)
+                }
+                className="p-2 border"
+              />
+            )}
           </div>
         )}
       </div>
@@ -197,17 +212,23 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
               className="p-2 border"
             />
 
-            <InputField
-              id="value"
-              name="value"
-              label="value"
-              placeholder="Enter value"
-              value={inputData.dropdown4.value}
-              onChange={(e) =>
-                handleInputChange("dropdown4", "value", e.target.value)
-              }
-              className="p-2 border"
-            />
+            {InputBox.includes(selectedAction.dropdown2) && (
+              <InputField
+                id="value"
+                name="value"
+                label="value"
+                placeholder={
+                  selectedAction.dropdown4 === "View Location"
+                    ? "lat,long"
+                    : "Enter value"
+                }
+                value={inputData.dropdown4.value}
+                onChange={(e) =>
+                  handleInputChange("dropdown4", "value", e.target.value)
+                }
+                className="p-2 border"
+              />
+            )}
           </div>
         )}
       </div>
