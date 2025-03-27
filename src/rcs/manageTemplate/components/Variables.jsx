@@ -59,6 +59,7 @@ export const Variables = ({
         name="variables"
         id="variables"
         minRows={5}
+        maxRows={10}
         className="w-full p-2 resize-none"
         value={messageContent}
         onChange={(e) => setMessageContent(e.target.value)}
