@@ -58,14 +58,25 @@ const AddTemplateRcs = () => {
     let hasError = false;
 
     Object.values(btnData).forEach(({ type, value, title }) => {
-      if (
-        !type ||
-        (!value && type !== "Share Location") ||
-        (!title && type !== "Share Location")
-      ) {
-        toast.error(`Please fill all the fields for ${type}`);
-        hasError = true;
-        return;
+      // if (
+      //   !type ||
+      //   (!value && type !== "Share Location") ||
+      //   (!title && type !== "Share Location")
+      // ) {
+      //   toast.error(`Please fill all the fields for ${type} 8`);
+      //   hasError = true;
+      //   return;
+      // }
+      if (type) {
+        if (!value && type !== "Share Location") {
+          toast.error(`Please fill all the fields for ${type} `);
+          hasError = true;
+          return;
+        } else if (type === "Share Location" && !title) {
+          toast.error(`Please fill all the fields for ${type} `);
+          hasError = true;
+          return;
+        }
       }
 
       const actions = {
