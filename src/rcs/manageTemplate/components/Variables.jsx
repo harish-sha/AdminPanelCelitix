@@ -154,9 +154,9 @@ export const Variables = ({
           maxLength={MAX_LENGTH}
           value={messageContent}
           onChange={(e) => handleContentMessage(e.target.value)}
-          className="w-full px-3 py-2 outline-none resize-none"
+          className="w-full px-3 py-2 mb-1 outline-none resize-none"
         ></textarea>
-        <div className="absolute bottom-0 right-1">
+        <div className="absolute -bottom-0 right-1">
           <CustomEmojiPicker onSelect={handleEmojiClick} />
         </div>
       </div>
