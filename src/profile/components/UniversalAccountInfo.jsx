@@ -270,23 +270,23 @@ function AccountInfoModal({ show, handleClose }) {
 
   const whatsApprows = Array.isArray(filteredWhatsAppData)
     ? filteredWhatsAppData?.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        countryName: item.countryName ?? "-",
-        countryCode: item.isoCode ?? "-",
-        transactional: item.transactional,
-        promotional: item.promotional,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      countryName: item.countryName ?? "-",
+      countryCode: item.isoCode ?? "-",
+      transactional: item.transactional,
+      promotional: item.promotional,
+    }))
     : [];
 
   const rcsrows = Array.isArray(filteredData)
     ? filteredData?.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        country_name: item.country_name,
-        ISO_code: "+" + item.ISO_code,
-        rate: item.rate,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      country_name: item.country_name,
+      ISO_code: "+" + item.ISO_code,
+      rate: item.rate,
+    }))
     : [];
 
   // const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

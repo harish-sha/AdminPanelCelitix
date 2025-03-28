@@ -117,6 +117,7 @@ const CreateWhatsAppBot = () => {
   const [selectedNodeId, setSelectedNodeId] = useState(null);
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectionType, setConnectionType] = useState("");
+  const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
 
   const onConnect = useCallback(
     (connection: { source: any; target: any }) => {
@@ -140,16 +141,62 @@ const CreateWhatsAppBot = () => {
     [edges, setEdges]
   );
 
-  const addNode = (type: string) => {
+  // const addNode = (type: string) => {
+  //   const newNode = {
+  //     id: `${nodeId}`,
+  //     position: { x: Math.random() * 400, y: Math.random() * 400 },
+  //     data: { type },
+  //     type,
+  //   };
+
+  //   setNodes((prevNodes) => [...prevNodes, newNode]);
+  //   setNodeId((prevId) => prevId + 1);
+  // };
+
+  const addNode = (type: string, position?: { x: number; y: number }) => {
     const newNode = {
       id: `${nodeId}`,
-      position: { x: Math.random() * 400, y: Math.random() * 400 },
+      position: position || { ...lastPosition },
       data: { type },
       type,
     };
 
     setNodes((prevNodes) => [...prevNodes, newNode]);
     setNodeId((prevId) => prevId + 1);
+    if (!position) {
+      setLastPosition((prevPosition) => ({
+        x: prevPosition.x + 50,
+        y: prevPosition.y + 50,
+      }));
+    }
+  };
+
+  // drag and drop nodes
+  const handleDragStart = (event: React.DragEvent, type: string) => {
+    event.dataTransfer.setData("application/reactflow", type);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+
+    const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+    const type = event.dataTransfer.getData("application/reactflow");
+
+    if (!type) return;
+
+    // Calculate the position relative to the React Flow container
+    const position = {
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    };
+
+    addNode(type, position);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
   };
 
   const deleteNode = useCallback(
@@ -297,7 +344,11 @@ const CreateWhatsAppBot = () => {
   return (
     <>
       <div className="flex">
-        <div style={{ width: "90vw", height: "90vh" }}>
+        <div
+          style={{ width: "90vw", height: "90vh" }}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -315,7 +366,7 @@ const CreateWhatsAppBot = () => {
               setIsConnecting(false);
               setConnectionType("");
             }}
-            fitView
+            // fitView
           >
             <Background />
             <MiniMap />
@@ -325,16 +376,25 @@ const CreateWhatsAppBot = () => {
 
         <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3 h-fit">
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "starting")}
             onClick={() => addNode("starting")}
             className={commonButtonClass}
           >
             <OutlinedFlagOutlinedIcon /> Start
           </Button>
-          <Button onClick={() => addNode("text")} className={commonButtonClass}>
+          <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "text")}
+            onClick={() => addNode("text")}
+            className={commonButtonClass}
+          >
             <TextFieldsOutlinedIcon />
             Text Node
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "image")}
             onClick={() => addNode("image")}
             className={commonButtonClass}
           >
@@ -342,6 +402,8 @@ const CreateWhatsAppBot = () => {
             Image
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "video")}
             onClick={() => addNode("video")}
             className={commonButtonClass}
           >
@@ -349,6 +411,8 @@ const CreateWhatsAppBot = () => {
             Video
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "document")}
             onClick={() => addNode("document")}
             className={commonButtonClass}
           >
@@ -356,6 +420,8 @@ const CreateWhatsAppBot = () => {
             Document
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "audio")}
             onClick={() => addNode("audio")}
             className={commonButtonClass}
           >
@@ -363,17 +429,26 @@ const CreateWhatsAppBot = () => {
             Audio
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "button")}
             onClick={() => addNode("button")}
             className={commonButtonClass}
           >
             <BsMenuButton />
             Button
           </Button>
-          <Button onClick={() => addNode("list")} className={commonButtonClass}>
+          <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "list")}
+            onClick={() => addNode("list")}
+            className={commonButtonClass}
+          >
             <FormatListBulletedOutlinedIcon />
             List
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "agent")}
             onClick={() => addNode("agent")}
             className={commonButtonClass}
           >
@@ -381,6 +456,8 @@ const CreateWhatsAppBot = () => {
             Agent
           </Button>
           <Button
+            draggable
+            onDragStart={(event) => handleDragStart(event, "answer")}
             onClick={() => addNode("answer")}
             className={commonButtonClass}
           >

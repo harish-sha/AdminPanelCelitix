@@ -6,7 +6,7 @@ import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import usePagination from '@mui/material/usePagination';
 import { styled } from '@mui/material/styles';
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
-import { Paper, Typography, Box, Button } from '@mui/material';
+import { Paper, Typography, Box, Button, Switch } from '@mui/material';
 import { MdClose } from 'react-icons/md';
 import { FaReply } from 'react-icons/fa6';
 import { BsTelephoneFill } from "react-icons/bs";
@@ -82,6 +82,27 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
     const [selectedRow, setSelectedRow] = useState(null);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
     const [dialogVisible, setDialogVisible] = useState(false);
+
+    // State to track toggle status for each row
+    const [toggleStates, setToggleStates] = useState({});
+
+    // Handle toggle change
+    const handleStatusChange = (templateName, currentValue) => {
+        const newValue = currentValue === 1 ? 0 : 1; // Toggle between 1 (Active) and 0 (Inactive)
+        setToggleStates((prevState) => ({
+            ...prevState,
+            [templateName]: newValue, // Use templateName as the key
+        }));
+
+        // Display the template name in the toast message
+        toast.success(
+            `"${templateName}" status updated to ${newValue === 1 ? "Active" : "Inactive"
+            }`
+        );
+
+        // Optionally, make an API call to update the status on the server
+        // console.log(`Toggled template "${templateName}" to ${newValue}`);
+    };
 
     const [visible, setVisible] = useState(false);
     const [currentRow, setCurrentRow] = useState(null);
@@ -194,6 +215,33 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
         { field: 'type', headerName: 'Type', flex: 1, minWidth: 120 },
         { field: 'health', headerName: 'Health', flex: 1, minWidth: 120 },
         { field: 'createdDate', headerName: 'Created At', flex: 1, minWidth: 120 },
+        {
+            field: "TemplateData",
+            headerName: "TemplateData",
+            flex: 1,
+            minWidth: 120,
+            renderCell: (params) => (
+                <CustomTooltip
+                    arrow
+                    placement="top"
+                    title={toggleStates[params.row.templateName] === 1 ? "Active" : "Inactive"}
+                >
+                    <Switch
+                        checked={toggleStates[params.row.templateName] === 1}
+                        onChange={() => handleStatusChange(params.row.templateName, toggleStates[params.row.templateName] || 0)}
+                        sx={{
+                            "& .MuiSwitch-switchBase.Mui-checked": {
+                                color: "#34C759",
+                            },
+                            "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                            {
+                                backgroundColor: "#34C759",
+                            },
+                        }}
+                    />
+                </CustomTooltip>
+            ),
+        },
         {
             field: 'action',
             headerName: 'Action',

@@ -488,6 +488,7 @@ const WhatsappManageWaba = ({ id, name }) => {
     status: waba.status || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
+    ...waba,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -714,7 +715,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           <div className="relative z-10 p-6">
             <div className="flex flex-col items-center gap-2">
               <p className="flex items-center gap-2 text-lg font-medium text-gray-900">
-                <FaWhatsapp className="text-[#25D366] text-lg" />{" "}
+                <FaWhatsapp className="text-[#25D366] text-lg" />
                 {selectedWaba?.wabaNumber || "N/A"}
               </p>
               <a

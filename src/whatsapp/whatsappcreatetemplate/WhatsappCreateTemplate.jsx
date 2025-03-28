@@ -586,11 +586,11 @@ const WhatsappCreateTemplate = () => {
                         !templateName
                       }
                       className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
-                          selectedCategory &&
-                          selectedTemplateType &&
-                          templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
+                        selectedCategory &&
+                        selectedTemplateType &&
+                        templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
                         }`}
                       onClick={handleSubmit}
                       id="submitTemplate"

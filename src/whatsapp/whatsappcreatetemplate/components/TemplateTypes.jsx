@@ -53,9 +53,9 @@ const TemplateTypes = ({
     onPreviewUpdate(previewFormat);
   };
 
-//   const handleAddVariable = (setState, variable) => {
-//     setState((prev) => `${prev} {${variable}}`);
-//   };
+  //   const handleAddVariable = (setState, variable) => {
+  //     setState((prev) => `${prev} {${variable}}`);
+  //   };
 
   return (
     <div className="w-full">
@@ -410,7 +410,7 @@ const TemplateTypes = ({
             maxLength={1024}
             placeholder="Enter template format"
           />
-          <div className="absolute top-0 right-0 flex mt-2 mr-2 space-x-2 ">
+          <div className="absolute top-0 right-0 flex mt-2 mr-2 space-x-2">
             <CustomEmojiPicker
               onSelect={(emoji) => handleEmojiSelect(setTemplateFormat, emoji)}
               position="right"
