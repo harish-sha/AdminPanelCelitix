@@ -2,29 +2,39 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
-export const Card = ({ type }) => {
+export const Card = ({
+  type,
+  cardData,
+  setCardData,
+  cardOrientation,
+  setCardOrientation,
+  cardwidth,
+  setCardwidth,
+}) => {
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
 
-    if (file) {
-      const validExtensions = [".xls", ".xlsx", ".xlsm"];
-      const fileExtension = file.name.split(".").pop();
+    console.log(file);
 
-      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split(".")[0])) {
-          setUploadedFile(file);
-          setIsUploaded(false);
-          parseFile(file);
-        } else {
-          toast.error(
-            "File name can only contain alphanumeric characters, underscores, or hyphens."
-          );
-        }
-      } else {
-        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-      }
-    }
+    // if (file) {
+    //   const validExtensions = [".xls", ".xlsx", ".xlsm"];
+    //   const fileExtension = file.name.split(".").pop();
+
+    //   if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
+    //     if (isValidFileName(file.name.split(".")[0])) {
+    //       setUploadedFile(file);
+    //       setIsUploaded(false);
+    //       parseFile(file);
+    //     } else {
+    //       toast.error(
+    //         "File name can only contain alphanumeric characters, underscores, or hyphens."
+    //       );
+    //     }
+    //   } else {
+    //     toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
+    //   }
+    // }
   };
 
   const handleDragOver = (event) => {
