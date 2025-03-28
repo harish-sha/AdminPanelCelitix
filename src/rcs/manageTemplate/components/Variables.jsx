@@ -1,6 +1,6 @@
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import Textarea from "@mui/joy/Textarea";
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
@@ -12,6 +12,7 @@ export const Variables = ({
 }) => {
   const [variablesData, setVariablesData] = useState([]);
   const MAX_LENGTH = 1024;
+  const textBoxRef = useRef(null);
 
   const isLimitExceeded = useCallback(
     () => messageContent.length >= MAX_LENGTH,
@@ -68,11 +69,25 @@ export const Variables = ({
     [messageContent, setMessageContent, MAX_LENGTH]
   );
 
+  const insertEmojiAtIndex = () => {};
+
   const handleEmojiClick = useCallback(
     (emoji) => {
       if (isLimitExceeded()) return;
+
+      const input = textBoxRef.current;
+      if (!input) return;
+
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+
+      const newText =
+        messageContent.substring(0, start) +
+        emoji +
+        messageContent.substring(end);
+
       if (messageContent.length + emoji.length <= MAX_LENGTH) {
-        setMessageContent((prev) => prev + emoji);
+        setMessageContent(newText);
       }
     },
     [messageContent, setMessageContent, MAX_LENGTH, isLimitExceeded]
@@ -127,24 +142,20 @@ export const Variables = ({
     setVariables(variablesData);
   }, [variablesData, setVariables]);
 
-
   return (
     <div className="mb-2 space-y-2">
       <div className="relative bg-white border border-gray-300 rounded-md">
-        <Textarea
+        <textarea
           name="variables"
           id="variables"
-          minRows={5}
-          maxRows={10}
+          rows={5}
+          ref={textBoxRef}
+          placeholder="Enter message content"
+          maxLength={MAX_LENGTH}
           value={messageContent}
           onChange={(e) => handleContentMessage(e.target.value)}
-          sx={{
-            "--Textarea-focusedInset": "none",
-            border: "none",
-            boxShadow: "none",
-          }}
-          placeholder="Enter message content"
-        />
+          className="w-full px-3 py-2 outline-none resize-none"
+        ></textarea>
         <div className="absolute bottom-0 right-1">
           <CustomEmojiPicker onSelect={handleEmojiClick} />
         </div>
