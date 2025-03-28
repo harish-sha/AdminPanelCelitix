@@ -45,6 +45,7 @@ export const Card = ({
     const file = event.target.files[0];
     console.log(file);
   };
+
   return (
     <>
       <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
@@ -53,6 +54,8 @@ export const Card = ({
           name={"title"}
           placeholder="Enter Title"
           label={"Title"}
+          value={cardData.title}
+          onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
         />
         {type === "rich_card" ? (
           <AnimatedDropdown
@@ -70,7 +73,8 @@ export const Card = ({
               },
             ]}
             placeholder="Select Card Orientation"
-            onChange={() => {}}
+            value={cardOrientation}
+            onChange={(e) => setCardOrientation(e)}
           />
         ) : (
           <AnimatedDropdown
@@ -88,7 +92,8 @@ export const Card = ({
               },
             ]}
             placeholder="Select Card Width"
-            onChange={() => {}}
+            value={cardwidth}
+            onChange={(e) => setCardwidth(e)}
           />
         )}
         <AnimatedDropdown
@@ -106,7 +111,8 @@ export const Card = ({
             },
           ]}
           placeholder="Select Media Height"
-          onChange={() => {}}
+          value={cardData.mediaHeight}
+          onChange={(e) => setCardData({ ...cardData, mediaHeight: e })}
         />
       </div>
       <div>
@@ -132,6 +138,17 @@ export const Card = ({
             >
               Choose or Drop File
             </label>
+            <div className="upload-button-container ">
+              <button
+                onClick={() => {}}
+                disabled={false}
+                className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
+              >
+                <FileUploadOutlinedIcon
+                  sx={{ color: "white", fontSize: "23px" }}
+                />
+              </button>
+            </div>
           </div>
         </div>
       </div>

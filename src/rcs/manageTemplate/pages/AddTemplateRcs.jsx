@@ -139,6 +139,10 @@ const AddTemplateRcs = () => {
       variables,
     };
 
+    console.log(cardData);
+    console.log(cardwidth , "cardwidth");
+    console.log(cardOrientation , "cardor");
+
     console.log("Api Requested Data", data);
 
     // Continue with API request or further processing
