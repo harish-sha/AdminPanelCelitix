@@ -105,19 +105,28 @@ export const Variables = ({
       messageContent
     );
 
-    console.log(updatedMessageContent);
+    const sortedVariableNumbers = [
+      ...new Set(updatedMessageContent.match(/\[\d+\]/g)),
+    ]
+      .map((match) => parseInt(match.slice(1, -1)))
+      .sort((a, b) => a - b);
+
+    let count = 0;
+    const finalMessageContent = updatedMessageContent.replace(
+      /\[\d+\]/g,
+      () => {
+        return `[${sortedVariableNumbers[count++]}]`;
+      }
+    );
 
     setVariablesData(updatedVariables);
-    setMessageContent(updatedMessageContent);
+    setMessageContent(finalMessageContent);
   }, [messageContent]);
 
   useEffect(() => {
     setVariables(variablesData);
   }, [variablesData, setVariables]);
 
-  useEffect(() => {
-    console.log(variablesData);
-  }, [variablesData]);
 
   return (
     <div className="mb-2 space-y-2">
@@ -154,7 +163,7 @@ export const Variables = ({
         </button>
       </div>
 
-      <div className="h-auto overflow-scroll max-h-56">
+      <div className="h-auto overflow-scroll max-h-[150px]">
         {variablesData.map((variable, index) => (
           <div
             key={variable.id}
