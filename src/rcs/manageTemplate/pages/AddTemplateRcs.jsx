@@ -170,8 +170,16 @@ const AddTemplateRcs = () => {
             name="templateType"
             options={[
               {
-                label: "Template 1",
-                value: "Template 1",
+                label: "Text",
+                value: "Text",
+              },
+              {
+                label: "Rich Card Stand Alone",
+                value: "Rich Card Stand Alone",
+              },
+              {
+                label: "Rich Card Carousel",
+                value: "Rich Card Carousel",
               },
             ]}
             value={inputData.templateType}
