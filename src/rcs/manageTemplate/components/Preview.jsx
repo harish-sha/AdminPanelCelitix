@@ -19,7 +19,9 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
 
     setPree({
       variables,
-      messageContent: messageContent || "Message Content Goes Here...",
+      messageContent:
+        messageContent ||
+        "As vibrant hues fill the canvas of life, may this festival of colors bring immense joy, success and prosperity to your corporate endeavors🎇💻\n\nLet's continue to paint the digital landscape with creativity, innovation and strategic brilliance!✨✨\n\nHere's to a colorful journey ahead!🎉🎊\n\nBest Regards,🎊 \n[Team Proactive]",
       filteredBtnData:
         filteredBtnData.length > 0
           ? filteredBtnData
