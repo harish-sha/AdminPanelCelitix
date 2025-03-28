@@ -57,7 +57,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
     setBtnData(inputData);
   }, [inputData, setBtnData]);
 
-  const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
+  const InputBox = ["Url Action", "Dialer Action", "View Location"];
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
