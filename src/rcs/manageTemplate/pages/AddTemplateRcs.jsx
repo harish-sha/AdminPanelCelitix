@@ -189,7 +189,7 @@ const AddTemplateRcs = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-between gap-5">
+      <div className="flex flex-col items-center justify-between gap-5 sm:flex-row lg:flex-row">
         <div className="w-full p-2 border">
           <h1>Text Template</h1>
           <Variables

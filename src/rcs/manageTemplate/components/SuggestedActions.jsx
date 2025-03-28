@@ -60,7 +60,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData }) => {
   const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
   return (
-    <div className="grid grid-cols-2 gap-2">
+    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
       <div>
         <AnimatedDropdown
           label={`Suggested Action 1 `}
