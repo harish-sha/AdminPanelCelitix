@@ -130,6 +130,13 @@ const AddTemplateRcs = () => {
     // Continue with API request or further processing
   };
 
+  function handleTemplateTypeChange(value) {
+    setInputData({ ...inputData, templateType: value });
+    setMessageContent("");
+    setVariables([]);
+    setBtnData([]);
+  }
+
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end w-full gap-2 mb-2">
@@ -146,7 +153,15 @@ const AddTemplateRcs = () => {
             ]}
             value={inputData.agentId}
             onChange={(newValue) => {
-              setInputData({ ...inputData, agentId: newValue });
+              setMessageContent("");
+              setVariables([]);
+              setBtnData([]);
+              setInputData({
+                ...inputData,
+                templateType: "",
+                templateName: "",
+                agentId: newValue,
+              });
             }}
             placeholder="Select Agent"
           />
@@ -184,7 +199,7 @@ const AddTemplateRcs = () => {
             ]}
             value={inputData.templateType}
             onChange={(newValue) => {
-              setInputData({ ...inputData, templateType: newValue });
+              handleTemplateTypeChange(newValue);
             }}
             placeholder="Select Template Type"
           />
