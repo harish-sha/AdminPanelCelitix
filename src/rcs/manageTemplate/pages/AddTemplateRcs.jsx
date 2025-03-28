@@ -19,6 +19,19 @@ const AddTemplateRcs = () => {
   const [variables, setVariables] = useState([]);
   const [messageContent, setMessageContent] = useState("");
 
+  //common for rich card and carousel
+  const [cardData, setCardData] = useState({
+    title: "",
+    mediaHeight: "",
+    file: "",
+  });
+
+  //for rich card
+  const [cardOrientation, setCardOrientation] = useState("horizontal");
+
+  //caraousel
+  const [cardwidth, setCardwidth] = useState("small");
+
   const btnOptions = [
     {
       label: "Url Action",
@@ -220,7 +233,15 @@ const AddTemplateRcs = () => {
           </div>
           {["rich_card", "carousel"].includes(inputData.templateType) && (
             <div className="mb-5">
-              <Card type={inputData.templateType} />
+              <Card
+                type={inputData.templateType}
+                cardData={cardData}
+                setCardData={setCardData}
+                cardOrientation={cardOrientation}
+                setCardOrientation={setCardOrientation}
+                cardwidth={cardwidth}
+                setCardwidth={setCardwidth}
+              />
             </div>
           )}
           <div className="mb-3">
