@@ -105,7 +105,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             links: [
                 { to: '/managekeywords', label: 'Manage Keyword' },
                 { to: '/twowayreports', label: 'Reports' },
-                { to: '/twowaydlttemplates', label: 'DLT Template' },
+                { to: '/twowayintegration', label: 'Integration' },
             ],
         },
         {
@@ -201,8 +201,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             label: 'Missed Call',
             type: "dropdown",
             links: [
-                { to: '/ibdcallhistory', label: 'Call History' },
-                { to: '/ibdsettings', label: 'Settings' },
+                { to: '/misscallhistory', label: 'Call History' },
+                { to: '/misssettings', label: 'Settings' },
             ],
         },
         {

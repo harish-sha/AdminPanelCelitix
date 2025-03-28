@@ -88,6 +88,20 @@ import TwowayMangeKeyword from "../../twowaysms/twowayMangeKeyword/TwowayMangeKe
 import TwowayReports from "../../twowaysms/twowayReports/TwowayReports";
 import TwowayIntegration from "../../twowaysms/twowayIntegration/TwowayIntegration";
 
+// IBD
+import IVRFlowIBD from "../../ibd/ibdIVRFlow/IVRFlowIBD";
+import SettingIBD from "../../ibd/ibdSettings/settingIBD";
+import CallHistoryIBD from "../../ibd/ibdCallHistory/CallHistoryIBD";
+import ManageExecutiveIBD from "../../ibd/ibdManageExecutive/manageExecutiveIBD";
+
+// MissedCall
+import HistoryMissCall from "../../misscall/missCallHistory/HistoryMissCall";
+import SettingsMissCall from "../../misscall/missCallSettings/SettingsMissCall";
+
+// C2C
+import Clicktosettings from "../../click2call/clickToSettings/Clicktosettings";
+import Clicktohistory from "../../click2call/clickToHistory/Clicktohistory";
+
 
 const Approutes = () => {
   return (
@@ -107,7 +121,7 @@ const Approutes = () => {
         <Route path="/graphuserwise" element={<GraphUserWise />} />
         <Route path="/manageSMPP" element={<ManageSMPP />} />
         <Route path="/managerouting" element={<ManageRouting />} />
-        <Route path="/SMPPerrorcode" element={<ManageSMPP />} />
+        {/* <Route path="/SMPPerrorcode" element={<ManageSMPP />} /> */}
         <Route path="/manageprefix" element={<ManagePrefix />} />
         <Route path="/blacklist" element={<Blacklist />} />
         <Route path="/managenotifications" element={<ManageNotifications />} />
@@ -134,7 +148,21 @@ const Approutes = () => {
         {/* Two-Way-SMS */}
         <Route path="/managekeywords" element={<TwowayMangeKeyword />} />
         <Route path="/twowayreports" element={<TwowayReports />} />
-        <Route path="/twowaydlttemplates" element={<TwowayIntegration />} />
+        <Route path="/twowayintegration" element={<TwowayIntegration />} />
+
+        {/* IBD */}
+        <Route path="/ibdcallhistory" element={<CallHistoryIBD />} />
+        <Route path="/ibdmanageexecutive" element={<ManageExecutiveIBD />} />    
+        <Route path="/ibdivrflow" element={<IVRFlowIBD />} />
+        <Route path="/ibdsettings" element={<SettingIBD />} />
+
+        {/* MissedCall */}
+        <Route path="/misscallhistory" element={<HistoryMissCall />} />
+        <Route path="/misssettings" element={<SettingsMissCall />} />
+
+        {/* C2C */}
+        <Route path="/clicktohistory" element={<Clicktohistory />} />
+        <Route path="/clicktosettings" element={<Clicktosettings />} />
 
         {/* whatsapp */}
         <Route path="/managetemplate" element={<ManageTemplate />} />
