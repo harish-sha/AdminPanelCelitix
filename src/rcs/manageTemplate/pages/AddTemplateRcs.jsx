@@ -7,6 +7,7 @@ import { Variables } from "../components/Variables";
 import { SuggestedActions } from "../components/SuggestedActions";
 import toast from "react-hot-toast";
 import { Preview } from "../components/Preview";
+import { Card } from "../components/Card";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -208,19 +209,28 @@ const AddTemplateRcs = () => {
 
       <div className="flex flex-col items-center justify-between gap-5 sm:flex-row lg:flex-row">
         <div className="w-full p-2 border">
-          <h1>Text Template</h1>
-          <Variables
-            variables={variables}
-            setVariables={setVariables}
-            messageContent={messageContent}
-            setMessageContent={setMessageContent}
-          />
-          <p>Suggested Actions</p>
-          <SuggestedActions
-            btnOptions={btnOptions}
-            setBtnData={setBtnData}
-            btnData={btnData}
-          />
+          <div className="mb-3">
+            <h1>Text Template</h1>
+            <Variables
+              variables={variables}
+              setVariables={setVariables}
+              messageContent={messageContent}
+              setMessageContent={setMessageContent}
+            />
+          </div>
+          {["rich_card", "carousel"].includes(inputData.templateType) && (
+            <div className="mb-5">
+              <Card type={inputData.templateType} />
+            </div>
+          )}
+          <div className="mb-3">
+            <p className="mb-2">Suggested Actions</p>
+            <SuggestedActions
+              btnOptions={btnOptions}
+              setBtnData={setBtnData}
+              btnData={btnData}
+            />
+          </div>
         </div>
         <div className="w-full p-2 border">
           <Preview
