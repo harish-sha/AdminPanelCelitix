@@ -140,8 +140,8 @@ const AddTemplateRcs = () => {
     };
 
     console.log(cardData);
-    console.log(cardwidth , "cardwidth");
-    console.log(cardOrientation , "cardor");
+    console.log(cardwidth, "cardwidth");
+    console.log(cardOrientation, "cardor");
 
     console.log("Api Requested Data", data);
 
@@ -224,7 +224,7 @@ const AddTemplateRcs = () => {
         </div>
       </div>
 
-      <div className="flex flex-col items-center justify-between gap-5 sm:flex-row lg:flex-row">
+      <div className="flex flex-col justify-between gap-5 sm:flex-row lg:flex-row">
         <div className="w-full p-2 border">
           <div className="mb-3">
             <h1>Text Template</h1>
@@ -257,7 +257,7 @@ const AddTemplateRcs = () => {
             />
           </div>
         </div>
-        <div className="w-full p-2 border">
+        <div className="w-full p-2 pt-2 mt-3 border">
           <Preview
             btnData={btnData}
             variables={variables}
