@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
+import { BsTelephoneFill } from "react-icons/bs";
+import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
@@ -35,6 +38,40 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
     });
   }, [variables, messageContent, btnData]);
 
+  const getBtnStyle = (type) => {
+    switch (type) {
+      case "Reply":
+        return "bg-gray-200 text-gray-800";
+      case "Url Action":
+        return "bg-green-500 text-white";
+      case "Dialer Action":
+        return "bg-blue-500 text-white";
+      case "View Location":
+        return "bg-yellow-500";
+      case "Share Location":
+        return "bg-red-500";
+      default:
+        return "";
+    }
+  };
+
+  const getBtnIcon = (type) => {
+    switch (type) {
+      case "Reply":
+        return <FaReply />;
+      case "Url Action":
+        return <FaExternalLinkAlt />;
+      case "Dialer Action":
+        return <BsTelephoneFill />;
+      case "View Location":
+        return <FaLocationCrosshairs />;
+      case "Share Location":
+        return <TbLocationShare />;
+      default:
+        return "";
+    }
+  };
+
   return (
     <div className="w-full">
       <div className="mb-4">
@@ -52,14 +89,17 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
         <div className="flex flex-col gap-2 w-full max-w-[500px]">
           {pree?.filteredBtnData?.length > 0 &&
             pree?.filteredBtnData?.map((item, index) => (
-              <button
-                key={index}
-                title={item.value}
-                className="flex items-center justify-center w-full px-4 py-2 text-white break-words whitespace-normal bg-green-500 rounded-md"
-              >
-                <FaExternalLinkAlt className="flex-shrink-0 mr-2" />
-                <span className="truncate">{item.title}</span>
-              </button>
+              <div key={index}>
+                <button
+                  title={item.value}
+                  className={`w-full flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getBtnStyle(
+                    item.type
+                  )}`}
+                >
+                  {getBtnIcon(item.type)}
+                  <p className="ml-2"> {item.title}</p>
+                </button>
+              </div>
             ))}
         </div>
       </div>
