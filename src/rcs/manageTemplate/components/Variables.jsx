@@ -79,8 +79,45 @@ export const Variables = ({
   );
 
   useEffect(() => {
+    const varRegex = messageContent.match(/\[\d+\]/g) || [];
+
+    const currentVariableIds = new Set(
+      variablesData.map((variable) => `[${variable.id}]`)
+    );
+
+    const newVariables = varRegex
+      .filter((match) => !currentVariableIds.has(match))
+      .map((match) => ({ id: match.slice(1, -1), value: "" }));
+
+    const validVariables = variablesData.filter((variable) =>
+      varRegex.includes(`[${variable.id}]`)
+    );
+
+    const updatedVariables = [...validVariables, ...newVariables].map(
+      (variable, index) => ({
+        ...variable,
+        id: `${index + 1}`,
+      })
+    );
+
+    const updatedMessageContent = varRegex.reduce(
+      (content, match, index) => content.replace(match, `[${index + 1}]`),
+      messageContent
+    );
+
+    console.log(updatedMessageContent);
+
+    setVariablesData(updatedVariables);
+    setMessageContent(updatedMessageContent);
+  }, [messageContent]);
+
+  useEffect(() => {
     setVariables(variablesData);
   }, [variablesData, setVariables]);
+
+  useEffect(() => {
+    console.log(variablesData);
+  }, [variablesData]);
 
   return (
     <div className="mb-2 space-y-2">
