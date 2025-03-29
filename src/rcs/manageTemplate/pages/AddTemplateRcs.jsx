@@ -260,7 +260,7 @@ const AddTemplateRcs = () => {
       </div>
 
       <div className="flex flex-col justify-between gap-5 sm:flex-row lg:flex-row">
-        <div className="w-full p-2 border">
+        <div className="w-full p-2 ">
           <div className="mb-3">
             <h1>Text Template</h1>
             <Variables
@@ -291,8 +291,16 @@ const AddTemplateRcs = () => {
               btnData={btnData}
             />
           </div>
+          <div className="mt-3 place-items-center">
+            <UniversalButton
+              id="saveTemplate"
+              name={"saveTemplate"}
+              label="Submit"
+              onClick={handleSubmit}
+            />
+          </div>
         </div>
-        <div className="w-full p-2 pt-2 mt-3 border">
+        <div className="w-full p-2 pt-2 -mt-20">
           <Preview
             btnData={btnData}
             variables={variables}
@@ -303,14 +311,14 @@ const AddTemplateRcs = () => {
           />
         </div>
       </div>
-      <div className="mt-3 place-items-center">
+      {/* <div className="mt-3 place-items-center">
         <UniversalButton
           id="saveTemplate"
           name={"saveTemplate"}
           label="Submit"
           onClick={handleSubmit}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

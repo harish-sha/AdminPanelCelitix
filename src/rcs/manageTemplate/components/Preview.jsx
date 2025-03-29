@@ -92,42 +92,44 @@ export const Preview = ({
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-4">
-        <p>Template Preview</p>
-        {pree?.cardData?.title}
-      </div>
-      <div>
-        {pree?.cardData?.file && (
-          <div>
-            <embed src={pree?.cardData?.file} type="" />
-          </div>
-        )}
-      </div>
-      <div className="flex flex-col justify-between gap-10">
-        {pree?.messageContent && (
-          <div className="overflow-y-scroll max-h-40 max-w-[525px]">
-            <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
-              {pree?.messageContent}
-            </pre>
-          </div>
-        )}
+    <div className="w-full smartphone">
+      <div className="p-2">
+        <div className="mb-4">
+          <p>Template Preview</p>
+          {pree?.cardData?.title}
+        </div>
+        <div>
+          {pree?.cardData?.file && (
+            <div>
+              <embed src={pree?.cardData?.file} type="" />
+            </div>
+          )}
+        </div>
+        <div className="flex flex-col justify-between gap-10">
+          {pree?.messageContent && (
+            <div className="overflow-y-scroll max-h-[250px]  max-w-[525px]">
+              <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+                {pree?.messageContent}
+              </pre>
+            </div>
+          )}
 
-        <div className="flex flex-col gap-2 w-full max-w-[500px]">
-          {pree?.filteredBtnData?.length > 0 &&
-            pree?.filteredBtnData?.map((item, index) => (
-              <div key={index}>
-                <button
-                  title={item.value}
-                  className={`w-full flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getBtnStyle(
-                    item.type
-                  )}`}
-                >
-                  {getBtnIcon(item.type)}
-                  <p className="ml-2"> {item.title}</p>
-                </button>
-              </div>
-            ))}
+          <div className="flex flex-col gap-2 w-full max-w-[500px]">
+            {pree?.filteredBtnData?.length > 0 &&
+              pree?.filteredBtnData?.map((item, index) => (
+                <div key={index}>
+                  <button
+                    title={item.value}
+                    className={`w-full flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getBtnStyle(
+                      item.type
+                    )}`}
+                  >
+                    {getBtnIcon(item.type)}
+                    <p className="ml-2"> {item.title}</p>
+                  </button>
+                </div>
+              ))}
+          </div>
         </div>
       </div>
     </div>

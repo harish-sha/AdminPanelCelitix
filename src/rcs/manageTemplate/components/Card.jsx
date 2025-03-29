@@ -63,7 +63,7 @@ export const Card = ({
   };
 
   return (
-    <>
+    <div>
       <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
         <InputField
           id={"title"}
@@ -190,6 +190,6 @@ export const Card = ({
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
