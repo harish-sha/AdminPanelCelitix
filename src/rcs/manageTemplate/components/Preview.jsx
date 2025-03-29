@@ -4,7 +4,14 @@ import { BsTelephoneFill } from "react-icons/bs";
 import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
+export const Preview = ({
+  variables = [],
+  messageContent,
+  btnData = [],
+  cardData,
+  cardWidth,
+  cardOrientation,
+}) => {
   const [pree, setPree] = useState();
 
   useEffect(() => {
@@ -37,8 +44,18 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
                 title: "Call Us",
               },
             ],
+      cardData,
+      cardWidth,
+      cardOrientation,
     });
-  }, [variables, messageContent, btnData]);
+  }, [
+    variables,
+    messageContent,
+    btnData,
+    cardData,
+    cardWidth,
+    cardOrientation,
+  ]);
 
   const getBtnStyle = (type) => {
     switch (type) {
@@ -78,6 +95,14 @@ export const Preview = ({ variables = [], messageContent, btnData = [] }) => {
     <div className="w-full">
       <div className="mb-4">
         <p>Template Preview</p>
+        {pree?.cardData?.title}
+      </div>
+      <div>
+        {pree?.cardData?.file && (
+          <div>
+            <embed src={pree?.cardData?.file} type="" />
+          </div>
+        )}
       </div>
       <div className="flex flex-col justify-between gap-10">
         {pree?.messageContent && (
