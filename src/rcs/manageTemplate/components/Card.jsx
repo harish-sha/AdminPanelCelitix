@@ -2,6 +2,8 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { MdOutlineDeleteForever } from "react-icons/md";
 
 export const Card = ({
   type,
@@ -13,7 +15,7 @@ export const Card = ({
   setCardwidth,
 }) => {
   const [customFilePath, setCustomFilePath] = useState(null);
-  
+
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
@@ -51,7 +53,14 @@ export const Card = ({
   };
 
   const uploadFile = () => {
+    if (!customFilePath) return toast.error("Please select a file.");
+    if (cardData.file) return toast.error("File already uploaded.");
     setCardData({ ...cardData, file: URL.createObjectURL(customFilePath) });
+  };
+
+  const deleteFileUpload = () => {
+    setCustomFilePath(null);
+    setCardData({ ...cardData, file: "" });
   };
 
   return (
@@ -157,6 +166,28 @@ export const Card = ({
                 />
               </button>
             </div>
+          </div>
+          <div className="mt-3">
+            {customFilePath ? (
+              <div className="flex items-center justify-center gap-1 file-upload-info">
+                <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
+                  File Selected: <strong>{customFilePath.name}</strong>
+                </p>
+                <button
+                  className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
+                  onClick={deleteFileUpload}
+                >
+                  <MdOutlineDeleteForever
+                    className="text-red-500 cursor-pointer hover:text-red-600"
+                    size={20}
+                  />
+                </button>
+              </div>
+            ) : (
+              <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
+                No file uploaded yet!
+              </p>
+            )}
           </div>
         </div>
       </div>
