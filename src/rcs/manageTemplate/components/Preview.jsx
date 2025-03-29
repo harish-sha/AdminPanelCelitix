@@ -107,7 +107,7 @@ export const Preview = ({
         </div>
         <div className="flex flex-col justify-between gap-10">
           {pree?.messageContent && (
-            <div className="overflow-y-scroll max-h-[250px]  max-w-[525px]">
+            <div className="overflow-y-scroll max-h-[150px]  max-w-[525px]">
               <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
                 {pree?.messageContent}
               </pre>

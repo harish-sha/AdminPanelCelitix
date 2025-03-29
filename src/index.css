@@ -271,7 +271,7 @@ a {
 .smartphone {
   position: relative;
   width: 360px;
-  height: 640px;
+  height: 700px;
   margin: auto;
   border: 16px black solid;
   border-top-width: 60px;
@@ -305,8 +305,8 @@ a {
   border-radius: 50%;
 }
 
-.smartphone {
+/* .smartphone {
   width: 360px;
-  height: 640px;
+  height: 200px;
   background: white;
-}
+} */
