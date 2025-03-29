@@ -19,7 +19,7 @@ const AddTemplateRcs = () => {
   const [variables, setVariables] = useState([]);
   const [messageContent, setMessageContent] = useState("");
 
-  //common for rich card and carousel
+  //for rich card
   const [cardData, setCardData] = useState({
     title: "",
     mediaHeight: "",
@@ -27,7 +27,6 @@ const AddTemplateRcs = () => {
     filePath: "",
   });
 
-  //for rich card
   const [cardOrientation, setCardOrientation] = useState("horizontal");
 
   //caraousel
@@ -120,11 +119,11 @@ const AddTemplateRcs = () => {
     });
 
     if (
-      !inputData.agentId ||
-      !inputData.templateName ||
-      !inputData.templateType
+      Object.keys(inputData).some(
+        (key) => !inputData[key] && toast.error(`Please fill the ${key}`)
+      )
     ) {
-      return toast.error("Please fill all the fields");
+      return;
     }
 
     variables.map((item, index) => {
