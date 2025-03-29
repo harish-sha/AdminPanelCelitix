@@ -1,6 +1,7 @@
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import { useEffect, useState } from "react";
 
 export const Card = ({
   type,
@@ -11,6 +12,8 @@ export const Card = ({
   cardwidth,
   setCardwidth,
 }) => {
+  const [customFilePath, setCustomFilePath] = useState(null);
+  
   const handleFileDrop = (event) => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
@@ -43,7 +46,12 @@ export const Card = ({
 
   const handleFileChange = (e) => {
     const file = event.target.files[0];
+    setCustomFilePath(file);
     console.log(file);
+  };
+
+  const uploadFile = () => {
+    setCardData({ ...cardData, file: URL.createObjectURL(customFilePath) });
   };
 
   return (
@@ -140,7 +148,7 @@ export const Card = ({
             </label>
             <div className="upload-button-container ">
               <button
-                onClick={() => {}}
+                onClick={uploadFile}
                 disabled={false}
                 className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer `}
               >
