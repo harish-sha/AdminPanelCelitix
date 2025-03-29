@@ -6,6 +6,7 @@ import BlockOutlinedIcon from '@mui/icons-material/BlockOutlined';
 import GroupOutlinedIcon from '@mui/icons-material/GroupOutlined';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaHome, FaSignOutAlt, FaWhatsapp } from 'react-icons/fa';
+import { IoPersonOutline } from "react-icons/io5";
 import { SiGoogleauthenticator } from "react-icons/si";
 import { LuMessageSquareMore } from "react-icons/lu";
 import { IoSettingsOutline } from "react-icons/io5";
@@ -13,15 +14,13 @@ import { IoWalletOutline } from "react-icons/io5";
 import Tooltip from '@mui/material/Tooltip';
 import Divider from '@mui/material/Divider';
 import toast from 'react-hot-toast';
-import { IoPersonOutline } from "react-icons/io5";
-
-import clsx from 'clsx';
+import { motion } from "framer-motion";
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
     const [openDropdown, setOpenDropdown] = useState(null);
+    const [collapseAnimationDone, setCollapseAnimationDone] = useState(!isCollapsed);
     const location = useLocation();
     const dropdownRefs = useRef({});
-
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,7 +39,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
 
     const handleSingleRouteClick = () => {
         if (isMobile) setIsCollapsed(true);
-        // setOpenDropdown(null);
     };
 
     const isActiveRoute = (route) => {
@@ -49,15 +47,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
         }
         return location.pathname.startsWith(route);
     };
-
-    // const handleLogout = () => {
-    //     localStorage.removeItem("token");
-    //     toast.success("Logged out successfully!");
-    //     // window.location.href = "/login";
-    //     setTimeout(() => {
-    //         window.location.href = "/login";
-    //     }, 1000)
-    // };
 
     useEffect(() => {
         const activeMenu = menuItems.find((item) =>
@@ -280,129 +269,137 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
     ];
 
     return (
-        <div
-            className={clsx(
-                "mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed  lg:top-15 top-14  left-0 transition-all duration-300 overflow-y-auto z-9 ",
-                isMobile
-                    ? isCollapsed
-                        ? "-translate-x-full w-0"
-                        : "translate-x-0 w-60"
-                    : isCollapsed
-                        ? "w-16"
-                        : "w-60"
-            )}
+        <motion.div
+            layout
+            initial={{ x: isMobile ? -240 : 0, width: isCollapsed ? 64 : 240 }}
+            animate={{ x: isMobile ? (isCollapsed ? -240 : 0) : 0, width: isCollapsed ? 64 : 240 }}
+            transition={{ type: "tween", stiffness: 260, damping: 30 }}
+            onAnimationComplete={() => {
+                setCollapseAnimationDone(!isCollapsed);
+            }}
+            className="mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed lg:top-15 top-14 left-0 overflow-y-auto z-9"
             style={{ maxHeight: "calc(100vh - 3.5rem)" }}
         >
 
-            <nav className="mt-1 ">
-                {menuItems.map((item) => (
-                    item.type === "dropdown" ? (
-                        <Tooltip
-                            key={item.name}
-                            title={item.label}
-                            placement="right"
-                            arrow
-                            disableHoverListener={!isCollapsed}
+            {menuItems.map((item) => (
+                item.type === "dropdown" ? (
+                    <Tooltip
+                        key={item.name}
+                        title={item.label}
+                        placement="right"
+                        arrow
+                        disableHoverListener={!isCollapsed}
+                        disableFocusListener={!isCollapsed}
+                        disableTouchListener={!isCollapsed}
+                    >
+                        <motion.div
+                            onClick={() => handleDropdownClick(item.name)}
+                            className={`flex items-center justify-between w-full px-4 cursor-pointer py-2 hover:bg-[#e6f4ff] transition-all duration-300 text-left ${isActiveRoute(`/${item.name}`) ? 'bg-[#6b728075]' : ''
+                                } ${isCollapsed ? 'justify-center' : ''}`}
                         >
-                            <div>
-                                <button
-                                    onClick={() => handleDropdownClick(item.name)}
-                                    className={clsx(
-                                        'flex items-center justify-between w-full px-4 cursor-pointer py-2  hover:bg-[#e6f4ff] transition-all duration-300 text-left',
-                                        isActiveRoute(`/${item.name}`) && 'bg-[#6b728075]',
-                                        isCollapsed && 'justify-center'
-                                    )}
-                                >
-                                    <div className="flex items-center gap-4 h-6">
-                                        <span className="flex-shrink-0 text-black">{item.icon}</span>
-                                        <span className={clsx(isCollapsed && 'hidden', 'text-black font-[600]')}>
-                                            {item.label}
-                                        </span>
-                                    </div>
-                                    <div
-                                        className={clsx(
-                                            isCollapsed && '',
-                                            'text-gray-800 transition-transform duration-300',
-                                            openDropdown === item.name ? 'rotate-180' : 'rotate-0'
-                                        )}
-                                    >
-                                        {!isCollapsed && (openDropdown === item.name ? <MdExpandLess /> : <MdExpandMore />)}
-                                    </div>
-
-                                </button>
-
-                                {/*Dropdown Content */}
-                                <div
-                                    ref={(el) => (dropdownRefs[item.name] = el)}
-                                    style={{
-                                        maxHeight: openDropdown === item.name ? `${dropdownRefs[item.name]?.scrollHeight}px` : "0px",
-                                        transition: "max-height 0.2s ease-in",
+                            <div className="flex items-center gap-4 h-6">
+                                <span className="flex-shrink-0 text-black">{item.icon}</span>
+                                <motion.span
+                                    initial={false}
+                                    animate={{
+                                        opacity: isCollapsed ? 0 : 1,
+                                        width: isCollapsed ? 0 : "auto",
                                     }}
-                                    className="overflow-hidden"
+                                    transition={{ duration: 0.2 }}
+                                    className="overflow-hidden whitespace-nowrap font-[600] text-black"
                                 >
-                                    {item.links.map((link) => (
-                                        <React.Fragment key={link.to}>
-                                            <Link
-                                                to={link.to}
-                                                onClick={handleSingleRouteClick}
-                                                className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to) ? 'bg-[#e6f4ff] text-blue-800' : 'text-gray-800'}`}
-                                            >
-                                                <FiberManualRecordIcon
-                                                    sx={{
-                                                        color: isActiveRoute(link.to) ? 'blue' : 'black',
-                                                        fontSize: '10px',
-                                                        marginRight: '10px',
-                                                    }}
-                                                />
-                                                <span className={`font-[600] ${isActiveRoute(link.to) ? 'text-blue-800' : 'text-gray-800'}`}>
-                                                    {link.label}
-                                                </span>
-                                            </Link>
-                                            <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
-                                        </React.Fragment>
-                                    ))}
-                                </div>
+                                    {item.label}
+                                </motion.span>
+
                             </div>
-                        </Tooltip>
-                    ) : (
-                        <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
-                            {item.onClick ? (
-                                //  Logout Button
-                                <button
-                                    onClick={() => {
-                                        item.onClick();
-                                        handleSingleRouteClick();
-                                    }}
-                                    className={clsx(
-                                        "flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer",
-                                        "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
-                                        isCollapsed && "justify-center"
-                                    )}
+                            {!isCollapsed && (
+                                <div
+                                    className={`text-gray-800 transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                                        }`}
                                 >
-                                    <span className="flex-shrink-0">{item.icon}</span>
-                                    <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
-                                </button>
-                            ) : (
-                                //  Normal Navigation Link
-                                <Link
-                                    to={item.to}
-                                    onClick={handleSingleRouteClick}
-                                    className={clsx(
-                                        "flex items-center gap-4 px-4 py-2 transition-all",
-                                        isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800",
-                                        isCollapsed && "justify-center"
-                                    )}
-                                >
-                                    <span className="flex-shrink-0">{item.icon}</span>
-                                    <span className={clsx(isCollapsed && "hidden", "font-[600]")}>{item.label}</span>
-                                </Link>
+                                    {openDropdown === item.name ? <MdExpandLess /> : <MdExpandMore />}
+                                </div>
                             )}
-                        </Tooltip>
-                    )
-                ))}
-            </nav>
 
-        </div>
+                        </motion.div>
+
+                        {/*Dropdown Content */}
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{
+                                height: openDropdown === item.name ? dropdownRefs[item.name]?.scrollHeight : 0,
+                                opacity: openDropdown === item.name ? 1 : 0,
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                            ref={(el) => (dropdownRefs[item.name] = el)}
+                        >
+                            {item.links.map((link) => (
+                                <React.Fragment key={link.to}>
+                                    <Link
+                                        to={link.to}
+                                        onClick={handleSingleRouteClick}
+                                        className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to) ? 'bg-[#e6f4ff] text-blue-800' : 'text-gray-800'}`}
+                                    >
+                                        <FiberManualRecordIcon
+                                            sx={{
+                                                color: isActiveRoute(link.to) ? 'blue' : 'black',
+                                                fontSize: '10px',
+                                                marginRight: '10px',
+                                            }}
+                                        />
+                                        <span className={`font-[600] ${isActiveRoute(link.to) ? 'text-blue-800' : 'text-gray-800'}`}>
+                                            {link.label}
+                                        </span>
+                                    </Link>
+                                    <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+                                </React.Fragment>
+                            ))}
+                        </motion.div>
+                    </Tooltip>
+                ) : (
+                    <Tooltip key={item.name} title={isCollapsed ? item.label : ""} placement="right" arrow>
+                        {item.onClick ? (
+                            <motion.div
+                                onClick={() => {
+                                    item.onClick();
+                                    handleSingleRouteClick();
+                                }}
+                                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? 'justify-center' : ''
+                                    }`}
+                            >
+                                <span className="flex-shrink-0">{item.icon}</span>
+                                <span className={`${isCollapsed ? 'hidden' : ''} font-[600]`}>{item.label}</span>
+                            </motion.div>
+                        ) : (
+                            <Link
+                                to={item.to}
+                                onClick={handleSingleRouteClick}
+                                className={`flex items-center gap-4 px-4 py-2 transition-all text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isActiveRoute(item.to) ? 'bg-[#e6f4ff] text-blue-800' : ''
+                                    } ${isCollapsed ? 'justify-center' : ''}`}
+                            >
+                                {/* <span className="flex-shrink-0">{item.icon}</span> */}
+                                {/* <span className={`${isCollapsed ? 'hidden' : ''} font-[600]`}>{item.label}</span> */}
+                                <motion.div
+                                // layout
+                                // className=" place-content-center text-lg"
+                                >
+                                    {item.icon}
+                                </motion.div>
+                                {(!isCollapsed || collapseAnimationDone) && (
+                                    <motion.span
+                                        // layout
+                                        className="font-semibold">
+                                        {item.label}
+                                    </motion.span>
+                                )}
+                            </Link>
+                        )}
+                    </Tooltip>
+                )
+            ))}
+
+        </motion.div>
     );
 };
 

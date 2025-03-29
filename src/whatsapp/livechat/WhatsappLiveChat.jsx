@@ -43,6 +43,8 @@ export default function WhatsappLiveChat() {
   const [selectedAgentList, setSelectedAgentList] = useState(null);
   const [selectedGroupList, setSelectedGroupList] = useState(null);
   const [selectedImage, setSelectedImage] = useState([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   const [chats, setChats] = useState([
     {
       id: 1,
@@ -565,7 +567,7 @@ export default function WhatsappLiveChat() {
             transition={{ duration: 0.5 }}
             className="flex flex-col items-center justify-center w-full h-[90vh] bg-gradient-to-br from-green-100 via-white to-blue-100 px-4"
           >
-            <div className="text-center max-w-md w-full space-y-8">
+            <div className="text-center max-w-md w-full space-y-8 mb-35">
               <div className="w-40 h-40 mx-auto">
                 <lottie-player
                   autoplay
@@ -592,7 +594,7 @@ export default function WhatsappLiveChat() {
               >
                 Choose your WhatsApp Business Account to access live chats, track activity, and delight your customers.
               </motion.p>
-              <motion.div
+              {/* <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
@@ -607,6 +609,63 @@ export default function WhatsappLiveChat() {
                   onChange={(value) => setSelectedWaba(value)}
                   placeholder="Select WABA to continue"
                 />
+              </motion.div> */}
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5 }}
+                className="w-full max-w-sm mx-auto"
+              >
+                <div className="relative">
+                  <button
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                    className="w-full flex justify-between items-center bg-green-100 p-4 rounded-lg shadow-lg cursor-pointer hover:bg-green-100 transition-all"
+                  >
+                    {/* <span className="text-lg font-semibold text-green-700">
+                      Select Your WABA
+                    </span> */}
+                    <span className="text-gray-500">
+                      {selectedWaba || "Select WABA to continue"}
+                    </span>
+                    <svg
+                      className="w-5 h-5 text-gray-500"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M19 9l-7 7-7-7"
+                      />
+                    </svg>
+                  </button>
+
+                  {/* Dropdown content */}
+                  {dropdownOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.3 }}
+                      className="absolute top-full left-0 w-full bg-white  rounded-lg shadow-lg mt-2 z-10"
+                    >
+                      <div className="max-h-40 overflow-auto">
+                        {waba.map((w, idx) => (
+                          <div
+                            key={idx}
+                            onClick={() => setSelectedWaba(w.name)}
+                            className="cursor-pointer p-2.5 border-b hover:bg-gray-100"
+                          >
+                            {w.name}
+                          </div>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
               </motion.div>
             </div>
           </motion.div>

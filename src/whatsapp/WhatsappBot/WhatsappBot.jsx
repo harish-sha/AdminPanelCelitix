@@ -89,6 +89,8 @@ import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlin
 import AccessAlarmsOutlinedIcon from '@mui/icons-material/AccessAlarmsOutlined';
 import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
 import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import { motion } from "framer-motion";
+
 import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import restaurtantimg from "../../assets/images/restaurant.avif";
 import workinghour from "../../assets/images/workinghour.jpg";
@@ -112,6 +114,13 @@ const WhatsappBot = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [searchActive, setSearchActive] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownItems, setDropdownItems] = useState([
+    "Edit",
+    "Duplicate",
+    "Share",
+    "Remove",
+  ])
 
 
 
@@ -415,6 +424,25 @@ const WhatsappBot = () => {
                       <CustomTooltip title="Settings" arrow >
                         <IconButton onClick={() => console.log(`Edit bot ${bot.id}`)}>
                           <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
+                          {/* Dropdown Menu */}
+                          {dropdownItems && dropdownOpen && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="absolute left-10 top-full mt-1 w-40 bg-white shadow-lg rounded-md border border-slate-200 z-10"
+                            >
+                              {dropdownItems.map((item, index) => (
+                                <button
+                                  key={index}
+                                  onClick={() => console.log(`Clicked ${item}`)}
+                                  className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100"
+                                >
+                                  {item}
+                                </button>
+                              ))}
+                            </motion.div>
+                          )}
                         </IconButton>
                       </CustomTooltip>
                       <CustomTooltip title="Delete Bot" arrow >
