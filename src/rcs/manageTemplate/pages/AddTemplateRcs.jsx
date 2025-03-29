@@ -300,7 +300,7 @@ const AddTemplateRcs = () => {
             />
           </div>
         </div>
-        <div className="w-full p-2 pt-2 -mt-20">
+        <div className="w-full p-2 pt-2 -mt-00">
           <Preview
             btnData={btnData}
             variables={variables}
