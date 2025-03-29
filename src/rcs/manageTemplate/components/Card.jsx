@@ -48,19 +48,18 @@ export const Card = ({
 
   const handleFileChange = (e) => {
     const file = event.target.files[0];
-    setCustomFilePath(file);
-    console.log(file);
+    setCardData({ ...cardData, filePath: file });
   };
 
   const uploadFile = () => {
-    if (!customFilePath) return toast.error("Please select a file.");
+    if (!cardData.filePath) return toast.error("Please select a file.");
     if (cardData.file) return toast.error("File already uploaded.");
-    setCardData({ ...cardData, file: URL.createObjectURL(customFilePath) });
+    setCardData({ ...cardData, file: URL.createObjectURL(cardData.filePath) });
   };
 
   const deleteFileUpload = () => {
     setCustomFilePath(null);
-    setCardData({ ...cardData, file: "" });
+    setCardData({ ...cardData, file: "", filePath: "" });
   };
 
   return (
@@ -168,10 +167,10 @@ export const Card = ({
             </div>
           </div>
           <div className="mt-3">
-            {customFilePath ? (
+            {cardData?.filePath ? (
               <div className="flex items-center justify-center gap-1 file-upload-info">
                 <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                  File Selected: <strong>{customFilePath.name}</strong>
+                  File Selected: <strong>{cardData?.filePath.name}</strong>
                 </p>
                 <button
                   className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
