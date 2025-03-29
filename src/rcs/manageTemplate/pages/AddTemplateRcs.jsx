@@ -177,6 +177,17 @@ const AddTemplateRcs = () => {
 
     console.log("Api Requested Data", data);
 
+    setTimeout(() => {
+      toast.success("Template added successfully");
+      setInputData({ agentId: "", templateName: "", templateType: "" });
+      setMessageContent("");
+      setVariables([]);
+      setBtnData([]);
+      setCardData({ title: "", mediaHeight: "", file: "" });
+      setCardOrientation("horizontal");
+      setCardwidth("small");
+    }, 1000);
+
     // Continue with API request or further processing
   };
 
