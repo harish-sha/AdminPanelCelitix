@@ -55,6 +55,14 @@ const AddTemplateRcs = () => {
     },
   ];
 
+  function handleTemplateTypeChange(value) {
+    setInputData({ ...inputData, templateType: value });
+    setMessageContent("");
+    setVariables([]);
+    setBtnData([]);
+    setCardData({ title: "", mediaHeight: "", file: "" });
+  }
+
   const handleSubmit = async () => {
     const suggestions = {
       website: [],
@@ -132,6 +140,29 @@ const AddTemplateRcs = () => {
 
     if (hasError) return;
 
+    if (inputData.templateType === "rich_card") {
+      Object.keys(cardData).forEach((key) => {
+        if (!cardData[key]) {
+          return toast.error(`Please fill the ${key}`);
+        }
+      });
+
+      if (!cardOrientation) {
+        return toast.error("Please select card orientation");
+      }
+    }
+    if (inputData.templateType === "carousel") {
+      Object.keys(cardData).forEach((key) => {
+        if (!cardData[key]) {
+          return toast.error(`Please fill the ${key}`);
+        }
+      });
+
+      if (!cardwidth) {
+        return toast.error("Please select card width");
+      }
+    }
+
     const data = {
       ...inputData,
       ...suggestions,
@@ -147,13 +178,6 @@ const AddTemplateRcs = () => {
 
     // Continue with API request or further processing
   };
-
-  function handleTemplateTypeChange(value) {
-    setInputData({ ...inputData, templateType: value });
-    setMessageContent("");
-    setVariables([]);
-    setBtnData([]);
-  }
 
   return (
     <div className="w-full">
@@ -262,6 +286,9 @@ const AddTemplateRcs = () => {
             btnData={btnData}
             variables={variables}
             messageContent={messageContent}
+            cardData={cardData}
+            cardwidth={cardwidth}
+            cardOrientation={cardOrientation}
           />
         </div>
       </div>
