@@ -24,6 +24,7 @@ const AddTemplateRcs = () => {
     title: "",
     mediaHeight: "",
     file: "",
+    filePath: "",
   });
 
   //for rich card
