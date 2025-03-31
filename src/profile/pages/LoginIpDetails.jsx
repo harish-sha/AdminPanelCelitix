@@ -14,7 +14,9 @@ const LoginIpDetails = () => {
   }, []);
   return (
     <>
-      <h1 className='text-xl font-semibold text-gray-700 mb-3' >Login Ip Details</h1>
+      <h1 className="mb-3 text-xl font-semibold text-gray-700">
+        Login Ip Details
+      </h1>
       <div className="w-full">
         <ManageIpDetailsTable
           id="whatsAppSummaryReport"

@@ -148,7 +148,10 @@ const AddTemplateRcs = () => {
       }
     });
 
-    if (!messageContent) {
+    if (
+      inputData.templateType === ("text_message" || "rich_card") &&
+      !messageContent
+    ) {
       return toast.error("Please fill the message content");
     }
 
@@ -166,14 +169,17 @@ const AddTemplateRcs = () => {
       }
     }
     if (inputData.templateType === "carousel") {
-      Object.keys(cardData).forEach((key) => {
-        if (!cardData[key]) {
-          return toast.error(`Please fill the ${key}`);
-        }
-      });
+      // Object.keys(cardData).forEach((key) => {
+      //   if (!cardData[key]) {
+      //     return toast.error(`Please fill the ${key}`);
+      //   }
+      // });
 
       if (!cardwidth) {
         return toast.error("Please select card width");
+      }
+      if (!cardheight) {
+        return toast.error("Please select card height");
       }
     }
 
@@ -188,6 +194,8 @@ const AddTemplateRcs = () => {
     console.log(cardwidth, "cardwidth");
     console.log(cardOrientation, "cardor");
 
+    // console.log("Car Data", caraousalData);
+
     console.log("Api Requested Data", data);
 
     setTimeout(() => {
@@ -199,6 +207,8 @@ const AddTemplateRcs = () => {
       setCardData({ title: "", mediaHeight: "", file: "" });
       setCardOrientation("horizontal");
       setCardwidth("small");
+      setCardheight("small");
+      setCaraousalData([]);
     }, 1000);
 
     // Continue with API request or further processing
