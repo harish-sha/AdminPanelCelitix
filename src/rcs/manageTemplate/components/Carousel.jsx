@@ -6,6 +6,8 @@ import { SuggestedActions } from "./SuggestedActions";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { IconButton } from "@mui/material";
+import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
+import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 
 export const Carousel = ({
   caraousalData,
@@ -73,6 +75,18 @@ export const Carousel = ({
     }
   }
 
+  function handlePreviousIndex() {
+    if (selectedCardIndex === 0) return;
+    setSelectedCardIndex((prev) => prev - 1);
+  }
+
+  function handleNextIndex() {
+    console.log(selectedCardIndex);
+    console.log(caraousalData.length);
+    if (selectedCardIndex === caraousalData.length) return;
+    setSelectedCardIndex((prev) => prev + 1);
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <button
@@ -85,6 +99,22 @@ export const Carousel = ({
       >
         Add Card
       </button>
+      <div className="flex justify-end">
+        <div>
+          <button onClick={handlePreviousIndex}>
+            <KeyboardArrowLeftOutlinedIcon
+              className="text-black cursor-pointer"
+              size={50}
+            />
+          </button>
+          <button onClick={handleNextIndex}>
+            <NavigateNextOutlinedIcon
+              className="text-black cursor-pointer"
+              size={100}
+            />
+          </button>
+        </div>
+      </div>
       <div className="flex justify-end">
         {selectedCardIndex > 0 && (
           <IconButton
@@ -102,7 +132,7 @@ export const Carousel = ({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AnimatedDropdown
           id={"selectCardWidth"}
-          label={`Select Card Width ${selectedCardIndex + 1}`}
+          label={`Select Card ${selectedCardIndex + 1} Width`}
           name={"selectCardWidth"}
           options={[
             {
@@ -122,7 +152,7 @@ export const Carousel = ({
         />
         <AnimatedDropdown
           id={"selectCardHeight"}
-          label={`Select Card Height ${selectedCardIndex + 1}`}
+          label={`Select Card ${selectedCardIndex + 1} Height`}
           name={"selectCardHeight"}
           options={[
             {
@@ -153,9 +183,9 @@ export const Carousel = ({
         setBtnData={setBtnData}
         btnData={btnData}
       />
-      {/* 
+
       {JSON.stringify(caraousalData, null, 2)}
-      {JSON.stringify(cardwidth, null, 2)} */}
+      {/* {JSON.stringify(cardwidth, null, 2)} */}
     </div>
   );
 };
