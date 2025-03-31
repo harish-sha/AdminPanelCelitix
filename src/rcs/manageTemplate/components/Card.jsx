@@ -11,8 +11,6 @@ export const Card = ({
   setCardData,
   cardOrientation,
   setCardOrientation,
-  cardwidth,
-  setCardwidth,
 }) => {
   const [customFilePath, setCustomFilePath] = useState(null);
 
@@ -73,45 +71,25 @@ export const Card = ({
           value={cardData.title}
           onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
         />
-        {type === "rich_card" ? (
-          <AnimatedDropdown
-            id={"selectCardOrientation"}
-            label="Select Orientation"
-            name={"selectCardOrientation"}
-            options={[
-              {
-                label: "Vertical",
-                value: "vertical",
-              },
-              {
-                label: "Horizontal",
-                value: "horizontal",
-              },
-            ]}
-            placeholder="Select Card Orientation"
-            value={cardOrientation}
-            onChange={(e) => setCardOrientation(e)}
-          />
-        ) : (
-          <AnimatedDropdown
-            id={"selectCardWidth"}
-            label="Select Card Width"
-            name={"selectCardWidth"}
-            options={[
-              {
-                label: "Small",
-                value: "small",
-              },
-              {
-                label: "Medium",
-                value: "medium",
-              },
-            ]}
-            placeholder="Select Card Width"
-            value={cardwidth}
-            onChange={(e) => setCardwidth(e)}
-          />
-        )}
+        <AnimatedDropdown
+          id={"selectCardOrientation"}
+          label="Select Orientation"
+          name={"selectCardOrientation"}
+          options={[
+            {
+              label: "Vertical",
+              value: "vertical",
+            },
+            {
+              label: "Horizontal",
+              value: "horizontal",
+            },
+          ]}
+          placeholder="Select Card Orientation"
+          value={cardOrientation}
+          onChange={(e) => setCardOrientation(e)}
+        />
+
         <AnimatedDropdown
           id={"selectMediaHeight"}
           label="Select Media Height"
