@@ -4,6 +4,8 @@ import { Variables } from "./Variables";
 import { useEffect, useState } from "react";
 import { SuggestedActions } from "./SuggestedActions";
 import toast from "react-hot-toast";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { IconButton } from "@mui/material";
 
 export const Carousel = ({
   caraousalData,
@@ -64,10 +66,17 @@ export const Carousel = ({
     setSelectedCardIndex((prev) => prev + 1);
   }
 
+  function handleDeleteCard(index) {
+    if (caraousalData.length > 1) {
+      setCaraousalData(caraousalData.filter((_, i) => i !== index));
+      setSelectedCardIndex((prev) => prev - 1);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <button
-        className="border border-gray-400 rounded-sm h-8.5 text-sm bg-gray-200 px-2"
+        className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] disabled:opacity-50 disabled:cursor-not-allowed mt-5"
         onClick={() => {
           setCaraousalData([...caraousalData, {}]);
           handleSelectedCardIndex();
@@ -76,6 +85,19 @@ export const Carousel = ({
       >
         Add Card
       </button>
+      <div className="flex justify-end">
+        {selectedCardIndex > 0 && (
+          <IconButton
+            className="no-xs"
+            onClick={() => handleDeleteCard(selectedCardIndex)}
+          >
+            <MdOutlineDeleteForever
+              className="text-red-500 cursor-pointer hover:text-red-600"
+              size={20}
+            />
+          </IconButton>
+        )}
+      </div>
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <AnimatedDropdown
