@@ -17,6 +17,10 @@ export const Carousel = ({
   cardheight,
   setCardheight,
   btnOptions,
+  selectedCardIndex,
+  setSelectedCardIndex,
+  handlePreviousIndex,
+  handleNextIndex,
 }) => {
   //cardTitle
   //cardDescription
@@ -26,8 +30,7 @@ export const Carousel = ({
   const [variables, setVariables] = useState([]);
   const [messageContent, setMessageContent] = useState("");
   const [btnData, setBtnData] = useState([]);
-  const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-
+  // const [selectedCardIndex, setSelectedCardIndex] = useState(0);
 
   useEffect(() => {
     if (caraousalData.length == 0) {
@@ -56,16 +59,6 @@ export const Carousel = ({
       setCaraousalData(caraousalData.filter((_, i) => i !== index));
       setSelectedCardIndex((prev) => prev - 1);
     }
-  }
-
-  function handlePreviousIndex() {
-    if (selectedCardIndex === 0) return;
-    setSelectedCardIndex((prev) => prev - 1);
-  }
-
-  function handleNextIndex() {
-    if (selectedCardIndex + 1 === caraousalData.length) return;
-    setSelectedCardIndex((prev) => prev + 1);
   }
 
   function handleAddCard() {

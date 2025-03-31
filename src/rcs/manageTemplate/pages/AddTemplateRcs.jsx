@@ -34,6 +34,17 @@ const AddTemplateRcs = () => {
   const [cardwidth, setCardwidth] = useState("small");
   const [cardheight, setCardheight] = useState("small");
   const [caraousalData, setCaraousalData] = useState([]);
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  function handlePreviousIndex() {
+    if (selectedIndex === 0) return;
+    setSelectedIndex((prev) => prev - 1);
+  }
+
+  function handleNextIndex() {
+    if (selectedIndex + 1 === caraousalData.length) return;
+    setSelectedIndex((prev) => prev + 1);
+  }
 
   const btnOptions = [
     {
@@ -303,6 +314,10 @@ const AddTemplateRcs = () => {
               cardheight={cardheight}
               setCardheight={setCardheight}
               btnOptions={btnOptions}
+              setSelectedCardIndex={setSelectedIndex}
+              selectedCardIndex={selectedIndex}
+              handleNextIndex={handleNextIndex}
+              handlePreviousIndex={handlePreviousIndex}
             />
           )}
           <div className="mt-3 place-items-center">
