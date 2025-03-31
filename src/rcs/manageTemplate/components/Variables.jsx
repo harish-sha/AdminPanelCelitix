@@ -28,7 +28,7 @@ export const Variables = ({
     if (messageContent.length + variableTag.length > MAX_LENGTH) return;
 
     setVariablesData((prev) => [...prev, newVariable]);
-    setMessageContent((prev) => prev + variableTag);
+    setMessageContent(messageContent + variableTag);
   }, [messageContent, variablesData, setMessageContent, MAX_LENGTH]);
 
   const handleVariableChange = useCallback((id, value) => {
