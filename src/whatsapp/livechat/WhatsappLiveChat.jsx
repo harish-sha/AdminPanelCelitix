@@ -643,7 +643,6 @@ export default function WhatsappLiveChat() {
                     </svg>
                   </button>
 
-                  {/* Dropdown content */}
                   {dropdownOpen && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}

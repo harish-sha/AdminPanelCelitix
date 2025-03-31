@@ -478,7 +478,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 17,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -487,7 +487,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 18,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -496,7 +496,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 19,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -505,7 +505,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 20,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -514,7 +514,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 21,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -523,7 +523,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 22,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -532,7 +532,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 23,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -541,7 +541,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 24,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -550,7 +550,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 25,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -559,7 +559,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 26,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -568,7 +568,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 27,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -577,7 +577,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 28,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -586,7 +586,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 29,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -595,7 +595,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 30,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -604,7 +604,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 31,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -613,7 +613,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 32,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -622,7 +622,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 33,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -631,7 +631,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 34,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -640,7 +640,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 35,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -649,7 +649,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 36,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -658,7 +658,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 37,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -667,7 +667,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 38,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -676,7 +676,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 39,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -685,7 +685,7 @@ const ManageTemplate = () => {
       button: { type: "cta", text: "Track Order", link: "#" },
     },
     {
-      id: 16,
+      id: 40,
       name: "Order Confirmation",
       category: "marketing",
       industry: "ecommerce",
@@ -1146,6 +1146,7 @@ const ManageTemplate = () => {
                     id="whatsappManageTemplateTable"
                     name="whatsappManageTemplateTable"
                     wabaNumber={selectedWaba}
+                    wabaSrno={wabaList.find((waba) => waba.mobileNo === selectedWaba)?.wabaSrno} // Pass wabaSrno
                     wabaList={wabaList}
                     data={filteredData}
                   />

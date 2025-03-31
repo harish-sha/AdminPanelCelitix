@@ -266,3 +266,12 @@ export const refreshWhatsApp = async (srno) => {
     }
   );
 };
+
+export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapptemplate/deleteWabaTemplate?templateSrno=${tempsrno}&wabaSrno=${wabaNo}templateName=${tempName}`,
+    {
+      method: "POST",
+    }
+  );
+};

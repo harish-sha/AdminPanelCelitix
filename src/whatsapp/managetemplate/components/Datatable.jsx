@@ -15,6 +15,8 @@ import { format } from 'timeago.js'
 import toast from 'react-hot-toast';
 import { Dialog } from 'primereact/dialog';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
@@ -22,9 +24,10 @@ import TerminalOutlinedIcon from '@mui/icons-material/TerminalOutlined';
 
 
 
-import { getWabaTemplate, getWabaTemplateDetails } from '../../../apis/whatsapp/whatsapp.js';
+import { deleteWabaTemplate, getWabaTemplate, getWabaTemplateDetails } from '../../../apis/whatsapp/whatsapp.js';
 import whatsappImg from '../../../assets/images/whatsappdummy.webp';
 import CustomTooltip from '../../components/CustomTooltip.jsx';
+import UniversalButton from '@/whatsapp/components/UniversalButton.jsx';
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -76,12 +79,15 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
     );
 };
 
-const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
+const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [templateData, setTemplateData] = useState([]);
     const [selectedRow, setSelectedRow] = useState(null);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
     const [dialogVisible, setDialogVisible] = useState(false);
+    const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
+    const [selectedTemplate, setSelectedTemplate] = useState("");
+
 
     // State to track toggle status for each row
     const [toggleStates, setToggleStates] = useState({});
@@ -152,18 +158,44 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
         // Implement duplicate logic here
     };
 
-    const handleDelete = (row) => {
-        // Implement delete logic here
-    };
+
 
     const handleApi = (row) => {
     }
 
-    // const handleDelete = (event, row) => {
-    //     setCurrentRow(row);
-    //     setAnchorEl(event.currentTarget);
-    //     setVisible(true);
-    // };
+    const handleOpenDeleteDialog = (row) => {
+        // setSelectedAgentId(id);
+        setSelectedTemplate(row);
+        setDeleteDialogVisible(true);
+        console.log("Selected Template:", row);
+    };
+
+    const handleDeleteTemplate = async () => {
+        if (!selectedTemplate || !wabaSrno) {
+            toast.error("Template or WABA account is missing.");
+            return;
+        }
+
+        const { id: templateSrno, templateName } = selectedTemplate;
+
+        try {
+            const response = await deleteWabaTemplate(templateSrno, wabaSrno, templateName);
+
+            if (response.ok) {
+                toast.success(`Template "${templateName}" deleted successfully.`);
+                setTemplateData((prevData) =>
+                    prevData.filter((template) => template.templateSrno !== templateSrno)
+                );
+                setDeleteDialogVisible(false); // Close the dialog
+            } else {
+                toast.error("Failed to delete the template.");
+            }
+        } catch (error) {
+            toast.error("Error deleting the template.");
+            console.error("Error:", error);
+        }
+    };
+
 
     // const acceptDelete = () => {
     //     toast.success(`Template "${currentRow.templateName}" deleted successfully.`);
@@ -294,7 +326,7 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                         placement="top"
                         arrow
                     >
-                        <IconButton onClick={(event) => handleDelete(event, params.row)}>
+                        <IconButton onClick={(event) => handleOpenDeleteDialog(params.row)}>
                             <DeleteForeverIcon
                                 sx={{
                                     fontSize: '1.2rem',
@@ -631,6 +663,53 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
                 accept={acceptDelete}
                 reject={rejectDelete}
             /> */}
+
+            {/* Delete Template Start */}
+            <Dialog
+                header="Confirm Deletion"
+                visible={deleteDialogVisible}
+                onHide={() => setDeleteDialogVisible(false)}
+                className="w-[30rem]"
+                draggable={false}
+            >
+                <div className="flex items-center justify-center">
+                    <CancelOutlinedIcon
+                        sx={{
+                            fontSize: 64,
+                            color: "#ff3f3f",
+                        }}
+                    />
+                </div>
+                <div className="p-4 text-center">
+                    <p className="text-[1.1rem] text-gray-700 font-semibold">
+                        Are you sure you want to delete the Template <br />
+                        <span className="text-green-500">"{selectedTemplate?.template_name}"</span>
+                    </p>
+                    <p className="mt-2 text-sm text-gray-500">
+                        This action is irreversible.
+                    </p>
+                </div>
+
+                <div className="flex justify-center gap-4 mt-2">
+                    <UniversalButton
+                        label="Cancel"
+                        style={{
+                            backgroundColor: "#090909",
+                        }}
+                        onClick={() => setDeleteDialogVisible(false)}
+                    />
+                    <UniversalButton
+                        label="Delete"
+                        style={
+                            {
+                                // backgroundColor: "red",
+                            }
+                        }
+                        onClick={handleDeleteTemplate}
+                    />
+                </div>
+            </Dialog>
+            {/* Delete Template End */}
 
 
         </>

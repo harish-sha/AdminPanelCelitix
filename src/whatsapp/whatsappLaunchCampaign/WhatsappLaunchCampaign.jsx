@@ -149,10 +149,10 @@ const WhatsappLaunchCampaign = () => {
     );
 
 
-    if (varLength !== Object.keys(filterObj).length) {
-      toast.error("Please enter a all variable values!");
-      return;
-    }
+    // if (varLength !== Object.keys(filterObj).length) {
+    //   toast.error("Please enter a all variable values!");
+    //   return;
+    // }
 
     if (isCountryCodeChecked) {
       if (!selectedCountryCode || selectedCountryCode === "no") {
@@ -276,6 +276,8 @@ const WhatsappLaunchCampaign = () => {
       scheduleDateTime: schedule && scheduledDateTime ? scheduledDateTime : "0",
       groupValues,
     };
+
+    console.log("Request Data:", requestData);
 
     // ✅ Send API request
     try {
