@@ -284,6 +284,16 @@ const AddTemplateRcs = () => {
               setCardOrientation={setCardOrientation}
             />
           )}
+          {inputData.templateType != "carousel" && (
+            <div className="mt-3 mb-3">
+              <p className="mb-2">Suggested Actions</p>
+              <SuggestedActions
+                btnOptions={btnOptions}
+                setBtnData={setBtnData}
+                btnData={btnData}
+              />
+            </div>
+          )}
           {inputData.templateType === "carousel" && (
             <Carousel
               caraousalData={caraousalData}
@@ -294,14 +304,6 @@ const AddTemplateRcs = () => {
               setCardheight={setCardheight}
             />
           )}
-          <div className="mb-3">
-            <p className="mb-2">Suggested Actions</p>
-            <SuggestedActions
-              btnOptions={btnOptions}
-              setBtnData={setBtnData}
-              btnData={btnData}
-            />
-          </div>
           <div className="mt-3 place-items-center">
             <UniversalButton
               id="saveTemplate"
