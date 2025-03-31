@@ -14,7 +14,7 @@ const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
     agentId: "",
     templateName: "",
-    templateType: "",
+    templateType: "text_message",
   });
   const [btnData, setBtnData] = useState([]);
   const [variables, setVariables] = useState([]);
@@ -263,38 +263,36 @@ const AddTemplateRcs = () => {
       </div>
 
       <div className="flex flex-col justify-between gap-5 sm:flex-row lg:flex-row">
-        <div className="w-full p-2 ">
-          <div className="mb-3">
-            <h1>Text Template</h1>
-            <Variables
-              variables={variables}
-              setVariables={setVariables}
-              messageContent={messageContent}
-              setMessageContent={setMessageContent}
-            />
-          </div>
-          {inputData.templateType === "rich_card" && (
-            <div className="mb-5">
-              <Card
-                type={inputData.templateType}
-                cardData={cardData}
-                setCardData={setCardData}
-                cardOrientation={cardOrientation}
-                setCardOrientation={setCardOrientation}
+        <div className="w-full p-2">
+          <h1>Text Template</h1>
+          {inputData.templateType !== "carousel" && (
+            <div className="mb-3">
+              <Variables
+                variables={variables}
+                setVariables={setVariables}
+                messageContent={messageContent}
+                setMessageContent={setMessageContent}
               />
             </div>
           )}
+          {inputData.templateType === "rich_card" && (
+            <Card
+              type={inputData.templateType}
+              cardData={cardData}
+              setCardData={setCardData}
+              cardOrientation={cardOrientation}
+              setCardOrientation={setCardOrientation}
+            />
+          )}
           {inputData.templateType === "carousel" && (
-            <div className="mb-5">
-              <Carousel
-                caraousalData={caraousalData}
-                setCaraousalData={setCaraousalData}
-                cardwidth={cardwidth}
-                setCardwidth={setCardwidth}
-                cardheight={cardheight}
-                setCardheight={setCardheight}
-              />
-            </div>
+            <Carousel
+              caraousalData={caraousalData}
+              setCaraousalData={setCaraousalData}
+              cardwidth={cardwidth}
+              setCardwidth={setCardwidth}
+              cardheight={cardheight}
+              setCardheight={setCardheight}
+            />
           )}
           <div className="mb-3">
             <p className="mb-2">Suggested Actions</p>
@@ -307,13 +305,13 @@ const AddTemplateRcs = () => {
           <div className="mt-3 place-items-center">
             <UniversalButton
               id="saveTemplate"
-              name={"saveTemplate"}
+              name="saveTemplate"
               label="Submit"
               onClick={handleSubmit}
             />
           </div>
         </div>
-        <div className="w-full p-2 pt-2 -mt-00">
+        <div className="w-full p-2 pt-2">
           <Preview
             btnData={btnData}
             variables={variables}
@@ -324,6 +322,7 @@ const AddTemplateRcs = () => {
           />
         </div>
       </div>
+
       {/* <div className="mt-3 place-items-center">
         <UniversalButton
           id="saveTemplate"
