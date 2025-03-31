@@ -28,10 +28,6 @@ export const Carousel = ({
   const [btnData, setBtnData] = useState([]);
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
 
-  // useEffect(() => {
-  //   console.log("Var", variables);
-  //   console.log("Message", messageContent);
-  // }, [messageContent, variables]);
 
   useEffect(() => {
     if (caraousalData.length == 0) {
@@ -45,26 +41,13 @@ export const Carousel = ({
       ]);
     }
   }, [caraousalData]);
-  // useEffect(() => {
-  //   // if (caraousalData.length > 0) {
-  //   //   setCaraousalData([
-  //   //     {
-  //   //       cardTitle: "Sample Card1 Title",
-  //   //       cardDescription: "Sample Card1 Description",
-  //   //       fileName: "C://Users//hp//Desktop//New folder//1.jpeg",
-  //   //       suggestions: [],
-  //   //     },
-  //   //   ]);
-  //   // }
-  //   console.log(caraousalData);
-  // }, [caraousalData]);
 
   function handleSelectedCardIndex() {
     if (selectedCardIndex === 9) {
       toast.error("You cannot add more than 10 cards.");
       return;
     }
-    console.log(selectedCardIndex + 1);
+    setCaraousalData([...caraousalData, {}]);
     setSelectedCardIndex((prev) => prev + 1);
   }
 
@@ -81,20 +64,20 @@ export const Carousel = ({
   }
 
   function handleNextIndex() {
-    console.log(selectedCardIndex);
-    console.log(caraousalData.length);
-    if (selectedCardIndex === caraousalData.length) return;
+    if (selectedCardIndex + 1 === caraousalData.length) return;
     setSelectedCardIndex((prev) => prev + 1);
+  }
+
+  function handleAddCard() {
+    setCaraousalData([...caraousalData, {}]);
+    handleSelectedCardIndex();
   }
 
   return (
     <div className="flex flex-col gap-2">
       <button
         className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] disabled:opacity-50 disabled:cursor-not-allowed mt-5"
-        onClick={() => {
-          setCaraousalData([...caraousalData, {}]);
-          handleSelectedCardIndex();
-        }}
+        onClick={handleSelectedCardIndex}
         type="button"
       >
         Add Card
