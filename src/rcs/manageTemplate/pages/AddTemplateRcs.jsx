@@ -32,6 +32,7 @@ const AddTemplateRcs = () => {
 
   //caraousel
   const [cardwidth, setCardwidth] = useState("small");
+  const [cardheight, setCardheight] = useState("small");
   const [caraousalData, setCaraousalData] = useState([]);
 
   const btnOptions = [
@@ -280,16 +281,18 @@ const AddTemplateRcs = () => {
                 setCardData={setCardData}
                 cardOrientation={cardOrientation}
                 setCardOrientation={setCardOrientation}
-                cardwidth={cardwidth}
-                setCardwidth={setCardwidth}
               />
             </div>
           )}
           {inputData.templateType === "carousel" && (
             <div className="mb-5">
               <Carousel
-              caraousalData={caraousalData}
-              setCaraousalData={setCaraousalData}
+                caraousalData={caraousalData}
+                setCaraousalData={setCaraousalData}
+                cardwidth={cardwidth}
+                setCardwidth={setCardwidth}
+                cardheight={cardheight}
+                setCardheight={setCardheight}
               />
             </div>
           )}
