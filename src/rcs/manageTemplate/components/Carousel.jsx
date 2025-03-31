@@ -2,6 +2,7 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import { Variables } from "./Variables";
 import { useEffect, useState } from "react";
+import { SuggestedActions } from "./SuggestedActions";
 
 export const Carousel = ({
   caraousalData,
@@ -10,6 +11,7 @@ export const Carousel = ({
   setCardwidth,
   cardheight,
   setCardheight,
+  btnOptions,
 }) => {
   //cardTitle
   //cardDescription
@@ -18,6 +20,7 @@ export const Carousel = ({
 
   const [variables, setVariables] = useState([]);
   const [messageContent, setMessageContent] = useState("");
+  const [btnData, setBtnData] = useState([]);
 
   // useEffect(() => {
   //   console.log("Var", variables);
@@ -72,6 +75,12 @@ export const Carousel = ({
         setVariables={setVariables}
         messageContent={messageContent}
         setMessageContent={setMessageContent}
+      />
+
+      <SuggestedActions
+        btnOptions={btnOptions}
+        setBtnData={setBtnData}
+        btnData={btnData}
       />
     </div>
   );
