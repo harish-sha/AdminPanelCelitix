@@ -8,6 +8,7 @@ import { SuggestedActions } from "../components/SuggestedActions";
 import toast from "react-hot-toast";
 import { Preview } from "../components/Preview";
 import { Card } from "../components/Card";
+import { Carousel } from "../components/Carousel";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -31,6 +32,7 @@ const AddTemplateRcs = () => {
 
   //caraousel
   const [cardwidth, setCardwidth] = useState("small");
+  const [caraousalData, setCaraousalData] = useState([]);
 
   const btnOptions = [
     {
@@ -270,7 +272,7 @@ const AddTemplateRcs = () => {
               setMessageContent={setMessageContent}
             />
           </div>
-          {["rich_card", "carousel"].includes(inputData.templateType) && (
+          {inputData.templateType === "rich_card" && (
             <div className="mb-5">
               <Card
                 type={inputData.templateType}
@@ -280,6 +282,14 @@ const AddTemplateRcs = () => {
                 setCardOrientation={setCardOrientation}
                 cardwidth={cardwidth}
                 setCardwidth={setCardwidth}
+              />
+            </div>
+          )}
+          {inputData.templateType === "carousel" && (
+            <div className="mb-5">
+              <Carousel
+              caraousalData={caraousalData}
+              setCaraousalData={setCaraousalData}
               />
             </div>
           )}
