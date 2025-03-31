@@ -302,6 +302,7 @@ const AddTemplateRcs = () => {
               setCardwidth={setCardwidth}
               cardheight={cardheight}
               setCardheight={setCardheight}
+              btnOptions={btnOptions}
             />
           )}
           <div className="mt-3 place-items-center">
