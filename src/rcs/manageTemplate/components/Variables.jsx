@@ -207,6 +207,7 @@ export const Variables = ({
         onHide={() => {
           setIsVariableVisible(false);
         }}
+        draggable={false}
       >
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-center gap-2">
