@@ -135,22 +135,39 @@ export const Carousel = ({
     },
     [selectedCardIndex, setCaraousalData]
   );
+  const handleCardTitleChange = useCallback(
+    (e) => {
+      setCaraousalData((prev) =>
+        prev.map((item, index) =>
+          index === selectedCardIndex
+            ? { ...item, cardTitle: e.target.value }
+            : item
+        )
+      );
+    },
+    [selectedCardIndex, setCaraousalData]
+  );
 
   const currentCardSuggestions =
     caraousalData[selectedCardIndex]?.suggestions || "";
-
 
   const currentCardVariables = caraousalData[selectedCardIndex]?.variable || [];
 
   const currentCardMessage =
     caraousalData[selectedCardIndex]?.cardDescription || "";
 
+  const currentCardTitle = caraousalData[selectedCardIndex]?.cardTitle || "";
+
   useEffect(() => {
     setSelectedAction({
-      dropdown1: caraousalData[selectedCardIndex]?.suggestions?.dropdown1.type || "",
-      dropdown2: caraousalData[selectedCardIndex]?.suggestions?.dropdown2.type || "",
-      dropdown3: caraousalData[selectedCardIndex]?.suggestions?.dropdown3.type || "",
-      dropdown4: caraousalData[selectedCardIndex]?.suggestions?.dropdown4.type || "",
+      dropdown1:
+        caraousalData[selectedCardIndex]?.suggestions?.dropdown1.type || "",
+      dropdown2:
+        caraousalData[selectedCardIndex]?.suggestions?.dropdown2.type || "",
+      dropdown3:
+        caraousalData[selectedCardIndex]?.suggestions?.dropdown3.type || "",
+      dropdown4:
+        caraousalData[selectedCardIndex]?.suggestions?.dropdown4.type || "",
     });
 
     setInputData({
@@ -227,6 +244,11 @@ export const Carousel = ({
       )}
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+        <InputField
+          label={`Select Card ${selectedCardIndex + 1} Title`}
+          value={currentCardTitle}
+          onChange={handleCardTitleChange}
+        />
         <AnimatedDropdown
           id="selectCardWidth"
           label={`Select Card ${selectedCardIndex + 1} Width`}
