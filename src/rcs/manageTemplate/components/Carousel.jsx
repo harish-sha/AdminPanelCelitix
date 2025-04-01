@@ -9,6 +9,7 @@ import { IconButton } from "@mui/material";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 
 const INITIAL_DROPDOWN_STATE = {
   dropdown1: "",
@@ -168,12 +169,19 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
-  const handleUploadFile = useCallback(() => {
+  const handleUploadFile = useCallback(async () => {
+    let res;
+    try {
+      res = await uploadImageFile(
+        caraousalData[selectedCardIndex]?.fileTempPath
+      );
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong");
+    }
     setCaraousalData((prev) =>
       prev.map((item, index) =>
-        index === selectedCardIndex
-          ? { ...item, filePath: URL.createObjectURL(item.fileTempPath) }
-          : item
+        index === selectedCardIndex ? { ...item, filePath: res?.fileUrl } : item
       )
     );
     toast.success("File Uploaded Successfully");
