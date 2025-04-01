@@ -105,8 +105,6 @@ export const Preview = ({
     }
   };
 
-  console.log(templateType);
-
   return (
     <div className="smartphone">
       <div className="smartphone-content">
@@ -151,7 +149,7 @@ export const Preview = ({
         ) : (
           <>
             <Carousel
-              showThumbs={false}
+              showThumbs={true}
               showStatus={false}
               infiniteLoop
               useKeyboardArrows

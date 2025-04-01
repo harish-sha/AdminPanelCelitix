@@ -287,16 +287,16 @@ const AddTemplateRcs = () => {
     setTimeout(() => {
       toast.success("Template added successfully");
 
-      setInputData({ agentId: "", templateName: "", templateType: "" });
-      setMessageContent("");
-      setVariables([]);
-      setBtnData([]);
-      setCardData({ title: "", mediaHeight: "", file: "" });
-      setCardOrientation("horizontal");
-      setCardwidth("small");
-      setCardheight("small");
-      setCaraousalData([]);
-      setSelectedIndex(0);
+      // setInputData({ agentId: "", templateName: "", templateType: "" });
+      // setMessageContent("");
+      // setVariables([]);
+      // setBtnData([]);
+      // setCardData({ title: "", mediaHeight: "", file: "" });
+      // setCardOrientation("horizontal");
+      // setCardwidth("small");
+      // setCardheight("small");
+      // setCaraousalData([]);
+      // setSelectedIndex(0);
     }, 1000);
   };
 

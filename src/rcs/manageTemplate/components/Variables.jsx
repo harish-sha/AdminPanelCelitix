@@ -4,6 +4,12 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
 
+import { Dialog } from "primereact/dialog";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
+import UniversalButton from "@/components/common/UniversalButton";
+import InputField from "@/whatsapp/components/InputField";
+import { set } from "date-fns";
+
 export const Variables = ({
   variables = [],
   setVariables,
@@ -14,22 +20,30 @@ export const Variables = ({
   const MAX_LENGTH = 1024;
   const textBoxRef = useRef(null);
 
+  const [userVariables, setUserVariables] = useState([]);
+  const [variableInput, setVariableInput] = useState("");
+  const [isVariableVisible, setIsVariableVisible] = useState(false);
+  const [selectedVariable, setSelectedVariable] = useState("");
+
   const isLimitExceeded = useCallback(
     () => messageContent.length >= MAX_LENGTH,
     [messageContent]
   );
 
-  const addVariable = useCallback(() => {
+  const addVariable = () => {
     if (isLimitExceeded()) return;
 
-    const newVariable = { id: `${variablesData.length + 1}`, value: "" };
-    const variableTag = `[${newVariable.id}]`;
+    // const newVariable = { id: `${variablesData.length + 1}`, value: "" };
+    const variableTag = `{#${selectedVariable}#}`;
 
     if (messageContent.length + variableTag.length > MAX_LENGTH) return;
 
-    setVariablesData((prev) => [...prev, newVariable]);
+    setVariablesData((prev) => [...prev, selectedVariable]);
     setMessageContent(messageContent + variableTag);
-  }, [messageContent, variablesData, setMessageContent, MAX_LENGTH]);
+
+    setIsVariableVisible(false);
+    setSelectedVariable("");
+  };
 
   const handleVariableChange = useCallback((id, value) => {
     setVariablesData((prev) =>
@@ -48,8 +62,8 @@ export const Variables = ({
       let updatedTemplateFormat = messageContent;
       variablesData.forEach((variable, index) => {
         updatedTemplateFormat = updatedTemplateFormat.replace(
-          `[${variable.id}]`,
-          updatedVariables[index] ? `[${index + 1}]` : ""
+          `{#${variable.id}#}`,
+          updatedVariables[index] ? `{#${index + 1}#}` : ""
         );
       });
 
@@ -93,54 +107,30 @@ export const Variables = ({
     [messageContent, setMessageContent, MAX_LENGTH, isLimitExceeded]
   );
 
+  const handleAddVariable = () => {
+    console.log(variableInput);
+    const allVar = localStorage.getItem("variables");
+    setUserVariables([...userVariables, variableInput]);
+
+    const updatedvar = [...JSON.parse(allVar), variableInput];
+    localStorage.setItem("variables", JSON.stringify(updatedvar));
+  };
+
   useEffect(() => {
-    const varRegex = messageContent.match(/\[\d+\]/g) || [];
+    const matches = messageContent.match(/\{#(.*?)#\}/g) || [];
 
-    const currentVariableIds = new Set(
-      variablesData.map((variable) => `[${variable.id}]`)
-    );
-
-    const newVariables = varRegex
-      .filter((match) => !currentVariableIds.has(match))
-      .map((match) => ({ id: match.slice(1, -1), value: "" }));
-
-    const validVariables = variablesData.filter((variable) =>
-      varRegex.includes(`[${variable.id}]`)
-    );
-
-    const updatedVariables = [...validVariables, ...newVariables].map(
-      (variable, index) => ({
-        ...variable,
-        id: `${index + 1}`,
-      })
-    );
-
-    const updatedMessageContent = varRegex.reduce(
-      (content, match, index) => content.replace(match, `[${index + 1}]`),
-      messageContent
-    );
-
-    const sortedVariableNumbers = [
-      ...new Set(updatedMessageContent.match(/\[\d+\]/g)),
-    ]
-      .map((match) => parseInt(match.slice(1, -1)))
-      .sort((a, b) => a - b);
-
-    let count = 0;
-    const finalMessageContent = updatedMessageContent.replace(
-      /\[\d+\]/g,
-      () => {
-        return `[${sortedVariableNumbers[count++]}]`;
-      }
-    );
-
-    setVariablesData(updatedVariables);
-    setMessageContent(finalMessageContent);
+    const result = matches.map((match) => match.replace(/\{#|#\}/g, ""));
+    setVariablesData(result);
   }, [messageContent]);
 
   useEffect(() => {
     setVariables(variablesData);
   }, [variablesData, setVariables]);
+
+  useEffect(() => {
+    const allVar = localStorage.getItem("variables");
+    setUserVariables(JSON.parse(allVar));
+  }, []);
 
   return (
     <div className="mb-2 space-y-2">
@@ -166,7 +156,10 @@ export const Variables = ({
           {messageContent.length}/{MAX_LENGTH}
         </p>
         <button
-          onClick={addVariable}
+          // onClick={addVariable}
+          onClick={() => {
+            setIsVariableVisible(true);
+          }}
           disabled={isLimitExceeded()}
           className="bg-[#212529] text-white px-2 py-2 font-normal rounded-md text-sm hover:bg-[#434851] disabled:opacity-50 disabled:cursor-not-allowed"
         >
@@ -174,7 +167,7 @@ export const Variables = ({
         </button>
       </div>
 
-      <div className="h-auto overflow-scroll max-h-[150px]">
+      {/* <div className="h-auto overflow-scroll max-h-[150px]">
         {variablesData.map((variable, index) => (
           <div
             key={variable.id}
@@ -191,7 +184,7 @@ export const Variables = ({
               onChange={(e) =>
                 handleVariableChange(variable.id, e.target.value)
               }
-              placeholder={`Enter value for [${variable.id}]`}
+              placeholder={`Enter value for {#${variable.id}#}`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
             />
             <button
@@ -205,7 +198,42 @@ export const Variables = ({
             </button>
           </div>
         ))}
-      </div>
+      </div> */}
+
+      <Dialog
+        header="Select Variable"
+        visible={isVariableVisible}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          setIsVariableVisible(false);
+        }}
+      >
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center justify-center gap-2">
+            <InputField
+              label="Add New Variable"
+              value={variableInput}
+              onChange={(e) => setVariableInput(e.target.value)}
+              placeholder="Add Variable"
+            />
+            <div className="mt-7">
+              <UniversalButton label="Add" onClick={handleAddVariable} />
+            </div>
+          </div>
+          <AnimatedDropdown
+            label="Select Variables"
+            options={userVariables.map((variable) => ({
+              label: variable,
+              value: variable,
+            }))}
+            value={selectedVariable}
+            onChange={(e) => {
+              setSelectedVariable(e);
+            }}
+          />
+          <UniversalButton label="Select" onClick={addVariable} />
+        </div>
+      </Dialog>
     </div>
   );
 };
