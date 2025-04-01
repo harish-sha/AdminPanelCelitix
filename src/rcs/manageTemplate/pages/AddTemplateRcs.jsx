@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputField from "@/whatsapp/components/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalButton from "@/whatsapp/components/UniversalButton";
@@ -11,6 +11,7 @@ import { Card } from "../components/Card";
 import { Carousel } from "../components/Carousel";
 import { carousel } from "@material-tailwind/react";
 import { set } from "date-fns";
+import { fetchAllAgents } from "@/apis/rcs/rcs";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -37,6 +38,7 @@ const AddTemplateRcs = () => {
   const [cardheight, setCardheight] = useState("small");
   const [caraousalData, setCaraousalData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [allAgents, setAllAgents] = useState([]);
 
   const [selectedAction, setSelectedAction] = useState({
     dropdown1: "",
@@ -300,6 +302,14 @@ const AddTemplateRcs = () => {
     }, 1000);
   };
 
+  useEffect(() => {
+    async function handleFetchAllAgents() {
+      const res = await fetchAllAgents();
+      setAllAgents(res);
+    }
+    handleFetchAllAgents();
+  }, []);
+
   return (
     <div className="w-full">
       <div className="flex flex-wrap items-end w-full gap-2 mb-2">
@@ -308,12 +318,10 @@ const AddTemplateRcs = () => {
             label="Select Agent"
             id="selectAgent"
             name="selectAgent"
-            options={[
-              {
-                label: "Agent 1",
-                value: "Agent 1",
-              },
-            ]}
+            options={allAgents.map((item) => ({
+              label: item.agentName,
+              value: item.agentId,
+            }))}
             value={inputData.agentId}
             onChange={(newValue) => {
               setMessageContent("");
