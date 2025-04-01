@@ -3,36 +3,36 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import toast from "react-hot-toast";
 
-export const SuggestedActions = ({ btnOptions, setBtnData }) => {
-  const [selectedAction, setSelectedAction] = useState({
-    dropdown1: "",
-    dropdown2: "",
-    dropdown3: "",
-    dropdown4: "",
-  });
+export const SuggestedActions = ({ btnOptions, setBtnData, selectedAction, setSelectedAction, inputData, setInputData }) => {
+  // const [selectedAction, setSelectedAction] = useState({
+  //   dropdown1: "",
+  //   dropdown2: "",
+  //   dropdown3: "",
+  //   dropdown4: "",
+  // });
 
-  const [inputData, setInputData] = useState({
-    dropdown1: {
-      type: "",
-      title: "",
-      value: "",
-    },
-    dropdown2: {
-      type: "",
-      title: "",
-      value: "",
-    },
-    dropdown3: {
-      type: "",
-      title: "",
-      value: "",
-    },
-    dropdown4: {
-      type: "",
-      title: "",
-      value: "",
-    },
-  });
+  // const [inputData, setInputData] = useState({
+  //   dropdown1: {
+  //     type: "",
+  //     title: "",
+  //     value: "",
+  //   },
+  //   dropdown2: {
+  //     type: "",
+  //     title: "",
+  //     value: "",
+  //   },
+  //   dropdown3: {
+  //     type: "",
+  //     title: "",
+  //     value: "",
+  //   },
+  //   dropdown4: {
+  //     type: "",
+  //     title: "",
+  //     value: "",
+  //   },
+  // });
 
   const handleDropdownChange = (index, newValue) => {
     setSelectedAction((prev) => ({ ...prev, [index]: newValue }));
