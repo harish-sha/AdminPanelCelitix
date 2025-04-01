@@ -440,6 +440,8 @@ const AddTemplateRcs = () => {
             templateType={inputData.templateType}
             caraousalData={caraousalData}
             selectedIndex={selectedIndex}
+            handleNextIndex={handleNextIndex}
+            handlePreviousIndex={handlePreviousIndex}
           />
         </div>
       </div>

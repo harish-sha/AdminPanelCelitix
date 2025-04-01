@@ -3,6 +3,8 @@ import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { BsTelephoneFill } from "react-icons/bs";
 import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
 export const Preview = ({
   variables = [],
@@ -11,6 +13,11 @@ export const Preview = ({
   cardData,
   cardWidth,
   cardOrientation,
+  templateType,
+  caraousalData,
+  selectedIndex,
+  handleNextIndex,
+  handlePreviousIndex,
 }) => {
   const [pree, setPree] = useState();
 
@@ -47,6 +54,9 @@ export const Preview = ({
       cardData,
       cardWidth,
       cardOrientation,
+      templateType,
+      caraousalData,
+      selectedIndex,
     });
   }, [
     variables,
@@ -55,6 +65,9 @@ export const Preview = ({
     cardData,
     cardWidth,
     cardOrientation,
+    templateType,
+    caraousalData,
+    selectedIndex,
   ]);
 
   const getBtnStyle = (type) => {
@@ -91,46 +104,66 @@ export const Preview = ({
     }
   };
 
+  console.log(templateType);
+
   return (
     <div className="smartphone">
       <div className="smartphone-content">
-        <div className="mb-4">
-          <p>Template Preview</p>
-          {pree?.cardData?.title}
-        </div>
+        <p>Template Preview</p>
+        {templateType != "carousel" ? (
+          <>
+            <div className="mb-4">{pree?.cardData?.title}</div>
 
-        {pree?.cardData?.file && (
-          <div>
-            <embed src={pree?.cardData?.file} type="" className="w-full" />
-          </div>
-        )}
+            {pree?.cardData?.file && (
+              <div>
+                <embed src={pree?.cardData?.file} type="" className="w-full" />
+              </div>
+            )}
 
-        <div className="flex flex-col justify-between gap-4">
-          {pree?.messageContent && (
-            <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
-              <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
-                {pree?.messageContent}
-              </pre>
+            <div className="flex flex-col justify-between gap-4">
+              {pree?.messageContent && (
+                <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
+                  <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+                    {pree?.messageContent}
+                  </pre>
+                </div>
+              )}
+
+              {pree?.filteredBtnData?.length > 0 && (
+                <div className="flex flex-wrap gap-2 w-full max-w-[500px]">
+                  {pree?.filteredBtnData?.map((item, index) => (
+                    <button
+                      key={index}
+                      title={item.value}
+                      className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
+                        item.type
+                      )}`}
+                    >
+                      {getBtnIcon(item.type)}
+                      <p className="ml-2">{item.title}</p>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
-          )}
-
-          {pree?.filteredBtnData?.length > 0 && (
-            <div className="flex flex-wrap gap-2 w-full max-w-[500px]">
-              {pree?.filteredBtnData?.map((item, index) => (
-                <button
-                  key={index}
-                  title={item.value}
-                  className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
-                    item.type
-                  )}`}
-                >
-                  {getBtnIcon(item.type)}
-                  <p className="ml-2">{item.title}</p>
-                </button>
+          </>
+        ) : (
+          <>
+            <Carousel
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop
+              useKeyboardArrows
+              renderArrowPrev={() => null}
+              renderArrowNext={() => null}
+              selectedItem={pree?.selectedIndex}
+            >
+              {pree?.caraousalData.map((item, index) => (
+                <div key={index}>{item.cardTitle}</div>
               ))}
-            </div>
-          )}
-        </div>
+            </Carousel>
+          </>
+        )}
       </div>
     </div>
   );

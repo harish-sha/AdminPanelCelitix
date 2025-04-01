@@ -109,9 +109,9 @@ const CarouselTemplatePreview = ({
                 overflow: 'auto',
                 // zIndex: 50,
             }}
-            className='w-full p-3 border border-gray-400  rounded-md shadow-lg bg-gray-100 transition-all duration-300'
+            className='w-full p-3 transition-all duration-300 bg-gray-100 border border-gray-400 rounded-md shadow-lg'
         >
-            <div className='flex items-center justify-between bg-green-500 text-white px-4 py-2 rounded-t-md mb-3'>
+            <div className='flex items-center justify-between px-4 py-2 mb-3 text-white bg-green-500 rounded-t-md'>
                 <h2 className='text-lg font-semibold'>Cards Template Preview</h2>
                 <p className='text-sm'>
                     <WhatsApp />
@@ -119,7 +119,7 @@ const CarouselTemplatePreview = ({
             </div>
 
             {format && (
-                <div className='mb-3 bg-gray-200 border border-gray-200  px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full h-auto max-h-24 break-words'
+                <div className='w-full h-auto px-3 py-2 mb-3 overflow-auto text-sm text-gray-800 break-words bg-gray-200 border border-gray-200 rounded-md max-h-24'
                     id='carousel-format-preview' name='carousel-format-preview'
                 >
                     {renderWithVariables(format)}
@@ -172,10 +172,10 @@ const CarouselTemplatePreview = ({
                                     // src='https://dummyimage.com/500x500/cccccc/ffffff'
                                     src='https://picsum.photos/500/500'
                                     alt='Dummy Video'
-                                    className='w-full h-48 object-cover rounded-md'
+                                    className='object-cover w-full h-48 rounded-md'
                                 />
                                 <FaPlay
-                                    className='absolute inset-0 m-auto text-gray-800 bg-white rounded-full p-2'
+                                    className='absolute inset-0 p-2 m-auto text-gray-800 bg-white rounded-full'
                                     size={30}
                                 />
                             </div>
@@ -185,7 +185,7 @@ const CarouselTemplatePreview = ({
                                 name='carousel-media-image'
                                 src={card.mediaUrl}
                                 alt='Card Media'
-                                className='w-full h-48 object-cover rounded-md'
+                                className='object-cover w-full h-48 rounded-md'
                             />
                         ) : (
                             <img
@@ -194,11 +194,11 @@ const CarouselTemplatePreview = ({
                                 // src='https://dummyimage.com/500x500/cccccc/ffffff'
                                 src='https://picsum.photos/500/500'
                                 alt='Dummy Image'
-                                className='w-full h-48 object-cover rounded-md'
+                                className='object-cover w-full h-48 rounded-md'
                             />
                         )}
                         <div className='pt-2 '>
-                            <div className='mb-0  border-gray-200 bg-gray-100 px-2 py-2 text-justify align-middle rounded-md border-2 text-gray-800 text-sm overflow-auto w-full h-28 break-words'
+                            <div className='w-full px-2 py-2 mb-0 overflow-auto text-sm text-justify text-gray-800 break-words align-middle bg-gray-100 border-2 border-gray-200 rounded-md h-28'
                                 id='carousel-body-preview' name='carousel-body-preview'
                             >
                                 {card.body ||
@@ -209,7 +209,7 @@ const CarouselTemplatePreview = ({
                         {index !== 0 && (
                             <button>
                                 <MdOutlineDeleteForever
-                                    className='absolute top-2 right-2 text-red-500 cursor-pointer hover:text-red-700'
+                                    className='absolute text-red-500 cursor-pointer top-2 right-2 hover:text-red-700'
                                     size={23}
                                     onClick={() => onDeleteCard(index)}
                                 />
@@ -219,7 +219,7 @@ const CarouselTemplatePreview = ({
                 ))}
             </Carousel>
 
-            <div className=' mt-2 px-2 py-1 border-gray-200  text-xs text-gray-500 rounded-md h-16 overflow-auto break-words border-2 carouselfooterpreview'
+            <div className='h-16 px-2 py-1 mt-2 overflow-auto text-xs text-gray-500 break-words border-2 border-gray-200 rounded-md  carouselfooterpreview'
                 id='carousel-footer-preview' name='carousel-footer-preview'
             >
                 {footer || 'This is a dummy footer. You can change this content later.'}
@@ -243,7 +243,7 @@ const CarouselTemplatePreview = ({
                     {action.title}
                 </button>
             ))}
-            <div className='mt-4 flex justify-center relative'>
+            <div className='relative flex justify-center mt-4'>
                 <button
                     id='carousel-add-card'
                     name='carousel-add-card'
