@@ -94,16 +94,29 @@ export const Card = ({
           id={"selectMediaHeight"}
           label="Select Media Height"
           name={"selectMediaHeight"}
-          options={[
-            {
-              label: "Medium",
-              value: "medium",
-            },
-            {
-              label: "Short",
-              value: "short",
-            },
-          ]}
+          options={
+            cardOrientation === "vertical"
+              ? [
+                  {
+                    label: "Medium",
+                    value: "medium",
+                  },
+                  {
+                    label: "Short",
+                    value: "short",
+                  },
+                ]
+              : [
+                  {
+                    label: "Left",
+                    value: "left",
+                  },
+                  {
+                    label: "Right",
+                    value: "right",
+                  },
+                ]
+          }
           placeholder="Select Media Height"
           value={cardData.mediaHeight}
           onChange={(e) => setCardData({ ...cardData, mediaHeight: e })}
