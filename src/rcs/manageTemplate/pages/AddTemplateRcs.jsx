@@ -36,6 +36,36 @@ const AddTemplateRcs = () => {
   const [caraousalData, setCaraousalData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
+  const [selectedAction, setSelectedAction] = useState({
+    dropdown1: "",
+    dropdown2: "",
+    dropdown3: "",
+    dropdown4: "",
+  });
+
+  const [BtninputData, setBtnInputData] = useState({
+    dropdown1: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown2: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown3: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown4: {
+      type: "",
+      title: "",
+      value: "",
+    },
+  });
+
   function handlePreviousIndex() {
     if (selectedIndex === 0) return;
     setSelectedIndex((prev) => prev - 1);
@@ -312,6 +342,10 @@ const AddTemplateRcs = () => {
                 btnOptions={btnOptions}
                 setBtnData={setBtnData}
                 btnData={btnData}
+                inputData={BtninputData}
+                setInputData={setBtnInputData}
+                selectedAction={selectedAction}
+                setSelectedAction={setSelectedAction}
               />
             </div>
           )}
