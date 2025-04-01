@@ -293,7 +293,7 @@ export const Carousel = ({
         setSelectedAction={setSelectedAction}
       />
 
-      <pre className="text-xs">{JSON.stringify(caraousalData, null, 2)}</pre>
+      {/* <pre className="text-xs">{JSON.stringify(caraousalData, null, 2)}</pre> */}
     </div>
   );
 };

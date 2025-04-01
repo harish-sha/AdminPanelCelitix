@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Preview } from "../components/Preview";
 import { Card } from "../components/Card";
 import { Carousel } from "../components/Carousel";
+import { carousel } from "@material-tailwind/react";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -124,8 +125,9 @@ const AddTemplateRcs = () => {
     let hasError = false;
 
     Object.values(btnData).forEach(({ type, value, title }) => {
-      if (!type) return;
+      if (!type) return; // Skip if no type
 
+      // Handle missing values for different types
       if (
         (type !== "Share Location" && !value) ||
         (type === "Share Location" && !title)
@@ -135,6 +137,7 @@ const AddTemplateRcs = () => {
         return;
       }
 
+      // Handle actions based on type
       const actions = {
         "Url Action": () => {
           suggestions.website.push(value);
@@ -159,57 +162,111 @@ const AddTemplateRcs = () => {
         },
       };
 
-      actions[type]?.();
+      actions[type]?.(); // Execute the corresponding action
     });
 
-    if (
-      Object.keys(inputData).some(
-        (key) => !inputData[key] && toast.error(`Please fill the ${key}`)
-      )
-    ) {
-      return;
-    }
-
-    variables.map((item, index) => {
+    variables.forEach((item) => {
       if (item.id && !item.value) {
         toast.error(`Please fill the fields for variable [${item.id}]`);
         hasError = true;
-        return;
       }
     });
 
     if (
-      inputData.templateType === ("text_message" || "rich_card") &&
+      (inputData.templateType === "text_message" ||
+        inputData.templateType === "rich_card") &&
       !messageContent
     ) {
-      return toast.error("Please fill the message content");
+      toast.error("Please fill the message content");
+      return;
     }
 
     if (hasError) return;
 
     if (inputData.templateType === "rich_card") {
-      Object.keys(cardData).forEach((key) => {
+      for (const key in cardData) {
         if (!cardData[key]) {
-          return toast.error(`Please fill the ${key}`);
+          toast.error(`Please fill the ${key}`);
+          return;
         }
-      });
+      }
 
+      // Check for card orientation
       if (!cardOrientation) {
-        return toast.error("Please select card orientation");
+        toast.error("Please select card orientation");
+        return;
       }
     }
-    if (inputData.templateType === "carousel") {
-      // Object.keys(cardData).forEach((key) => {
-      //   if (!cardData[key]) {
-      //     return toast.error(`Please fill the ${key}`);
-      //   }
-      // });
 
+    if (inputData.templateType === "carousel") {
+      caraousalData.forEach((item, index) => {
+        const suggestion = {
+          website: [],
+          websitetitle: [],
+          mobile: [],
+          mobiletitle: [],
+          replybtn: [],
+          replybtntitle: [],
+          locationtitle: [],
+          addresstitle: [],
+          addressLatitude: [],
+          addressLongitude: [],
+        };
+
+        Object.values(item.suggestions).forEach(({ type, value, title }) => {
+          if (!type) return;
+
+          if (
+            (type !== "Share Location" && !value) ||
+            (type === "Share Location" && !title)
+          ) {
+            toast.error(`Please fill all the fields for ${type}`);
+            hasError = true;
+            return;
+          }
+
+          const actions = {
+            "Url Action": () => {
+              suggestion.website.push(value);
+              suggestion.websitetitle.push(title);
+            },
+            "Dialer Action": () => {
+              suggestion.mobile.push(value);
+              suggestion.mobiletitle.push(title);
+            },
+            Reply: () => {
+              suggestion.replybtn.push(value);
+              suggestion.replybtntitle.push(title);
+            },
+            "Share Location": () => {
+              suggestion.locationtitle.push(title);
+            },
+            "View Location": () => {
+              const [latitude, longitude] = value.split(",");
+              suggestion.addresstitle.push(title);
+              suggestion.addressLatitude.push(latitude);
+              suggestion.addressLongitude.push(longitude);
+            },
+          };
+
+          actions[type]?.();
+
+          setCaraousalData((prevData) => {
+            const updatedData = [...prevData];
+            updatedData[index].suggestions = suggestion;
+            return updatedData;
+          });
+        });
+      });
+
+      // Check for carousel card width and height
       if (!cardwidth) {
-        return toast.error("Please select card width");
+        toast.error("Please select card width");
+        return;
       }
       if (!cardheight) {
-        return toast.error("Please select card height");
+        toast.error("Please select card height");
+        return;
       }
     }
 
@@ -220,16 +277,15 @@ const AddTemplateRcs = () => {
       variables,
     };
 
-    console.log(cardData);
+    console.log(cardData, "cardData");
     console.log(cardwidth, "cardwidth");
-    console.log(cardOrientation, "cardor");
-
-    // console.log("Car Data", caraousalData);
-
+    console.log(cardOrientation, "cardOrientation");
+    console.log("carouselData: ", caraousalData);
     console.log("Api Requested Data", data);
 
     setTimeout(() => {
       toast.success("Template added successfully");
+
       setInputData({ agentId: "", templateName: "", templateType: "" });
       setMessageContent("");
       setVariables([]);
@@ -240,8 +296,6 @@ const AddTemplateRcs = () => {
       setCardheight("small");
       setCaraousalData([]);
     }, 1000);
-
-    // Continue with API request or further processing
   };
 
   return (
