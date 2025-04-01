@@ -326,13 +326,15 @@ export const Carousel = ({
 
   return (
     <div className="flex flex-col gap-2">
-      <button
-        className="mt-5 rounded-md bg-[#212529] px-2 py-2 text-sm font-normal text-white hover:bg-[#434851] disabled:cursor-not-allowed disabled:opacity-50"
-        onClick={addNewCard}
-        type="button"
-      >
-        Add Card
-      </button>
+      {caraousalData.length != 10 && (
+        <button
+          className="mt-5 rounded-md bg-[#212529] px-2 py-2 text-sm font-normal text-white hover:bg-[#434851] disabled:cursor-not-allowed disabled:opacity-50"
+          onClick={addNewCard}
+          type="button"
+        >
+          Add Card
+        </button>
+      )}
 
       <div className="flex justify-end gap-2">
         {selectedCardIndex > 0 && (

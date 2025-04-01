@@ -24,6 +24,7 @@ export const Preview = ({
 
   useEffect(() => {
     const filteredBtnData = [];
+    // let updatedSuggestions = caraousalData;
 
     Object.values(btnData).map((item) => {
       if (item.type) {
@@ -32,6 +33,14 @@ export const Preview = ({
       }
     });
 
+    const updatedCData = caraousalData?.map((item) => ({
+      ...item,
+      suggestions: item?.suggestions
+        ? Object.values(item.suggestions).filter(({ type }) => type)
+        : [],
+    }));
+
+    console.log(updatedCData);
     setPree({
       variables,
       messageContent:
@@ -58,6 +67,7 @@ export const Preview = ({
       templateType,
       caraousalData,
       selectedIndex,
+      updatedCData,
     });
   }, [
     variables,
@@ -168,8 +178,8 @@ export const Preview = ({
                     key={index}
                     className={`inline-block ${indicatorClass}`}
                     onClick={() => {
-                      onClickHandler(); // Update Carousel
-                      setSelectedCardIndex(index); // Sync selectedCardIndex globally
+                      onClickHandler();
+                      setSelectedCardIndex(index);
                       console.log("Selected Card Index:", index);
                     }}
                     role="button"
@@ -179,21 +189,41 @@ export const Preview = ({
                 );
               }}
             >
-              {pree?.caraousalData.map((item, index) => (
-                <div key={index}>
-                  <p>{item.cardTitle}</p>
-                  <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
-                    <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
-                      {item.cardDescription}
-                    </pre>
+              {pree?.updatedCData.map((item, index) => (
+                <>
+                  <div key={index}>
+                    <p>{item.cardTitle}</p>
+                    <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
+                      <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+                        {item.cardDescription}
+                      </pre>
+                    </div>
+                    {item.fileTempPath && (
+                      <img
+                        src={URL.createObjectURL(item.fileTempPath)}
+                        alt={item.cardTitle}
+                      />
+                    )}
                   </div>
-                  {item.fileTempPath && (
-                    <img
-                      src={URL.createObjectURL(item.fileTempPath)}
-                      alt={item.cardTitle}
-                    />
+                  {/* {JSON.stringify(pree?.updatedCData, null, 2)} */}
+
+                  {item.suggestions && (
+                    <div className="flex flex-wrap gap-2 w-full max-w-[500px] mt-5">
+                      {item.suggestions?.map((item, index) => (
+                        <button
+                          key={index}
+                          title={item.value}
+                          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
+                            item.type
+                          )}`}
+                        >
+                          {getBtnIcon(item.type)}
+                          <p className="ml-2">{item.title}</p>
+                        </button>
+                      ))}
+                    </div>
                   )}
-                </div>
+                </>
               ))}
             </Carousel>
           </>
