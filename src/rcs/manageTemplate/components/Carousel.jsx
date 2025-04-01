@@ -154,71 +154,6 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
-  // const handleFileChange = (e) => {
-  //   const file = e.target.files[0];
-
-  //   if (!file) return;
-  //   const fileType = file.type.split("/")[0];
-
-  //   const img = new Image();
-  //   img.src = URL.createObjectURL(file);
-
-  //   if (file?.size) {
-  //     if (fileType === "image" && file?.size > 2 * 1024 * 1024) {
-  //       toast.error("File size must be less than 2MB.");
-  //       return;
-  //     } else if (fileType === "video" && file?.size > 10 * 1024 * 1024) {
-  //       toast.error("File size must be less than 10MB.");
-  //       return;
-  //     }
-  //   }
-  //   img.onload = () => {
-  //     const width = img.naturalWidth;
-  //     const height = img.naturalHeight;
-
-  //     const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
-  //     const divisor = gcd(width, height);
-  //     const ratioWidth = width / divisor;
-  //     const ratioHeight = height / divisor;
-  //     const ratio = `${ratioWidth}:${ratioHeight}`;
-
-  //     const ratios = {
-  //       vertical: {
-  //         short: "3:1",
-  //         medium: "2:1",
-  //       },
-  //       horizontal: "3:4",
-  //     };
-
-  //     if (
-  //       cardOrientation === "vertical" &&
-  //       cardData.mediaHeight === "short" &&
-  //       ratio !== ratios.vertical.short
-  //     ) {
-  //       toast.error("Please select a 3:1 ratio image for vertical short card.");
-  //       return;
-  //     }
-
-  //     if (
-  //       cardOrientation === "vertical" &&
-  //       cardData.mediaHeight === "medium" &&
-  //       ratio !== ratios.vertical.medium
-  //     ) {
-  //       toast.error("Please select a 2:1 ratio image for vertical tall card.");
-  //       return;
-  //     }
-
-  //     if (cardOrientation === "horizontal" && ratio !== ratios.horizontal) {
-  //       toast.error("Please select a 3:4 ratio image for horizontal card.");
-  //       return;
-  //     }
-
-  //     setCardData({ ...cardData, filePath: file });
-  //   };
-  //   img.onloadend = () => {
-  //     URL.revokeObjectURL(img.src);
-  //   };
-  // };
   const handleImageChange = useCallback(
     (e) => {
       const fileName = e.target.files[0];
@@ -227,24 +162,26 @@ export const Carousel = ({
         return;
       }
 
-      const fileType = file.type.split("/")[0];
+      if (!cardheight) {
+        toast.error("Please select card height");
+        return;
+      }
+
+      const fileType = fileName.type.split("/")[0];
 
       const img = new Image();
-      img.src = URL.createObjectURL(file);
+      img.src = URL.createObjectURL(fileName);
 
-      if (file?.size) {
-        if (fileType === "image" && file?.size > 1 * 1024 * 1024) {
+      if (fileName?.size) {
+        if (fileType === "image" && fileName?.size > 1 * 1024 * 1024) {
           toast.error("File size must be less than 2MB.");
           return;
-        } else if (fileType === "video" && file?.size > 5 * 1024 * 1024) {
+        } else if (fileType === "video" && fileName?.size > 5 * 1024 * 1024) {
           toast.error("File size must be less than 10MB.");
           return;
         }
       }
 
-      const ratios = {
-        short: {},
-      };
       img.onload = () => {
         const width = img.naturalWidth;
         const height = img.naturalHeight;
@@ -304,7 +241,7 @@ export const Carousel = ({
         URL.revokeObjectURL(img.src);
       };
     },
-    [selectedCardIndex, setCaraousalData]
+    [selectedCardIndex, setCaraousalData, cardheight]
   );
 
   const handleUploadFile = async () => {
