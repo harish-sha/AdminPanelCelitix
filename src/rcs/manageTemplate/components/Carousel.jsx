@@ -252,9 +252,6 @@ export const Carousel = ({
     });
   }, [selectedCardIndex]);
 
-  useEffect(() => {
-    console.log("caraousalData", caraousalData);
-  }, [caraousalData]);
 
   return (
     <div className="flex flex-col gap-2">

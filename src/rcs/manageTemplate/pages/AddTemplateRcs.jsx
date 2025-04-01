@@ -11,13 +11,13 @@ import { Card } from "../components/Card";
 import { Carousel } from "../components/Carousel";
 import { carousel } from "@material-tailwind/react";
 import { set } from "date-fns";
-import { fetchAllAgents } from "@/apis/rcs/rcs";
+import { fetchAllAgents, saveRcsTemplate } from "@/apis/rcs/rcs";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
     agentId: "",
     templateName: "",
-    templateType: "text_message",
+    templateType: "text",
   });
   const [btnData, setBtnData] = useState([]);
   const [variables, setVariables] = useState([]);
@@ -128,9 +128,8 @@ const AddTemplateRcs = () => {
     let hasError = false;
 
     Object.values(btnData).forEach(({ type, value, title }) => {
-      if (!type) return; // Skip if no type
+      if (!type) return;
 
-      // Handle missing values for different types
       if (
         (type !== "Share Location" && !value) ||
         (type === "Share Location" && !title)
@@ -139,8 +138,6 @@ const AddTemplateRcs = () => {
         hasError = true;
         return;
       }
-
-      // Handle actions based on type
       const actions = {
         "Url Action": () => {
           suggestions.website.push(value);
@@ -165,7 +162,7 @@ const AddTemplateRcs = () => {
         },
       };
 
-      actions[type]?.(); // Execute the corresponding action
+      actions[type]?.()
     });
 
     variables.forEach((item) => {
@@ -176,7 +173,7 @@ const AddTemplateRcs = () => {
     });
 
     if (
-      (inputData.templateType === "text_message" ||
+      (inputData.templateType === "text" ||
         inputData.templateType === "rich_card") &&
       !messageContent
     ) {
@@ -275,7 +272,7 @@ const AddTemplateRcs = () => {
 
     const data = {
       ...inputData,
-      ...suggestions,
+      suggestions,
       messageContent,
       variables,
     };
@@ -286,20 +283,28 @@ const AddTemplateRcs = () => {
     console.log("carouselData: ", caraousalData);
     console.log("Api Requested Data", data);
 
-    setTimeout(() => {
+    try {
+      const res = await saveRcsTemplate(data);
+      console.log(res);
       toast.success("Template added successfully");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
 
-      // setInputData({ agentId: "", templateName: "", templateType: "" });
-      // setMessageContent("");
-      // setVariables([]);
-      // setBtnData([]);
-      // setCardData({ title: "", mediaHeight: "", file: "" });
-      // setCardOrientation("horizontal");
-      // setCardwidth("small");
-      // setCardheight("small");
-      // setCaraousalData([]);
-      // setSelectedIndex(0);
-    }, 1000);
+    // setTimeout(() => {
+    //   toast.success("Template added successfully");
+
+    //   // setInputData({ agentId: "", templateName: "", templateType: "" });
+    //   // setMessageContent("");
+    //   // setVariables([]);
+    //   // setBtnData([]);
+    //   // setCardData({ title: "", mediaHeight: "", file: "" });
+    //   // setCardOrientation("horizontal");
+    //   // setCardwidth("small");
+    //   // setCardheight("small");
+    //   // setCaraousalData([]);
+    //   // setSelectedIndex(0);
+    // }, 1000);
   };
 
   useEffect(() => {
@@ -357,7 +362,7 @@ const AddTemplateRcs = () => {
             options={[
               {
                 label: "Text",
-                value: "text_message",
+                value: "text",
               },
               {
                 label: "Rich Card Stand Alone",

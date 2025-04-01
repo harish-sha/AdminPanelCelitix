@@ -149,7 +149,7 @@ export const Preview = ({
         ) : (
           <>
             <Carousel
-              showThumbs={true}
+              showThumbs={false}
               showStatus={false}
               infiniteLoop
               useKeyboardArrows

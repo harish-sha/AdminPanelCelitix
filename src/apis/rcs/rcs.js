@@ -78,3 +78,10 @@ export const deleteTemplate = async (srno) => {
     }
   );
 };
+
+export const saveRcsTemplate = async (data) => {
+  return await fetchWithAuth(`/proCpaasRest/rcsTemplate/saveRcsTemplate`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
