@@ -22,7 +22,7 @@ const Mainlayout = () => {
     }, []);
 
     return (
-        <div className="h-screen flex flex-col">
+        <div className="h-screen flex flex-col">    
             <Navbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} isMobile={isMobile} />
