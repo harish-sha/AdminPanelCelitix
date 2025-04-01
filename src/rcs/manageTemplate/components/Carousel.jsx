@@ -8,6 +8,7 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { IconButton } from "@mui/material";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 
 const INITIAL_DROPDOWN_STATE = {
   dropdown1: "",
@@ -20,7 +21,9 @@ const INITIAL_CARD = {
   cardTitle: "Sample Card1 Title",
   cardDescription: "Sample Card1 Description",
   fileName: "C://Users//hp//Desktop//New folder//1.jpeg",
+  filePath: "C://Users//hp//Desktop//New folder//1.jpeg",
   suggestions: INITIAL_DROPDOWN_STATE,
+  fileTempPath: "C://Users//hp//Desktop//New folder//1.jpeg",
 };
 
 export const Carousel = ({
@@ -83,7 +86,9 @@ export const Carousel = ({
       cardTitle: `Sample Card ${caraousalData.length + 1} Title`,
       cardDescription: `Sample Card ${caraousalData.length + 1} Description`,
       fileName: INITIAL_CARD.fileName,
+      filePath: INITIAL_CARD.filePath,
       suggestions: INITIAL_DROPDOWN_STATE,
+      fileTempPath: INITIAL_CARD.fileTempPath,
     };
 
     setCaraousalData((prev) => [...prev, newCard]);
@@ -148,6 +153,34 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
+  const handleImageChange = useCallback(
+    (e) => {
+      const fileName = e.target.files[0];
+      const filePath = URL.createObjectURL(fileName);
+      setCaraousalData((prev) =>
+        prev.map((item, index) =>
+          index === selectedCardIndex
+            ? { ...item, fileName: fileName.name, fileTempPath: fileName }
+            : item
+        )
+      );
+    },
+    [selectedCardIndex, setCaraousalData]
+  );
+
+  const handleUploadFile = useCallback(() => {
+    setCaraousalData((prev) =>
+      prev.map((item, index) =>
+        index === selectedCardIndex
+          ? { ...item, filePath: URL.createObjectURL(item.fileTempPath) }
+          : item
+      )
+    );
+    toast.success("File Uploaded Successfully");
+  }, [selectedCardIndex, setCaraousalData]);
+
+  // const handleUploadFile = () => {
+  // };
   const currentCardSuggestions =
     caraousalData[selectedCardIndex]?.suggestions || "";
 
@@ -157,6 +190,7 @@ export const Carousel = ({
     caraousalData[selectedCardIndex]?.cardDescription || "";
 
   const currentCardTitle = caraousalData[selectedCardIndex]?.cardTitle || "";
+  const currentFileName = caraousalData[selectedCardIndex]?.fileName || null;
 
   useEffect(() => {
     setSelectedAction({
@@ -249,6 +283,25 @@ export const Carousel = ({
           value={currentCardTitle}
           onChange={handleCardTitleChange}
         />
+        <div className="flex flex-col gap-2 mb-2">
+          <label
+            htmlFor="uplaodfile"
+            className="text-sm font-medium text-gray-700"
+          >
+            Upload File
+          </label>
+          <div className="flex gap-2">
+            <input
+              type="file"
+              // value={currentFileName}
+              onChange={handleImageChange}
+              className="block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
+            />
+            <button onClick={handleUploadFile}>
+              <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+            </button>
+          </div>
+        </div>
         <AnimatedDropdown
           id="selectCardWidth"
           label={`Select Card ${selectedCardIndex + 1} Width`}

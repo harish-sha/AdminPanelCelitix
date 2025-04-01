@@ -45,7 +45,7 @@ export const Card = ({
   };
 
   const handleFileChange = (e) => {
-    const file = event.target.files[0];
+    const file = e.target.files[0];
     setCardData({ ...cardData, filePath: file });
   };
 
