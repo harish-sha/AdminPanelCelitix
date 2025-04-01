@@ -226,13 +226,83 @@ export const Carousel = ({
         toast.error("No file selected.");
         return;
       }
-      setCaraousalData((prev) =>
-        prev.map((item, index) =>
-          index === selectedCardIndex
-            ? { ...item, fileName: fileName.name, fileTempPath: fileName }
-            : item
-        )
-      );
+
+      const fileType = file.type.split("/")[0];
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      if (file?.size) {
+        if (fileType === "image" && file?.size > 1 * 1024 * 1024) {
+          toast.error("File size must be less than 2MB.");
+          return;
+        } else if (fileType === "video" && file?.size > 5 * 1024 * 1024) {
+          toast.error("File size must be less than 10MB.");
+          return;
+        }
+      }
+
+      const ratios = {
+        short: {},
+      };
+      img.onload = () => {
+        const width = img.naturalWidth;
+        const height = img.naturalHeight;
+
+        const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+        const divisor = gcd(width, height);
+        const ratioWidth = width / divisor;
+        const ratioHeight = height / divisor;
+        const ratio = `${ratioWidth}:${ratioHeight}`;
+
+        if (cardheight === "short" && cardwidth === "small" && ratio != "5:4") {
+          toast.error(
+            "Please select a 5:4 ratio image for Short Height and Small Width card."
+          );
+          return;
+        }
+        if (
+          cardheight === "short" &&
+          cardwidth === "medium" &&
+          ratio != "2:1"
+        ) {
+          toast.error(
+            "Please select a 2:1 ratio image for Short Height and Medium Width card."
+          );
+          return;
+        }
+        if (
+          cardheight === "medium" &&
+          cardwidth === "small" &&
+          ratio != "4:3"
+        ) {
+          toast.error(
+            "Please select a 4:5 ratio image for Medium Height and Small Width card."
+          );
+          return;
+        }
+        if (
+          cardheight === "medium" &&
+          cardwidth === "small" &&
+          ratio != "4:3"
+        ) {
+          toast.error(
+            "Please select a 4:3 ratio image for Medium Height and Small Width card."
+          );
+          return;
+        }
+        setCaraousalData((prev) =>
+          prev.map((item, index) =>
+            index === selectedCardIndex
+              ? { ...item, fileName: fileName.name, fileTempPath: fileName }
+              : item
+          )
+        );
+      };
+
+      img.onloadend = () => {
+        URL.revokeObjectURL(img.src);
+      };
     },
     [selectedCardIndex, setCaraousalData]
   );
