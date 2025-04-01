@@ -10,6 +10,7 @@ import { Preview } from "../components/Preview";
 import { Card } from "../components/Card";
 import { Carousel } from "../components/Carousel";
 import { carousel } from "@material-tailwind/react";
+import { set } from "date-fns";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -295,6 +296,7 @@ const AddTemplateRcs = () => {
       setCardwidth("small");
       setCardheight("small");
       setCaraousalData([]);
+      setSelectedIndex(0);
     }, 1000);
   };
 
