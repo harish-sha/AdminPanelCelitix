@@ -437,6 +437,9 @@ const AddTemplateRcs = () => {
             cardData={cardData}
             cardwidth={cardwidth}
             cardOrientation={cardOrientation}
+            templateType={inputData.templateType}
+            caraousalData={caraousalData}
+            selectedIndex={selectedIndex}
           />
         </div>
       </div>
