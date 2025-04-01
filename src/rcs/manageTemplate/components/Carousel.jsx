@@ -9,11 +9,18 @@ import { IconButton } from "@mui/material";
 import KeyboardArrowLeftOutlinedIcon from "@mui/icons-material/KeyboardArrowLeftOutlined";
 import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 
+const INITIAL_DROPDOWN_STATE = {
+  dropdown1: "",
+  dropdown2: "",
+  dropdown3: "",
+  dropdown4: "",
+};
+
 const INITIAL_CARD = {
   cardTitle: "Sample Card1 Title",
   cardDescription: "Sample Card1 Description",
   fileName: "C://Users//hp//Desktop//New folder//1.jpeg",
-  suggestions: [],
+  suggestions: INITIAL_DROPDOWN_STATE,
 };
 
 export const Carousel = ({
@@ -29,8 +36,35 @@ export const Carousel = ({
   handlePreviousIndex,
   handleNextIndex,
 }) => {
-  const [variables, setVariables] = useState([]);
-  const [messageContent, setMessageContent] = useState("");
+  const [selectedAction, setSelectedAction] = useState({
+    dropdown1: "",
+    dropdown2: "",
+    dropdown3: "",
+    dropdown4: "",
+  });
+
+  const [inputData, setInputData] = useState({
+    dropdown1: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown2: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown3: {
+      type: "",
+      title: "",
+      value: "",
+    },
+    dropdown4: {
+      type: "",
+      title: "",
+      value: "",
+    },
+  });
 
   // Initialize carousel data if empty
   useEffect(() => {
@@ -49,7 +83,7 @@ export const Carousel = ({
       cardTitle: `Sample Card ${caraousalData.length + 1} Title`,
       cardDescription: `Sample Card ${caraousalData.length + 1} Description`,
       fileName: INITIAL_CARD.fileName,
-      suggestions: [],
+      suggestions: INITIAL_DROPDOWN_STATE,
     };
 
     setCaraousalData((prev) => [...prev, newCard]);
@@ -71,11 +105,12 @@ export const Carousel = ({
       setCaraousalData((prev) =>
         prev.map((item, index) =>
           index === selectedCardIndex
-            ? { ...item, suggestions: [suggestions] }
+            ? { ...item, suggestions: suggestions }
             : item
         )
       );
     },
+
     [selectedCardIndex, setCaraousalData]
   );
   const updateVariables = useCallback(
@@ -102,12 +137,57 @@ export const Carousel = ({
   );
 
   const currentCardSuggestions =
-    caraousalData[selectedCardIndex]?.suggestions || [];
+    caraousalData[selectedCardIndex]?.suggestions || "";
+
 
   const currentCardVariables = caraousalData[selectedCardIndex]?.variable || [];
 
   const currentCardMessage =
     caraousalData[selectedCardIndex]?.cardDescription || "";
+
+  useEffect(() => {
+    setSelectedAction({
+      dropdown1: caraousalData[selectedCardIndex]?.suggestions?.dropdown1.type || "",
+      dropdown2: caraousalData[selectedCardIndex]?.suggestions?.dropdown2.type || "",
+      dropdown3: caraousalData[selectedCardIndex]?.suggestions?.dropdown3.type || "",
+      dropdown4: caraousalData[selectedCardIndex]?.suggestions?.dropdown4.type || "",
+    });
+
+    setInputData({
+      dropdown1: {
+        type:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown1?.type || "",
+        title:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown1?.title || "",
+        value:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown1?.value || "",
+      },
+      dropdown2: {
+        type:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown2?.type || "",
+        title:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown2?.title || "",
+        value:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown2?.value || "",
+      },
+      dropdown3: {
+        type:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown3?.type || "",
+        title:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown3?.title || "",
+        value:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown3?.value || "",
+      },
+      dropdown4: {
+        type:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown4?.type || "",
+        title:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown4?.title || "",
+        value:
+          caraousalData[selectedCardIndex]?.suggestions?.dropdown4?.value || "",
+      },
+    });
+  }, [selectedCardIndex]);
 
   return (
     <div className="flex flex-col gap-2">
@@ -120,12 +200,16 @@ export const Carousel = ({
       </button>
 
       <div className="flex justify-end gap-2">
-        <IconButton onClick={handlePreviousIndex} aria-label="Previous">
-          <KeyboardArrowLeftOutlinedIcon className="text-black" />
-        </IconButton>
-        <IconButton onClick={handleNextIndex} aria-label="Next">
-          <NavigateNextOutlinedIcon className="text-black" />
-        </IconButton>
+        {selectedCardIndex > 0 && (
+          <IconButton onClick={handlePreviousIndex} aria-label="Previous">
+            <KeyboardArrowLeftOutlinedIcon className="text-black " />
+          </IconButton>
+        )}
+        {selectedCardIndex < caraousalData.length - 1 && (
+          <IconButton onClick={handleNextIndex} aria-label="Next">
+            <NavigateNextOutlinedIcon className="text-black" />
+          </IconButton>
+        )}
       </div>
 
       {selectedCardIndex > 0 && (
@@ -180,6 +264,11 @@ export const Carousel = ({
         btnOptions={btnOptions}
         setBtnData={updateCardSuggestions}
         btnData={currentCardSuggestions}
+        cardIndex={selectedCardIndex}
+        inputData={inputData}
+        setInputData={setInputData}
+        selectedAction={selectedAction}
+        setSelectedAction={setSelectedAction}
       />
 
       <pre className="text-xs">{JSON.stringify(caraousalData, null, 2)}</pre>
