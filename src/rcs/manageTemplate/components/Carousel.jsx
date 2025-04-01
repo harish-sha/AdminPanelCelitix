@@ -21,10 +21,10 @@ const INITIAL_DROPDOWN_STATE = {
 const INITIAL_CARD = {
   cardTitle: "Sample Card1 Title",
   cardDescription: "Sample Card1 Description",
-  fileName: "C://Users//hp//Desktop//New folder//1.jpeg",
-  filePath: "C://Users//hp//Desktop//New folder//1.jpeg",
+  fileName: "",
+  filePath: "",
   suggestions: INITIAL_DROPDOWN_STATE,
-  fileTempPath: "C://Users//hp//Desktop//New folder//1.jpeg",
+  fileTempPath: "",
 };
 
 export const Carousel = ({
@@ -157,7 +157,10 @@ export const Carousel = ({
   const handleImageChange = useCallback(
     (e) => {
       const fileName = e.target.files[0];
-      const filePath = URL.createObjectURL(fileName);
+      if (!fileName) {
+        toast.error("No file selected.");
+        return;
+      }
       setCaraousalData((prev) =>
         prev.map((item, index) =>
           index === selectedCardIndex
@@ -169,26 +172,24 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
-  const handleUploadFile = useCallback(async () => {
-    let res;
+  const handleUploadFile = async () => {
     try {
-      res = await uploadImageFile(
+      const res = await uploadImageFile(
         caraousalData[selectedCardIndex]?.fileTempPath
       );
+      setCaraousalData((prev) =>
+        prev.map((item, index) =>
+          index === selectedCardIndex
+            ? { ...item, filePath: res?.fileUrl }
+            : item
+        )
+      );
+      toast.success("File Uploaded Successfully");
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
-    setCaraousalData((prev) =>
-      prev.map((item, index) =>
-        index === selectedCardIndex ? { ...item, filePath: res?.fileUrl } : item
-      )
-    );
-    toast.success("File Uploaded Successfully");
-  }, [selectedCardIndex, setCaraousalData]);
+  };
 
-  // const handleUploadFile = () => {
-  // };
   const currentCardSuggestions =
     caraousalData[selectedCardIndex]?.suggestions || "";
 
@@ -247,6 +248,10 @@ export const Carousel = ({
       },
     });
   }, [selectedCardIndex]);
+
+  useEffect(() => {
+    console.log("caraousalData", caraousalData);
+  }, [caraousalData]);
 
   return (
     <div className="flex flex-col gap-2">

@@ -65,11 +65,11 @@ export const uploadImageFile = async (file) => {
       body: formData,
     });
 
-    if (response && response.status) {
       return response;
-    } else {
-      throw new Error(response?.msg || "Image upload failed.");
-    }
+    // if (response && response.status) {
+    // } else {
+    //   throw new Error(response?.msg || "Image upload failed.");
+    // }
   } catch (error) {
     console.error("Error uploading image:", error);
     throw error;
