@@ -18,6 +18,7 @@ export const Preview = ({
   selectedIndex,
   handleNextIndex,
   handlePreviousIndex,
+  setSelectedCardIndex,
 }) => {
   const [pree, setPree] = useState();
 
@@ -157,9 +158,44 @@ export const Preview = ({
               renderArrowPrev={() => null}
               renderArrowNext={() => null}
               selectedItem={pree?.selectedIndex}
+              renderIndicator={(onClickHandler, isSelected, index) => {
+                const indicatorClass = isSelected
+                  ? "bg-[#212529] w-3 h-3 rounded-full mx-1 cursor-pointer"
+                  : "bg-[#7E7F80] w-3 h-3 rounded-full mx-1 cursor-pointer";
+
+                return (
+                  <li
+                    id="carousel-indicator"
+                    name="carousel-indicator"
+                    key={index}
+                    className={`inline-block ${indicatorClass}`}
+                    onClick={() => {
+                      onClickHandler(); // Update Carousel
+                      setSelectedCardIndex(index); // Sync selectedCardIndex globally
+                      console.log("Selected Card Index:", index);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                );
+              }}
             >
               {pree?.caraousalData.map((item, index) => (
-                <div key={index}>{item.cardTitle}</div>
+                <div key={index}>
+                  <p>{item.cardTitle}</p>
+                  <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
+                    <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+                      {item.cardDescription}
+                    </pre>
+                  </div>
+                  {item.fileTempPath && (
+                    <img
+                      src={URL.createObjectURL(item.fileTempPath)}
+                      alt={item.cardTitle}
+                    />
+                  )}
+                </div>
               ))}
             </Carousel>
           </>

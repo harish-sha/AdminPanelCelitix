@@ -174,6 +174,9 @@ export const Carousel = ({
 
   const handleUploadFile = async () => {
     try {
+      if (!caraousalData[selectedCardIndex]?.fileTempPath) {
+        return toast.error("Please select a file first");
+      }
       const res = await uploadImageFile(
         caraousalData[selectedCardIndex]?.fileTempPath
       );

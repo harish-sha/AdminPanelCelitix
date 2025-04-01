@@ -442,6 +442,7 @@ const AddTemplateRcs = () => {
             selectedIndex={selectedIndex}
             handleNextIndex={handleNextIndex}
             handlePreviousIndex={handlePreviousIndex}
+            setSelectedCardIndex={setSelectedIndex}
           />
         </div>
       </div>
