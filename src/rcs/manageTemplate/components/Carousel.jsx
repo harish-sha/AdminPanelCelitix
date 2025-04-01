@@ -154,6 +154,71 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
+  // const handleFileChange = (e) => {
+  //   const file = e.target.files[0];
+
+  //   if (!file) return;
+  //   const fileType = file.type.split("/")[0];
+
+  //   const img = new Image();
+  //   img.src = URL.createObjectURL(file);
+
+  //   if (file?.size) {
+  //     if (fileType === "image" && file?.size > 2 * 1024 * 1024) {
+  //       toast.error("File size must be less than 2MB.");
+  //       return;
+  //     } else if (fileType === "video" && file?.size > 10 * 1024 * 1024) {
+  //       toast.error("File size must be less than 10MB.");
+  //       return;
+  //     }
+  //   }
+  //   img.onload = () => {
+  //     const width = img.naturalWidth;
+  //     const height = img.naturalHeight;
+
+  //     const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+  //     const divisor = gcd(width, height);
+  //     const ratioWidth = width / divisor;
+  //     const ratioHeight = height / divisor;
+  //     const ratio = `${ratioWidth}:${ratioHeight}`;
+
+  //     const ratios = {
+  //       vertical: {
+  //         short: "3:1",
+  //         medium: "2:1",
+  //       },
+  //       horizontal: "3:4",
+  //     };
+
+  //     if (
+  //       cardOrientation === "vertical" &&
+  //       cardData.mediaHeight === "short" &&
+  //       ratio !== ratios.vertical.short
+  //     ) {
+  //       toast.error("Please select a 3:1 ratio image for vertical short card.");
+  //       return;
+  //     }
+
+  //     if (
+  //       cardOrientation === "vertical" &&
+  //       cardData.mediaHeight === "medium" &&
+  //       ratio !== ratios.vertical.medium
+  //     ) {
+  //       toast.error("Please select a 2:1 ratio image for vertical tall card.");
+  //       return;
+  //     }
+
+  //     if (cardOrientation === "horizontal" && ratio !== ratios.horizontal) {
+  //       toast.error("Please select a 3:4 ratio image for horizontal card.");
+  //       return;
+  //     }
+
+  //     setCardData({ ...cardData, filePath: file });
+  //   };
+  //   img.onloadend = () => {
+  //     URL.revokeObjectURL(img.src);
+  //   };
+  // };
   const handleImageChange = useCallback(
     (e) => {
       const fileName = e.target.files[0];
@@ -252,7 +317,6 @@ export const Carousel = ({
     });
   }, [selectedCardIndex]);
 
-
   return (
     <div className="flex flex-col gap-2">
       <button
@@ -315,6 +379,19 @@ export const Carousel = ({
             </button>
           </div>
         </div>
+
+        <AnimatedDropdown
+          id="selectCardHeight"
+          label={`Select Card ${selectedCardIndex + 1} Height`}
+          name="selectCardHeight"
+          options={[
+            { label: "Short", value: "short" },
+            { label: "Medium", value: "medium" },
+          ]}
+          placeholder="Select Card Height"
+          value={cardheight}
+          onChange={setCardheight}
+        />
         <AnimatedDropdown
           id="selectCardWidth"
           label={`Select Card ${selectedCardIndex + 1} Width`}
@@ -326,18 +403,6 @@ export const Carousel = ({
           placeholder="Select Card Width"
           value={cardwidth}
           onChange={setCardwidth}
-        />
-        <AnimatedDropdown
-          id="selectCardHeight"
-          label={`Select Card ${selectedCardIndex + 1} Height`}
-          name="selectCardHeight"
-          options={[
-            { label: "Small", value: "small" },
-            { label: "Medium", value: "medium" },
-          ]}
-          placeholder="Select Card Height"
-          value={cardheight}
-          onChange={setCardheight}
         />
       </div>
 
