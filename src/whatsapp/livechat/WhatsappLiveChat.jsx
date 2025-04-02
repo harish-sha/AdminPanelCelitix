@@ -71,6 +71,8 @@ export default function WhatsappLiveChat() {
   const [btnOption, setBtnOption] = useState("active");
   const [search, setSearch] = useState("");
 
+  const [allConvo, setAllConvo] = useState([]);
+
   const inputRef = useRef(null);
 
   const insertEmoji = (emoji) => {
@@ -154,7 +156,6 @@ export default function WhatsappLiveChat() {
 
   useEffect(() => {
     async function handleFetchAllConvo() {
-      console.log(btnOption);
       const userActive = btnOption == "active" ? 1 : 0;
       try {
         const data = {
@@ -163,9 +164,20 @@ export default function WhatsappLiveChat() {
           active: userActive,
         };
         const res = await fetchAllConversations(data);
-        console.log(res);
+
+        const mappedConversations = res.conversationEntityList.map((chat) => {
+          const unread = res.unreadCounts.find(
+            (unreadChat) => unreadChat.mobile === chat.mobileNo
+          );
+          return {
+            ...chat,
+            unreadCount: unread ? unread.unreadCount : 0,
+          };
+        });
+        setAllConvo(mappedConversations);
       } catch (e) {
         console.log(e);
+        return toast.error("Error fetching all conversations");
       }
     }
 
@@ -183,6 +195,15 @@ export default function WhatsappLiveChat() {
 
     // Append new files while keeping the previous ones
     setSelectedImage((prev) => [...prev, ...files]);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Unknown";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
   };
 
   return (
@@ -246,12 +267,12 @@ export default function WhatsappLiveChat() {
           </div>
         </div>
 
-        <div className="mt-4 ">
-          {chats.map((chat) => (
+        <div className="mt-4 h-[400px] overflow-y-auto">
+          {allConvo?.map((chat) => (
             <div
-              key={chat.id}
+              key={chat.srno}
               className={`p-3 border-b cursor-pointer select-none ${
-                activeChat?.id === chat.id ? "bg-gray-300" : ""
+                activeChat?.srno === chat.srno ? "bg-gray-300" : ""
               }`}
               onClick={() => setActiveChat(chat)}
             >
@@ -265,10 +286,18 @@ export default function WhatsappLiveChat() {
                     />
                     <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-lg"></div>
                   </div>
-                  {chat.name}
+                  <div className="ml-2">
+                    {chat.contectName || chat.mobileNo}
+                    <p className="text-xs truncate w-[200px]">
+                      {chat?.messageBody}
+                    </p>
+                  </div>
                 </div>
-                <div className="flex items-center justify-center w-5 h-5 text-sm text-white bg-green-500 rounded-full">
-                  5
+                <div className="flex flex-col items-end justify-end">
+                  <p className="text-xs"> {formatDate(chat.insertTime)}</p>
+                  <div className="flex items-center justify-center w-5 h-5 text-sm text-white bg-green-500 rounded-full">
+                    {chat.unreadCount}
+                  </div>
                 </div>
               </div>
             </div>
