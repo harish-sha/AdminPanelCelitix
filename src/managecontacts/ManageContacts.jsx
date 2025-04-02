@@ -96,10 +96,9 @@ const ManageContacts = () => {
     pageSize: 5,
   });
   const [selectedRows, setSelectedRows] = useState([]);
-
-  useEffect(() => {
-    console.log(updateContactDetails);
-  }, [updateContactDetails]);
+  const [idtoDelete, setIdToDelete] = useState([]);
+  const [deleteContactDialogVisible, setDeleteContactDialogVisible] =
+    useState(false);
 
   async function getGrpListData() {
     const res = await getGrpList();
@@ -389,9 +388,6 @@ const ManageContacts = () => {
     if (!grpDetails) {
       toast.error("Group not found");
     }
-
-    console.log(updateContactDetails.srno);
-
     const data = {
       srNo: updateContactDetails.srno,
       groupSrNo: grpDetails.groupCode,
@@ -646,6 +642,11 @@ const ManageContacts = () => {
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
+  async function handleContactDelete() {
+    console.log(idtoDelete.srno);
+  
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -764,6 +765,8 @@ const ManageContacts = () => {
           updateContactData={updateContactData}
           setUpdateContactDetails={setUpdateContactDetails}
           setUpdateContactVisible={setUpdateContactVisible}
+          setIdToDelete={setIdToDelete}
+          setDeleteContactDialogVisible={setDeleteContactDialogVisible}
         />
       )}
 
@@ -1598,6 +1601,58 @@ const ManageContacts = () => {
               onClick={updateContactData}
             />
           </div>
+        </div>
+      </Dialog>
+      <Dialog
+        header="Confirm Deletion"
+        visible={deleteContactDialogVisible}
+        onHide={() => {
+          setDeleteContactDialogVisible(false);
+          setIdToDelete(null);
+        }}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          {/* <ErrorOutlineOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                  }}
+                /> */}
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] text-gray-700 font-semibold">
+            Are you sure you want to delete the Contact <br />
+            <span className="text-green-500">"{idtoDelete?.firstName}"</span>
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-2">
+          <UniversalButton
+            label="Cancel"
+            style={{
+              backgroundColor: "#090909",
+            }}
+            onClick={() => setDeleteContactDialogVisible(false)}
+          />
+          <UniversalButton
+            label="Delete"
+            style={
+              {
+                // backgroundColor: "red",
+              }
+            }
+            onClick={handleContactDelete}
+          />
         </div>
       </Dialog>
     </div>

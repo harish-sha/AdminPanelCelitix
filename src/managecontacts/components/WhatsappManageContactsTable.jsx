@@ -85,6 +85,8 @@ const WhatsappManageContactsTable = ({
   allContacts,
   setUpdateContactVisible,
   setUpdateContactDetails,
+  setIdToDelete,
+  setDeleteContactDialogVisible
 }) => {
   const [selectedRows, setLocalSelectedRows] = React.useState([]);
 
@@ -128,7 +130,8 @@ const WhatsappManageContactsTable = ({
           <IconButton
             className="no-xs"
             onClick={() => {
-              console.log(params.row);
+              setDeleteContactDialogVisible(true);
+              setIdToDelete(params.row);
             }}
           >
             <DeleteIcon
@@ -169,7 +172,7 @@ const WhatsappManageContactsTable = ({
         action: "True",
         srno: contact.addSrno,
         gender: contact.gender,
-        ...contact
+        ...contact,
       }))
     : [];
 
