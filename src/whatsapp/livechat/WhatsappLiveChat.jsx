@@ -6,6 +6,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AnimatedDropdown from "../components/AnimatedDropdown";
 import {
   fetchAllConversations,
+  fetchSpecificConversations,
   getWabaList,
 } from "../../apis/whatsapp/whatsapp";
 import {
@@ -72,6 +73,7 @@ export default function WhatsappLiveChat() {
   const [search, setSearch] = useState("");
 
   const [allConvo, setAllConvo] = useState([]);
+  const [specificConversation, setSpecificConversation] = useState([]);
 
   const inputRef = useRef(null);
 
@@ -206,6 +208,25 @@ export default function WhatsappLiveChat() {
     return `${day}/${month}/${year}`;
   };
 
+  async function handleFetchSpecificConversation() {
+    const data = {
+      mobileNo: activeChat?.mobileNo,
+      wabaMobile: activeChat?.wabaNumber,
+      chatNo: 0,
+    };
+    try {
+      const res = await fetchSpecificConversations(data);
+      setSpecificConversation(res.conversationEntityList);
+      console.log(res.conversationEntityList);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching specific conversation");
+    }
+  }
+
+  useEffect(() => {
+    handleFetchSpecificConversation();
+  }, [activeChat]);
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -283,7 +304,7 @@ export default function WhatsappLiveChat() {
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <img
-                        src={chat.image || "/default-avatar.png"}
+                        src={chat.image || "/default-avatar.jpg"}
                         alt=""
                         className="w-10 h-10 rounded-full"
                       />
@@ -311,6 +332,8 @@ export default function WhatsappLiveChat() {
       </div>
 
       {/* Chat Section */}
+      {/* code goes here */}
+
       {activeChat && (
         <div className="relative flex flex-col flex-1 h-screen md:h-full">
           {/* Header */}
@@ -318,14 +341,19 @@ export default function WhatsappLiveChat() {
             <div className="flex items-center space-x-2">
               <IoArrowBack
                 className="text-xl cursor-pointer md:hidden"
-                onClick={() => setActiveChat(null)}
+                onClick={() => {
+                  setActiveChat(null);
+                  setSpecificConversation([]);
+                }}
               />
               <img
-                src={activeChat.image}
-                alt=""
-                className="w-10 h-10 rounded-full"
+                src={activeChat.image || "/default-avatar.jpg"}
+                alt={activeChat.contectName}
+                className="w-10 h-10 ml-2 rounded-full"
               />
-              <h3 className="text-lg font-semibold">{activeChat.name}</h3>
+              <h3 className="text-lg font-semibold">
+                {activeChat.contectName || activeChat.mobileNo}
+              </h3>
               <InfoOutlinedIcon
                 onClick={() => {
                   setVisibleRight(true);
@@ -345,7 +373,7 @@ export default function WhatsappLiveChat() {
           </div>
 
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
+          {/* <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
             {activeChat.messages.map((msg, index) => (
               <div
                 key={index}
@@ -358,9 +386,9 @@ export default function WhatsappLiveChat() {
                 {msg.text}
               </div>
             ))}
-          </div>
+          </div> */}
 
-          {selectedImage.length > 0 && (
+          {/* {selectedImage.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
               {selectedImage.map((file, index) => (
                 <div className="relative" key={index}>
@@ -398,10 +426,10 @@ export default function WhatsappLiveChat() {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
 
           {/* Input */}
-          <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
+          {/* <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
             <div className="mr-2">
               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
             </div>
@@ -438,8 +466,8 @@ export default function WhatsappLiveChat() {
                 <FormatStrikethroughOutlined />
               </div>
             </div>
-          </div>
-          <Sidebar
+          </div> */}
+          {/* <Sidebar
             visible={visibleRight}
             position="right"
             onHide={() => setVisibleRight(false)}
@@ -506,9 +534,10 @@ export default function WhatsappLiveChat() {
                 <p className="text-right">Rajasthan</p>
               </div>
             </div>
-          </Sidebar>
+          </Sidebar> */}
         </div>
       )}
+
       <Dialog
         visible={dialogVisible}
         style={{ width: "50vw" }}

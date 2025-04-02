@@ -275,3 +275,11 @@ export const fetchAllConversations = async (data) => {
     }
   );
 };
+export const fetchSpecificConversations = async (data) => {
+  return await fetchWithAuth(
+    `proCpaasRest/LiveChat/getWhatsappChatsOneUser?mobile=${data.mobileNo}&wabaMobile=${data.wabaMobile}&chatNo=${data.chatNo}`,
+    {
+      method: "POST",
+    }
+  );
+};
