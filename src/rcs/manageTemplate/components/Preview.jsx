@@ -40,7 +40,8 @@ export const Preview = ({
         : [],
     }));
 
-    console.log(updatedCData);
+    const fileType = cardData?.filePath?.type?.split("/")[0];
+
     setPree({
       variables,
       messageContent:
@@ -68,6 +69,7 @@ export const Preview = ({
       caraousalData,
       selectedIndex,
       updatedCData,
+      fileType,
     });
   }, [
     variables,
@@ -115,6 +117,8 @@ export const Preview = ({
     }
   };
 
+  console.log(cardData);
+
   return (
     <div className="smartphone">
       <div className="smartphone-content">
@@ -124,8 +128,17 @@ export const Preview = ({
             <div className="mb-4">{pree?.cardData?.title}</div>
 
             {pree?.cardData?.file && (
-              <div>
-                <embed src={pree?.cardData?.file} type="" className="w-full" />
+              <div className="mb-3">
+                {pree?.fileType === "image" ? (
+                  <img src={pree.cardData.file} alt="Uploaded content" />
+                ) : (
+                  // Uncomment and define the type if you plan to use <embed>
+                  <embed
+                    src={pree.cardData.file}
+                    type="your-file-type"
+                    className="w-[70%] overflow-x-hidden"
+                  />
+                )}
               </div>
             )}
 
