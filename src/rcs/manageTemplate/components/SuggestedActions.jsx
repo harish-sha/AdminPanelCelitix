@@ -3,7 +3,14 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import toast from "react-hot-toast";
 
-export const SuggestedActions = ({ btnOptions, setBtnData, selectedAction, setSelectedAction, inputData, setInputData }) => {
+export const SuggestedActions = ({
+  btnOptions,
+  setBtnData,
+  selectedAction,
+  setSelectedAction,
+  inputData,
+  setInputData,
+}) => {
   // const [selectedAction, setSelectedAction] = useState({
   //   dropdown1: "",
   //   dropdown2: "",
@@ -57,7 +64,7 @@ export const SuggestedActions = ({ btnOptions, setBtnData, selectedAction, setSe
     setBtnData(inputData);
   }, [inputData, setBtnData]);
 
-  const InputBox = ["Url Action", "Dialer Action", "View Location"];
+  const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
   return (
     <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
