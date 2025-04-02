@@ -33,7 +33,7 @@ export const Variables = ({
   const addVariable = () => {
     if (isLimitExceeded()) return;
 
-    // const newVariable = { id: `${variablesData.length + 1}`, value: "" };
+    if (!selectedVariable) return toast.error("Please select a variable");
     const variableTag = `{#${selectedVariable}#}`;
 
     if (messageContent.length + variableTag.length > MAX_LENGTH) return;
@@ -108,12 +108,19 @@ export const Variables = ({
   );
 
   const handleAddVariable = () => {
-    console.log(variableInput);
-    const allVar = localStorage.getItem("variables");
-    setUserVariables([...userVariables, variableInput]);
+    if (!variableInput) {
+      return toast.error("Please enter a variable name");
+    }
 
-    const updatedvar = [...JSON.parse(allVar), variableInput];
-    localStorage.setItem("variables", JSON.stringify(updatedvar));
+    const storedVariables = JSON.parse(
+      localStorage.getItem("variables") || "[]"
+    );
+
+    const updatedVariables = [...storedVariables, variableInput];
+
+    setUserVariables((prevVars) => [...prevVars, variableInput]);
+    localStorage.setItem("variables", JSON.stringify(updatedVariables));
+    setVariableInput("");
   };
 
   useEffect(() => {
@@ -128,8 +135,7 @@ export const Variables = ({
   }, [variablesData, setVariables]);
 
   useEffect(() => {
-    const allVar = localStorage.getItem("variables");
-    setUserVariables(JSON.parse(allVar));
+    setUserVariables(JSON.parse(localStorage.getItem("variables") || "[]"));
   }, []);
 
   return (
@@ -223,7 +229,7 @@ export const Variables = ({
           </div>
           <AnimatedDropdown
             label="Select Variables"
-            options={userVariables.map((variable) => ({
+            options={userVariables?.map((variable) => ({
               label: variable,
               value: variable,
             }))}
