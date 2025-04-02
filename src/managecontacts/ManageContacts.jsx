@@ -97,6 +97,10 @@ const ManageContacts = () => {
   });
   const [selectedRows, setSelectedRows] = useState([]);
 
+  useEffect(() => {
+    console.log(updateContactDetails);
+  }, [updateContactDetails]);
+
   async function getGrpListData() {
     const res = await getGrpList();
     setGrpList(res);
@@ -386,9 +390,20 @@ const ManageContacts = () => {
       toast.error("Group not found");
     }
 
+    console.log(updateContactDetails.srno);
+
     const data = {
+      srNo: updateContactDetails.srno,
       groupSrNo: grpDetails.groupCode,
-      ...updatedContactDetails,
+      firstName: updateContactDetails.firstName,
+      middleName: updateContactDetails.middleName,
+      lastName: updateContactDetails.lastName,
+      mobileno: updateContactDetails.mobileno,
+      email: updateContactDetails.email,
+      uniqueId: updateContactDetails.uniqueId,
+      gender: updateContactDetails.gender,
+      activeStatus: updatedContactDetails.status,
+      uniqueId: updateContactDetails.uniqueId,
     };
 
     const res = await updateContactsDetails(data);
@@ -623,10 +638,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList?.map((grp, index) => ({
-      id: grp.groupCode,
-      sn: index + 1,
-      groupName: grp.groupName,
-    }))
+        id: grp.groupCode,
+        sn: index + 1,
+        groupName: grp.groupName,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -676,7 +691,6 @@ const ManageContacts = () => {
             options={grpList?.map((item) => ({
               value: item.groupCode,
               label: `${item.groupName} (${item.totalCount})`,
-
             }))}
             value={selectedMultiGroup}
             onChange={(e) => setSelectedMultiGroup(e)}
@@ -1073,8 +1087,9 @@ const ManageContacts = () => {
                         <button
                           onClick={handleFileUpload}
                           disabled={isUploading}
-                          className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                            }`}
+                          className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                            isUploading ? "disabled" : ""
+                          }`}
                         >
                           <FileUploadOutlinedIcon
                             sx={{ color: "white", fontSize: "23px" }}
@@ -1424,10 +1439,10 @@ const ManageContacts = () => {
               id="userfirstname"
               name="userfirstname"
               type="text"
-              value={updatedContactDetails.firstName}
+              value={updateContactDetails.firstName}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   firstName: e.target.value,
                 })
               }
@@ -1451,10 +1466,10 @@ const ManageContacts = () => {
               id="userlastname"
               name="userlastname"
               type="text"
-              value={updatedContactDetails.lastName}
+              value={updateContactDetails.lastName}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   lastName: e.target.value,
                 })
               }
@@ -1465,11 +1480,11 @@ const ManageContacts = () => {
               id="mobilenumber"
               name="mobilenumber"
               type="number"
-              value={updatedContactDetails.mobileNo}
+              value={updateContactDetails.mobileno}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
-                  mobileNo: e.target.value,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
+                  mobileno: e.target.value,
                 })
               }
               required={true}
@@ -1493,10 +1508,10 @@ const ManageContacts = () => {
               id="uniqueid"
               name="uniqueid"
               type="text"
-              value={updatedContactDetails.uniqueId}
+              value={updateContactDetails.uniqueId}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   uniqueId: e.target.value,
                 })
               }
@@ -1564,11 +1579,11 @@ const ManageContacts = () => {
                 { value: 0, label: "Active" },
                 { value: 1, label: "Inactive" },
               ]}
-              value={updatedContactDetails.activeStatus}
+              value={updateContactDetails.status}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
-                  activeStatus: Number(e.target.value),
+                setUpdateContactDetails({
+                  ...updateContactDetails,
+                  status: Number(e.target.value),
                 })
               }
               required={true}

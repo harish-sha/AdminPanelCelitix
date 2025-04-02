@@ -108,7 +108,7 @@ const WhatsappManageContactsTable = ({
     { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
     { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
     { field: "mobileno", headerName: "Mobile No", flex: 1, minWidth: 120 },
-    { field: "uniqueid", headerName: "Unique ID", flex: 1, minWidth: 120 },
+    { field: "uniqueId", headerName: "Unique ID", flex: 1, minWidth: 120 },
     {
       field: "emailstatus",
       headerName: "Email Status",
@@ -163,13 +163,13 @@ const WhatsappManageContactsTable = ({
         firstName: contact.firstName ?? "-",
         lastName: contact.lastName ?? "-",
         mobileno: contact.mobileno ?? "-",
-        uniqueid: contact.uniqueId ?? "-",
         emailstatus: contact.status == 1 ? "Active" : "Inactive",
         group: contact.groupName ?? "-",
         status: contact.status == 1 ? "Active" : "Inactive",
         action: "True",
         srno: contact.addSrno,
         gender: contact.gender,
+        ...contact
       }))
     : [];
 
