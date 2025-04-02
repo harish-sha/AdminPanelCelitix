@@ -154,11 +154,13 @@ export default function WhatsappLiveChat() {
 
   useEffect(() => {
     async function handleFetchAllConvo() {
+      console.log(btnOption);
+      const userActive = btnOption == "active" ? 1 : 0;
       try {
         const data = {
           mobileNo: "918504944944",
           srno: 0,
-          userActive: 0,
+          active: userActive,
         };
         const res = await fetchAllConversations(data);
         console.log(res);
@@ -168,7 +170,7 @@ export default function WhatsappLiveChat() {
     }
 
     handleFetchAllConvo();
-  }, []);
+  }, [btnOption]);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
