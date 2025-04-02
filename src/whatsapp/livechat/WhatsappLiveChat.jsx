@@ -4,7 +4,10 @@ import { BsJournalArrowDown, BsThreeDotsVertical } from "react-icons/bs";
 import { IoArrowBack } from "react-icons/io5";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AnimatedDropdown from "../components/AnimatedDropdown";
-import { getWabaList } from "../../apis/whatsapp/whatsapp";
+import {
+  fetchAllConversations,
+  getWabaList,
+} from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
   FormatBoldOutlined,
@@ -125,7 +128,6 @@ export default function WhatsappLiveChat() {
     }
   };
 
-
   const items = [
     {
       label: "Attachment",
@@ -149,6 +151,24 @@ export default function WhatsappLiveChat() {
       },
     },
   ];
+
+  useEffect(() => {
+    async function handleFetchAllConvo() {
+      try {
+        const data = {
+          mobileNo: "918504944944",
+          srno: 0,
+          userActive: 0,
+        };
+        const res = await fetchAllConversations(data);
+        console.log(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    handleFetchAllConvo();
+  }, []);
 
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);

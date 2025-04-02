@@ -65,7 +65,7 @@ export const uploadImageFile = async (file) => {
       body: formData,
     });
 
-      return response;
+    return response;
     // if (response && response.status) {
     // } else {
     //   throw new Error(response?.msg || "Image upload failed.");
@@ -261,6 +261,15 @@ export const syncStatus = async (srno) => {
 export const refreshWhatsApp = async (srno) => {
   return await fetchWithAuth(
     `proCpaasRest/whatsapptemplate/refreshWabaDetails?wabaSrno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const fetchAllConversations = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=&userActive=${data.active}`,
     {
       method: "POST",
     }
