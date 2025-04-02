@@ -117,7 +117,6 @@ export const Preview = ({
     }
   };
 
-  console.log(cardData);
 
   return (
     <div className="smartphone">

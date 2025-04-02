@@ -117,7 +117,7 @@ export const Card = ({
   };
 
   const deleteFileUpload = () => {
-    setCustomFilePath(null);
+    setCustomFilePath("");
     setCardData({ ...cardData, file: "", filePath: "" });
   };
 

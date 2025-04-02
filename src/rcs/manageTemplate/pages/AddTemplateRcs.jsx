@@ -130,14 +130,14 @@ const AddTemplateRcs = () => {
     Object.values(btnData).forEach(({ type, value, title }) => {
       if (!type) return;
 
-      if (
-        (type !== "Share Location" && !value) ||
-        (type === "Share Location" && !title)
-      ) {
-        toast.error(`Please fill all the fields for ${type}`);
-        hasError = true;
-        return;
-      }
+      // if (
+      //   (type !== "Share Location" && !value) ||
+      //   (type === "Share Location" && !title)
+      // ) {
+      //   toast.error(`Please fill all the fields for ${type}`);
+      //   hasError = true;
+      //   return;
+      // }
       const actions = {
         "Url Action": () => {
           suggestions.website.push(value);
@@ -162,7 +162,7 @@ const AddTemplateRcs = () => {
         },
       };
 
-      actions[type]?.()
+      actions[type]?.();
     });
 
     variables.forEach((item) => {
@@ -270,17 +270,41 @@ const AddTemplateRcs = () => {
       }
     }
 
-    const data = {
-      ...inputData,
-      suggestions,
-      messageContent,
-      variables,
-    };
+    // const data = {
+    //   ...inputData,
+    //   suggestions,
+    //   messageContent,
+    //   variables,
+    // };
+    let data = {};
 
-    console.log(cardData, "cardData");
-    console.log(cardwidth, "cardwidth");
-    console.log(cardOrientation, "cardOrientation");
-    console.log("carouselData: ", caraousalData);
+    if (inputData.templateType === "rich_card") {
+      data = {
+        ...inputData,
+        orientation: cardOrientation,
+        height: cardData.mediaHeight,
+        standAlone: {
+          cardTitle: cardData.title,
+          cardDescription: messageContent,
+          file: cardData.fileName,
+          thumbnailFileName: cardData.fileName,
+          suggestions: suggestions,
+        },
+        variables,
+      };
+    } else if (inputData.templateType === "text") {
+      data = {
+        ...inputData,
+        suggestions,
+        messageContent,
+        variables,
+      };
+    }
+
+    // console.log(cardData, "cardData");
+    // console.log(cardwidth, "cardwidth");
+    // console.log(cardOrientation, "cardOrientation");
+    // console.log("carouselData: ", caraousalData);
     console.log("Api Requested Data", data);
 
     try {
