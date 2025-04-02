@@ -1,7 +1,11 @@
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 
-export const HandleCampaignDetails = () => {
+export const HandleCampaignDetails = ({
+  campaignDetails,
+  setCampaignDetails,
+  allAgents,
+}) => {
   return (
     <div className="w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
       <div className="mb-3">
@@ -11,9 +15,14 @@ export const HandleCampaignDetails = () => {
           label="Select Agent"
           tooltipContent="Select your Agent "
           tooltipPlacement="right"
-          options={[{ value: "option1", label: "Option 1" }]}
-          value={""}
-          onChange={() => {}}
+          options={allAgents.map((agent) => ({
+            value: agent.agentId,
+            label: agent.agentName,
+          }))}
+          value={campaignDetails.agent}
+          onChange={(e) => {
+            setCampaignDetails({ ...campaignDetails, agent: e });
+          }}
           placeholder="Select Agent"
         />
       </div>
@@ -24,7 +33,9 @@ export const HandleCampaignDetails = () => {
           name="createCampaign"
           label="Campaign Name"
           value={"inputValue"}
-          onChange={(e) => {}}
+          onChange={(e) => {
+            setCampaignDetails({ ...campaignDetails, campaignName: e });
+          }}
           placeholder="Campaign Name"
           tooltipContent="Your templatename should not contain spaces."
           tooltipPlacement="right"
