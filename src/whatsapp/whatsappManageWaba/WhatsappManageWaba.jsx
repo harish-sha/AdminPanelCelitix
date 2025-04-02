@@ -390,7 +390,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       flex: 1,
       minWidth: 120,
     },
-    { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
+    // { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
     {
       field: "phoneNumberId",
       headerName: "Phone Number ID",
@@ -485,9 +485,11 @@ const WhatsappManageWaba = ({ id, name }) => {
     wabaNumber: waba.mobileNo || "N/A",
     createdOn: waba.insertTime || "N/A",
     expiryDate: waba.expiryDate || "N/A",
-    status: waba.status || "N/A",
+    status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
+    messaging_limit: waba.messagingLimits || "N/A",
+    quality: waba.qualityRate || "N/A",
     ...waba,
   }));
 

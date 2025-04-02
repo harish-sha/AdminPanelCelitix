@@ -188,7 +188,10 @@ const TemplatePreview = ({
             id="templateFormatPreview"
             name="templateFormatPreview"
           >
-            {renderWithVariables(format)}
+            <pre className='text-wrap' >
+
+              {renderWithVariables(format)}
+            </pre>
           </div>
         )}
 

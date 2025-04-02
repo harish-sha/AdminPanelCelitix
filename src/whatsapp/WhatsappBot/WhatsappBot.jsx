@@ -77,21 +77,21 @@
 
 // export default WhatsappBot;
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { IconButton } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import CustomTooltip from "@/whatsapp/components/CustomTooltip";
-import SmartToyOutlinedIcon from '@mui/icons-material/SmartToyOutlined';
-import RadioButtonCheckedOutlinedIcon from '@mui/icons-material/RadioButtonCheckedOutlined';
-import RestaurantMenuOutlinedIcon from '@mui/icons-material/RestaurantMenuOutlined';
-import AccessAlarmsOutlinedIcon from '@mui/icons-material/AccessAlarmsOutlined';
-import SchoolOutlinedIcon from '@mui/icons-material/SchoolOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
+import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
+import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
+import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import { motion } from "framer-motion";
 
-import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import restaurtantimg from "../../assets/images/restaurant.avif";
 import workinghour from "../../assets/images/workinghour.jpg";
 import whatsapp from "../../assets/images/whatsapp.jpg";
@@ -100,6 +100,7 @@ import customerservice from "../../assets/images/customerservice.avif";
 import touristplace from "../../assets/images/tourist.avif";
 import university from "../../assets/images/university.avif";
 import UniversalButton from "../components/UniversalButton";
+import DropdownMenuPortal from "../../utils/DropdownMenuPortal.jsx";
 import {
   FaWhatsapp,
   FaEnvelope,
@@ -115,33 +116,55 @@ const WhatsappBot = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [searchActive, setSearchActive] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  // const [dropdownButtonRefs, setDropdownButtonRefs] = useState({});
+  const dropdownButtonRefs = useRef({});
+
   const [dropdownItems, setDropdownItems] = useState([
     "Edit",
     "Duplicate",
     "Share",
     "Remove",
-  ])
-
-
+  ]);
 
   const handleNavigate = () => navigate("/createwhatsappbot");
+
+  const toggleDropdown = (id) => {
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+    console.log("bot id", id);
+  };
+
+  const closeDropdown = () => setDropdownOpenId(null);
+
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".bot-settings")) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // Fetch WABA List
   useEffect(() => {
     setIsLoading(true);
     setTimeout(() => {
       setIsLoading(false);
-    }, 500)
+    }, 500);
   }, []);
 
   const templates = [
     {
       name: "Restaurant Bot",
-      icon: <RestaurantMenuOutlinedIcon
-        sx={{
-          fontSize: "3rem",
-        }}
-      />,
+      icon: (
+        <RestaurantMenuOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: restaurtantimg,
     },
     {
@@ -151,19 +174,24 @@ const WhatsappBot = () => {
     },
     {
       name: "LiveChat After-Hours",
-      icon: <AccessAlarmsOutlinedIcon
-        sx={{
-          fontSize: "3rem",
-        }}
-
-      />,
+      icon: (
+        <AccessAlarmsOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: workinghour,
     },
     {
       name: "Blank Bot",
-      icon: <SmartToyOutlinedIcon sx={{
-        fontSize: "3rem",
-      }} />,
+      icon: (
+        <SmartToyOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: chatbot,
     },
     {
@@ -173,23 +201,35 @@ const WhatsappBot = () => {
     },
     {
       name: "Customer Service Bot",
-      icon: <SupportAgentOutlinedIcon sx={{
-        fontSize: "3rem",
-      }} />,
+      icon: (
+        <SupportAgentOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: customerservice,
     },
     {
       name: "University Bot",
-      icon: <SchoolOutlinedIcon sx={{
-        fontSize: "3rem",
-      }} />,
+      icon: (
+        <SchoolOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: university,
     },
     {
       name: "Chat Bot",
-      icon: <SmartToyOutlinedIcon sx={{
-        fontSize: "3rem",
-      }} />,
+      icon: (
+        <SmartToyOutlinedIcon
+          sx={{
+            fontSize: "3rem",
+          }}
+        />
+      ),
       backgroundImage: chatbot,
     },
   ];
@@ -204,7 +244,8 @@ const WhatsappBot = () => {
 
       {/* Content */}
       <div className="relative z-10 flex flex-col items-center justify-center text-center text-gray-900 space-y-2">
-        <div className="text-3xl text-teal-600"
+        <div
+          className="text-3xl text-teal-600"
           style={{
             fontSize: "3rem",
           }}
@@ -313,7 +354,7 @@ const WhatsappBot = () => {
       integrations: "No Integrations added",
       lastUpdated: "25 Mar 2025, 02:49pm",
     },
-  ]
+  ];
 
   return (
     <>
@@ -322,8 +363,9 @@ const WhatsappBot = () => {
       ) : (
         <div className="p-3 rounded-xl space-y-6 bg-gray-50  w-full overflow-hidden min-h-[90vh]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2 text-2xl font-medium text-gray-900" >
-              Manage Bots<FaWhatsapp className="text-[#25D366] text-2xl" />
+            <div className="flex items-center gap-2 text-2xl font-medium text-gray-900">
+              Manage Bots
+              <FaWhatsapp className="text-[#25D366] text-2xl" />
             </div>
             {/* search bots */}
             {/* <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 mr-50 `}>
@@ -379,7 +421,9 @@ const WhatsappBot = () => {
           </div>
 
           <div className="bg-white p-4 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-2 text-gray-800">Templates</h2>
+            <h2 className="text-lg font-semibold mb-2 text-gray-800">
+              Templates
+            </h2>
             <Carousel
               value={templates}
               numVisible={3}
@@ -393,81 +437,112 @@ const WhatsappBot = () => {
           </div>
 
           <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">Created Bots <SmartToyOutlinedIcon /></h2>
-            <div className="overflow-auto h-80" >
+            <h2 className="text-lg font-semibold mb-4 text-gray-800 flex items-center gap-2">
+              Created Bots <SmartToyOutlinedIcon />
+            </h2>
+            <div className="overflow-auto h-80">
+              {createdBots.map((bot) => {
+                const ref = dropdownButtonRefs[bot.id] || React.createRef();
 
-              {createdBots.map((bot) => (
-                <div
-                  key={bot.id}
-                  className="border rounded-xl overflow-hidden hover:shadow-lg transition-all mb-4"
-                >
-                  <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-blue-50 px-6 py-4 gap-3">
-                    <div className="flex items-center gap-4 flex-1">
-                      <RadioButtonCheckedOutlinedIcon className="text-green-500" fontSize="small" />
-                      <div>
-                        <p className="font-semibold text-gray-800">{bot.name}</p>
-                        <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
-                          {bot.status}
-                        </span>
+                return (
+                  <div
+                    key={bot.id}
+                    className="border rounded-xl overflow-hidden hover:shadow-lg transition-all mb-4"
+                  >
+                    <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-blue-50 px-6 py-4 gap-3">
+                      <div className="flex items-center gap-4 flex-1">
+                        <RadioButtonCheckedOutlinedIcon
+                          className="text-green-500"
+                          fontSize="small"
+                        />
+                        <div>
+                          <p className="font-semibold text-gray-800">
+                            {bot.name}
+                          </p>
+                          <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
+                            {bot.status}
+                          </span>
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-700 flex-1">
+                        Versions: <strong>{bot.versions}</strong>
+                      </div>
+                      <div className="text-sm text-red-500 font-medium flex-1">
+                        {bot.integrations}
+                      </div>
+                      <div className="text-sm text-gray-500 flex-1 flex flex-col items-center gap-1">
+                        Last Updated: <strong>{bot.lastUpdated}</strong>
+                      </div>
+                      <div className="flex items-center gap-2 relative bot-settings">
+                        <CustomTooltip title="Settings" arrow>
+                          <IconButton
+                            ref={(el) => {
+                              if (el) dropdownButtonRefs.current[bot.id] = el;
+                            }}
+                            onClick={() => toggleDropdown(bot.id)}
+                          >
+                            <SettingsOutlinedIcon
+                              className="text-gray-600"
+                              fontSize="small"
+                            />
+                          </IconButton>
+                        </CustomTooltip>
+                        {dropdownOpenId === bot.id && (
+                          <DropdownMenuPortal
+                            targetRef={{
+                              current: dropdownButtonRefs.current[bot.id],
+                            }}
+                            onClose={closeDropdown}
+                          >
+                            {dropdownItems.map((item, index) => (
+                              <button
+                                key={index}
+                                onClick={() => {
+                                  console.log(
+                                    `Clicked ${item} on bot ${bot.id}`
+                                  );
+                                  closeDropdown();
+                                }}
+                                className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                              >
+                                {item === "Edit" && (
+                                  <EditNoteIcon fontSize="small" />
+                                )}
+                                {item === "Duplicate" && (
+                                  <FaEnvelope size={14} />
+                                )}
+                                {item === "Share" && <FaGlobe size={14} />}
+                                {item === "Remove" && (
+                                  <MdOutlineDeleteForever
+                                    size={16}
+                                    className="text-red-500"
+                                  />
+                                )}
+                                {item}
+                              </button>
+                            ))}
+                          </DropdownMenuPortal>
+                        )}
+                        <CustomTooltip title="Delete Bot" arrow>
+                          <IconButton
+                            onClick={() => console.log(`Delete bot ${bot.id}`)}
+                          >
+                            <MdOutlineDeleteForever
+                              className="text-red-500"
+                              size={20}
+                            />
+                          </IconButton>
+                        </CustomTooltip>
                       </div>
                     </div>
-                    <div className="text-sm text-gray-700 flex-1">
-                      Versions: <strong>{bot.versions}</strong>
-                    </div>
-                    <div className="text-sm text-red-500 font-medium flex-1">
-                      {bot.integrations}
-                    </div>
-                    <div className="text-sm text-gray-500 flex-1 flex flex-col items-center gap-1">
-                      Last Updated: <strong>{bot.lastUpdated}</strong>
-                    </div>
-                    <div className="flex items-center gap-2 ">
-                      <CustomTooltip title="Settings" arrow >
-                        <IconButton onClick={() => console.log(`Edit bot ${bot.id}`)}>
-                          <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
-                          {/* Dropdown Menu */}
-                          {dropdownItems && dropdownOpen && (
-                            <motion.div
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              exit={{ opacity: 0, y: -10 }}
-                              className="absolute left-10 top-full mt-1 w-40 bg-white shadow-lg rounded-md border border-slate-200 z-10"
-                            >
-                              {dropdownItems.map((item, index) => (
-                                <button
-                                  key={index}
-                                  onClick={() => console.log(`Clicked ${item}`)}
-                                  className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100"
-                                >
-                                  {item}
-                                </button>
-                              ))}
-                            </motion.div>
-                          )}
-                        </IconButton>
-                      </CustomTooltip>
-                      <CustomTooltip title="Delete Bot" arrow >
-                        <IconButton
-                          onClick={() => console.log(`Delete bot ${bot.id}`)}
-                        >
-                          <MdOutlineDeleteForever
-                            className="text-red-500"
-                            size={20}
-                          />
-                        </IconButton>
-                      </CustomTooltip>
-                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
-
           </div>
         </div>
       )}
     </>
-
-
-
   );
 };
 

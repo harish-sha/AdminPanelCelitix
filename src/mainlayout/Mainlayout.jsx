@@ -8,7 +8,6 @@ const Mainlayout = () => {
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
 
-    // ✅ Handle screen resize for responsiveness
     useEffect(() => {
         const handleResize = () => {
             const isNowMobile = window.innerWidth < 1024;
@@ -27,7 +26,6 @@ const Mainlayout = () => {
             <div className="flex flex-1 overflow-hidden">
                 <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} isMobile={isMobile} />
 
-                {/* Main Content */}
                 <div
                     ref={scrollableContainerRef}
                     className={`flex-1 transition-all duration-300 overflow-auto p-3 bg-gray-100 lg:rounded-tl-2xl 
