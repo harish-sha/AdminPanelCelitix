@@ -922,7 +922,7 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
           <div>
-            {/* <TemplatePreview tempDetails={templateDetails} /> */}
+            <TemplatePreview tempDetails={templateDetails} />
           </div>
         </div>
       </Dialog>
