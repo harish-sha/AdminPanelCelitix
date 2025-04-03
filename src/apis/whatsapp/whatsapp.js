@@ -301,3 +301,10 @@ export const sendMessageToUser = async (data) => {
     }
   );
 };
+
+export const sendTemplateMessageToUser = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/LiveChat/sendTemplateMsg", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
