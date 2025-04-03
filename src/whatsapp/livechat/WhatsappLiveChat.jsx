@@ -182,7 +182,7 @@ export default function WhatsappLiveChat() {
       const userActive = btnOption == "active" ? 1 : 0;
       try {
         const data = {
-          mobileNo: "918504944944",
+          mobileNo: selectedWaba,
           srno: 0,
           active: userActive,
         };
@@ -209,19 +209,21 @@ export default function WhatsappLiveChat() {
 
     handleFetchAllConvo();
     setActiveChat(null);
-  }, [btnOption]);
+  }, [selectedWaba, btnOption]);
 
-  useEffect(() => {
-    async function handleFetchAllTemplates() {
-      try {
-        const res = await getWabaTemplateDetails("917230000091");
-        setAllTemplated(res);
-      } catch (e) {
-        console.log(e);
-        return toast.error("Error fetching all templates");
-      }
+  async function handleFetchAllTemplates() {
+    if (!selectedWaba) {
+      return;
     }
-
+    try {
+      const res = await getWabaTemplateDetails(selectedWaba);
+      setAllTemplated(res);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching all templates");
+    }
+  }
+  useEffect(() => {
     handleFetchAllTemplates();
   }, [sendMessageDialogVisible === true]);
 
@@ -307,7 +309,7 @@ export default function WhatsappLiveChat() {
     }
 
     const data = {
-      waba: "917230000091",
+      waba: selectedWaba,
       name: agentName,
       agentSrno: selectedAgentList,
       groupNo: selectedGroupList,
@@ -346,7 +348,7 @@ export default function WhatsappLiveChat() {
     if (messageType === "text") {
       data = {
         mobile: activeChat.mobileNo,
-        wabaNumber: "917230000091",
+        wabaNumber: selectedWaba,
         srno: activeChat.srno,
         message: sendmessageData.message,
         contactName: activeChat?.contectName || "",
@@ -362,7 +364,7 @@ export default function WhatsappLiveChat() {
         templateType: "text",
         templateName: "celitix",
         templateLanguage: "en",
-        wabaNumber: "917230000091",
+        wabaNumber: selectedWaba,
         mobileno: activeChat.mobileNo,
         contactName: activeChat?.contectName || "",
         msgType: "template",
@@ -382,6 +384,12 @@ export default function WhatsappLiveChat() {
     try {
       setIsFetching(true);
       const res = await func(data);
+      if (res?.msg?.includes("successfully")) {
+        toast.success("Message sent successfully.");
+        setSendMessageDialogVisible(false);
+        setSendMessageData({});
+        return;
+      }
       console.log(res);
     } catch (e) {
       console.log(e);
@@ -394,12 +402,13 @@ export default function WhatsappLiveChat() {
     if (!sendmessageData?.templateName) {
       return;
     }
+    console.log(wabaId);
     try {
       const res = await getWabaTemplate(
-        "635404869082307",
+        wabaId?.wabaAccountId,
         sendmessageData?.templateName
       );
-      setTemplateDetails(res.data);
+      setTemplateDetails(res.data[0]);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching template details");
@@ -448,28 +457,30 @@ export default function WhatsappLiveChat() {
             />
             <SearchOutlined className="absolute text-gray-500 right-2 top-7" />
           </div>
-          <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
-            <button
-              onClick={() => setBtnOption("active")}
-              className={`p-2 transition-all duration-300 rounded-lg ${
-                btnOption === "active"
-                  ? "bg-blue-500 text-white scale-105 shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Active
-            </button>
-            <button
-              onClick={() => setBtnOption("close")}
-              className={`p-2 transition-all duration-300 rounded-lg ${
-                btnOption === "close"
-                  ? "bg-blue-500 text-white scale-105 shadow-lg"
-                  : "bg-white text-gray-700 hover:bg-gray-300"
-              }`}
-            >
-              Close
-            </button>
-          </div>
+          {selectedWaba && (
+            <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
+              <button
+                onClick={() => setBtnOption("active")}
+                className={`p-2 transition-all duration-300 rounded-lg ${
+                  btnOption === "active"
+                    ? "bg-blue-500 text-white scale-105 shadow-lg"
+                    : "bg-white text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Active
+              </button>
+              <button
+                onClick={() => setBtnOption("close")}
+                className={`p-2 transition-all duration-300 rounded-lg ${
+                  btnOption === "close"
+                    ? "bg-blue-500 text-white scale-105 shadow-lg"
+                    : "bg-white text-gray-700 hover:bg-gray-300"
+                }`}
+              >
+                Close
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="mt-4 h-[400px] overflow-y-auto">
@@ -832,16 +843,16 @@ export default function WhatsappLiveChat() {
       <Dialog
         header="Send Message to User"
         visible={sendMessageDialogVisible}
-        style={{ width: "50vw" }}
+        style={{ width: "50rem" }}
         draggable={false}
         onHide={() => {
           setSendMessageDialogVisible(false);
         }}
       >
-        <div className="flex items-center justify-between gap-4 p-2">
+        <div className="flex flex-col justify-between gap-4 p-2 md:flex-row">
           <div className="flex flex-col gap-5">
             <div className="flex gap-2">
-              <div className="flex items-center gap-2">
+              <div className="flex gap-2">
                 <RadioButton
                   inputId="mesageTemplateType"
                   name="mesageTemplateType"
@@ -849,6 +860,7 @@ export default function WhatsappLiveChat() {
                   onChange={(e) => {
                     setMessageType(e.target.value);
                     setSendMessageData({});
+                    setTemplateDetails("");
                   }}
                   checked={messageType === "template"}
                 />
@@ -867,6 +879,7 @@ export default function WhatsappLiveChat() {
                   onChange={(e) => {
                     setMessageType(e.target.value);
                     setSendMessageData({});
+                    setTemplateDetails("");
                   }}
                   checked={messageType === "text"}
                 />
