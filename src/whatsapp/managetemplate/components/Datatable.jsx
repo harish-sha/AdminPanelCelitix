@@ -91,7 +91,14 @@ const CustomPagination = ({
   );
 };
 
-const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
+const DataTable = ({
+  id,
+  wabaNumber,
+  data,
+  name,
+  wabaList,
+  fetchTemplateData,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [templateData, setTemplateData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -404,6 +411,7 @@ const DataTable = ({ id, wabaNumber, data, name, wabaList }) => {
       if (res?.msg?.includes("Succefully")) {
         toast.success("Template deleted successfully.");
         setVisible(false);
+        await fetchTemplateData();
         return;
       }
     } catch (e) {
