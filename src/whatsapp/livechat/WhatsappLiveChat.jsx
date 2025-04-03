@@ -10,6 +10,8 @@ import {
   fetchSpecificConversations,
   getWabaList,
   getWabaShowGroupsList,
+  getWabaTemplateDetails,
+  sendMessageToUser,
 } from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
@@ -34,6 +36,7 @@ import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
 import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
 import { fetchAllAgents } from "@/apis/rcs/rcs";
 import UniversalButton from "../components/UniversalButton";
+import { RadioButton } from "primereact/radiobutton";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -82,6 +85,11 @@ export default function WhatsappLiveChat() {
   const [specificConversation, setSpecificConversation] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
+  const [sendMessageDialogVisible, setSendMessageDialogVisible] =
+    useState(false);
+  const [messageType, setMessageType] = useState("template");
+  const [allTemplated, setAllTemplated] = useState([]);
+  const [sendmessageData, setSendMessageData] = useState({});
 
   const inputRef = useRef(null);
 
@@ -198,6 +206,20 @@ export default function WhatsappLiveChat() {
     setActiveChat(null);
   }, [btnOption]);
 
+  useEffect(() => {
+    async function handleFetchAllTemplates() {
+      try {
+        const res = await getWabaTemplateDetails("917230000091");
+        setAllTemplated(res);
+      } catch (e) {
+        console.log(e);
+        return toast.error("Error fetching all templates");
+      }
+    }
+
+    handleFetchAllTemplates();
+  }, [sendMessageDialogVisible === true]);
+
   const handleFileChange = (e) => {
     const files = Array.from(e.target.files);
 
@@ -301,6 +323,44 @@ export default function WhatsappLiveChat() {
       toast.error("Something went wrong. Please try again.");
     }
   }
+
+  async function handlesendMessage() {
+    if (!activeChat) {
+      return toast.error("Please select chat first");
+    }
+
+    if (!sendmessageData.message) {
+      return toast.error("Please enter message");
+    }
+
+    let data = {};
+    let func = "";
+    if (messageType === "text") {
+      data = {
+        mobile: activeChat.mobileNo,
+        wabaNumber: "917230000091",
+        srno: activeChat.srno,
+        message: sendmessageData.message,
+        contactName: activeChat?.contectName || "",
+        replyType: "text",
+        replyFrom: "user",
+        wabaSrNo: 3,
+      };
+      func = sendMessageToUser;
+    } else if (messageType === "template") {
+    } else {
+      return toast.error("Please select valid messageType");
+    }
+
+    try {
+      const res = await func(data);
+      console.log(res);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Something went wrong. Please try again.");
+    }
+  }
+
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -561,7 +621,12 @@ export default function WhatsappLiveChat() {
                   the user to initiate a chat
                 </p>
               </div>
-              <button className="flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-md">
+              <button
+                onClick={() => {
+                  setSendMessageDialogVisible(true);
+                }}
+                className="flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-md"
+              >
                 Start Chat
                 <ArrowRightAltOutlinedIcon />
               </button>
@@ -713,6 +778,101 @@ export default function WhatsappLiveChat() {
           images={selectedImage}
         />
       )}
+
+      <Dialog
+        header="Send Message to User"
+        visible={sendMessageDialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          setSendMessageDialogVisible(false);
+        }}
+      >
+        <div className="flex items-center justify-between gap-4 p-2">
+          <div className="flex flex-col gap-5">
+            <div className="flex gap-2">
+              <div className="flex items-center gap-2">
+                <RadioButton
+                  inputId="mesageTemplateType"
+                  name="mesageTemplateType"
+                  value="template"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                  }}
+                  checked={messageType === "template"}
+                />
+                <label
+                  htmlFor="mesageTemplateType"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Template
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioButton
+                  inputId="mesageTextType"
+                  name="mesageTextType"
+                  value="text"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                  }}
+                  checked={messageType === "text"}
+                />
+                <label
+                  htmlFor="mesageTextType"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Custom Message
+                </label>
+              </div>
+            </div>
+            <div>
+              {messageType === "template" ? (
+                <div className="flex flex-col gap-3">
+                  <AnimatedDropdown
+                    id="selectTemplate"
+                    name="selectTemplate"
+                    label="Select Template"
+                    options={allTemplated.map((template) => ({
+                      value: template.templateName,
+                      label: template.templateName,
+                    }))}
+                    value={sendmessageData.templateName}
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        templateName: e,
+                      }));
+                    }}
+                  />
+
+                  <p>Variables</p>
+                </div>
+              ) : (
+                <div>
+                  <InputField
+                    label="Enter Message"
+                    value={sendmessageData.message}
+                    placeholder="Enter Message..."
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        message: e.target.value,
+                      }));
+                    }}
+                  />
+                </div>
+              )}
+            </div>
+            <div>
+              <UniversalButton label="Send" onClick={handlesendMessage} />
+            </div>
+          </div>
+          <div>Preview</div>
+        </div>
+      </Dialog>
     </div>
   );
 }

@@ -292,3 +292,12 @@ export const assignUserToAgent = async (data) => {
     }
   );
 };
+
+export const sendMessageToUser = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+    {
+      method: "POST",
+    }
+  );
+};
