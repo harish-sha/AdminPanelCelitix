@@ -1,44 +1,115 @@
-const handleGenerate = async () => {
-    if (!aiPrompt.trim()) return;
+import React from "react";
+import Slider from "react-slick";
+import { FaReply } from "react-icons/fa6";
+import { BsTelephoneFill } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
-    setIsGenerating(true);
-    setAiSuggestion("");
-    setIsTypingDone(false);
-    setHasInserted(false);
-    setGenerationCount((prev) => prev + 1); // forces new key
-
-    try {
-        const response = await axios.post(
-            "https://api.openai.com/v1/chat/completions",
-            {
-                model: "gpt-4", // Use the appropriate model (e.g., gpt-3.5-turbo or gpt-4)
-                messages: [
-                    { role: "system", content: "You are a helpful assistant." },
-                    { role: "user", content: aiPrompt },
-                ],
-                max_tokens: 1024, // Limit the response length
-                temperature: 0.7, // Adjust creativity level
-            },
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${process.env.REACT_APP_OPEN_API_KEY}`, // Use the API key from the environment variable
-                },
-            }
-        );
-
-        const text = response.data.choices[0].message.content;
-
-        const totalLength = templateFormat.length + text.length;
-        const finalText =
-            totalLength > 1024 ? text.slice(0, 1024 - templateFormat.length) : text;
-
-        setAiSuggestion(finalText);
-        setTypingKey((prev) => prev + 1); // force TypingText to re-render only here
-    } catch (err) {
-        console.error("Error generating content:", err);
-        toast.error("Failed to generate AI response. Please try again.");
-    } finally {
-        setIsGenerating(false);
+const getBtnIcon = (type) => {
+    switch (type) {
+        case "PHONE_NUMBER":
+            return <BsTelephoneFill className="mr-2" />;
+        case "QUICK_REPLY":
+            return <FaReply className="mr-2" />;
+        default:
+            return <FaExternalLinkAlt className="mr-2" />;
     }
 };
+
+const getBtnCss = (type) => {
+    switch (type) {
+        case "PHONE_NUMBER":
+            return "bg-blue-500 text-white";
+        case "QUICK_REPLY":
+            return "text-gray-800 bg-gray-200";
+        default:
+            return "bg-green-500 text-white";
+    }
+};
+
+const getBtnTitle = (type, phone, url, text) => {
+    switch (type) {
+        case "PHONE_NUMBER":
+            return `Contact us: ${phone}`;
+        case "QUICK_REPLY":
+            return `View more: ${text}`;
+        default:
+            return `Visit us: ${url}`;
+    }
+};
+
+const CarouselPreview = ({ carouselData }) => {
+    const settings = {
+        dots: true,
+        infinite: false,
+        speed: 500,
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        arrows: true,
+    };
+
+    return (
+        <div className="w-full mt-4">
+            <Slider {...settings}>
+                {carouselData.cards.map((card, cardIndex) => {
+                    const headerComponent = card.components.find((comp) => comp.type === "HEADER");
+                    const bodyComponent = card.components.find((comp) => comp.type === "BODY");
+                    const buttonComponent = card.components.find((comp) => comp.type === "BUTTONS");
+
+                    const mediaUrl = headerComponent?.example?.header_handle[0];
+
+                    return (
+                        <div
+                            key={cardIndex}
+                            className="p-4 bg-white rounded-xl border border-gray-200 shadow-md"
+                        >
+                            {headerComponent?.format === "IMAGE" && (
+                                <img
+                                    src={mediaUrl}
+                                    alt="Card Media"
+                                    className="w-full h-60 object-contain rounded-md mb-4"
+                                />
+                            )}
+
+                            {headerComponent?.format === "VIDEO" && (
+                                <video controls className="w-full h-60 object-contain rounded-md mb-4">
+                                    <source src={mediaUrl} type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                            )}
+
+                            <div className="text-sm text-gray-800 whitespace-pre-wrap mb-4">
+                                {bodyComponent?.text}
+                            </div>
+
+                            {buttonComponent?.buttons?.length > 0 && (
+                                <div className="flex flex-col gap-2">
+                                    {buttonComponent.buttons.map((btn, btnIdx) => (
+                                        <button
+                                            key={btnIdx}
+                                            title={getBtnTitle(btn.type, btn.phone_number, btn.url, btn.text)}
+                                            className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(btn.type)}`}
+                                            onClick={() => {
+                                                if (btn.type === "PHONE_NUMBER") {
+                                                    window.location.href = `tel:${btn.phone_number}`;
+                                                } else if (btn.type === "URL") {
+                                                    window.open(btn.url, "_blank");
+                                                }
+                                            }}
+                                        >
+                                            {getBtnIcon(btn.type)}
+                                            {btn.text}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    );
+                })}
+            </Slider>
+        </div>
+    );
+};
+
+export default CarouselPreview;

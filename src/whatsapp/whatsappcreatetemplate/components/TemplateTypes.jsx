@@ -123,7 +123,7 @@ const TemplateTypes = ({
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
-          model: "gpt-4o-mini",
+          model: "gpt-3.5-turbo",
           messages: [
             { role: "system", content: "You are a helpful assistant." },
             { role: "user", content: aiPrompt },
@@ -543,13 +543,11 @@ const TemplateTypes = ({
           {templateFormat.length}/1024 characters
         </div> */}
 
-        <div className="">
-          <VariableManager
-            templateFormat={templateFormat}
-            setTemplateFormat={setTemplateFormat}
-            onUpdateVariables={updateVariables}
-          />
-        </div>
+        <VariableManager
+          templateFormat={templateFormat}
+          setTemplateFormat={setTemplateFormat}
+          onUpdateVariables={updateVariables}
+        />
 
         <div className="w-full mb-4 relative">
           <AnimatePresence>

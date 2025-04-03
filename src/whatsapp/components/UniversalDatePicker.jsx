@@ -17,6 +17,7 @@ const UniversalDatePicker = ({
     errorText = '',
     minDate,
     maxDate,
+    defaultValue,
     views
 }) => {
     return (

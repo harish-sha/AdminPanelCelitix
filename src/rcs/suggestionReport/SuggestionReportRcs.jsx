@@ -20,7 +20,7 @@ const SuggestionReportRcs = () => {
     mobileNumber: "",
     offset: "0",
   });
-  const[suggestionTableData, setSuggestionTableData] = useState([]);
+  const [suggestionTableData, setSuggestionTableData] = useState([]);
 
   useEffect(() => {
     async function fetchAllBotsData() {
@@ -76,13 +76,14 @@ const SuggestionReportRcs = () => {
         </>
       ) : ( */}
       <div>
-        <div className="flex flex-wrap items-end w-full gap-2 pb-1">
+        <div className="flex flex-wrap items-end w-full gap-2 mb-5">
           {/* From Date Picker */}
           <div className="w-full sm:w-56">
             <UniversalDatePicker
               id="suggestionfrom"
               name="suggestionfrom"
               label="From Date"
+              maxDate={new Date()}
               value={suggestionData.fromDate}
               onChange={(newValue) => {
                 setSuggestionData({ ...suggestionData, fromDate: newValue });
@@ -158,7 +159,6 @@ const SuggestionReportRcs = () => {
           </div>
         </div>
 
-        {/* ✅ Show Loader or Table */}
         {isFetching ? (
           <div className="w-full">
             <UniversalSkeleton height="35rem" width="100%" />

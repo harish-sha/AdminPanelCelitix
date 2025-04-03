@@ -17,6 +17,7 @@ import { Dialog } from 'primereact/dialog';
 import WarningAmberOutlinedIcon from '@mui/icons-material/WarningAmberOutlined';
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
+
 import { ConfirmPopup, confirmPopup } from 'primereact/confirmpopup';
 
 import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
@@ -28,6 +29,8 @@ import { deleteWabaTemplate, getWabaTemplate, getWabaTemplateDetails } from '../
 import whatsappImg from '../../../assets/images/whatsappdummy.webp';
 import CustomTooltip from '../../components/CustomTooltip.jsx';
 import UniversalButton from '@/whatsapp/components/UniversalButton.jsx';
+import CarouselPreview from './CarouselPreview.jsx';
+
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -124,6 +127,7 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
             toast.error("Please select a WABA account.");
             return;
         }
+
         const selectedWaba = wabaList.find(waba => waba.mobileNo === wabaNumber);
         if (!selectedWaba || !selectedWaba.wabaAccountId) {
             toast.error("WABA Account ID not found for the selected WABA.");
@@ -149,16 +153,15 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
     };
 
 
+
+
     const handleClose = () => {
         setDialogVisible(false);
     };
 
-
     const handleDuplicate = (row) => {
         // Implement duplicate logic here
     };
-
-
 
     const handleApi = (row) => {
     }
@@ -555,10 +558,7 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
                 <div className="modal-content rounded-xl">
                     <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
                         {selectedRow?.templateData ? (
-
-
                             <>
-
                                 {/* Document if exists */}
                                 {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "DOCUMENT") && (
                                     <div className="docbox">
@@ -578,6 +578,14 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
                                     </div>
                                 )}
 
+                                {/* Carousel if exists */}
+                                {selectedRow?.templateData?.components.some(comp => comp.type === "CAROUSEL") && (
+                                    <CarouselPreview
+                                        carouselData={
+                                            selectedRow.templateData.components.find(comp => comp.type === "CAROUSEL")
+                                        }
+                                    />
+                                )}
 
                                 {/* Image if exists */}
                                 {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "IMAGE") && (
@@ -599,19 +607,6 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
 
                                 {/* Buttons if exists */}
                                 <div className='flex flex-col gap-2'>
-                                    {/* {selectedRow.templateData.components.some(comp => comp.type === "BUTTONS") && (
-                                        selectedRow.templateData.components.find(comp => comp.type === "BUTTONS").buttons.map((btn, index) => (
-                                            <button
-                                                key={index}
-                                                title={btn.type === "PHONE_NUMBER" ? `Call: ${btn.phone_number}` : `Visit: ${btn.url}`}
-                                                className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${btn.type === "PHONE_NUMBER" ? "bg-blue-500 text-white" : "bg-green-500 text-white"}`}
-                                                onClick={() => btn.type === "PHONE_NUMBER" ? window.location.href = `tel:${btn.phone_number}` : window.open(btn.url, "_blank")}
-                                            >
-                                                {btn.type === "PHONE_NUMBER" ? <BsTelephoneFill className='mr-2' /> : <FaExternalLinkAlt className='mr-2' />}
-                                                {btn.text}
-                                            </button>
-                                        ))
-                                    )} */}
                                     {selectedRow.templateData.components.some(
                                         (comp) => comp.type === "BUTTONS"
                                     ) &&
@@ -645,6 +640,7 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList }) => {
                                                 </button>
                                             ))}
                                 </div>
+
                             </>
                         ) : (
                             <p>No template data available.</p>
