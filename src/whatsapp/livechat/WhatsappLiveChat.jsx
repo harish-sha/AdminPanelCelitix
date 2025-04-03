@@ -10,6 +10,7 @@ import {
   fetchSpecificConversations,
   getWabaList,
   getWabaShowGroupsList,
+  getWabaTemplate,
   getWabaTemplateDetails,
   sendMessageToUser,
   sendTemplateMessageToUser,
@@ -38,6 +39,8 @@ import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined
 import { fetchAllAgents } from "@/apis/rcs/rcs";
 import UniversalButton from "../components/UniversalButton";
 import { RadioButton } from "primereact/radiobutton";
+import Loader from "../components/Loader";
+import { TemplatePreview } from "./component/TemplatePreview";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -91,6 +94,7 @@ export default function WhatsappLiveChat() {
   const [messageType, setMessageType] = useState("template");
   const [allTemplated, setAllTemplated] = useState([]);
   const [sendmessageData, setSendMessageData] = useState({});
+  const [templateDetails, setTemplateDetails] = useState("");
 
   const inputRef = useRef(null);
 
@@ -311,6 +315,7 @@ export default function WhatsappLiveChat() {
     };
 
     try {
+      setIsFetching(true);
       const res = await assignUserToAgent(data);
       if (res.message.includes("Successfully")) {
         toast.success("Agent assigned successfully.");
@@ -322,6 +327,8 @@ export default function WhatsappLiveChat() {
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
     }
   }
 
@@ -373,15 +380,38 @@ export default function WhatsappLiveChat() {
     }
 
     try {
+      setIsFetching(true);
       const res = await func(data);
       console.log(res);
     } catch (e) {
       console.log(e);
       return toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
     }
   }
+  async function handlefetchTemplateDetails() {
+    if (!sendmessageData?.templateName) {
+      return;
+    }
+    try {
+      const res = await getWabaTemplate(
+        "635404869082307",
+        sendmessageData?.templateName
+      );
+      setTemplateDetails(res.data);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching template details");
+    }
+  }
+  useEffect(() => {
+    handlefetchTemplateDetails();
+  }, [sendmessageData?.templateName, setSendMessageData]);
 
-  return (
+  return isFetching ? (
+    <Loader height="35rem" width="100%" />
+  ) : (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
       <div
@@ -891,7 +921,9 @@ export default function WhatsappLiveChat() {
               <UniversalButton label="Send" onClick={handlesendMessage} />
             </div>
           </div>
-          <div>Preview</div>
+          <div>
+            {/* <TemplatePreview tempDetails={templateDetails} /> */}
+          </div>
         </div>
       </Dialog>
     </div>
