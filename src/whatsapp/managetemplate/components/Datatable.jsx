@@ -24,11 +24,13 @@ import {
   getWabaTemplate,
   getWabaTemplateDetails,
   deleteTemplate,
+  refreshTemplate,
 } from "../../../apis/whatsapp/whatsapp.js";
 import whatsappImg from "../../../assets/images/whatsappdummy.webp";
 import CustomTooltip from "../../components/CustomTooltip.jsx";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import UniversalButton from "@/components/common/UniversalButton.jsx";
+import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -210,6 +212,18 @@ const DataTable = ({
     });
   };
 
+  const handleRefreshStatus = async (data) => {
+    try {
+      const res = await refreshTemplate(data?.id);
+      toast.success("Refreshed Successfully");
+      await fetchTemplateData();
+    } catch (e) {
+      console.log(e);
+      return toast.error("Failed to refresh template.");
+    }
+    toast.success("Refreshed Successfully");
+  };
+
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     {
@@ -230,6 +244,21 @@ const DataTable = ({
       minWidth: 150,
       renderCell: (params) => (
         <>
+          <CustomTooltip title="Refresh Status" placement="top" arrow>
+            <IconButton
+              className="text-xs"
+              onClick={() => {
+                handleRefreshStatus(params.row);
+              }}
+            >
+              <SyncOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
           <CustomTooltip title="View" placement="top" arrow>
             <IconButton
               className="text-xs"

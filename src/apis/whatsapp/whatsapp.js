@@ -317,3 +317,12 @@ export const deleteTemplate = async (data) => {
     }
   );
 };
+
+export const refreshTemplate = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/whatsapptemplate/checkStatus?srno=${data}`,
+    {
+      method: "POST",
+    }
+  );
+};
