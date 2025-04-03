@@ -12,6 +12,7 @@ import {
   getWabaShowGroupsList,
   getWabaTemplateDetails,
   sendMessageToUser,
+  sendTemplateMessageToUser,
 } from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
@@ -129,7 +130,7 @@ export default function WhatsappLiveChat() {
 
   const sendMessage = () => {
     if (input.trim() || selectedImage) {
-      const updatedChats = chats.map((chat) =>
+      const updatedChats = chats?.map((chat) =>
         chat.id === activeChat.id
           ? {
               ...chat,
@@ -184,7 +185,7 @@ export default function WhatsappLiveChat() {
         setIsFetching(true);
         const res = await fetchAllConversations(data);
 
-        const mappedConversations = res.conversationEntityList.map((chat) => {
+        const mappedConversations = res.conversationEntityList?.map((chat) => {
           const unread = res.unreadCounts.find(
             (unreadChat) => unreadChat.mobile === chat.mobileNo
           );
@@ -329,7 +330,7 @@ export default function WhatsappLiveChat() {
       return toast.error("Please select chat first");
     }
 
-    if (!sendmessageData.message) {
+    if (messageType === "text" && !sendmessageData.message) {
       return toast.error("Please enter message");
     }
 
@@ -348,6 +349,25 @@ export default function WhatsappLiveChat() {
       };
       func = sendMessageToUser;
     } else if (messageType === "template") {
+      data = {
+        srno: "562",
+        templateUrlVariable: "asdasds",
+        templateType: "text",
+        templateName: "celitix",
+        templateLanguage: "en",
+        wabaNumber: "917230000091",
+        mobileno: activeChat.mobileNo,
+        contactName: activeChat?.contectName || "",
+        msgType: "template",
+        variables: [],
+        mediaUrl:
+          "http://localhost:8080/procpaas//Whatsapp/whatsapp_2907_1741414141365.jpg",
+        message: "Welcome to celitix",
+        phoneDisplay: "",
+        wabaSrNo: "1",
+        agentsrno: "",
+      };
+      func = sendTemplateMessageToUser;
     } else {
       return toast.error("Please select valid messageType");
     }
@@ -425,8 +445,8 @@ export default function WhatsappLiveChat() {
         <div className="mt-4 h-[400px] overflow-y-auto">
           {allConvo
             ?.slice()
-            .sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
-            .map((chat, index) => (
+            ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
+            ?.map((chat, index) => (
               <div
                 key={chat.srno || index}
                 className={`p-3 border-b cursor-pointer select-none ${
@@ -610,7 +630,7 @@ export default function WhatsappLiveChat() {
               </div>
             </div>
           ) : (
-            <div className="flex items-center justify-between w-full p-4 bg-white">
+            <div className="flex flex-col items-center justify-between w-full p-4 bg-white mb-17 md:mb-0 md:flex-row">
               <div>
                 <div className="flex gap-2">
                   <AccessAlarmOutlinedIcon />
@@ -715,7 +735,7 @@ export default function WhatsappLiveChat() {
       >
         <div className="space-y-3">
           <AnimatedDropdown
-            options={agentList.map((agent) => ({
+            options={agentList?.map((agent) => ({
               value: agent.srno,
               label: agent.agentName,
             }))}
@@ -740,7 +760,7 @@ export default function WhatsappLiveChat() {
             placeholder="Enter Agent Display Name"
           />
           <AnimatedDropdown
-            options={groupList.map((group) => ({
+            options={groupList?.map((group) => ({
               value: group.groupCode,
               label: group.groupName,
             }))}
@@ -762,10 +782,10 @@ export default function WhatsappLiveChat() {
           />
         </div>
       </Dialog>
-      <input
+      {/* <input
         type="file"
         ref={fileInputRef}
-        style={{ display: "none" }}
+        // style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/*"
         multiple
@@ -777,7 +797,7 @@ export default function WhatsappLiveChat() {
           setImagePreviewVisible={setImagePreviewVisible}
           images={selectedImage}
         />
-      )}
+      )} */}
 
       <Dialog
         header="Send Message to User"
@@ -835,7 +855,8 @@ export default function WhatsappLiveChat() {
                     id="selectTemplate"
                     name="selectTemplate"
                     label="Select Template"
-                    options={allTemplated.map((template) => ({
+                    placeholder="Select Template"
+                    options={allTemplated?.map((template) => ({
                       value: template.templateName,
                       label: template.templateName,
                     }))}
