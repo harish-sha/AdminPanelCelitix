@@ -308,3 +308,12 @@ export const sendTemplateMessageToUser = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const deleteTemplate = async (data) => {
+  return await fetchWithAuth(
+    `proCpaasRest/whatsapptemplate/deleteWabaTemplate?templateSrno=${data.srno}&wabaSrno=${data.waba}&templateName=${data.name}`,
+    {
+      method: "POST",
+    }
+  );
+};
