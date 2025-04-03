@@ -283,3 +283,12 @@ export const fetchSpecificConversations = async (data) => {
     }
   );
 };
+
+export const assignUserToAgent = async (data) => {
+  return await fetchWithAuth(
+    `proCpaasRest/LiveChat/addAgentToUser?wabaNumber=${data.waba}&name=${data.name}&agentSrno=${data.agentSrno}&groupNo=${data.groupNo}&mobileNo=${data.mobileNo}`,
+    {
+      method: "POST",
+    }
+  );
+};

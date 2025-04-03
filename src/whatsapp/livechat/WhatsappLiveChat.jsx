@@ -5,6 +5,7 @@ import { IoArrowBack } from "react-icons/io5";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import AnimatedDropdown from "../components/AnimatedDropdown";
 import {
+  assignUserToAgent,
   fetchAllConversations,
   fetchSpecificConversations,
   getWabaList,
@@ -32,6 +33,7 @@ import ImagePreview from "./ImagePreview";
 import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
 import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
 import { fetchAllAgents } from "@/apis/rcs/rcs";
+import UniversalButton from "../components/UniversalButton";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -262,6 +264,40 @@ export default function WhatsappLiveChat() {
     handleFetchAllAgent();
     handleFetchAllGroup();
   }, []);
+
+  async function handleAssignAgent() {
+    if (!selectedAgentList) {
+      return toast.error("Please select agent");
+    }
+    if (!agentName) {
+      return toast.error("Please select agent display name");
+    }
+    if (!selectedGroupList) {
+      return toast.error("Please select group");
+    }
+    if (!activeChat.mobileNo) {
+      return toast.error("Please select chat first");
+    }
+
+    const data = {
+      waba: "917230000091",
+      name: agentName,
+      agentSrno: selectedAgentList,
+      groupNo: selectedGroupList,
+      mobileNo: activeChat.mobileNo,
+    };
+
+    try {
+      const res = await assignUserToAgent(data);
+      if (res.message.includes("Successfully")) {
+        toast.success("Agent assigned successfully.");
+        setDialogVisible(false);
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong. Please try again.");
+    }
+  }
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -612,7 +648,7 @@ export default function WhatsappLiveChat() {
         <div className="space-y-3">
           <AnimatedDropdown
             options={agentList.map((agent) => ({
-              value: agent.agentId,
+              value: agent.srno,
               label: agent.agentName,
             }))}
             id="agentList"
@@ -648,6 +684,13 @@ export default function WhatsappLiveChat() {
             value={selectedGroupList}
             onChange={(value) => setSelectedGroupList(value)}
             placeholder="Group"
+          />
+
+          <UniversalButton
+            id={"assignAgent"}
+            name={"assignAgent"}
+            label="Assign Agent"
+            onClick={handleAssignAgent}
           />
         </div>
       </Dialog>
