@@ -28,6 +28,8 @@ import { Dialog } from "primereact/dialog";
 import InputField from "../components/InputField";
 import toast from "react-hot-toast";
 import ImagePreview from "./ImagePreview";
+import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -74,6 +76,8 @@ export default function WhatsappLiveChat() {
 
   const [allConvo, setAllConvo] = useState([]);
   const [specificConversation, setSpecificConversation] = useState([]);
+
+  const [isFetching, setIsFetching] = useState(false);
 
   const inputRef = useRef(null);
 
@@ -165,6 +169,7 @@ export default function WhatsappLiveChat() {
           srno: 0,
           active: userActive,
         };
+        setIsFetching(true);
         const res = await fetchAllConversations(data);
 
         const mappedConversations = res.conversationEntityList.map((chat) => {
@@ -180,10 +185,13 @@ export default function WhatsappLiveChat() {
       } catch (e) {
         console.log(e);
         return toast.error("Error fetching all conversations");
+      } finally {
+        setIsFetching(false);
       }
     }
 
     handleFetchAllConvo();
+    setActiveChat(null);
   }, [btnOption]);
 
   const handleFileChange = (e) => {
@@ -215,12 +223,15 @@ export default function WhatsappLiveChat() {
       chatNo: 0,
     };
     try {
+      setIsFetching(true);
       const res = await fetchSpecificConversations(data);
       setSpecificConversation(res.conversationEntityList);
       console.log(res.conversationEntityList);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching specific conversation");
+    } finally {
+      setIsFetching(false);
     }
   }
 
@@ -373,20 +384,27 @@ export default function WhatsappLiveChat() {
           </div>
 
           {/* Messages */}
-          {/* <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
-            {activeChat.messages.map((msg, index) => (
+          <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
+            {specificConversation?.map((msg, index) => (
               <div
                 key={index}
                 className={`p-2 rounded-lg max-w-xs ${
-                  msg.sender === "You"
+                  msg.replyFrom != "user"
                     ? "bg-blue-500 text-white self-end"
                     : "bg-gray-200 text-black self-start"
                 }`}
               >
-                {msg.text}
+                {msg?.replyType === "image" && (
+                  <img
+                    src={msg?.mediaPath}
+                    alt={msg?.mediaPath}
+                    className="object-cover h-50 w-50"
+                  />
+                )}
+                {msg.messageBody}
               </div>
             ))}
-          </div> */}
+          </div>
 
           {/* {selectedImage.length > 0 && (
             <div className="flex flex-wrap gap-2 mt-2">
@@ -429,45 +447,64 @@ export default function WhatsappLiveChat() {
           )} */}
 
           {/* Input */}
-          {/* <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
-            <div className="mr-2">
-              <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-            </div>
-            <div className="relative w-full border rounded-lg">
-              <input
-                type="text"
-                className="flex-1 md:w-[35rem] w-[14rem] p-2 focus:outline-none"
-                placeholder="Type a message..."
-                ref={inputRef}
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-              />
-              <button
-                onClick={sendMessage}
-                className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-2 bottom-1"
-              >
-                <FiSend />
-              </button>
-              <div>
-                <SpeedDial
-                  model={items}
-                  direction="up"
-                  style={{ bottom: 4, right: 40 }}
-                  buttonStyle={{
-                    width: "2rem",
-                    height: "2rem",
-                  }}
+          {btnOption === "active" ? (
+            <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
+              <div className="mr-2">
+                <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+              </div>
+              <div className="relative w-full border rounded-lg">
+                <input
+                  type="text"
+                  className="flex-1 md:w-[35rem] w-[14rem] p-2 focus:outline-none"
+                  placeholder="Type a message..."
+                  ref={inputRef}
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && sendMessage()}
                 />
-              </div>
-              <div className="absolute items-center justify-center hidden gap-1 right-25 bottom-2 md:flex">
-                <FormatBoldOutlined />
-                <FormatItalicOutlined />
-                <FormatStrikethroughOutlined />
+                <button
+                  onClick={sendMessage}
+                  className="absolute p-2 ml-2 text-white bg-blue-500 rounded-lg right-2 bottom-1"
+                >
+                  <FiSend />
+                </button>
+                <div>
+                  <SpeedDial
+                    model={items}
+                    direction="up"
+                    style={{ bottom: 4, right: 40 }}
+                    buttonStyle={{
+                      width: "2rem",
+                      height: "2rem",
+                    }}
+                  />
+                </div>
+                <div className="absolute items-center justify-center hidden gap-1 right-25 bottom-2 md:flex">
+                  <FormatBoldOutlined />
+                  <FormatItalicOutlined />
+                  <FormatStrikethroughOutlined />
+                </div>
               </div>
             </div>
-          </div> */}
-          {/* <Sidebar
+          ) : (
+            <div className="flex items-center justify-between w-full p-4 bg-white">
+              <div>
+                <div className="flex gap-2">
+                  <AccessAlarmOutlinedIcon />
+                  <p>24 Hour Window Elapsed</p>
+                </div>
+                <p className="text-xs">
+                  The 24 Hour conversation window has elapsed. Please wait for
+                  the user to initiate a chat
+                </p>
+              </div>
+              <button className="flex items-center justify-center px-4 py-2 text-white bg-blue-500 rounded-md">
+                Start Chat
+                <ArrowRightAltOutlinedIcon />
+              </button>
+            </div>
+          )}
+          <Sidebar
             visible={visibleRight}
             position="right"
             onHide={() => setVisibleRight(false)}
@@ -476,15 +513,15 @@ export default function WhatsappLiveChat() {
             <div className="flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
                 <img
-                  src={activeChat.image}
+                  src={activeChat.image || "/default-avatar.jpg"}
                   alt=""
                   className="w-10 h-10 rounded-full"
                 />
-                <h1>{activeChat.name}</h1>
+                <h1> {activeChat.contectName || activeChat.mobileNo}</h1>
               </div>
               <div className="flex items-center gap-2">
                 <LocalPhoneOutlinedIcon />
-                <p>{activeChat.phone}</p>
+                <p>{activeChat.mobileNo}</p>
               </div>
             </div>
 
@@ -534,7 +571,7 @@ export default function WhatsappLiveChat() {
                 <p className="text-right">Rajasthan</p>
               </div>
             </div>
-          </Sidebar> */}
+          </Sidebar>
         </div>
       )}
 
