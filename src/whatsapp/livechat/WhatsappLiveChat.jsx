@@ -8,6 +8,7 @@ import {
   fetchAllConversations,
   fetchSpecificConversations,
   getWabaList,
+  getWabaShowGroupsList,
 } from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
@@ -30,6 +31,7 @@ import toast from "react-hot-toast";
 import ImagePreview from "./ImagePreview";
 import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
 import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
+import { fetchAllAgents } from "@/apis/rcs/rcs";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -238,6 +240,28 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     handleFetchSpecificConversation();
   }, [activeChat]);
+
+  useEffect(() => {
+    async function handleFetchAllAgent() {
+      try {
+        const res = await fetchAllAgents();
+        setAgentList(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    async function handleFetchAllGroup() {
+      try {
+        const res = await getWabaShowGroupsList();
+        setGroupList(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    handleFetchAllAgent();
+    handleFetchAllGroup();
+  }, []);
   return (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden">
       {/* Sidebar */}
@@ -576,6 +600,7 @@ export default function WhatsappLiveChat() {
       )}
 
       <Dialog
+        header="Transfer Chat to Agent"
         visible={dialogVisible}
         style={{ width: "50vw" }}
         draggable={false}
@@ -586,16 +611,10 @@ export default function WhatsappLiveChat() {
       >
         <div className="space-y-3">
           <AnimatedDropdown
-            options={[
-              {
-                value: "arIHANT1",
-                label: "Arihant",
-              },
-              {
-                value: "aRIHANT2",
-                label: "Arihant",
-              },
-            ]}
+            options={agentList.map((agent) => ({
+              value: agent.agentId,
+              label: agent.agentName,
+            }))}
             id="agentList"
             name="agentList"
             label="Agent List"
@@ -607,26 +626,20 @@ export default function WhatsappLiveChat() {
           />
 
           <InputField
-            label="Agent Name"
+            label="Agent Display Name"
             tooltipContent="Enter Agent Name"
             id="agentname"
             name="agentname"
             type="tel"
             value={agentName}
             onChange={(e) => setAgentname(e.target.value)}
-            placeholder="Enter Agent Name"
+            placeholder="Enter Agent Display Name"
           />
           <AnimatedDropdown
-            options={[
-              {
-                value: "arIHANT3",
-                label: "Arihant",
-              },
-              {
-                value: "aRIHANT4",
-                label: "Arihant",
-              },
-            ]}
+            options={groupList.map((group) => ({
+              value: group.groupCode,
+              label: group.groupName,
+            }))}
             id="group"
             name="group"
             label="Group"
