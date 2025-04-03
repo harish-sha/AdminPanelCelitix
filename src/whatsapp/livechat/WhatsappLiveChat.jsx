@@ -292,6 +292,9 @@ export default function WhatsappLiveChat() {
       if (res.message.includes("Successfully")) {
         toast.success("Agent assigned successfully.");
         setDialogVisible(false);
+        setSelectedAgentList("");
+        setSelectedGroupList("");
+        setAgentname("");
       }
     } catch (e) {
       console.log(e);
