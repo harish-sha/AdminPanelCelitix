@@ -935,7 +935,7 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
           <div>
-            <TemplatePreview tempDetails={templateDetails} />
+            <TemplatePreview tempDetails={templateDetails} messageType={messageType} sendmessageData={sendmessageData} />
           </div>
         </div>
       </Dialog>

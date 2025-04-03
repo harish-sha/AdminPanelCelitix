@@ -3,7 +3,11 @@ import { FaReply } from "react-icons/fa6";
 import { BsTelephoneFill } from "react-icons/bs";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-export const TemplatePreview = ({ tempDetails }) => {
+export const TemplatePreview = ({
+  tempDetails,
+  messageType,
+  sendmessageData,
+}) => {
   console.log(tempDetails);
   const getBtnStyle = (type) => {
     switch (type) {
@@ -45,27 +49,31 @@ export const TemplatePreview = ({ tempDetails }) => {
           </div>
 
           <div className="flex flex-col gap-3 p-3 bg-white rounded-b-md">
-            {tempDetails?.components?.map(({ type, text, buttons }, index) => (
-              <div key={index} className="flex">
-                {type === "BODY" && <div>{text}</div>}
-                {type === "BUTTONS" && buttons?.length > 0 && (
-                   <div className="flex gap-2 w-full max-w-[500px] mt-5 flex-col">
-                    {buttons.map(({ url, type, text }, btnIndex) => (
-                      <button
-                        key={btnIndex}
-                        title={url}
-                        className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
-                          type
-                        )}`}
-                      >
-                        {getBtnIcon(type)}
-                        <p className="ml-2">{text}</p>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+            {messageType === "text" ? (
+              <>{sendmessageData?.message}</>
+            ) : (
+              tempDetails?.components?.map(({ type, text, buttons }, index) => (
+                <div key={index} className="flex">
+                  {type === "BODY" && <div>{text}</div>}
+                  {type === "BUTTONS" && buttons?.length > 0 && (
+                    <div className="flex gap-2 w-full max-w-[500px] mt-5 flex-col">
+                      {buttons.map(({ url, type, text }, btnIndex) => (
+                        <button
+                          key={btnIndex}
+                          title={url}
+                          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
+                            type
+                          )}`}
+                        >
+                          {getBtnIcon(type)}
+                          <p className="ml-2">{text}</p>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
 
             {/* {uploadedImage ? (
               <div className="flex justify-center mb-2">
