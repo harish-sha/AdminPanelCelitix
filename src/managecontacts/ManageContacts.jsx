@@ -399,7 +399,6 @@ const ManageContacts = () => {
       uniqueId: updateContactDetails.uniqueId,
       gender: updateContactDetails.gender,
       activeStatus: updatedContactDetails.status,
-      uniqueId: updateContactDetails.uniqueId,
     };
 
     const res = await updateContactsDetails(data);
