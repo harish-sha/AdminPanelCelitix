@@ -42,6 +42,7 @@ import { RadioButton } from "primereact/radiobutton";
 import Loader from "../components/Loader";
 import { TemplatePreview } from "./component/TemplatePreview";
 import dayjs from "dayjs";
+import { getAgentList } from "@/apis/Agent/Agent";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -269,7 +270,7 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     async function handleFetchAllAgent() {
       try {
-        const res = await fetchAllAgents();
+        const res = await getAgentList();
         setAgentList(res);
       } catch (e) {
         console.log(e);
@@ -793,9 +794,9 @@ export default function WhatsappLiveChat() {
       >
         <div className="space-y-3">
           <AnimatedDropdown
-            options={agentList?.map((agent) => ({
-              value: agent.agent_id,
-              label: agent.agent_name,
+            options={agentList?.data?.map((agent) => ({
+              value: agent.sr_no,
+              label: agent.name,
             }))}
             id="agentList"
             name="agentList"
