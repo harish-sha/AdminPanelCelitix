@@ -402,12 +402,11 @@ export default function WhatsappLiveChat() {
     if (!sendmessageData?.templateName) {
       return;
     }
-    console.log(wabaId);
+    const wabaId = waba.find(
+      (waba) => waba.mobileNo === selectedWaba
+    )?.wabaAccountId;
     try {
-      const res = await getWabaTemplate(
-        wabaId?.wabaAccountId,
-        sendmessageData?.templateName
-      );
+      const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
       setTemplateDetails(res.data[0]);
     } catch (e) {
       console.log(e);
