@@ -428,41 +428,45 @@ export default function WhatsappLiveChat() {
   return isFetching ? (
     <Loader height="35rem" width="100%" />
   ) : (
-    <div className="flex h-[100%] bg-gray-100 overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
       <div
-        className={`w-full md:w-1/3 bg-white border-r overflow-hidden ${
+        className={`w-full md:w-1/3  border-r overflow-hidden ${
           activeChat ? "hidden md:block" : "block"
         }`}
       >
-        {/* <h2 className="text-xl font-bold">Chats</h2> */}
-
         <div>
-          <AnimatedDropdown
-            id="createSelectWaba"
-            name="createSelectWaba"
-            label="Select WABA"
-            tooltipContent="Select your whatsapp business account"
-            tooltipPlacement="right"
-            options={waba?.map((waba) => ({
-              value: waba.mobileNo,
-              label: waba.name,
-            }))}
-            value={selectedWaba}
-            onChange={(value) => setSelectedWaba(value)}
-            placeholder="Select WABA"
-          />
-          <div id="input" className="relative flex items-center justify-center">
-            <input
-              type="text"
-              name="search"
-              id="search"
-              placeholder="Search"
-              className="w-full p-2 mt-5 rounded-lg border-1 focus:outline-hidden"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            <SearchOutlined className="absolute text-gray-500 right-2 top-7" />
+          <div className="flex flex-col gap-2">
+            {/* <div className="w-2/3"> */}
+              <AnimatedDropdown
+                id="createSelectWaba"
+                name="createSelectWaba"
+                label="Select WABA"
+                tooltipContent="Select your whatsapp business account"
+                tooltipPlacement="right"
+                options={waba?.map((waba) => ({
+                  value: waba.mobileNo,
+                  label: waba.name,
+                }))}
+                value={selectedWaba}
+                onChange={(value) => setSelectedWaba(value)}
+                placeholder="Select WABA"
+              />
+            {/* </div> */}
+            <div
+              id="input"
+              className="flex items-center justify-center border-gray-300 rounded-lg border-1"
+            >
+              <input
+                type="text"
+                name="search"
+                id="search"
+                placeholder="Search"
+                className="w-full p-2 border-none rounded-2xl-lg focus:outline-hidden"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+              />
+              <SearchOutlined className="mr-2 text-gray-500" />
+            </div>
           </div>
           {selectedWaba && (
             <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
