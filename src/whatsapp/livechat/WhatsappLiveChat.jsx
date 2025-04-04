@@ -581,7 +581,7 @@ export default function WhatsappLiveChat() {
                   <img
                     src={msg?.mediaPath}
                     alt={msg?.mediaPath}
-                    className="object-contain h-50 w-50"
+                    className="object-contain pointer-events-none select-none h-50 w-50 "
                   />
                 )}
                 {msg.messageBody}
