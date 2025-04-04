@@ -259,7 +259,6 @@ export default function WhatsappLiveChat() {
       setIsFetching(true);
       const res = await fetchSpecificConversations(data);
       setSpecificConversation(res.conversationEntityList);
-      console.log(res.conversationEntityList);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching specific conversation");
@@ -568,7 +567,7 @@ export default function WhatsappLiveChat() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
-            {specificConversation?.map((msg, index) => (
+            {specificConversation?.reverse()?.map((msg, index) => (
               <div
                 key={index}
                 className={`p-2 rounded-lg max-w-xs ${
