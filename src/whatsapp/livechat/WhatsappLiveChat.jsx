@@ -544,7 +544,7 @@ export default function WhatsappLiveChat() {
               <img
                 src={activeChat.image || "/default-avatar.jpg"}
                 alt={activeChat.contectName}
-                className="w-10 h-10 ml-2 rounded-full"
+                className="w-10 h-10 ml-2 rounded-full "
               />
               <h3 className="text-lg font-semibold">
                 {activeChat.contectName || activeChat.mobileNo}
@@ -582,7 +582,7 @@ export default function WhatsappLiveChat() {
                   <img
                     src={msg?.mediaPath}
                     alt={msg?.mediaPath}
-                    className="object-cover h-50 w-50"
+                    className="object-contain h-50 w-50"
                   />
                 )}
                 {msg.messageBody}
@@ -935,7 +935,11 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
           <div>
-            <TemplatePreview tempDetails={templateDetails} messageType={messageType} sendmessageData={sendmessageData} />
+            <TemplatePreview
+              tempDetails={templateDetails}
+              messageType={messageType}
+              sendmessageData={sendmessageData}
+            />
           </div>
         </div>
       </Dialog>
