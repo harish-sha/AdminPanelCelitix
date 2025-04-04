@@ -41,6 +41,7 @@ import UniversalButton from "../components/UniversalButton";
 import { RadioButton } from "primereact/radiobutton";
 import Loader from "../components/Loader";
 import { TemplatePreview } from "./component/TemplatePreview";
+import dayjs from "dayjs";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -54,30 +55,6 @@ export default function WhatsappLiveChat() {
   const [selectedAgentList, setSelectedAgentList] = useState(null);
   const [selectedGroupList, setSelectedGroupList] = useState(null);
   const [selectedImage, setSelectedImage] = useState([]);
-  const [chats, setChats] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      phone: "+919672670732",
-      image:
-        "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
-      messages: [
-        { text: "Hello!", sender: "John Doe" },
-        { text: "Hi there!", sender: "You" },
-      ],
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      phone: "+919672670733",
-      image:
-        "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
-      messages: [
-        { text: "Hey!", sender: "Jane Smith" },
-        { text: "What's up?", sender: "You" },
-      ],
-    },
-  ]);
   const [activeChat, setActiveChat] = useState(null);
   const [input, setInput] = useState("");
   const [waba, setWaba] = useState([]);
@@ -251,6 +228,7 @@ export default function WhatsappLiveChat() {
 
   async function handleFetchSpecificConversation() {
     const data = {
+      // mobileNo: "91942998288",
       mobileNo: activeChat?.mobileNo,
       wabaMobile: activeChat?.wabaNumber,
       chatNo: 0,
@@ -258,7 +236,24 @@ export default function WhatsappLiveChat() {
     try {
       setIsFetching(true);
       const res = await fetchSpecificConversations(data);
-      setSpecificConversation(res.conversationEntityList);
+
+      const grouped = res?.conversationEntityList
+        ?.reverse()
+        .reduce((acc, message) => {
+          const date = dayjs(message.queTime).format("YYYY-MM-DD");
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          acc[date].push(message);
+          return acc;
+        }, {});
+
+      const groupedArray = Object.keys(grouped).map((date) => ({
+        date,
+        messages: grouped[date],
+      }));
+
+      setSpecificConversation(groupedArray);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching specific conversation");
@@ -416,6 +411,19 @@ export default function WhatsappLiveChat() {
     handlefetchTemplateDetails();
   }, [sendmessageData?.templateName, setSendMessageData]);
 
+  function formatTime(dateString) {
+    const date = new Date(dateString.replace(" ", "T"));
+
+    const options = {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    };
+
+    const timeAMPM = date.toLocaleTimeString("en-US", options);
+    return timeAMPM;
+  }
+
   return isFetching ? (
     <Loader height="35rem" width="100%" />
   ) : (
@@ -567,23 +575,34 @@ export default function WhatsappLiveChat() {
 
           {/* Messages */}
           <div className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col mt-16 mb-0 md:max-h-[calc(100vh-8rem)]">
-            {specificConversation?.reverse()?.map((msg, index) => (
-              <div
-                key={index}
-                className={`p-2 rounded-lg max-w-xs ${
-                  msg.replyFrom != "user"
-                    ? "bg-blue-500 text-white self-end"
-                    : "bg-gray-200 text-black self-start"
-                }`}
-              >
-                {msg?.replyType === "image" && (
-                  <img
-                    src={msg?.mediaPath}
-                    alt={msg?.mediaPath}
-                    className="object-contain pointer-events-none select-none h-50 w-50 "
-                  />
-                )}
-                {msg.messageBody}
+            {specificConversation?.map((group, groupIndex) => (
+              <div key={groupIndex}>
+                <div className="my-4 text-xs text-center text-gray-500">
+                  {group?.date}
+                </div>
+
+                {group.messages.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${
+                      msg.replyFrom !== "user"
+                        ? "bg-blue-500 text-white self-end"
+                        : "bg-gray-200 text-black self-start"
+                    }`}
+                  >
+                    {msg?.replyType === "image" && (
+                      <img
+                        src={msg?.mediaPath}
+                        alt={msg?.mediaPath}
+                        className="object-contain mb-2 pointer-events-none select-none h-50 w-50 "
+                      />
+                    )}
+                    <div className="w-25">{msg.messageBody}</div>
+                    <p className="mt-1 text-[0.7rem] text-end">
+                      {formatTime(msg?.queTime)}
+                    </p>
+                  </div>
+                ))}
               </div>
             ))}
           </div>
@@ -821,22 +840,6 @@ export default function WhatsappLiveChat() {
           />
         </div>
       </Dialog>
-      {/* <input
-        type="file"
-        ref={fileInputRef}
-        // style={{ display: "none" }}
-        onChange={handleFileChange}
-        accept="image/*"
-        multiple
-      />
-
-      {imagePreviewVisible && (
-        <ImagePreview
-          imagePreviewVisible={imagePreviewVisible}
-          setImagePreviewVisible={setImagePreviewVisible}
-          images={selectedImage}
-        />
-      )} */}
 
       <Dialog
         header="Send Message to User"
