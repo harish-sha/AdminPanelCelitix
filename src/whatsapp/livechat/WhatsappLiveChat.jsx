@@ -794,7 +794,7 @@ export default function WhatsappLiveChat() {
         <div className="space-y-3">
           <AnimatedDropdown
             options={agentList?.map((agent) => ({
-              value: agent.srno,
+              value: agent.agent_id,
               label: agent.agent_name,
             }))}
             id="agentList"
