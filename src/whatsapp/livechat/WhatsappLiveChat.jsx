@@ -430,27 +430,27 @@ export default function WhatsappLiveChat() {
   ) : (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
       <div
-        className={`w-full md:w-1/3  border-r overflow-hidden ${
+        className={`w-full md:w-75  border-r overflow-hidden ${
           activeChat ? "hidden md:block" : "block"
         }`}
       >
         <div>
           <div className="flex flex-col gap-2">
             {/* <div className="w-2/3"> */}
-              <AnimatedDropdown
-                id="createSelectWaba"
-                name="createSelectWaba"
-                label="Select WABA"
-                tooltipContent="Select your whatsapp business account"
-                tooltipPlacement="right"
-                options={waba?.map((waba) => ({
-                  value: waba.mobileNo,
-                  label: waba.name,
-                }))}
-                value={selectedWaba}
-                onChange={(value) => setSelectedWaba(value)}
-                placeholder="Select WABA"
-              />
+            <AnimatedDropdown
+              id="createSelectWaba"
+              name="createSelectWaba"
+              label="Select WABA"
+              tooltipContent="Select your whatsapp business account"
+              tooltipPlacement="right"
+              options={waba?.map((waba) => ({
+                value: waba.mobileNo,
+                label: waba.name,
+              }))}
+              value={selectedWaba}
+              onChange={(value) => setSelectedWaba(value)}
+              placeholder="Select WABA"
+            />
             {/* </div> */}
             <div
               id="input"

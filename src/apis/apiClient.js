@@ -34,7 +34,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       headers,
     });
 
-    console.log(response);
 
     if (response.status === 400) {
       return response;
