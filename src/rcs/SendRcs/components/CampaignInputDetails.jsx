@@ -16,8 +16,8 @@ export const HandleCampaignDetails = ({
           tooltipContent="Select your Agent "
           tooltipPlacement="right"
           options={allAgents?.map((agent) => ({
-            value: agent.agentId,
-            label: agent.agentName,
+            value: agent.agent_id,
+            label: agent.agent_name,
           }))}
           value={campaignDetails.agent}
           onChange={(e) => {
