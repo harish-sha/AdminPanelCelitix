@@ -193,88 +193,120 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image uploaded successfully.");
   };
 
+  // useEffect(() => {
+  //   const loadFacebookSDK = () => {
+  //     if (window.FB) {
+  //       console.log("Facebook SDK already loaded.");
+  //       setIsSdkLoaded(true);
+  //       return;
+  //     }
+
+  //     window.fbAsyncInit = function () {
+  //       console.log("Initializing Facebook SDK...");
+
+  //       FB.init({
+  //         appId: "YOUR_APP_ID", // Replace with your App ID
+  //         autoLogAppEvents: true,
+  //         xfbml: true,
+  //         version: "v20.0",
+  //       });
+
+  //       console.log("Facebook SDK initialized.");
+  //       setIsSdkLoaded(true);
+  //     };
+
+  //     const scriptId = "facebook-jssdk";
+  //     if (!document.getElementById(scriptId)) {
+  //       const js = document.createElement("script");
+  //       js.id = scriptId;
+  //       js.src = "https://connect.facebook.net/en_US/sdk.js";
+  //       js.async = true;
+  //       js.defer = true;
+  //       js.onload = () => {
+  //         console.log("Facebook SDK script loaded.");
+  //         if (window.fbAsyncInit) {
+  //           window.fbAsyncInit();
+  //         }
+  //       };
+  //       document.body.appendChild(js);
+  //     }
+  //   };
+
+  //   loadFacebookSDK();
+  // }, []);
+
+  // const handleFacebookLogin = () => {
+  //   if (!isSdkLoaded || typeof window.FB === "undefined") {
+  //     console.error("Facebook SDK not loaded yet.");
+  //     return;
+  //   }
+
+  //   window.FB.getLoginStatus((response) => {
+  //     console.log("FB Login Status:", response);
+  //     if (response.status === "unknown") {
+  //       console.warn(
+  //         "FB.init() might not have completed. Retrying login in 2s..."
+  //       );
+  //       // setTimeout(() => {
+  //       //   handleFacebookLogin();
+  //       // }, 2000);
+  //       return;
+  //     }
+  //     if (response.status !== "connected") {
+  //       window.FB.login(
+  //         function (response) {
+  //           if (response.authResponse) {
+  //             console.log("Access Token:", response.authResponse.accessToken);
+  //             setIsLoggedIn(true);
+  //           } else {
+  //             console.log("User cancelled login or did not fully authorize.");
+  //           }
+  //         },
+  //         { scope: "public_profile,email", return_scopes: true }
+  //       );
+  //     } else {
+  //       console.log("Already logged in:", response);
+  //       setIsLoggedIn(true);
+  //     }
+  //   });
+  // };
+
   useEffect(() => {
-    const loadFacebookSDK = () => {
-      if (window.FB) {
-        console.log("Facebook SDK already loaded.");
-        setIsSdkLoaded(true);
-        return;
-      }
-
-      window.fbAsyncInit = function () {
-        console.log("Initializing Facebook SDK...");
-
-        FB.init({
-          appId: "YOUR_APP_ID", // Replace with your App ID
-          autoLogAppEvents: true,
-          xfbml: true,
-          version: "v20.0",
-        });
-
-        console.log("Facebook SDK initialized.");
-        setIsSdkLoaded(true);
-      };
-
-      const scriptId = "facebook-jssdk";
-      if (!document.getElementById(scriptId)) {
-        const js = document.createElement("script");
-        js.id = scriptId;
-        js.src = "https://connect.facebook.net/en_US/sdk.js";
-        js.async = true;
-        js.defer = true;
-        js.onload = () => {
-          console.log("Facebook SDK script loaded.");
-          if (window.fbAsyncInit) {
-            window.fbAsyncInit();
-          }
-        };
-        document.body.appendChild(js);
-      }
+    window.fbAsyncInit = function () {
+      window.FB.init({
+        appId: "",
+        cookie: true,
+        xfbml: true,
+        version: "v21.0",
+      });
     };
 
-    loadFacebookSDK();
+    (function (d, s, id) {
+      let js,
+        fjs = d.getElementsByTagName(s)[0];
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://connect.facebook.net/en_US/sdk.js";
+      fjs.parentNode.insertBefore(js, fjs);
+    })(document, "script", "facebook-jssdk");
   }, []);
 
   const handleFacebookLogin = () => {
-    if (!isSdkLoaded || typeof window.FB === "undefined") {
-      console.error("Facebook SDK not loaded yet.");
-      return;
-    }
-
-    window.FB.getLoginStatus((response) => {
-      console.log("FB Login Status:", response);
-      if (response.status === "unknown") {
-        console.warn(
-          "FB.init() might not have completed. Retrying login in 2s..."
-        );
-        // setTimeout(() => {
-        //   handleFacebookLogin();
-        // }, 2000);
-        return;
-      }
-      if (response.status !== "connected") {
-        window.FB.login(
-          function (response) {
-            if (response.authResponse) {
-              console.log("Access Token:", response.authResponse.accessToken);
-              setIsLoggedIn(true);
-            } else {
-              console.log("User cancelled login or did not fully authorize.");
-            }
-          },
-          { scope: "public_profile,email", return_scopes: true }
-        );
-      } else {
-        console.log("Already logged in:", response);
-        setIsLoggedIn(true);
-      }
-    });
+    window.FB.login(
+      (response) => {
+        if (response.authResponse) {
+          console.log("User logged in", response);
+          window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
+            console.log("User details", user);
+          });
+        } else {
+          console.log("User canceled login or did not fully authorize.");
+        }
+      },
+      { scope: "public_profile,email" }
+    );
   };
-
-  // const handleFacebookLogin = () => {
-  //   console.log("Login with Facebook clicked");
-  //   setIsLoggedIn(true);
-  // };
 
   const handleSelectFile = () => {
     fileInputRef.current.value = "";

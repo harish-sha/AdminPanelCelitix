@@ -96,6 +96,9 @@ const ManageContacts = () => {
     pageSize: 5,
   });
   const [selectedRows, setSelectedRows] = useState([]);
+  const [idtoDelete, setIdToDelete] = useState([]);
+  const [deleteContactDialogVisible, setDeleteContactDialogVisible] =
+    useState(false);
 
   async function getGrpListData() {
     const res = await getGrpList();
@@ -385,10 +388,17 @@ const ManageContacts = () => {
     if (!grpDetails) {
       toast.error("Group not found");
     }
-
     const data = {
+      srNo: updateContactDetails.srno,
       groupSrNo: grpDetails.groupCode,
-      ...updatedContactDetails,
+      firstName: updateContactDetails.firstName,
+      middleName: updateContactDetails.middleName,
+      lastName: updateContactDetails.lastName,
+      mobileno: updateContactDetails.mobileno,
+      email: updateContactDetails.email,
+      uniqueId: updateContactDetails.uniqueId,
+      gender: updateContactDetails.gender,
+      activeStatus: updatedContactDetails.status,
     };
 
     const res = await updateContactsDetails(data);
@@ -631,6 +641,11 @@ const ManageContacts = () => {
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
+  async function handleContactDelete() {
+    console.log(idtoDelete.srno);
+
+  }
+
   return (
     <div>
       <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
@@ -676,7 +691,6 @@ const ManageContacts = () => {
             options={grpList?.map((item) => ({
               value: item.groupCode,
               label: `${item.groupName} (${item.totalCount})`,
-
             }))}
             value={selectedMultiGroup}
             onChange={(e) => setSelectedMultiGroup(e)}
@@ -750,6 +764,8 @@ const ManageContacts = () => {
           updateContactData={updateContactData}
           setUpdateContactDetails={setUpdateContactDetails}
           setUpdateContactVisible={setUpdateContactVisible}
+          setIdToDelete={setIdToDelete}
+          setDeleteContactDialogVisible={setDeleteContactDialogVisible}
         />
       )}
 
@@ -1424,10 +1440,10 @@ const ManageContacts = () => {
               id="userfirstname"
               name="userfirstname"
               type="text"
-              value={updatedContactDetails.firstName}
+              value={updateContactDetails.firstName}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   firstName: e.target.value,
                 })
               }
@@ -1451,10 +1467,10 @@ const ManageContacts = () => {
               id="userlastname"
               name="userlastname"
               type="text"
-              value={updatedContactDetails.lastName}
+              value={updateContactDetails.lastName}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   lastName: e.target.value,
                 })
               }
@@ -1465,11 +1481,11 @@ const ManageContacts = () => {
               id="mobilenumber"
               name="mobilenumber"
               type="number"
-              value={updatedContactDetails.mobileNo}
+              value={updateContactDetails.mobileno}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
-                  mobileNo: e.target.value,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
+                  mobileno: e.target.value,
                 })
               }
               required={true}
@@ -1493,10 +1509,10 @@ const ManageContacts = () => {
               id="uniqueid"
               name="uniqueid"
               type="text"
-              value={updatedContactDetails.uniqueId}
+              value={updateContactDetails.uniqueId}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
+                setUpdateContactDetails({
+                  ...updateContactDetails,
                   uniqueId: e.target.value,
                 })
               }
@@ -1564,11 +1580,11 @@ const ManageContacts = () => {
                 { value: 0, label: "Active" },
                 { value: 1, label: "Inactive" },
               ]}
-              value={updatedContactDetails.activeStatus}
+              value={updateContactDetails.status}
               onChange={(e) =>
-                setUpdatedContactDetails({
-                  ...updatedContactDetails,
-                  activeStatus: Number(e.target.value),
+                setUpdateContactDetails({
+                  ...updateContactDetails,
+                  status: Number(e.target.value),
                 })
               }
               required={true}
@@ -1583,6 +1599,58 @@ const ManageContacts = () => {
               onClick={updateContactData}
             />
           </div>
+        </div>
+      </Dialog>
+      <Dialog
+        header="Confirm Deletion"
+        visible={deleteContactDialogVisible}
+        onHide={() => {
+          setDeleteContactDialogVisible(false);
+          setIdToDelete(null);
+        }}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          {/* <ErrorOutlineOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                  }}
+                /> */}
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] text-gray-700 font-semibold">
+            Are you sure you want to delete the Contact <br />
+            <span className="text-green-500">"{idtoDelete?.firstName}"</span>
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
+
+        <div className="flex justify-center gap-4 mt-2">
+          <UniversalButton
+            label="Cancel"
+            style={{
+              backgroundColor: "#090909",
+            }}
+            onClick={() => setDeleteContactDialogVisible(false)}
+          />
+          <UniversalButton
+            label="Delete"
+            style={
+              {
+                // backgroundColor: "red",
+              }
+            }
+            onClick={handleContactDelete}
+          />
         </div>
       </Dialog>
     </div>

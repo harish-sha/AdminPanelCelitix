@@ -24,21 +24,16 @@ import {
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
   const { scrollableContainerRef } = useOutletContext();
-
   const [wabaList, setWabaList] = useState(null);
   const [selectedWaba, setSelectedWaba] = useState("");
   const [selectedWabaSno, setSelectedWabaSno] = useState("");
-
   const [valueWithoutSpaces, setValueWithoutSpaces] = useState("");
-
   const [templateName, setTemplateName] = useState("");
   // const [selectedOption, setSelectedOption] = useState('');
   const [selectedOption2, setSelectedOption2] = useState("");
   const [selectedOption3, setSelectedOption3] = useState("");
-
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-
   const [selectedTemplateType, setSelectedTemplateType] = useState("");
   const [templateHeader, setTemplateHeader] = useState("");
   const [templateFormat, setTemplateFormat] = useState("");
@@ -49,9 +44,7 @@ const WhatsappCreateTemplate = () => {
   const [locationUrl, setLocationUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
-
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-
   const [interactiveAction, setInteractiveAction] = useState("none");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneTitle, setPhoneTitle] = useState("");
@@ -69,24 +62,20 @@ const WhatsappCreateTemplate = () => {
     },
   ]);
   const [variables, setVariables] = useState([]);
-
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
   const [urlVariables, setUrlVariables] = useState([]);
-
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
   };
-
   const templateTypeOptions = [
     { value: "text", label: "Text" },
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
     { value: "location", label: "Location" },
-    { value: "carousel", label: "Carousel" }, // Only for marketing
+    { value: "carousel", label: "Carousel" }, 
   ];
-
   const handleDeleteCard = (index) => {
     setCards(cards.filter((_, i) => i !== index));
   };

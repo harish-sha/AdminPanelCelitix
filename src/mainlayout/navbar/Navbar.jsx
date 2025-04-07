@@ -197,7 +197,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           </Menu>
         </div>
       ) : (
-        // ✅ Small Screen Dropdown
         <div className="ml-auto">
           <IconButton onClick={handleMenu} className="text-gray-700">
             {/* <MoreIcon /> */}
@@ -210,7 +209,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             </label>
           </IconButton>
 
-          {/* Small Screen Dropdown Menu */}
           <Menu
             anchorEl={menuAnchorEl}
             open={Boolean(menuAnchorEl)}
@@ -266,7 +264,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       )}
 
-      {/* ✅ Account Info Modal */}
       {showModal && (
         <UniversalAccountInfo
           show={showModal}

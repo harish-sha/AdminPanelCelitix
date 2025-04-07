@@ -1,5 +1,6 @@
 import { fetchWithAuth } from "../apiClient";
 
+// get campaign report
 export const fetchCampaignReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/rcs/getCampaignReport", {
     method: "POST",
@@ -7,6 +8,7 @@ export const fetchCampaignReport = async (data) => {
   });
 };
 
+// get summary report
 export const fetchSummaryReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/rcs/getSummaryReport", {
     method: "POST",
@@ -14,6 +16,7 @@ export const fetchSummaryReport = async (data) => {
   });
 };
 
+// fetch all bots list
 export const fetchAllBotsList = async (agent_id = "") => {
   return await fetchWithAuth(
     `proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
@@ -32,6 +35,7 @@ export const fetchAllBotsList = async (agent_id = "") => {
 //   );
 // };
 
+// fetch suggestion report
 export const fetchsuggestionReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/rcs/getReplyReport", {
     method: "POST",
@@ -39,18 +43,21 @@ export const fetchsuggestionReport = async (data) => {
   });
 };
 
+// fetch all agents(bots) list
 export const fetchAllAgents = async () => {
   return await fetchWithAuth("/proCpaasRest/rcs/showAgentList", {
     method: "POST",
   });
 };
 
+// fetch all templates list
 export const fetchAllTemplates = async () => {
   return await fetchWithAuth("/proCpaasRest/rcsTemplate/showTemplates", {
     method: "POST",
   });
 };
 
+// update template status by srno
 export const updateTemplateStatusbySrno = async (data) => {
   return await fetchWithAuth(
     "/proCpaasRest/rcsTemplate/updateStatusByTemplateSrNo",
@@ -61,6 +68,7 @@ export const updateTemplateStatusbySrno = async (data) => {
   );
 };
 
+// fetch template details by srno
 export const fetchTemplateDetails = async (srno) => {
   return await fetchWithAuth(
     `/proCpaasRest/rcsTemplate/showTemplateDetailsBySrNo?srno=${srno}`,
@@ -70,6 +78,7 @@ export const fetchTemplateDetails = async (srno) => {
   );
 };
 
+// delete template by srno
 export const deleteTemplate = async (srno) => {
   return await fetchWithAuth(
     `/proCpaasRest/rcsTemplate/deleteTemplate?srno=${srno}`,
@@ -77,4 +86,12 @@ export const deleteTemplate = async (srno) => {
       method: "POST",
     }
   );
+};
+
+// create template
+export const saveRcsTemplate = async (data) => {
+  return await fetchWithAuth(`/proCpaasRest/rcsTemplate/saveRcsTemplate`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };

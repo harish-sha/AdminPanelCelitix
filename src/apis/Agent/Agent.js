@@ -70,7 +70,7 @@ export const addDepartment = async (departmentName) => {
       }
     );
 
-    console.log("API Response:", response); // ✅ Log response for debugging
+    console.log("API Response:", response); 
 
     return response;
   } catch (error) {
@@ -82,7 +82,7 @@ export const addDepartment = async (departmentName) => {
 // Edit Department
 export const editDepartment = async (srno, name) => {
   try {
-    console.log("Sending Edit Request:", { srno, name }); // Debugging
+    console.log("Sending Edit Request:", { srno, name }); 
 
     const response = await fetchWithAuth(
       "/proCpaasRest/department/editdepartmentBysrno",
@@ -92,7 +92,7 @@ export const editDepartment = async (srno, name) => {
       }
     );
 
-    console.log("Edit API Response:", response); // Debugging
+    console.log("Edit API Response:", response); 
     return response;
   } catch (error) {
     console.error("Error updating department:", error);
@@ -107,15 +107,15 @@ export const deleteDepartment = async (srno) => {
       "/proCpaasRest/department/deleteDepartmentByid",
       {
         method: "POST",
-        body: JSON.stringify({ srno }), // ✅ Ensure correct body format
+        body: JSON.stringify({ srno }), 
       }
     );
-    console.log("Delete API Response:", response); // ✅ Debugging
+    console.log("Delete API Response:", response); 
     if (response?.statusCode !== 200) {
-      console.error("❌ Delete failed:", response);
+      console.error("Delete failed:", response);
     }
 
-    return response; // ✅ Return entire response for handling in the component
+    return response; 
   } catch (error) {
     console.error("Error deleting department:", error);
     return { statusCode: 500, message: "Internal Server Error" };
@@ -189,7 +189,7 @@ export const getAssignedTemplatesByAgentId = async (agentId) => {
       }
     );
 
-    return response.data; // Ensure this returns the JSON response
+    return response.data; 
   } catch (error) {
     console.error("Error fetching assigned templates:", error);
     return null;

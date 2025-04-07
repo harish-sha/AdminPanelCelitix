@@ -5,6 +5,7 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
+import { MdOutlineDeleteForever } from "react-icons/md";
 // import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
 import {
   DataGrid,
@@ -85,6 +86,8 @@ const WhatsappManageContactsTable = ({
   allContacts,
   setUpdateContactVisible,
   setUpdateContactDetails,
+  setIdToDelete,
+  setDeleteContactDialogVisible
 }) => {
   const [selectedRows, setLocalSelectedRows] = React.useState([]);
 
@@ -108,7 +111,7 @@ const WhatsappManageContactsTable = ({
     { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
     { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
     { field: "mobileno", headerName: "Mobile No", flex: 1, minWidth: 120 },
-    { field: "uniqueid", headerName: "Unique ID", flex: 1, minWidth: 120 },
+    { field: "uniqueId", headerName: "Unique ID", flex: 1, minWidth: 120 },
     {
       field: "emailstatus",
       headerName: "Email Status",
@@ -128,14 +131,13 @@ const WhatsappManageContactsTable = ({
           <IconButton
             className="no-xs"
             onClick={() => {
-              console.log(params.row);
+              setDeleteContactDialogVisible(true);
+              setIdToDelete(params.row);
             }}
           >
-            <DeleteIcon
-              sx={{
-                fontSize: "1.2rem",
-                color: "green",
-              }}
+            <MdOutlineDeleteForever
+              className="text-red-500 cursor-pointer hover:text-red-600"
+              size={20}
             />
           </IconButton>
           <IconButton
@@ -158,19 +160,19 @@ const WhatsappManageContactsTable = ({
 
   const rows = Array.isArray(allContacts)
     ? allContacts?.map((contact, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        firstName: contact.firstName ?? "-",
-        lastName: contact.lastName ?? "-",
-        mobileno: contact.mobileno ?? "-",
-        uniqueid: contact.uniqueId ?? "-",
-        emailstatus: contact.status == 1 ? "Active" : "Inactive",
-        group: contact.groupName ?? "-",
-        status: contact.status == 1 ? "Active" : "Inactive",
-        action: "True",
-        srno: contact.addSrno,
-        gender: contact.gender,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      firstName: contact.firstName ?? "-",
+      lastName: contact.lastName ?? "-",
+      mobileno: contact.mobileno ?? "-",
+      emailstatus: contact.status == 1 ? "Active" : "Inactive",
+      group: contact.groupName ?? "-",
+      status: contact.status == 1 ? "Active" : "Inactive",
+      action: "True",
+      srno: contact.addSrno,
+      gender: contact.gender,
+      ...contact,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

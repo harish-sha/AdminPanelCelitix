@@ -252,21 +252,22 @@ const ManageTemplate = () => {
     fetchWabaList();
   }, []);
 
-  useEffect(() => {
-    const fetchTemplateData = async () => {
-      if (!selectedTemplate || !wabaAccountId) return;
-      try {
-        const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+  const fetchTemplateData = async () => {
+    if (!selectedTemplate || !wabaAccountId) return;
+    try {
+      const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
 
-        if (response && response.data && response.data.length > 0) {
-          setTemplateData(response.data[0]);
-        } else {
-          toast.error("Failed to load template data!");
-        }
-      } catch (error) {
-        toast.error("Error fetching template data.");
+      if (response && response.data && response.data.length > 0) {
+        setTemplateData(response.data[0]);
+      } else {
+        toast.error("Failed to load template data!");
       }
-    };
+    } catch (error) {
+      toast.error("Error fetching template data.");
+    }
+  };
+
+  useEffect(() => {
     fetchTemplateData();
   }, [selectedTemplate, wabaAccountId]);
 
@@ -1149,6 +1150,7 @@ const ManageTemplate = () => {
                     wabaSrno={wabaList.find((waba) => waba.mobileNo === selectedWaba)?.wabaSrno} // Pass wabaSrno
                     wabaList={wabaList}
                     data={filteredData}
+                    fetchTemplateData={handleSearch}
                   />
                 )}
               </>

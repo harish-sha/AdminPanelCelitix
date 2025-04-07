@@ -27,11 +27,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
 
-    // const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    //   ...options,
-    //   method: options.method || "GET",
-    //   headers,
-    // });
     const response = await axios({
       method: options.method || "GET",
       url: `${API_BASE_URL}${endpoint}`,
@@ -39,29 +34,23 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       headers,
     });
 
-    if (response.status === 401) {
-      console.error("Session expired. Redirecting to login...");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-      return null;
-    } else if (response.status === 400) {
-      return await response.json();
+    if (response.status === 400) {
+      return response;
     }
-
-    // if (!response.ok) {
-    //   console.error(`API Error: ${response.status} ${response.statusText}`);
-    //   return null;
-    // }
-    // return await response.json();
 
     if (response.statusText !== "OK") {
       console.error(`API Error: ${response.status} ${response.statusText}`);
-      return null;
+      return;
     }
 
     return response.data;
   } catch (error) {
+    if (error?.status === 401) {
+      console.error("Session expired. Redirecting to login...");
+      localStorage.removeItem("token");
+      window.location.href = "/login";
+      return null;
+    }
     console.error("Network Error:", error);
-    return null;
   }
 };

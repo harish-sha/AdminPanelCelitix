@@ -102,7 +102,6 @@ const ManageTemplateRcs = () => {
     handleFetchTempData();
   }, []);
 
-
   const fetchTemplateDataDetails = async (data) => {
     if (!data) {
       toast.error("Please select template");
@@ -157,9 +156,10 @@ const ManageTemplateRcs = () => {
 
   const handleTemplateDelete = async () => {
     try {
-      // const res = await deleteTemplate(templateid);
+      const res = await deleteTemplate(templateid);
       toast.success("Template Deleted Successfully");
       setTemplateDeleteVisible(false);
+      await handleFetchTempData();
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
