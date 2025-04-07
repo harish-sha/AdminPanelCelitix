@@ -18,6 +18,7 @@ import TemplateForm from "./components/TemplateForm.jsx";
 import InputField from "../../components/layout/InputField.jsx";
 import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
+import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -494,7 +495,7 @@ const WhatsappLaunchCampaign = () => {
                         value={selectedWabaMobileNo.join(", ")}
                         readOnly
                         disabled
-                        placeholder="Your Waba Mobile No"
+                        placeholder="Phone No."
                       />
                     </div>
                   </div>
@@ -511,7 +512,7 @@ const WhatsappLaunchCampaign = () => {
                     />
                   </div>
                   <div className="mb-3">
-                    <AnimatedDropdown
+                    <DropdownWithSearch
                       id="selectTemplateType"
                       name="selectTemplateType"
                       label="Select Template"

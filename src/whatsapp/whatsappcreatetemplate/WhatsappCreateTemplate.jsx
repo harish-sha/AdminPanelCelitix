@@ -73,8 +73,8 @@ const WhatsappCreateTemplate = () => {
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
-    { value: "location", label: "Location" },
-    { value: "carousel", label: "Carousel" }, 
+    // { value: "location", label: "Location" },
+    { value: "carousel", label: "Carousel" },
   ];
   const handleDeleteCard = (index) => {
     setCards(cards.filter((_, i) => i !== index));

@@ -50,7 +50,7 @@ const CarouselPreview = ({ carouselData }) => {
     };
 
     return (
-        <div className="w-full mt-4">
+        <div className="w-full ">
             {carouselData?.cards?.length > 0 ? (
                 <Slider {...settings}>
                     {carouselData.cards.map((card, cardIndex) => {
@@ -62,7 +62,7 @@ const CarouselPreview = ({ carouselData }) => {
                         return (
                             <div
                                 key={cardIndex}
-                                className="p-4 bg-white rounded-xl border border-gray-200 shadow-md"
+                                className="p-2 bg-white rounded-xl border border-gray-200 shadow-md"
                             >
                                 <div className="text-sm text-gray-800 whitespace-pre-wrap mb-4">
                                     {bodyComponent?.text}

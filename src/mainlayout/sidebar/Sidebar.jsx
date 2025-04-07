@@ -67,13 +67,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             type: "single",
             to: "/",
         },
-        {
-            name: 'Dummy',
-            icon: <BlockOutlinedIcon fontSize='20' />,
-            label: 'Dummy',
-            type: "single",
-            to: "/dummy",
-        },
+        // {
+        //     name: 'Dummy',
+        //     icon: <BlockOutlinedIcon fontSize='20' />,
+        //     label: 'Dummy',
+        //     type: "single",
+        //     to: "/dummy",
+        // },
         {
             name: 'SMS',
             icon: <LuMessageSquareMore />,

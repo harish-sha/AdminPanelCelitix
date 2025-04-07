@@ -606,19 +606,24 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList, fetchTempla
                                     </div>
                                 )}
 
-                                {/* Carousel if exists */}
-                                {selectedRow?.templateData?.components.some(comp => comp.type === "CAROUSEL") && (
-                                    <CarouselPreview
-                                        carouselData={
-                                            selectedRow.templateData.components.find(comp => comp.type === "CAROUSEL")
-                                        }
-                                    />
-                                )}
+
 
                                 {/* Image if exists */}
                                 {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "IMAGE") && (
                                     <div className="imgbox">
                                         <img
+                                            src={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
+                                            alt="Template Preview"
+                                            className='h-45 w-full rounded-lg object-contain border border-gray-200'
+                                        />
+                                    </div>
+                                )}
+
+                                {/* Video if exist */}
+                                {selectedRow.templateData.components.some(comp => comp.type === "HEADER" && comp.format === "VIDEO") && (
+                                    <div className="videobox">
+                                        <video
+                                            controls
                                             src={selectedRow.templateData.components.find(comp => comp.type === "HEADER").example?.header_handle[0]}
                                             alt="Template Preview"
                                             className='h-45 w-full rounded-lg object-contain border border-gray-200'
@@ -632,6 +637,15 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList, fetchTempla
                                         <pre className='text-wrap' key={index}>{component.text}</pre>
                                     ))}
                                 </div>
+
+                                {/* Carousel if exists */}
+                                {selectedRow?.templateData?.components.some(comp => comp.type === "CAROUSEL") && (
+                                    <CarouselPreview
+                                        carouselData={
+                                            selectedRow.templateData.components.find(comp => comp.type === "CAROUSEL")
+                                        }
+                                    />
+                                )}
 
                                 {/* Buttons if exists */}
                                 <div className='flex flex-col gap-2'>

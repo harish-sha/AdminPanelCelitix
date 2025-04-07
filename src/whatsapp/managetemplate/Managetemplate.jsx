@@ -1119,7 +1119,7 @@ const ManageTemplate = () => {
                     />
                   </div>
                 </div>
-                {isFetching ? (
+                {/* {isFetching ? (
                   <UniversalSkeleton height="35rem" width="100%" />
                 ) : (
                   // ) : !hasSearched ? (
@@ -1152,7 +1152,17 @@ const ManageTemplate = () => {
                     data={filteredData}
                     fetchTemplateData={handleSearch}
                   />
-                )}
+                )} */}
+
+                <DataTable
+                  id="whatsappManageTemplateTable"
+                  name="whatsappManageTemplateTable"
+                  wabaNumber={selectedWaba}
+                  wabaSrno={wabaList.find((waba) => waba.mobileNo === selectedWaba)?.wabaSrno} // Pass wabaSrno
+                  wabaList={wabaList}
+                  data={filteredData}
+                  fetchTemplateData={handleSearch}
+                />
               </>
             </div>
           </CustomTabPanel>

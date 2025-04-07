@@ -561,7 +561,7 @@ export default function WhatsappLiveChat() {
           srno: 0,
           active: userActive,
         };
-        setIsFetching(true);
+        // setIsFetching(true);
         const res = await fetchAllConversations(data);
 
         const mappedConversations = res.conversationEntityList?.map((chat) => {
@@ -578,7 +578,7 @@ export default function WhatsappLiveChat() {
         console.log(e);
         return toast.error("Error fetching all conversations");
       } finally {
-        setIsFetching(false);
+        // setIsFetching(false);
       }
     }
 
@@ -633,7 +633,7 @@ export default function WhatsappLiveChat() {
       chatNo: 0,
     };
     try {
-      setIsFetching(true);
+      // setIsFetching(true);
       const res = await fetchSpecificConversations(data);
 
       const grouped = res?.conversationEntityList
@@ -657,7 +657,7 @@ export default function WhatsappLiveChat() {
       console.log(e);
       return toast.error("Error fetching specific conversation");
     } finally {
-      setIsFetching(false);
+      // setIsFetching(false);
     }
   }
 
@@ -710,7 +710,7 @@ export default function WhatsappLiveChat() {
     };
 
     try {
-      setIsFetching(true);
+      // setIsFetching(true);
       const res = await assignUserToAgent(data);
       if (res.message.includes("Successfully")) {
         toast.success("Agent assigned successfully.");
@@ -723,7 +723,7 @@ export default function WhatsappLiveChat() {
       console.log(e);
       toast.error("Something went wrong. Please try again.");
     } finally {
-      setIsFetching(false);
+      // setIsFetching(false);
     }
   }
 
@@ -775,7 +775,7 @@ export default function WhatsappLiveChat() {
     }
 
     try {
-      setIsFetching(true);
+      // setIsFetching(true);
       const res = await func(data);
       if (res?.msg?.includes("successfully")) {
         toast.success("Message sent successfully.");
@@ -788,7 +788,7 @@ export default function WhatsappLiveChat() {
       console.log(e);
       return toast.error("Something went wrong. Please try again.");
     } finally {
-      setIsFetching(false);
+      // setIsFetching(false);
     }
   }
 
@@ -830,7 +830,7 @@ export default function WhatsappLiveChat() {
   ) : (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
       <div
-        className={`w-full md:w-75  border-r overflow-hidden ${activeChat ? "hidden md:block" : "block"
+        className={`w-full md:w-90  border-r overflow-hidden ${activeChat ? "hidden md:block" : "block"
           }`}
       >
         <div>
@@ -932,7 +932,6 @@ export default function WhatsappLiveChat() {
             ))}
         </div>
       </div>
-
       {/* Chat Section */}
 
       {/* code goes here */}
@@ -981,28 +980,33 @@ export default function WhatsappLiveChat() {
                 <div className="my-4 text-xs text-center text-gray-500">
                   {group?.date}
                 </div>
-
-                {group.messages.map((msg, index) => (
-                  <div
-                    key={index}
-                    className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${msg.replyFrom !== "user"
-                      ? "bg-blue-500 text-white self-end"
-                      : "bg-gray-200 text-black self-start"
-                      }`}
-                  >
-                    {msg?.replyType === "image" && (
-                      <img
-                        src={msg?.mediaPath}
-                        alt={msg?.mediaPath}
-                        className="object-contain mb-2 pointer-events-none select-none h-50 w-50 "
-                      />
-                    )}
-                    <div className="w-25">{msg.messageBody}</div>
-                    <p className="mt-1 text-[0.7rem] text-end">
-                      {formatTime(msg?.queTime)}
-                    </p>
-                  </div>
-                ))}
+                <div className="flex flex-col items-start ">
+                  {group.messages.map((msg, index) => (
+                    <div
+                      key={index}
+                      className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${!msg.isReceived
+                        ? "self-end"
+                        : "self-start"
+                        }`}
+                    >
+                      {msg?.replyType === "image" && (
+                        <img
+                          src={msg?.mediaPath}
+                          alt={msg?.mediaPath}
+                          className="object-contain mb-2 pointer-events-none select-none h-50 w-50 "
+                        />
+                      )}
+                      <div className={`w-25 ${!msg.isReceived
+                        ? "bg-blue-500 text-white"
+                        : "bg-gray-200 text-black"
+                        }`}>{msg.messageBody}</div>
+                      <p className="mt-1 text-[0.7rem] text-end">
+                        {/* {formatTime(msg?.queTime)} */}
+                        {(msg?.insertTime)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -1114,7 +1118,7 @@ export default function WhatsappLiveChat() {
             visible={visibleRight}
             position="right"
             onHide={() => setVisibleRight(false)}
-            style={{ height: "630px", position: "absolute", bottom: 0 }}
+            style={{ height: "", position: "absolute", bottom: 0 }}
           >
             <div className="flex flex-col justify-center gap-2">
               <div className="flex items-center gap-2">
