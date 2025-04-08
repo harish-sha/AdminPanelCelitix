@@ -21,11 +21,12 @@ import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import { Dialog } from "primereact/dialog";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { ImInfo } from "react-icons/im";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import toast from "react-hot-toast";
-
+import DropdownMenuPortal from "../../utils/DropdownMenuPortal.jsx";
 import UniversalButton from "../components/UniversalButton";
 import UniversalLabel from "../components/UniversalLabel";
 import InputField from "../../components/layout/InputField";
@@ -41,6 +42,7 @@ import {
 import Loader from "../components/Loader";
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
+import { Position } from "@xyflow/react";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -124,13 +126,14 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [wabaList, setWabaList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedWaba, setSelectedWaba] = useState(null);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
 
   const [wabaCreatebtn, setWabaCreatebtn] = useState(false);
-
+  const [clicked, setClicked] = useState([]);
   const [wabadetails, setwabadetails] = useState(null);
   const [editWebsite1, seteditWebsite1] = useState("");
   const [editWebsite2, seteditWebsite2] = useState("");
-
+  const dropdownButtonRefs = useRef({});
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -380,6 +383,28 @@ const WhatsappManageWaba = ({ id, name }) => {
     setSelectedRows(ids);
   };
 
+  // const handleInfo = (row) => {
+  //   const id = row.id;
+  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
+  //   console.log("Info clicked:", row);
+  // };
+
+  // const handleInfo = (row) => {
+  //   const id = row.id;
+  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
+  //   setClicked(row.wabas || []);
+  //   console.log("Info clicked:", row);
+  // };
+
+  const handleInfo = (row) => {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+    setClicked(row.additionalInfo || []); // Use the additionalInfo field
+    console.log("Info clicked:", row); // Debugging
+  };
+
+  const closeDropdown = () => setDropdownOpenId(null);
+
   const updateDetails = async () => {
     const website = [editWebsite1, editWebsite2];
 
@@ -408,14 +433,14 @@ const WhatsappManageWaba = ({ id, name }) => {
     },
     { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-    {
-      field: "messaging_limit",
-      headerName: "Messaging Limit",
-      flex: 1,
-      minWidth: 120,
-    },
-    { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
-    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
+    // {
+    //   field: "messaging_limit",
+    //   headerName: "Messaging Limit",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
+    // { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
+    // { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
     {
       field: "wabaAccountId",
       headerName: "WABA Account ID",
@@ -436,6 +461,79 @@ const WhatsappManageWaba = ({ id, name }) => {
       minWidth: 150,
       renderCell: (params) => (
         <>
+          <CustomTooltip title="Info" placement="top" arrow>
+            <span>
+              <IconButton
+                type="button"
+                ref={(el) => {
+                  if (el) dropdownButtonRefs.current[params.row.id] = el;
+                }}
+                onClick={() => handleInfo(params.row)}
+                className="no-xs relative"
+              >
+                <ImInfo size={18} className="text-green-500 " />
+              </IconButton>
+              {dropdownOpenId === params.row.id && (
+                <DropdownMenuPortal
+                  targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
+                  onClose={closeDropdown}
+                  style={{
+                    position: "absolute",
+                  }}
+                  positionOverrides={{
+                    top: 260, // Set exact top position in pixels
+                    right: 0,
+                  }}
+                >
+                  {clicked && Object.keys(clicked).length > 0 ? (
+                    <table className="w-full text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                      <tbody>
+                        {Object.entries(clicked).map(([key, value], index) => (
+                          <tr
+                            key={index}
+                            className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                          >
+                            <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
+                              {key}
+                            </td>
+                            <td className="px-4 py-2 text-gray-800">
+                              {value || "N/A"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="text-sm text-gray-400 italic px-2 py-2">
+                      No data
+                    </div>
+                  )}
+                </DropdownMenuPortal>
+              )}
+            </span>
+          </CustomTooltip>
+
+          {/* {dropdownOpenId === params.row.id && (
+            <DropdownMenuPortal
+              targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
+              onClose={closeDropdown}
+            >
+              {clicked && clicked.length > 0 ? (
+                clicked.map((waba, index) => (
+                  <div
+                    key={index}
+                    className="text-sm text-slate-700 hover:bg-slate-100 px-2 py-1 rounded"
+                  >
+                    Expiry Date: {waba.expiryDate || "N/A"}
+                  </div>
+                ))
+              ) : (
+                <div className="text-sm text-gray-400 italic px-2">No data</div>
+              )}
+            </DropdownMenuPortal>
+          )} */}
+
+
           <CustomTooltip title="View Profile" placement="top" arrow>
             <IconButton
               className="no-xs"
@@ -472,18 +570,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               />
             </IconButton>
           </CustomTooltip>
-          {/* <CustomTooltip
-            title="Delete WABA"
-            placement="top"
-            arrow
-          >
-            <IconButton className='no-xs' onClick={() => handleDelete(params.row)}>
-              <MdOutlineDeleteForever
-                className="text-red-500 cursor-pointer hover:text-red-600"
-                size={20}
-              />
-            </IconButton>
-          </CustomTooltip> */}
         </>
       ),
     },
@@ -516,12 +602,17 @@ const WhatsappManageWaba = ({ id, name }) => {
     wabaName: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
     createdOn: waba.insertTime || "N/A",
-    expiryDate: waba.expiryDate || "N/A",
+    // expiryDate: waba.expiryDate || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
-    messaging_limit: waba.messagingLimits || "N/A",
-    quality: waba.qualityRate || "N/A",
+    // messaging_limit: waba.messagingLimits || "N/A",
+    // quality: waba.qualityRate || "N/A",
+    additionalInfo: {
+      expiryDate: waba.expiryDate || "N/A",
+      messagingLimit: waba.messagingLimits || "N/A",
+      quality: waba.qualityRate || "N/A",
+    },
     ...waba,
   }));
 
@@ -602,12 +693,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         <>
           <div className="flex flex-wrap items-center justify-between w-full gap-4 mb-4">
             <div>
-              <label className="text-xl font-semibold text-green-500">
-                Manage Waba Accounts{" "}
+              <label className="flex items-center gap-2 text-xl font-semibold text-green-500">
+                <FaWhatsapp /> Manage Waba Accounts
               </label>
-            </div>
-            <div className="p-2 text-3xl font-semibold text-green-500 border rounded-2xl">
-              <FaWhatsapp />
             </div>
             <div className="w-max-content">
               <UniversalButton
@@ -1050,17 +1138,17 @@ const WhatsappManageWaba = ({ id, name }) => {
           setWabaCreatebtn(false);
         }}
         draggable={false}
-        className="w-[50rem]"
+        className="lg:w-[50rem] md:w-[35rem] sm:w-[20rem]"
         modal
       >
-        <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
+        <div className="p-2 md:p-10 lg:p-10 space-y-2 text-center bg-white shadow-md rounded-xl h-48 md:h-auto lg:h-auto">
           <h1 className="text-xl font-semibold">Add Another Account</h1>
           <p className="mb-6 font-medium">
             To add another WABA account, link the new account through Facebook.
           </p>
           <a
             href="#signup"
-            className="bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide"
+            className="bg-[#4267b2] p-2.5 rounded-lg lg:text-[1rem] md:text-[0.9rem] sm:text-[0.5rem] text-white cursor-pointer font-medium tracking-wide"
             onClick={handleFacebookLogin}
           >
             Login with Facebook

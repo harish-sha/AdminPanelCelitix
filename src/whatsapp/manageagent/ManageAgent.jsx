@@ -67,6 +67,7 @@ const ManageAgent = () => {
   const [isProcessing, setIsProcessing] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
+  const [agentList, setAgentList] = useState([]);
 
 
   // Department LIST
@@ -267,8 +268,16 @@ const ManageAgent = () => {
       return;
     }
 
-    if (!agentMobile.trim() || !/^\d{10}$/.test(agentMobile)) {
-      toast.error("Enter a valid 10-digit mobile number.");
+    // if (!agentMobile.trim() || !/^\d{10}$/.test(agentMobile)) {
+    //   toast.error("Enter a valid 10-digit mobile number.");
+    //   return;
+    // }
+
+    if (
+      !agentMobile.trim() ||
+      !/^(\+\d{1,3})?\d{10}$/.test(agentMobile)
+    ) {
+      toast.error("Enter a valid mobile number (10 digits or with country code).");
       return;
     }
 
@@ -308,6 +317,8 @@ const ManageAgent = () => {
 
       if (response?.statusCode === 201) {
         toast.success("Agent added successfully.");
+
+
         setAddAgentDialog(false);
         setAgentName("");
         setAgentEmail("");
@@ -425,7 +436,7 @@ const ManageAgent = () => {
       minWidth: 80,
       renderCell: (params) => {
         if (!params.row || !params.row.id) {
-          console.error("⚠️ Invalid row data:", params.row);
+          console.error(" Invalid row data:", params.row);
           return null;
         }
         return (
@@ -461,6 +472,7 @@ const ManageAgent = () => {
         (dept) => dept.departmentId === selectedadddepartment
       )
       : departmentList;
+      
 
   const rows = filteredDepartmentList.map((item, index) => ({
     id: item.departmentId,
@@ -536,7 +548,7 @@ const ManageAgent = () => {
         </>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between w-full mt-4 mb-5">
+          <div className="flex flex-wrap items-center md:justify-between lg:justify-between justify-start gap-2 w-full mt-4 mb-5">
             <h1 className="text-xl font-semibold text-gray-700">Manage Agent</h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
@@ -566,19 +578,19 @@ const ManageAgent = () => {
             header="Add Department"
             draggable={false}
             visible={adddepartment}
-            className="w-[40rem]"
+            className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
             onHide={() => {
               if (!adddepartment) return;
               setAddDepartment(false);
             }}
           >
             <TabView>
-              <TabPanel header="Add New" leftIcon="pi pi-calendar mr-2">
+              <TabPanel header="Add New" leftIcon="pi pi-calendar " className="">
                 <InputField
                   id="adddepartmenname"
                   name="adddepartmenname"
                   label="Department Name"
-                  tooltipContent="25 character Maximum allowed"
+                  tooltipContent="20 character Maximum allowed"
                   type="text"
                   placeholder="Enter Department name..."
                   value={newDepartmentName}
@@ -663,7 +675,7 @@ const ManageAgent = () => {
                     header="Edit Department"
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
-                    className="w-[30rem]"
+                    className="w-[30rem] md:w-[25rem] sm:w-[20rem]"
                   >
                     <InputField
                       label="Department Name"
@@ -690,7 +702,7 @@ const ManageAgent = () => {
                     header="Delete Department"
                     visible={deleteDialog}
                     onHide={() => setDeleteDialog(false)}
-                    className="w-[25rem]"
+                    className="w-[30rem] md:w-[25rem] sm:w-[20rem]"
                   >
                     <Typography variant="body1" className="text-center">
                       Are you sure you want to delete <br />
@@ -725,7 +737,7 @@ const ManageAgent = () => {
             header="Add Agent"
             draggable={false}
             visible={addAgentDialog}
-            style={{ width: "40rem" }}
+            className="w-[30rem] md:-[25rem] sm:w-[20]"
             onHide={() => {
               setAddAgentDialog(false);
             }}
@@ -739,7 +751,7 @@ const ManageAgent = () => {
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
               />
-              <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+              <div className="grid flex-wrap lg:grid-cols-2 grid-cols-1 gap-3 lg:flex-nowrap">
                 <InputField
                   label="Email"
                   id="email"
@@ -763,6 +775,7 @@ const ManageAgent = () => {
                 name="agentPassword"
                 tooltipContent="Click to generate a secure password"
                 tooltipPlacement="right"
+                value={generatedPassword}
                 onPasswordGenerate={(newPassword) =>
                   setGeneratedPassword(newPassword)
                 }
@@ -789,7 +802,7 @@ const ManageAgent = () => {
               <RadioGroupFieldupdown
                 id="assign"
                 name="assign"
-                label="Assign"
+                label="Assign Type"
                 options={[
                   { label: "Auto", value: "Auto" },
                   { label: "Manual", value: "Manual" },

@@ -1,35 +1,47 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import {
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material";
 
-const RadioGroupFieldupdown = ({ label, value,id, name, onChange, options = [] }) => {
+const RadioGroupFieldupdown = ({
+  label,
+  value,
+  id,
+  name,
+  onChange,
+  options = [],
+}) => {
   return (
-    <div className="flex flex-col items-start"> {/* ✅ Changed layout to column */}
-    {label && (
-        <FormLabel 
-          sx={{fontSize: "0.875rem", fontWeight: 500, color: "black" }}
-        >
-          {label}
-        </FormLabel>
-      )}
+    <div className="flex flex-col items-start ">
+      {" "}
+      {/* ✅ Changed layout to column */}
+      {label && (
+  <FormLabel sx={{ fontSize: "0.875rem", fontWeight: 500, color: "#374151" }}>
+    {label}
+  </FormLabel>
+)}
+
       <FormControl component="fieldset">
         {/* ✅ Radio buttons now appear ABOVE the label */}
         <RadioGroup row value={value} onChange={onChange}>
           {options.map((option) => (
-            <FormControlLabel 
-              key={option.value} 
-              value={option.value} 
+            <FormControlLabel
+              key={option.value}
+              value={option.value}
               id={id}
-              name={name}  
-              control={<Radio />} 
-              label={option.label} 
+              name={name}
+              control={<Radio />}
+              label={option.label}
               sx={{ color: "black" }}
             />
           ))}
         </RadioGroup>
       </FormControl>
-      
-      
     </div>
   );
 };

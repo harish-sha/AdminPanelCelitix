@@ -33,9 +33,20 @@ const GeneratePassword = ({
     return generated;
   };
 
+  // const handleGeneratePassword = () => {
+  //   const newPassword = generateRandomPassword();
+  //   onChange(newPassword);
+  // };
+
   const handleGeneratePassword = () => {
     const newPassword = generateRandomPassword();
-    onChange(newPassword);
+    setPassword(newPassword); // Update the local state
+    if (onPasswordGenerate) {
+      onPasswordGenerate(newPassword); // Call the correct prop
+      console.log('Password generated:', newPassword);
+    } else {
+      console.error("onPasswordGenerate is not defined");
+    }
   };
 
   const handleCopyPassword = () => {

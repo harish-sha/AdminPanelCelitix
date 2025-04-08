@@ -487,7 +487,7 @@ const WhatsappManageCampaign = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="w-full">
-              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+              <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     id="manageCampaignLogsDate"

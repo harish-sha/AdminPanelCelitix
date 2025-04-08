@@ -506,7 +506,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   //   setSelectedAgentName(row.name);
   //   setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
   //   setManageAssign(true);
-  //   console.log("agent select for assign", row);
   // };
 
   const handleAssign = async (row) => {
@@ -576,14 +575,14 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       password: data.password,
       name: data.name,
       mobileNumber: data.mobile,
-      allowAllChats: 1,
+      allowAllChats: parseInt(data.allowAllChats, 10),
       departmentId: data.departmentId,
     });
     setSelectedAgentId(data);
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "name", headerName: "Name", flex: 1, minWidth: 120 },
     { field: "email", headerName: "Email", flex: 1, minWidth: 120 },
     { field: "mobile", headerName: "Mobile No", flex: 1, minWidth: 120 },
@@ -706,6 +705,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     status: agent.status,
     user_sr_no: agent.userSrNo,
     departmentId: agent.department_srno,
+    allowAllChats: agent.allowAllChats,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -734,7 +734,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
       // setEditSelectedDepartment
     } catch (error) {
-      console.log(error);
       toast.error("Error updating agent details.");
     }
   };
@@ -1196,6 +1195,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                               placeholder="Search Templates"
                             />
                           )}
+                          className="overflow-y-scroll max-h-[5rem]"
+
                         />
                       </div>
                       <button
@@ -1338,7 +1339,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               onChange={(e) => {
                 setUpdateAgentData({
                   ...updateAgentData,
-                  allowAllChats: e.target.value,
+                  allowAllChats: parseInt(e.target.value, 10),
                 });
               }}
             />
@@ -1360,7 +1361,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
           header="Confirm Deletion"
           visible={deleteDialogVisible}
           onHide={() => setDeleteDialogVisible(false)}
-          className="w-[30rem]"
+          className="lg:w-[30rem] md:w-[25rem] sm:w-[20rem]"
           draggable={false}
         >
           <div className="flex items-center justify-center">

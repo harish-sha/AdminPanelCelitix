@@ -110,8 +110,9 @@ const WhatsappConversation = () => {
             </h1>
           </div>
 
-          <div className="flex items-end gap-4 mb-5">
+          <div className="flex flex-wrap items-end gap-4 mb-5">
             {/* Select WABA Dropdown */}
+            <div className="flex w-56">
             <AnimatedDropdown
               id="wabadropdown"
               label="Select WABA"
@@ -125,6 +126,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, wabaSrno: value }))
               }
             />
+            </div>
+            <div className="flex w-56">
 
             {/* From Date Picker */}
             <UniversalDatePicker
@@ -135,7 +138,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, fromDate: value }))
               }
             />
-
+               </div>
+               <div className="flex w-56">
             {/* To Date Picker */}
             <UniversalDatePicker
               id="conversationto"
@@ -145,7 +149,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, toDate: value }))
               }
             />
-
+             </div>
+             <div className="flex w-56">
             {/* Mobile Number Input Field */}
             <InputField
               id="conversationmobile"
@@ -157,8 +162,10 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
               }
             />
-
+             </div>
+             <div className="flex">
             {/* Search Button */}
+            <div className="w-max-content ">
             <UniversalButton
               id="conversationsearch"
               label={isFetching ? "Searching..." : "Search"}
@@ -166,13 +173,18 @@ const WhatsappConversation = () => {
               onClick={handleSearch}
               disabled={isFetching}
             />
-
+             </div>
+             </div>
+             <div className="flex">
             {/* Export Button */}
+            <div className="w-max-content ">
             <UniversalButton
               id="conversationexport"
               label="Export"
               onClick={() => console.log("Export Clicked")}
             />
+             </div>
+             </div>
           </div>
 
           {/* Show Loader or Table */}

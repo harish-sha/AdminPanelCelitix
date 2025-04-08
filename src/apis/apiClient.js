@@ -45,12 +45,12 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
     return response.data;
   } catch (error) {
-    if (error?.status === 401) {
-      console.error("Session expired. Redirecting to login...");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-      return null;
-    }
+    // if (error?.status === 401) {
+    //   console.error("Session expired. Redirecting to login...");
+    //   localStorage.removeItem("token");
+    //   window.location.href = "/login";
+    //   return null;
+    // }
     console.error("Network Error:", error);
   }
 };
