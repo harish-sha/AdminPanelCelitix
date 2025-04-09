@@ -626,7 +626,7 @@ const WhatsappCreateTemplate = () => {
               </>
             ) : (
               <>
-                <div className="p-2 border-2 border-blue-500 border-dashed rounded-2xl">
+                <div className=" border-blue-500  rounded-2xl">
                   <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
                     <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
                       <WhatsApp

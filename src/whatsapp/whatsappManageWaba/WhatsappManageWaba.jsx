@@ -127,7 +127,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedWaba, setSelectedWaba] = useState(null);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
-
   const [wabaCreatebtn, setWabaCreatebtn] = useState(false);
   const [clicked, setClicked] = useState([]);
   const [wabadetails, setwabadetails] = useState(null);
