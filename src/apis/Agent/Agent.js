@@ -82,7 +82,7 @@ export const addDepartment = async (departmentName) => {
 // Edit Department
 export const editDepartment = async (srno, name) => {
   try {
-    console.log("Sending Edit Request:", { srno, name }); 
+    console.log("Sending Edit Request:", { srno, name });
 
     const response = await fetchWithAuth(
       "/proCpaasRest/department/editdepartmentBysrno",
@@ -92,7 +92,7 @@ export const editDepartment = async (srno, name) => {
       }
     );
 
-    console.log("Edit API Response:", response); 
+  console.log("Edit API Response:", response); 
     return response;
   } catch (error) {
     console.error("Error updating department:", error);
@@ -112,7 +112,7 @@ export const deleteDepartment = async (srno) => {
     );
     console.log("Delete API Response:", response); 
     if (response?.statusCode !== 200) {
-      console.error("Delete failed:", response);
+      console.error(" Delete failed:", response);
     }
 
     return response; 
@@ -124,16 +124,10 @@ export const deleteDepartment = async (srno) => {
 
 // Add Agent
 export const addAgent = async (agentData) => {
-  try {
-    const response = await fetchWithAuth("/proCpaasRest/agent/AddAgent", {
-      method: "POST",
-      body: JSON.stringify(agentData),
-    });
-    return response;
-  } catch (error) {
-    console.error("Error adding agent:", error);
-    return { statusCode: 500, message: "Internal Server Error" };
-  }
+  return await fetchWithAuth("/proCpaasRest/agent/AddAgent", {
+    method: "POST",
+    body: JSON.stringify(agentData),
+  });
 };
 
 // Edit agent by srno.
@@ -189,10 +183,9 @@ export const getAssignedTemplatesByAgentId = async (agentId) => {
       }
     );
 
-    return response.data; 
+    return response.data; // Ensure this returns the JSON response
   } catch (error) {
     console.error("Error fetching assigned templates:", error);
     return null;
   }
 };
-

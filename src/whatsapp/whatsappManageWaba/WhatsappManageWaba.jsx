@@ -38,6 +38,7 @@ import {
   getwabadetails,
   updateWabaDetails,
   refreshWhatsApp,
+  uploadImageFile
 } from "../../apis/whatsapp/whatsapp";
 import Loader from "../components/Loader";
 
@@ -191,7 +192,8 @@ const WhatsappManageWaba = ({ id, name }) => {
 
     const imageUrl = URL.createObjectURL(selectedFile);
     setPreview(imageUrl);
-    setFile(selectedFile);
+    const res = await uploadImageFile(selectedFile);
+    setFile(res?.fileUrl);
     toast.success("Image uploaded successfully.");
   };
 
@@ -276,10 +278,10 @@ const WhatsappManageWaba = ({ id, name }) => {
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: "",
+        appId: "827520649332611",
         cookie: true,
         xfbml: true,
-        version: "v21.0",
+        version: "v20.0",
       });
     };
 
@@ -412,7 +414,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       about: about,
       description: description,
       email: email,
-      profilePic: null,
+      profilePic: file,
       address: address,
       websites: website,
       vertical: vertical,

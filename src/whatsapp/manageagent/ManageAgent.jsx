@@ -65,10 +65,10 @@ const ManageAgent = () => {
   const [selectedDepartmentData, setSelectedDepartmentData] = useState(null);
   const [editedDepartmentName, setEditedDepartmentName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
   const [agentList, setAgentList] = useState([]);
-
 
   // Department LIST
   const fetchDepartmentList = async () => {
@@ -170,7 +170,7 @@ const ManageAgent = () => {
     const isDuplicate = departmentList.some(
       (dept) =>
         dept.departmentName.toLowerCase() ===
-        editedDepartmentName.toLowerCase() &&
+          editedDepartmentName.toLowerCase() &&
         dept.departmentId !== selectedDepartmentData?.departmentId
     );
 
@@ -268,16 +268,10 @@ const ManageAgent = () => {
       return;
     }
 
-    // if (!agentMobile.trim() || !/^\d{10}$/.test(agentMobile)) {
-    //   toast.error("Enter a valid 10-digit mobile number.");
-    //   return;
-    // }
-
-    if (
-      !agentMobile.trim() ||
-      !/^(\+\d{1,3})?\d{10}$/.test(agentMobile)
-    ) {
-      toast.error("Enter a valid mobile number (10 digits or with country code).");
+    if (!agentMobile.trim() || !/^(\+\d{1,3})?\d{10}$/.test(agentMobile)) {
+      toast.error(
+        "Enter a valid mobile number (10 digits or with country code)."
+      );
       return;
     }
 
@@ -310,53 +304,22 @@ const ManageAgent = () => {
       departmentName: department.departmentName,
       agentCode: "",
     };
-    try {
-      setIsSubmitting(true);
+    const response = await addAgent(agentData);
 
-      const response = await addAgent(agentData);
+    if (response?.status === 400) {
+      return toast.error(response?.response?.data?.message);
+    }
 
-      if (response?.statusCode === 201) {
-        toast.success("Agent added successfully.");
-
-
-        setAddAgentDialog(false);
-        setAgentName("");
-        setAgentEmail("");
-        setAgentMobile("");
-        setGeneratedPassword("");
-        setSelectedDepartment(null);
-        fetchDepartmentList();
-      }
-
-      else if (response?.statusCode == 400) {
-        let errorMessage = response.message;
-        toast.error(errorMessage);
-      }
-      else {
-        let errorMessage = response?.message || "Failed to add agent.";
-
-        if (errorMessage.includes("Email already exist")) {
-          toast.error("Email already exists. Please use another.");
-        } else if (errorMessage.includes("Mobile number already exists")) {
-          toast.error("Mobile number already exists. Please use another.");
-        } else {
-          toast.error(errorMessage);
-        }
-      }
-    } catch (error) {
-      console.error("Error adding agent:", error);
-
-      let errorMessage = "Something went wrong. Please try again.";
-
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      }
-
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
+    if (response?.statusCode === 201) {
+      toast.success("Agent added successfully.");
+      setRefresh(true);
+      setAddAgentDialog(false);
+      setAgentName("");
+      setAgentEmail("");
+      setAgentMobile("");
+      setGeneratedPassword("");
+      setSelectedDepartment(null);
+      fetchDepartmentList();
     }
   };
 
@@ -469,10 +432,9 @@ const ManageAgent = () => {
   const filteredDepartmentList =
     selectedadddepartment && selectedadddepartment !== "no-selection"
       ? departmentList.filter(
-        (dept) => dept.departmentId === selectedadddepartment
-      )
+          (dept) => dept.departmentId === selectedadddepartment
+        )
       : departmentList;
-
 
   const rows = filteredDepartmentList.map((item, index) => ({
     id: item.departmentId,
@@ -549,7 +511,9 @@ const ManageAgent = () => {
       ) : (
         <>
           <div className="flex flex-wrap items-center md:justify-between lg:justify-between justify-start gap-2 w-full mt-4 mb-5">
-            <h1 className="text-xl font-semibold text-gray-700">Manage Agent</h1>
+            <h1 className="text-xl font-semibold text-gray-700">
+              Manage Agent
+            </h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
                 <UniversalButton
@@ -571,7 +535,11 @@ const ManageAgent = () => {
           </div>
 
           {/* Manage Agent Table */}
-          <ManageAgentTable deptList={departmentList} />
+          <ManageAgentTable
+            deptList={departmentList}
+            refresh={refresh}
+            setRefresh={setRefresh}
+          />
 
           {/* Add Department dialog start  */}
           <Dialog
@@ -585,7 +553,11 @@ const ManageAgent = () => {
             }}
           >
             <TabView>
-              <TabPanel header="Add New" leftIcon="pi pi-calendar " className="">
+              <TabPanel
+                header="Add New"
+                leftIcon="pi pi-calendar "
+                className=""
+              >
                 <InputField
                   id="adddepartmenname"
                   name="adddepartmenname"
@@ -616,7 +588,9 @@ const ManageAgent = () => {
                       tooltipContent="Select Department"
                       tooltipPlacement="right"
                       value={selectedadddepartment}
-                      onChange={(selected) => setSelectedAddDepartment(selected)}
+                      onChange={(selected) =>
+                        setSelectedAddDepartment(selected)
+                      }
                       options={departmentList.map((department) => ({
                         value: department.departmentId,
                         label: department.departmentName,
@@ -790,9 +764,9 @@ const ManageAgent = () => {
                   options={
                     Array.isArray(departmentList)
                       ? departmentList.map((department) => ({
-                        value: department.departmentId,
-                        label: department.departmentName,
-                      }))
+                          value: department.departmentId,
+                          label: department.departmentName,
+                        }))
                       : []
                   }
                   placeholder="Select Department"
@@ -824,10 +798,8 @@ const ManageAgent = () => {
           {/* Add agent dialog end */}
         </>
       )}
-
     </div>
   );
 };
 
 export default ManageAgent;
-

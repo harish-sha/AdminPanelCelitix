@@ -338,3 +338,43 @@ export const sendTemplateMessageToUser = async (data) => {
   });
 };
 
+// send input message to user (live chat)
+export const sendInputMessageToUser = async (data, body) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+    {
+      method: "POST",
+      body: body,
+    }
+  );
+};
+
+// load new chat (live chat)
+export const loadNewChat = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/loadNewChat?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&replayTime=${data.replayTime}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// download attachemnt (live chat)
+export const downloadAttachment = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/refreshAttachmentPro?wabaNumber=${data.waba}&id=${data.id}&conversionSrno=${data.conversionSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// read message (live chat)
+export const readMessage = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
+    {
+      method: "POST",
+    }
+  );
+};

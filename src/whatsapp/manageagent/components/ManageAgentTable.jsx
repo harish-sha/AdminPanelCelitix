@@ -62,13 +62,15 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
-    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${checked ? "bg-blue-400" : "bg-gray-300"
-      }`}
+    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${
+      checked ? "bg-blue-400" : "bg-gray-300"
+    }`}
     onClick={() => onChange(!checked)}
   >
     <div
-      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${checked ? "translate-x-5" : ""
-        }`}
+      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${
+        checked ? "translate-x-5" : ""
+      }`}
     />
   </button>
 );
@@ -163,7 +165,14 @@ const CustomPagination = ({
   );
 };
 
-const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
+const ManageAgentTable = ({
+  id,
+  name,
+  visible,
+  deptList = [],
+  refresh,
+  setRefresh,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updateStatus, setUpdateStatus] = useState(false);
@@ -237,6 +246,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       const response = await getAgentList();
       if (response?.data) {
         setAgentList(response.data);
+        setRefresh(false);
       } else {
         console.error("Failed to fetch Agent details");
         toast.error("Failed to load Agent details!");
@@ -250,8 +260,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   };
   // GET AGENT LIST
   useEffect(() => {
+    console.log("useEffect");
     fetchAgentList();
-  }, []);
+  }, [refresh]);
 
   // ================================================
 
@@ -428,11 +439,30 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   const handleSaveWorkingHours = async () => {
     const schedule = {};
     let hasValidationError = false;
+    let error = "";
 
     Object.keys(workingHours).forEach((day) => {
       if (workingHours[day].enabled) {
         if (!workingHours[day].start || !workingHours[day].end) {
           hasValidationError = true;
+          error = "Please assign hours to all enabled days before saving.";
+          return;
+        }
+        if (
+          workingHours[day]?.start?.format("HH:mm") >
+          workingHours[day]?.end?.format("HH:mm")
+        ) {
+          hasValidationError = true;
+          error = "Start time cannot be greater than end time.";
+          return;
+        }
+        if (
+          workingHours[day]?.start?.format("HH:mm") ==
+          workingHours[day]?.end?.format("HH:mm")
+        ) {
+          hasValidationError = true;
+          error = "Start time and end time cannot be same.";
+          return;
         }
         schedule[day.toLowerCase()] = {
           starttime: workingHours[day].start
@@ -453,7 +483,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     });
 
     if (hasValidationError) {
-      toast.error("Please assign hours to all enabled days before saving.");
+      toast.error(error);
       return;
     }
 
@@ -596,7 +626,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
           arrow
           placement="top"
           title={params.row.status === 1 ? "Active" : "Inactive"}
-
         >
           <Switch
             checked={params.row.status}
@@ -609,9 +638,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -991,9 +1020,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       <Switch
                         sx={{
                           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                          {
-                            backgroundColor: "#34C759",
-                          },
+                            {
+                              backgroundColor: "#34C759",
+                            },
                           "& .MuiSwitch-switchBase.Mui-checked": {
                             color: "#34C759",
                           },
@@ -1196,7 +1225,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                             />
                           )}
                           className="overflow-y-scroll max-h-[5rem]"
-
                         />
                       </div>
                       <button
