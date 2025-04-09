@@ -737,7 +737,7 @@ const ManageTemplate = () => {
         <Box
           sx={{
             width: "100%",
-            maxHeight: "91vh",
+            // maxHeight: "91vh",
             overflow: "hidden",
           }}
         >
@@ -1011,7 +1011,7 @@ const ManageTemplate = () => {
             <div className="w-full">
               <>
                 <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateWaba"
                       name="manageTemplateWaba"
@@ -1027,7 +1027,7 @@ const ManageTemplate = () => {
                       placeholder="Select WABA"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <UniversalDatePicker
                       id="manageTemplateDate"
                       name="manageTemplateDate"
@@ -1042,7 +1042,7 @@ const ManageTemplate = () => {
                       maxDate={new Date()}
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <InputField
                       id="manageTemplateName"
                       name="manageTemplateName"
@@ -1055,7 +1055,7 @@ const ManageTemplate = () => {
                     />
                   </div>
 
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateCategory"
                       name="manageTemplateCategory"
@@ -1072,7 +1072,7 @@ const ManageTemplate = () => {
                       placeholder="Category"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateType"
                       name="manageTemplateType"
@@ -1090,7 +1090,7 @@ const ManageTemplate = () => {
                       placeholder="Type"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateStatus"
                       name="manageTemplateStatus"

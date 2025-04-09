@@ -119,11 +119,15 @@ const DeliveryreportRcs = () => {
             aria-label="Manage Campaigns Tabs"
             textColor="primary"
             indicatorColor="primary"
+            variant="scrollable" 
+            scrollButtons="auto" 
+            allowScrollButtonsMobile 
+            className="w-full"
           >
             <Tab
               label={
-                <span>
-                  <GradingOutlinedIcon size={20} /> Campaigns Logs
+                <span className="flex items-center gap-1 text-sm md:text-base">
+                  <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
                 </span>
               }
               {...a11yProps(0)}
@@ -140,8 +144,8 @@ const DeliveryreportRcs = () => {
             />
             <Tab
               label={
-                <span>
-                  <LibraryBooksOutlinedIcon size={20} /> Day Wise Summary
+                <span className="flex items-center gap-1 text-sm md:text-base">
+                  <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
                 </span>
               }
               {...a11yProps(1)}
@@ -157,9 +161,10 @@ const DeliveryreportRcs = () => {
               }}
             />
           </Tabs>
+
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
-              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     label="Created On"
@@ -268,7 +273,7 @@ const DeliveryreportRcs = () => {
             )}
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"

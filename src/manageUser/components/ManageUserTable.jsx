@@ -908,10 +908,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const whatsapprows = Array.from({ length: 20 }, (_, i) => ({
@@ -1989,8 +1989,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>

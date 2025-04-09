@@ -350,7 +350,7 @@ const WhatsappCreateTemplate = () => {
                 Create Template
               </h1>
               <div className="flex flex-wrap items-end justify-start gap-4 pb-5 align-middle">
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   {/* <AnimatedDropdown
                     id="createSelectWaba"
                     name="createSelectWaba"
@@ -404,7 +404,7 @@ const WhatsappCreateTemplate = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="category"
                     name="category"
@@ -423,7 +423,7 @@ const WhatsappCreateTemplate = () => {
                 </div>
 
                 {selectedCategory && (
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-48">
                     <AnimatedDropdown
                       id="templateType"
                       name="templateType"
@@ -443,7 +443,7 @@ const WhatsappCreateTemplate = () => {
                 )}
 
                 {selectedTemplateType === "carousel" && (
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-48">
                     <AnimatedDropdown
                       id="carouselMediaType"
                       name="carouselMediaType"
@@ -461,7 +461,7 @@ const WhatsappCreateTemplate = () => {
                   </div>
                 )}
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <LanguageSelect
                     id="language"
                     name="language"
@@ -473,7 +473,7 @@ const WhatsappCreateTemplate = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <InputField
                     id="templateName"
                     name="templateName"
@@ -488,85 +488,120 @@ const WhatsappCreateTemplate = () => {
               </div>
             </div>
 
-            {/* {selectedWaba && selectedCategory && selectedTemplateType ? ( */}
-            <div className="flex">
-              <div className="w-1/3 px-2 py-0">
-                <>
-                  {selectedTemplateType === "carousel" &&
-                    carouselMediaType ? (
-                    <CarouselTemplateTypes
-                      templateFormat={templateFormat}
-                      setTemplateFormat={setTemplateFormat}
-                      templateFooter={templateFooter}
-                      setTemplateFooter={setTemplateFooter}
-                      handleAddVariable={handleAddVariable}
-                      handleEmojiSelect={handleEmojiSelect}
-                      selectedCardIndex={selectedCardIndex}
-                      setSelectedCardIndex={setSelectedCardIndex}
-                      cards={cards}
-                      setCards={setCards}
-                      file={file}
-                      setFile={setFile}
-                      onPreviewUpdate={handlePreviewUpdate}
-                    />
-                  ) : (
-                    <TemplateTypes
-                      selectedTemplateType={selectedTemplateType}
-                      templateHeader={templateHeader}
-                      setTemplateHeader={setTemplateHeader}
-                      templateFormat={templateFormat}
-                      setTemplateFormat={setTemplateFormat}
-                      templateFooter={templateFooter}
-                      setTemplateFooter={setTemplateFooter}
-                      handleAddVariable={handleAddVariable}
-                      handleEmojiSelect={handleEmojiSelect}
-                      imageUrl={imageUrl}
-                      setImageUrl={setImageUrl}
-                      videoUrl={videoUrl}
-                      setVideoUrl={setVideoUrl}
-                      documentUrl={documentUrl}
-                      setDocumentUrl={setDocumentUrl}
-                      locationUrl={locationUrl}
-                      setLocationUrl={setLocationUrl}
-                      file={file}
-                      setFile={setFile}
-                      onPreviewUpdate={handlePreviewUpdate}
-                      setvariables={setVariables}
-                    />
-                  )}
+            {selectedWaba && selectedCategory && selectedTemplateType ? (
+              <>
+                <div className="grid lg:grid-cols-2 gap-4">
+                  <div className="">
+                    <>
+                      {selectedTemplateType === "carousel" &&
+                        carouselMediaType ? (
+                        <CarouselTemplateTypes
+                          templateFormat={templateFormat}
+                          setTemplateFormat={setTemplateFormat}
+                          templateFooter={templateFooter}
+                          setTemplateFooter={setTemplateFooter}
+                          handleAddVariable={handleAddVariable}
+                          handleEmojiSelect={handleEmojiSelect}
+                          selectedCardIndex={selectedCardIndex}
+                          setSelectedCardIndex={setSelectedCardIndex}
+                          cards={cards}
+                          setCards={setCards}
+                          file={file}
+                          setFile={setFile}
+                          onPreviewUpdate={handlePreviewUpdate}
+                        />
+                      ) : (
+                        <TemplateTypes
+                          selectedTemplateType={selectedTemplateType}
+                          templateHeader={templateHeader}
+                          setTemplateHeader={setTemplateHeader}
+                          templateFormat={templateFormat}
+                          setTemplateFormat={setTemplateFormat}
+                          templateFooter={templateFooter}
+                          setTemplateFooter={setTemplateFooter}
+                          handleAddVariable={handleAddVariable}
+                          handleEmojiSelect={handleEmojiSelect}
+                          imageUrl={imageUrl}
+                          setImageUrl={setImageUrl}
+                          videoUrl={videoUrl}
+                          setVideoUrl={setVideoUrl}
+                          documentUrl={documentUrl}
+                          setDocumentUrl={setDocumentUrl}
+                          locationUrl={locationUrl}
+                          setLocationUrl={setLocationUrl}
+                          file={file}
+                          setFile={setFile}
+                          onPreviewUpdate={handlePreviewUpdate}
+                          setvariables={setVariables}
+                        />
+                      )}
 
-                  {selectedTemplateType === "carousel" &&
-                    carouselMediaType ? (
-                    <CarouselInteractiveActions
-                      cards={cards}
-                      selectedCardIndex={selectedCardIndex}
-                      setCards={setCards}
-                    />
-                  ) : (
-                    <InteractiveActions
-                      interactiveAction={interactiveAction}
-                      setInteractiveAction={setInteractiveAction}
-                      phoneNumber={phoneNumber}
-                      setPhoneNumber={setPhoneNumber}
-                      phoneTitle={phoneTitle}
-                      setPhoneTitle={setPhoneTitle}
-                      url={url}
-                      setUrl={setUrl}
-                      urlTitle={urlTitle}
-                      setUrlTitle={setUrlTitle}
-                      quickReplies={quickReplies}
-                      setQuickReplies={setQuickReplies}
-                      urlValid={urlValid}
-                      validateUrl={validateUrl}
-                      handlePhoneNumberChange={handlePhoneNumberChange}
-                      handleQuickReplyChange={handleQuickReplyChange}
-                      addQuickReply={addQuickReply}
-                      removeQuickReply={removeQuickReply}
-                      setUrlVariables={setUrlVariables}
-                    />
-                  )}
-                </>
-                <div className="flex items-center justify-center w-full mt-6">
+                      {selectedTemplateType === "carousel" &&
+                        carouselMediaType ? (
+                        <CarouselInteractiveActions
+                          cards={cards}
+                          selectedCardIndex={selectedCardIndex}
+                          setCards={setCards}
+                        />
+                      ) : (
+                        <InteractiveActions
+                          interactiveAction={interactiveAction}
+                          setInteractiveAction={setInteractiveAction}
+                          phoneNumber={phoneNumber}
+                          setPhoneNumber={setPhoneNumber}
+                          phoneTitle={phoneTitle}
+                          setPhoneTitle={setPhoneTitle}
+                          url={url}
+                          setUrl={setUrl}
+                          urlTitle={urlTitle}
+                          setUrlTitle={setUrlTitle}
+                          quickReplies={quickReplies}
+                          setQuickReplies={setQuickReplies}
+                          urlValid={urlValid}
+                          validateUrl={validateUrl}
+                          handlePhoneNumberChange={handlePhoneNumberChange}
+                          handleQuickReplyChange={handleQuickReplyChange}
+                          addQuickReply={addQuickReply}
+                          removeQuickReply={removeQuickReply}
+                          setUrlVariables={setUrlVariables}
+                        />
+                      )}
+                    </>
+
+                  </div>
+                  <div className="flex items-start justify-center lg:mt-7">
+                    {selectedTemplateType === "carousel" && carouselMediaType ? (
+                      <CarouselTemplatePreview
+                        scrollContainerRef={scrollableContainerRef}
+                        format={templateFormat}
+                        cards={cards}
+                        footer={templateFooter}
+                        setCards={setCards}
+                        selectedCardIndex={selectedCardIndex}
+                        setSelectedCardIndex={setSelectedCardIndex}
+                        onAddCard={(newCard) => setCards([...cards, newCard])}
+                        onDeleteCard={handleDeleteCard}
+                      />
+                    ) : (
+                      <TemplatePreview
+                        scrollContainerRef={scrollableContainerRef}
+                        header={templateHeader}
+                        format={templateFormat}
+                        footer={templateFooter}
+                        imageUrl={imageUrl}
+                        videoUrl={videoUrl}
+                        documentUrl={documentUrl}
+                        locationUrl={locationUrl}
+                        phoneTitle={phoneTitle}
+                        urlTitle={urlTitle}
+                        quickReplies={quickReplies}
+                      />
+
+                      // <></>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-center justify-center w-full mt-2">
                   <button
                     disabled={
                       !selectedWaba ||
@@ -588,42 +623,10 @@ const WhatsappCreateTemplate = () => {
                     Submit Template
                   </button>
                 </div>
-              </div>
-              <div className="w-1/3">
-                {selectedTemplateType === "carousel" && carouselMediaType ? (
-                  <CarouselTemplatePreview
-                    scrollContainerRef={scrollableContainerRef}
-                    format={templateFormat}
-                    cards={cards}
-                    footer={templateFooter}
-                    setCards={setCards}
-                    selectedCardIndex={selectedCardIndex}
-                    setSelectedCardIndex={setSelectedCardIndex}
-                    onAddCard={(newCard) => setCards([...cards, newCard])}
-                    onDeleteCard={handleDeleteCard}
-                  />
-                ) : (
-                  <TemplatePreview
-                    scrollContainerRef={scrollableContainerRef}
-                    header={templateHeader}
-                    format={templateFormat}
-                    footer={templateFooter}
-                    imageUrl={imageUrl}
-                    videoUrl={videoUrl}
-                    documentUrl={documentUrl}
-                    locationUrl={locationUrl}
-                    phoneTitle={phoneTitle}
-                    urlTitle={urlTitle}
-                    quickReplies={quickReplies}
-                  />
-
-                  // <></>
-                )}
-              </div>
-            </div>
-            {/* ) : ( */}
-            <>
-              {/* <div className="p-2 border-2 border-blue-500 border-dashed rounded-2xl">
+              </>
+            ) : (
+              <>
+                <div className="p-2 border-2 border-blue-500 border-dashed rounded-2xl">
                   <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
                     <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
                       <WhatsApp
@@ -641,9 +644,9 @@ const WhatsappCreateTemplate = () => {
                       )}
                     </p>
                   </div>
-                </div> */}
-            </>
-            {/* )} */}
+                </div>
+              </>
+            )}
           </div>
         </>
       )}

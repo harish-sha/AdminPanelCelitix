@@ -77,21 +77,10 @@ const TemplatePreview = ({
       return variable ? `[${variable.value || "empty"}]` : match;
     });
   };
+  const isLargeScreen = window.innerWidth >= 1024;
 
   return (
-    <div
-      style={{
-        position: "absolute", // Position within the scrollable container
-        right: "20.5rem", // Tailwind's `right-10`
-        top: `${scrollOffset}px`, // Dynamic top position
-        width: "28rem",
-        minHeight: "35rem",
-        height: "auto",
-        overflowY: "auto",
-        // zIndex: 50,
-      }}
-      className="p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"
-    >
+    <div className={`${isLargeScreen ? 'fixed' : 'static'} top-[230px] sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg`}>
       <div className="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t-md">
         <h2 className="text-lg font-semibold">Template Preview</h2>
         <p className="text-sm">

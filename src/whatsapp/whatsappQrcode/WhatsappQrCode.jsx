@@ -38,12 +38,8 @@ const WhatsappQrCode = () => {
   };
 
   return (
-    <div style={{
-      background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", width: "auto", display: "flex", gap: "15px"
-    }}>
-      <div className="w-4/12" style={{
-        background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", display: "flex", flexDirection: "column", gap: "15px"
-      }}>
+    <div className="bg-white p-5 rounded-[10px] shadow-[0_0_10px_rgba(0,0,0,0.1)] w-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-2">
+      <div className=" bg-white p-5 rounded-[10px] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex flex-col gap-[15px] h-120" >
         <InputField
           label="WhatsApp QR Code Generator"
           id="whatsAppqrCodeGenerator"
@@ -69,9 +65,7 @@ const WhatsappQrCode = () => {
           onClick={generateQRCode}
         />
       </div>
-      <div className="w-4/12" style={{
-        background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", display: "flex", flexDirection: "column", gap: "15px"
-      }}>
+      <div className=" bg-white p-5 rounded-[10px] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex flex-col gap-[15px] h-120">
         <div style={{
           width: "100%", height: "100%", background: "#e5ddd5", borderRadius: "10px", padding: "10px", fontFamily: "Arial, sans-serif", position: "relative"
         }}>
@@ -99,12 +93,10 @@ const WhatsappQrCode = () => {
           </div>
         </div>
       </div>
-      <div className="w-4/12" style={{
-        background: "white", padding: "20px", borderRadius: "10px", boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)", display: "flex", flexDirection: "column", gap: "15px"
-      }}>
-        <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center", borderRadius: "5px", border: "1px solid #ddd", padding: "0px" }}>
-          {/* <QRCode value={qrLink} size={100} /> */}
-          {qrImage && <img src={qrImage} alt="WhatsApp QR Code" className="w-full" />}
+      <div className="bg-white p-5 rounded-[10px] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex flex-col gap-[15px] h-120">
+        <div className=" flex items-center justify-center rounded-[5px] border border-[#ddd] p-0">
+         
+          {qrImage && <img src={qrImage} alt="WhatsApp QR Code" className="h-60 w-60" />}
         </div>
         <InputField
           label="Your WhatsApp Click-To-Chat Link"

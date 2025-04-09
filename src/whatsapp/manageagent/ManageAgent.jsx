@@ -472,7 +472,7 @@ const ManageAgent = () => {
         (dept) => dept.departmentId === selectedadddepartment
       )
       : departmentList;
-      
+
 
   const rows = filteredDepartmentList.map((item, index) => ({
     id: item.departmentId,

@@ -110,9 +110,9 @@ const WhatsappConversation = () => {
             </h1>
           </div>
 
-          <div className="flex flex-wrap items-end gap-4 mb-5">
+          <div className="flex lg:flex-nowrap md:flex-wrap flex-wrap items-end gap-2 mb-5">
             {/* Select WABA Dropdown */}
-            <div className="flex w-56">
+            <div className="lg:w-56 w-full">
             <AnimatedDropdown
               id="wabadropdown"
               label="Select WABA"
@@ -127,7 +127,7 @@ const WhatsappConversation = () => {
               }
             />
             </div>
-            <div className="flex w-56">
+            <div className="lg:w-56 w-full">
 
             {/* From Date Picker */}
             <UniversalDatePicker
@@ -139,7 +139,7 @@ const WhatsappConversation = () => {
               }
             />
                </div>
-               <div className="flex w-56">
+               <div className="lg:w-56 w-full">
             {/* To Date Picker */}
             <UniversalDatePicker
               id="conversationto"
@@ -150,7 +150,7 @@ const WhatsappConversation = () => {
               }
             />
              </div>
-             <div className="flex w-56">
+             <div className="lg:w-56 w-full">
             {/* Mobile Number Input Field */}
             <InputField
               id="conversationmobile"
@@ -163,7 +163,6 @@ const WhatsappConversation = () => {
               }
             />
              </div>
-             <div className="flex">
             {/* Search Button */}
             <div className="w-max-content ">
             <UniversalButton
@@ -174,8 +173,6 @@ const WhatsappConversation = () => {
               disabled={isFetching}
             />
              </div>
-             </div>
-             <div className="flex">
             {/* Export Button */}
             <div className="w-max-content ">
             <UniversalButton
@@ -183,7 +180,6 @@ const WhatsappConversation = () => {
               label="Export"
               onClick={() => console.log("Export Clicked")}
             />
-             </div>
              </div>
           </div>
 

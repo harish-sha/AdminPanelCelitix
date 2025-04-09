@@ -96,21 +96,10 @@ const CarouselTemplatePreview = ({
             return variable ? `[${variable.value || 'empty'}]` : match;
         });
     };
+    const isLargeScreen = window.innerWidth >= 1024;
 
     return (
-        <div
-            style={{
-                position: 'absolute', // Position within the scrollable container
-                right: '20.5rem', // Tailwind's `right-10`
-                top: `${scrollOffset}px`, // Dynamic top position
-                width: '27rem',
-                minHeight: '35rem',
-                height: 'auto',
-                overflow: 'auto',
-                // zIndex: 50,
-            }}
-            className='w-full p-3 border border-gray-400  rounded-md shadow-lg bg-gray-100 transition-all duration-300'
-        >
+        <div className={`${isLargeScreen ? 'static' : 'static'} top-[230px] sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg mb-5`}>
             <div className='flex items-center justify-between bg-green-500 text-white px-4 py-2 rounded-t-md mb-3'>
                 <h2 className='text-lg font-semibold'>Cards Template Preview</h2>
                 <p className='text-sm'>

@@ -273,7 +273,7 @@ const DataTable = ({ id, wabaNumber, wabaSrno, data, name, wabaList, fetchTempla
             field: 'action',
             headerName: 'Action',
             flex: 1,
-            minWidth: 150,
+            minWidth: 220,
             renderCell: (params) => (
                 <>
                     <CustomTooltip title="Refresh Status" placement="top" arrow>

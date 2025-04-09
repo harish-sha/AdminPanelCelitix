@@ -307,10 +307,10 @@ function RadioButtonLaunchCampaign({
         <h2 className="mb-2 text-sm font-medium tracking-wide text-gray-800">
           Choose an Option
         </h2>
-        <div className="flex flex-wrap gap-4 mb-2 sm:grid-cols-2">
+        <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
           {/* Option 1 */}
-          <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center justify-center gap-2 cursor-pointer">
+          <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+            <div className="flex items-center justify-start gap-2 cursor-pointer">
               <RadioButton
                 inputId="radioOption1"
                 name="radioGroup"
@@ -328,8 +328,8 @@ function RadioButtonLaunchCampaign({
           </label>
 
           {/* Option 2 */}
-          <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center justify-center gap-2">
+          <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+            <div className="flex items-center justify-start gap-2">
               <RadioButton
                 inputId="radioOption2"
                 name="radioGroup"

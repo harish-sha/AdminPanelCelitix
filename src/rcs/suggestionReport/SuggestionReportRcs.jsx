@@ -78,7 +78,7 @@ const SuggestionReportRcs = () => {
       <div>
         <div className="flex flex-wrap items-end w-full gap-2 mb-5">
           {/* From Date Picker */}
-          <div className="w-full sm:w-56">
+          <div className="w-full sm:w-48">
             <UniversalDatePicker
               id="suggestionfrom"
               name="suggestionfrom"
@@ -92,7 +92,7 @@ const SuggestionReportRcs = () => {
           </div>
 
           {/* To Date Picker */}
-          <div className="w-full sm:w-56">
+          <div className="w-full sm:w-48">
             <UniversalDatePicker
               id="suggestionto"
               name="suggestionto"
@@ -104,7 +104,7 @@ const SuggestionReportRcs = () => {
             />
           </div>
 
-          <div className="w-max-content">
+          <div className="w-full sm:w-48">
             <AnimatedDropdown
               label="Agent"
               options={allAgents.map((bot) => ({
@@ -122,7 +122,7 @@ const SuggestionReportRcs = () => {
           </div>
 
           {/* Mobile Number Input Field */}
-          <div className="w-max-content">
+          <div className="w-full sm:w-48">
             <InputField
               id="suggestionmobile"
               name="suggestionmobile"
