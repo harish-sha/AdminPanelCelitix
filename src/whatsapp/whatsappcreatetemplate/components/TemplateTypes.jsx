@@ -135,7 +135,6 @@ const TemplateTypes = ({
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY}`,
-
           },
         }
       );
