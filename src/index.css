@@ -322,3 +322,9 @@ a {
     height: 43rem;
   }
 }
+
+/* DatePicker */
+.css-1go6k0s-MuiFormControl-root-MuiTextField-root{
+  width: 100% !important;
+}
+/* DatePicker */

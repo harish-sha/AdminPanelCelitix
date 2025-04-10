@@ -788,6 +788,7 @@ const ManageContacts = () => {
                   id="addGroupname"
                   name="addGroupname"
                   type="text"
+                  label="Group Name"
                   placeholder="Enter group name..."
                   value={groupName}
                   onChange={(e) => {

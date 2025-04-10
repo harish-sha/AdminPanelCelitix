@@ -116,7 +116,7 @@ const DeliveryreportRcs = () => {
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="Manage Campaigns Tabs"
+            aria-label="Deliveryre Report Tabs"
             textColor="primary"
             indicatorColor="primary"
             variant="scrollable" 

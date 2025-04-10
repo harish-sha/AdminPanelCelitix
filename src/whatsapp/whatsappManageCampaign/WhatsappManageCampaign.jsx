@@ -271,6 +271,10 @@ const WhatsappManageCampaign = () => {
             aria-label="Manage Campaigns Tabs"
             textColor="primary"
             indicatorColor="primary"
+            scrollButtons="auto" 
+            allowScrollButtonsMobile 
+            className="w-full"
+            variant="scrollable" 
           >
             <Tab
               label={

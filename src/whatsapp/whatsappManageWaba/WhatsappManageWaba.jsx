@@ -275,10 +275,31 @@ const WhatsappManageWaba = ({ id, name }) => {
   //   });
   // };
 
+  // useEffect(() => {
+  //   window.fbAsyncInit = function () {
+  //     window.FB.init({
+  //       appId: "827520649332611",
+  //       cookie: true,
+  //       xfbml: true,
+  //       version: "v20.0",
+  //     });
+  //   };
+
+  //   (function (d, s, id) {
+  //     let js,
+  //       fjs = d.getElementsByTagName(s)[0];
+  //     if (d.getElementById(id)) return;
+  //     js = d.createElement(s);
+  //     js.id = id;
+  //     js.src = "https://connect.facebook.net/en_US/sdk.js";
+  //     fjs.parentNode.insertBefore(js, fjs);
+  //   })(document, "script", "facebook-jssdk");
+  // }, []);
+
   useEffect(() => {
     window.fbAsyncInit = function () {
       window.FB.init({
-        appId: "827520649332611",
+        appId: "819027950096451",
         cookie: true,
         xfbml: true,
         version: "v20.0",
@@ -308,9 +329,37 @@ const WhatsappManageWaba = ({ id, name }) => {
           console.log("User canceled login or did not fully authorize.");
         }
       },
-      { scope: "public_profile,email" }
+      { scope: "public_profile,email" },
+      {
+        config_id: "827520649332611",
+        response_type: "code",
+        override_default_response_type: true,
+        extras: {
+          feature: "whatsapp_embedded_signup",
+          version: 2,
+          setup: {
+            solutionID: "597385276367677",
+          },
+        },
+      }
     );
   };
+
+  // const handleFacebookLogin = () => {
+  //   window.FB.login(
+  //     (response) => {
+  //       if (response.authResponse) {
+  //         console.log("User logged in", response);
+  //         window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
+  //           console.log("User details", user);
+  //         });
+  //       } else {
+  //         console.log("User canceled login or did not fully authorize.");
+  //       }
+  //     },
+  //     { scope: "public_profile,email" }
+  //   );
+  // };
 
   const handleSelectFile = () => {
     fileInputRef.current.value = "";
