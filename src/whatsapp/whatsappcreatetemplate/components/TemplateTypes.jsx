@@ -43,17 +43,9 @@ const TemplateTypes = ({
   setFile,
   onPreviewUpdate,
   setvariables,
+  uploadImageFile,
+  setFileUploadUrl,
 }) => {
-  useEffect(() => {
-    setTemplateHeader("");
-    setTemplateFormat("");
-    setTemplateFooter("");
-    setImageUrl(null);
-    setVideoUrl(null);
-    setDocumentUrl(null);
-    setLocationUrl("");
-    setFile(null);
-  }, [selectedTemplateType]);
   const [lastUploadedFileName, setLastUploadedFileName] = useState("");
   const fileInputRef = useRef(null);
 
@@ -65,7 +57,6 @@ const TemplateTypes = ({
     });
     onPreviewUpdate(previewFormat);
   };
-
 
   const [isOpen, setIsOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");
@@ -134,7 +125,9 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY}`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+            }`,
           },
         }
       );
@@ -143,24 +136,36 @@ const TemplateTypes = ({
 
       const totalLength = templateFormat.length + text.length;
       const finalText =
-        totalLength > 1024
-          ? text.slice(0, 1024 - templateFormat.length)
-          : text;
+        totalLength > 1024 ? text.slice(0, 1024 - templateFormat.length) : text;
 
       setAiSuggestion(finalText);
       setTypingKey((prev) => prev + 1);
     } catch (err) {
-      console.error("Error generating content:", err.response?.data || err.message);
-      toast.error("Failed to generate AI response. Please check your API key and usage.");
+      console.error(
+        "Error generating content:",
+        err.response?.data || err.message
+      );
+      toast.error(
+        "Failed to generate AI response. Please check your API key and usage."
+      );
     } finally {
       setIsGenerating(false);
     }
   };
 
-
   //   const handleAddVariable = (setState, variable) => {
   //     setState((prev) => `${prev} {${variable}}`);
   //   };
+
+  const handleFileUpload = async () => {
+    try {
+      const res = await uploadImageFile(file, 1);
+      console.log(res?.handlerid);
+      setFileUploadUrl(res?.handlerid);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className="w-full">
@@ -242,12 +247,7 @@ const TemplateTypes = ({
               <button
                 className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
                 onClick={() => {
-                  if (imageUrl && file.name === lastUploadedFileName) {
-                    toast.error(
-                      "Image already uploaded. Please select a different one"
-                    );
-                    return;
-                  }
+                  handleFileUpload();
                   if (file.size <= 5 * 1024 * 1024) {
                     setImageUrl(file);
                     setLastUploadedFileName(file.name);
@@ -324,6 +324,7 @@ const TemplateTypes = ({
                   setFile(selectedFile);
                 }
               }}
+              ref={fileInputRef}
             />
 
             {/* Upload Button */}
@@ -331,12 +332,7 @@ const TemplateTypes = ({
               <button
                 className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
                 onClick={() => {
-                  if (videoUrl && file.name === lastUploadedFileName) {
-                    toast.error(
-                      "Video already uploaded.  Please select a different one"
-                    );
-                    return;
-                  }
+                  handleFileUpload();
                   if (file.size <= 16 * 1024 * 1024) {
                     setVideoUrl(file);
                     setLastUploadedFileName(file.name);
@@ -358,6 +354,7 @@ const TemplateTypes = ({
                 onClick={() => {
                   setFile(null);
                   setVideoUrl(null);
+                  fileInputRef.current.value = "";
                   document.getElementById("videoUpload").value = "";
                   toast.success("Video removed successfully!");
                 }}
@@ -411,6 +408,7 @@ const TemplateTypes = ({
                   setFile(selectedFile);
                 }
               }}
+              ref={fileInputRef}
             />
 
             {/* Upload Button */}
@@ -418,12 +416,7 @@ const TemplateTypes = ({
               <button
                 className="px-4 py-2 text-sm text-white bg-green-500 rounded-md hover:bg-green-600"
                 onClick={() => {
-                  if (documentUrl && file.name === lastUploadedFileName) {
-                    toast.error(
-                      "Document already uploaded.  Please select a different one"
-                    );
-                    return;
-                  }
+                  handleFileUpload();
                   if (file.size <= 100 * 1024 * 1024) {
                     setDocumentUrl(URL.createObjectURL(file));
                     setLastUploadedFileName(file.name);
@@ -445,6 +438,7 @@ const TemplateTypes = ({
                 onClick={() => {
                   setFile(null);
                   setDocumentUrl(null);
+                  fileInputRef.current.value = "";
                   document.getElementById("documentUpload").value = "";
                   toast.success("Document removed successfully!");
                 }}
@@ -561,7 +555,10 @@ const TemplateTypes = ({
                   <p className=" text-violet-700 font-medium">
                     Ask AI to Generate Template <AutoAwesomeIcon />
                   </p>
-                  <IconButton onClick={closePanel} sx={{ padding: "3px", fontSize: "18px" }} >
+                  <IconButton
+                    onClick={closePanel}
+                    sx={{ padding: "3px", fontSize: "18px" }}
+                  >
                     <AiOutlineClose className="text-gray-500 hover:text-red-500 cursor-pointer" />
                   </IconButton>
                 </div>
@@ -612,7 +609,6 @@ const TemplateTypes = ({
                     </p>
                   )}
                 </div>
-
 
                 {isTypingDone && aiSuggestion && !hasInserted && (
                   <div className="flex items-center justify-center ">
@@ -679,11 +675,3 @@ const TemplateTypes = ({
 };
 
 export default TemplateTypes;
-
-
-
-
-
-
-
-

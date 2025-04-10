@@ -75,9 +75,12 @@ export const campaignUploadFile = async (file) => {
 };
 
 // upload file - (image)
-export const uploadImageFile = async (file) => {
+export const uploadImageFile = async (file, generateHandler = 0) => {
   const formData = new FormData();
   formData.append("file", file);
+  if (generateHandler) {
+    formData.append("generateHandler", generateHandler);
+  }
 
   try {
     const response = await fetchWithAuth("/proCpaasRest/utility/upload", {
@@ -293,7 +296,7 @@ export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
 // fetch all conversations (live chat)
 export const fetchAllConversations = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=&userActive=${data.active}`,
+    `/proCpaasRest/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}`,
     {
       method: "POST",
     }
@@ -373,6 +376,32 @@ export const downloadAttachment = async (data) => {
 export const readMessage = async (data) => {
   return await fetchWithAuth(
     `/proCpaasRest/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// Campaign Summary Info
+export const campaignSummaryInfo = async (data) => {
+  return await fetchWithAuth(`/proCpaasRest/whatsapp/getCampaignSummaryInfo`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// get list of send messages
+export const getListofSendMsg = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/whatsapp/getListOfSentMsg", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// fetch curl of template
+export const fetchCurlData = async (data) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/wrapper/waba/getTemplate?templatename=${data.tempName}&wabaNumber=${data.waba}&curl`,
     {
       method: "POST",
     }

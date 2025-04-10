@@ -126,8 +126,8 @@ import {
   Divider,
 } from "@mui/material";
 import DoneIcon from "@mui/icons-material/Done";
-import DoneAllOutlinedIcon from '@mui/icons-material/DoneAllOutlined';
-import CurrencyRupeeOutlinedIcon from '@mui/icons-material/CurrencyRupeeOutlined';
+import DoneAllOutlinedIcon from "@mui/icons-material/DoneAllOutlined";
+import CurrencyRupeeOutlinedIcon from "@mui/icons-material/CurrencyRupeeOutlined";
 import ErrorIcon from "@mui/icons-material/Error";
 import ScheduleIcon from "@mui/icons-material/Schedule";
 import PersonIcon from "@mui/icons-material/Person";
@@ -137,8 +137,9 @@ import AttachMoneyIcon from "@mui/icons-material/AttachMoney";
 import MarkEmailReadIcon from "@mui/icons-material/MarkEmailRead";
 import SmsFailedIcon from "@mui/icons-material/SmsFailed";
 import { motion } from "framer-motion";
-import GroupsOutlinedIcon from '@mui/icons-material/GroupsOutlined';
+import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { Grid } from "@mui/joy";
+import { useNavigate } from "react-router-dom";
 
 const statusColors = {
   delivered: "text-green-500",
@@ -147,6 +148,7 @@ const statusColors = {
 };
 
 const CampaignLogCard = ({ log }) => {
+  const navigate = useNavigate();
   return (
     // <Paper className="w-full p-6 bg-white shadow-lg rounded-xl border border-gray-200">
     //   {/* Header */}
@@ -304,46 +306,82 @@ const CampaignLogCard = ({ log }) => {
               label: "Delivered",
               value: log.delivered,
               icon: <DoneIcon className="text-green-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Failed",
               value: log.failed,
               icon: <ErrorIcon className="text-red-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Total",
               value: log.total,
               icon: <GroupsOutlinedIcon className="text-gray-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Busy",
               value: log.busy,
               icon: <SmsFailedIcon className="text-yellow-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Blocked",
               value: log.block,
               icon: <BlockIcon className="text-red-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Submitted",
               value: log.submitted,
               icon: <SendIcon className="text-blue-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Charged",
               value: log.chargedUnit,
               icon: <CurrencyRupeeOutlinedIcon className="text-green-700" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Read",
               value: log.read,
               icon: <DoneAllOutlinedIcon className="text-green-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
             {
               label: "Undelivered",
               value: log.undelivered,
               icon: <SmsFailedIcon className="text-gray-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log },
+                }),
             },
           ].map((item, index) => (
             <motion.div
@@ -352,6 +390,7 @@ const CampaignLogCard = ({ log }) => {
               initial={{ opacity: 0, scale: 0.6 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.3 + index * 0.1 }}
+              onClick={item.onclick}
             >
               {item.icon && (
                 <Tooltip title={item.label} arrow>

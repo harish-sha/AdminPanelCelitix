@@ -52,6 +52,7 @@ const WhatsappCreateTemplate = () => {
   const [urlTitle, setUrlTitle] = useState("");
   const [quickReplies, setQuickReplies] = useState([]);
   const [urlValid, setUrlValid] = useState(true);
+  const [fileUploadUrl, setFileUploadUrl] = useState("");
   const [cards, setCards] = useState([
     {
       mediaType: "image",
@@ -130,6 +131,14 @@ const WhatsappCreateTemplate = () => {
   const handleTemplateTypeChange = (value) => {
     setSelectedTemplateType(value);
     setCarouselMediaType("");
+    setTemplateHeader("");
+    setTemplateFormat("");
+    setTemplateFooter("");
+    setImageUrl(null);
+    setVideoUrl(null);
+    setDocumentUrl(null);
+    setLocationUrl("");
+    setFile(null);
   };
 
   const handleCarouselMediaTypeChange = (value) => {
@@ -177,11 +186,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-      "((\\d{1,3}\\.){3}\\d{1,3}))" +
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-      "(\\?[;&a-z\\d%_.~+=-]*)?" +
-      "(\\#[-a-z\\d_]*)?$",
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+        "((\\d{1,3}\\.){3}\\d{1,3}))" +
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+        "(\\?[;&a-z\\d%_.~+=-]*)?" +
+        "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -299,33 +308,63 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    if (selectedCategory === "UTILITY") {
+    if (selectedTemplateType != "text") {
       data.components.push({
         type: "HEADER",
-        format: selectedTemplateType,
+        format: selectedTemplateType.toUpperCase(),
+        example: {
+          header_handle: [fileUploadUrl],
+        },
       });
     }
 
+    // if (selectedCategory === "UTILITY") {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: selectedTemplateType,
+    //   });
+    // }
+
     try {
-      setIsLoading(true);
       const response = await sendTemplatetoApi(data);
 
       if (response.message === "Template Name is duplicate") {
-        toast.error("Template name is already in use. Please choose another.");
+        return toast.error(
+          "Template name is already in use. Please choose another."
+        );
       } else if (response.message === "Template Save Successfully") {
+        setIsLoading(true);
         toast.success("Template submitted successfully!");
+        setSelectedWaba("");
+        setSelectedCategory("");
+        setSelectedLanguage("");
+        setSelectedWabaSno("");
+        setTemplateHeader("");
+        setTemplateFormat("");
+        setTemplateFooter("");
+        setImageUrl(null);
+        setVideoUrl(null);
+        setDocumentUrl(null);
+        setLocationUrl("");
+        setFile(null);
+
+        setPhoneNumber("");
+        setPhoneTitle("");
+        setUrl("");
+        setUrlTitle("");
+        setQuickReplies([]);
       } else if (
         response?.includes("language") &&
         response?.includes("not available")
       ) {
-        toast.error(
+        return toast.error(
           "The selected language is not available for message templates. Please try a different language."
         );
       } else {
-        toast.error("An unknown error occurred. Please try again.");
+        return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      toast.error(e.message || "Something went wrong.");
+      return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
     }
@@ -385,9 +424,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                          mbno: selectedWaba,
-                          sno: selectedWabaSno,
-                        })
+                            mbno: selectedWaba,
+                            sno: selectedWabaSno,
+                          })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -494,7 +533,7 @@ const WhatsappCreateTemplate = () => {
                   <div className="">
                     <>
                       {selectedTemplateType === "carousel" &&
-                        carouselMediaType ? (
+                      carouselMediaType ? (
                         <CarouselTemplateTypes
                           templateFormat={templateFormat}
                           setTemplateFormat={setTemplateFormat}
@@ -533,11 +572,13 @@ const WhatsappCreateTemplate = () => {
                           setFile={setFile}
                           onPreviewUpdate={handlePreviewUpdate}
                           setvariables={setVariables}
+                          uploadImageFile={uploadImageFile}
+                          setFileUploadUrl={setFileUploadUrl}
                         />
                       )}
 
                       {selectedTemplateType === "carousel" &&
-                        carouselMediaType ? (
+                      carouselMediaType ? (
                         <CarouselInteractiveActions
                           cards={cards}
                           selectedCardIndex={selectedCardIndex}
@@ -567,10 +608,10 @@ const WhatsappCreateTemplate = () => {
                         />
                       )}
                     </>
-
                   </div>
                   <div className="flex items-start justify-center lg:mt-7">
-                    {selectedTemplateType === "carousel" && carouselMediaType ? (
+                    {selectedTemplateType === "carousel" &&
+                    carouselMediaType ? (
                       <CarouselTemplatePreview
                         scrollContainerRef={scrollableContainerRef}
                         format={templateFormat}
@@ -609,13 +650,14 @@ const WhatsappCreateTemplate = () => {
                       !selectedTemplateType ||
                       !templateName
                     }
-                    className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                    className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
+                      selectedWaba &&
                       selectedCategory &&
                       selectedTemplateType &&
                       templateName
-                      ? "bg-[#212529] hover:bg-[#434851]"
-                      : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                    }`}
                     onClick={handleSubmit}
                     id="submitTemplate"
                     name="submitTemplate"

@@ -451,6 +451,7 @@ const WhatsappManageCampaign = () => {
                     id="whatsappManageCampaignTable"
                     name="whatsappManageCampaignTable"
                     data={filteredData}
+                    fromDate={selectedDate}
                   />
                 </div>
               )}
