@@ -67,17 +67,20 @@ export const SuggestedActions = ({
     const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
     return (
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
-            <div>
-                <AnimatedDropdown
-                    label={`Suggested Action 1 `}
-                    options={btnOptions}
-                    value={selectedAction.dropdown1}
-                    onChange={(newValue) => {
-                        handleDropdownChange("dropdown1", newValue);
-                    }}
-                    placeholder={`Select Action 1`}
-                />
+        <div className="grid grid-cols-1 gap-1">
+            <div className="flex items-center gap-2 w-full">
+                <div className="w-56" >
+
+                    <AnimatedDropdown
+                        label={`Suggested Action 1 `}
+                        options={btnOptions}
+                        value={selectedAction.dropdown1}
+                        onChange={(newValue) => {
+                            handleDropdownChange("dropdown1", newValue);
+                        }}
+                        placeholder={`Select Action 1`}
+                    />
+                </div>
                 {selectedAction.dropdown1 && (
                     <div className="flex gap-2">
                         <InputField
@@ -112,7 +115,7 @@ export const SuggestedActions = ({
                     </div>
                 )}
             </div>
-            <div>
+            <div className="grid grid-cols-2 gap-1">
                 <AnimatedDropdown
                     label={`Suggested Action 2 `}
                     options={btnOptions}
@@ -157,7 +160,7 @@ export const SuggestedActions = ({
                     </div>
                 )}
             </div>
-            <div>
+            <div className="grid grid-cols-2 gap-1">
                 <AnimatedDropdown
                     label={`Suggested Action 3 `}
                     options={btnOptions}
@@ -200,7 +203,7 @@ export const SuggestedActions = ({
                     </div>
                 )}
             </div>
-            <div>
+            <div className="grid grid-cols-2 gap-1">
                 <AnimatedDropdown
                     label={`Suggested Action 4`}
                     options={btnOptions}

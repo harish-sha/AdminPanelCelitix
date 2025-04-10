@@ -110,9 +110,9 @@ const WhatsappConversation = () => {
             </h1>
           </div>
 
-          <div className="flex lg:flex-nowrap md:flex-wrap flex-wrap items-end gap-2 mb-5">
+          <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             {/* Select WABA Dropdown */}
-            <div className="lg:w-56 w-full">
+            <div className="w-full sm:w-56">
             <AnimatedDropdown
               id="wabadropdown"
               label="Select WABA"
@@ -127,7 +127,7 @@ const WhatsappConversation = () => {
               }
             />
             </div>
-            <div className="lg:w-56 w-full">
+            <div className="w-full sm:w-56">
 
             {/* From Date Picker */}
             <UniversalDatePicker
@@ -139,7 +139,7 @@ const WhatsappConversation = () => {
               }
             />
                </div>
-               <div className="lg:w-56 w-full">
+               <div className="w-full sm:w-56">
             {/* To Date Picker */}
             <UniversalDatePicker
               id="conversationto"
@@ -150,7 +150,7 @@ const WhatsappConversation = () => {
               }
             />
              </div>
-             <div className="lg:w-56 w-full">
+             <div className="w-full sm:w-56">
             {/* Mobile Number Input Field */}
             <InputField
               id="conversationmobile"

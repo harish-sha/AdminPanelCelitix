@@ -1592,8 +1592,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="max-w-md p-6 mx-auto rounded-lg shadow-xl bg-gradient-to-r from-white to-gray-100">
-          <h2 className="mb-4 text-xl font-semibold text-center text-gray-800">
+        <div className="max-w-md p-2 mx-auto rounded-lg border ">
+          <h2 className="mb-4 text-lg font-semibold text-center text-gray-800">
             Mobile Numbers
           </h2>
 
@@ -1637,7 +1637,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-              onClick={addMobileNumber}
+            // onClick={addMobileNumber}
             />
 
             {/* <IconButton
@@ -1867,14 +1867,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           <div className="space-y-6 p-2">
             {/* Row 1 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm">
                 <RemoveRedEyeOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>User ID:</strong>{" "}
+                  <strong className="text-sm" >User ID : </strong>
                   {selectedUserDetails.userId || "Not Available"}
                 </p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 text-sm">
                 <CalendarTodayOutlinedIcon className="text-gray-600" />
                 <p>
                   <strong>Expiry Date:</strong>{" "}
@@ -1884,7 +1884,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 2 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1902,7 +1902,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 3 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <EmailOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1920,7 +1920,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 4 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <BusinessOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1938,7 +1938,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 5 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <LocationCityOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1956,7 +1956,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 6 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <PublicOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1974,7 +1974,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 7 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <AccountTreeOutlinedIcon className="text-gray-600" />
                 <p>
@@ -1996,7 +1996,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 8 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <CampaignOutlinedIcon className="text-gray-600" />
                 <p>
@@ -2014,7 +2014,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
 
             {/* Row 9 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
               <div className="flex items-center gap-2">
                 <KeyOutlinedIcon className="text-gray-600" />
                 <p>

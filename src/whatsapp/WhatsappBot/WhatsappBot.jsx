@@ -362,13 +362,67 @@ const WhatsappBot = () => {
         <Loader />
       ) : (
         <div className="p-3 rounded-xl space-y-6 bg-gray-50  w-full overflow-hidden min-h-[90vh]">
-          <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-3 md:grid-cols-3 items-center mb-4">
+            {/* Title */}
+            <div className="flex items-center justify-center lg:justify-start gap-2 text-xl font-semibold text-gray-900">
+              Manage Bots
+              <FaWhatsapp className="text-[#25D366] text-2xl" />
+            </div>
+
+            {/* Search */}
+            <div className="flex justify-center lg:justify-center">
+              <div className="relative flex items-center transition-all duration-500">
+                <div
+                  className={`relative flex items-center border rounded-lg border-gray-300 transition-all duration-300
+          ${searchActive ? "w-60" : "w-0"}
+          ${!searchActive ? "animate-rotate-glow" : ""}`}
+                >
+                  <input
+                    type="text"
+                    className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300
+            ${
+              searchActive
+                ? "border border-gray-400 outline-none w-full opacity-100"
+                : "w-0 opacity-0"
+            }
+            focus:outline-none`}
+                    placeholder="Search Bots&Templates..."
+                    onBlur={() => setSearchActive(false)}
+                  />
+                  <IoSearch
+                    className="absolute text-gray-600 cursor-pointer right-2"
+                    size={22}
+                    color="green"
+                    onClick={() => setSearchActive(true)}
+                  />
+                </div>
+
+                {!searchActive && (
+                  <span className="ml-2 text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">
+                    Search Bots
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Button */}
+            <div className="flex justify-center lg:justify-end md:justify-end">
+              <UniversalButton
+                id="addwhatsappbot"
+                name="addwhatsappbot"
+                label="+ New Bot"
+                onClick={handleNavigate}
+              />
+            </div>
+          </div>
+
+          {/* <div className="items-center grid grid-cols-1 lg:grid-cols-3 md:grid-cols-3 h-30">
             <div className="flex items-center gap-2 text-2xl font-medium text-gray-900">
               Manage Bots
               <FaWhatsapp className="text-[#25D366] text-2xl" />
             </div>
-            {/* search bots */}
-            {/* <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 mr-50 `}>
+            {/* search bots 
+            <div className={`relative flex items-center transition-all duration-300 ${searchActive ? "w-85" : "w-12"} border rounded-lg border-gray-300 mr-50 `}>
               <input
                 type="text"
                 className={`border border-gray-300 rounded-lg px-4 py-2 text-sm transition-all duration-300 ${searchActive ? "w-full opacity-100" : "w-0 opacity-0"} focus:outline-none`}
@@ -381,8 +435,8 @@ const WhatsappBot = () => {
                 color='green'
                 onClick={() => setSearchActive(true)}
               />
-            </div> */}
-            <div className="relative flex items-center h-0 transition-all duration-500 w-120 ml-25">
+            </div>
+            <div className="relative flex items-center h-0 transition-all duration-500 ">
               <div
                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
                         ${searchActive ? "w-80 " : "w-0"} 
@@ -391,15 +445,16 @@ const WhatsappBot = () => {
                 <input
                   type="text"
                   className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300 
-                            ${searchActive
-                      ? "border border-gray-400 outline-none w-full opacity-100"
-                      : "w-0 opacity-0"
-                    } focus:outline-none`}
+                            ${
+                              searchActive
+                                ? "border border-gray-400 outline-none w-full opacity-100"
+                                : "w-0 opacity-0"
+                            } focus:outline-none`}
                   placeholder="Search Bots, Bot Templates..."
                   onBlur={() => setSearchActive(false)}
                 />
                 <IoSearch
-                  className="absolute text-gray-600 cursor-pointer right-4"
+                  className="absolute text-gray-600 cursor-pointer right-2"
                   size={22}
                   color="green"
                   onClick={() => setSearchActive(true)}
@@ -407,20 +462,22 @@ const WhatsappBot = () => {
               </div>
 
               {!searchActive && (
-                <span className="ml-2 text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">
+                <span className="ml-2  text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">
                   Search Bots
                 </span>
               )}
             </div>
+            <div className="flex items-center justify-end">
             <UniversalButton
               id="addwhatsappbot"
               name="addwhatsappbot"
               label="+ New Bot"
               onClick={handleNavigate}
             />
-          </div>
+            </div>
+          </div> */}
 
-          <div className="bg-white p-4 rounded-xl shadow">
+          <div className="bg-white p-3 rounded-xl shadow">
             <h2 className="text-lg font-semibold mb-2 text-gray-800">
               Templates
             </h2>
@@ -433,6 +490,18 @@ const WhatsappBot = () => {
               showIndicators={true}
               showNavigators={true}
               className="custom-carousel"
+              responsiveOptions={[
+                {
+                  breakpoint: "1024px", 
+                  numVisible: 2,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "768px", 
+                  numVisible: 1,
+                  numScroll: 1,
+                },
+              ]}
             />
           </div>
 
@@ -470,7 +539,7 @@ const WhatsappBot = () => {
                       <div className="text-sm text-red-500 font-medium flex-1">
                         {bot.integrations}
                       </div>
-                      <div className="text-sm text-gray-500 flex-1 flex flex-col items-center gap-1">
+                      <div className="text-sm text-gray-500 flex-1 flex lg:flex-col md:flex-row items-center md:justify-start gap-1">
                         Last Updated: <strong>{bot.lastUpdated}</strong>
                       </div>
                       <div className="flex items-center gap-2 relative bot-settings">

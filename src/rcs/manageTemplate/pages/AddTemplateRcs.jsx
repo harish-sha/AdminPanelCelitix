@@ -31,7 +31,7 @@ const AddTemplateRcs = () => {
     filePath: "",
   });
 
-  const [cardOrientation, setCardOrientation] = useState("horizontal");
+  const [cardOrientation, setCardOrientation] = useState("");
 
   //caraousel
   const [cardwidth, setCardwidth] = useState("small");
@@ -466,7 +466,7 @@ const AddTemplateRcs = () => {
             />
           </div>
         </div>
-        <div className="w-full p-2 pt-2">
+        <div className="w-full p-2 pt-2 mt-6">
           <Preview
             btnData={btnData}
             variables={variables}

@@ -320,6 +320,10 @@ const ManageTemplate = () => {
   };
 
   const handleSyncTemplate = async () => {
+    if (!syncWabaId) {
+      toast.error("Please select a WABA account to sync templates.");
+      return;
+    }
     try {
       const res = await syncStatus(syncWabaId);
       toast(
@@ -727,7 +731,7 @@ const ManageTemplate = () => {
           </div>
         </div>
       ))}
-  </div>;
+  </div>
 
   return (
     <div className="w-full">

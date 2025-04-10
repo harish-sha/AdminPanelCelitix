@@ -52,7 +52,10 @@ const ManageUser = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
+      <div className="flex flex-wrap items-end justify-between w-full gap-4 mb-3 align-middle">
+        <h1>
+          <span className="text-xl font-semibold text-gray-700">Manage Users</span>
+        </h1>
         <div className="w-max-content">
           <UniversalButton
             id="manageadduserbtn"

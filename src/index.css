@@ -269,51 +269,67 @@ a {
 }
 
 /* rcs */
-.smartphone {
+/* .smartphone {
   position: relative;
-  width: 360px;
-  height: 43rem;
+  width: 325px;
+  height: auto;
   margin: auto;
-  border: 10px #ffe9e6f5 solid;
-  border-top-width: 60px;
-  border-bottom-width: 60px;
+  border: 10px #d7d9dd solid;
+  border-top-width: 40px;
+  border-bottom-width: 40px;
   border-radius: 36px;
-  /* min-height: 5rem; */
+  min-height: 5rem;
   display: flex;
   flex-direction: column;
-  /* overflow: hidden; */
+  overflow: hidden;
+} */
+
+.smartphone {
+  position: relative;
+  width: 300px;
+  min-height: 32rem;
+  height: auto;
+  margin: auto;
+  border: 10px #d7d9dd solid;
+  border-top-width: 15px;
+  border-bottom-width: 15px;
+  border-radius: 25px;
+  display: flex;
+  flex-direction: column;
 }
 
 .smartphone:before {
   content: "";
   display: block;
   width: 60px;
-  height: 5px;
+  height: 4px;
   position: absolute;
-  top: -30px;
+  bottom: -12px;
   left: 50%;
   transform: translate(-50%, -50%);
   background: #333;
   border-radius: 10px;
 }
 
-.smartphone:after {
+/* .smartphone:after {
   content: "";
   display: block;
-  width: 35px;
-  height: 35px;
+  width: 28px;
+  height: 28px;
   position: absolute;
   left: 50%;
-  bottom: -65px;
+  bottom: -48px;
   transform: translate(-50%, -50%);
   background: #333;
   border-radius: 50%;
-}
+} */
 
 .smartphone-content {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 0px 0px 10px 0px;
+  border-radius: 20px;
+  /* border: 1px solid black; */
 }
 
 @media (max-width: 600px) {

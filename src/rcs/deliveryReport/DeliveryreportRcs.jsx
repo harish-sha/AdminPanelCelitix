@@ -244,7 +244,6 @@ const DeliveryreportRcs = () => {
                     }}
                   />
                 </div>
-                <div className="w-full sm:w-56">
                   <div className="w-max-content">
                     <UniversalButton
                       label="Search"
@@ -255,7 +254,6 @@ const DeliveryreportRcs = () => {
                       icon={<IoSearch />}
                     />
                   </div>
-                </div>
               </div>
             </div>
             {isFetching ? (

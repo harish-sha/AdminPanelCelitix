@@ -333,8 +333,8 @@ const WhatsappManageCampaign = () => {
           </Tabs>
           <CustomTabPanel value={value} index={0} className="">
             <div>
-              <div className="flex lg:flex-nowrap md:flex-wrap flex-wrap items-end gap-2 mb-5">
-                <div className="w-full">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-48">
                   <UniversalDatePicker
                     id="manageCampaignDate"
                     name="manageCampaignDate"
@@ -350,7 +350,7 @@ const WhatsappManageCampaign = () => {
                     errorText="Please select a valid date"
                   />
                 </div>
-                <div className="w-full">
+                <div className="w-full sm:w-48">
                   <InputField
                     id="manageCampaignName"
                     name="manageCampaignName"
@@ -362,7 +362,7 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="w-full">
+                <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignCategory"
                     name="manageCampaignCategory"
@@ -379,7 +379,7 @@ const WhatsappManageCampaign = () => {
                     placeholder="Category"
                   />
                 </div>
-                <div className="w-full">
+                <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignType"
                     name="manageCampaignType"
@@ -397,7 +397,7 @@ const WhatsappManageCampaign = () => {
                     placeholder="Type"
                   />
                 </div>
-                <div className="w-full">
+                <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignStatus"
                     name="manageCampaignStatus"
@@ -489,8 +489,8 @@ const WhatsappManageCampaign = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="w-full">
-              <div className="flex lg:flex-nowrap md:flex-wrap flex-wrap items-end gap-2 mb-5">
-                <div className="lg:w-56 w-full">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-48">
                   <UniversalDatePicker
                     id="manageCampaignLogsDate"
                     name="manageCampaignLogsDate"
@@ -506,7 +506,7 @@ const WhatsappManageCampaign = () => {
                     maxDate={new Date()}
                   />
                 </div>
-                <div className="lg:w-56 w-full">
+                <div className="w-full sm:w-48">
                   <InputField
                     id="manageCampaignLogsNumber"
                     name="manageCampaignLogsNumber"
@@ -577,10 +577,10 @@ const WhatsappManageCampaign = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={2}>
             <div className="w-full">
-              <div className="flex lg:flex-nowrap md:flex-wrap flex-wrap items-end gap-2 mb-5">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
                 {isMonthWise ? (
                   <>
-                    <div className="lg:w-56 w-full">
+                    <div className="w-full sm:w-56">
                       <UniversalDatePicker
                         id="manageFromDate"
                         name="manageFromDate"
@@ -600,7 +600,7 @@ const WhatsappManageCampaign = () => {
                   </>
                 ) : (
                   <>
-                    <div className="lg:w-56 w-full">
+                    <div className="w-full sm:w-56">
                       <UniversalDatePicker
                         id="manageFromDate"
                         name="manageFromDate"
@@ -616,7 +616,7 @@ const WhatsappManageCampaign = () => {
                         errorText="Please select a valid date"
                       />
                     </div>
-                    <div className="lg:w-56 w-full">
+                    <div className="w-full sm:w-56">
                       <UniversalDatePicker
                         id="manageToDate"
                         name="manageToDate"
@@ -634,7 +634,7 @@ const WhatsappManageCampaign = () => {
                     </div>
                   </>
                 )}
-                <div className="lg:w-56 w-full">
+                <div className="w-full sm:w-56">
                   <AnimatedDropdown
                     id="manageWaBaAccount"
                     name="manageWaBaAccount"

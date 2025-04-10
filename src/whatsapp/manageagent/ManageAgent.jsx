@@ -649,7 +649,7 @@ const ManageAgent = () => {
                     header="Edit Department"
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
-                    className="w-[30rem] md:w-[25rem] sm:w-[20rem]"
+                     className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
                   >
                     <InputField
                       label="Department Name"
@@ -711,7 +711,7 @@ const ManageAgent = () => {
             header="Add Agent"
             draggable={false}
             visible={addAgentDialog}
-            className="w-[30rem] md:-[25rem] sm:w-[20]"
+             className="lg:w-[35rem] md:w-[30rem] sm:w-[20rem]"
             onHide={() => {
               setAddAgentDialog(false);
             }}
