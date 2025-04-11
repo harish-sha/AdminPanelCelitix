@@ -34,7 +34,7 @@ const TemplateForm = ({
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
-  const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+  const [urlIndex, setUrlIndex] = useState(null); 
 
   const [imageState, setImageState] = useState({
     file: null,
@@ -133,7 +133,7 @@ const TemplateForm = ({
 
       const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
-      // ✅ If selecting for BUTTON URL, update `urlIndex`
+      // f selecting for BUTTON URL, update `urlIndex`
       if (type === "button" && fileHeaders.includes(variable)) {
         const index = fileHeaders.indexOf(variable);
 

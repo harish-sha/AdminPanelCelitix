@@ -24,7 +24,7 @@ const InputVariable = ({ variables = [], onSelect }) => {
     }, []);
 
     return (
-        <div className="relative" ref={dropdownRef}>
+        <div className="relative -z-0" ref={dropdownRef}>
             <button
                 className="px-1 border-1 border-gray-300 rounded-r-sm h-8.5 text-sm bg-gray-200 cursor-pointer focus:outline-none"
                 onClick={() => setShowDropdown(!showDropdown)}

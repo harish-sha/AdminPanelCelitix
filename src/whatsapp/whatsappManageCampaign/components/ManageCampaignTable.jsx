@@ -317,6 +317,8 @@ import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
 
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
+import InfoPopover from "../../../components/common/InfoPopover.jsx";
+import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -387,6 +389,8 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   });
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [campaignInfo, setCampaignInfo] = useState(null);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
+
   const dropdownButtonRefs = React.useRef({});
   const navigate = useNavigate();
 
@@ -402,9 +406,31 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // const handleView = async (row) => {
+  //   const id = row.id;
+  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
+
+  //   const fromDateStr = new Date(fromDate).toLocaleDateString("en-GB");
+  //   const formattedDate = fromDateStr.replace(/\//g, "-");
+
+  //   const data = {
+  //     campSrno: row?.campaignSrno,
+  //     fromDate: formattedDate,
+  //   };
+
+  //   try {
+  //     const res = await campaignSummaryInfo(data);
+  //     setCampaignInfo(res[0]);
+  //   } catch (e) {
+  //     console.log(e);
+  //   }
+  // };
+
   const handleView = async (row) => {
     const id = row.id;
-    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+
+    // Reset for this row
+    setDropdownOpenId(null);
 
     const fromDateStr = new Date(fromDate).toLocaleDateString("en-GB");
     const formattedDate = fromDateStr.replace(/\//g, "-");
@@ -416,9 +442,15 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
     try {
       const res = await campaignSummaryInfo(data);
-      setCampaignInfo(res[0]);
+
+      setCampaignInfoMap((prev) => ({
+        ...prev,
+        [id]: res[0] || null,
+      }));
+
+      setDropdownOpenId(id); // Open only after data is ready
     } catch (e) {
-      console.log(e);
+      console.error("Error fetching campaign summary:", e);
     }
   };
 
@@ -486,7 +518,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       minWidth: 150,
       renderCell: (params) => (
         <>
-          <CustomTooltip title="View Campaign" placement="top" arrow={true}>
+          {/* <CustomTooltip title="View Campaign" placement="top" arrow={true}>
             <IconButton
               className="text-xs"
               ref={(el) => {
@@ -522,7 +554,95 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
                 )}
               </DropdownMenuPortalCampaign>
             )}
+          </CustomTooltip> */}
+          <CustomTooltip title="View Campaign" placement="top" arrow>
+            <IconButton
+              className="text-xs"
+              ref={(el) => {
+                if (el) dropdownButtonRefs.current[params.row.id] = el;
+              }}
+              onClick={() => handleView(params.row)}
+            >
+              <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "green" }} />
+            </IconButton>
           </CustomTooltip>
+
+          {/* <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={closeDropdown}
+          >
+            {campaignInfoMap[params.row.id] ? (
+              <div className="space-y-1">
+                {Object.entries(campaignInfoMap[params.row.id]).map(
+                  ([key, val]) => (
+                    <div
+                      key={key}
+                      className="flex justify-between text-sm text-gray-800 border-b border-gray-200 py-1"
+                    >
+                      <span className="font-semibold">{key}:</span>
+                      <span>{val}</span>
+                    </div>
+                  )
+                )}
+              </div>
+            ) : (
+              <div>No Data Available</div>
+            )}
+          </InfoPopover> */}
+          <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={closeDropdown}
+          >
+            {campaignInfoMap[params.row.id] ? (
+              <div className="w-[280px] max-w-full">
+                {/* <div className="text-base font-semibold mb-2 text-gray-800">
+                  Campaign Summary
+                </div> */}
+                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                  {[
+                    "total",
+                    "delivered",
+                    "failed",
+                    "pending",
+                    "read",
+                    "block",
+                    "submitted",
+                    "sent",
+                    "source",
+                    "queTime",
+                  ].map((key) => (
+                    <React.Fragment key={key}  >
+                      <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                        {key.replace(/([A-Z])/g, " $1")}
+                      </div>
+                      <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                        {campaignInfoMap[params.row.id][key] ?? "N/A"}
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No Data Available</div>
+            )}
+          </InfoPopover>
+
+          {/* <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={closeDropdown}
+          >
+            {campaignInfoMap[params.row.id] ? (
+              <CampaignSummaryUI data={campaignInfoMap[params.row.id]} />
+            ) : (
+              <Typography fontSize={14} color="gray">
+                No Data Available
+              </Typography>
+            )}
+          </InfoPopover> */}
+
           <CustomTooltip
             title="Campaign Detail Report"
             placement="top"
