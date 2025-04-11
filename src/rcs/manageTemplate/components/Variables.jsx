@@ -150,17 +150,17 @@ export const Variables = ({
                     maxLength={MAX_LENGTH}
                     value={messageContent}
                     onChange={(e) => handleContentMessage(e.target.value)}
-                    className="w-full px-3 py-2 mb-1 outline-none resize-none"
+                    className="w-full px-3 py-2 mb-1 text-sm outline-none resize-none"
                 ></textarea>
                 <div className="absolute -bottom-0 right-1">
                     <CustomEmojiPicker onSelect={handleEmojiClick} />
                 </div>
             </div>
 
-            <div className="flex items-center justify-between">
-                <p className={isLimitExceeded() ? "text-red-500" : ""}>
+            <div className="flex items-start justify-between">
+                <small className= {isLimitExceeded() ? "text-red-500" : "text-sm font-medium text-gray-700"}>
                     {messageContent.length}/{MAX_LENGTH}
-                </p>
+                </small>
                 <button
                     // onClick={addVariable}
                     onClick={() => {
@@ -209,7 +209,7 @@ export const Variables = ({
             <Dialog
                 header="Select Variable"
                 visible={isVariableVisible}
-                style={{ width: "50vw" }}
+                 className="w-[20rem] md:-[25rem] lg:w-[30rem]"
                 onHide={() => {
                     setIsVariableVisible(false);
                 }}
@@ -238,7 +238,9 @@ export const Variables = ({
                             setSelectedVariable(e);
                         }}
                     />
+                    <div className="flex items-center justify-center mt-2">
                     <UniversalButton label="Select" onClick={addVariable} />
+                    </div>
                 </div>
             </Dialog>
         </div>

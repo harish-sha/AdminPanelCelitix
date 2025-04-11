@@ -127,8 +127,7 @@ const DataTable = ({
 
     // Display the template name in the toast message
     toast.success(
-      `"${templateName}" status updated to ${
-        newValue === 1 ? "Active" : "Inactive"
+      `"${templateName}" status updated to ${newValue === 1 ? "Active" : "Inactive"
       }`
     );
 
@@ -309,9 +308,9 @@ const DataTable = ({
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -416,7 +415,7 @@ const DataTable = ({
     navigator.clipboard
       .writeText(value)
       .then(() => {
-        toast.success("Password copied to clipboard!");
+        toast.success("Curl copied to clipboard!");
       })
       .catch(() => {
         toast.error("Failed to copy password.");
@@ -646,65 +645,65 @@ const DataTable = ({
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "DOCUMENT"
                 ) && (
-                  <div className="docbox">
-                    <iframe
-                      src={
-                        selectedRow.templateData.components.find(
-                          (comp) => comp.type === "HEADER"
-                        ).example?.header_handle[0]
-                      }
-                      title="Document Preview"
-                      className="w-full h-64 border border-gray-200 rounded-lg"
-                    />
-                    <a
-                      href={
-                        selectedRow.templateData.components.find(
-                          (comp) => comp.type === "HEADER"
-                        ).example?.header_handle[0]
-                      }
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-blue-600 text-sm hover:underline flex items-center justify-center mt-3"
-                    >
-                      View Document in new tab
-                    </a>
-                  </div>
-                )}
+                    <div className="docbox">
+                      <iframe
+                        src={
+                          selectedRow.templateData.components.find(
+                            (comp) => comp.type === "HEADER"
+                          ).example?.header_handle[0]
+                        }
+                        title="Document Preview"
+                        className="w-full h-64 border border-gray-200 rounded-lg"
+                      />
+                      <a
+                        href={
+                          selectedRow.templateData.components.find(
+                            (comp) => comp.type === "HEADER"
+                          ).example?.header_handle[0]
+                        }
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-600 text-sm hover:underline flex items-center justify-center mt-3"
+                      >
+                        View Document in new tab
+                      </a>
+                    </div>
+                  )}
 
                 {/* Image if exists */}
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "IMAGE"
                 ) && (
-                  <div className="imgbox">
-                    <img
-                      src={
-                        selectedRow.templateData.components.find(
-                          (comp) => comp.type === "HEADER"
-                        ).example?.header_handle[0]
-                      }
-                      alt="Template Preview"
-                      className="h-45 w-full rounded-lg object-contain border border-gray-200"
-                    />
-                  </div>
-                )}
+                    <div className="imgbox">
+                      <img
+                        src={
+                          selectedRow.templateData.components.find(
+                            (comp) => comp.type === "HEADER"
+                          ).example?.header_handle[0]
+                        }
+                        alt="Template Preview"
+                        className="h-45 w-full rounded-lg object-contain border border-gray-200"
+                      />
+                    </div>
+                  )}
 
                 {/* Video if exist */}
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "VIDEO"
                 ) && (
-                  <div className="videobox">
-                    <video
-                      controls
-                      src={
-                        selectedRow.templateData.components.find(
-                          (comp) => comp.type === "HEADER"
-                        ).example?.header_handle[0]
-                      }
-                      alt="Template Preview"
-                      className="h-45 w-full rounded-lg object-contain border border-gray-200"
-                    />
-                  </div>
-                )}
+                    <div className="videobox">
+                      <video
+                        controls
+                        src={
+                          selectedRow.templateData.components.find(
+                            (comp) => comp.type === "HEADER"
+                          ).example?.header_handle[0]
+                        }
+                        alt="Template Preview"
+                        className="h-45 w-full rounded-lg object-contain border border-gray-200"
+                      />
+                    </div>
+                  )}
 
                 {/* Text Content */}
                 <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
@@ -721,12 +720,12 @@ const DataTable = ({
                 {selectedRow?.templateData?.components.some(
                   (comp) => comp.type === "CAROUSEL"
                 ) && (
-                  <CarouselPreview
-                    carouselData={selectedRow.templateData.components.find(
-                      (comp) => comp.type === "CAROUSEL"
-                    )}
-                  />
-                )}
+                    <CarouselPreview
+                      carouselData={selectedRow.templateData.components.find(
+                        (comp) => comp.type === "CAROUSEL"
+                      )}
+                    />
+                  )}
 
                 {/* Buttons if exists */}
                 <div className="flex flex-col gap-2">
@@ -839,28 +838,31 @@ const DataTable = ({
       <Dialog
         header={"Curl Data"}
         visible={curlDialogVisible}
-        style={{ width: "30rem", height: "30rem" }}
+        style={{ width: "35rem", height: "35rem" }}
         onHide={() => {
           setCurlDialogVisible(false);
           setCurlData("");
         }}
         draggable={false}
       >
-        <div className="flex items-center justify-end">
-          <button
-            onClick={() =>
-              handleCopyPassword(JSON.stringify(curlData, null, 2))
-            }
-          >
-            <ContentCopyOutlinedIcon
-              sx={{
-                fontSize: "1.2rem",
-                color: "#999",
-              }}
-            />
-          </button>
+        <div className="border" >
+
+          <div className="flex items-center justify-end">
+            <button
+              onClick={() =>
+                handleCopyPassword(JSON.stringify(curlData, null, 2))
+              }
+            >
+              <ContentCopyOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "#999",
+                }}
+              />
+            </button>
+          </div>
+          <pre className="text-xs break-words">{JSON.stringify(curlData, null, 2)}</pre>
         </div>
-        <pre className="text-xs">{JSON.stringify(curlData, null, 2)}</pre>
       </Dialog>
     </>
   );

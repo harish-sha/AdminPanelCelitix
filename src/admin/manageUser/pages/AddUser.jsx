@@ -37,7 +37,7 @@ const AddUser = () => {
 
   useEffect(() => {
     setIsReadOnly(userType !== "Reseller");
-    setAccountUrl(""); 
+    setAccountUrl("");
   }, [userType]);
 
   const handleChangeEnablePostpaid = (event) => {
@@ -53,21 +53,28 @@ const AddUser = () => {
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <h1 className="mb-4 text-xl font-semibold">Login Info:</h1>
-      <div className="grid gap-4 lg:grid-cols-2">
-        <InputField label="User ID *"
-          id="userid"
-          name="userid"
-          placeholder="Enter your User ID"
-          required
-          value={userid}
-          onChange={(e) => setUserId(e.target.value)}
-        />
-        <GeneratePassword
-          id="generatepassword"
-          name="generatepassword"
-          label="Password *"
-          onChange={(e) => setUserId(e.target.value0)}
-        />
+      <div className="flex items-center flex-wrap gap-4 mb-4">
+        <div className="w-100" >
+
+          <InputField label="User ID *"
+            id="userid"
+            name="userid"
+            placeholder="Enter your User ID"
+            required
+            value={userid}
+            maxLength="8"
+            onChange={(e) => setUserId(e.target.value)}
+          />
+        </div>
+        <div className="w-150" >
+
+          <GeneratePassword
+            id="generatepassword"
+            name="generatepassword"
+            label="Password *"
+            onChange={(e) => setUserId(e.target.value0)}
+          />
+        </div>
       </div>
 
       <h2 className="mt-6 mb-4 text-lg font-semibold">Personal Details:</h2>
@@ -149,115 +156,103 @@ const AddUser = () => {
       </div>
 
       <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>
-      <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-        <div className="flex flex-wrap gap-2 mb-2">
-          <div className="flex gap-2">
+      <div className="flex items-start flex-wrap  gap-4 mb-4 w-full">
+        <div className="flex  flex-wrap gap-2 mb-2 ">
+          <div className="flex gap-2 w-full md:w-50 ">
             <AnimatedDropdown
               label="User Type"
               id="userType"
               name="userType"
               options={useroption}
-              value={userType} 
+              value={userType}
               onChange={(selected) => {
                 setUserType(selected);
               }}
             />
-            <div className="min-w-max">
+          </div>
+          {userType === "Reseller" && (
+            <div className="md:w-50 w-full">
               <InputField
                 label="Account URL"
                 id="accounturl"
                 name="accounturl"
                 placeholder="Enter URL"
-                value={accountUrl} // Controlled input value
-                readOnly={isReadOnly} // Controlled readOnly property
-                onChange={(e) => setAccountUrl(e.target.value)} // Handle manual input
+                value={accountUrl}
+                readOnly={isReadOnly}
+                onChange={(e) => setAccountUrl(e.target.value)}
               />
-            </div>
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Postpaid"
-                  id="enablepostpaid"
-                  name="enablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                />
-              </div>
-              {/* Option 1 */}
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption1"
-                  name="enablepostpaidredio"
-                  value="enable"
-                  onChange={handleChangeEnablePostpaid}
-                  checked={enablepostpaid === "enable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Yes
-                </label>
-              </div>
-              {/* Option 2 */}
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption2"
-                  name="enablepostpaidredio"
-                  value="disable"
-                  onChange={handleChangeEnablePostpaid}
-                  checked={enablepostpaid === "disable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  No
-                </label>
-              </div>
-
-              {/* Conditional Display of Input Field */}
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="enablepostinput"
-                    name="enablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
             </div>
           )}
         </div>
+        <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
+          <label htmlFor="" className="text-sm font-medium text-gray-800 font-p">Postpaid Amount *</label>
+          {/* <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="enablepostpaidOption1"
+                name="enablepostpaidredio"
+                value="enable"
+                onChange={handleChangeEnablePostpaid}
+                checked={enablepostpaid === "enable"}
+              />
+              <label
+                htmlFor="enablepostpaidOption1"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Yes
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="enablepostpaidOption2"
+                name="enablepostpaidredio"
+                value="disable"
+                onChange={handleChangeEnablePostpaid}
+                checked={enablepostpaid === "disable"}
+              />
+              <label
+                htmlFor="enablepostpaidOption2"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                No
+              </label>
+            </div> */}
 
-        <AnimatedDropdown
-          label="Account Manager *"
-          id="accountManager"
-          name="accountManager"
-          options={usermanager}
-          value={userAccountManager}
-          onChange={setUserAccountManager}
-        />
-
-        <UniversalDatePicker
-          label="Expiry Date *"
-          id="expiryDate"
-          name="expiryDate"
-          placeholder="Enter Expiry Date"
-          value={expiryDate}
-          onChange={(newValue) => setExpiryDate(newValue)}
-        />
-
+          <InputField
+            id="enablepostinput"
+            name="enablepostinput"
+            placeholder="Enter Limit"
+          />
+        </div>
+        <div className="md:w-80 w-full" >
+          <AnimatedDropdown
+            label="Account Manager *"
+            id="accountManager"
+            name="accountManager"
+            options={usermanager}
+            value={userAccountManager}
+            onChange={setUserAccountManager}
+          />
+        </div>
+        <div className="md:w-50 w-full" >
+          <UniversalDatePicker
+            label="Expiry Date *"
+            id="expiryDate"
+            name="expiryDate"
+            placeholder="Enter Expiry Date"
+            value={expiryDate || new Date()}
+            onChange={(newValue) => setExpiryDate(newValue)}
+          />
+        </div>
       </div>
-
-      <UniversalButton
-        label="Sign in"
-        type="submit"
-        id="sign"
-        name="sign"
-        className="mt-2"
-      />
+      <div className="flex items-center justify-center">
+        <UniversalButton
+          label="Submit"
+          type="submit"
+          id="submit"
+          name="submit"
+          className="mt-2"
+        />
+      </div>
     </div>
   );
 };

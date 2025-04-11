@@ -12,6 +12,8 @@ import { Carousel } from "../components/Carousel";
 import { carousel } from "@material-tailwind/react";
 import { set } from "date-fns";
 import { fetchAllAgents, saveRcsTemplate } from "@/apis/rcs/rcs";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -341,7 +343,7 @@ const AddTemplateRcs = () => {
 
   return (
     <div className="w-full">
-      <div className="flex flex-wrap items-end w-full gap-2 mb-2">
+      <div className="flex flex-wrap items-end w-full p-3 bg-white rounded-lg gap-2 mb-3">
         <div className="w-full sm:w-56">
           <AnimatedDropdown
             label="Select Agent"
@@ -364,6 +366,8 @@ const AddTemplateRcs = () => {
               });
             }}
             placeholder="Select Agent"
+            tooltipContent="Select Agent"
+            placement="right"
           />
         </div>
         <div className="w-full sm:w-56">
@@ -376,6 +380,7 @@ const AddTemplateRcs = () => {
             onChange={(e) => {
               setInputData({ ...inputData, templateName: e.target.value });
             }}
+            tooltipContent="Enter Template Name"
           />
         </div>
         <div className="w-full sm:w-56">
@@ -402,13 +407,29 @@ const AddTemplateRcs = () => {
               handleTemplateTypeChange(newValue);
             }}
             placeholder="Select Template Type"
+            tooltipContent="Select Template Type"
           />
         </div>
       </div>
 
-      <div className="flex flex-col justify-between gap-5 sm:flex-row lg:flex-row">
-        <div className="w-full p-2">
-          <h1>Text Template</h1>
+      <div className="flex flex-col justify-between gap-6 bg-gray-100 sm:flex-row lg:flex-row">
+        <div className="w-full p-3 bg-white rounded-lg shadow-md ">
+          {/* <h1 className="text-sm font-medium text-gray-700 mb-2">
+            Text Template
+          </h1> */}
+          <div className="flex items-center mb-2 gap-2" >
+            <span className="text-sm font-medium text-gray-700">
+              Text Template
+            </span>
+            <CustomTooltip
+              title="Enter Message content"
+              placement="right"
+              arrow
+            >
+
+              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+            </CustomTooltip>
+          </div>
           {inputData.templateType !== "carousel" && (
             <div className="mb-3">
               <Variables
@@ -429,8 +450,24 @@ const AddTemplateRcs = () => {
             />
           )}
           {inputData.templateType != "carousel" && (
-            <div className="mt-3 mb-3">
-              <p className="mb-2">Suggested Actions</p>
+            <div className="mb-3">
+              <div className="flex items-center mb-2 gap-2" >
+                <span className="text-sm font-medium text-gray-700">
+                  Suggested Actions
+                </span>
+                <CustomTooltip
+                  title="URL Action:Opens a specified URL in the recipient's browser when clicked.
+                Dialer Action:Initiates a phone call to a specified number when clicked.
+                View Location: Displays a specified location by measuring latitude and longitude on the recipient's map application when clicked.
+                Share Location: Prompts the recipient to share their current location.
+                Reply:Allows the recipient to send a reply message directly."
+                  placement="right"
+                  arrow
+                >
+
+                  <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                </CustomTooltip>
+              </div>
               <SuggestedActions
                 btnOptions={btnOptions}
                 setBtnData={setBtnData}
@@ -457,16 +494,8 @@ const AddTemplateRcs = () => {
               handlePreviousIndex={handlePreviousIndex}
             />
           )}
-          <div className="mt-3 place-items-center">
-            <UniversalButton
-              id="saveTemplate"
-              name="saveTemplate"
-              label="Submit"
-              onClick={handleSubmit}
-            />
-          </div>
         </div>
-        <div className="w-full p-2 pt-2 mt-6">
+        <div className="w-full p-3 bg-white rounded-lg shadow-md ">
           <Preview
             btnData={btnData}
             variables={variables}
@@ -482,6 +511,14 @@ const AddTemplateRcs = () => {
             setSelectedCardIndex={setSelectedIndex}
           />
         </div>
+      </div>
+      <div className="mt-3 place-items-center">
+        <UniversalButton
+          id="saveTemplate"
+          name="saveTemplate"
+          label="Submit"
+          onClick={handleSubmit}
+        />
       </div>
 
       {/* <div className="mt-3 place-items-center">

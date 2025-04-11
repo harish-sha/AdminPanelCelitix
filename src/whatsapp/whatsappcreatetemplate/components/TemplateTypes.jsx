@@ -114,7 +114,7 @@ const TemplateTypes = ({
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
-          model: "gpt-3.5-turbo",
+          model: "gpt-4o",
           messages: [
             { role: "system", content: "You are a helpful assistant." },
             { role: "user", content: aiPrompt },
@@ -125,9 +125,8 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-            }`,
+            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+              }`,
           },
         }
       );

@@ -131,7 +131,7 @@ export const Preview = ({
 
   return (
     <div className="smartphone">
-      <div className="flex items-center justify-between px-4 py-1 bg-gray-100 w-full text-black text-xs font-medium rounded-xl">
+      <div className="flex items-center justify-between px-4 py-1 bg-gray-100 text-black text-xs font-medium rounded-t-xl">
         {/* Time */}
         <div>9:30</div>
 
@@ -150,7 +150,7 @@ export const Preview = ({
         {templateType != "carousel" ? (
           <div className="rounded-md border px-1">
             {pree?.cardData?.file && (
-              <div className="mb-0 w-full h-40">
+              <div className="mb-0 w-full h-35">
                 {pree?.fileType === "image" ? (
                   <img src={pree.cardData.file} alt="Uploaded content" className="h-full w-full" />
                 ) : (
@@ -163,13 +163,13 @@ export const Preview = ({
                 )}
               </div>
             )}
-            <div className="overflow-y-scroll max-h-[60px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
+            <div className="overflow-y-scroll max-h-[50px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
               <p>{pree?.cardData?.title}</p>
             </div>
 
             <div className="flex flex-col justify-between">
               {pree?.messageContent && (
-                <div className="overflow-y-scroll max-h-[180px] max-w-[525px] break-words whitespace-pre-wrap  min-h-[50px] mb-2">
+                <div className="overflow-y-scroll max-h-[130px] max-w-[525px] break-words whitespace-pre-wrap  min-h-[50px] mb-2">
                   <pre className="p-1 text-sm break-words whitespace-pre-wrap rounded-md">
                     {pree?.messageContent}
                   </pre>

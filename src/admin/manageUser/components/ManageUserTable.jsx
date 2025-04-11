@@ -291,8 +291,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   // };
 
   const handleEdit = async (srNo) => {
+    console.log(srNo, "srNo");
     try {
       const response = await fetchUserbySrno(srNo); // Fetch user details by srNo
+      console.log(response, "fetch user details response");
       if (response?.userMstPojoList?.length > 0) {
         const userDetails = response.userMstPojoList[0];
         setUpdateDetails({
@@ -461,6 +463,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangetwoway = (event) => {
     setTwoWayStatus(event.target.value);
     // setRcsStatus(value);
@@ -475,6 +478,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeMisscall = (event) => {
     setMisscallStatus(event.target.value);
     // setRcsStatus(value);
@@ -492,12 +496,15 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   // Email
   const [emailStatus, setEmailStatus] = useState("disable");
+
   const [emailAssign, setEmailAssign] = useState(null);
+
   const emailOptions = [
     { value: "3 Months", label: "3 Months" },
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeEmail = (event) => {
     setEmailStatus(event.target.value);
     // setRcsStatus(value);
@@ -509,16 +516,19 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [ibdStatus, setIbdStatus] = useState("disable");
   const [ibdpulseStatus, setibdPulseStatus] = useState("disable");
   const [ibdAssign, setIbdAssign] = useState(null);
+
   const ibdOptions = [
     { value: "3 Months", label: "3 Months" },
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeIbd = (event) => {
     setIbdStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
   };
+
   const handleChangeibdPulse = (event) => {
     setibdPulseStatus(event.target.value);
     // setRcsStatus(value);
@@ -588,6 +598,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
   };
+
   const handleChangeEditStatus = (event) => {
     setEditStatusStatus(event.target.value);
     // setRcsStatus(value);
@@ -678,6 +689,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleLonins = (id, name) => {
     setLogins(true);
   };
+
   const handleOtp = (id, name) => {
     setOtpService(true);
   };
@@ -698,18 +710,18 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     }
   };
 
-  // const handleEdit = (id, name) => {
-  //   setEditDetailsDialogVisible(true);
-  // };
   const handleAssign = (id, name) => {
     setAssignService(true);
   };
+
   const handleApikey = (id, name) => {
     setManageApiKeys(true);
   };
+
   const handleReset = (id, name) => {
     setreset(true);
   };
+
   const handleReport = (id, name) => {
     setuserReports(true);
   };
@@ -1664,7 +1676,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         header="View details"
         visible={viewService}
         onHide={() => setViewService(false)}
-        className="w-[55rem] max-w-full"
+        className="w-[48rem] max-w-full"
         draggable={false}
       >
         {/* <div className="space-y-3">
@@ -1864,7 +1876,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           </div>
         </div> */}
         {selectedUserDetails ? (
-          <div className="space-y-6 p-2">
+          <div className="space-y-6 p-3 border rounded-xl shadow-md">
             {/* Row 1 */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
               <div className="flex items-center gap-2 text-sm">
@@ -1877,7 +1889,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2 text-sm">
                 <CalendarTodayOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Expiry Date:</strong>{" "}
+                  <strong>Expiry Date : </strong>
                   {selectedUserDetails.expiryDate || "Not Available"}
                 </p>
               </div>
@@ -1888,14 +1900,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>First Name:</strong>{" "}
+                  <strong>First Name : </strong>
                   {selectedUserDetails.firstName || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <PersonOutlineOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Last Name:</strong>{" "}
+                  <strong>Last Name : </strong>{" "}
                   {selectedUserDetails.lastName || "Not Available"}
                 </p>
               </div>
@@ -1906,14 +1918,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <EmailOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Email ID:</strong>{" "}
+                  <strong>Email ID : </strong>{" "}
                   {selectedUserDetails.emailId || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <PhoneOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Mobile No.:</strong>{" "}
+                  <strong>Mobile No. : </strong>{" "}
                   {selectedUserDetails.mobileNo || "Not Available"}
                 </p>
               </div>
@@ -1924,14 +1936,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <BusinessOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Company Name:</strong>{" "}
+                  <strong>Company Name : </strong>{" "}
                   {selectedUserDetails.companyName || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <LocationOnOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Address:</strong>{" "}
+                  <strong>Address : </strong>{" "}
                   {selectedUserDetails.address || "Not Available"}
                 </p>
               </div>
@@ -1942,14 +1954,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <LocationCityOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>City:</strong>{" "}
+                  <strong>City : </strong>{" "}
                   {selectedUserDetails.city || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <MapOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>State:</strong>{" "}
+                  <strong>State : </strong>{" "}
                   {selectedUserDetails.state || "Not Available"}
                 </p>
               </div>
@@ -1960,14 +1972,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <PublicOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Country:</strong>{" "}
+                  <strong>Country : </strong>{" "}
                   {selectedUserDetails.country || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <PinDropOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Pincode:</strong>{" "}
+                  <strong>Pincode : </strong>{" "}
                   {selectedUserDetails.pinCode || "Not Available"}
                 </p>
               </div>
@@ -1978,14 +1990,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <AccountTreeOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>User Type:</strong>{" "}
+                  <strong>User Type : </strong>{" "}
                   {selectedUserDetails.userType || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <CheckCircleOutlineOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Status:</strong>{" "}
+                  <strong>Status : </strong>{" "}
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
@@ -2000,14 +2012,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <CampaignOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Promo Service:</strong>{" "}
+                  <strong>Promo Service : </strong>{" "}
                   {selectedUserDetails.promoService || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <SmsOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Trans Service:</strong>{" "}
+                  <strong>Trans Service : </strong>{" "}
                   {selectedUserDetails.transService || "Not Available"}
                 </p>
               </div>
@@ -2018,14 +2030,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2">
                 <KeyOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Domain:</strong>{" "}
+                  <strong>Domain : </strong>{" "}
                   {selectedUserDetails.domain || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
                 <LockOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Virtual Balance:</strong>{" "}
+                  <strong>Virtual Balance : </strong>{" "}
                   {selectedUserDetails.virtualBalance || "Not Available"}
                 </p>
               </div>
