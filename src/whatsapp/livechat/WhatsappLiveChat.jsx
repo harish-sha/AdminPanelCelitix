@@ -461,6 +461,7 @@ import UniversalSkeleton from "@/components/common/UniversalSkeleton";
 import { ChatScreen } from "./component/chat/ChatScreen";
 import { ChatSidebar } from "./component/chat/Sidebar";
 import { InputData } from "./component/InputData";
+import { select } from "@material-tailwind/react";
 
 export default function WhatsappLiveChat() {
   const fileInputRef = useRef(null);
@@ -510,6 +511,26 @@ export default function WhatsappLiveChat() {
   const inputRef = useRef(null);
   const messageRef = useRef(null);
 
+  //merge related States
+  const [chatState, setChatState] = useState({
+    active: null,
+    input: "",
+    allConversations: [],
+    specificConversation: [],
+    latestMessage: {
+      srno: "",
+      replayTime: "",
+    },
+    replyData: "",
+    isReply: false,
+  });
+
+  const [wabaState, setWabaState] = useState({
+    waba: [],
+    selectedWaba: "",
+    wabaSrno: "",
+  });
+
   const insertEmoji = (emoji) => {
     if (inputRef.current) {
       const inputref = inputRef.current;
@@ -530,7 +551,8 @@ export default function WhatsappLiveChat() {
   useEffect(() => {
     async function fetchWaba() {
       const res = await getWabaList();
-      setWaba(res);
+      // setWaba(res);
+      setWabaState({ ...wabaState, waba: res });
     }
 
     fetchWaba();
@@ -593,29 +615,25 @@ export default function WhatsappLiveChat() {
         break;
     }
 
-    const wabaSrno = waba.find(
-      (waba) => waba.mobileNo === selectedWaba
-    )?.wabaSrno;
-
     const data = {
-      mobile: activeChat?.mobileNo,
-      wabaNumber: selectedWaba,
-      srno: activeChat?.srno,
+      mobile: chatState?.active.mobileNo,
+      wabaNumber: wabaState?.selectedWaba,
+      srno: chatState?.active.srno,
       message: input,
-      contactName: activeChat?.contectName || "",
-      replyType: isReply ? "" : replyType,
+      contactName: chatState?.active.contectName || "",
+      replyType: chatState?.isReply ? "" : replyType,
       replyFrom: "user",
-      wabaSrNo: wabaSrno,
+      wabaSrNo: wabaState?.wabaSrno,
     };
 
     let body = {};
-    if (isReply && input.trim()) {
+    if (chatState?.isReply && input.trim()) {
       body = {
         messaging_product: "whatsapp",
         context: {
-          message_id: replyData?.receiptNo,
+          message_id: chatState?.replyData?.receiptNo,
         },
-        to: activeChat?.mobileNo,
+        to: chatState?.active.mobileNo,
         type: "text",
         text: {
           preview_url: "False",
@@ -628,7 +646,7 @@ export default function WhatsappLiveChat() {
 
       body = {
         messaging_product: "whatsapp",
-        to: activeChat?.mobileNo,
+        to: chatState?.active?.mobileNo,
         type: replyType,
         [replyType]: {
           caption: input || "",
@@ -647,38 +665,16 @@ export default function WhatsappLiveChat() {
       if (res?.status !== "success") {
         return toast.error("Error sending message");
       }
-      setIsReply(false);
+      const audio = new Audio("./send-message.wav");
+      audio.play().catch((e) => {
+        console.log("Audio play error:", e);
+      });
+      setChatState((prev) => ({ ...prev, isReply: false }));
       await handleFetchSpecificConversation();
     } catch (e) {
       console.log("Error Sending Message");
       return;
     }
-
-    // if (input.trim()) {
-    //   try {
-    //     setInput("");
-    //     const res = await sendInputMessageToUser(data, body);
-    //     if (res?.status !== "success") {
-    //       return toast.error("Error sending message");
-    //     }
-    //     await handleFetchSpecificConversation();
-    //   } catch (e) {
-    //     console.log(e);
-    //     return toast.error("Error sending message");
-    //   }
-    // } else if (selectedImage) {
-    //   const imageData = await uploadImageFile(selectedImage[0]);
-
-    //   body = {
-    //     messaging_product: "whatsapp",
-    //     to: activeChat?.srno,
-    //     type: "image",
-    //     image: {
-    //       caption: input || "",
-    //       link: imageData?.fileUrl,
-    //     },
-    //   };
-    // }
   };
 
   const items = [
@@ -706,12 +702,12 @@ export default function WhatsappLiveChat() {
   ];
 
   async function handleFetchAllConvo() {
-    if (!selectedWaba) return;
+    if (!wabaState?.selectedWaba) return;
     if (!btnOption) return;
     const userActive = btnOption == "active" ? 1 : 0;
     try {
       const data = {
-        mobileNo: selectedWaba,
+        mobileNo: wabaState?.selectedWaba,
         srno: 0,
         active: userActive,
         search: search || "",
@@ -732,7 +728,10 @@ export default function WhatsappLiveChat() {
           unreadCount: unread ? unread.unreadCount : 0,
         };
       });
-      setAllConvo(mappedConversations);
+      setChatState((prev) => ({
+        ...prev,
+        allConversations: mappedConversations,
+      }));
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching all conversations");
@@ -743,7 +742,8 @@ export default function WhatsappLiveChat() {
 
   function handleSearch() {
     handleFetchAllConvo();
-    setActiveChat(null);
+    // setActiveChat(null);
+    setChatState((prev) => ({ ...prev, active: null }));
   }
 
   useEffect(() => {
@@ -752,19 +752,18 @@ export default function WhatsappLiveChat() {
     }, 500);
 
     return () => clearInterval(intervalid);
-  }, [selectedWaba, btnOption]);
+  }, [wabaState.selectedWaba, btnOption]);
 
   useEffect(() => {
-    setActiveChat(null);
-    setAllConvo([]);
-  }, [selectedWaba, btnOption]);
+    setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
+  }, [wabaState.selectedWaba, btnOption]);
 
   async function handleFetchAllTemplates() {
-    if (!selectedWaba) {
+    if (!wabaState.selectedWaba) {
       return;
     }
     try {
-      const res = await getWabaTemplateDetails(selectedWaba);
+      const res = await getWabaTemplateDetails(wabaState.selectedWaba);
       setAllTemplated(res);
     } catch (e) {
       console.log(e);
@@ -807,15 +806,10 @@ export default function WhatsappLiveChat() {
     const year = String(date.getFullYear()).slice(-2);
     return `${day}/${month}/${year}`;
   };
-
-  useEffect(() => {
-    console.log(replyData);
-  }, [replyData]);
-
   async function handleFetchSpecificConversation() {
     const payload = {
-      mobileNo: activeChat?.mobileNo,
-      wabaMobile: activeChat?.wabaNumber,
+      mobileNo: chatState?.active?.mobileNo,
+      wabaMobile: chatState?.active?.wabaNumber,
       chatNo: 0,
     };
 
@@ -835,7 +829,7 @@ export default function WhatsappLiveChat() {
           if (msg.isReceived && msg?.replyType === "image") {
             try {
               mediaPath = await downloadAttachment({
-                waba: selectedWaba,
+                waba: wabaState.selectedWaba,
                 id: msg.mediaId,
                 conversionSrno: msg.srno,
               });
@@ -869,7 +863,11 @@ export default function WhatsappLiveChat() {
         messages,
       }));
 
-      setSpecificConversation(groupedArray);
+      // setSpecificConversation(groupedArray);
+      setChatState((prev) => ({
+        ...prev,
+        specificConversation: groupedArray,
+      }));
     } catch (e) {
       console.error("Error in handleFetchSpecificConversation:", e);
       toast.error("Error fetching specific conversation");
@@ -880,11 +878,11 @@ export default function WhatsappLiveChat() {
     if (messageRef.current) {
       messageRef.current.scrollTop = messageRef.current.scrollHeight;
     }
-  }, [activeChat, specificConversation]);
+  }, [chatState?.active, specificConversation]);
 
   useEffect(() => {
     handleFetchSpecificConversation();
-  }, [activeChat]);
+  }, [chatState?.active]);
 
   useEffect(() => {
     async function handleFetchAllAgent() {
@@ -912,22 +910,22 @@ export default function WhatsappLiveChat() {
     if (!selectedAgentList) {
       return toast.error("Please select agent");
     }
-    if (!agentName) {
-      return toast.error("Please select agent display name");
-    }
+    // if (!agentName) {
+    //   return toast.error("Please select agent display name");
+    // }
     if (!selectedGroupList) {
       return toast.error("Please select group");
     }
-    if (!activeChat.mobileNo) {
+    if (!chatState?.active.mobileNo) {
       return toast.error("Please select chat first");
     }
 
     const data = {
-      waba: selectedWaba,
+      waba: wabaState.selectedWaba,
       name: agentName,
       agentSrno: selectedAgentList,
       groupNo: selectedGroupList,
-      mobileNo: activeChat.mobileNo,
+      mobileNo: chatState?.active.mobileNo,
     };
 
     try {
@@ -949,7 +947,7 @@ export default function WhatsappLiveChat() {
   }
 
   async function handlesendMessage() {
-    if (!activeChat) {
+    if (!chatState?.active) {
       return toast.error("Please select chat first");
     }
 
@@ -957,22 +955,18 @@ export default function WhatsappLiveChat() {
       return toast.error("Please enter message");
     }
 
-    const wabaSrno = waba.find(
-      (waba) => waba.mobileNo === selectedWaba
-    ).wabaSrno;
-
     let data = {};
     let func = "";
     if (messageType === "text") {
       data = {
-        mobile: activeChat.mobileNo,
-        wabaNumber: selectedWaba,
-        srno: activeChat.srno,
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        srno: chatState?.active.srno,
         message: sendmessageData.message,
-        contactName: activeChat?.contectName || "",
+        contactName: chatState?.active?.contectName || "",
         replyType: "text",
         replyFrom: "user",
-        wabaSrNo: wabaSrno,
+        wabaSrNo: wabaState.wabaSrno,
       };
       func = sendMessageToUser;
     } else if (messageType === "template") {
@@ -999,19 +993,19 @@ export default function WhatsappLiveChat() {
         return toast.error("Please enter Button variables");
       }
       data = {
-        srno: activeChat.srno,
+        srno: chatState?.active.srno,
         templateUrlVariable: btnVariables,
         templateType: templateType?.type,
         templateName: sendmessageData?.templateName,
         templateLanguage: "en",
-        wabaNumber: selectedWaba,
-        mobileno: activeChat.mobileNo,
-        contactName: activeChat?.contectName || "",
+        wabaNumber: wabaState.selectedWaba,
+        mobileno: chatState?.active.mobileNo,
+        contactName: chatState?.active?.contectName || "",
         msgType: "template",
         variables: allvariables,
         mediaUrl: "",
         phoneDisplay: "",
-        wabaSrNo: wabaSrno,
+        wabaSrNo: wabaState.wabaSrno,
         agentsrno: "",
       };
       func = sendTemplateMessageToUser;
@@ -1045,8 +1039,8 @@ export default function WhatsappLiveChat() {
     if (!sendmessageData?.templateName) {
       return;
     }
-    const wabaId = waba.find(
-      (waba) => waba.mobileNo === selectedWaba
+    const wabaId = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selectedWaba
     )?.wabaAccountId;
     try {
       const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
@@ -1096,18 +1090,22 @@ export default function WhatsappLiveChat() {
 
   useEffect(() => {
     async function handleLoadNewChat() {
-      if (!selectedWaba || !activeChat) return;
+      if (!wabaState.selectedWaba || !chatState?.active) return;
 
       try {
         const data = {
-          mobile: activeChat.mobileNo,
-          wabaNumber: selectedWaba,
+          mobile: chatState?.active.mobileNo,
+          wabaNumber: wabaState.selectedWaba,
           ...latestMessageData,
         };
         const res = await loadNewChat(data);
         if (res?.conversationEntityList.length === 0) {
           return;
         }
+        const audio = new Audio("./receive-message.mp3");
+        audio.play().catch((e) => {
+          console.log("Audio play error:", e);
+        });
         await handleFetchSpecificConversation();
       } catch (e) {
         console.log(e);
@@ -1115,11 +1113,11 @@ export default function WhatsappLiveChat() {
     }
 
     async function handleIsView() {
-      if (!selectedWaba || !activeChat) return;
+      if (!wabaState.selectedWaba || !chatState?.active) return;
       try {
         const data = {
-          mobile: activeChat.mobileNo,
-          waba: selectedWaba,
+          mobile: chatState?.active.mobileNo,
+          waba: wabaState.selectedWaba,
           srno: latestMessageData.srno,
         };
         await readMessage(data);
@@ -1132,12 +1130,12 @@ export default function WhatsappLiveChat() {
       handleIsView();
     }, 5000);
     return () => clearInterval(intervalId);
-  }, [latestMessageData, activeChat]);
+  }, [latestMessageData, chatState?.active]);
 
   async function handleAttachmentDownload(data) {
     try {
       const mediaPath = await downloadAttachment({
-        waba: selectedWaba,
+        waba: wabaState.selectedWaba,
         id: data.mediaId,
         conversionSrno: data.srno,
       });
@@ -1152,42 +1150,34 @@ export default function WhatsappLiveChat() {
     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
       <div
         className={`w-full md:w-100  border-r overflow-hidden ${
-          activeChat ? "hidden md:block" : "block"
+          chatState?.active ? "hidden md:block" : "block"
         }`}
       >
         <InputData
-          waba={waba}
-          selectedWaba={selectedWaba}
-          setSelectedWaba={setSelectedWaba}
-          setAllConvo={setAllConvo}
           setSearch={setSearch}
           search={search}
           handleSearch={handleSearch}
           btnOption={btnOption}
           setBtnOption={setBtnOption}
+          wabaState={wabaState}
+          setWabaState={setWabaState}
+          setChatState={setChatState}
         />
 
         <ChatSidebar
-          allConvo={allConvo}
-          setActiveChat={setActiveChat}
           formatDate={formatDate}
-          activeChat={activeChat}
+          chatState={chatState}
+          setChatState={setChatState}
         />
       </div>
 
-      {activeChat && (
+      {chatState.active && (
         <ChatScreen
-          setActiveChat={setActiveChat}
-          activeChat={activeChat}
-          setSpecificConversation={setSpecificConversation}
           setVisibleRight={setVisibleRight}
           setDialogVisible={setDialogVisible}
           messageRef={messageRef}
-          specificConversation={specificConversation}
           formatTime={formatTime}
-          isReply={isReply}
           btnOption={btnOption}
-          replyData={replyData}
           selectedImage={selectedImage}
           deleteImages={deleteImages}
           handleAttachmentDownload={handleAttachmentDownload}
@@ -1199,6 +1189,8 @@ export default function WhatsappLiveChat() {
           input={input}
           setInput={setInput}
           setSendMessageDialogVisible={setSendMessageDialogVisible}
+          setChatState={setChatState}
+          chatState={chatState}
         />
       )}
 
@@ -1228,7 +1220,7 @@ export default function WhatsappLiveChat() {
             placeholder="Agent List"
           />
 
-          <InputField
+          {/* <InputField
             label="Agent Display Name"
             tooltipContent="Enter Agent Name"
             id="agentname"
@@ -1237,7 +1229,7 @@ export default function WhatsappLiveChat() {
             value={agentName}
             onChange={(e) => setAgentname(e.target.value)}
             placeholder="Enter Agent Display Name"
-          />
+          /> */}
           <AnimatedDropdown
             options={groupList?.map((group) => ({
               value: group.groupCode,

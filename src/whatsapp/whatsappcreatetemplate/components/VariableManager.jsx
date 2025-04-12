@@ -11,19 +11,29 @@ const VariableManager = ({
 }) => {
   const containerRef = useRef(null);
   const [variables, setVariables] = useState([]);
-  const[btnDisabled, setBtnDisabled] = useState(false);
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
   const addVariable = () => {
+    const newVarTag = `{{${variables.length + 1}}}`;
     const newVariable = { id: `${variables.length + 1}`, value: "" };
+    if (templateFormat.length + newVarTag.length >= 1024) return;
     const updatedVariables = [...variables, newVariable];
     setVariables(updatedVariables);
     setTemplateFormat((prev) => `${prev}{{${newVariable.id}}}`);
     onUpdateVariables(updatedVariables);
-    
-    if(allowSingleVariable){
-        setBtnDisabled(true);
+
+    if (allowSingleVariable) {
+      setBtnDisabled(true);
     }
   };
+
+  useEffect(() => {
+    if (templateFormat.length > 1024) {
+      setBtnDisabled(true);
+    } else {
+      setBtnDisabled(false);
+    }
+  }, [templateFormat]);
 
   const handleVariableChange = (id, value) => {
     const updatedVariables = variables.map((variable) =>

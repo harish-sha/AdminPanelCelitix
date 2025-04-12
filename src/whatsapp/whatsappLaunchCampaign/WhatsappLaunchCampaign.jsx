@@ -135,7 +135,6 @@ const WhatsappLaunchCampaign = () => {
         );
         return;
       }
-
     }
 
     if (selectedOption === "option1") {
@@ -148,7 +147,6 @@ const WhatsappLaunchCampaign = () => {
     const filterObj = Object.fromEntries(
       Object.entries(formData).filter(([key, value]) => value !== "")
     );
-
 
     // if (varLength !== Object.keys(filterObj).length) {
     //   toast.error("Please enter a all variable values!");
@@ -195,6 +193,20 @@ const WhatsappLaunchCampaign = () => {
     const bodyVariables = templateDataNew?.components
       ?.filter((component) => component.type === "BODY")
       ?.flatMap((component) => extractVariablesFromText(component.text));
+
+    const headerComponent = templateDataNew.components.find(
+      (comp) =>
+        comp.type === "HEADER" &&
+        ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp.format)
+    );
+
+    if (
+      ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent.format) &&
+      !imagePreview
+    ) {
+      toast.error("Please upload a media file.");
+      return;
+    }
 
     const contentValues = bodyVariables
       ?.map((variable) => {
@@ -251,6 +263,16 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
+    const date = new Date(scheduledDateTime);
+
+    const padZero = (num) => num.toString().padStart(2, "0");
+
+    const scheduleDateFormat = `${date.getFullYear()}-${padZero(
+      date.getMonth() + 1
+    )}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(
+      date.getMinutes()
+    )}:${padZero(date.getSeconds())}`;
+
     // ✅ Prepare Request Payload
     const requestData = {
       mobileIndex: selectedMobileColumn,
@@ -274,11 +296,10 @@ const WhatsappLaunchCampaign = () => {
       isGroup: isGroup,
       countryCode: selectedCountryCode || "",
       ScheduleCheck: schedule && scheduledDateTime ? "1" : "0",
-      scheduleDateTime: schedule && scheduledDateTime ? scheduledDateTime : "0",
+      scheduleDateTime:
+        schedule && scheduledDateTime ? scheduleDateFormat : "0",
       groupValues,
     };
-
-    console.log("Request Data:", requestData);
 
     // ✅ Send API request
     try {
@@ -570,23 +591,23 @@ const WhatsappLaunchCampaign = () => {
                     uploadedFile={uploadedFile}
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
-                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
 
               <div className="w-full lg:w-1/3 px-5 lg:mt-0 mt-5 min-h-[80vh]">
-                {isFetching ? (
+                {/* {isFetching ? (
                   <div className="w-full">
                     <UniversalSkeleton height="46rem" width="100%" />
                   </div>
-                ) : (
+                ) : ( */}
                   <WhatsappLaunchPreview
                     templateDataNew={templateDataNew}
                     formData={formData}
                     uploadedImage={imagePreview}
                   />
-                )}
+                {/* )} */}
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">

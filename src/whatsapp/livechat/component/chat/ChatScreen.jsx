@@ -20,17 +20,11 @@ import { ClosedChat } from "./CloseChat";
 import { ChatInput } from "./Input";
 
 export const ChatScreen = ({
-  setActiveChat,
-  activeChat,
-  setSpecificConversation,
   setVisibleRight,
   setDialogVisible,
   messageRef,
-  specificConversation,
   formatTime,
-  isReply,
   btnOption,
-  replyData,
   selectedImage,
   deleteImages,
   handleAttachmentDownload,
@@ -42,6 +36,9 @@ export const ChatScreen = ({
   input,
   setInput,
   setSendMessageDialogVisible,
+
+  chatState,
+  setChatState,
 }) => {
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
@@ -50,17 +47,29 @@ export const ChatScreen = ({
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
             onClick={() => {
-              setActiveChat(null);
-              setSpecificConversation([]);
+              // setActiveChat(null);
+              // setSpecificConversation([]);
+              setChatState({
+                active: null,
+                input: "",
+                allConversations: [],
+                specificConversation: [],
+                latestMessage: {
+                  srno: "",
+                  replayTime: "",
+                },
+                replyData: "",
+                isReply: false,
+              });
             }}
           />
           <img
-            src={activeChat.image || "/default-avatar.jpg"}
-            alt={activeChat.contectName}
+            src={chatState.active.image || "/default-avatar.jpg"}
+            alt={chatState.active.contectName}
             className="w-10 h-10 rounded-full"
           />
           <h3 className="text-lg font-semibold">
-            {activeChat.contectName || activeChat.mobileNo}
+            {chatState.active.contectName || chatState.active.mobileNo}
           </h3>
           <InfoOutlinedIcon
             onClick={() => setVisibleRight(true)}
@@ -77,7 +86,7 @@ export const ChatScreen = ({
         ref={messageRef}
         className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5"
       >
-        {specificConversation?.map((group, groupIndex) => (
+        {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>
             <div className="my-4 text-xs text-center text-gray-500">
               {group?.date}
@@ -145,8 +154,11 @@ export const ChatScreen = ({
                         {btnOption === "active" && (
                           <button
                             onClick={() => {
-                              setIsReply(true);
-                              setReplyData(msg);
+                              setChatState((prev) => ({
+                                ...prev,
+                                replyData: msg,
+                                isReply: true,
+                              }));
                             }}
                           >
                             <FaReply className="text-gray-500 size-3" />
@@ -173,8 +185,11 @@ export const ChatScreen = ({
                         {btnOption === "active" && (
                           <button
                             onClick={() => {
-                              setIsReply(true);
-                              setReplyData(msg);
+                              setChatState((prev) => ({
+                                ...prev,
+                                replyData: msg,
+                                isReply: true,
+                              }));
                             }}
                           >
                             <FaReply className="text-gray-500 size-3" />
@@ -199,25 +214,26 @@ export const ChatScreen = ({
       </div>
 
       {/* Reply Preview */}
-      {isReply && btnOption === "active" && (
+      {chatState.isReply && btnOption === "active" && (
         <div className="relative">
           <div className="ml-2 mr-2 border p-2">
-            {replyData?.replyType === "image" && (
+            {chatState.replyData?.replyType === "image" && (
               <img
-                src={replyData?.mediaPath}
+                src={chatState.replyData?.mediaPath}
                 alt=""
                 className="object-contain mb-2 border rounded-md pointer-events-none select-none h-48 w-48"
               />
             )}
-            {replyData?.replyType === "video" && (
-              <video src={replyData?.mediaPath}></video>
+            {chatState.replyData?.replyType === "video" && (
+              <video src={chatState.replyData?.mediaPath}></video>
             )}
-            <p>{replyData?.messageBody}</p>
+            <p>{chatState.replyData?.messageBody}</p>
           </div>
           <div
             onClick={() => {
-              setIsReply(false);
-              setReplyData(null);
+              // setIsReply(false);
+              // setReplyData(null);
+              setChatState({ ...chatState, isReply: false, replyData: null });
             }}
             className="absolute -top-2 right-2 cursor-pointer"
           >
@@ -304,6 +320,8 @@ export const ChatScreen = ({
           selectedImage={selectedImage}
           items={items}
           insertEmoji={insertEmoji}
+          setChatState={setChatState}
+          chatState={chatState}
         />
       ) : (
         <ClosedChat setSendMessageDialogVisible={setSendMessageDialogVisible} />
@@ -318,15 +336,17 @@ export const ChatScreen = ({
         <div className="flex flex-col justify-center gap-2">
           <div className="flex items-center gap-2">
             <img
-              src={activeChat.image || "/default-avatar.jpg"}
+              src={chatState?.active.image || "/default-avatar.jpg"}
               alt=""
               className="w-10 h-10 rounded-full"
             />
-            <h1>{activeChat.contectName || activeChat.mobileNo}</h1>
+            <h1>
+              {chatState?.active.contectName || chatState?.active.mobileNo}
+            </h1>
           </div>
           <div className="flex items-center gap-2">
             <LocalPhoneOutlinedIcon />
-            <p>{activeChat.mobileNo}</p>
+            <p>{chatState?.active.mobileNo}</p>
           </div>
         </div>
         <div className="space-x-2 text-[0.9rem]">

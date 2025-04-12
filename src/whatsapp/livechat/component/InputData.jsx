@@ -2,15 +2,14 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { SearchOutlined } from "@mui/icons-material";
 
 export const InputData = ({
-  waba,
-  selectedWaba,
-  setSelectedWaba,
-  setAllConvo,
   setSearch,
   search,
   handleSearch,
   setBtnOption,
-  btnOption
+  btnOption,
+  wabaState,
+  setWabaState,
+  setChatState,
 }) => {
   return (
     <div>
@@ -21,15 +20,22 @@ export const InputData = ({
           label="Select WABA"
           tooltipContent="Select your whatsapp business account"
           tooltipPlacement="right"
-          options={waba?.map((waba) => ({
+          options={wabaState?.waba?.map((waba) => ({
             value: waba.mobileNo,
             label: waba.name,
           }))}
-          value={selectedWaba}
+          value={wabaState?.selectedWaba}
           onChange={(value) => {
-            setSelectedWaba(value);
-            setAllConvo([]);
-            setSearch("");
+            const wabaSrno = wabaState?.waba?.find(
+              (waba) => waba.mobileNo === value
+            )?.srno;
+            setWabaState({ ...wabaState, selectedWaba: value, wabaSrno });
+
+            setChatState((prev) => ({
+              ...prev,
+              active: null,
+              allConversations: [],
+            }));
           }}
           placeholder="Select WABA"
         />
@@ -59,7 +65,7 @@ export const InputData = ({
           </button>
         </div>
       </div>
-      {selectedWaba && (
+      {wabaState.selectedWaba && (
         <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
           <button
             onClick={() => setBtnOption("active")}

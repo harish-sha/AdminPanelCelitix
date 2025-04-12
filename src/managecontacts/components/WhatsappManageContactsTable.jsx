@@ -129,18 +129,6 @@ const WhatsappManageContactsTable = ({
       renderCell: (params) => (
         <>
           <IconButton
-            className="no-xs"
-            onClick={() => {
-              setDeleteContactDialogVisible(true);
-              setIdToDelete(params.row);
-            }}
-          >
-            <MdOutlineDeleteForever
-              className="text-red-500 cursor-pointer hover:text-red-600"
-              size={20}
-            />
-          </IconButton>
-          <IconButton
             onClick={() => {
               setUpdateContactVisible(true);
               setUpdateContactDetails(params.row);
@@ -151,6 +139,18 @@ const WhatsappManageContactsTable = ({
                 fontSize: "1.2rem",
                 color: "gray",
               }}
+            />
+          </IconButton>
+          <IconButton
+            className="no-xs"
+            onClick={() => {
+              setDeleteContactDialogVisible(true);
+              setIdToDelete(params.row);
+            }}
+          >
+            <MdOutlineDeleteForever
+              className="text-red-500 cursor-pointer hover:text-red-600"
+              size={20}
             />
           </IconButton>
         </>

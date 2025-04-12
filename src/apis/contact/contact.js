@@ -58,6 +58,14 @@ export const updateGroupName = async (grpSrno, grpName) => {
     }
   );
 };
+export const getContactBySrno = async (conSrno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/contact/getContactBySrno?srNo=${conSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
 
 // upload contact file
 export const uploadContactFile = async (file) => {

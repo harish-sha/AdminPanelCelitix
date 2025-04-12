@@ -19,6 +19,7 @@ const InputField = ({
   maxLength = "",
   accept = "",
   required = false,
+  max={maxLength}
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;

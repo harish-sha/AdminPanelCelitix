@@ -111,7 +111,9 @@ const CarouselTemplatePreview = ({
                 <div className='mb-3 bg-gray-200 border border-gray-200  px-3 py-2 rounded-md text-gray-800 text-sm overflow-auto w-full h-auto max-h-24 break-words'
                     id='carousel-format-preview' name='carousel-format-preview'
                 >
-                    {renderWithVariables(format)}
+                    {/* {renderWithVariables(format)} */}
+            <pre className="text-wrap">{renderWithVariables(format)}</pre>
+
                 </div>
             )}
 

@@ -103,6 +103,7 @@ const ManageContacts = () => {
   const [deleteContactDialogVisible, setDeleteContactDialogVisible] =
     useState(false);
   const [allowishes, setAllowishes] = useState("");
+  // const [filteredRows, setFilteredRows] = useState([]);
 
   async function getGrpListData() {
     const res = await getGrpList();
@@ -112,15 +113,34 @@ const ManageContacts = () => {
     getGrpListData();
   }, []);
 
+  // const handleAddGroup = async () => {
+  //   const res = await addGrp({
+  //     groupName,
+  //   });
+
+  //   if (res.flag) {
+  //     setGroupName("");
+  //     toast.success(res.message);
+  //     setaddGroupVisible(false);
+  //   } else {
+  //     toast.error(res.message ?? "Something went wrong");
+  //   }
+  // };
+
   const handleAddGroup = async () => {
     const res = await addGrp({
       groupName,
     });
 
     if (res.flag) {
+      if (res.message === "A group with this name already exists.") {
+        toast.error(res.message);
+        return;
+      }
       setGroupName("");
       toast.success(res.message);
       setaddGroupVisible(false);
+      await getGrpListData();
     } else {
       toast.error(res.message ?? "Something went wrong");
     }
@@ -467,6 +487,7 @@ const ManageContacts = () => {
     setDeleteDialogVisible(false);
     setaddGroupVisible(false);
     await getGrpListData();
+    setSelectedManageGroups(null); // reset filter
   };
 
   const CustomFooter = () => {
@@ -635,13 +656,25 @@ const ManageContacts = () => {
     },
   ];
 
+  // const rows = Array.isArray(grpList)
+  //   ? grpList?.map((grp, index) => ({
+  //       id: grp.groupCode,
+  //       sn: index + 1,
+  //       groupName: grp.groupName,
+  //     }))
+  //   : [];
+
   const rows = Array.isArray(grpList)
-    ? grpList?.map((grp, index) => ({
+    ? grpList.map((grp, index) => ({
         id: grp.groupCode,
         sn: index + 1,
         groupName: grp.groupName,
       }))
     : [];
+
+  const filteredRows = selectedmanageGroups?.value
+    ? rows.filter((row) => row.id === selectedmanageGroups.value)
+    : rows;
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -822,6 +855,13 @@ const ManageContacts = () => {
                         value: item.groupCode,
                         label: item.groupName,
                       }))}
+                      // options={[
+                      //   { value: null, label: "All Groups" },
+                      //   ...grpList?.map((item) => ({
+                      //     value: item.groupCode,
+                      //     label: item.groupName,
+                      //   })),
+                      // ]}
                       value={selectedmanageGroups}
                       onChange={(e) => setSelectedManageGroups(e)}
                       optionLabel="name"
@@ -841,7 +881,8 @@ const ManageContacts = () => {
                     <DataGrid
                       id={"ManageGroup"}
                       name={"ManageGroup"}
-                      rows={rows}
+                      // rows={rows}
+                      rows={filteredRows}
                       columns={contactColumns}
                       initialState={{ pagination: { paginationModel } }}
                       pageSizeOptions={[10, 20, 50]}
@@ -1033,64 +1074,63 @@ const ManageContacts = () => {
                 required={true}
               /> */}
 
-
               <div>
-              <UniversalLabel
-                text="Allowishes"
-                id="addwish"
-                name="addwish"
-                className="mt-0 text-sm font-medium text-gray-800"
-              />
-              
-              <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
-                {/* Enable Option */}
-                <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="AllowishesOption1"
-                      name="Allowishesredio"
-                      value="enable"
-                      onChange={(e) =>
-                        setAddContactDetails({
-                          ...addContactDetails,
-                          allowishes: e.value,
-                        })
-                      }
-                      checked={addContactDetails.allowishes === "enable"}
-                    />
-                    <label
-                      htmlFor="AllowishesOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
+                <UniversalLabel
+                  text="Allowishes"
+                  id="addwish"
+                  name="addwish"
+                  className="mt-0 text-sm font-medium text-gray-800"
+                />
 
-                {/* Disable Option */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="AllowishesOption2"
-                      name="Allowishesredio"
-                      value="disable"
-                      onChange={(e) =>
-                        setAddContactDetails({
-                          ...addContactDetails,
-                          allowishes: e.value,
-                        })
-                      }
-                      checked={addContactDetails.allowishes === "disable"}
-                    />
-                    <label
-                      htmlFor="AllowishesOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
+                <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
+                  {/* Enable Option */}
+                  <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="AllowishesOption1"
+                        name="Allowishesredio"
+                        value="enable"
+                        onChange={(e) =>
+                          setAddContactDetails({
+                            ...addContactDetails,
+                            allowishes: e.value,
+                          })
+                        }
+                        checked={addContactDetails.allowishes === "enable"}
+                      />
+                      <label
+                        htmlFor="AllowishesOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Enable
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Disable Option */}
+                  <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="AllowishesOption2"
+                        name="Allowishesredio"
+                        value="disable"
+                        onChange={(e) =>
+                          setAddContactDetails({
+                            ...addContactDetails,
+                            allowishes: e.value,
+                          })
+                        }
+                        checked={addContactDetails.allowishes === "disable"}
+                      />
+                      <label
+                        htmlFor="AllowishesOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Disable
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
               {/* <RadioGroupField
                 label={"Gender?"}
@@ -1110,62 +1150,62 @@ const ManageContacts = () => {
                 required={true}
               /> */}
               <div>
-              <UniversalLabel
-                text="Gender"
-                id="gamderadd"
-                name="gamderadd"
-                className="mt-0 text-sm font-medium text-gray-800"
-              />
-              
-              <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
-                {/* Enable Option */}
-                <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="genderOption1"
-                      name="genderredio"
-                      value="Male"
-                      onChange={(e) =>
-                        setAddContactDetails({
-                          ...addContactDetails,
-                          gender: e.target.value,
-                        })
-                      }
-                      checked={addContactDetails.gender === "Male"}
-                    />
-                    <label
-                      htmlFor="genderOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Male
-                    </label>
-                  </div>
-                </div>
+                <UniversalLabel
+                  text="Gender"
+                  id="gamderadd"
+                  name="gamderadd"
+                  className="mt-0 text-sm font-medium text-gray-800"
+                />
 
-                {/* Disable Option */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="genderOption2"
-                      name="genderredio"
-                      value="Female"
-                      onChange={(e) =>
-                        setAddContactDetails({
-                          ...addContactDetails,
-                          gender: e.target.value,
-                        })
-                      }
-                      checked={addContactDetails.gender === "Female"}
-                    />
-                    <label
-                      htmlFor="genderOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Female
-                    </label>
+                <div className="flex flex-wrap gap-2 lg:w-70 md:w-50">
+                  {/* Enable Option */}
+                  <div className="flex-1 px-1 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="genderOption1"
+                        name="genderredio"
+                        value="Male"
+                        onChange={(e) =>
+                          setAddContactDetails({
+                            ...addContactDetails,
+                            gender: e.target.value,
+                          })
+                        }
+                        checked={addContactDetails.gender === "Male"}
+                      />
+                      <label
+                        htmlFor="genderOption1"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Male
+                      </label>
+                    </div>
+                  </div>
+
+                  {/* Disable Option */}
+                  <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <RadioButton
+                        inputId="genderOption2"
+                        name="genderredio"
+                        value="Female"
+                        onChange={(e) =>
+                          setAddContactDetails({
+                            ...addContactDetails,
+                            gender: e.target.value,
+                          })
+                        }
+                        checked={addContactDetails.gender === "Female"}
+                      />
+                      <label
+                        htmlFor="genderOption2"
+                        className="text-sm font-medium text-gray-700 cursor-pointer"
+                      >
+                        Female
+                      </label>
+                    </div>
                   </div>
                 </div>
-              </div>
               </div>
             </div>
             <div className="flex justify-center mt-2">
@@ -1551,20 +1591,22 @@ const ManageContacts = () => {
             id="name"
             name="name"
             type="text"
-            tooltipContent="Enter Group Name"
+            tooltipContent="New Group Name"
             placeholder="Enter Group Name"
             value={groupName}
             onChange={(e) => {
               setGroupName(e.target.value);
             }}
           />
-          <UniversalButton
-            id="addgroupbtn"
-            name="addgroupbtn"
-            label="Update Group Name"
-            className="mt-2"
-            onClick={handleUpdateGrpName}
-          />
+          <div className="w-max-content flex items-center justify-center mt-4">
+            <UniversalButton
+              id="addgroupbtn"
+              name="addgroupbtn"
+              label="Update Group Name"
+              className="mt-2"
+              onClick={handleUpdateGrpName}
+            />
+          </div>
         </div>
       </Dialog>
 
@@ -1576,161 +1618,175 @@ const ManageContacts = () => {
         draggable={false}
       >
         <div>
-          <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
-            <InputField
-              placeholder="Enter first name.."
-              id="userfirstname"
-              name="userfirstname"
-              type="text"
-              value={updateContactDetails.firstName}
-              onChange={(e) =>
-                setUpdateContactDetails({
-                  ...updateContactDetails,
-                  firstName: e.target.value,
-                })
-              }
-              required={true}
-            />
-            {/* <InputField
-              placeholder="Enter middle name.."
-              id="usermiddlename"
-              name="usermiddlename"
-              type="text"
-              value={addContactDetails.middleName}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  middleName: e.target.value,
-                })
-              }
-            /> */}
-            <InputField
-              placeholder="Enter last name.."
-              id="userlastname"
-              name="userlastname"
-              type="text"
-              value={updateContactDetails.lastName}
-              onChange={(e) =>
-                setUpdateContactDetails({
-                  ...updateContactDetails,
-                  lastName: e.target.value,
-                })
-              }
-              required={true}
-            />
-            <InputField
-              placeholder="Enter mobile no.."
-              id="mobilenumber"
-              name="mobilenumber"
-              type="number"
-              value={updateContactDetails.mobileno}
-              onChange={(e) =>
-                setUpdateContactDetails({
-                  ...updateContactDetails,
-                  mobileno: e.target.value,
-                })
-              }
-              required={true}
-            />
-            {/* <InputField
-              placeholder="Enter email id.."
-              id="emailid"
-              name="emailid"
-              type="email"
-              value={addContactDetails.emailId}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  emailId: e.target.value,
-                })
-              }
-              required={true}
-            /> */}
-            <InputField
-              placeholder="Enter unique id.."
-              id="uniqueid"
-              name="uniqueid"
-              type="text"
-              value={updateContactDetails.uniqueId}
-              onChange={(e) =>
-                setUpdateContactDetails({
-                  ...updateContactDetails,
-                  uniqueId: e.target.value,
-                })
-              }
-            />
-            {/* <UniversalDatePicker
-              label="Birth Date"
-              className="mb-0"
-              value={addContactDetails.birthDate}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  birthDate: e,
-                })
-              }
-              required={true}
-            /> */}
-            {/* <UniversalDatePicker
-              label="Anniversary Date"
-              className="mb-0"
-              value={addContactDetails.mariageDate}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  mariageDate: e,
-                })
-              }
-              required={true}
-            /> */}
-            {/* <RadioGroupField
-              label={"Allowishes?"}
-              name="addwish"
-              id="addwish"
-              options={addwish}
-              value={addContactDetails.allowishes}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  allowishes: e.target.value,
-                })
-              }
-              required={true}
-            /> */}
-            {/* <RadioGroupField
-              label={"Gender?"}
-              name="gamderadd"
-              id="addgamderaddImportContact"
-              options={[
-                { value: "m", label: "Male" },
-                { value: "f", label: "Female" },
-              ]}
-              value={addContactDetails.gender}
-              onChange={(e) =>
-                setAddContactDetails({
-                  ...addContactDetails,
-                  gender: e.target.value,
-                })
-              }
-              required={true}
-            /> */}
-            <RadioGroupField
-              label={"Active Status"}
-              name="activeStatus"
-              id="activeStatus"
-              options={[
-                { value: 0, label: "Active" },
-                { value: 1, label: "Inactive" },
-              ]}
-              value={updateContactDetails.status}
-              onChange={(e) =>
-                setUpdateContactDetails({
-                  ...updateContactDetails,
-                  status: Number(e.target.value),
-                })
-              }
-              required={true}
-            />
+          <div className="space-y-5">
+            <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+              <InputField
+                placeholder="Enter first name.."
+                id="userfirstname"
+                name="userfirstname"
+                type="text"
+                value={updateContactDetails.firstName}
+                onChange={(e) =>
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    firstName: e.target.value,
+                  })
+                }
+                required={true}
+              />
+              <InputField
+                placeholder="Enter middle name.."
+                id="usermiddlename"
+                name="usermiddlename"
+                type="text"
+                value={addContactDetails.middleName}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    middleName: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+              <InputField
+                placeholder="Enter last name.."
+                id="userlastname"
+                name="userlastname"
+                type="text"
+                value={updateContactDetails.lastName}
+                onChange={(e) =>
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    lastName: e.target.value,
+                  })
+                }
+                required={true}
+              />
+              <InputField
+                placeholder="Enter mobile no.."
+                id="mobilenumber"
+                name="mobilenumber"
+                type="number"
+                value={updateContactDetails.mobileno}
+                onChange={(e) =>
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    mobileno: e.target.value,
+                  })
+                }
+                required={true}
+              />
+            </div>
+
+            <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+              <InputField
+                placeholder="Enter email id.."
+                id="emailid"
+                name="emailid"
+                type="email"
+                value={addContactDetails.emailId}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    emailId: e.target.value,
+                  })
+                }
+                required={true}
+              />
+              <InputField
+                placeholder="Enter unique id.."
+                id="uniqueid"
+                name="uniqueid"
+                type="text"
+                value={updateContactDetails.uniqueId}
+                onChange={(e) =>
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    uniqueId: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+              <UniversalDatePicker
+                label="Birth Date"
+                className="mb-0"
+                value={addContactDetails.birthDate}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    birthDate: e,
+                  })
+                }
+                required={true}
+              />
+              <UniversalDatePicker
+                label="Anniversary Date"
+                className="mb-0"
+                value={addContactDetails.mariageDate}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    mariageDate: e,
+                  })
+                }
+                required={true}
+              />
+            </div>
+            <div className="flex items-center gap-5 flex-wrap lg:flex-nowrap">
+              <RadioGroupField
+                label={"Allowishes?"}
+                name="addwish"
+                id="addwish"
+                options={addwish}
+                value={addContactDetails.allowishes}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    allowishes: e.target.value,
+                  })
+                }
+                required={true}
+              />
+              <RadioGroupField
+                label={"Gender?"}
+                name="gamderadd"
+                id="addgamderaddImportContact"
+                options={[
+                  { value: "m", label: "Male" },
+                  { value: "f", label: "Female" },
+                ]}
+                value={addContactDetails.gender}
+                onChange={(e) =>
+                  setAddContactDetails({
+                    ...addContactDetails,
+                    gender: e.target.value,
+                  })
+                }
+                required={true}
+              />
+            </div>
+
+            <div className="flex items-center justify-center ">
+              <RadioGroupField
+                label={"Active Status"}
+                name="activeStatus"
+                id="activeStatus"
+                options={[
+                  { value: 0, label: "Active" },
+                  { value: 1, label: "Inactive" },
+                ]}
+                value={updateContactDetails.status}
+                onChange={(e) =>
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    status: Number(e.target.value),
+                  })
+                }
+                required={true}
+              />
+            </div>
           </div>
           <div className="flex justify-center mt-2">
             <UniversalButton

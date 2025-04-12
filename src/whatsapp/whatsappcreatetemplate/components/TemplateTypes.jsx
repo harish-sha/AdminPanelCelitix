@@ -114,7 +114,7 @@ const TemplateTypes = ({
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
-          model: "gpt-4o",
+          model: "gpt-3.5-turbo",
           messages: [
             { role: "system", content: "You are a helpful assistant." },
             { role: "user", content: aiPrompt },
@@ -125,8 +125,9 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-              }`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+            }`,
           },
         }
       );
@@ -168,7 +169,7 @@ const TemplateTypes = ({
 
   return (
     <div className="w-full">
-      {selectedTemplateType === "text" && (
+      {/* {selectedTemplateType === "text" && (
         <div className="w-full mb-4">
           <div className="flex items-center mb-2">
             <label className="text-sm font-medium text-gray-700">
@@ -199,7 +200,7 @@ const TemplateTypes = ({
             {templateHeader.length}/60
           </p>
         </div>
-      )}
+      )} */}
 
       {selectedTemplateType === "image" && (
         <div className="w-full mb-4">
@@ -268,6 +269,7 @@ const TemplateTypes = ({
                   size={23}
                   onClick={() => {
                     setFile(null);
+                    setFileUploadUrl("");
                     setImageUrl(null);
                     fileInputRef.current.value = "";
                     toast.success("Image removed successfully!");
@@ -351,6 +353,7 @@ const TemplateTypes = ({
                 className="text-red-500 cursor-pointer hover:text-red-700"
                 size={20}
                 onClick={() => {
+                  setFileUploadUrl("");
                   setFile(null);
                   setVideoUrl(null);
                   fileInputRef.current.value = "";
@@ -435,6 +438,7 @@ const TemplateTypes = ({
                 className="text-red-500 cursor-pointer hover:text-red-700"
                 size={23}
                 onClick={() => {
+                  setFileUploadUrl("");
                   setFile(null);
                   setDocumentUrl(null);
                   fileInputRef.current.value = "";
@@ -510,7 +514,14 @@ const TemplateTypes = ({
           />
           <div className="absolute top-0 right-0 flex mt-2 mr-2 space-x-2">
             <CustomEmojiPicker
-              onSelect={(emoji) => handleEmojiSelect(setTemplateFormat, emoji)}
+              onSelect={(emoji) =>
+                handleEmojiSelect(
+                  setTemplateFormat,
+                  emoji,
+                  1024,
+                  "templateFormat"
+                )
+              }
               position="right"
             />
           </div>
@@ -662,7 +673,14 @@ const TemplateTypes = ({
               }
             /> */}
             <CustomEmojiPicker
-              onSelect={(emoji) => handleEmojiSelect(setTemplateFooter, emoji)}
+              onSelect={(emoji) =>
+                handleEmojiSelect(
+                  setTemplateFooter,
+                  emoji,
+                  60,
+                  "templateFooter"
+                )
+              }
               position="right"
             />
           </div>

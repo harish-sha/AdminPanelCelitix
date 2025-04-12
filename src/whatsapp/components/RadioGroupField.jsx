@@ -4,7 +4,7 @@ import { FormControl, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mu
 
 const RadioGroupField = ({ label, value, onChange, options = [] }) => {
   return (
-    <div className="flex items-center" >
+    <div className="flex items-center " >
       {label && (
         <FormLabel sx={{ marginRight: 2, fontSize: "0.875rem", fontWeight: 700, color: "black" }}>
           {label}

@@ -14,7 +14,7 @@ export const ChatInput = ({
   sendMessage,
   selectedImage,
   items,
-  insertEmoji
+  insertEmoji,
 }) => {
   return (
     <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">

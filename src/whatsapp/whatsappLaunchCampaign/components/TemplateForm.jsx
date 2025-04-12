@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import DoNotDisturbOutlinedIcon from "@mui/icons-material/DoNotDisturbOutlined";
@@ -34,7 +34,9 @@ const TemplateForm = ({
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
-  const [urlIndex, setUrlIndex] = useState(null); 
+  const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+
+  const fileRef = useRef(null);
 
   const [imageState, setImageState] = useState({
     file: null,
@@ -126,14 +128,13 @@ const TemplateForm = ({
     onInputChange(value, `${type}${variable}`);
   };
 
-
   const handleSelectVariable = (variable, inputKey, type = "body") => {
     setInputValues((prev) => {
       const updatedValue = `{{${variable}}}`;
 
       const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
-      // f selecting for BUTTON URL, update `urlIndex`
+      // ✅ If selecting for BUTTON URL, update `urlIndex`
       if (type === "button" && fileHeaders.includes(variable)) {
         const index = fileHeaders.indexOf(variable);
 
@@ -157,19 +158,19 @@ const TemplateForm = ({
       toast.error("No file selected.");
       return;
     }
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Only jpg, jpeg, and png files are allowed.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB.");
-      return;
-    }
-    if (/\s/.test(file.name)) {
-      toast.error("File name should not contain spaces.");
-      return;
-    }
+    // const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    // if (!allowedTypes.includes(file.type)) {
+    //   toast.error("Only jpg, jpeg, and png files are allowed.");
+    //   return;
+    // }
+    // if (file.size > 5 * 1024 * 1024) {
+    //   toast.error("File size must be less than 5MB.");
+    //   return;
+    // }
+    // if (/\s/.test(file.name)) {
+    //   toast.error("File name should not contain spaces.");
+    //   return;
+    // }
     setImageState({
       file,
       preview: URL.createObjectURL(file),
@@ -193,7 +194,7 @@ const TemplateForm = ({
     try {
       const response = await uploadImageFile(imageState.file);
       if (response.status) {
-        toast.success("Image uploaded successfully!");
+        toast.success("Media uploaded successfully!");
         setImageState((prev) => ({
           ...prev,
           uploadedUrl: response.fileUrl,
@@ -202,10 +203,10 @@ const TemplateForm = ({
         }));
         onImageUpload(response.fileUrl);
       } else {
-        toast.error(response.msg || "Image upload failed.");
+        toast.error(response.msg || "Media upload failed.");
       }
     } catch (error) {
-      toast.error(error.message || "Error uploading image.");
+      toast.error(error.message || "Error uploading media.");
     } finally {
       setImageState((prev) => ({ ...prev, uploading: false }));
     }
@@ -220,8 +221,9 @@ const TemplateForm = ({
       uploadedUrl: null,
       validFileSelected: false,
     });
+    fileRef.current.value = "";
     onImageUpload(null);
-    toast.success("Image removed successfully.");
+    toast.success("Media removed successfully.");
   };
 
   return (
@@ -363,15 +365,16 @@ const TemplateForm = ({
         {/* HEADER Component: Handle Image Upload */}
         {templateDataNew?.components.some(
           (component) =>
-            component.type === "HEADER" && component.format === "IMAGE"
+            component.type === "HEADER" &&
+            ["IMAGE", "VIDEO", "DOCUMENT"].includes(component.format)
         ) && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium tracking-wide text-gray-700">
-                Upload Image
+                Upload File
               </p>
               <CustomTooltip
-                title="Only jpg,jpeg and png allowed (5 MB max)"
+                title="Only jpg, jpeg and png allowed (5 MB max)"
                 placement="right"
                 arrow
               >
@@ -380,14 +383,33 @@ const TemplateForm = ({
                 </span>
               </CustomTooltip>
             </div>
+
             <div className="flex items-start gap-2">
-              <input
-                type="file"
-                id="imageUpload"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
+              {(() => {
+                const mediaComponent = templateDataNew?.components.find(
+                  (component) =>
+                    component.type === "HEADER" &&
+                    ["IMAGE", "VIDEO", "DOCUMENT"].includes(component.format)
+                );
+
+                const acceptedTypes = {
+                  IMAGE: "image/*",
+                  VIDEO: "video/*",
+                  DOCUMENT: ".pdf,.doc,.docx,.xls,.xlsx",
+                };
+
+                return (
+                  <input
+                    type="file"
+                    id="imageUpload"
+                    accept={acceptedTypes[mediaComponent?.format] || "*/*"}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    ref={fileRef}
+                  />
+                );
+              })()}
+
               <button
                 type="button"
                 onClick={() => document.getElementById("imageUpload").click()}
@@ -431,12 +453,12 @@ const TemplateForm = ({
                 </>
               )}
             </div>
+
             {imageState.name && (
               <span className="text-[0.8rem] text-gray-700">
                 {imageState.name}
               </span>
             )}
-            {/* <div className='text-[0.8rem] text-gray-600'>Only jpg,jpeg and png allowed (5 MB max)</div> */}
           </div>
         )}
       </div>

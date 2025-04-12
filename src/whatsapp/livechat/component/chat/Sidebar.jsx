@@ -1,22 +1,18 @@
-export const ChatSidebar = ({
-    allConvo,
-    setActiveChat,
-    formatDate,
-    activeChat
-}) => {
+export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
   return (
     <div className="mt-4 h-[400px] overflow-y-auto">
-      {allConvo
+      {chatState?.allConversations
         ?.slice()
         ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
         ?.map((chat, index) => (
           <div
             key={chat.srno || index}
             className={`p-3 border-b cursor-pointer select-none ${
-              activeChat?.srno === chat.srno ? "bg-gray-300" : ""
+              chatState?.active?.srno === chat.srno ? "bg-gray-300" : ""
             }`}
             onClick={() => {
-              setActiveChat(chat);
+              // setActiveChat(chat);
+              setChatState((prev) => ({ ...prev, active: chat }));
             }}
           >
             <div className="flex items-center justify-between">
