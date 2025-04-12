@@ -29,7 +29,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const handleTooltipOpen = (key) => {
     setOpenTooltips((prev) => ({ ...prev, [key]: true }));
   };
-  
+
   const handleTooltipClose = (key) => {
     setOpenTooltips((prev) => ({ ...prev, [key]: false }));
   };
@@ -39,8 +39,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       setOpenTooltips({});
     }
   }, [isCollapsed]);
-  
-  
+
+
 
   useEffect(() => {
     if (isCollapsed) {
@@ -191,8 +191,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/obdcreatecampaign", label: "Create Campaign" },
-        { to: "/obdreports", label: "Reports" },
-        { to: "/obdmanagevoice", label: "Manage Voice Clips" },
+        { to: "/obdmanagecampaign", label: "Reports" },
+        { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+        { to: "/obdIntegration", label: "Integration" },
       ],
     },
     {
@@ -237,6 +238,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //         { to: '/mainaccount', label: 'Account' },
     //     ],
     // },
+    {
+      name: 'CallBack',
+      icon: <MdOutlineEmail />,
+      label: 'Callback',
+      type: 'dropdown',
+      links: [
+        { to: '/callback', label: 'Call Back' }
+      ]
+
+    },
     {
       name: "managefunds",
       icon: <IoWalletOutline />,
@@ -438,7 +449,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       onAnimationComplete={() => {
         setCollapseAnimationDone(!isCollapsed);
       }}
-      className={`mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 overflow-y-auto overflow-x-hidden z-9 border-r 
+      className={`mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 overflow-y-auto overflow-x-hidden z-9  
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 3.5rem)" }}
     >
@@ -457,27 +468,24 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
             disableTouchListener={!isCollapsed}
           >
             <motion.div
-              onClick={() =>  handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
-                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-              }`}
+              onClick={() => handleDropdownClick(item.name)}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+                }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
-                  isCollapsed ? "w-0" : "w-auto"
-                }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+                  }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${
-                    openDropdown === item.name ? "rotate-180" : "rotate-0"
-                  }`}
+                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                    }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -507,11 +515,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   <Link
                     to={link.to}
                     onClick={handleSingleRouteClick}
-                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${
-                      isActiveRoute(link.to)
-                        ? "bg-[#e6f4ff] text-blue-800"
-                        : "text-gray-800"
-                    }`}
+                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to)
+                      ? "bg-[#e6f4ff] text-blue-800"
+                      : "text-gray-800"
+                      }`}
                   >
                     <FiberManualRecordIcon
                       sx={{
@@ -521,11 +528,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                       }}
                     />
                     <span
-                      className={`font-[600] ${
-                        isActiveRoute(link.to)
-                          ? "text-blue-800"
-                          : "text-gray-800"
-                      }`}
+                      className={`font-[600] ${isActiveRoute(link.to)
+                        ? "text-blue-800"
+                        : "text-gray-800"
+                        }`}
                     >
                       {link.label}
                     </span>
@@ -554,9 +560,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
-                  isCollapsed ? "justify-center" : ""
-                }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+                  }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -567,17 +572,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-2 py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
-                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : ""
-                }`}
+                className={`flex items-center gap-2 py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : ""
+                  }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${
-                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                  }`}
+                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                    }`}
                 >
                   {item.label}
                 </motion.span>

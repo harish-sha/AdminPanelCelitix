@@ -10,10 +10,10 @@ const UniversalDatePicker = ({
     label,
     value,
     onChange,
-    placeholder = 'Select a date',
+    // placeholder = '',
     tooltipContent = '',
     tooltipPlacement = 'top',
-    error = false,
+    // error = false,
     errorText = '',
     minDate,
     maxDate,
@@ -40,7 +40,7 @@ const UniversalDatePicker = ({
             </div>
 
             <LocalizationProvider dateAdapter={AdapterDateFns} className="h-5 bg-slate-500" >
-                <DatePicker
+                {/* <DatePicker
                     id={id}
                     name={name}
                     value={value}
@@ -48,7 +48,7 @@ const UniversalDatePicker = ({
                     minDate={minDate}
                     maxDate={maxDate}
                     views={views}
-                    defaultValue={new Date()}
+                    defaultValue={defaultValue || null}
                     format='dd/MM/yyyy'
                     renderInput={(params) => (
                         <div >
@@ -71,6 +71,35 @@ const UniversalDatePicker = ({
                             backgroundColor: '#fff',
                             boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.5)",
                             color: '',
+                        },
+                    }}
+                /> */}
+                <DatePicker
+                    id={id}
+                    name={name}
+                    value={value}
+                    onChange={onChange}
+                    minDate={minDate}
+                    maxDate={maxDate}
+                    views={views}
+                    format="dd/MM/yyyy"
+                    slotProps={{
+                        textField: {
+                            fullWidth: true,
+                            // placeholder,
+                            variant: "outlined",
+                            InputProps: {
+                                style: {
+                                    backgroundColor: "#fff",
+                                    borderRadius: 6,
+                                    fontSize: "0.95rem",
+                                    height: "38px",
+                                    boxShadow: "0px 0px 1px rgba(0, 0, 0, 0.3)",
+                                },
+                            },
+                            InputLabelProps: {
+                                shrink: true,
+                            },
                         },
                     }}
                 />

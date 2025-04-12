@@ -95,14 +95,29 @@ import IVRFlowIBD from "@/ibd/ibdIVRFlow/IVRFlowIBD";
 import ManageExecutiveIBD from "@/ibd/ibdManageExecutive/ManageExecutiveIBD";
 import SettingIBD from "@/ibd/ibdSettings/SettingIBD";
 
+// OBD
+import ObdManageVoiceClips from "../../obd/managevoiceclips/ObdManageVoiceClips";
+import ObdIntegration from "../../obd/obdmanageinteration/ObdIntegration";
+import ObdCampaignReports from '../../obd/obdManageCampaign/ObdCampaignReports';
+
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
 import MissedCallSettings from "@/missedcall/missedCallSettings/MissedCallSettings";
+
+// App Authenticator
+import AppauthenticatorReports from "../../appauthenticator/authenticatorreports/AppauthenticatorReports";
+import AuthenticatorSetting from "../../appauthenticator/authenticatorsettings/AuthenticatorSetting";
+
+// Email
+import EmailReport from "../../email/emailreport/EmailReport";
+import EmailTemplate from "../../email/emailtemplate/EmailTemplate";
 
 
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
+import Callback from "@/callback/Callback";
 
 const Approutes = () => {
   return (
@@ -212,14 +227,34 @@ const Approutes = () => {
         <Route path="ibdmanageexecutive" element={<ManageExecutiveIBD />} />
         <Route path="ibdsettings" element={<SettingIBD />} />
 
+        {/* OBD */}
+        <Route path='/obdcreatecampaign' element={<ObdCreateCampaign />} />
+        <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
+        <Route path="/obdIntegration" element={<ObdIntegration />} />
+        <Route path='/obdmanagecampaign' element={<ObdCampaignReports />} />
+
+
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
         <Route path="/missedcallsettings" element={<MissedCallSettings />} />
+
+        {/* Callback */}
+        <Route path="/callback" element={<Callback />} />
+
+        {/* Appauthenticator */}
+        <Route
+          path="/authreports"
+          element={<AppauthenticatorReports />}
+        />
+        <Route path="/authsettings" element={<AuthenticatorSetting />} />
+
+        {/* Email */}
+        <Route path="/emailtemplate" element={<EmailTemplate />} />
+        <Route path="/emailreports" element={<EmailReport />} />
+
       </Route>
 
-
       <Route path="dummy" element={<Dummy />} />
-
       <Route path="arihant" element={<Arihant />} />
 
       <Route

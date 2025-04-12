@@ -70,8 +70,7 @@ const CarouselTemplateTypes = ({
         toast.success(`${isVideo ? "Video" : "Image"} uploaded successfully!`);
       } else {
         toast.error(
-          `File size exceeds ${
-            isVideo ? "16MB" : "5MB"
+          `File size exceeds ${isVideo ? "16MB" : "5MB"
           } limit. Please upload a smaller file.`
         );
       }
@@ -156,9 +155,8 @@ const CarouselTemplateTypes = ({
             Card Body {selectedCardIndex + 1}
           </label>
           <CustomTooltip
-            title={`Enter the card ${
-              selectedCardIndex + 1
-            } body. Max length: 160 characters.`}
+            title={`Enter the card ${selectedCardIndex + 1
+              } body. Max length: 160 characters.`}
             placement="right"
             arrow
           >

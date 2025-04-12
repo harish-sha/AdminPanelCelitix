@@ -15,7 +15,7 @@ export const getGrpList = async () => {
   });
 };
 
-// add contact to group 
+// add contact to group
 export const addContact = async (data) => {
   return await fetchWithAuth("/proCpaasRest/contact/addContact", {
     method: "POST",

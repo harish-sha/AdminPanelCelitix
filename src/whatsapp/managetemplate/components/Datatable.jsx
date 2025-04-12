@@ -838,16 +838,15 @@ const DataTable = ({
       <Dialog
         header={"Curl Data"}
         visible={curlDialogVisible}
-        style={{ width: "35rem", height: "35rem" }}
+        style={{ width: "35rem", maxHeight: "35rem" }}
         onHide={() => {
           setCurlDialogVisible(false);
           setCurlData("");
         }}
         draggable={false}
       >
-        <div className="border" >
-
-          <div className="flex items-center justify-end">
+        <div className="border rounded-md p-1 relative" >
+          <div className="absolute right-0">
             <button
               onClick={() =>
                 handleCopyPassword(JSON.stringify(curlData, null, 2))
@@ -861,7 +860,8 @@ const DataTable = ({
               />
             </button>
           </div>
-          <pre className="text-xs break-words">{JSON.stringify(curlData, null, 2)}</pre>
+
+          <pre className="text-xs whitespace-pre-wrap text-gray-800  break-words">{JSON.stringify(curlData, null, 2)}</pre>
         </div>
       </Dialog>
     </>
