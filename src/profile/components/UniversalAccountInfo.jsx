@@ -16,6 +16,7 @@ import {
 import Loader from "../../whatsapp/components/Loader";
 
 import { getCountryList } from "../../apis/common/common";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const CustomPagination = ({
   totalPages,
@@ -270,23 +271,23 @@ function AccountInfoModal({ show, handleClose }) {
 
   const whatsApprows = Array.isArray(filteredWhatsAppData)
     ? filteredWhatsAppData?.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      countryName: item.countryName ?? "-",
-      countryCode: item.isoCode ?? "-",
-      transactional: item.transactional,
-      promotional: item.promotional,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        countryName: item.countryName ?? "-",
+        countryCode: item.isoCode ?? "-",
+        transactional: item.transactional,
+        promotional: item.promotional,
+      }))
     : [];
 
   const rcsrows = Array.isArray(filteredData)
     ? filteredData?.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      country_name: item.country_name,
-      ISO_code: "+" + item.ISO_code,
-      rate: item.rate,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        country_name: item.country_name,
+        ISO_code: "+" + item.ISO_code,
+        rate: item.rate,
+      }))
     : [];
 
   // const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -361,7 +362,10 @@ function AccountInfoModal({ show, handleClose }) {
         draggable={false}
       >
         {isFetching ? (
-          <Loader />
+          // <Loader />
+          <div className="card flex justify-content-center">
+            <ProgressSpinner strokeWidth="2" className="text-blue-500" />
+          </div>
         ) : (
           <>
             <div className="flex justify-end mb-3">

@@ -24,7 +24,6 @@ import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
 import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
 
-
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
 import Transactions from "@/managefunds/transactions/Transactions";
@@ -56,7 +55,7 @@ import AddService from "@/admin/manageSMPP.jsx/pages/AddService";
 import AddRouting from "@/admin/manageRouting/pages/AddRouting";
 import EditRouting from "@/admin/manageRouting/pages/EditRouting";
 import SMPPErrorCode from "@/admin/smmpErrorCode/SMPPErrorCode";
-import AddOperator from '@/admin/managePrefix/pages/AddOperator';
+import AddOperator from "@/admin/managePrefix/pages/AddOperator";
 
 // sms
 import SmsReports from "@/sms/smsReports/SmsReports";
@@ -83,11 +82,9 @@ import TwowayMangeKeyword from "@/twowaysms/twowayMangeKeyword/TwowayMangeKeywor
 import TwowayReports from "@/twowaysms/twowayReports/TwowayReports";
 import TwowayIntegration from "@/twowaysms/twowayIntegration/TwowayIntegration";
 
-
 // Cick To Call
 import ClickToSetting from "@/clicktwocall/clickToSetting/ClickToSetting";
 import ClickToHistory from "@/clicktwocall/clickToHistory/ClickToHistory";
-
 
 // IBD
 import CallHistoryIBD from "@/ibd/ibdCallHistory/CallHIstoryIBD";
@@ -96,9 +93,10 @@ import ManageExecutiveIBD from "@/ibd/ibdManageExecutive/ManageExecutiveIBD";
 import SettingIBD from "@/ibd/ibdSettings/SettingIBD";
 
 // OBD
+import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
 import ObdManageVoiceClips from "../../obd/managevoiceclips/ObdManageVoiceClips";
 import ObdIntegration from "../../obd/obdmanageinteration/ObdIntegration";
-import ObdCampaignReports from '../../obd/obdManageCampaign/ObdCampaignReports';
+import ObdCampaignReports from "../../obd/obdManageCampaign/ObdCampaignReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
@@ -112,12 +110,16 @@ import AuthenticatorSetting from "../../appauthenticator/authenticatorsettings/A
 import EmailReport from "../../email/emailreport/EmailReport";
 import EmailTemplate from "../../email/emailtemplate/EmailTemplate";
 
+// Number Lookup
+import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
+import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
+
+// Callback
+import Callback from "@/callback/Callback";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
-import Callback from "@/callback/Callback";
 
 const Approutes = () => {
   return (
@@ -228,30 +230,29 @@ const Approutes = () => {
         <Route path="ibdsettings" element={<SettingIBD />} />
 
         {/* OBD */}
-        <Route path='/obdcreatecampaign' element={<ObdCreateCampaign />} />
+        <Route path="/obdcreatecampaign" element={<ObdCreateCampaign />} />
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
-        <Route path='/obdmanagecampaign' element={<ObdCampaignReports />} />
-
+        <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
         <Route path="/missedcallsettings" element={<MissedCallSettings />} />
 
+        {/* Number Lookup */}
+        <Route path="/hlrlookup" element={<HlrLookup />} />
+        <Route path="/hlrlookupreports" element={<HlrLookupReports />} />
+
         {/* Callback */}
         <Route path="/callback" element={<Callback />} />
 
         {/* Appauthenticator */}
-        <Route
-          path="/authreports"
-          element={<AppauthenticatorReports />}
-        />
+        <Route path="/authreports" element={<AppauthenticatorReports />} />
         <Route path="/authsettings" element={<AuthenticatorSetting />} />
 
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
-
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

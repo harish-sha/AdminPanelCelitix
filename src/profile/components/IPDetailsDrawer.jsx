@@ -40,11 +40,11 @@ export const IPDetailsDrawer = ({ row, open, onClose }) => {
         unmountOnExit
         timeout={300}
       >
-        <Box className="w-[60rem] h-full bg-white p-6 relative overflow-y-auto">
+        <Box className="w-[40rem] h-full bg-white p-6 relative overflow-y-auto">
           {/* Header */}
           <div className="flex items-center justify-between mb-4">
             <Typography variant="h6" className="font-semibold">
-              IP Details
+              More Details
             </Typography>
             <IconButton onClick={onClose}>
               <CloseIcon />
@@ -55,7 +55,7 @@ export const IPDetailsDrawer = ({ row, open, onClose }) => {
           <Divider className="mb-4" />
 
           {/* Content */}
-          <div className="grid grid-cols-3 gap-4 mt-4">
+          <div className="grid grid-cols-2 gap-4 mt-4">
             {Object.entries(row).map(([key, value]) => {
               return (
                 <div

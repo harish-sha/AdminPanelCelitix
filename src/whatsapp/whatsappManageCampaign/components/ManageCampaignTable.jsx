@@ -292,6 +292,7 @@
 // export default ManageCampaignTable;
 
 import * as React from "react";
+import { useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
@@ -391,7 +392,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const [campaignInfo, setCampaignInfo] = useState(null);
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
 
-  const dropdownButtonRefs = React.useRef({});
+  const dropdownButtonRefs = useRef({});
   const navigate = useNavigate();
 
   const closeDropdown = () => setDropdownOpenId(null);
@@ -628,20 +629,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
               <div className="text-sm text-gray-500">No Data Available</div>
             )}
           </InfoPopover>
-
-          {/* <InfoPopover
-            anchorEl={dropdownButtonRefs.current[params.row.id]}
-            open={dropdownOpenId === params.row.id}
-            onClose={closeDropdown}
-          >
-            {campaignInfoMap[params.row.id] ? (
-              <CampaignSummaryUI data={campaignInfoMap[params.row.id]} />
-            ) : (
-              <Typography fontSize={14} color="gray">
-                No Data Available
-              </Typography>
-            )}
-          </InfoPopover> */}
 
           <CustomTooltip
             title="Campaign Detail Report"

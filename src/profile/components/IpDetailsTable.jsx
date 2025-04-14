@@ -76,11 +76,6 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
     pageSize: 10,
   });
 
-  const handleView = (row) => {
-    setSelectedRow(row);
-  };
-
-
   // const columns = [
   //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
   //   {
@@ -312,29 +307,58 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => {
-      let moreDetails = {};
+        let moreDetails = {};
 
-      try {
-        moreDetails =
-          item.moreDetails && item.moreDetails !== "null"
-            ? JSON.parse(item.moreDetails)
-            : {};
-      } catch (error) {
-        console.error("Error parsing moreDetails:", error);
-      }
+        try {
+          moreDetails =
+            item.moreDetails && item.moreDetails !== "null"
+              ? JSON.parse(item.moreDetails)
+              : {};
+        } catch (error) {
+          console.error("Error parsing moreDetails:", error);
+        }
 
-      const row = {
-        id: index + 1,
-        sn: index + 1,
-        ip: item.ip ?? "-",
-        user_id: item.user_id ?? "-",
-        insert_time: item.insert_time ?? "-",
-        ...moreDetails,
-      };
+        const row = {
+          id: index + 1,
+          sn: index + 1,
+          ip: item.ip ?? "-",
+          user_id: item.user_id ?? "-",
+          insert_time: item.insert_time ?? "-",
+          ...moreDetails,
+        };
 
-      return row;
-    })
+        return row;
+      })
     : [];
+
+  // Function to filter out unwanted fields
+  const filterRowData = (row) => {
+    const excludedFields = [
+      "id",
+      "sn",
+      "network",
+      "languages",
+      "country_area",
+      "country_population",
+      "country_tld",
+      "continent_code",
+      "in_eu",
+      "utc_offset",
+    ];
+    const filteredRow = Object.keys(row)
+      .filter((key) => !excludedFields.includes(key))
+      .reduce((acc, key) => {
+        acc[key] = row[key];
+        return acc;
+      }, {});
+    return filteredRow;
+  };
+
+  // Handle View Details
+  const handleView = (row) => {
+    const filteredRow = filterRowData(row); 
+    setSelectedRow(filteredRow); 
+  };
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 

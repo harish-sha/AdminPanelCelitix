@@ -159,7 +159,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 <Icon className="text-xl text-blue-700" />
               </button> */}
               <button
-                className="relative p-2 rounded-full bg-[#e6f4ff] group overflow-hidden transition-all duration-300  hover:shadow-md"
+                className="relative p-2 rounded-full bg-[#e6f4ff] group overflow-hidden transition-all duration-300  hover:shadow-md cursor-pointer"
                 onClick={action}
               >
                 <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 bg-indigo-200 transition-transform origin-bottom duration-300 z-0"></div>
