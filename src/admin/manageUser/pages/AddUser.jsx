@@ -7,6 +7,8 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import { useEffect } from "react";
 import { RadioButton } from 'primereact/radiobutton';
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import { getPincodeDetails } from "@/apis/common/common";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 const AddUser = () => {
   const [userid, setUserId] = useState("");
@@ -23,10 +25,11 @@ const AddUser = () => {
   const [zipCode, setZipCode] = useState("");
   const [userAccountManager, setUserAccountManager] = useState(null);
   const [expiryDate, setExpiryDate] = useState("");
-  const [userType, setUserType] = useState(""); // Default state
-  const [isReadOnly, setIsReadOnly] = useState(true); // Default: readOnly is true
-  const [accountUrl, setAccountUrl] = useState(""); // State for input value
-  const [enablepostpaid, setEnablePostpaid] = useState("disable"); // Postpaid option state
+  const [userType, setUserType] = useState("");
+  const [isReadOnly, setIsReadOnly] = useState(true);
+  const [accountUrl, setAccountUrl] = useState("");
+  const [enablepostpaid, setEnablePostpaid] = useState("disable");
+  const [pincodeOptions, setPincodeOptions] = useState([])
 
   // Dropdown options
   const useroption = [
@@ -34,11 +37,39 @@ const AddUser = () => {
     { value: "Reseller", label: "Reseller" },
   ];
 
-
   useEffect(() => {
     setIsReadOnly(userType !== "Reseller");
     setAccountUrl("");
   }, [userType]);
+
+  // Fetch pincode details when the zipCode changes
+  useEffect(() => {
+    const fetchPincodeDetails = async () => {
+      if (zipCode) {
+        try {
+          console.log("Fetching pincode details for:", zipCode); // Debugging log
+          const data = await getPincodeDetails(zipCode); // Call the API with the pincode
+          console.log("Pincode API response:", data); // Debugging log
+
+          if (Array.isArray(data)) {
+            const options = data.map((item) => ({
+              value: item.pincode, // Use the pincode as the value
+              label: `${item.pincode} - ${item.district}, ${item.state}`, // Combine pincode, district, and state for the label
+            }));
+
+            setPincodeOptions(options); // Update the dropdown options
+          } else {
+            console.error("Invalid API response:", data);
+          }
+        } catch (error) {
+          console.error("Error fetching pincode details:", error.message); // Log any errors
+        }
+      }
+    };
+
+    fetchPincodeDetails();
+  }, [zipCode]);
+
 
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
@@ -146,12 +177,20 @@ const AddUser = () => {
           value={country}
           onChange={(e) => setCountry(e.target.value)}
         />
-        <InputField label="Pincode"
+        {/* <InputField label="Pincode"
           id='Pincode'
           name="Pincode"
           placeholder="Enter your Pincode"
           value={zipCode}
           onChange={(e) => setZipCode(e.target.value)}
+        /> */}
+        <DropdownWithSearch
+          label="Pincode"
+          id="pincode"
+          name="pincode"
+          options={pincodeOptions}
+          value={zipCode}
+          onChange={(selected) => setZipCode(selected)}
         />
       </div>
 

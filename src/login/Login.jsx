@@ -186,7 +186,7 @@ const Login = () => {
                 />
                 <div
                   className="absolute right-3 top-8.5 cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)} // Toggle password visibility
+                  onClick={() => setShowPassword(!showPassword)} 
                 >
                   {showPassword ? (
                     <AiOutlineEyeInvisible size={20} />

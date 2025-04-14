@@ -1,234 +1,264 @@
-import React from "react";
-import { motion } from "framer-motion";
-import { Grid } from "@mui/material";
-import {
-  WhatsApp,
-  Email,
-  Call,
-  Lock,
-  Message,
-  PhoneAndroid,
-  SyncAlt,
-  Person,
-  Star,
-  TaskAlt,
-  TrendingUp,
-  Insights,
-  SmartToy,
-  SupportAgent,
-  Feedback,
-} from "@mui/icons-material";
+import React, { useState, useEffect } from "react";
+import InputField from "../../../whatsapp/components/InputField";
+import GeneratePassword from "../../../whatsapp/components/GeneratePassword";
+import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
+import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
+import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import { RadioButton } from 'primereact/radiobutton';
+import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import { getPincodeDetails } from "../../../common"; // Import the API function
 
-const services = [
-  {
-    name: "WhatsApp",
-    icon: WhatsApp,
-    desc: "Send real-time notifications",
-    color: "from-green-100 to-green-300",
-  },
-  {
-    name: "RCS",
-    icon: Message,
-    desc: "Interactive messaging solution",
-    color: "from-purple-100 to-purple-300",
-  },
-  {
-    name: "OBD",
-    icon: Call,
-    desc: "Automated outbound dialer",
-    color: "from-yellow-100 to-yellow-300",
-  },
-  {
-    name: "IBD",
-    icon: Call,
-    desc: "Track inbound communications",
-    color: "from-indigo-100 to-indigo-300",
-  },
-  {
-    name: "Click2Call",
-    icon: PhoneAndroid,
-    desc: "One-click voice connect",
-    color: "from-pink-100 to-pink-300",
-  },
-  {
-    name: "Email",
-    icon: Email,
-    desc: "Campaign and transactional email",
-    color: "from-blue-100 to-blue-300",
-  },
-  {
-    name: "App Authenticator",
-    icon: Lock,
-    desc: "Secure 2FA login solutions",
-    color: "from-gray-100 to-gray-300",
-  },
-  {
-    name: "Two-Way SMS",
-    icon: SyncAlt,
-    desc: "Bi-directional messaging",
-    color: "from-red-100 to-red-300",
-  },
-];
+const AddUser = () => {
+  const [userid, setUserId] = useState("");
+  const [userPassword, setUserPassword] = useState("");
+  const [userName, setUserName] = useState("");
+  const [userLastName, setUserLastName] = useState("");
+  const [userEmail, setUserEmail] = useState("");
+  const [userPhoneNumber, setUserPhoneNumber] = useState("");
+  const [companyName, setCompanyName] = useState("");
+  const [userAddress, setUserAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [state, setState] = useState("");
+  const [country, setCountry] = useState("");
+  const [zipCode, setZipCode] = useState("");
+  const [pincodeOptions, setPincodeOptions] = useState([]); // State for pincode dropdown options
+  const [userAccountManager, setUserAccountManager] = useState(null);
+  const [expiryDate, setExpiryDate] = useState("");
+  const [userType, setUserType] = useState(""); // Default state
+  const [isReadOnly, setIsReadOnly] = useState(true); // Default: readOnly is true
+  const [accountUrl, setAccountUrl] = useState(""); // State for input value
+  const [enablepostpaid, setEnablePostpaid] = useState("disable"); // Postpaid option state
 
-const quickStats = [
-  {
-    icon: <TaskAlt className="text-green-600" />,
-    label: "Active Campaigns",
-    value: 32,
-  },
-  {
-    icon: <TrendingUp className="text-blue-600" />,
-    label: "Engagement Rate",
-    value: "78%",
-  },
-  {
-    icon: <Star className="text-yellow-500" />,
-    label: "Client Rating",
-    value: "4.8/5",
-  },
-];
+  // Dropdown options
+  const useroption = [
+    { value: "User", label: "User" },
+    { value: "Reseller", label: "Reseller" },
+  ];
 
-const bots = [
-  {
-    name: "Support Bot",
-    desc: "Handles common queries 24/7",
-    icon: SupportAgent,
-  },
-  {
-    name: "Onboarding Bot",
-    desc: "Welcomes and guides new users",
-    icon: SmartToy,
-  },
-  { name: "Feedback Bot", desc: "Collects customer feedback", icon: Feedback },
-];
+  const usermanager = [
+    { value: "AshimaSainit", label: "AshimaSainit" },
+    { value: "RuchiPatel", label: "RuchiPatel" },
+    { value: "RiyaSen", label: "RiyaSen" },
+  ];
 
-const Dashboard = () => {
+  useEffect(() => {
+    setIsReadOnly(userType !== "Reseller");
+    setAccountUrl("");
+  }, [userType]);
+
+  // Fetch pincode details when the zipCode changes
+  useEffect(() => {
+    const fetchPincodeDetails = async () => {
+      if (zipCode) {
+        try {
+          const data = await getPincodeDetails(zipCode); // Call the API
+          const options = data.map((item) => ({
+            value: item.id, // Assuming the API returns an ID
+            label: item.name, // Assuming the API returns a name
+          }));
+          setPincodeOptions(options); // Update the dropdown options
+        } catch (error) {
+          console.error("Error fetching pincode details:", error.message);
+        }
+      }
+    };
+
+    fetchPincodeDetails();
+  }, [zipCode]);
+
+  const handleChangeEnablePostpaid = (event) => {
+    setEnablePostpaid(event.target.value);
+  };
+
   return (
-    <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-screen">
-      {/* Logged In User Card */}
-      <motion.div
-        className="rounded-2xl shadow-md p-6 flex items-center justify-between gap-6 bg-gradient-to-br from-blue-50 to-blue-100"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-      >
-        <div className="flex items-center gap-4">
-          <Person className="text-blue-600 text-4xl" />
-          <div>
-            <h2 className="text-lg font-bold">Welcome back, John!</h2>
-            <p className="text-sm opacity-80">
-              You're doing great. Here’s a quick overview of your dashboard.
-            </p>
-          </div>
+    <div className="p-6 bg-white rounded-lg shadow-md">
+      <h1 className="mb-4 text-xl font-semibold">Login Info:</h1>
+      <div className="flex items-center flex-wrap gap-4 mb-4">
+        <div className="w-100">
+          <InputField
+            label="User ID *"
+            id="userid"
+            name="userid"
+            placeholder="Enter your User ID"
+            required
+            value={userid}
+            maxLength="8"
+            onChange={(e) => setUserId(e.target.value)}
+          />
         </div>
-        <div className="grid grid-cols-3 gap-4">
-          {quickStats.map((stat, i) => (
-            <div
-              key={i}
-              className="bg-white rounded-xl shadow p-3 px-5 flex flex-col items-start justify-center"
-            >
-              <div className="text-2xl">{stat.icon}</div>
-              <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
-              <div className="font-semibold text-lg">{stat.value}</div>
+        <div className="w-150">
+          <GeneratePassword
+            id="generatepassword"
+            name="generatepassword"
+            label="Password *"
+            onChange={(e) => setUserId(e.target.value0)}
+          />
+        </div>
+      </div>
+
+      <h2 className="mt-6 mb-4 text-lg font-semibold">Personal Details:</h2>
+      <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+        <InputField
+          label="First Name *"
+          id="firstname"
+          name="firstname"
+          placeholder="Enter your First Name"
+          value={userName}
+          onChange={(e) => setUserName(e.target.value)}
+          required
+        />
+        <InputField
+          label="Last Name *"
+          id="lastname"
+          name="lastname"
+          placeholder="Enter your Last Name"
+          value={userLastName}
+          onChange={(e) => setUserLastName(e.target.value)}
+          required
+        />
+        <InputField
+          label="Email ID *"
+          type="email"
+          id="email"
+          name="email"
+          placeholder="Enter your Email ID"
+          value={userEmail}
+          onChange={(e) => setUserEmail(e.target.value)}
+          required
+        />
+        <InputField
+          label="Mobile No. *"
+          id="mobile"
+          name="mobile"
+          placeholder="Enter your Mobile No."
+          value={userPhoneNumber}
+          onChange={(e) => setUserPhoneNumber(e.target.value)}
+        />
+        <InputField
+          label="Company Name"
+          id="company"
+          name="company"
+          placeholder="Enter your Company Name"
+          value={companyName}
+          onChange={(e) => setCompanyName(e.target.value)}
+        />
+        <InputField
+          label="Address"
+          id="address"
+          name="address"
+          placeholder="Enter your Address"
+          value={userAddress}
+          onChange={(e) => setUserAddress(e.target.value)}
+        />
+        <InputField
+          label="City"
+          id="city"
+          name="city"
+          placeholder="Enter your City"
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+        />
+        <InputField
+          label="State"
+          id="state"
+          name="state"
+          placeholder="Enter your State"
+          value={state}
+          onChange={(e) => setState(e.target.value)}
+          required
+        />
+        <InputField
+          label="Country"
+          id="country"
+          name="country"
+          placeholder="Enter your Country"
+          value={country}
+          onChange={(e) => setCountry(e.target.value)}
+        />
+        <AnimatedDropdown
+          label="Pincode"
+          id="pincode"
+          name="pincode"
+          options={pincodeOptions}
+          value={zipCode}
+          onChange={(selected) => setZipCode(selected)}
+        />
+      </div>
+
+      <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>
+      <div className="flex items-start flex-wrap gap-4 mb-4 w-full">
+        <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex gap-2 w-full md:w-50">
+            <AnimatedDropdown
+              label="User Type"
+              id="userType"
+              name="userType"
+              options={useroption}
+              value={userType}
+              onChange={(selected) => {
+                setUserType(selected);
+              }}
+            />
+          </div>
+          {userType === "Reseller" && (
+            <div className="md:w-50 w-full">
+              <InputField
+                label="Account URL"
+                id="accounturl"
+                name="accounturl"
+                placeholder="Enter URL"
+                value={accountUrl}
+                readOnly={isReadOnly}
+                onChange={(e) => setAccountUrl(e.target.value)}
+              />
             </div>
-          ))}
+          )}
         </div>
-      </motion.div>
-
-      {/* Service Cards */}
-      <Grid container spacing={3}>
-        {services.map((service, index) => {
-          const IconComponent = service.icon;
-          return (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-40 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
-              >
-                <motion.div
-                  initial={{ scale: 0.8 }}
-                  animate={{ scale: 1 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex items-center justify-between z-10"
-                >
-                  <div className="font-semibold text-lg">{service.name}</div>
-                  <div className="text-3xl">
-                    <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
-                  </div>
-                </motion.div>
-                <p className="text-sm opacity-70 mt-3 z-10">{service.desc}</p>
-              </motion.div>
-            </Grid>
-          );
-        })}
-      </Grid>
-
-      {/* Bot Section */}
-      <motion.div
-        className="mt-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="flex items-center gap-4 mb-4">
-          <SmartToy className="text-purple-600 text-3xl" />
-          <h2 className="text-xl font-semibold">Your Bots</h2>
+        <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
+          <label
+            htmlFor=""
+            className="text-sm font-medium text-gray-800 font-p"
+          >
+            Postpaid Amount *
+          </label>
+          <InputField
+            id="enablepostinput"
+            name="enablepostinput"
+            placeholder="Enter Limit"
+          />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {bots.map((bot, index) => {
-            const BotIcon = bot.icon;
-            return (
-              <motion.div
-                key={index}
-                whileHover={{ scale: 1.03 }}
-                className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition"
-              >
-                <div className="flex items-center gap-3 mb-2">
-                  <BotIcon className="text-xl text-purple-600" />
-                  <h3 className="font-bold text-base">{bot.name}</h3>
-                </div>
-                <p className="text-sm text-gray-600">{bot.desc}</p>
-              </motion.div>
-            );
-          })}
+        <div className="md:w-80 w-full">
+          <AnimatedDropdown
+            label="Account Manager *"
+            id="accountManager"
+            name="accountManager"
+            options={usermanager}
+            value={userAccountManager}
+            onChange={setUserAccountManager}
+          />
         </div>
-      </motion.div>
-
-      {/* Modern Insight Box Section */}
-      <motion.div
-        className="mt-4 bg-gradient-to-r from-blue-100 to-white border border-blue-200 rounded-2xl shadow-md p-6"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        <div className="flex items-center gap-4 mb-4">
-          <Insights className="text-blue-500 text-3xl" />
-          <h2 className="text-xl font-semibold">Platform Highlights</h2>
+        <div className="md:w-50 w-full">
+          <UniversalDatePicker
+            label="Expiry Date *"
+            id="expiryDate"
+            name="expiryDate"
+            placeholder="Enter Expiry Date"
+            value={expiryDate || new Date()}
+            onChange={(newValue) => setExpiryDate(newValue)}
+          />
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Boosted Deliverability</h3>
-            <p className="text-sm text-gray-600">
-              New engine improves message delivery by 22%.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Real-Time Flow Testing</h3>
-            <p className="text-sm text-gray-600">
-              Test WhatsApp & RCS flows in seconds.
-            </p>
-          </div>
-          <div className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition">
-            <h3 className="font-bold text-base mb-1">Multi-Channel Sync</h3>
-            <p className="text-sm text-gray-600">
-              Unified dashboard now supports all channels together.
-            </p>
-          </div>
-        </div>
-      </motion.div>
+      </div>
+      <div className="flex items-center justify-center">
+        <UniversalButton
+          label="Submit"
+          type="submit"
+          id="submit"
+          name="submit"
+          className="mt-2"
+        />
+      </div>
     </div>
   );
 };
 
-export default Dashboard;
+export default AddUser;

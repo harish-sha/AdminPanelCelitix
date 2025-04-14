@@ -1149,9 +1149,8 @@ export default function WhatsappLiveChat() {
   ) : (
     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
       <div
-        className={`w-full md:w-100  border-r overflow-hidden ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100  border-r overflow-hidden ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1390,7 +1389,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

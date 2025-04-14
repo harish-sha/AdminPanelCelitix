@@ -16,15 +16,7 @@ export const fetchSummaryReport = async (data) => {
   });
 };
 
-// fetch all bots list
-export const fetchAllBotsList = async (agent_id = "") => {
-  return await fetchWithAuth(
-    `proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
-    {
-      method: "POST",
-    }
-  );
-};
+
 
 // export const fetchAgentBySrNo = async (srno) => {
 //   return await fetchWithAuth(

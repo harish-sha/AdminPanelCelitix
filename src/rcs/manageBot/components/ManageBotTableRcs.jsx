@@ -1,8 +1,11 @@
-import { Paper, Typography, Box, Button, styled } from "@mui/material";
+import { Paper, Typography, Box, Button, styled, IconButton } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination/usePagination";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -64,55 +67,7 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
-  const [open, setOpen] = useState(false); // ✅ Start as false
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
-    setOpen(false);
-  };
-
-  // const open = Boolean(anchorEl);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-    </div>
-  );
-};
-const ManageBotTableRcs = ({ id, name, data = [] }) => {
+const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -122,7 +77,7 @@ const ManageBotTableRcs = ({ id, name, data = [] }) => {
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "agent_name", headerName: "Bot Name", flex: 1, minWidth: 120 },
-    { field: "srno", headerName: "Bot Id", flex: 1, minWidth: 120 },
+    { field: "agent_id", headerName: "Bot Id", flex: 1, minWidth: 120 },
     { field: "insert_time", headerName: "Created on", flex: 1, minWidth: 120 },
     {
       field: "user_id",
@@ -131,16 +86,37 @@ const ManageBotTableRcs = ({ id, name, data = [] }) => {
       minWidth: 120,
     },
     { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      minWidth: 350,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit User Details" placement="top">
+            <IconButton onClick={() => onEdit(params.row.srno)}>
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
   ];
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        ...item,
-        active: item.active === 1 ? "Active" : "Inactive",
-        sn: index + 1,
-        id: index + 1,
-      }))
+      ...item,
+      active: item.active === 1 ? "Active" : "Inactive",
+      sn: index + 1,
+      id: index + 1,
+    }))
     : [];
+
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
@@ -194,6 +170,7 @@ const ManageBotTableRcs = ({ id, name, data = [] }) => {
       </GridFooterContainer>
     );
   };
+
   return (
     <Paper sx={{ height: 558 }} id={id} name={name}>
       <DataGrid

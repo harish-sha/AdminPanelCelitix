@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
@@ -266,6 +267,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: "/manageuser", label: "Manage User" },
         { to: "/managedlttemplate", label: "Manage DLT Template" },
+        { to: '/rcsmanagebot', label: 'Manage Bot' },
         { to: "/managevoiceclips", label: "Manage Voice Clips" },
         { to: "/manageplan", label: "Manage Plan" },
         { to: "/accountmanager", label: "Account Manager" },

@@ -8,7 +8,7 @@ import Loader from "../../whatsapp/components/Loader.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
 import SuggestionReportTableRcs from "./components/SuggestionReportTableRcs.jsx";
 import toast from "react-hot-toast";
-import { fetchAllAgents, fetchAllBotsList, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
+import { fetchAllAgents, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
 
 const SuggestionReportRcs = () => {
   const [isFetching, setIsFetching] = useState(false);

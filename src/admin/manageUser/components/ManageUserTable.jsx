@@ -2235,6 +2235,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               }}
             />
           </Tabs>
+
+          {/* whatsapp */}
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2380,6 +2382,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* RCS */}
           <CustomTabPanel value={value} index={1}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2509,6 +2512,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2614,6 +2618,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2753,6 +2758,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Two way sms */}
           <CustomTabPanel value={value} index={4}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2824,6 +2830,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Missed Call */}
           <CustomTabPanel value={value} index={5}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2895,6 +2902,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* C2C */}
           <CustomTabPanel value={value} index={6}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -2958,6 +2966,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Email */}
           <CustomTabPanel value={value} index={7}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
@@ -3029,6 +3038,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               )}
             </div>
           </CustomTabPanel>
+          
+          {/* IBD */}
           <CustomTabPanel value={value} index={8}>
             <div>
               <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">

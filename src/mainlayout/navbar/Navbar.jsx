@@ -38,12 +38,14 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   //   const res = await fetchBalance();
   //   setBalance(res.balance);
   // };
+
   const handleBalance = async () => {
     setIsFetchingBalance(true);
     const res = await fetchBalance();
     setBalance(res.balance);
-    setTimeout(() => setIsFetchingBalance(false), 600); // for smooth loading animation
+    setTimeout(() => setIsFetchingBalance(false), 600); 
   };
+
   useEffect(() => {
     handleBalance();
   }, []);
@@ -52,7 +54,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     () => setIsCollapsed((prev) => !prev),
     [setIsCollapsed]
   );
-
 
   const handleProfileMenu = useCallback(
     (event) => setProfileAnchorEl(event?.currentTarget || null),
@@ -140,11 +141,11 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             // },
             {
               title: `Balance: ₹${balance}`,
-              Icon: isFetchingBalance ? LoopIcon : PaymentsIcon,
+              Icon: isFetchingBalance ? LoopIcon : WalletIcon,
               action: handleBalance,
               showBalance: true
             },
-            { title: "Wallet", Icon: WalletIcon },
+            // { title: "Wallet", Icon: WalletIcon },
             {
               title: "Downloads",
               Icon: DownloadIcon,
@@ -248,8 +249,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 icon: <InfoIcon />,
                 action: () => setShowModal(true),
               },
-              { text: "Balance", icon: <PaymentsIcon /> },
-              { text: "Wallet", icon: <WalletIcon /> },
+              // { text: "Balance", icon: <PaymentsIcon /> },
+              { text: "Balance", icon: <WalletIcon /> },
               { text: "Download", icon: <DownloadIcon /> },
               {
                 text: "Profile",
