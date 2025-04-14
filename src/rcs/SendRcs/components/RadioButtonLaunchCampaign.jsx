@@ -281,7 +281,7 @@ export const RadioButtonLaunchCampaign = ({
 
       {selectedOption === "contact" &&
         uploadedFile &&
-        contactData?.fileHeaders.length > 0 && (
+        contactData?.fileHeaders?.length > 0 && (
           <div className="flex flex-col w-full mt-5">
             <div className="flex flex-col gap-2">
               <div className="flex items-center gap-2">
@@ -349,7 +349,7 @@ export const RadioButtonLaunchCampaign = ({
 
       {selectedOption === "contact" &&
         uploadedFile &&
-        contactData?.sampleRecords.length > 0 && (
+        contactData?.sampleRecords?.length > 0 && (
           <>
             <div className="my-3">
               <p className="text-sm font-semibold tracking-wide text-gray-700">

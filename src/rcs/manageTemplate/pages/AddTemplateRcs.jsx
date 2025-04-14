@@ -14,6 +14,7 @@ import { set } from "date-fns";
 import { fetchAllAgents, saveRcsTemplate } from "@/apis/rcs/rcs";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { cardActionsClasses } from "@mui/material";
 
 const AddTemplateRcs = () => {
   const [inputData, setInputData] = useState({
@@ -201,7 +202,63 @@ const AddTemplateRcs = () => {
     }
 
     if (inputData.templateType === "carousel") {
-      caraousalData.forEach((item, index) => {
+      // Check for carousel card width and height
+      if (!cardwidth) {
+        toast.error("Please select card width");
+        return;
+      }
+      if (!cardheight) {
+        toast.error("Please select card height");
+        return;
+      }
+    }
+
+    // const data = {
+    //   ...inputData,
+    //   suggestions,
+    //   messageContent,
+    //   variables,
+    // };
+    let data = {};
+    let isError = false;
+
+    if (inputData.templateType === "rich_card") {
+      if (!cardData?.file) {
+        toast.error("Please upload a file");
+        return;
+      }
+      data = {
+        ...inputData,
+        agentId: inputData.agentId.toString(),
+        templateType: "image",
+        variables,
+        imageList: [
+          {
+            imagePath: cardData?.file,
+            title: cardData.title,
+            caption: messageContent,
+            cardOrientation: cardOrientation,
+            mediaHeight: cardData.mediaHeight,
+            suggestions: suggestions,
+          },
+        ],
+      };
+    } else if (inputData.templateType === "text") {
+      data = {
+        ...inputData,
+        suggestions,
+        messageContent,
+        variables,
+      };
+    } else if (inputData.templateType === "carousel") {
+      let imageList = [];
+      caraousalData.map((card, index) => {
+        if (!card?.filePath) {
+          isError = true;
+          toast.error("Please upload a file");
+          return;
+        }
+
         const suggestion = {
           website: [],
           websitetitle: [],
@@ -215,7 +272,7 @@ const AddTemplateRcs = () => {
           addressLongitude: [],
         };
 
-        Object.values(item.suggestions).forEach(({ type, value, title }) => {
+        Object.values(card.suggestions).forEach(({ type, value, title }) => {
           if (!type) return;
 
           if (
@@ -252,66 +309,54 @@ const AddTemplateRcs = () => {
           };
 
           actions[type]?.();
-
-          setCaraousalData((prevData) => {
-            const updatedData = [...prevData];
-            updatedData[index].suggestions = suggestion;
-            return updatedData;
-          });
         });
+
+        const hasAtLeastOneButton =
+          suggestion.website.length ||
+          suggestion.mobile.length ||
+          suggestion.replybtn.length ||
+          suggestion.locationtitle.length ||
+          suggestion.addresstitle.length;
+
+        if (!hasAtLeastOneButton && !hasError) {
+          toast.error(
+            `Please add at least one button to the card-${index + 1}`
+          );
+          isError = true;
+          return;
+        }
+
+        const data = {
+          imagePath: card?.filePath,
+          title: card?.cardTitle,
+          caption: card?.cardDescription,
+          suggestions: suggestion,
+        };
+
+        imageList.push(data);
       });
 
-      // Check for carousel card width and height
-      if (!cardwidth) {
-        toast.error("Please select card width");
+      if (isError) {
         return;
       }
-      if (!cardheight) {
-        toast.error("Please select card height");
-        return;
-      }
-    }
 
-    // const data = {
-    //   ...inputData,
-    //   suggestions,
-    //   messageContent,
-    //   variables,
-    // };
-    let data = {};
-
-    if (inputData.templateType === "rich_card") {
       data = {
         ...inputData,
-        orientation: cardOrientation,
-        height: cardData.mediaHeight,
-        standAlone: {
-          cardTitle: cardData.title,
-          cardDescription: messageContent,
-          file: cardData.fileName,
-          thumbnailFileName: cardData.fileName,
-          suggestions: suggestions,
-        },
+        agentId: inputData.agentId.toString(),
+        templateType: "image",
+        width: cardwidth,
+        height: cardheight,
         variables,
-      };
-    } else if (inputData.templateType === "text") {
-      data = {
-        ...inputData,
-        suggestions,
-        messageContent,
-        variables,
+        imageList: imageList,
       };
     }
-
-    // console.log(cardData, "cardData");
-    // console.log(cardwidth, "cardwidth");
-    // console.log(cardOrientation, "cardOrientation");
-    // console.log("carouselData: ", caraousalData);
-    console.log("Api Requested Data", data);
 
     try {
       const res = await saveRcsTemplate(data);
-      console.log(res);
+      if (!res?.status) {
+        toast.error(res?.msg);
+        return;
+      }
       toast.success("Template added successfully");
     } catch (e) {
       toast.error("Something went wrong");
@@ -350,8 +395,8 @@ const AddTemplateRcs = () => {
             id="selectAgent"
             name="selectAgent"
             options={allAgents.map((item) => ({
-              label: item.agentName,
-              value: item.agentId,
+              label: item.agent_name,
+              value: item.agent_id,
             }))}
             value={inputData.agentId}
             onChange={(newValue) => {
@@ -417,7 +462,7 @@ const AddTemplateRcs = () => {
           {/* <h1 className="text-sm font-medium text-gray-700 mb-2">
             Text Template
           </h1> */}
-          <div className="flex items-center mb-2 gap-2" >
+          <div className="flex items-center mb-2 gap-2">
             <span className="text-sm font-medium text-gray-700">
               Text Template
             </span>
@@ -426,7 +471,6 @@ const AddTemplateRcs = () => {
               placement="right"
               arrow
             >
-
               <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
             </CustomTooltip>
           </div>
@@ -451,7 +495,7 @@ const AddTemplateRcs = () => {
           )}
           {inputData.templateType != "carousel" && (
             <div className="mb-3">
-              <div className="flex items-center mb-2 gap-2" >
+              <div className="flex items-center mb-2 gap-2">
                 <span className="text-sm font-medium text-gray-700">
                   Suggested Actions
                 </span>
@@ -464,7 +508,6 @@ const AddTemplateRcs = () => {
                   placement="right"
                   arrow
                 >
-
                   <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
                 </CustomTooltip>
               </div>

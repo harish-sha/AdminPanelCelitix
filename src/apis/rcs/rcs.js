@@ -16,7 +16,15 @@ export const fetchSummaryReport = async (data) => {
   });
 };
 
-
+// fetch all bots list
+export const fetchAllBotsList = async (agent_id = "") => {
+  return await fetchWithAuth(
+    `proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
+    {
+      method: "POST",
+    }
+  );
+};
 
 // export const fetchAgentBySrNo = async (srno) => {
 //   return await fetchWithAuth(
@@ -43,10 +51,13 @@ export const fetchAllAgents = async () => {
 };
 
 // fetch all templates list
-export const fetchAllTemplates = async () => {
-  return await fetchWithAuth("/proCpaasRest/rcsTemplate/showTemplates", {
-    method: "POST",
-  });
+export const fetchAllTemplates = async (data = "") => {
+  return await fetchWithAuth(
+    `/proCpaasRest/rcsTemplate/showTemplates?agentId=${data}`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 // update template status by srno
@@ -83,6 +94,13 @@ export const deleteTemplate = async (srno) => {
 // create template
 export const saveRcsTemplate = async (data) => {
   return await fetchWithAuth(`/proCpaasRest/rcsTemplate/saveRcsTemplate`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+export const launchCampaign = async (data) => {
+  return await fetchWithAuth("/proCpaasRest/sendRcs/sendRcsMessage", {
     method: "POST",
     body: JSON.stringify(data),
   });

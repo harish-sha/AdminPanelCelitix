@@ -233,14 +233,14 @@ a {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
-  width: 18px;
-  height: 18px;
+  width: 26px;
+  height: 25px;
   cursor: pointer;
 }
 
 .hamburger .bar {
   width: 100%;
-  height: 3.5px;
+  height: 4px;
   background-color: #333;
   border-radius: 15px;
   transition: transform 0.3s ease, opacity 0.3s ease;
@@ -340,7 +340,7 @@ a {
 }
 
 /* DatePicker */
-.css-1go6k0s-MuiFormControl-root-MuiTextField-root{
+.css-1go6k0s-MuiFormControl-root-MuiTextField-root {
   width: 100% !important;
 }
 /* DatePicker */

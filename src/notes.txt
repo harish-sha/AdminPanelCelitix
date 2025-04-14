@@ -1,0 +1,80 @@
+arihant commits changes - 
+
+Commits on Apr 11, 2025
+feat: send imageCards in api - done
+at: display carousalUploaded image in preview - done
+feat: add fileUpload btn based on templateType - done
+feat: display uploadFile acc to caraousal template Type - done
+feat: display caraousal preview  - done
+feat: update fileUpload Validations - done
+feat: send file url to in api payload - done
+feat: add nullSaftey operator in whatsAppLaunchCampaign - done
+feat: upload all media and preview in previewComponent - done
+feat: make input accept dynamic in template form" - done
+feat: send schedule date in required format - done
+feat: make fileUpload required - done
+feat: check charLimit for card body carousal template - done
+feat: check charLimit for carousal template - done
+feat: add charLength vdalidation in templateFooter - done
+feat: set AddVariable Btn to disable when char limit exceed - done
+feat: add templateFormatLength validation - done
+feat: display document in preview - done
+feat: remove header from templateType and footer from carouselTemplateType - done
+feat: send authentication payload to api - done
+feat: create ui and states for authentication - done
+feat: optimize caraousal render UI condition - done
+feat: make variables required - done
+feat: make file and interactive actions required - done
+feat: create carousal media payload send template to api - done
+feat: upload file and save handlerId to cardState - done
+feat: remove extra states in component - done
+feat: merge wabaState and update in every component - done
+feat: combine chatState related states - done
+feat: remove agentDisplayName from transfer chat to agent Dialog - done
+
+Commits on Apr 12, 2025
+feat: update wabaSrno key
+
+
+Commits on Apr 14, 2025
+feat: update image url in whatsAppLaunchCampaign preview - done
+feat: add await in send LaunchCampaign - done
+feat: send payload to api for launchCampaign - done
+feat: open a dialog box for final submission - done
+feat: add all validations before sending data to api - done
+feat: display input variables input in preview - done
+feat: save input variable value in inputVariables states - done
+feat: display input for variables - done
+feat: display carousal template preview - done
+feat: make template details empty array in state - done
+feat: display template preview- done
+feat: update preview in live chat - done
+feat: set templateDetails to null after changing seletedTemplate - done
+feat: fetch selected Template Details and set details to null when agent id changes - done
+feat: make necessary states for radioBtnLaunchCampaign RCS - done
+feat: add api to fetchAllGrps in common Api Folder - done
+feat: fetch rcs template based on agentId - done
+feat: add default date in to and from date in transaction - done
+feat: remove header and footer in whatsapp template preview - done
+feat: update validations on api response - done
+feat: add default today date in Rcs Suggestion Report - done
+feat: setfileUploadUrl to null after template is create - done
+
+Commits on Apr 12, 2025
+feat: make carousal api payload and send to api - done
+feat: update payload for rich card template type - done
+feat: add updated rcs files - done
+feat: add validations when send carousal data - done
+feat: send carousal image in payload - done
+feat: setChatState to null when waba changes - done
+feat: display carousalPreview in LiveChatTemplatePreview - done
+feat: render dynamic heading for each card in liveChatvariables - done
+feat: display uploadMedia for caraousal - done
+feat: add mediaUrl in sendTemplate - done
+eat: display variableValue in launchCampaignPreview - done
+feat: update card uploadMedia validations - done
+feat: update wabaSrno key - done
+
+
+
+

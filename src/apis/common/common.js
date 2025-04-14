@@ -7,6 +7,12 @@ export const getCountryList = async () => {
   });
 };
 
+export const getAllGroups = async () => {
+  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
+    method: "POST",
+  });
+};
+
 // Base URL for the API
 const BASE_URL = "https://test.digibima.com/api";
 

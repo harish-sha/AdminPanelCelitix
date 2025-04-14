@@ -136,8 +136,8 @@ export const ChatScreen = ({
                                     isSent ? msg.mediaPath : msg.mediaPath.msg
                                   }
                                   className={commonMediaClass}
-                                  controls={false}
-                                  autoPlay
+                                  controls={true}
+                                  // autoPlay
                                 />
                               )}
                               {msg?.caption && <p>{msg.caption}</p>}

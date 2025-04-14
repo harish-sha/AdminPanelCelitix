@@ -53,27 +53,27 @@ export const Preview = ({
         filteredBtnData.length > 0
           ? filteredBtnData
           : [
-            {
+              {
                 type: "Reply",
                 value: "+91XXXXXXXXXX",
                 title: "Reply",
               },
-            {
-              type: "Url Action",
-              value: "#",
-              title: "Visit Us",
-            },
-            {
-              type: "Dialer Action",
-              value: "+91XXXXXXXXXX",
-              title: "Call Us",
-            },
-            {
-              type: "View Location",
-              value: "+91XXXXXXXXXX",
-              title: "Location",
-            },
-          ],
+              {
+                type: "Url Action",
+                value: "#",
+                title: "Visit Us",
+              },
+              {
+                type: "Dialer Action",
+                value: "+91XXXXXXXXXX",
+                title: "Call Us",
+              },
+              {
+                type: "View Location",
+                value: "+91XXXXXXXXXX",
+                title: "Location",
+              },
+            ],
       cardData,
       cardWidth,
       cardOrientation,
@@ -152,7 +152,11 @@ export const Preview = ({
             {pree?.cardData?.file && (
               <div className="mb-0 w-full h-35">
                 {pree?.fileType === "image" ? (
-                  <img src={pree.cardData.file} alt="Uploaded content" className="h-full w-full" />
+                  <img
+                    src={pree.cardData.file}
+                    alt="Uploaded content"
+                    className="h-full w-full"
+                  />
                 ) : (
                   // Uncomment and define the type if you plan to use <embed>
                   <embed
@@ -218,7 +222,6 @@ export const Preview = ({
                     onClick={() => {
                       onClickHandler();
                       setSelectedCardIndex(index);
-                      console.log("Selected Card Index:", index);
                     }}
                     role="button"
                     tabIndex={0}

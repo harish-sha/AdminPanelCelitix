@@ -15,8 +15,8 @@ const SuggestionReportRcs = () => {
   const [allAgents, setAllAgents] = useState([]);
   const [suggestionData, setSuggestionData] = useState({
     botId: "",
-    fromDate: "",
-    toDate: "",
+    fromDate: new Date(),
+    toDate: new Date(),
     mobileNumber: "",
     offset: "0",
   });

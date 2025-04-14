@@ -119,9 +119,9 @@ const DeliveryreportRcs = () => {
             aria-label="Deliveryre Report Tabs"
             textColor="primary"
             indicatorColor="primary"
-            variant="scrollable" 
-            scrollButtons="auto" 
-            allowScrollButtonsMobile 
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
             className="w-full"
           >
             <Tab
@@ -244,16 +244,16 @@ const DeliveryreportRcs = () => {
                     }}
                   />
                 </div>
-                  <div className="w-max-content">
-                    <UniversalButton
-                      label="Search"
-                      id="campaignsearch"
-                      name="campaignsearch"
-                      variant="primary"
-                      onClick={handleCampaignSearch}
-                      icon={<IoSearch />}
-                    />
-                  </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    label="Search"
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    onClick={handleCampaignSearch}
+                    icon={<IoSearch />}
+                  />
+                </div>
               </div>
             </div>
             {isFetching ? (

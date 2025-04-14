@@ -6,6 +6,10 @@ export const HandleCampaignDetails = ({
   setCampaignDetails,
   allAgents,
   allTemplates,
+  setTemplateDetails,
+  setVarList,
+  setInputVariables,
+  setVarLength,
 }) => {
   return (
     <div>
@@ -27,6 +31,10 @@ export const HandleCampaignDetails = ({
               agent: e,
               templateSrno: "",
             });
+            setTemplateDetails([]);
+            setInputVariables([]);
+            setVarList([]);
+            setVarLength(0);
           }}
           placeholder="Select Agent"
         />
@@ -63,6 +71,10 @@ export const HandleCampaignDetails = ({
           value={campaignDetails?.templateSrno}
           onChange={(value) => {
             setCampaignDetails({ ...campaignDetails, templateSrno: value });
+            setTemplateDetails([]);
+            setInputVariables([]);
+            setVarList([]);
+            setVarLength(0);
           }}
           placeholder="Select Template"
         />

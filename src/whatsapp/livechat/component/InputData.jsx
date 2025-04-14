@@ -20,7 +20,7 @@ export const InputData = ({
           label="Select WABA"
           tooltipContent="Select your whatsapp business account"
           tooltipPlacement="right"
-          options={wabaState?.waba?.map((waba) => ({
+          options={wabaState.waba?.map((waba) => ({
             value: waba.mobileNo,
             label: waba.name,
           }))}
@@ -28,14 +28,22 @@ export const InputData = ({
           onChange={(value) => {
             const wabaSrno = wabaState?.waba?.find(
               (waba) => waba.mobileNo === value
-            )?.srno;
+            )?.wabaSrno;
+
             setWabaState({ ...wabaState, selectedWaba: value, wabaSrno });
 
-            setChatState((prev) => ({
-              ...prev,
+            setChatState({
               active: null,
+              input: "",
               allConversations: [],
-            }));
+              specificConversation: [],
+              latestMessage: {
+                srno: "",
+                replayTime: "",
+              },
+              replyData: "",
+              isReply: false,
+            });
           }}
           placeholder="Select WABA"
         />

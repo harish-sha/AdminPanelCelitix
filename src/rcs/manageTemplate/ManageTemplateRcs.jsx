@@ -80,7 +80,7 @@ const ManageTemplateRcs = () => {
 
     try {
       const res = await updateTemplateStatusbySrno(updateData);
-      if (res.includes(true)) {
+      if (res?.status) {
         toast.success("Status Updated Successfully");
         setSummaryFilterData((prev) =>
           prev.map((item) =>
@@ -181,7 +181,7 @@ const ManageTemplateRcs = () => {
             />
           </div>
         </div>
-        <div className="flex flex-wrap items-end w-full gap-2 mb-2">
+        <div className="flex flex-wrap items-end w-full gap-2 mb-5">
           <div className="w-full sm:w-56">
             <InputField
               label="Template Name"
