@@ -34,8 +34,13 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       headers,
     });
 
-    if (response.statusText !== "OK") {
-      console.error(`API Error: ${response.status} ${response.statusText}`);
+    // if (response.statusText !== "OK") {
+    //   console.error(`API Error: ${response.status} ${response.statusText}`);
+    //   return;
+    // }
+
+    if (response.status !== 200) {
+      console.error(`API Error: ${response.status}`);
       return;
     }
 

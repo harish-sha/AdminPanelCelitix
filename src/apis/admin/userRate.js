@@ -127,7 +127,7 @@ export const getSmsRateByUser = async (userSrno) => {
 };
 
 // delete sms rate data by user
-export const getVoiceRateByUser = async (userSrno) => {
+export const deleteSmsRateByUser = async (userSrno) => {
   return await fetchWithAuth(
     `/proCpaasRest/sms/deleteSmsPricing?userSrno=${userSrno}`,
     {

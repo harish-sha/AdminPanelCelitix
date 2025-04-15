@@ -38,12 +38,13 @@ import {
   getwabadetails,
   updateWabaDetails,
   refreshWhatsApp,
-  uploadImageFile
+  uploadImageFile,
 } from "../../apis/whatsapp/whatsapp";
 import Loader from "../components/Loader";
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { Position } from "@xyflow/react";
+import InfoPopover from "@/components/common/InfoPopover.jsx";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -490,20 +491,20 @@ const WhatsappManageWaba = ({ id, name }) => {
     //   minWidth: 120,
     // },
     // { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
-    // { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
-    {
-      field: "wabaAccountId",
-      headerName: "WABA Account ID",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
+    // {
+    //   field: "wabaAccountId",
+    //   headerName: "WABA Account ID",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     // { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
-    {
-      field: "phoneNumberId",
-      headerName: "Phone Number ID",
-      flex: 1,
-      minWidth: 120,
-    },
+    // {
+    //   field: "phoneNumberId",
+    //   headerName: "Phone Number ID",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     {
       field: "action",
       headerName: "Action",
@@ -523,7 +524,7 @@ const WhatsappManageWaba = ({ id, name }) => {
               >
                 <ImInfo size={18} className="text-green-500 " />
               </IconButton>
-              {dropdownOpenId === params.row.id && (
+              {/* {dropdownOpenId === params.row.id && (
                 <DropdownMenuPortal
                   targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
                   onClose={closeDropdown}
@@ -559,7 +560,36 @@ const WhatsappManageWaba = ({ id, name }) => {
                     </div>
                   )}
                 </DropdownMenuPortal>
-              )}
+              )} */}
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.id]}
+                open={dropdownOpenId === params.row.id}
+                onClose={closeDropdown}
+              >
+                {clicked && Object.keys(clicked).length > 0 ? (
+                  <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                    <tbody>
+                      {Object.entries(clicked).map(([key, value], index) => (
+                        <tr
+                          key={index}
+                          className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                        >
+                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
+                            {key}
+                          </td>
+                          <td className="px-4 py-2 text-gray-800">
+                            {value || "N/A"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="text-sm text-gray-400 italic px-2 py-2">
+                    No data
+                  </div>
+                )}
+              </InfoPopover>
             </span>
           </CustomTooltip>
 
@@ -582,7 +612,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               )}
             </DropdownMenuPortal>
           )} */}
-
 
           <CustomTooltip title="View Profile" placement="top" arrow>
             <IconButton
@@ -647,21 +676,19 @@ const WhatsappManageWaba = ({ id, name }) => {
   // Map API Data to DataGrid Rows
   const rows = wabaList.map((waba, index) => ({
     id: index + 1,
-    // id: waba.wabaSrno,
     sn: index + 1,
     wabaName: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
     createdOn: waba.insertTime || "N/A",
-    // expiryDate: waba.expiryDate || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
-    // messaging_limit: waba.messagingLimits || "N/A",
-    // quality: waba.qualityRate || "N/A",
     additionalInfo: {
       expiryDate: waba.expiryDate || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
       quality: waba.qualityRate || "N/A",
+      wabaAccountId: waba.wabaAccountId || "N/A",
+      phoneNumberId: waba.phoneNumberId || "N/A",
     },
     ...waba,
   }));

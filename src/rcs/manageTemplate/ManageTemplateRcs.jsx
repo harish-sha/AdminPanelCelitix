@@ -20,6 +20,7 @@ import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
+
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [templateData, setTemplateData] = useState({

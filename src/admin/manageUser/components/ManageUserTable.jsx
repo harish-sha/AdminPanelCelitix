@@ -60,7 +60,24 @@ import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicke
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
-import { fetchUserbySrno, updateUserbySrno } from "@/apis/admin/admin";
+import {
+  fetchUserbySrno,
+  getPromoServices,
+  getTransServices,
+  updateUserbySrno,
+} from "@/apis/admin/admin";
+import {
+  addSmsPricing,
+  deleteWhatsappRateBySrno,
+  getSmsRateByUser,
+  getWhatsappRateBySrno,
+  getWhatsappRateData,
+  saveEditWhatsappRate,
+} from "@/apis/admin/userRate";
+import { getCountryList } from "@/apis/common/common";
+import { DataTable } from "@/components/layout/DataTable";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -259,6 +276,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
   const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [currentUserSrno, setCurrentUserSrno] = useState(null);
 
   //userId
   const [selectedId, setSelectedId] = useState("");
@@ -355,21 +373,26 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   // assignService
 
-  // whatsapp
+  // whatsapp Start
+  const [countryOptions, setCountryOptions] = useState([]);
+  const [whatsapprows, setWhatsapprows] = useState([]);
   const [whatsappStatus, setWhatsappStatus] = useState("disable");
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
+  const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
+  const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [editingRow, setEditingRow] = useState(null); // holds full row data
 
-  const countryOptions = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-
-  const handleWhatsappAddCredit = () => {
-    console.log("handleWhatsAppCredit");
-  };
+  const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
+  const [editWhatsappForm, setEditWhatsappForm] = useState({
+    srno: "",
+    userSrno: "",
+    utility: "",
+    marketing: "",
+    countryCode: "",
+  });
 
   const handleChangewhatsapp = (event) => {
     setWhatsappStatus(event.target.value);
@@ -377,7 +400,133 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     // onOptionChange(value);
   };
 
-  // whatsapp
+  const fetchWhatsappRateData = async (userSrno) => {
+    const res = await getWhatsappRateData(userSrno);
+    console.log("raw whatsapp rate response:", res);
+
+    // Case 1: API returns array directly
+    const list = Array.isArray(res) ? res : res?.data;
+
+    if (Array.isArray(list)) {
+      const formatted = list.map((item, index) => {
+        console.log("Mapping item:", item);
+        return {
+          id: item.sr_no || index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          userSrno: String(item.user_srno),
+          countryName: item.country_name || item.country_code || "Unknown",
+          countryCode: String(item.country_srno || ""),
+          utility: String(item.transactional || 0),
+          marketing: String(item.promotional || 0),
+          isoCode: String(item.ISO_code || ""),
+          updateTime: item.update_time || "-",
+        };
+      });
+
+      console.log("formatted rows", formatted);
+      setWhatsapprows(formatted);
+    } else {
+      console.warn("No valid data returned from API");
+    }
+  };
+
+  useEffect(() => {
+    console.log(" WhatsApp rows updated:", whatsapprows);
+  }, [whatsapprows]);
+
+  const handleWhatsappAddCredit = async () => {
+    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
+      toast.error("Please fill all the fields.");
+      return;
+    }
+
+    const payload = {
+      srno: "",
+      userSrno: String(currentUserSrno),
+      utility: String(whatsappUtility),
+      marketing: String(whatsappMarketing),
+      countryCode: String(whatsappCountry),
+    };
+
+    const res = await saveEditWhatsappRate(payload);
+
+    // ✅ Always show the message
+    if (res?.message) {
+      toast[
+        res.message.toLowerCase().includes("success") ? "success" : "error"
+      ](res.message);
+    }
+
+    // ✅ Only refresh and reset if added successfully
+    if (res?.message?.toLowerCase().includes("success")) {
+      await fetchWhatsappRateData(currentUserSrno);
+      resetWhatsappFields(); // clear inputs
+    }
+  };
+
+  const handleWhatsappEdit = async (srno) => {
+    console.log("Editing WhatsApp rate for srno:", srno);
+
+    const res = await getWhatsappRateBySrno(srno);
+    console.log("Edit API response:", res);
+
+    const d = Array.isArray(res) ? res[0] : res?.data?.[0];
+
+    if (d) {
+      setEditWhatsappForm({
+        srno: d.srno ?? srno, // fallback in case srno is not returned
+        userSrno: String(d.user_srno),
+        utility: String(d.transactional),
+        marketing: String(d.promotional),
+        countryCode: String(d.country_srno),
+      });
+
+      setEditWhatsappVisible(true); // ✅ Now it will open
+    } else {
+      console.warn("No data found for srno:", srno);
+    }
+  };
+
+  const handleWhatsappUpdate = async () => {
+    const res = await saveEditWhatsappRate(editWhatsappForm);
+    if (res?.message?.toLowerCase().includes("success")) {
+      toast.success("Rate updated successfully");
+      setEditWhatsappVisible(false);
+      fetchWhatsappRateData(currentUserSrno);
+    } else {
+      toast.error(res?.message || "Failed to update");
+    }
+  };
+
+  const handleWhatsappDelete = (srno) => {
+    const row = whatsapprows.find((r) => r.srno === srno);
+    setEditingRow(row);
+    setWhatsappDeleteVisible(true);
+  };
+
+  const confirmWhatsappDelete = async () => {
+    if (!selectedWhatsappRow?.srno) return;
+
+    const res = await deleteWhatsappRateBySrno(selectedWhatsappRow.srno);
+    if (res?.message?.toLowerCase().includes("success")) {
+      toast.success("Rate deleted successfully.");
+      fetchWhatsappRateData(currentUserSrno);
+      setWhatsappDeleteVisible(false);
+      setSelectedWhatsappRow(null);
+    } else {
+      toast.error(res?.message || "Delete failed.");
+    }
+  };
+
+  const resetWhatsappFields = () => {
+    setWhatsappCountry(null);
+    setWhatsappUtility("");
+    setWhatsappMarketing("");
+  };
+
+  // whatsapp End
+
   // RCS
   const [rcsStatus, setRcsStatus] = useState("disable");
   const [rcsCountry, setRcsCountry] = useState(null);
@@ -395,35 +544,55 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const handleChangercs = (event) => {
     setRcsStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
   // RCS
-  // SMS
+
+  // SMS Start
   const [smsStatus, setSmsStatus] = useState("disable");
   const [transcheck, setTranscheck] = useState(false);
   const [promocheck, setPromocheck] = useState(false);
   const [trans, setTrans] = useState(null);
   const [promo, setPromo] = useState(null);
   const [smsrate, setSmsRate] = useState("");
+  const [transOptions, setTransOptions] = useState([]);
+  const [promoOption, setPromoOption] = useState([]);
+  const [dltRate, setDltRate] = useState("");
 
-  const transOptions = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-  const promoOption = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
+  const resetSmsFields = () => {
+    setTrans(null);
+    setPromo(null);
+    setTranscheck(false);
+    setPromocheck(false);
+    setSmsRate("");
+    setDltRate("");
+  };
 
   const handleChangesms = (event) => {
     setSmsStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // SMS
+  const handleSaveSmsPricing = async () => {
+    const payload = {
+      srno: "",
+      userSrno: String(currentUserSrno),
+      rate: smsrate,
+      dltRate: dltRate || "0",
+      transService: transcheck ? String(trans) : "",
+      promoService: promocheck ? String(promo) : "",
+    };
+
+    console.log("Submitting SMS Pricing Payload:", payload);
+
+    const res = await addSmsPricing(payload);
+    if (res?.statusCode === 200) {
+      toast.success(res.message || "SMS Pricing saved successfully!");
+      resetSmsFields();
+      setAssignService(false);
+    } else {
+      toast.error(res.message || "Failed to save SMS Pricing.");
+    }
+  };
+  // SMS End
+
   // OBD
   const [obdStatus, setObdStatus] = useState("disable");
   const [transcheckobd, setTranscheckobd] = useState(false);
@@ -455,6 +624,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     // onOptionChange(value);
   };
   // OBD
+
   // two-way
   const [twowayStatus, setTwoWayStatus] = useState("disable");
   const [twowayAssign, setTwowayAssign] = useState(null);
@@ -604,6 +774,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     // setRcsStatus(value);
     // onOptionChange(value);
   };
+
   // Edit
 
   {
@@ -710,8 +881,67 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     }
   };
 
-  const handleAssign = (id, name) => {
+  // const handleAssign = (srNo) => {
+  //   setAssignService(true);
+  // };
+
+  const handleAssign = async (srNo) => {
     setAssignService(true);
+    setCurrentUserSrno(srNo);
+    console.log("srNo", srNo);
+
+    setTimeout(() => {
+      fetchWhatsappRateData(srNo);
+    }, 0);
+
+    const [transRes, promoRes, userSmsData, countryListRes, whatsappRateRes] =
+      await Promise.all([
+        getTransServices(),
+        getPromoServices(),
+        getSmsRateByUser(srNo),
+        getCountryList(),
+        getWhatsappRateData(srNo),
+      ]);
+
+    // ✅ map country list
+    if (countryListRes) {
+      setCountryOptions(
+        countryListRes.map((item) => ({
+          label: item.countryName,
+          value: String(item.countryCode),
+        }))
+      );
+    }
+
+    // map trans/promo
+    setTransOptions(
+      (transRes || []).map((item) => ({
+        label: item.serviceName,
+        value: String(item.serviceId),
+      }))
+    );
+    setPromoOption(
+      (promoRes || []).map((item) => ({
+        label: item.serviceName,
+        value: String(item.serviceId),
+      }))
+    );
+
+    // set SMS data
+    if (userSmsData?.data) {
+      const d = userSmsData.data;
+      setTranscheck(!!d.transService);
+      setPromocheck(!!d.promoService);
+      setTrans(d.transService || null);
+      setPromo(d.promoService || null);
+      setSmsRate(d.rate || "");
+      setDltRate(d.dltRate || "");
+    }
+
+    // set WhatsApp table data
+    if (whatsappRateRes?.data) {
+      setWhatsapprows(whatsappRateRes.data);
+    }
   };
 
   const handleApikey = (id, name) => {
@@ -741,7 +971,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Login" placement="top">
-            <IconButton onClick={() => handleLonins(params.row)}>
+            <IconButton onClick={() => handleLonins(params.row.srno)}>
               <LockOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -751,7 +981,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Otp" placement="top">
-            <IconButton onClick={() => handleOtp(params.row)}>
+            <IconButton onClick={() => handleOtp(params.row.srno)}>
               <EmergencyOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -791,7 +1021,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Assign Service" placement="top">
-            <IconButton onClick={() => handleAssign(params.row)}>
+            <IconButton onClick={() => handleAssign(params.row.srno)}>
               <SettingsOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -801,7 +1031,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Manage Api Key" placement="top">
-            <IconButton onClick={() => handleApikey(params.row)}>
+            <IconButton onClick={() => handleApikey(params.row.srno)}>
               <KeyOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -811,7 +1041,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Reset Password" placement="top">
-            <IconButton onClick={() => handleReset(params.row)}>
+            <IconButton onClick={() => handleReset(params.row.srno)}>
               <LockOpenOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -821,7 +1051,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="User Reports" placement="top">
-            <IconButton onClick={() => handleReport(params.row)}>
+            <IconButton onClick={() => handleReport(params.row.srno)}>
               <AssignmentOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -835,46 +1065,72 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     },
   ];
 
+  // const whatsaappcolumns = [
+  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+  //   { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+  //   {
+  //     field: "utility",
+  //     headerName: "Utility (INR/Credit)",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "marketing",
+  //     headerName: "Marketing (INR/Credit)",
+  //     flex: 1,
+  //     minWidth: 120,
+  //   },
+  //   {
+  //     field: "action",
+  //     headerName: "Action",
+  //     flex: 1,
+  //     minWidth: 100,
+  //     renderCell: (params) => (
+  //       <>
+  //         <CustomTooltip arrow title="Edit" placement="top">
+  //           <IconButton onClick={() => handleWhatsappEdit(params.row)}>
+  //             <EditNoteIcon
+  //               sx={{
+  //                 fontSize: "1.2rem",
+  //                 color: "gray",
+  //               }}
+  //             />
+  //           </IconButton>
+  //         </CustomTooltip>
+  //         <CustomTooltip arrow title="Delete" placement="top">
+  //           <IconButton onClick={() => handleWhatsappDelete(params.row)}>
+  //             <DeleteIcon
+  //               sx={{
+  //                 fontSize: "1.2rem",
+  //                 color: "gray",
+  //               }}
+  //             />
+  //           </IconButton>
+  //         </CustomTooltip>
+  //       </>
+  //     ),
+  //   },
+  // ];
   const whatsaappcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "countryName", headerName: "Country", flex: 1 },
+    { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "marketing", headerName: "Marketing", flex: 1 },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
-      field: "utility",
-      headerName: "Utility (INR/Credit)",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "marketing",
-      headerName: "Marketing (INR/Credit)",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 100,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit" placement="top">
-            <IconButton onClick={() => handleWhatsappEdit(params.row)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+            <IconButton onClick={() => handleWhatsappEdit(params.row.srno)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Delete" placement="top">
-            <IconButton onClick={() => handleWhatsappDelete(params.row)}>
-              <DeleteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+            <IconButton onClick={() => handleWhatsappDelete(params.row.srno)}>
+              <DeleteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
         </>
@@ -920,19 +1176,19 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
-  const whatsapprows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    country: "India",
-    utility: "0.30",
-    marketing: "0.80",
-  }));
+  // const whatsapprows = Array.from({ length: 20 }, (_, i) => ({
+  //   id: i + 1,
+  //   sn: i + 1,
+  //   country: "India",
+  //   utility: "0.30",
+  //   marketing: "0.80",
+  // }));
 
   const rcsrows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
@@ -1649,7 +1905,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-            // onClick={addMobileNumber}
+              // onClick={addMobileNumber}
             />
 
             {/* <IconButton
@@ -1882,7 +2138,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               <div className="flex items-center gap-2 text-sm">
                 <RemoveRedEyeOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong className="text-sm" >User ID : </strong>
+                  <strong className="text-sm">User ID : </strong>
                   {selectedUserDetails.userId || "Not Available"}
                 </p>
               </div>
@@ -2001,8 +2257,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2332,43 +2588,15 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                       />
                     </div>
 
-                    <Paper sx={{ height: 250 }} id={id} name={name}>
-                      <DataGrid
-                        id={id}
-                        name={name}
-                        rows={whatsapprows}
-                        columns={whatsaappcolumns}
-                        initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        rowHeight={45}
-                        slots={{
-                          footer: CustomFooter,
-                          noRowsOverlay: CustomNoRowsOverlay,
-                        }}
-                        onRowSelectionModelChange={(ids) =>
-                          setSelectedRows(ids)
-                        }
-                        disableRowSelectionOnClick
-                        disableColumnResize
-                        disableColumnMenu
-                        sx={{
-                          border: 0,
-                          "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": {
-                            color: "#193cb8",
-                            fontSize: "14px",
-                            fontWeight: "bold !important",
-                          },
-                          "& .MuiDataGrid-row--borderBottom": {
-                            backgroundColor: "#e6f4ff !important",
-                          },
-                          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                        }}
-                      />
-                    </Paper>
+                    <DataTable
+                      height={280}
+                      id="whatsapp-rate-table"
+                      name="whatsappRateTable"
+                      col={whatsaappcolumns}
+                      rows={whatsapprows}
+                      selectedRows={selectedRows}
+                      setSelectedRows={setSelectedRows}
+                    />
                   </div>
                   <div className="flex justify-center mt-3">
                     <UniversalButton
@@ -2379,6 +2607,106 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   </div>
                 </>
               )}
+
+              {/* Edit whatsapp Rate */}
+              <Dialog
+                header="Edit WhatsApp Rate"
+                visible={editWhatsappVisible}
+                onHide={() => setEditWhatsappVisible(false)}
+                style={{ width: "30rem" }}
+                draggable={false}
+              >
+                <div className="space-y-4">
+                  <DropdownWithSearch
+                    id="editCountry"
+                    name="editCountry"
+                    label="Country"
+                    value={editWhatsappForm.countryCode}
+                    options={countryOptions}
+                    onChange={(val) =>
+                      setEditWhatsappForm((prev) => ({
+                        ...prev,
+                        countryCode: val,
+                      }))
+                    }
+                  />
+
+                  <InputField
+                    label="Utility"
+                    value={editWhatsappForm.utility}
+                    onChange={(e) =>
+                      setEditWhatsappForm((prev) => ({
+                        ...prev,
+                        utility: e.target.value,
+                      }))
+                    }
+                  />
+
+                  <InputField
+                    label="Marketing"
+                    value={editWhatsappForm.marketing}
+                    onChange={(e) =>
+                      setEditWhatsappForm((prev) => ({
+                        ...prev,
+                        marketing: e.target.value,
+                      }))
+                    }
+                  />
+
+                  <div className="flex justify-end">
+                    <UniversalButton
+                      label="Update"
+                      onClick={handleWhatsappUpdate}
+                    />
+                  </div>
+                </div>
+              </Dialog>
+
+              {/* Delete whatsapp Rate  */}
+              <Dialog
+                header="Delete WhatsApp Rate"
+                visible={whatsappDeleteVisible}
+                style={{ width: "27rem" }}
+                onHide={() => setWhatsappDeleteVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Delete rate for{" "}
+                    <span className="text-green-600">
+                      {editingRow?.countryName}
+                    </span>
+                    ?
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex justify-center gap-4 mt-4">
+                  <UniversalButton
+                    label="Cancel"
+                    onClick={() => setWhatsappDeleteVisible(false)}
+                  />
+                  <UniversalButton
+                    label="Delete"
+                    onClick={async () => {
+                      const res = await deleteWhatsappRateBySrno(
+                        editingRow.srno
+                      );
+                      if (res?.message?.toLowerCase().includes("success")) {
+                        toast.success("Rate deleted.");
+                        fetchWhatsappRateData(currentUserSrno);
+                        setWhatsappDeleteVisible(false);
+                      } else {
+                        toast.error(res.message || "Delete failed.");
+                      }
+                    }}
+                  />
+                </div>
+              </Dialog>
             </div>
           </CustomTabPanel>
 
@@ -2555,62 +2883,86 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
 
               {smsStatus === "enable" && (
-                <div>
-                  <div className="flex mb-2 lg:w-100 md:w-100">
-                    <Checkbox
-                      id="smsstatus"
-                      name="smsstatus"
-                      onChange={(e) => setTranscheck(e.checked)}
-                      checked={transcheck}
-                      className="m-2"
-                    />
+                <div className="">
+                  <div className="space-y-2">
+                    <p>Transaction Service</p>
+                    <div className="flex mb-2 lg:w-100 md:w-100">
+                      <Checkbox
+                        id="smsstatus"
+                        name="smsstatus"
+                        onChange={(e) => setTranscheck(e.checked)}
+                        checked={transcheck}
+                        className="m-2"
+                      />
 
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={transOptions}
-                      value={trans}
-                      onChange={(value) => setTrans(value)}
-                      disabled={!transcheck}
-                    />
-                  </div>
-                  <div className="flex lg:w-100 md:w-100">
-                    <Checkbox
-                      id="smspromo"
-                      name="smspromo"
-                      onChange={(e) => setPromocheck(e.checked)}
-                      checked={promocheck}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={promoOption}
-                      value={promo}
-                      onChange={(value) => setPromo(value)}
-                      disabled={!promocheck}
-                    />
+                      <AnimatedDropdown
+                        id="transdropdown"
+                        name="transdropdown"
+                        options={transOptions}
+                        value={trans} // <- should be the selected serviceId
+                        onChange={(selected) => setTrans(selected)} // selected.value if needed
+                        disabled={!transcheck}
+                      />
+                    </div>
                   </div>
 
-                  <div className=" lg:w-100 md:w-100">
-                    <InputField
-                      id="translimit"
-                      name="translimit"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      value={smsrate}
-                      onChange={(e) =>
-                        validateInput(e.target.value, setSmsRate)
-                      }
-                      type="number"
-                    />
+                  <div className="space-y-2">
+                    <p>Promotion Service</p>
+                    <div className="flex lg:w-100 md:w-100">
+                      <Checkbox
+                        id="smspromo"
+                        name="smspromo"
+                        onChange={(e) => setPromocheck(e.checked)}
+                        checked={promocheck}
+                        className="m-2"
+                      />
+
+                      <AnimatedDropdown
+                        id="promodropdown"
+                        name="promodropdown"
+                        options={promoOption}
+                        value={promo}
+                        onChange={(selected) => setPromo(selected)}
+                        disabled={!promocheck}
+                      />
+                    </div>
                   </div>
+
+                  <div className="flex gap-5 items-center justify-start mt-3">
+                    <div className=" lg:w-100 md:w-100">
+                      <InputField
+                        id="translimit"
+                        name="translimit"
+                        label="Rate"
+                        placeholder="(INR / Credit)"
+                        value={smsrate}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setSmsRate)
+                        }
+                        type="number"
+                      />
+                    </div>
+                    <div className=" lg:w-100 md:w-100">
+                      <InputField
+                        id="dltRate"
+                        name="dltRate"
+                        label="Dlt Rate"
+                        placeholder="(INR / Credit)"
+                        value={dltRate}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setDltRate)
+                        }
+                        type="number"
+                      />
+                    </div>
+                  </div>
+
                   <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
+                      id="smsSave"
+                      name="smsSave"
+                      onClick={handleSaveSmsPricing}
                     />
                   </div>
                 </div>
@@ -3038,7 +3390,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               )}
             </div>
           </CustomTabPanel>
-          
+
           {/* IBD */}
           <CustomTabPanel value={value} index={8}>
             <div>

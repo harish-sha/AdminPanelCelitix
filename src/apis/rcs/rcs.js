@@ -35,6 +35,7 @@ export const fetchAllBotsList = async (agent_id = "") => {
 //   );
 // };
 
+
 // fetch suggestion report
 export const fetchsuggestionReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/rcs/getReplyReport", {
@@ -104,4 +105,14 @@ export const launchCampaign = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
+};
+
+// sync rcs template status
+export const syncTemplateRcs = async (srno) => {
+  return await fetchWithAuth(
+    `/proCpaasRest/rcsTemplate/getRcsStatus?srno=${srno}`,
+    {
+      method: "POST",
+    }
+  );
 };

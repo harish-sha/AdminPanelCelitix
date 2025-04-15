@@ -9,6 +9,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Switch } from "@mui/material";
+import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
+// import syncTemplateRcs from "@/apis/rcs/rcs"
+
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -78,7 +81,7 @@ const ManageTemplatetableRcs = ({
   setTemplateid,
   setTemplateDeleteVisible,
   updateTemplateStatus,
-  fetchTemplateDataDetails
+  fetchTemplateDataDetails,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -158,12 +161,27 @@ const ManageTemplatetableRcs = ({
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Edit Template" placement="top" arrow>
+          {/* <CustomTooltip title="Edit Template" placement="top" arrow>
             <IconButton onClick={() => handleEdit(params.row)}>
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
                   color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip> */}
+          <CustomTooltip title="Sync Status" placement="top" arrow>
+            <IconButton
+              className="text-xs"
+              onClick={() => {
+                handleRefreshStatus(params.row);
+              }}
+            >
+              <SyncOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
                 }}
               />
             </IconButton>
@@ -266,7 +284,7 @@ const ManageTemplatetableRcs = ({
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           onRowSelectionModelChange={(ids) => {
-            console.log(ids)
+            console.log(ids);
           }}
           checkboxSelection
           disableRowSelectionOnClick

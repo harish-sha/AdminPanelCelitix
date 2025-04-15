@@ -6,7 +6,6 @@ import { useState } from "react";
 import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
 import toast from "react-hot-toast";
 
-
 const PaginationList = styled("ul")({
   listStyle: "none",
   padding: 0,
@@ -75,6 +74,7 @@ export const DataTable = ({
   rows,
   setSelectedRows,
   selectedRows,
+  height = 558, // 👈 default height
 }) => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -140,7 +140,7 @@ export const DataTable = ({
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
+    <Paper sx={{ height }} id={id} name={name}>
       <DataGrid
         id={id}
         name={name}

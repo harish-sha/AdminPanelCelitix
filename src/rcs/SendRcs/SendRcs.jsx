@@ -251,7 +251,7 @@ const SendRcs = () => {
   return (
     <>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-3 ">
-        <div className=" p-2">
+        <div className=" p-2 shadow-md rounded-md">
           <HandleCampaignDetails
             setCampaignDetails={setCampaignDetails}
             campaignDetails={campaignDetails}

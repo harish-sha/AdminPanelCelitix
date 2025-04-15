@@ -802,12 +802,12 @@ const SmsReports = () => {
             />
           </Tabs>
 
-          <UniversalButton
+          {/* <UniversalButton
             label="Export"
             id="exportsmsreport"
             name="exportsmsreport"
             onClick={handleExports}
-          />
+          /> */}
         </div>
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
