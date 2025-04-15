@@ -129,9 +129,9 @@ const ManageTemplatetableRcs = ({
                   color: "#34C759",
                 },
                 "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                  {
-                    backgroundColor: "#34C759",
-                  },
+                {
+                  backgroundColor: "#34C759",
+                },
               }}
             />
           </CustomTooltip>
@@ -207,11 +207,12 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: item.srno,
-        sn: i + 1,
-        ...item,
-      }))
+      id: item.srno,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
+    
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {

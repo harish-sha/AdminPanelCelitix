@@ -339,7 +339,7 @@ const CreateWhatsAppBot = () => {
     setSelectedNodeId(node.id);
   };
   const commonButtonClass =
-    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gray-900";
+    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   return (
     <>

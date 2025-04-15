@@ -113,7 +113,7 @@ const Login = () => {
     //     toast.error('Please enter a valid Password');
     //     return;
     // }
-    
+
     setLoading(true);
     try {
       const response = await fetch("/api/proCpaasRest/auth/login", {
@@ -155,12 +155,12 @@ const Login = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 h-full">
             <form
               onSubmit={handleLogin}
-              className="h-full flex flex-col p-6 mt-18 space-y-4"
+              className="h-full flex flex-col md:p-6 mt-12 space-y-4 p-2"
             >
-              <h1 className="text-[2.5rem] text-center font-semibold bluetxt pb-2">
+              <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
                 Sign In
               </h1>
-              <InputField
+              {/* <InputField
                 id="userId"
                 name="userId"
                 label="User ID"
@@ -170,9 +170,22 @@ const Login = () => {
                 type="text"
                 className="form-control"
                 required
+              /> */}
+              <div className="text-[0.95rem] font-medium text-gray-700 mb-2">User ID</div>
+              <input
+                type="text"
+                id="userId"
+                name="userId"
+                label="User ID"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+                placeholder="Enter User ID"
+                type="text"
+                className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                required
               />
               <div className="relative">
-                <InputField
+                {/* <InputField
                   type={showPassword ? "text" : "password"}
                   className="relative"
                   placeholder="Enter password"
@@ -183,10 +196,22 @@ const Login = () => {
                   name="password"
                   label="Password"
                   maxLength={8}
+                /> */}
+                <div className="text-[0.95rem] font-medium text-gray-700 mb-2">Password</div>
+                <input type="text"
+                  type={showPassword ? "text" : "password"}
+                  className="relative"
+                  placeholder="Enter password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  id="password"
+                  name="password"
+                  className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
                 />
                 <div
-                  className="absolute right-3 top-8.5 cursor-pointer"
-                  onClick={() => setShowPassword(!showPassword)} 
+                  className="absolute right-3 top-10 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? (
                     <AiOutlineEyeInvisible size={20} />

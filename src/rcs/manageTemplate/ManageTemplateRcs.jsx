@@ -47,8 +47,8 @@ const ManageTemplateRcs = () => {
     try {
       setIsFetching(true);
       const res = await fetchAllTemplates();
-      setSummaryFilterData(res.data);
-      setSummaryTableData(res.data);
+      setSummaryFilterData(res.Data);
+      setSummaryTableData(res.Data);
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
@@ -121,6 +121,19 @@ const ManageTemplateRcs = () => {
       toast.error("Something went wrong");
     }
   };
+
+  const handleTemplateDelete = async () => {
+    try {
+      const res = await deleteTemplate(templateid);
+      toast.success("Template Deleted Successfully");
+      setTemplateDeleteVisible(false);
+      await handleFetchTempData();
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong.");
+    }
+  };
+
   const getTemplateTypeCss = (type) => {
     switch (type) {
       case "reply button":
@@ -155,17 +168,7 @@ const ManageTemplateRcs = () => {
     }
   };
 
-  const handleTemplateDelete = async () => {
-    try {
-      const res = await deleteTemplate(templateid);
-      toast.success("Template Deleted Successfully");
-      setTemplateDeleteVisible(false);
-      await handleFetchTempData();
-    } catch (e) {
-      console.log(e);
-      toast.error("Something went wrong.");
-    }
-  };
+
 
   return (
     <div className="w-full">
@@ -260,7 +263,6 @@ const ManageTemplateRcs = () => {
           </div>
         </div>
 
-        {/* ✅ Show Loader or Table */}
         {isFetching ? (
           <div className="w-full">
             <UniversalSkeleton height="35rem" width="100%" />

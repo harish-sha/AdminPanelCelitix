@@ -90,7 +90,7 @@ const SendRcs = () => {
     async function handleFetchAllTemplates() {
       try {
         const res = await fetchAllTemplates(campaignDetails?.agent);
-        setAllTemplates(res?.data);
+        setAllTemplates(res?.Data);
       } catch (e) {
         console.log(e);
         toast.error("Something went wrong.");

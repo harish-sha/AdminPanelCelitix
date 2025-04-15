@@ -35,7 +35,6 @@ export const fetchAllBotsList = async (agent_id = "") => {
 //   );
 // };
 
-
 // fetch suggestion report
 export const fetchsuggestionReport = async (data) => {
   return await fetchWithAuth("/proCpaasRest/rcs/getReplyReport", {

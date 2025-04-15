@@ -451,7 +451,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       onAnimationComplete={() => {
         setCollapseAnimationDone(!isCollapsed);
       }}
-      className={`mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-14 left-0 overflow-y-auto overflow-x-hidden z-9  
+      className={`mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-19 left-0 overflow-y-auto overflow-x-hidden z-9  
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 3.5rem)" }}
     >
