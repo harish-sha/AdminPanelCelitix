@@ -1,3604 +1,4915 @@
-import * as React from "react";
-import { useState } from "react";
+// Harish Changes Start
+// import { useEffect, useState, useRef } from "react";
+// import { FiSend } from "react-icons/fi";
+// import { BsJournalArrowDown, BsStars, BsThreeDotsVertical } from "react-icons/bs";
+// import { MdOutlineForum } from "react-icons/md";
+// import { IoArrowBack } from "react-icons/io5";
+// import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+// import { motion, AnimatePresence } from "framer-motion";
+// import AnimatedDropdown from "../components/AnimatedDropdown";
+// import { getWabaList } from "../../apis/whatsapp/whatsapp";
+// import {
+//   BoltRounded,
+//   FormatBoldOutlined,
+//   FormatItalicOutlined,
+//   FormatStrikethroughOutlined,
+//   LocalPhoneOutlined,
+//   SearchOutlined,
+// } from "@mui/icons-material";
+// import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+// import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+// import { SpeedDial } from "primereact/speeddial";
+// import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+// import CustomEmojiPicker from "../components/CustomEmojiPicker";
+// import { Sidebar } from "primereact/sidebar";
+// import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+// import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+// import { Dialog } from "primereact/dialog";
+// import InputField from "../components/InputField";
+// import { Badge } from 'primereact/badge';
+// import toast from "react-hot-toast";
+// import ImagePreview from "./ImagePreview";
+// import { MessageSquare } from "lucide-react";
+
+// export default function WhatsappLiveChat() {
+//   const fileInputRef = useRef(null);
+//   const [visibleRight, setVisibleRight] = useState(false);
+//   const [dialogVisible, setDialogVisible] = useState(false);
+//   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+//   const [agentList, setAgentList] = useState([]);
+//   const [agentName, setAgentname] = useState("");
+//   const [groupList, setGroupList] = useState([]);
+//   const [selectedAgentList, setSelectedAgentList] = useState(null);
+//   const [selectedGroupList, setSelectedGroupList] = useState(null);
+//   const [selectedImage, setSelectedImage] = useState([]);
+//   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+//   const [chats, setChats] = useState([
+//     {
+//       id: 1,
+//       name: "John Doe",
+//       phone: "+919672670732",
+//       image:
+//         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
+//       messages: [
+//         { text: "Hello!", sender: "John Doe" },
+//         { text: "Hi there!", sender: "You" },
+//       ],
+//     },
+//     {
+//       id: 2,
+//       name: "Jane Smith",
+//       phone: "+919672670733",
+//       image:
+//         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
+//       messages: [
+//         { text: "Hey!", sender: "Jane Smith" },
+//         { text: "What's up?", sender: "You" },
+//       ],
+//     },
+//   ]);
+//   const [activeChat, setActiveChat] = useState(null);
+//   const [input, setInput] = useState("");
+//   const [waba, setWaba] = useState([]);
+//   const [selectedWaba, setSelectedWaba] = useState("");
+//   const [btnOption, setBtnOption] = useState("active");
+//   const [search, setSearch] = useState("");
+
+//   const inputRef = useRef(null);
+
+//   const insertEmoji = (emoji) => {
+//     if (inputRef.current) {
+//       const inputref = inputRef.current;
+//       const start = inputref.selectionStart;
+//       const end = inputref.selectionEnd;
+
+//       const newText = input.substring(0, start) + emoji + input.substring(end);
+
+//       setInput(newText);
+
+//       setTimeout(() => {
+//         inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+//         inputref.focus();
+//       }, 0);
+//     }
+//   };
+
+//   useEffect(() => {
+//     async function fetchWaba() {
+//       const res = await getWabaList();
+//       setWaba(res);
+//     }
+
+//     fetchWaba();
+//   }, []);
+
+//   function deleteImages(index) {
+//     setSelectedImage((prev) => {
+//       const newSelectedImage = [...prev];
+//       newSelectedImage.splice(index, 1);
+//       return newSelectedImage;
+//     });
+//   }
+
+//   const sendMessage = () => {
+//     if (input.trim() || selectedImage) {
+//       const updatedChats = chats.map((chat) =>
+//         chat.id === activeChat.id
+//           ? {
+//             ...chat,
+//             messages: [
+//               ...chat.messages,
+//               { text: selectedImage[0], sender: "You" },
+//               { text: "Auto-reply: Got it!", sender: activeChat.name },
+//             ],
+//           }
+//           : chat
+//       );
+//       setChats(updatedChats);
+//       setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
+//       setInput("");
+//       setSelectedImage("");
+//     }
+//   };
+
+//   const items = [
+//     {
+//       label: "Attachment",
+//       icon: <AttachmentOutlinedIcon />,
+//       command: () => {
+//         fileInputRef.current.click();
+//       },
+//     },
+//     {
+//       label: "Document",
+//       icon: <FilePresentOutlinedIcon />,
+//       command: () => {
+//         console.log("Document Btn");
+//       },
+//     },
+//     {
+//       label: "Template",
+//       icon: <BsJournalArrowDown />,
+//       command: () => {
+//         console.log("Template Btn");
+//       },
+//     },
+//   ];
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     if (files.length + selectedImage.length > 10) {
+//       toast.error("You can only upload up to 10 files.");
+//       return;
+//     }
+//     setSelectedImage((prev) => [...prev, ...files]);
+//   };
+
+//   return (
+//     <div className="flex h-[90vh] bg-gradient-to-br from-green-400 via-white to-blue-400 rounded-xl overflow-hidden shadow-lg">
+//       <AnimatePresence>
+//         {!selectedWaba && (
+//           <motion.div
+//             key="waba-selector"
+//             initial={{ opacity: 0, scale: 0.95 }}
+//             animate={{ opacity: 1, scale: 1 }}
+//             exit={{ opacity: 0, scale: 0.95 }}
+//             transition={{ duration: 0.5 }}
+//             className="flex flex-col items-center justify-center w-full h-[90vh] bg-gradient-to-br from-green-100 via-white to-blue-100 px-4"
+//           >
+//             <div className="text-center max-w-md w-full space-y-8 mb-35">
+//               <div className="w-40 h-40 mx-auto">
+//                 <lottie-player
+//                   autoplay
+//                   loop
+//                   mode="normal"
+//                   src='/animation/wabalivechatanimation.json'
+//                   style={{ width: "100%", height: "100%" }}
+//                 ></lottie-player>
+//               </div>
+//               <motion.h2
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.3 }}
+//                 className="text-3xl font-semibold text-green-900"
+//               >
+//                 Ready to Manage Your Conversations?
+//               </motion.h2>
+//               <motion.p
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.4 }}
+//                 className="text-gray-600 text-sm"
+//               >
+//                 Choose your WhatsApp Business Account to access live chats, track activity, and delight your customers.
+//               </motion.p>
+//               <motion.div
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.5 }}
+//                 className="w-full max-w-sm mx-auto"
+//               >
+//                 <div className="relative">
+//                   <button
+//                     onClick={() => setDropdownOpen(!dropdownOpen)}
+//                     className="w-full flex justify-between items-center bg-green-100 p-4 rounded-lg shadow-lg cursor-pointer hover:bg-green-100 transition-all"
+//                   >
+//                     <span className="text-gray-500">
+//                       {selectedWaba || "Select WABA to continue"}
+//                     </span>
+//                     <svg
+//                       className="w-5 h-5 text-gray-500"
+//                       xmlns="http://www.w3.org/2000/svg"
+//                       fill="none"
+//                       viewBox="0 0 24 24"
+//                       stroke="currentColor"
+//                     >
+//                       <path
+//                         stroke-linecap="round"
+//                         stroke-linejoin="round"
+//                         stroke-width="2"
+//                         d="M19 9l-7 7-7-7"
+//                       />
+//                     </svg>
+//                   </button>
+
+//                   {dropdownOpen && (
+//                     <motion.div
+//                       initial={{ opacity: 0, y: 10 }}
+//                       animate={{ opacity: 1, y: 0 }}
+//                       exit={{ opacity: 0, y: 10 }}
+//                       transition={{ duration: 0.3 }}
+//                       className="absolute top-full left-0 w-full bg-white  rounded-lg shadow-lg mt-2 z-10"
+//                     >
+//                       <div className="max-h-40 overflow-auto">
+//                         {waba.map((w, idx) => (
+//                           <div
+//                             key={idx}
+//                             onClick={() => setSelectedWaba(w.name)}
+//                             className="cursor-pointer p-2.5 border-b hover:bg-gray-100"
+//                           >
+//                             {w.name}
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </motion.div>
+//                   )}
+//                 </div>
+//               </motion.div>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {selectedWaba && (
+//           <motion.div
+//             key="chat-list"
+//             initial={{ x: "-100%" }}
+//             animate={{ x: 0 }}
+//             exit={{ x: "-100%" }}
+//             transition={{ type: "spring", stiffness: 100 }}
+//             className="w-full md:w-1/3 bg-white p-4 overflow-y-auto border-r"
+//           >
+//             <div className="flex justify-between items-center mb-4">
+//               <h3 className="text-xl font-bold text-gray-800">Active Users</h3>
+//               <button className="text-sm text-red-500 underline" onClick={() => setSelectedWaba("")}>Change WABA</button>
+//             </div>
+//             {chats.length === 0 ? (
+//               <div className="text-center text-gray-500 mt-20">
+//                 <p>No active users found for this WABA.</p>
+//               </div>
+//             ) : (
+//               chats.map((chat) => (
+//                 <div
+//                   key={chat.id}
+//                   className="p-3 mb-2 rounded-lg bg-gray-100 hover:bg-blue-100 cursor-pointer transition"
+//                   onClick={() => setActiveChat(chat)}
+//                 >
+//                   <div className="flex items-center gap-3">
+//                     <img
+//                       src={chat.image}
+//                       alt="avatar"
+//                       className="w-10 h-10 rounded-full object-cover"
+//                     />
+//                     <div>
+//                       <h4 className="font-semibold">{chat.name}</h4>
+//                       <p className="text-sm text-gray-500 truncate">
+//                         {chat.messages[chat.messages.length - 1].text}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))
+//             )}
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {selectedWaba && !activeChat && (
+//           <motion.div
+//             key="empty-chat"
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             className="flex-1 flex items-center justify-center bg-gray-100 rounded-r-xl"
+//           >
+//             <div className="text-center space-y-6">
+//               <div className="flex justify-center mb-4">
+//                 <div className="w-24 h-24 rounded-full bg-green-100 shadow-xl flex items-center justify-center animate-bounce">
+//                   <QuestionAnswerOutlinedIcon sx={{ fontSize: "3rem" }} className="text-green-700" />
+//                 </div>
+//               </div>
+//               <h2 className="text-2xl font-semibold text-gray-800 tracking-wide">Welcome to Celitix LiveChat!</h2>
+//               <p className="text-gray-500">Select a conversation from the left panel to start chatting.</p>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {activeChat && (
+//           <motion.div
+//             key="chat-window"
+//             initial={{ x: "100%", opacity: 0 }}
+//             animate={{ x: 0, opacity: 1 }}
+//             exit={{ x: "100%", opacity: 0 }}
+//             transition={{ type: "spring", stiffness: 100 }}
+//             className="flex flex-col flex-1 bg-white shadow-md"
+//           >
+//             <div className="flex items-center justify-between p-4 border-b">
+//               <div className="flex items-center gap-3">
+//                 <IoArrowBack
+//                   className="md:hidden text-xl cursor-pointer"
+//                   onClick={() => setActiveChat(null)}
+//                 />
+//                 <img
+//                   src={activeChat.image}
+//                   alt="avatar"
+//                   className="w-10 h-10 rounded-full object-cover"
+//                 />
+//                 <h4 className="font-semibold text-gray-700">
+//                   {activeChat.name}
+//                 </h4>
+//               </div>
+//             </div>
+
+//             <div className="flex-1 overflow-y-auto p-4 space-y-2">
+//               {activeChat.messages.map((msg, index) => (
+//                 <motion.div
+//                   key={index}
+//                   initial={{ opacity: 0, y: 10 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   transition={{ delay: index * 0.05 }}
+//                   className={`p-2 rounded-lg max-w-xs ${msg.sender === "You"
+//                     ? "bg-blue-500 text-white self-end"
+//                     : "bg-gray-200 text-black self-start"}`}
+//                 >
+//                   {msg.text}
+//                 </motion.div>
+//               ))}
+//             </div>
+
+//             <div className="p-4 border-t flex items-center gap-2">
+//               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+//               <input
+//                 ref={inputRef}
+//                 type="text"
+//                 placeholder="Type a message..."
+//                 className="flex-1 p-2 border rounded-lg focus:outline-none"
+//                 value={input}
+//                 onChange={(e) => setInput(e.target.value)}
+//                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+//               />
+//               <button
+//                 onClick={sendMessage}
+//                 className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+//               >
+//                 <FiSend />
+//               </button>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </div>
+//   );
+// }
+
+// Harish Changes End
+
+// april 15 changes start
+// import { useEffect, useState, useRef, useCallback } from "react";
+// import { FiSend } from "react-icons/fi";
+// import { BsJournalArrowDown, BsThreeDotsVertical } from "react-icons/bs";
+// import { IoArrowBack } from "react-icons/io5";
+// import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+// import AnimatedDropdown from "../components/AnimatedDropdown";
+// import { FaReply } from "react-icons/fa6";
+// import {
+//   assignUserToAgent,
+//   downloadAttachment,
+//   fetchAllConversations,
+//   fetchSpecificConversations,
+//   getWabaList,
+//   getWabaShowGroupsList,
+//   getWabaTemplate,
+//   getWabaTemplateDetails,
+//   loadNewChat,
+//   readMessage,
+//   sendInputMessageToUser,
+//   sendMessageToUser,
+//   sendTemplateMessageToUser,
+//   uploadImageFile,
+// } from "../../apis/whatsapp/whatsapp";
+// import {
+//   BoltRounded,
+//   FormatBoldOutlined,
+//   FormatItalicOutlined,
+//   FormatStrikethroughOutlined,
+//   LocalPhoneOutlined,
+//   SearchOutlined,
+// } from "@mui/icons-material";
+// import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+// import { SpeedDial } from "primereact/speeddial";
+// import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+// import CustomEmojiPicker from "../components/CustomEmojiPicker";
+// import { Sidebar } from "primereact/sidebar";
+// import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+// import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+// import { Dialog } from "primereact/dialog";
+// import InputField from "../components/InputField";
+// import toast from "react-hot-toast";
+// import ImagePreview from "./ImagePreview";
+// import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+// import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
+// import { fetchAllAgents } from "@/apis/rcs/rcs";
+// import UniversalButton from "../components/UniversalButton";
+// import { RadioButton } from "primereact/radiobutton";
+// import Loader from "../components/Loader";
+// import { TemplatePreview } from "./component/TemplatePreview";
+// import dayjs from "dayjs";
+// import { getAgentList } from "@/apis/Agent/Agent";
+// import { Variables } from "./component/Variables";
+// import { Tooltip } from "primereact/tooltip";
+// import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+// import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
+
+// import { motion, AnimatePresence } from "framer-motion";
+
+// import UniversalSkeleton from "@/components/common/UniversalSkeleton";
+// import { ChatScreen } from "./component/chat/ChatScreen";
+// import { ChatSidebar } from "./component/chat/Sidebar";
+// import { InputData } from "./component/InputData";
+// import { select } from "@material-tailwind/react";
+
+// export default function WhatsappLiveChat() {
+//   const fileInputRef = useRef(null);
+//   const [visibleRight, setVisibleRight] = useState(false);
+//   const [dialogVisible, setDialogVisible] = useState(false);
+//   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+//   const [agentList, setAgentList] = useState([]);
+//   const [agentName, setAgentname] = useState("");
+//   const [groupList, setGroupList] = useState([]);
+//   const [selectedAgentList, setSelectedAgentList] = useState(null);
+//   const [selectedGroupList, setSelectedGroupList] = useState(null);
+//   const [selectedImage, setSelectedImage] = useState("");
+//   const [activeChat, setActiveChat] = useState(null);
+//   const [input, setInput] = useState("");
+//   const [waba, setWaba] = useState([]);
+//   const [selectedWaba, setSelectedWaba] = useState("");
+//   const [btnOption, setBtnOption] = useState("active");
+//   const [search, setSearch] = useState("");
+
+//   const [allConvo, setAllConvo] = useState([]);
+//   const [specificConversation, setSpecificConversation] = useState([]);
+
+//   const [isFetching, setIsFetching] = useState(false);
+//   const [sendMessageDialogVisible, setSendMessageDialogVisible] =
+//     useState(false);
+//   const [messageType, setMessageType] = useState("template");
+//   const [allTemplated, setAllTemplated] = useState([]);
+//   const [sendmessageData, setSendMessageData] = useState({});
+//   const [templateDetails, setTemplateDetails] = useState("");
+//   const [templateType, setTemplateType] = useState("");
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [varLength, setVarLength] = useState(0);
+//   const [btnVarLength, setBtnVarLength] = useState(0);
+//   const [latestMessageData, setLatestMessageData] = useState({
+//     srno: "",
+//     replayTime: "",
+//   });
+
+//   const [variables, setVariables] = useState([]);
+
+//   const [btnVariables, setBtnVariables] = useState("");
+
+//   const [replyData, setReplyData] = useState("");
+//   const [isReply, setIsReply] = useState(false);
+
+//   const inputRef = useRef(null);
+//   const messageRef = useRef(null);
+
+//   //merge related States
+//   const [chatState, setChatState] = useState({
+//     active: null,
+//     input: "",
+//     allConversations: [],
+//     specificConversation: [],
+//     latestMessage: {
+//       srno: "",
+//       replayTime: "",
+//     },
+//     replyData: "",
+//     isReply: false,
+//   });
+
+//   const [wabaState, setWabaState] = useState({
+//     waba: [],
+//     selectedWaba: "",
+//     wabaSrno: "",
+//   });
+
+//   const insertEmoji = (emoji) => {
+//     if (inputRef.current) {
+//       const inputref = inputRef.current;
+//       const start = inputref.selectionStart;
+//       const end = inputref.selectionEnd;
+
+//       const newText = input.substring(0, start) + emoji + input.substring(end);
+
+//       setInput(newText);
+
+//       setTimeout(() => {
+//         inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+//         inputref.focus();
+//       }, 0);
+//     }
+//   };
+
+//   useEffect(() => {
+//     async function fetchWaba() {
+//       const res = await getWabaList();
+//       // setWaba(res);
+//       setWabaState({ ...wabaState, waba: res });
+//     }
+
+//     fetchWaba();
+//   }, []);
+
+//   function deleteImages(index) {
+//     if (fileInputRef.current) {
+//       fileInputRef.current.value = "";
+//     }
+//     // setSelectedImage((prev) => {
+//     //   const newSelectedImage = [...prev];
+//     //   newSelectedImage.splice(index, 1);
+//     //   return newSelectedImage;
+//     // });
+//     setSelectedImage(null);
+//   }
+
+//   const sendMessage = async () => {
+//     // if (input.trim() || selectedImage) {
+//     //   const updatedChats = chats?.map((chat) =>
+//     //     chat.id === activeChat.id
+//     //       ? {
+//     //           ...chat,
+//     //           messages: [
+//     //             ...chat.messages,
+//     //             { text: selectedImage[0], sender: "You" },
+//     //             { text: "Auto-reply: Got it!", sender: activeChat.name },
+//     //           ],
+//     //         }
+//     //       : chat
+//     //   );
+//     //   setChats(updatedChats);
+//     //   setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
+//     //   setInput("");
+//     //   setSelectedImage("");
+//     // }
+
+//     // console.log(isReply);
+//     // console.log(replyData);
+
+//     const fileType = selectedImage?.type?.split("/")[0];
+
+//     let replyType = "";
+
+//     switch (fileType) {
+//       case "image":
+//         replyType = "image";
+//         break;
+//       case "video":
+//         replyType = "video";
+//         break;
+//       case "audio":
+//         replyType = "audio";
+//         break;
+//       case "sticker":
+//         replyType = "sticker";
+//         break;
+//       default:
+//         replyType = "text";
+//         break;
+//     }
+
+//     const data = {
+//       mobile: chatState?.active.mobileNo,
+//       wabaNumber: wabaState?.selectedWaba,
+//       srno: chatState?.active.srno,
+//       message: input,
+//       contactName: chatState?.active.contectName || "",
+//       replyType: chatState?.isReply ? "" : replyType,
+//       replyFrom: "user",
+//       wabaSrNo: wabaState?.wabaSrno,
+//     };
+
+//     let body = {};
+//     if (chatState?.isReply && input.trim()) {
+//       body = {
+//         messaging_product: "whatsapp",
+//         context: {
+//           message_id: chatState?.replyData?.receiptNo,
+//         },
+//         to: chatState?.active.mobileNo,
+//         type: "text",
+//         text: {
+//           preview_url: "False",
+//           body: input,
+//         },
+//       };
+//       console.log(body);
+//     } else if (selectedImage) {
+//       const imageData = await uploadImageFile(selectedImage);
+
+//       body = {
+//         messaging_product: "whatsapp",
+//         to: chatState?.active?.mobileNo,
+//         type: replyType,
+//         [replyType]: {
+//           caption: input || "",
+//           link: imageData?.fileUrl,
+//         },
+//       };
+//     }
+
+//     try {
+//       setInput("");
+//       setSelectedImage(null);
+//       if (fileInputRef.current) {
+//         fileInputRef.current.value = "";
+//       }
+//       const res = await sendInputMessageToUser(data, body);
+//       if (res?.status !== "success") {
+//         return toast.error("Error sending message");
+//       }
+//       const audio = new Audio("./send-message.wav");
+//       audio.play().catch((e) => {
+//         console.log("Audio play error:", e);
+//       });
+//       setChatState((prev) => ({ ...prev, isReply: false }));
+//       await handleFetchSpecificConversation();
+//     } catch (e) {
+//       console.log("Error Sending Message");
+//       return;
+//     }
+//   };
+
+//   const items = [
+//     {
+//       label: "Attachment",
+//       icon: <AttachmentOutlinedIcon />,
+//       command: () => {
+//         fileInputRef.current.click();
+//       },
+//     },
+//     {
+//       label: "Document",
+//       icon: <FilePresentOutlinedIcon />,
+//       command: () => {
+//         console.log("Document Btn");
+//       },
+//     },
+//     {
+//       label: "Template",
+//       icon: <BsJournalArrowDown />,
+//       command: () => {
+//         setSendMessageDialogVisible(true);
+//       },
+//     },
+//   ];
+
+//   async function handleFetchAllConvo() {
+//     if (!wabaState?.selectedWaba) return;
+//     if (!btnOption) return;
+//     const userActive = btnOption == "active" ? 1 : 0;
+//     try {
+//       const data = {
+//         mobileNo: wabaState?.selectedWaba,
+//         srno: 0,
+//         active: userActive,
+//         search: search || "",
+//       };
+//       // setIsFetching(true);
+//       const res = await fetchAllConversations(data);
+
+//       if (!res.conversationEntityList[0]) {
+//         return;
+//       }
+
+//       const mappedConversations = res.conversationEntityList?.map((chat) => {
+//         const unread = res.unreadCounts.find(
+//           (unreadChat) => unreadChat.mobile === chat.mobileNo
+//         );
+//         return {
+//           ...chat,
+//           unreadCount: unread ? unread.unreadCount : 0,
+//         };
+//       });
+//       setChatState((prev) => ({
+//         ...prev,
+//         allConversations: mappedConversations,
+//       }));
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching all conversations");
+//     } finally {
+//       // setIsFetching(false);
+//     }
+//   }
+
+//   function handleSearch() {
+//     handleFetchAllConvo();
+//     // setActiveChat(null);
+//     setChatState((prev) => ({ ...prev, active: null }));
+//   }
+
+//   useEffect(() => {
+//     const intervalid = setInterval(() => {
+//       handleFetchAllConvo();
+//     }, 500);
+
+//     return () => clearInterval(intervalid);
+//   }, [wabaState.selectedWaba, btnOption]);
+
+//   useEffect(() => {
+//     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
+//   }, [wabaState.selectedWaba, btnOption]);
+
+//   async function handleFetchAllTemplates() {
+//     if (!wabaState.selectedWaba) {
+//       return;
+//     }
+//     try {
+//       const res = await getWabaTemplateDetails(wabaState.selectedWaba);
+//       setAllTemplated(res);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching all templates");
+//     }
+//   }
+//   useEffect(() => {
+//     handleFetchAllTemplates();
+//   }, [sendMessageDialogVisible === true]);
+
+//   const handleFileChange = async (e) => {
+//     // const filesUrl = [];
+//     // const files = Array.from(e.target.files);
+//     // try {
+//     //   files.forEach(async (file) => {
+//     //     const res = await uploadImageFile(file);
+//     //     // filesUrl.push(res);
+//     //     console.log(res);
+//     //   });
+//     // } catch (e) {
+//     //   console.log(e);
+//     //   return toast.error("Error uploading file");
+//     // }
+
+//     // if (files.length + selectedImage.length > 10) {
+//     //   toast.error("You can only upload up to 10 files.");
+//     //   return;
+//     // }
+//     // setSelectedImage((prev) => [...prev, ...files]);
+
+//     const files = e.target.files[0];
+//     setSelectedImage(files);
+//   };
+
+//   const formatDate = (dateString) => {
+//     if (!dateString) return "Unknown";
+//     const date = new Date(dateString);
+//     const day = String(date.getDate()).padStart(2, "0");
+//     const month = String(date.getMonth() + 1).padStart(2, "0");
+//     const year = String(date.getFullYear()).slice(-2);
+//     return `${day}/${month}/${year}`;
+//   };
+//   async function handleFetchSpecificConversation() {
+//     const payload = {
+//       mobileNo: chatState?.active?.mobileNo,
+//       wabaMobile: chatState?.active?.wabaNumber,
+//       chatNo: 0,
+//     };
+
+//     try {
+//       const res = await fetchSpecificConversations(payload);
+//       const messages = [...(res?.conversationEntityList || [])].reverse();
+
+//       setLatestMessageData({
+//         srno: res?.conversationEntityList[0]?.srno,
+//         replayTime: res?.conversationEntityList[0]?.replyTime,
+//       });
+
+//       const enrichedMessages = await Promise.all(
+//         messages.map(async (msg) => {
+//           let mediaPath = null;
+
+//           if (msg.isReceived && msg?.replyType === "image") {
+//             try {
+//               mediaPath = await downloadAttachment({
+//                 waba: wabaState.selectedWaba,
+//                 id: msg.mediaId,
+//                 conversionSrno: msg.srno,
+//               });
+//             } catch (err) {
+//               console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+//             }
+//           } else {
+//             mediaPath = msg.mediaPath;
+//           }
+
+//           return {
+//             ...msg,
+//             date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
+//             mediaPath,
+//             // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
+//           };
+//         })
+//       );
+
+//       // Group messages by date
+//       const grouped = enrichedMessages.reduce((acc, msg) => {
+//         if (!acc[msg.date]) {
+//           acc[msg.date] = [];
+//         }
+//         acc[msg.date].push(msg);
+//         return acc;
+//       }, {});
+
+//       const groupedArray = Object.entries(grouped).map(([date, messages]) => ({
+//         date,
+//         messages,
+//       }));
+
+//       // setSpecificConversation(groupedArray);
+//       setChatState((prev) => ({
+//         ...prev,
+//         specificConversation: groupedArray,
+//       }));
+//     } catch (e) {
+//       console.error("Error in handleFetchSpecificConversation:", e);
+//       toast.error("Error fetching specific conversation");
+//     }
+//   }
+
+//   useEffect(() => {
+//     if (messageRef.current) {
+//       messageRef.current.scrollTop = messageRef.current.scrollHeight;
+//     }
+//   }, [chatState?.active, specificConversation]);
+
+//   useEffect(() => {
+//     handleFetchSpecificConversation();
+//   }, [chatState?.active]);
+
+//   useEffect(() => {
+//     async function handleFetchAllAgent() {
+//       try {
+//         const res = await getAgentList();
+//         setAgentList(res);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+//     async function handleFetchAllGroup() {
+//       try {
+//         const res = await getWabaShowGroupsList();
+//         setGroupList(res);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+
+//     handleFetchAllAgent();
+//     handleFetchAllGroup();
+//   }, []);
+
+//   async function handleAssignAgent() {
+//     if (!selectedAgentList) {
+//       return toast.error("Please select agent");
+//     }
+//     // if (!agentName) {
+//     //   return toast.error("Please select agent display name");
+//     // }
+//     if (!selectedGroupList) {
+//       return toast.error("Please select group");
+//     }
+//     if (!chatState?.active.mobileNo) {
+//       return toast.error("Please select chat first");
+//     }
+
+//     const data = {
+//       waba: wabaState.selectedWaba,
+//       name: agentName,
+//       agentSrno: selectedAgentList,
+//       groupNo: selectedGroupList,
+//       mobileNo: chatState?.active.mobileNo,
+//     };
+
+//     try {
+//       setIsFetching(true);
+//       const res = await assignUserToAgent(data);
+//       if (res.message.includes("Successfully")) {
+//         toast.success("Agent assigned successfully.");
+//         setDialogVisible(false);
+//         setSelectedAgentList("");
+//         setSelectedGroupList("");
+//         setAgentname("");
+//       }
+//     } catch (e) {
+//       console.log(e);
+//       toast.error("Something went wrong. Please try again.");
+//     } finally {
+//       setIsFetching(false);
+//     }
+//   }
+
+//   async function handlesendMessage() {
+//     if (!chatState?.active) {
+//       return toast.error("Please select chat first");
+//     }
+
+//     if (messageType === "text" && !sendmessageData.message) {
+//       return toast.error("Please enter message");
+//     }
+
+//     let data = {};
+//     let func = "";
+//     if (messageType === "text") {
+//       data = {
+//         mobile: chatState?.active.mobileNo,
+//         wabaNumber: wabaState.selectedWaba,
+//         srno: chatState?.active.srno,
+//         message: sendmessageData.message,
+//         contactName: chatState?.active?.contectName || "",
+//         replyType: "text",
+//         replyFrom: "user",
+//         wabaSrNo: wabaState.wabaSrno,
+//       };
+//       func = sendMessageToUser;
+//     } else if (messageType === "template") {
+//       const templateType = allTemplated.find(
+//         (temp) => temp.templateName === sendmessageData?.templateName
+//       );
+
+//       if (templateType?.type === "image") {
+//         return toast.error("Please Select Image first");
+//       }
+
+//       const allvariables = [];
+//       console.log(variables.length);
+//       if (varLength[0]?.length > 0) {
+//         Object.keys(variables).forEach((key) => {
+//           allvariables.push(variables[key]);
+//         });
+//         // if (varLength[0]?.length != variables.length) {
+//         //   return toast.error("Please enter all variables");
+//         // }
+//       }
+
+//       if (btnVarLength?.length > 0 && !btnVariables) {
+//         return toast.error("Please enter Button variables");
+//       }
+//       data = {
+//         srno: chatState?.active.srno,
+//         templateUrlVariable: btnVariables,
+//         templateType: templateType?.type,
+//         templateName: sendmessageData?.templateName,
+//         templateLanguage: "en",
+//         wabaNumber: wabaState.selectedWaba,
+//         mobileno: chatState?.active.mobileNo,
+//         contactName: chatState?.active?.contectName || "",
+//         msgType: "template",
+//         variables: allvariables,
+//         mediaUrl: "",
+//         phoneDisplay: "",
+//         wabaSrNo: wabaState.wabaSrno,
+//         agentsrno: "",
+//       };
+//       func = sendTemplateMessageToUser;
+//     } else {
+//       return toast.error("Please select valid messageType");
+//     }
+
+//     try {
+//       setIsFetching(true);
+//       const res = await func(data);
+//       if (
+//         res?.msg?.includes("successfully") ||
+//         res?.msg?.includes("Successfully")
+//       ) {
+//         toast.success("Message sent successfully.");
+//         setSendMessageDialogVisible(false);
+//         setSendMessageData({});
+//         setVariables([]);
+//         setVarLength(0);
+//         setTemplateDetails("");
+//         return;
+//       }
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Something went wrong. Please try again.");
+//     } finally {
+//       setIsFetching(false);
+//     }
+//   }
+//   async function handlefetchTemplateDetails() {
+//     if (!sendmessageData?.templateName) {
+//       return;
+//     }
+//     const wabaId = wabaState.waba.find(
+//       (waba) => waba.mobileNo === wabaState.selectedWaba
+//     )?.wabaAccountId;
+//     try {
+//       const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
+//       setTemplateDetails(res.data[0]);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching template details");
+//     }
+//   }
+//   useEffect(() => {
+//     handlefetchTemplateDetails();
+//   }, [sendmessageData?.templateName, setSendMessageData]);
+
+//   function formatTime(dateString) {
+//     const date = new Date(dateString.replace(" ", "T"));
+
+//     const options = {
+//       hour: "numeric",
+//       minute: "2-digit",
+//       hour12: true,
+//     };
+
+//     const timeAMPM = date.toLocaleTimeString("en-US", options);
+//     return timeAMPM;
+//   }
+
+//   function fetchVaribles() {
+//     if (!templateDetails) return;
+
+//     templateDetails?.components?.map((item) => {
+//       if (item?.type === "BODY") {
+//         setVarLength(item?.example?.body_text);
+//       }
+//       if (item?.type === "BUTTONS") {
+//         item?.buttons?.map(({ type, example }) => {
+//           if (type === "URL") {
+//             setBtnVarLength(example);
+//           }
+//         });
+//       }
+//     });
+//   }
+
+//   useEffect(() => {
+//     fetchVaribles();
+//   }, [templateDetails]);
+
+//   useEffect(() => {
+//     async function handleLoadNewChat() {
+//       if (!wabaState.selectedWaba || !chatState?.active) return;
+
+//       try {
+//         const data = {
+//           mobile: chatState?.active.mobileNo,
+//           wabaNumber: wabaState.selectedWaba,
+//           ...latestMessageData,
+//         };
+//         const res = await loadNewChat(data);
+//         if (res?.conversationEntityList.length === 0) {
+//           return;
+//         }
+//         const audio = new Audio("./receive-message.mp3");
+//         audio.play().catch((e) => {
+//           console.log("Audio play error:", e);
+//         });
+//         await handleFetchSpecificConversation();
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+
+//     async function handleIsView() {
+//       if (!wabaState.selectedWaba || !chatState?.active) return;
+//       try {
+//         const data = {
+//           mobile: chatState?.active.mobileNo,
+//           waba: wabaState.selectedWaba,
+//           srno: latestMessageData.srno,
+//         };
+//         await readMessage(data);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+//     const intervalId = setInterval(() => {
+//       handleLoadNewChat();
+//       handleIsView();
+//     }, 5000);
+//     return () => clearInterval(intervalId);
+//   }, [latestMessageData, chatState?.active]);
+
+//   async function handleAttachmentDownload(data) {
+//     try {
+//       const mediaPath = await downloadAttachment({
+//         waba: wabaState.selectedWaba,
+//         id: data.mediaId,
+//         conversionSrno: data.srno,
+//       });
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }
+
+//   return isFetching ? (
+//     <Loader height="35rem" width="100%" />
+//   ) : (
+//     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
+//       <div
+//         className={`w-full md:w-100  border-r overflow-hidden ${chatState?.active ? "hidden md:block" : "block"
+//           }`}
+//       >
+//         <InputData
+//           setSearch={setSearch}
+//           search={search}
+//           handleSearch={handleSearch}
+//           btnOption={btnOption}
+//           setBtnOption={setBtnOption}
+//           wabaState={wabaState}
+//           setWabaState={setWabaState}
+//           setChatState={setChatState}
+//         />
+
+//         <ChatSidebar
+//           formatDate={formatDate}
+//           chatState={chatState}
+//           setChatState={setChatState}
+//         />
+//       </div>
+
+//       {chatState.active && (
+//         <ChatScreen
+//           setVisibleRight={setVisibleRight}
+//           setDialogVisible={setDialogVisible}
+//           messageRef={messageRef}
+//           formatTime={formatTime}
+//           btnOption={btnOption}
+//           selectedImage={selectedImage}
+//           deleteImages={deleteImages}
+//           handleAttachmentDownload={handleAttachmentDownload}
+//           insertEmoji={insertEmoji}
+//           inputRef={inputRef}
+//           sendMessage={sendMessage}
+//           items={items}
+//           visibleRight={visibleRight}
+//           input={input}
+//           setInput={setInput}
+//           setSendMessageDialogVisible={setSendMessageDialogVisible}
+//           setChatState={setChatState}
+//           chatState={chatState}
+//         />
+//       )}
+
+//       <Dialog
+//         header="Transfer Chat to Agent"
+//         visible={dialogVisible}
+//         style={{ width: "50vw" }}
+//         draggable={false}
+//         onHide={() => {
+//           if (!dialogVisible) return;
+//           setDialogVisible(false);
+//         }}
+//       >
+//         <div className="space-y-3">
+//           <AnimatedDropdown
+//             options={agentList?.data?.map((agent) => ({
+//               value: agent.sr_no,
+//               label: agent.name,
+//             }))}
+//             id="agentList"
+//             name="agentList"
+//             label="Agent List"
+//             tooltipContent="Select Agent"
+//             tooltipPlacement="right"
+//             value={selectedAgentList}
+//             onChange={(value) => setSelectedAgentList(value)}
+//             placeholder="Agent List"
+//           />
+
+//           {/* <InputField
+//             label="Agent Display Name"
+//             tooltipContent="Enter Agent Name"
+//             id="agentname"
+//             name="agentname"
+//             type="tel"
+//             value={agentName}
+//             onChange={(e) => setAgentname(e.target.value)}
+//             placeholder="Enter Agent Display Name"
+//           /> */}
+//           <AnimatedDropdown
+//             options={groupList?.map((group) => ({
+//               value: group.groupCode,
+//               label: group.groupName,
+//             }))}
+//             id="group"
+//             name="group"
+//             label="Group"
+//             tooltipContent="Select Group"
+//             tooltipPlacement="right"
+//             value={selectedGroupList}
+//             onChange={(value) => setSelectedGroupList(value)}
+//             placeholder="Group"
+//           />
+
+//           <UniversalButton
+//             id={"assignAgent"}
+//             name={"assignAgent"}
+//             label="Assign Agent"
+//             onClick={handleAssignAgent}
+//           />
+//         </div>
+//       </Dialog>
+
+//       <Dialog
+//         header="Send Message to User"
+//         visible={sendMessageDialogVisible}
+//         style={{ width: "50rem", height: "40rem" }}
+//         draggable={false}
+//         onHide={() => {
+//           setSendMessageDialogVisible(false);
+//           setTemplateType(templateType);
+//           setBtnVarLength(0);
+//           setVarLength(0);
+//           setVariables({});
+//           setBtnVariables("");
+//           setTemplateDetails({});
+//           setSendMessageData({});
+//         }}
+//       >
+//         <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
+//           <div className="flex flex-col w-full gap-5">
+//             {/* <div className="flex gap-2">
+//               <div className="flex gap-2">
+//                 <RadioButton
+//                   inputId="mesageTemplateType"
+//                   name="mesageTemplateType"
+//                   value="template"
+//                   onChange={(e) => {
+//                     setMessageType(e.target.value);
+//                     setSendMessageData({});
+//                     setTemplateDetails("");
+//                   }}
+//                   checked={messageType === "template"}
+//                 />
+//                 <label
+//                   htmlFor="mesageTemplateType"
+//                   className="text-sm font-medium text-gray-700 cursor-pointer"
+//                 >
+//                   Template
+//                 </label>
+//               </div>
+//               <div className="flex items-center gap-2">
+//                 <RadioButton
+//                   inputId="mesageTextType"
+//                   name="mesageTextType"
+//                   value="text"
+//                   onChange={(e) => {
+//                     setMessageType(e.target.value);
+//                     setSendMessageData({});
+//                     setTemplateDetails("");
+//                   }}
+//                   checked={messageType === "text"}
+//                 />
+//                 <label
+//                   htmlFor="mesageTextType"
+//                   className="text-sm font-medium text-gray-700 cursor-pointer"
+//                 >
+//                   Custom Message
+//                 </label>
+//               </div>
+//             </div> */}
+//             <div>
+//               {messageType === "template" ? (
+//                 <div className="flex flex-col gap-3">
+//                   <AnimatedDropdown
+//                     id="selectTemplate"
+//                     name="selectTemplate"
+//                     label="Select Template"
+//                     placeholder="Select Template"
+//                     options={allTemplated?.map((template) => ({
+//                       value: template.templateName,
+//                       label: template.templateName,
+//                     }))}
+//                     value={sendmessageData.templateName}
+//                     onChange={(e) => {
+//                       setSendMessageData((prevData) => ({
+//                         ...prevData,
+//                         templateName: e,
+//                       }));
+//                       const templateType = allTemplated?.find(
+//                         (template) => template.templateName === e
+//                       )?.type;
+//                       setTemplateType(templateType);
+//                       setBtnVarLength(0);
+//                       setVarLength(0);
+//                       setVariables({});
+//                       setBtnVariables("");
+//                       setTemplateDetails("");
+//                     }}
+//                   />
+
+//                   <Variables
+//                     templateType={templateType}
+//                     selectedFile={selectedFile}
+//                     setSelectedFile={setSelectedFile}
+//                     varLength={varLength}
+//                     setVariables={setVariables}
+//                     variables={variables}
+//                     btnVariables={btnVariables}
+//                     btnVarLength={btnVarLength}
+//                     setBtnVariables={setBtnVariables}
+//                   />
+//                 </div>
+//               ) : null}
+//               {/* (
+//                 <div>
+//                   <InputField
+//                     label="Enter Message"
+//                     value={sendmessageData.message}
+//                     placeholder="Enter Message..."
+//                     onChange={(e) => {
+//                       setSendMessageData((prevData) => ({
+//                         ...prevData,
+//                         message: e.target.value,
+//                       }));
+//                     }}
+//                   />
+//                 </div>
+//               ) */}
+//             </div>
+//             <div>
+//               <UniversalButton label="Send" onClick={handlesendMessage} />
+//             </div>
+//           </div>
+//           <div>
+//             <TemplatePreview
+//               tempDetails={templateDetails}
+//               messageType={messageType}
+//               sendmessageData={sendmessageData}
+//             />
+//           </div>
+//         </div>
+//       </Dialog>
+//       <input
+//         type="file"
+//         ref={fileInputRef}
+//         style={{ display: "none" }}
+//         onChange={handleFileChange}
+//         accept="image/* video/* audio/*"
+//       // multiple
+//       />
+
+//       {imagePreviewVisible && (
+//         <ImagePreview
+//           imagePreviewVisible={imagePreviewVisible}
+//           setImagePreviewVisible={setImagePreviewVisible}
+//           images={[selectedImage]}
+//         />
+//       )}
+//     </div>
+//   );
+// }
+// april 15 changes end
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { FiSend } from "react-icons/fi";
+import { BsJournalArrowDown, BsThreeDotsVertical } from "react-icons/bs";
+import { IoArrowBack } from "react-icons/io5";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import { FaReply } from "react-icons/fa6";
 import {
-  IconButton,
-  Paper,
-  Typography,
-  Box,
-  Button,
-  Tooltip,
-  Popover,
-} from "@mui/material";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import usePagination from "@mui/material/usePagination";
-import { styled } from "@mui/material/styles";
+  assignUserToAgent,
+  downloadAttachment,
+  fetchAllConversations,
+  fetchSpecificConversations,
+  getWabaList,
+  getWabaShowGroupsList,
+  getWabaTemplate,
+  getWabaTemplateDetails,
+  loadNewChat,
+  readMessage,
+  sendInputMessageToUser,
+  sendMessageToUser,
+  sendTemplateMessageToUser,
+  uploadImageFile,
+} from "../../apis/whatsapp/whatsapp";
+import {
+  BoltRounded,
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+  LocalPhoneOutlined,
+  SearchOutlined,
+} from "@mui/icons-material";
+import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+import { SpeedDial } from "primereact/speeddial";
+import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+import CustomEmojiPicker from "../components/CustomEmojiPicker";
+import { Sidebar } from "primereact/sidebar";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import { Dialog } from "primereact/dialog";
-import { RadioButton } from "primereact/radiobutton";
-import { Checkbox } from "primereact/checkbox";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import PropTypes from "prop-types";
-import WhatsAppIcon from "@mui/icons-material/WhatsApp";
-import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
-import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
-import { BsJournalArrowDown } from "react-icons/bs";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import EmergencyOutlinedIcon from "@mui/icons-material/EmergencyOutlined";
-import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
-import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import EditNoteIcon from "@mui/icons-material/EditNote";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
-import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { useEffect } from "react";
+import InputField from "../components/InputField";
 import toast from "react-hot-toast";
-// import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
-// import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
-import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
-import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
-import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
-import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
-import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
-import RadioGroupField from "../../../whatsapp/components/RadioGroupField";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import InputField from "../../../whatsapp/components/InputField";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
-import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
-import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
-import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
-import {
-  fetchUserbySrno,
-  getPromoServices,
-  getTransServices,
-  updateUserbySrno,
-} from "@/apis/admin/admin";
-import {
-  addSmsPricing,
-  deleteWhatsappRateBySrno,
-  getSmsRateByUser,
-  getWhatsappRateBySrno,
-  getWhatsappRateData,
-  saveEditWhatsappRate,
-} from "@/apis/admin/userRate";
-import { getCountryList } from "@/apis/common/common";
-import { DataTable } from "@/components/layout/DataTable";
-import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import ImagePreview from "./ImagePreview";
+import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
+import { fetchAllAgents } from "@/apis/rcs/rcs";
+import UniversalButton from "../components/UniversalButton";
+import { RadioButton } from "primereact/radiobutton";
+import Loader from "../components/Loader";
+import { TemplatePreview } from "./component/TemplatePreview";
+import dayjs from "dayjs";
+import { getAgentList } from "@/apis/Agent/Agent";
+import { Variables } from "./component/Variables";
+import { Tooltip } from "primereact/tooltip";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
 
+import { motion, AnimatePresence } from "framer-motion";
 
-function CustomTabPanel(props) {
-  const { children, value, index, ...other } = props;
+import UniversalSkeleton from "@/components/common/UniversalSkeleton";
+import { ChatScreen } from "./component/chat/ChatScreen";
+import { ChatSidebar } from "./component/chat/Sidebar";
+import { InputData } from "./component/InputData";
+import { select } from "@material-tailwind/react";
+import DropdownWithSearch from "../components/DropdownWithSearch";
 
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
+export default function WhatsappLiveChat() {
+  const fileInputRef = useRef(null);
+  const [visibleRight, setVisibleRight] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
 
-CustomTabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.number.isRequired,
-  value: PropTypes.number.isRequired,
-};
+  const [agentList, setAgentList] = useState([]);
+  const [agentName, setAgentname] = useState("");
+  const [groupList, setGroupList] = useState([]);
+  const [selectedAgentList, setSelectedAgentList] = useState(null);
+  const [selectedGroupList, setSelectedGroupList] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [activeChat, setActiveChat] = useState(null);
+  const [input, setInput] = useState("");
+  const [waba, setWaba] = useState([]);
+  const [selectedWaba, setSelectedWaba] = useState("");
+  const [btnOption, setBtnOption] = useState("active");
+  const [search, setSearch] = useState("");
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
+  const [allConvo, setAllConvo] = useState([]);
+  const [specificConversation, setSpecificConversation] = useState([]);
 
-const PaginationList = styled("ul")({
-  listStyle: "none",
-  padding: 0,
-  margin: 0,
-  display: "flex",
-  gap: "8px",
-});
-
-const CustomPagination = ({
-  totalPages,
-  paginationModel,
-  setPaginationModel,
-}) => {
-  const { items } = usePagination({
-    count: totalPages,
-    page: paginationModel.page + 1,
-    onChange: (_, newPage) =>
-      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+  const [isFetching, setIsFetching] = useState(false);
+  const [sendMessageDialogVisible, setSendMessageDialogVisible] =
+    useState(false);
+  const [messageType, setMessageType] = useState("template");
+  const [allTemplated, setAllTemplated] = useState([]);
+  const [sendmessageData, setSendMessageData] = useState({});
+  const [templateDetails, setTemplateDetails] = useState("");
+  const [templateType, setTemplateType] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [varLength, setVarLength] = useState(0);
+  const [btnVarLength, setBtnVarLength] = useState(0);
+  const [latestMessageData, setLatestMessageData] = useState({
+    srno: "",
+    replayTime: "",
   });
 
-  return (
-    <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-      <PaginationList>
-        {items.map(({ page, type, selected, ...item }, index) => {
-          let children = null;
+  const [variables, setVariables] = useState([]);
+  const [carFile, setCarFile] = useState([]);
 
-          if (type === "start-ellipsis" || type === "end-ellipsis") {
-            children = "…";
-          } else if (type === "page") {
-            children = (
-              <Button
-                key={index}
-                variant={selected ? "contained" : "outlined"}
-                size="small"
-                sx={{ minWidth: "27px" }}
-                {...item}
-              >
-                {page}
-              </Button>
-            );
-          } else {
-            children = (
-              <Button
-                key={index}
-                variant="outlined"
-                size="small"
-                {...item}
-                sx={{}}
-              >
-                {type === "previous" ? "Previous" : "Next"}
-              </Button>
-            );
-          }
+  const [btnVariables, setBtnVariables] = useState("");
 
-          return <li key={index}>{children}</li>;
-        })}
-      </PaginationList>
-    </Box>
-  );
-};
+  const [replyData, setReplyData] = useState("");
+  const [isReply, setIsReply] = useState(false);
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [open, setOpen] = useState(false);
+  const inputRef = useRef(null);
+  const messageRef = useRef(null);
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
+  const [cardIndex, setCardIndex] = useState(0);
 
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-    setOpen(false);
-  };
+  function handleNextCard() {
+    setCardIndex(cardIndex + 1);
+  }
 
+  function handlePreviousCard() {
+    if (cardIndex === 0) return;
+    setCardIndex(cardIndex - 1);
+  }
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handlePopoverClose}
-        onMouseLeave={handlePopoverClose}
-        anchorOrigin={{ vertical: "bottom", horizontal: "left" }}
-        transformOrigin={{ vertical: "top", horizontal: "left" }}
-        disableRestoreFocus
-        PaperProps={{
-          sx: {
-            p: 1,
-            maxWidth: 300,
-            borderRadius: 2,
-            boxShadow: 3,
-          },
-          onMouseEnter: () => setOpen(true),
-          onMouseLeave: handlePopoverClose,
-        }}
-      >
-        {/* <Paper sx={{ p: 1, maxWidth: 300, borderRadius: 2, boxShadow: 3 }}> */}
-        <Typography sx={{ fontSize: "14px", color: "#333", mb: 1 }}>
-          {value}
-        </Typography>
-
-        <Button
-          variant="outlined"
-          size="small"
-          onClick={copyToClipboard}
-          startIcon={<ContentCopyIcon />}
-          sx={{
-            width: "100%",
-            textTransform: "none",
-            fontSize: "13px",
-            color: "#007BFF",
-            borderColor: "#007BFF",
-            "&:hover": { backgroundColor: "#007BFF", color: "#fff" },
-          }}
-        >
-          Copy
-        </Button>
-        {/* </Paper> */}
-      </Popover>
-    </div>
-  );
-};
-
-const ManageUserTable = ({ id, name, allUsers = [] }) => {
-
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
-  const [logins, setLogins] = useState(false);
-  const [otpService, setOtpService] = useState(false);
-  const [viewService, setViewService] = useState(false);
-  const [editService, setEditDetailsDialogVisible] = useState(false);
-  const [assignService, setAssignService] = useState(false);
-  const [manageApiKeys, setManageApiKeys] = useState(false);
-  const [reset, setreset] = useState(false);
-  const [userReports, setuserReports] = useState("");
-  const [value, setValue] = useState(0);
-  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
-  const [currentUserSrno, setCurrentUserSrno] = useState(null);
-
-  //userId
-  const [selectedId, setSelectedId] = useState("");
-
-  //updateDetails
-  const [updateDetails, setUpdateDetails] = useState({
-    domain: "",
-    userId: "",
-    status: "",
-    emailId: "",
-    mobileNo: "",
-    firstName: "",
-    lastName: "",
-    address: "",
-    companyName: "",
-    expiryDate: new Date(),
-    applicationType: "",
-    userType: "",
-    country: "",
-    state: "",
-    city: "",
-    pinCode: "",
+  //merge related States
+  const [chatState, setChatState] = useState({
+    active: null,
+    input: "",
+    allConversations: [],
+    specificConversation: [],
+    latestMessage: {
+      srno: "",
+      replayTime: "",
+    },
+    replyData: "",
+    isReply: false,
   });
 
-  // const handleDetailsUpdate = async () => {
-  //   const data = {
-  //     srno: selectedId,
-  //     ...updateDetails,
-  //   };
-  // };
+  const [wabaState, setWabaState] = useState({
+    waba: [],
+    selectedWaba: "",
+    wabaSrno: "",
+  });
 
-  const handleEdit = async (srNo) => {
-    console.log(srNo, "srNo");
-    try {
-      const response = await fetchUserbySrno(srNo);
-      console.log(response, "fetch user details response");
-      if (response?.userMstPojoList?.length > 0) {
-        const userDetails = response.userMstPojoList[0];
-        setUpdateDetails({
-          domain: userDetails.domain || "",
-          userId: userDetails.userId || "",
-          status: userDetails.status || "",
-          emailId: userDetails.emailId || "",
-          mobileNo: userDetails.mobileNo || "",
-          firstName: userDetails.firstName || "",
-          lastName: userDetails.lastName || "",
-          address: userDetails.address || "",
-          companyName: userDetails.companyName || "",
-          expiryDate: userDetails.expiryDate || new Date(),
-          applicationType: userDetails.applicationType || "",
-          userType: userDetails.userType || "",
-          country: userDetails.country || "",
-          state: userDetails.state || "",
-          city: userDetails.city || "",
-          pinCode: userDetails.pinCode || "",
-        });
-        setSelectedId(srNo);
-        setEditDetailsDialogVisible(true);
-      } else {
-        toast.error("No user details found for the selected user.");
-      }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      toast.error("Failed to fetch user details. Please try again.");
+  async function fetchWaba() {
+    const res = await getWabaList();
+    console.log(res);
+    setWabaState((prev) => ({
+      ...prev,
+      waba: res,
+    }));
+  }
+  useEffect(() => {
+    fetchWaba();
+  }, []);
+  const insertEmoji = (emoji) => {
+    if (inputRef.current) {
+      const inputref = inputRef.current;
+      const start = inputref.selectionStart;
+      const end = inputref.selectionEnd;
+
+      const newText = input.substring(0, start) + emoji + input.substring(end);
+
+      setInput(newText);
+
+      setTimeout(() => {
+        inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+        inputref.focus();
+      }, 0);
     }
   };
 
-  const handleDetailsUpdate = async () => {
-    const formattedExpiryDate = new Intl.DateTimeFormat("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-    }).format(new Date(updateDetails.expiryDate));
+  function deleteImages(index) {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    // setSelectedImage((prev) => {
+    //   const newSelectedImage = [...prev];
+    //   newSelectedImage.splice(index, 1);
+    //   return newSelectedImage;
+    // });
+    setSelectedImage(null);
+  }
+
+  const sendMessage = async () => {
+    const fileType = selectedImage?.type?.split("/")[0];
+
+    let replyType = "";
+
+    switch (fileType) {
+      case "image":
+        replyType = "image";
+        break;
+      case "video":
+        replyType = "video";
+        break;
+      case "audio":
+        replyType = "audio";
+        break;
+      case "sticker":
+        replyType = "sticker";
+        break;
+      default:
+        replyType = "text";
+        break;
+    }
 
     const data = {
-      srno: selectedId,
-      ...updateDetails,
-      expiryDate: formattedExpiryDate,
+      mobile: chatState?.active.mobileNo,
+      wabaNumber: wabaState?.selectedWaba,
+      srno: chatState?.active.srno,
+      message: input || "",
+      contactName: chatState?.active.contectName || "",
+      replyType: chatState?.isReply ? "" : replyType,
+      replyFrom: "user",
+      wabaSrNo: wabaState?.wabaSrno,
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
     };
 
+    let body = {};
+
+    if (chatState?.isReply && input) {
+      body = {
+        messaging_product: "whatsapp",
+        context: {
+          message_id: chatState?.replyData?.receiptNo,
+        },
+        to: chatState?.active.mobileNo,
+        type: replyType,
+        [replyType]: {
+          preview_url: "False",
+          body: input,
+        },
+      };
+    } else if (selectedImage) {
+      const imageData = await uploadImageFile(selectedImage);
+
+      body = {
+        messaging_product: "whatsapp",
+        to: chatState?.active?.mobileNo,
+        type: replyType,
+        [replyType]: {
+          caption: input || "",
+          link: imageData?.fileUrl,
+        },
+      };
+    }
+
+    // console.log(body, data);
+
     try {
-      const response = await updateUserbySrno(data);
-      if (response?.msg === "User Updated Successfully") {
-        toast.success("User details updated successfully!");
-        setEditDetailsDialogVisible(false);
-      } else {
-        toast.error(response?.message || "Failed to update user details.");
+      setInput("");
+      setSelectedImage(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
-    } catch (error) {
-      console.error("Error updating user details:", error);
-      toast.error("Failed to update user details. Please try again.");
+      const res = await sendInputMessageToUser(data, body);
+      if (res?.status !== "success") {
+        return toast.error("Error sending message");
+      }
+      new Audio("./send-message.wav");
+      audio.play().catch((e) => {
+        console.log("Audio play error:", e);
+      });
+      setChatState((prev) => ({ ...prev, isReply: false }));
+      await handleFetchSpecificConversation();
+    } catch (e) {
+      console.log("Error Sending Message");
+      return;
     }
   };
-  // assignService
 
-  const [countryOptions, setCountryOptions] = useState([]);
+  const items = [
+    {
+      label: "Attachment",
+      icon: <AttachmentOutlinedIcon />,
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Document",
+      icon: <FilePresentOutlinedIcon />,
+      command: () => {
+        console.log("Document Btn");
+      },
+    },
+    {
+      label: "Template",
+      icon: <BsJournalArrowDown />,
+      command: () => {
+        setSendMessageDialogVisible(true);
+      },
+    },
+  ];
 
-  // whatsapp Start
-  const [whatsapprows, setWhatsapprows] = useState([]);
-  const [whatsappStatus, setWhatsappStatus] = useState("disable");
-  const [whatsappCountry, setWhatsappCountry] = useState(null);
-  const [whatsappUtility, setWhatsappUtility] = useState("");
-  const [whatsappMarketing, setWhatsappMarketing] = useState("");
-  const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
-  const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
-  const [editDialogVisible, setEditDialogVisible] = useState(false);
-  const [editingRow, setEditingRow] = useState(null);
+  async function handleFetchAllConvo() {
+    if (!wabaState?.selectedWaba) return;
+    if (!btnOption) return;
+    const userActive = btnOption == "active" ? 1 : 0;
+    try {
+      const data = {
+        mobileNo: wabaState?.selectedWaba,
+        srno: 0,
+        active: userActive,
+        search: search || "",
+      };
+      // setIsFetching(true);
+      const res = await fetchAllConversations(data);
 
-  const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
-  const [editWhatsappForm, setEditWhatsappForm] = useState({
-    srno: "",
-    userSrno: "",
-    utility: "",
-    marketing: "",
-    countryCode: "",
-  });
+      if (!res.conversationEntityList[0]) {
+        return;
+      }
 
-  const handleChangewhatsapp = (event) => {
-    setWhatsappStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-
-  const fetchWhatsappRateData = async (userSrno) => {
-    const res = await getWhatsappRateData(userSrno);
-    console.log("raw whatsapp rate response:", res);
-
-    const list = Array.isArray(res) ? res : res?.data;
-
-    if (Array.isArray(list)) {
-      const formatted = list.map((item, index) => {
-        console.log("Mapping item:", item);
+      const mappedConversations = res.conversationEntityList?.map((chat) => {
+        const unread = res.unreadCounts.find(
+          (unreadChat) => unreadChat.mobile === chat.mobileNo
+        );
         return {
-          id: item.sr_no || index + 1,
-          sn: index + 1,
-          srno: item.sr_no,
-          userSrno: String(item.user_srno),
-          countryName: item.country_name || item.country_code || "Unknown",
-          countryCode: String(item.country_srno || ""),
-          utility: String(item.transactional || 0),
-          marketing: String(item.promotional || 0),
-          isoCode: String(item.ISO_code || ""),
-          updateTime: item.update_time || "-",
+          ...chat,
+          unreadCount: unread ? unread.unreadCount : 0,
         };
       });
-
-      console.log("formatted rows", formatted);
-      setWhatsapprows(formatted);
-    } else {
-      console.warn("No valid data returned from API");
+      setChatState((prev) => ({
+        ...prev,
+        allConversations: mappedConversations,
+      }));
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching all conversations");
+    } finally {
+      // setIsFetching(false);
     }
-  };
+  }
+
+  function handleSearch() {
+    handleFetchAllConvo();
+    // setActiveChat(null);
+    setChatState((prev) => ({ ...prev, active: null }));
+  }
 
   useEffect(() => {
-    console.log(" WhatsApp rows updated:", whatsapprows);
-  }, [whatsapprows]);
+    handleFetchAllConvo();
+    if (!wabaState?.selectedWaba) return;
+    const intervalid = setInterval(() => {
+      // handleFetchAllConvo();
+    }, 500);
 
-  const handleWhatsappAddCredit = async () => {
-    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
-      toast.error("Please fill all the fields.");
+    return () => clearInterval(intervalid);
+  }, [wabaState.selectedWaba, btnOption]);
+
+  useEffect(() => {
+    setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
+  }, [wabaState.selectedWaba, btnOption]);
+
+  async function handleFetchAllTemplates() {
+    if (!wabaState.selectedWaba) {
       return;
     }
-
-    const payload = {
-      srno: "",
-      userSrno: String(currentUserSrno),
-      utility: String(whatsappUtility),
-      marketing: String(whatsappMarketing),
-      countryCode: String(whatsappCountry),
-    };
-
-    const res = await saveEditWhatsappRate(payload);
-    if (res?.message) {
-      toast[
-        res.message.toLowerCase().includes("success") ? "success" : "error"
-      ](res.message);
+    try {
+      const res = await getWabaTemplateDetails(wabaState.selectedWaba);
+      setAllTemplated(res);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching all templates");
     }
+  }
+  useEffect(() => {
+    handleFetchAllTemplates();
+  }, [sendMessageDialogVisible === true]);
 
-    if (res?.message?.toLowerCase().includes("success")) {
-      await fetchWhatsappRateData(currentUserSrno);
-      resetWhatsappFields();
-    }
+  const handleFileChange = async (e) => {
+    // const filesUrl = [];
+    // const files = Array.from(e.target.files);
+    // try {
+    //   files.forEach(async (file) => {
+    //     const res = await uploadImageFile(file);
+    //     // filesUrl.push(res);
+    //     console.log(res);
+    //   });
+    // } catch (e) {
+    //   console.log(e);
+    //   return toast.error("Error uploading file");
+    // }
+
+    // if (files.length + selectedImage.length > 10) {
+    //   toast.error("You can only upload up to 10 files.");
+    //   return;
+    // }
+    // setSelectedImage((prev) => [...prev, ...files]);
+
+    const files = e.target.files[0];
+    setSelectedImage(files);
   };
 
-  const handleWhatsappEdit = async (srno) => {
-    console.log("Editing WhatsApp rate for srno:", srno);
+  const formatDate = (dateString) => {
+    if (!dateString) return "Unknown";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+  };
+  async function handleFetchSpecificConversation() {
+    const payload = {
+      mobileNo: chatState?.active?.mobileNo,
+      wabaMobile: chatState?.active?.wabaNumber,
+      chatNo: 0,
+    };
 
-    const res = await getWhatsappRateBySrno(srno);
-    console.log("Edit API response:", res);
+    try {
+      const res = await fetchSpecificConversations(payload);
+      const messages = [...(res?.conversationEntityList || [])].reverse();
 
-    const d = Array.isArray(res) ? res[0] : res?.data?.[0];
-
-    if (d) {
-      setEditWhatsappForm({
-        srno: d.srno ?? srno,
-        userSrno: String(d.user_srno),
-        utility: String(d.transactional),
-        marketing: String(d.promotional),
-        countryCode: String(d.country_srno),
+      setLatestMessageData({
+        srno: res?.conversationEntityList[0]?.srno,
+        replayTime: res?.conversationEntityList[0]?.replyTime,
       });
 
-      setEditWhatsappVisible(true);
-    } else {
-      console.warn("No data found for srno:", srno);
+      const enrichedMessages = await Promise.all(
+        messages.map(async (msg) => {
+          let mediaPath = null;
+
+          // if (msg.isReceived && msg?.replyType === "image") {
+          //   try {
+          //     mediaPath = await downloadAttachment({
+          //       waba: wabaState.selectedWaba,
+          //       id: msg.mediaId,
+          //       conversionSrno: msg.srno,
+          //     });
+          //   } catch (err) {
+          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+          //   }
+          // } else {
+          // }
+
+          mediaPath = msg.mediaPath;
+          return {
+            ...msg,
+            date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
+            mediaPath,
+            // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
+          };
+        })
+      );
+
+      // Group messages by date
+      const grouped = enrichedMessages.reduce((acc, msg) => {
+        if (!acc[msg.date]) {
+          acc[msg.date] = [];
+        }
+        acc[msg.date].push(msg);
+        return acc;
+      }, {});
+
+      const groupedArray = Object.entries(grouped).map(([date, messages]) => ({
+        date,
+        messages,
+      }));
+
+      // setSpecificConversation(groupedArray);
+      setChatState((prev) => ({
+        ...prev,
+        specificConversation: groupedArray,
+      }));
+    } catch (e) {
+      console.error("Error in handleFetchSpecificConversation:", e);
+      toast.error("Error fetching specific conversation");
     }
-  };
+  }
 
-  const handleWhatsappUpdate = async () => {
-    const res = await saveEditWhatsappRate(editWhatsappForm);
-    if (res?.message?.toLowerCase().includes("success")) {
-      toast.success("Rate updated successfully");
-      setEditWhatsappVisible(false);
-      fetchWhatsappRateData(currentUserSrno);
-    } else {
-      toast.error(res?.message || "Failed to update");
-    }
-  };
-
-  const handleWhatsappDelete = (srno) => {
-    const row = whatsapprows.find((r) => r.srno === srno);
-    setEditingRow(row);
-    setWhatsappDeleteVisible(true);
-  };
-
-  const confirmWhatsappDelete = async () => {
-    if (!selectedWhatsappRow?.srno) return;
-
-    const res = await deleteWhatsappRateBySrno(selectedWhatsappRow.srno);
-    if (res?.message?.toLowerCase().includes("success")) {
-      toast.success("Rate deleted successfully.");
-      fetchWhatsappRateData(currentUserSrno);
-      setWhatsappDeleteVisible(false);
-      setSelectedWhatsappRow(null);
-    } else {
-      toast.error(res?.message || "Delete failed.");
-    }
-  };
-
-  const resetWhatsappFields = () => {
-    setWhatsappCountry(null);
-    setWhatsappUtility("");
-    setWhatsappMarketing("");
-  };
-
-  // whatsapp End
-
-  // RCS Start
-  const [rcsStatus, setRcsStatus] = useState("enable");
-  const [rcsCountry, setRcsCountry] = useState(null);
-  const [rcsrate, setRcsrate] = useState("");
-
-  // const rcscountryOptions = [
-  //   { value: "USA", label: "USA" },
-  //   { value: "UK", label: "UK" },
-  //   { value: "India", label: "India" },
-  // ];
-
-  const handleRcsAddCredit = () => {
-    console.log("handleRcsCredit");
-  };
-
-  const handleChangercs = (event) => {
-    setRcsStatus(event.target.value);
-  };
-
-  // RCS End
-
-  // SMS Start
-  const [smsStatus, setSmsStatus] = useState("disable");
-  const [transcheck, setTranscheck] = useState(false);
-  const [promocheck, setPromocheck] = useState(false);
-  const [trans, setTrans] = useState(null);
-  const [promo, setPromo] = useState(null);
-  const [smsrate, setSmsRate] = useState("");
-  const [transOptions, setTransOptions] = useState([]);
-  const [promoOption, setPromoOption] = useState([]);
-  const [dltRate, setDltRate] = useState("");
-
-  const resetSmsFields = () => {
-    setTrans(null);
-    setPromo(null);
-    setTranscheck(false);
-    setPromocheck(false);
-    setSmsRate("");
-    setDltRate("");
-  };
-
-  const handleChangesms = (event) => {
-    setSmsStatus(event.target.value);
-  };
-  const handleSaveSmsPricing = async () => {
-    const payload = {
-      srno: "",
-      userSrno: String(currentUserSrno),
-      rate: smsrate,
-      dltRate: dltRate || "0",
-      transService: transcheck ? String(trans) : "",
-      promoService: promocheck ? String(promo) : "",
-    };
-
-    console.log("Submitting SMS Pricing Payload:", payload);
-
-    const res = await addSmsPricing(payload);
-    if (res?.statusCode === 200) {
-      toast.success(res.message || "SMS Pricing saved successfully!");
-      resetSmsFields();
-      setAssignService(false);
-    } else {
-      toast.error(res.message || "Failed to save SMS Pricing.");
-    }
-  };
-  // SMS End
-
-  // OBD
-  const [obdStatus, setObdStatus] = useState("disable");
-  const [transcheckobd, setTranscheckobd] = useState(false);
-  const [promocheckobd, setPromocheckobd] = useState(false);
-  const [transobd, setTransobd] = useState(null);
-  const [promoobd, setPromoobd] = useState(null);
-  const [obdrate, setObdRate] = useState("");
-  const [obdrateStatus, setObdRateStatus] = useState("disable");
-
-  const transOptionsobd = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-  const promoOptionobd = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-
-  const handleChangeobd = (event) => {
-    setObdStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  const handleChangeobdRate = (event) => {
-    setObdRateStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  // OBD
-
-  // two-way
-  const [twowayStatus, setTwoWayStatus] = useState("disable");
-  const [twowayAssign, setTwowayAssign] = useState(null);
-  const twowayOptions = [
-    { value: "3 Months", label: "3 Months" },
-    { value: "6 Months", label: "6 Months" },
-    { value: "12 Months", label: "12 Months" },
-  ];
-
-  const handleChangetwoway = (event) => {
-    setTwoWayStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  // two-way
-
-  // misscall
-  const [misscallStatus, setMisscallStatus] = useState("disable");
-  const [misscallAssign, setMisscallAssign] = useState(null);
-  const misscallOptions = [
-    { value: "3 Months", label: "3 Months" },
-    { value: "6 Months", label: "6 Months" },
-    { value: "12 Months", label: "12 Months" },
-  ];
-
-  const handleChangeMisscall = (event) => {
-    setMisscallStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  // misscall
-
-  // C2C
-  const [clickStatus, setClickStatus] = useState("disable");
-  const handleChangeClick = (event) => {
-    setClickStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  // C2C
-
-  // Email
-  const [emailStatus, setEmailStatus] = useState("disable");
-
-  const [emailAssign, setEmailAssign] = useState(null);
-
-  const emailOptions = [
-    { value: "3 Months", label: "3 Months" },
-    { value: "6 Months", label: "6 Months" },
-    { value: "12 Months", label: "12 Months" },
-  ];
-
-  const handleChangeEmail = (event) => {
-    setEmailStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-  // Email
-
-  // IBD
-  const [ibdStatus, setIbdStatus] = useState("disable");
-  const [ibdpulseStatus, setibdPulseStatus] = useState("disable");
-  const [ibdAssign, setIbdAssign] = useState(null);
-
-  const ibdOptions = [
-    { value: "3 Months", label: "3 Months" },
-    { value: "6 Months", label: "6 Months" },
-    { value: "12 Months", label: "12 Months" },
-  ];
-
-  const handleChangeIbd = (event) => {
-    setIbdStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-
-  const handleChangeibdPulse = (event) => {
-    setibdPulseStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
-  };
-
-  // IBD
-  // Function to validate input
-  const validateInput = (value, setter) => {
-    value = value.replace(/[^0-9.]/g, "");
-    const parts = value.split(".");
-
-    if (parts.length > 2) {
-      value = parts[0] + "." + parts.slice(1).join("");
-    }
-
-    if (parts[0].length > 1 && !value.includes(".")) {
-      value = parts[0][0] + "." + parts[0].slice(1);
-    }
-
-    if (parts[1] && parts[1].length > 2) {
-      value = parts[0] + "." + parts[1].substring(0, 2);
-    }
-
-    let floatVal = parseFloat(value);
-    if (floatVal > 9.99) {
-      value = "9.99"; // Max limit
-    }
-
-    if (value && floatVal < 0.01) {
-      value = ""; // Prevent values less than 0.01
-    }
-
-    setter(value);
-  };
-  // assignService
-
-  // Edit
-  const [userid, setUserId] = useState("");
-  const [userName, setUserName] = useState("");
-  const [userLastName, setUserLastName] = useState("");
-  const [userEmail, setUserEmail] = useState("");
-  const [userPhoneNumber, setUserPhoneNumber] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [userAddress, setUserAddress] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [country, setCountry] = useState("");
-  const [zipCode, setZipCode] = useState("");
-  const [expiryDate, setExpiryDate] = useState("");
-  const [editstatusStatus, setEditStatusStatus] = useState("disable");
-  const [userType, setUserType] = useState("");
-  const [isReadOnly, setIsReadOnly] = useState(true);
-  const [accountUrl, setAccountUrl] = useState("");
-  const [enablepostpaid, setEnablePostpaid] = useState("disable");
-
-  // Dropdown options
-  const useroption = [
-    { value: 1, label: "User" },
-    { value: 2, label: "Reseller" },
-  ];
+  // useEffect(() => {
+  //   console.log(messageRef.current?.scrollTop);
+  //   console.log(messageRef.current?.scrollHeight);
+  //   if (messageRef.current) {
+  //     messageRef.current.scrollTop = messageRef.current.scrollHeight;
+  //   }
+  // }, [chatState?.active, specificConversation]);
 
   useEffect(() => {
-    setIsReadOnly(userType !== "Reseller");
-    setAccountUrl("");
-  }, [userType]);
+    handleFetchSpecificConversation();
+  }, [chatState?.active]);
 
-  const handleChangeEnablePostpaid = (event) => {
-    setEnablePostpaid(event.target.value);
-  };
-
-  const handleChangeEditStatus = (event) => {
-    setEditStatusStatus(event.target.value);
-  };
-
-  const [newAPIKey, setNewAPIKey] = useState("");
-
-  // Function to generate an API key with only lowercase letters and numbers.
-  const generateAPIKey = (length = 10) => {
-    const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
-    let key = "";
-    for (let i = 0; i < length; i++) {
-      key += charset.charAt(Math.floor(Math.random() * charset.length));
+  useEffect(() => {
+    async function handleFetchAllAgent() {
+      try {
+        const res = await getAgentList();
+        setAgentList(res);
+      } catch (e) {
+        console.log(e);
+      }
     }
-    return key + "XX";
-  };
+    async function handleFetchAllGroup() {
+      try {
+        const res = await getWabaShowGroupsList();
+        setGroupList(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
 
-  const handleGenerateAPIKey = () => {
-    const apiKey = generateAPIKey();
-    setNewAPIKey(apiKey);
-  };
+    handleFetchAllAgent();
+    handleFetchAllGroup();
+  }, []);
 
-  const [newPassword, setNewPassword] = useState("");
-  const [mobileNumbers, setMobileNumbers] = useState([""]);
+  async function handleAssignAgent() {
+    if (!selectedAgentList) {
+      return toast.error("Please select agent");
+    }
+    // if (!agentName) {
+    //   return toast.error("Please select agent display name");
+    // }
+    if (!selectedGroupList) {
+      return toast.error("Please select group");
+    }
+    if (!chatState?.active.mobileNo) {
+      return toast.error("Please select chat first");
+    }
 
-  // Add new input field (Max 5)
-  const addMobileNumber = () => {
-    if (mobileNumbers.length >= 5) {
-      toast.error("You can add a maximum of 5 mobile numbers.");
+    const data = {
+      waba: wabaState.selectedWaba,
+      name: agentName,
+      agentSrno: selectedAgentList,
+      groupNo: selectedGroupList,
+      mobileNo: chatState?.active.mobileNo,
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await assignUserToAgent(data);
+      if (res.message.includes("Successfully")) {
+        toast.success("Agent assigned successfully.");
+        setDialogVisible(false);
+        setSelectedAgentList("");
+        setSelectedGroupList("");
+        setAgentname("");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+  async function handlesendMessage() {
+    if (!chatState?.active) {
+      return toast.error("Please select chat first");
+    }
+
+    if (messageType === "text" && !sendmessageData.message) {
+      return toast.error("Please enter message");
+    }
+
+    let data = {};
+    let func = "";
+    if (messageType === "text") {
+      data = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        srno: chatState?.active.srno,
+        message: sendmessageData.message,
+        contactName: chatState?.active?.contectName || "",
+        replyType: "text",
+        replyFrom: "user",
+        wabaSrNo: wabaState.wabaSrno,
+      };
+      func = sendMessageToUser;
+    } else if (messageType === "template") {
+      const templateType = allTemplated.find(
+        (temp) => temp.templateName === sendmessageData?.templateName
+      );
+
+      if (
+        ["image", "video", "document"].includes(templateType?.type) &&
+        !selectedFile?.fileUrl
+      ) {
+        return toast.error("Please Select Media first");
+      }
+
+      const allvariables = [];
+      if (varLength && varLength[0]?.length > 0) {
+        Object.keys(variables).forEach((key) => {
+          allvariables.push(variables[key]);
+        });
+        // if (varLength[0]?.length != variables.length) {
+        //   return toast.error("Please enter all variables");
+        // }
+      }
+
+      let imgCard = [];
+
+      let isError = false;
+
+      const isCaroual = templateDetails?.components?.find(
+        (item) => item?.type === "CAROUSEL"
+      )?.type;
+
+      if (isCaroual) {
+        Object.keys(carFile).forEach((key) => {
+          if (!carFile[key].filePath) {
+            toast.error(`Please upload a file for Card ${key + 1}.`);
+            isError = true;
+            return;
+          }
+          const filePath = carFile[key].filePath;
+          imgCard.push(filePath);
+        });
+
+        if (isError) {
+          return;
+        }
+      }
+
+      if (btnVarLength?.length > 0 && !btnVariables) {
+        return toast.error("Please enter Button variables");
+      }
+      data = {
+        srno: chatState?.active.srno,
+        templateUrlVariable: btnVariables,
+        templateType: templateType?.type,
+        templateName: sendmessageData?.templateName,
+        templateLanguage: "en",
+        wabaNumber: wabaState.selectedWaba,
+        mobileno: chatState?.active.mobileNo,
+        contactName: chatState?.active?.contectName || "",
+        msgType: "template",
+        variables: allvariables,
+        mediaUrl: selectedFile?.fileUrl,
+        phoneDisplay: "",
+        wabaSrNo: wabaState.wabaSrno,
+        agentsrno: "",
+        imgCards: imgCard,
+      };
+      func = sendTemplateMessageToUser;
+    } else {
+      return toast.error("Please select valid messageType");
+    }
+
+    try {
+      setIsFetching(true);
+      const res = await func(data);
+      if (
+        res?.msg?.includes("successfully") ||
+        res?.msg?.includes("Successfully")
+      ) {
+        toast.success("Message sent successfully.");
+        setSendMessageDialogVisible(false);
+        setSendMessageData({});
+        setVariables([]);
+        setVarLength(0);
+        setTemplateDetails("");
+        setSelectedFile(null);
+        return;
+      }
+    } catch (e) {
+      console.log(e);
+      return toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+  async function handlefetchTemplateDetails() {
+    if (!sendmessageData?.templateName) {
       return;
     }
-    setMobileNumbers([...mobileNumbers, ""]);
-  };
-
-  // Remove input field
-  const removeMobileNumber = (index) => {
-    const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
-    setMobileNumbers(updatedNumbers);
-  };
-
-  // Handle input change
-  const handleInputChange = (index, value) => {
-    const updatedNumbers = [...mobileNumbers];
-    updatedNumbers[index] = value;
-    setMobileNumbers(updatedNumbers);
-  };
-
-  const [userreportStatus, setUserReportStatus] = useState("disable");
-  const handleChangeuserreport = (event) => {
-    setUserReportStatus(event.target.value);
-  };
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
-
-  const handleLonins = (id, name) => {
-    setLogins(true);
-  };
-
-  const handleOtp = (id, name) => {
-    setOtpService(true);
-  };
-
-  // view user details
-  const handleView = async (srNo) => {
+    const wabaId = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selectedWaba
+    )?.wabaAccountId;
     try {
-      const response = await fetchUserbySrno(srNo);
-      if (response?.userMstPojoList?.length > 0) {
-        setSelectedUserDetails(response.userMstPojoList[0]);
-        setViewService(true);
-      } else {
-        toast.error("No user details found for the selected user.");
+      const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
+      setTemplateDetails(res.data[0]);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching template details");
+    }
+  }
+  useEffect(() => {
+    handlefetchTemplateDetails();
+  }, [sendmessageData?.templateName, setSendMessageData]);
+
+  function formatTime(dateString) {
+    const date = new Date(dateString.replace(" ", "T"));
+
+    const options = {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    };
+
+    const timeAMPM = date.toLocaleTimeString("en-US", options);
+    return timeAMPM;
+  }
+
+  function fetchVaribles() {
+    if (!templateDetails) return;
+
+    templateDetails?.components?.map((item) => {
+      if (item?.type === "BODY") {
+        setVarLength(item?.example?.body_text);
       }
-    } catch (error) {
-      console.error("Error fetching user details:", error);
-      toast.error("Failed to fetch user details. Please try again.");
+      if (item?.type === "BUTTONS") {
+        item?.buttons?.map(({ type, example }) => {
+          if (type === "URL") {
+            setBtnVarLength(example);
+          }
+        });
+      }
+    });
+  }
+
+  useEffect(() => {
+    fetchVaribles();
+  }, [templateDetails]);
+
+  async function handleLoadNewChat() {
+    if (!wabaState.selectedWaba || !chatState?.active) return;
+
+    try {
+      const data = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        ...latestMessageData,
+      };
+      const res = await loadNewChat(data);
+
+      if (res?.conversationEntityList.length === 0) {
+        return;
+      }
+      const audio = new Audio("./receive-message.mp3");
+      audio.play().catch((e) => {
+        console.log("Audio play error:", e);
+      });
+      await handleFetchSpecificConversation();
+    } catch (e) {
+      console.log(e);
     }
-  };
-
-  const handleAssign = async (srNo) => {
-    setAssignService(true);
-    setCurrentUserSrno(srNo);
-    console.log("srNo", srNo);
-
-    setTimeout(() => {
-      fetchWhatsappRateData(srNo);
-    }, 0);
-
-    const [transRes, promoRes, userSmsData, countryListRes, whatsappRateRes] =
-      await Promise.all([
-        getTransServices(),
-        getPromoServices(),
-        getSmsRateByUser(srNo),
-        getCountryList(),
-        getWhatsappRateData(srNo),
-      ]);
-
-    // Country List
-    if (countryListRes) {
-      setCountryOptions(
-        countryListRes.map((item) => ({
-          label: item.countryName,
-          value: String(item.countryCode),
-        }))
-      );
+  }
+  useEffect(() => {
+    async function handleIsView() {
+      if (!wabaState.selectedWaba || !chatState?.active) return;
+      try {
+        const data = {
+          mobile: chatState?.active.mobileNo,
+          waba: wabaState.selectedWaba,
+          srno: latestMessageData.srno,
+        };
+        await readMessage(data);
+      } catch (e) {
+        console.log(e);
+      }
     }
+    handleLoadNewChat();
+    handleIsView();
+    const intervalId = setInterval(() => {
+      // handleLoadNewChat();
+      // handleIsView();
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, [latestMessageData]);
 
-    // Transaction
-    setTransOptions(
-      (transRes || []).map((item) => ({
-        label: item.serviceName,
-        value: String(item.serviceId),
-      }))
-    );
-
-    // Promotion
-    setPromoOption(
-      (promoRes || []).map((item) => ({
-        label: item.serviceName,
-        value: String(item.serviceId),
-      }))
-    );
-
-    // set SMS data
-    if (userSmsData?.data) {
-      const d = userSmsData.data;
-      setTranscheck(!!d.transService);
-      setPromocheck(!!d.promoService);
-      setTrans(d.transService || null);
-      setPromo(d.promoService || null);
-      setSmsRate(d.rate || "");
-      setDltRate(d.dltRate || "");
+  async function handleAttachmentDownload(data) {
+    try {
+      const mediaPath = await downloadAttachment({
+        waba: wabaState.selectedWaba,
+        id: data.mediaId,
+        conversionSrno: data.srno,
+      });
+    } catch (e) {
+      console.log(e);
     }
+  }
 
-    // set WhatsApp table data
-    if (whatsappRateRes?.data) {
-      setWhatsapprows(whatsappRateRes.data);
-    }
-  };
+  return isFetching ? (
+    <Loader height="35rem" width="100%" />
+  ) : (
+    <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
+      <div
+        className={`w-full md:w-100  border-r overflow-hidden ${chatState?.active ? "hidden md:block" : "block"
+          }`}
+      >
+        <InputData
+          setSearch={setSearch}
+          search={search}
+          handleSearch={handleSearch}
+          btnOption={btnOption}
+          setBtnOption={setBtnOption}
+          wabaState={wabaState}
+          setWabaState={setWabaState}
+          setChatState={setChatState}
+        />
 
-  const handleApikey = (id, name) => {
-    setManageApiKeys(true);
-  };
+        <ChatSidebar
+          formatDate={formatDate}
+          chatState={chatState}
+          setChatState={setChatState}
+        />
+      </div>
 
-  const handleReset = (id, name) => {
-    setreset(true);
-  };
+      {chatState.active && (
+        <ChatScreen
+          setVisibleRight={setVisibleRight}
+          setDialogVisible={setDialogVisible}
+          messageRef={messageRef}
+          formatTime={formatTime}
+          btnOption={btnOption}
+          selectedImage={selectedImage}
+          deleteImages={deleteImages}
+          handleAttachmentDownload={handleAttachmentDownload}
+          insertEmoji={insertEmoji}
+          inputRef={inputRef}
+          sendMessage={sendMessage}
+          items={items}
+          visibleRight={visibleRight}
+          input={input}
+          setInput={setInput}
+          setSendMessageDialogVisible={setSendMessageDialogVisible}
+          setChatState={setChatState}
+          chatState={chatState}
+        // specificConversation={specificConversation}
+        />
+      )}
 
-  const handleReport = (id, name) => {
-    setuserReports(true);
-  };
-
-  const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "userId", headerName: "User ID", flex: 1, minWidth: 120 },
-    { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
-    { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
-    { field: "companyName", headerName: "Company", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 350,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Login" placement="top">
-            <IconButton onClick={() => handleLonins(params.row.srno)}>
-              <LockOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Otp" placement="top">
-            <IconButton onClick={() => handleOtp(params.row.srno)}>
-              <EmergencyOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="View User Details" placement="top">
-            <IconButton onClick={() => handleView(params.row.srno)}>
-              <RemoveRedEyeOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => handleEdit(params.row.srno)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Assign Service" placement="top">
-            <IconButton onClick={() => handleAssign(params.row.srno)}>
-              <SettingsOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Manage Api Key" placement="top">
-            <IconButton onClick={() => handleApikey(params.row.srno)}>
-              <KeyOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Reset Password" placement="top">
-            <IconButton onClick={() => handleReset(params.row.srno)}>
-              <LockOpenOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="User Reports" placement="top">
-            <IconButton onClick={() => handleReport(params.row.srno)}>
-              <AssignmentOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
-
-  const whatsaappcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "countryName", headerName: "Country", flex: 1 },
-    { field: "utility", headerName: "Utility", flex: 1 },
-    { field: "marketing", headerName: "Marketing", flex: 1 },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleWhatsappEdit(params.row.srno)}>
-              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleWhatsappDelete(params.row.srno)}>
-              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
-
-  // const rcscolumns = [
-  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-  //   { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-  //   { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
-  //   {
-  //     field: "action",
-  //     headerName: "Action",
-  //     flex: 1,
-  //     minWidth: 100,
-  //     renderCell: (params) => (
-  //       <>
-  //         <CustomTooltip arrow title="Edit" placement="top">
-  //           <IconButton onClick={() => handleRcsEdit(params.row)}>
-  //             <EditNoteIcon
-  //               sx={{
-  //                 fontSize: "1.2rem",
-  //                 color: "gray",
-  //               }}
-  //             />
-  //           </IconButton>
-  //         </CustomTooltip>
-  //         <CustomTooltip arrow title="Delete" placement="top">
-  //           <IconButton onClick={() => handleRcsDelete(params.row)}>
-  //             <DeleteIcon
-  //               sx={{
-  //                 fontSize: "1.2rem",
-  //                 color: "gray",
-  //               }}
-  //             />
-  //           </IconButton>
-  //         </CustomTooltip>
-  //       </>
-  //     ),
-  //   },
-  // ];
-  const rcscolumns = [
-    { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "countryName", headerName: "Country", flex: 1 },
-    { field: "utility", headerName: "Utility", flex: 1 },
-    { field: "marketing", headerName: "Marketing", flex: 1 },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
-    {
-      field: "actions",
-      headerName: "Actions",
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row.srno)}>
-              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row.srno)}>
-              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
-
-  const rows = Array.isArray(allUsers)
-    ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
-    : [];
-
-  const rcsrows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    country: "India",
-    rate: "0.30",
-  }));
-
-
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-  const CustomFooter = () => {
-    return (
-      <GridFooterContainer
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: { xs: "center", lg: "space-between" },
-          alignItems: "center",
-          padding: 1,
-          gap: 2,
-          overflowX: "auto",
+      <Dialog
+        header="Transfer Chat to Agent"
+        visible={dialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          if (!dialogVisible) return;
+          setDialogVisible(false);
         }}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 1.5,
-          }}
-        >
-          {selectedRows.length > 0 && (
-            <Typography
-              variant="body2"
-              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
-            >
-              {selectedRows.length} Rows Selected
-            </Typography>
-          )}
-
-          <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
-          }}
-        >
-          <CustomPagination
-            totalPages={totalPages}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-          />
-        </Box>
-      </GridFooterContainer>
-    );
-  };
-
-  return (
-    <>
-      <Paper sx={{ height: 558 }} id={id} name={name}>
-        <DataGrid
-          id={id}
-          name={name}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[10, 20, 50]}
-          pagination
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          rowHeight={45}
-          slots={{
-            footer: CustomFooter,
-            noRowsOverlay: CustomNoRowsOverlay,
-          }}
-          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-          disableRowSelectionOnClick
-          disableColumnResize
-          disableColumnMenu
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-cell": { outline: "none !important" },
-            "& .MuiDataGrid-columnHeaders": {
-              color: "#193cb8",
-              fontSize: "14px",
-              fontWeight: "bold !important",
-            },
-            "& .MuiDataGrid-row--borderBottom": {
-              backgroundColor: "#e6f4ff !important",
-            },
-            "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-          }}
-        />
-      </Paper>
-
-      {/* Dialog Section Start */}
-
-      {/* Edit details */}
-      <Dialog
-        header="Edit details"
-        visible={editService}
-        onHide={() => setEditDetailsDialogVisible(false)}
-        className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
-        draggable={false}
-      >
-        {/* <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="userid"
-              name="userid"
-              placeholder="Enter your User ID"
-              required
-              // value={userid}
-              // onChange={(e) => setUserId(e.target.value)}
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="expiryDate"
-              name="expiryDate"
-              placeholder="Enter Expiry Date"
-              // value={expiryDate}
-              // onChange={(newValue) => setExpiryDate(newValue)}
-            />
-          </div>
-          <div className="flex gap-2">
-            <AnimatedDropdown
-              label="User Type"
-              id="userType"
-              name="userType"
-              options={useroption}
-              // value={userType} // Ensure correct value is set
-              onChange={() => {}}
-            />
-            <InputField
-              label="Account URL"
-              id="accounturl"
-              name="accounturl"
-              placeholder="Enter URL"
-              // value={accountUrl} // Controlled input value
-              readOnly={isReadOnly} // Controlled readOnly property
-              // onChange={(e) => setAccountUrl(e.target.value)} // Handle manual input
-            />
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Enable Postpaid"
-                  id="enablepostpaid"
-                  name="enablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption1"
-                  name="enablepostpaidredio"
-                  // value="enable"
-                  // onChange={handleChangeEnablePostpaid}
-                  checked={enablepostpaid === "enable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Yes
-                </label>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption2"
-                  name="enablepostpaidredio"
-                  value="disable"
-                  // onChange={handleChangeEnablePostpaid}
-                  // checked={enablepostpaid === "disable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  No
-                </label>
-              </div>
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="enablepostinput"
-                    name="enablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="editstatus"
-                name="editstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="editstatusOption1"
-                name="editstatusredio"
-                // value="enable"
-                // onChange={handleChangeEditStatus}
-                checked={updateDetails.status === "enable"}
-              />
-              <label
-                htmlFor="editstatusOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="editstatusOption2"
-                name="editstatusredio"
-                checked={updateDetails.status === "disable"}
-              />
-              <label
-                htmlFor="editstatusOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="firstname"
-              name="firstname"
-              placeholder="Enter your First Name"
-              value={updateDetails.firstName}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  firstName: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Last Name"
-              id="lastname"
-              name="lastname"
-              placeholder="Enter your Last Name"
-              value={updateDetails.lastName}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  lastName: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your Email ID"
-              value={updateDetails.emailId}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  emailId: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Mobile No."
-              id="mobile"
-              name="mobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              value={updateDetails.mobileNo}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  mobileNo: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Company Name"
-              id="company"
-              name="company"
-              placeholder="Enter your Company Name"
-              value={updateDetails.country}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  country: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Address"
-              id="address"
-              name="address"
-              placeholder="Enter your Address"
-              value={updateDetails.address}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  address: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="City"
-              id="city"
-              name="city"
-              placeholder="Enter your City"
-              value={updateDetails.city}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  city: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="State"
-              id="state"
-              name="state"
-              placeholder="Enter your State"
-              value={updateDetails.state}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  state: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Country"
-              id="country"
-              name="country"
-              placeholder="Enter your Country"
-              value={updateDetails.country}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  country: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Pincode"
-              id="Pincode"
-              name="Pincode"
-              placeholder="Enter your Pincode"
-              value={updateDetails?.zipCode}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  zipCode: e.target.value,
-                });
-              }}
-            />
-          </div>
-
-          <div className="flex justify-center mt-3">
-            <UniversalButton
-              label="Save"
-              id="whatsappsave"
-              name="whatsappsave"
-              onClick={handleDetailsUpdate}
-            />
-          </div>
-        </div> */}
         <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="userid"
-              name="userid"
-              placeholder="Enter your User ID"
-              value={updateDetails.userId}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, userId: e.target.value })
-              }
-              required
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="expiryDate"
-              name="expiryDate"
-              placeholder="Enter Expiry Date"
-              value={updateDetails.expiryDate}
-              onChange={(newValue) =>
-                setUpdateDetails({ ...updateDetails, expiryDate: newValue })
-              }
-            />
-          </div>
-          <div className="flex gap-2">
-            <AnimatedDropdown
-              label="User Type"
-              id="userType"
-              name="userType"
-              // options={useroption}
-              options={[
-                { value: 1, label: "User" },
-                { value: 2, label: "Reseller" },
-              ]}
-              value={updateDetails.userType}
-              onChange={(value) =>
-                setUpdateDetails({ ...updateDetails, userType: value })
-              }
-            />
-            <InputField
-              label="Domain"
-              id="domain"
-              name="domain"
-              placeholder="Enter Domain"
-              value={updateDetails.domain}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, domain: e.target.value })
-              }
-            />
-          </div>
-          {/* Row 3 */}
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="editstatus"
-                name="editstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 cursor-pointer">
-                Active
-              </label>
-              <Checkbox
-                inputId="statusToggle"
-                name="statusToggle"
-                checked={updateDetails.status === 1}
-                onChange={(e) =>
-                  setUpdateDetails({
-                    ...updateDetails,
-                    status: e.checked ? 1 : 0,
-                  })
-                }
-              />
-              <label className="text-sm font-medium text-gray-700 cursor-pointer">
-                Inactive
-              </label>
-            </div>
-          </div>
+          <AnimatedDropdown
+            options={agentList?.data?.map((agent) => ({
+              value: agent.sr_no,
+              label: agent.name,
+            }))}
+            id="agentList"
+            name="agentList"
+            label="Agent List"
+            tooltipContent="Select Agent"
+            tooltipPlacement="right"
+            value={selectedAgentList}
+            onChange={(value) => setSelectedAgentList(value)}
+            placeholder="Agent List"
+          />
 
-          {/* Row 4 */}
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Application Type"
-                id="applicationType"
-                name="applicationType"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="applicationType1"
-                name="applicationType"
-                value={1}
-                onChange={(e) =>
-                  setUpdateDetails({
-                    ...updateDetails,
-                    applicationType: e.value,
-                  })
-                }
-                checked={updateDetails.applicationType === 1}
-              />
-              <label
-                htmlFor="applicationType1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Type 1
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="applicationType2"
-                name="applicationType"
-                value={2}
-                onChange={(e) =>
-                  setUpdateDetails({
-                    ...updateDetails,
-                    applicationType: e.value,
-                  })
-                }
-                checked={updateDetails.applicationType === 2}
-              />
-              <label
-                htmlFor="applicationType2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Type 2
-              </label>
-            </div>
-          </div>
+          {/* <InputField
+            label="Agent Display Name"
+            tooltipContent="Enter Agent Name"
+            id="agentname"
+            name="agentname"
+            type="tel"
+            value={agentName}
+            onChange={(e) => setAgentname(e.target.value)}
+            placeholder="Enter Agent Display Name"
+          /> */}
+          <AnimatedDropdown
+            options={groupList?.map((group) => ({
+              value: group.groupCode,
+              label: group.groupName,
+            }))}
+            id="group"
+            name="group"
+            label="Group"
+            tooltipContent="Select Group"
+            tooltipPlacement="right"
+            value={selectedGroupList}
+            onChange={(value) => setSelectedGroupList(value)}
+            placeholder="Group"
+          />
 
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="firstname"
-              name="firstname"
-              placeholder="Enter your First Name"
-              value={updateDetails.firstName}
-              onChange={(e) =>
-                setUpdateDetails({
-                  ...updateDetails,
-                  firstName: e.target.value,
-                })
-              }
-              required
-            />
-            <InputField
-              label="Last Name"
-              id="lastname"
-              name="lastname"
-              placeholder="Enter your Last Name"
-              value={updateDetails.lastName}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, lastName: e.target.value })
-              }
-              required
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your Email ID"
-              value={updateDetails.emailId}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, emailId: e.target.value })
-              }
-              required
-            />
-            <InputField
-              label="Mobile No."
-              id="mobile"
-              name="mobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              value={updateDetails.mobileNo}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, mobileNo: e.target.value })
-              }
-            />
-            <InputField
-              label="Company Name"
-              id="company"
-              name="company"
-              placeholder="Enter your Company Name"
-              value={updateDetails.companyName}
-              onChange={(e) =>
-                setUpdateDetails({
-                  ...updateDetails,
-                  companyName: e.target.value,
-                })
-              }
-            />
-            <InputField
-              label="Address"
-              id="address"
-              name="address"
-              placeholder="Enter your Address"
-              value={updateDetails.address}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, address: e.target.value })
-              }
-            />
-            <InputField
-              label="City"
-              id="city"
-              name="city"
-              placeholder="Enter your City"
-              value={updateDetails.city}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, city: e.target.value })
-              }
-            />
-            <InputField
-              label="State"
-              id="state"
-              name="state"
-              placeholder="Enter your State"
-              value={updateDetails.state}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, state: e.target.value })
-              }
-              required
-            />
-            <InputField
-              label="Country"
-              id="country"
-              name="country"
-              placeholder="Enter your Country"
-              value={updateDetails.country}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, country: e.target.value })
-              }
-            />
-            <InputField
-              label="Pincode"
-              id="Pincode"
-              name="Pincode"
-              placeholder="Enter your Pincode"
-              value={updateDetails.pinCode}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, pinCode: e.target.value })
-              }
-            />
-          </div>
-          <div className="flex justify-center mt-3">
-            <UniversalButton
-              label="Save"
-              id="saveButton"
-              name="saveButton"
-              onClick={handleDetailsUpdate}
-            />
-          </div>
+          <UniversalButton
+            id={"assignAgent"}
+            name={"assignAgent"}
+            label="Assign Agent"
+            onClick={handleAssignAgent}
+          />
         </div>
       </Dialog>
-      {/* Edit Details */}
 
-      {/* Login details */}
       <Dialog
-        header="Login details"
-        visible={logins}
-        onHide={() => setLogins(false)}
-        className="w-[30rem]"
+        header="Send Message to User"
+        visible={sendMessageDialogVisible}
+        style={{ width: "50rem", height: "40rem" }}
         draggable={false}
+        onHide={() => {
+          setSendMessageDialogVisible(false);
+          setTemplateType(templateType);
+          setBtnVarLength(0);
+          setVarLength(0);
+          setVariables({});
+          setBtnVariables("");
+          setTemplateDetails({});
+          setSendMessageData({});
+        }}
       >
-        Login details
-      </Dialog>
-      {/* Login details */}
-
-      {/* OTP details */}
-      <Dialog
-        header="OTP details"
-        visible={otpService}
-        onHide={() => setOtpService(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="max-w-md p-2 mx-auto rounded-lg border ">
-          <h2 className="mb-4 text-lg font-semibold text-center text-gray-800">
-            Mobile Numbers
-          </h2>
-
-          <div className="flex flex-col gap-3">
-            {mobileNumbers.map((number, index) => (
-              <div key={index} className="relative flex items-center gap-3">
-                <InputField
-                  variant="outlined"
-                  placeholder="Enter mobile number..."
-                  value={number}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  className="w-full"
-                  size="small"
-                />
-                {index > 0 && (
-                  // <IconButton onClick={() => removeMobileNumber(index)} sx={{ color: "red", position:"absolute", right:"3rem" }}>
-                  //   <DeleteIcon />
-                  // </IconButton>
-                  <MdOutlineDeleteForever
-                    onClick={() => removeMobileNumber(index)}
-                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
-                    size={20}
-                  />
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-center gap-2 mt-4">
-            <UniversalButton
-              label="Add"
-              id="addButton"
-              name="addButton"
-              variant="contained"
-              color="primary"
-              onClick={addMobileNumber}
-            />
-            <UniversalButton
-              label="Save"
-              id="saveButton"
-              name="saveButton"
-              variant="contained"
-              color="primary"
-            // onClick={addMobileNumber}
-            />
-
-            {/* <IconButton
-                onClick={addMobileNumber}
-                sx={{
-                  bgcolor: "#1E40AF",
-                  color: "white",
-                  borderRadius: "50%",
-                  width: 50,
-                  height: 50,
-                  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-                  "&:hover": { bgcolor: "#2563EB" },
-                }}
-              >
-                <AddCircleIcon sx={{ fontSize: 36 }} />
-              </IconButton> */}
-          </div>
-        </div>
-      </Dialog>
-      {/* OTP details */}
-
-      {/* View details */}
-      <Dialog
-        header="View details"
-        visible={viewService}
-        onHide={() => setViewService(false)}
-        className="w-[48rem] max-w-full"
-        draggable={false}
-      >
-        {/* <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="viewuserid"
-              name="viewuserid"
-              placeholder="Enter your User ID"
-              readOnly="true"
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="viewexpiryDate"
-              name="viewexpiryDate"
-              placeholder="Enter Expiry Date"
-              readOnly="true"
-            />
-          </div>
-          <div className="flex gap-2">
-            <InputField
-              label="User Type"
-              id="viewuserType"
-              name="viewuserType"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-            <InputField
-              label="Account URL"
-              id="viewaccounturl"
-              name="viewaccounturl"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Enable Postpaid"
-                  id="viewenablepostpaid"
-                  name="viewenablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                  readOnly="true"
-                />
-              </div>
-              <div className="flex items-center gap-2">
+        <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
+          <div className="flex flex-col w-full gap-5">
+            {/* <div className="flex gap-2">
+              <div className="flex gap-2">
                 <RadioButton
-                  inputId="viewenablepostpaidOption1"
-                  name="viewenablepostpaidredio"
-                  value="enable"
+                  inputId="mesageTemplateType"
+                  name="mesageTemplateType"
+                  value="template"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                    setTemplateDetails("");
+                  }}
+                  checked={messageType === "template"}
                 />
                 <label
-                  htmlFor="viewenablepostpaidOption1"
+                  htmlFor="mesageTemplateType"
                   className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
-                  Yes
+                  Template
                 </label>
               </div>
               <div className="flex items-center gap-2">
                 <RadioButton
-                  inputId="viewenablepostpaidOption2"
-                  name="viewenablepostpaidredio"
+                  inputId="mesageTextType"
+                  name="mesageTextType"
+                  value="text"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                    setTemplateDetails("");
+                  }}
+                  checked={messageType === "text"}
                 />
                 <label
-                  htmlFor="viewenablepostpaidOption2"
+                  htmlFor="mesageTextType"
                   className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
-                  No
+                  Custom Message
                 </label>
-              </div>
-
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="viewenablepostinput"
-                    name="viewenablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="vieweditstatus"
-                name="vieweditstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption1"
-                name="viewstatusredio"
-                value="enable"
-              />
-              <label
-                htmlFor="viewstatusOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption2"
-                name="viewstatusredio"
-                value="disable"
-              />
-              <label
-                htmlFor="viewstatusOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="viewfirstname"
-              name="viewfirstname"
-              placeholder="Enter your First Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Last Name"
-              id="viewlastname"
-              name="viewlastname"
-              placeholder="Enter your Last Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="viewemail"
-              name="viewemail"
-              placeholder="Enter your Email ID"
-              readOnly="true"
-            />
-            <InputField
-              label="Mobile No."
-              id="viewmobile"
-              name="viewmobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              readOnly="true"
-            />
-            <InputField
-              label="Company Name"
-              id="viewcompany"
-              name="viewcompany"
-              placeholder="Enter your Company Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Address"
-              id="viewaddress"
-              name="viewaddress"
-              placeholder="Enter your Address"
-              readOnly="true"
-            />
-            <InputField
-              label="City"
-              id="viewcity"
-              name="viewcity"
-              placeholder="Enter your City"
-              readOnly="true"
-            />
-            <InputField
-              label="State"
-              id="viewstate"
-              name="viewstate"
-              placeholder="Enter your State"
-              readOnly="true"
-            />
-            <InputField
-              label="Country"
-              id="viewcountry"
-              name="viewcountry"
-              placeholder="Enter your Country"
-              readOnly="true"
-            />
-            <InputField
-              label="Pincode"
-              id="viewPincode"
-              name="viewPincode"
-              placeholder="Enter your Pincode"
-              readOnly="true"
-            />
-          </div>
-        </div> */}
-        {selectedUserDetails ? (
-          <div className="space-y-6 p-3 border rounded-xl shadow-md">
-            {/* Row 1 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div className="flex items-center gap-2 text-sm">
-                <RemoveRedEyeOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong className="text-sm">User ID : </strong>
-                  {selectedUserDetails.userId || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CalendarTodayOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Expiry Date : </strong>
-                  {selectedUserDetails.expiryDate || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 2 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <PersonOutlineOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>First Name : </strong>
-                  {selectedUserDetails.firstName || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <PersonOutlineOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Last Name : </strong>{" "}
-                  {selectedUserDetails.lastName || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 3 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <EmailOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Email ID : </strong>{" "}
-                  {selectedUserDetails.emailId || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <PhoneOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Mobile No. : </strong>{" "}
-                  {selectedUserDetails.mobileNo || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 4 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <BusinessOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Company Name : </strong>{" "}
-                  {selectedUserDetails.companyName || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <LocationOnOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Address : </strong>{" "}
-                  {selectedUserDetails.address || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 5 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <LocationCityOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>City : </strong>{" "}
-                  {selectedUserDetails.city || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>State : </strong>{" "}
-                  {selectedUserDetails.state || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 6 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <PublicOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Country : </strong>{" "}
-                  {selectedUserDetails.country || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <PinDropOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Pincode : </strong>{" "}
-                  {selectedUserDetails.pinCode || "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 7 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <AccountTreeOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>User Type : </strong>{" "}
-                  {selectedUserDetails.userType || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <CheckCircleOutlineOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Status : </strong>{" "}
-                  {selectedUserDetails.status === 1
-                    ? "Active"
-                    : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
-                </p>
-              </div>
-            </div>
-
-            {/* Row 8 */}
-            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <CampaignOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Promo Service : </strong>
-                  {selectedUserDetails.promoService || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <SmsOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Trans Service : </strong>
-                  {selectedUserDetails.transService || "Not Available"}
-                </p>
               </div>
             </div> */}
-
-            {/* Row 9 */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
-              <div className="flex items-center gap-2">
-                <KeyOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Domain : </strong>{" "}
-                  {selectedUserDetails.domain || "Not Available"}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <LockOutlinedIcon className="text-gray-600" />
-                <p>
-                  <strong>Virtual Balance : </strong>{" "}
-                  {selectedUserDetails.virtualBalance || "Not Available"}
-                </p>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <p className="text-center text-gray-500">Loading user details...</p>
-        )}
-      </Dialog>
-      {/* View details */}
-
-      {/* assignService */}
-      <Dialog
-        header="Assign Service"
-        visible={assignService}
-        onHide={() => setAssignService(false)}
-        className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
-        draggable={false}
-      >
-        <Box sx={{ width: "100%" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="Assign Service Tabs"
-            textColor="primary"
-            indicatorColor="primary"
-          >
-            <Tab
-              label={
-                <span>
-                  <WhatsAppIcon size={20} /> WhatsApp
-                </span>
-              }
-              {...a11yProps(0)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span className="flex items-center gap-2">
-                  <BsJournalArrowDown size={18} />
-                  RCS
-                </span>
-              }
-              {...a11yProps(1)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <SmsOutlinedIcon size={20} /> SMS
-                </span>
-              }
-              {...a11yProps(2)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  OBD
-                </span>
-              }
-              {...a11yProps(3)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  Two Way
-                </span>
-              }
-              {...a11yProps(4)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <PhoneMissedOutlinedIcon size={20} />
-                  Missed Call
-                </span>
-              }
-              {...a11yProps(5)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  C2C
-                </span>
-              }
-              {...a11yProps(6)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <EmailOutlinedIcon size={20} />
-                  E-mail
-                </span>
-              }
-              {...a11yProps(7)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span>
-                  <CampaignOutlinedIcon size={20} />
-                  IBD
-                </span>
-              }
-              {...a11yProps(8)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Tabs>
-
-          {/* whatsapp */}
-          <CustomTabPanel value={value} index={0} className="">
             <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="whatsaapOption1"
-                      name="whatsappredio"
-                      value="enable"
-                      onChange={handleChangewhatsapp}
-                      checked={whatsappStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="whatsaapOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="whatsOption2"
-                      name="whatsappredio"
-                      value="disable"
-                      onChange={handleChangewhatsapp}
-                      checked={whatsappStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="whatsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {/* <RadioGroupField
-                id="whatsappenabledisabled"
-                name="whatsappenabledisabled"
-                // label="Enable Whatsapp"
-                options={whatsappenabledisabled}
-                value={whatsappStatus}
-                onChange={(e) => setWhatsappStatus(e.target.value)}
-              /> */}
-              {whatsappStatus === "enable" && (
-                <>
-                  <div id="whatsapptable">
-                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                      <DropdownWithSearch
-                        id="whatsappcountryselect"
-                        name="whatsappcountryselect"
-                        label="Select Country"
-                        options={countryOptions}
-                        value={whatsappCountry}
-                        onChange={(value) => setWhatsappCountry(value)}
-                      />
-
-                      <InputField
-                        id="whatsapputility"
-                        name="whatsapputility"
-                        label="Utility"
-                        placeholder="INR / Credit"
-                        value={whatsappUtility}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setWhatsappUtility)
-                        }
-                        type="text"
-                        readOnly={!whatsappCountry}
-                      />
-
-                      <InputField
-                        id="whatsappmarketing"
-                        name="whatsappmarketing"
-                        label="Marketing"
-                        placeholder="INR / Credit"
-                        value={whatsappMarketing}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setWhatsappMarketing)
-                        }
-                        type="text"
-                        readOnly={!whatsappCountry}
-                      />
-
-                      <UniversalButton
-                        label="Add"
-                        id="whatsaapaddcredit"
-                        name="whatsaapaddcredit"
-                        onClick={handleWhatsappAddCredit}
-                      />
-                    </div>
-
-                    <DataTable
-                      height={288}
-                      id="whatsapp-rate-table"
-                      name="whatsappRateTable"
-                      col={whatsaappcolumns}
-                      rows={whatsapprows}
-                      selectedRows={selectedRows}
-                      setSelectedRows={setSelectedRows}
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    {/* <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    /> */}
-                  </div>
-                </>
-              )}
-
-              {/* Edit whatsapp Rate */}
-              <Dialog
-                header="Edit WhatsApp Rate"
-                visible={editWhatsappVisible}
-                onHide={() => setEditWhatsappVisible(false)}
-                style={{ width: "30rem" }}
-                draggable={false}
-              >
-                <div className="space-y-4">
+              {messageType === "template" ? (
+                <div className="flex flex-col gap-3">
                   <DropdownWithSearch
-                    id="editCountry"
-                    name="editCountry"
-                    label="Country"
-                    value={editWhatsappForm.countryCode}
-                    options={countryOptions}
-                    onChange={(val) =>
-                      setEditWhatsappForm((prev) => ({
-                        ...prev,
-                        countryCode: val,
-                      }))
-                    }
+                    id="selectTemplate"
+                    name="selectTemplate"
+                    label="Select Template"
+                    placeholder="Select Template"
+                    options={allTemplated?.map((template) => ({
+                      value: template.templateName,
+                      label: template.templateName,
+                    }))}
+                    value={sendmessageData.templateName}
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        templateName: e,
+                      }));
+                      const templateType = allTemplated?.find(
+                        (template) => template.templateName === e
+                      )?.type;
+                      setTemplateType(templateType);
+                      setBtnVarLength(0);
+                      setVarLength(0);
+                      setVariables({});
+                      setBtnVariables("");
+                      setTemplateDetails("");
+                    }}
                   />
-                  <div className="flex items-center gap-5">
-                    <InputField
-                      label="Utility"
-                      value={editWhatsappForm.utility}
-                      onChange={(e) =>
-                        validateInput(e.target.value, (val) =>
-                          setEditWhatsappForm((prev) => ({
-                            ...prev,
-                            utility: val,
-                          }))
-                        )
-                      }
-                    />
 
-                    <InputField
-                      label="Marketing"
-                      value={editWhatsappForm.marketing}
-                      onChange={(e) =>
-                        validateInput(e.target.value, (val) =>
-                          setEditWhatsappForm((prev) => ({
-                            ...prev,
-                            marketing: val,
-                          }))
-                        )
-                      }
-                    />
-                  </div>
-
-
-                  <div className="flex justify-center">
-                    <UniversalButton
-                      label="Update"
-                      onClick={handleWhatsappUpdate}
-                    />
-                  </div>
-                </div>
-              </Dialog>
-
-              {/* Delete whatsapp Rate  */}
-              <Dialog
-                header="Delete WhatsApp Rate"
-                visible={whatsappDeleteVisible}
-                style={{ width: "27rem" }}
-                onHide={() => setWhatsappDeleteVisible(false)}
-                draggable={false}
-              >
-                <div className="flex items-center justify-center">
-                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
-                </div>
-                <div className="p-4 text-center">
-                  <p className="text-[1.1rem] font-semibold text-gray-700">
-                    Delete rate for{" "}
-                    <span className="text-green-600">
-                      {editingRow?.countryName}
-                    </span>
-                    ?
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    This action cannot be undone.
-                  </p>
-                </div>
-                <div className="flex justify-center gap-4 mt-4">
-                  <UniversalButton
-                    label="Cancel"
-                    onClick={() => setWhatsappDeleteVisible(false)}
+                  <Variables
+                    templateType={templateType}
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    varLength={varLength}
+                    setVariables={setVariables}
+                    variables={variables}
+                    btnVariables={btnVariables}
+                    btnVarLength={btnVarLength}
+                    setBtnVariables={setBtnVariables}
+                    setCarFile={setCarFile}
+                    carFile={carFile}
+                    cardIndex={cardIndex}
+                    setCardIndex={setCardIndex}
+                    handleNextCard={handleNextCard}
+                    handlePreviousCard={handlePreviousCard}
+                    tempDetails={templateDetails}
                   />
-                  <UniversalButton
-                    label="Delete"
-                    onClick={async () => {
-                      const res = await deleteWhatsappRateBySrno(
-                        editingRow.srno
-                      );
-                      if (res?.message?.toLowerCase().includes("success")) {
-                        toast.success("Rate deleted.");
-                        fetchWhatsappRateData(currentUserSrno);
-                        setWhatsappDeleteVisible(false);
-                      } else {
-                        toast.error(res.message || "Delete failed.");
-                      }
+                </div>
+              ) : null}
+              {/* (
+                <div>
+                  <InputField
+                    label="Enter Message"
+                    value={sendmessageData.message}
+                    placeholder="Enter Message..."
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        message: e.target.value,
+                      }));
                     }}
                   />
                 </div>
-              </Dialog>
-            </div>
-          </CustomTabPanel>
-
-          {/* RCS */}
-          <CustomTabPanel value={value} index={1}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="rcsOption1"
-                      name="rcsredio"
-                      value="enable"
-                      onChange={handleChangercs}
-                      checked={rcsStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="rcsOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="rcsOption2"
-                      name="rcsredio"
-                      value="disable"
-                      onChange={handleChangercs}
-                      checked={rcsStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="rcsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {/* <RadioGroupField
-                id="rcsenabledisabled"
-                name="rcsenabledisabled"
-                // label="Enable Whatsapp"
-                options={rcsenabledisabled}
-                value={rcsStatus}
-                onChange={(e) => setRcsStatus(e.target.value)}
-              /> */}
-              {rcsStatus === "enable" && (
-                <>
-                  <div id="rcstable">
-                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                      <DropdownWithSearch
-                        id="rcscountryselect"
-                        name="rcscountryselect"
-                        label="Select Country"
-                        options={countryOptions}
-                        value={rcsCountry}
-                        onChange={(value) => setRcsCountry(value)}
-                      />
-
-                      <InputField
-                        id="rcsrate"
-                        name="rcsrate"
-                        label="Rate"
-                        placeholder="INR / Credit"
-                        value={rcsrate}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setRcsrate)
-                        }
-                        type="text"
-                        readOnly={!rcsCountry}
-                      />
-
-                      <UniversalButton
-                        label="Add"
-                        id="rcsaddcredit"
-                        name="rcsaddcredit"
-                        onClick={handleRcsAddCredit}
-                      />
-                    </div>
-
-                    <Paper sx={{ height: 250 }} id={id} name={name}>
-                      <DataGrid
-                        id={id}
-                        name={name}
-                        rows={rcsrows}
-                        columns={rcscolumns}
-                        initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        rowHeight={45}
-                        slots={{
-                          footer: CustomFooter,
-                          noRowsOverlay: CustomNoRowsOverlay,
-                        }}
-                        onRowSelectionModelChange={(ids) =>
-                          setSelectedRows(ids)
-                        }
-                        disableRowSelectionOnClick
-                        disableColumnResize
-                        disableColumnMenu
-                        sx={{
-                          border: 0,
-                          "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": {
-                            color: "#193cb8",
-                            fontSize: "14px",
-                            fontWeight: "bold !important",
-                          },
-                          "& .MuiDataGrid-row--borderBottom": {
-                            backgroundColor: "#e6f4ff !important",
-                          },
-                          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                        }}
-                      />
-                    </Paper>
-
-                    {/* <DataTable
-                      height={280}
-                      id="rcs-rate-table"
-                      name="rcsRateTable"
-                      rows={rcsrows}
-                      columns={rcscolumns}
-                      selectedRows={selectedRows}
-                      setSelectedRows={setSelectedRows}
-                    /> */}
-                  </div>
-                  {/* <div className="flex justify-center mt-3">
-                    <UniversalButton label="Save" id="rcssave" name="rcssave" />
-                  </div> */}
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* SMS */}
-          <CustomTabPanel value={value} index={2}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption1"
-                      name="smsredio"
-                      value="enable"
-                      onChange={handleChangesms}
-                      checked={smsStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="smsOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="smsOption2"
-                      name="smsredio"
-                      value="disable"
-                      onChange={handleChangesms}
-                      checked={smsStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="smsOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {smsStatus === "enable" && (
-                <div className="">
-                  <div className="space-y-2">
-                    <p>Transaction Service</p>
-                    <div className="flex mb-2 lg:w-100 md:w-100">
-                      <Checkbox
-                        id="smsstatus"
-                        name="smsstatus"
-                        onChange={(e) => setTranscheck(e.checked)}
-                        checked={transcheck}
-                        className="m-2"
-                      />
-
-                      <AnimatedDropdown
-                        id="transdropdown"
-                        name="transdropdown"
-                        options={transOptions}
-                        value={trans} // <- should be the selected serviceId
-                        onChange={(selected) => setTrans(selected)} // selected.value if needed
-                        disabled={!transcheck}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <p>Promotion Service</p>
-                    <div className="flex lg:w-100 md:w-100">
-                      <Checkbox
-                        id="smspromo"
-                        name="smspromo"
-                        onChange={(e) => setPromocheck(e.checked)}
-                        checked={promocheck}
-                        className="m-2"
-                      />
-
-                      <AnimatedDropdown
-                        id="promodropdown"
-                        name="promodropdown"
-                        options={promoOption}
-                        value={promo}
-                        onChange={(selected) => setPromo(selected)}
-                        disabled={!promocheck}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex gap-5 items-center justify-start mt-3">
-                    <div className=" lg:w-100 md:w-100">
-                      <InputField
-                        id="translimit"
-                        name="translimit"
-                        label="Rate"
-                        placeholder="(INR / Credit)"
-                        value={smsrate}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setSmsRate)
-                        }
-                        type="number"
-                      />
-                    </div>
-                    <div className=" lg:w-100 md:w-100">
-                      <InputField
-                        id="dltRate"
-                        name="dltRate"
-                        label="Dlt Rate"
-                        placeholder="(INR / Credit)"
-                        value={dltRate}
-                        onChange={(e) =>
-                          validateInput(e.target.value, setDltRate)
-                        }
-                        type="number"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="smsSave"
-                      name="smsSave"
-                      onClick={handleSaveSmsPricing}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* OBD */}
-          <CustomTabPanel value={value} index={3}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="obdOption1"
-                      name="obdredio"
-                      value="enable"
-                      onChange={handleChangeobd}
-                      checked={obdStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="obdOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="obdOption2"
-                      name="obdredio"
-                      value="disable"
-                      onChange={handleChangeobd}
-                      checked={obdStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="obdOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              {obdStatus === "enable" && (
-                <div>
-                  <div className="flex mb-2 lg:w-100 md:w-100">
-                    <Checkbox
-                      id="obdstatusobd"
-                      name="obdstatusobd"
-                      onChange={(e) => setTranscheckobd(e.checked)}
-                      checked={transcheckobd}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdownobd"
-                      name="transdropdownobd"
-                      options={transOptionsobd}
-                      value={transobd}
-                      onChange={(value) => setTransobd(value)}
-                      disabled={!transcheckobd}
-                    />
-                  </div>
-                  <div className="flex lg:w-100 md:w-100">
-                    <Checkbox
-                      id="obdstatuspromo"
-                      name="obdstatuspromo"
-                      onChange={(e) => setPromocheckobd(e.checked)}
-                      checked={promocheckobd}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdownobd"
-                      name="transdropdownobd"
-                      options={promoOptionobd}
-                      value={promoobd}
-                      onChange={(value) => setPromoobd(value)}
-                      disabled={!promocheckobd}
-                    />
-                  </div>
-
-                  <div className=" lg:w-100 md:w-100">
-                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
-                      {/* Option 1 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="obdrateOption1"
-                          name="obdrateredio"
-                          value="enable"
-                          onChange={handleChangeobdRate}
-                          checked={obdrateStatus === "enable"}
-                        />
-                        <label
-                          htmlFor="obdrateOption1"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          @ 15 sec
-                        </label>
-                      </div>
-                      {/* Option 2 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="obdrateOption2"
-                          name="obdrateredio"
-                          value="disable"
-                          onChange={handleChangeobdRate}
-                          checked={obdrateStatus === "disable"}
-                        />
-                        <label
-                          htmlFor="obdrateOption2"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          @ 30 sec
-                        </label>
-                      </div>
-                    </div>
-                    <InputField
-                      id="transratesobd"
-                      name="transratesobd"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      value={obdrate}
-                      onChange={(e) =>
-                        validateInput(e.target.value, setObdRate)
-                      }
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* Two way sms */}
-          <CustomTabPanel value={value} index={4}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="twowayOption1"
-                      name="twowayredio"
-                      value="enable"
-                      onChange={handleChangetwoway}
-                      checked={twowayStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="twowayOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="twowayOption2"
-                      name="twowayredio"
-                      value="disable"
-                      onChange={handleChangetwoway}
-                      checked={twowayStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="twowayOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {twowayStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="twowayselect"
-                      name="twowayselect"
-                      label="Assign Validity"
-                      options={twowayOptions}
-                      value={twowayAssign}
-                      onChange={(value) => setTwowayAssign(value)}
-                    />
-                    <InputField
-                      id="twowayrate"
-                      name="twowayrate"
-                      label="Rate"
-                      placeholder="INR"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="twowaysave"
-                      name="twowaysave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* Missed Call */}
-          <CustomTabPanel value={value} index={5}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="misscallOption1"
-                      name="misscallredio"
-                      value="enable"
-                      onChange={handleChangeMisscall}
-                      checked={misscallStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="misscallOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="misscallOption2"
-                      name="misscallredio"
-                      value="disable"
-                      onChange={handleChangeMisscall}
-                      checked={misscallStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="misscallOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {misscallStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="misscallselect"
-                      name="misscallselect"
-                      label="Assign Validity"
-                      options={misscallOptions}
-                      value={misscallAssign}
-                      onChange={(value) => setMisscallAssign(value)}
-                    />
-                    <InputField
-                      id="misscallrate"
-                      name="misscallrate"
-                      label="Rate"
-                      placeholder="INR"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="misscallsave"
-                      name="misscallsave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* C2C */}
-          <CustomTabPanel value={value} index={6}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="clickOption1"
-                      name="clickredio"
-                      value="enable"
-                      onChange={handleChangeClick}
-                      checked={clickStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="clickOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="clickOption2"
-                      name="clickredio"
-                      value="disable"
-                      onChange={handleChangeClick}
-                      checked={clickStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="clickOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {clickStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap lg:w-100 md:w-100">
-                    <InputField
-                      id="clickrate"
-                      name="clickrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="clicksave"
-                      name="clicksave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* Email */}
-          <CustomTabPanel value={value} index={7}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="emailOption1"
-                      name="emailredio"
-                      value="enable"
-                      onChange={handleChangeEmail}
-                      checked={emailStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="emailOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="emailOption2"
-                      name="emailredio"
-                      value="disable"
-                      onChange={handleChangeEmail}
-                      checked={emailStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="emailOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {emailStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="emailselect"
-                      name="emailselect"
-                      label="Assign Validity"
-                      options={emailOptions}
-                      value={emailAssign}
-                      onChange={(value) => setEmailAssign(value)}
-                    />
-                    <InputField
-                      id="emailrate"
-                      name="emailrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton
-                      label="Save"
-                      id="emailsave"
-                      name="emailsave"
-                    />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-
-          {/* IBD */}
-          <CustomTabPanel value={value} index={8}>
-            <div>
-              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-                {/* Option 1 */}
-                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="ibdOption1"
-                      name="ibdredio"
-                      value="enable"
-                      onChange={handleChangeIbd}
-                      checked={ibdStatus === "enable"}
-                    />
-                    <label
-                      htmlFor="ibdOption1"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="ibdOption2"
-                      name="ibdredio"
-                      value="disable"
-                      onChange={handleChangeIbd}
-                      checked={ibdStatus === "disable"}
-                    />
-                    <label
-                      htmlFor="ibdOption2"
-                      className="text-sm font-medium text-gray-700 cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-              {ibdStatus === "enable" && (
-                <>
-                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
-                    <AnimatedDropdown
-                      id="ibdselect"
-                      name="ibdselect"
-                      label="Assign Validity"
-                      options={ibdOptions}
-                      value={ibdAssign}
-                      onChange={(value) => setIbdAssign(value)}
-                    />
-                    <InputField
-                      id="ibdrate"
-                      name="ibdrate"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      type="number"
-                    />
-                  </div>
-                  <div className=" lg:w-100 md:w-100">
-                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
-                      {/* Option 1 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="ibdpulseOption1"
-                          name="ibdpulseredio"
-                          value="enable"
-                          onChange={handleChangeibdPulse}
-                          checked={ibdpulseStatus === "enable"}
-                        />
-                        <label
-                          htmlFor="ibdpulseOption1"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          Enable
-                        </label>
-                      </div>
-                      {/* Option 2 */}
-                      <div className="flex items-center gap-2">
-                        <RadioButton
-                          inputId="ibdpulseOption2"
-                          name="ibdpulseredio"
-                          value="disable"
-                          onChange={handleChangeibdPulse}
-                          checked={ibdpulseStatus === "disable"}
-                        />
-                        <label
-                          htmlFor="ibdpulseOption2"
-                          className="text-sm font-medium text-gray-700 cursor-pointer"
-                        >
-                          Disable
-                        </label>
-                      </div>
-                    </div>
-                    {ibdpulseStatus === "enable" && (
-                      <InputField
-                        id="ibdpulselimit"
-                        name="ibdpulselimit"
-                        label="Pulse Limit"
-                        placeholder="(INR / Credit)"
-                        type="number"
-                      />
-                    )}
-                  </div>
-                  <div className="flex justify-center mt-3">
-                    <UniversalButton label="Save" id="ibdsave" name="ibdsave" />
-                  </div>
-                </>
-              )}
-            </div>
-          </CustomTabPanel>
-        </Box>
-      </Dialog>
-      {/* assignService */}
-
-      {/* Manage Api Key */}
-      <Dialog
-        header="Manage Api Key "
-        visible={manageApiKeys}
-        onHide={() => setManageApiKeys(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="space-y-4">
-          <InputField
-            id="apimanagekey"
-            name="apimanagekey"
-            type="text"
-            label="Old key"
-            placeholder="Enter Old key"
-            readOnly
-          />
-          <div className="flex items-end gap-2">
-            <div className="flex-1 ">
-              <InputField
-                id="newapikey"
-                name="newapikey"
-                type="text"
-                label="New API Key"
-                placeholder="Generate New Key"
-                value={newAPIKey}
-                readOnly
-                style={{ cursor: "not-allowed", backgroundColor: "#E5E7EB" }}
-              />
+              ) */}
             </div>
             <div>
-              <button
-                onClick={handleGenerateAPIKey}
-                className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
-              >
-                Generate Key
-              </button>
+              <UniversalButton label="Send" onClick={handlesendMessage} />
             </div>
           </div>
-        </div>
-        <div className="flex justify-center mt-4">
-          <UniversalButton
-            label="Save"
-            id="apisaveButton"
-            name="apisaveButton"
-            variant="primary"
-          />
-        </div>
-      </Dialog>
-      {/* Manage Api Key */}
-
-      {/* reset service */}
-      <Dialog
-        header="reset service"
-        visible={reset}
-        onHide={() => setreset(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="space-y-4">
-          <div className="relative">
-            <InputField
-              id="username"
-              name="username"
-              label="User Name"
-              placeholder="demo"
+          <div>
+            <TemplatePreview
+              tempDetails={templateDetails}
+              messageType={messageType}
+              sendmessageData={sendmessageData}
+              selectedImage={selectedFile}
+              carFile={carFile}
+              cardIndex={cardIndex}
+              setCardIndex={setCardIndex}
             />
           </div>
-          <GeneratePasswordSettings
-            id="newPassword"
-            name="newPassword"
-            type={"text"}
-            label="New Password"
-            placeholder="Enter your new password"
-            value={newPassword}
-          />
-        </div>
-        <div className="flex justify-center mt-4">
-          <UniversalButton
-            label="Save"
-            id="apisaveButton"
-            name="apisaveButton"
-            variant="primary"
-          />
         </div>
       </Dialog>
-      {/* reset service */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        accept="image/* video/* audio/*"
+      // multiple
+      />
 
-      {/* User Report */}
-      <Dialog
-        header="User Report"
-        visible={userReports}
-        onHide={() => setuserReports(false)}
-        className="w-[30rem]"
-        draggable={false}
-      >
-        <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-          {/* Option 1 */}
-          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="userreportOption1"
-                name="userreportredio"
-                value="enable"
-                onChange={handleChangeuserreport}
-                checked={userreportStatus === "enable"}
-              />
-              <label
-                htmlFor="userreportOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-          </div>
-          {/* Option 2 */}
-          <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="userreportOption2"
-                name="userreportredio"
-                value="disable"
-                onChange={handleChangeuserreport}
-                checked={userreportStatus === "disable"}
-              />
-              <label
-                htmlFor="userreportOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex justify-center mt-3">
-          <UniversalButton
-            label="Save"
-            id="userreportsave"
-            name="userreportsave"
-          />
-        </div>
-      </Dialog>
-      {/* User Report */}
-    </>
+      {imagePreviewVisible && (
+        <ImagePreview
+          imagePreviewVisible={imagePreviewVisible}
+          setImagePreviewVisible={setImagePreviewVisible}
+          images={[selectedImage]}
+        />
+      )}
+    </div>
   );
-};
+}
 
-export default ManageUserTable;
+
+
+
+
+
+
+// /=====================
+// Harish Changes Start
+// import { useEffect, useState, useRef } from "react";
+// import { FiSend } from "react-icons/fi";
+// import { BsJournalArrowDown, BsStars, BsThreeDotsVertical } from "react-icons/bs";
+// import { MdOutlineForum } from "react-icons/md";
+// import { IoArrowBack } from "react-icons/io5";
+// import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+// import { motion, AnimatePresence } from "framer-motion";
+// import AnimatedDropdown from "../components/AnimatedDropdown";
+// import { getWabaList } from "../../apis/whatsapp/whatsapp";
+// import {
+//   BoltRounded,
+//   FormatBoldOutlined,
+//   FormatItalicOutlined,
+//   FormatStrikethroughOutlined,
+//   LocalPhoneOutlined,
+//   SearchOutlined,
+// } from "@mui/icons-material";
+// import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+// import QuestionAnswerOutlinedIcon from '@mui/icons-material/QuestionAnswerOutlined';
+// import { SpeedDial } from "primereact/speeddial";
+// import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+// import CustomEmojiPicker from "../components/CustomEmojiPicker";
+// import { Sidebar } from "primereact/sidebar";
+// import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+// import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+// import { Dialog } from "primereact/dialog";
+// import InputField from "../components/InputField";
+// import { Badge } from 'primereact/badge';
+// import toast from "react-hot-toast";
+// import ImagePreview from "./ImagePreview";
+// import { MessageSquare } from "lucide-react";
+
+// export default function WhatsappLiveChat() {
+//   const fileInputRef = useRef(null);
+//   const [visibleRight, setVisibleRight] = useState(false);
+//   const [dialogVisible, setDialogVisible] = useState(false);
+//   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+//   const [agentList, setAgentList] = useState([]);
+//   const [agentName, setAgentname] = useState("");
+//   const [groupList, setGroupList] = useState([]);
+//   const [selectedAgentList, setSelectedAgentList] = useState(null);
+//   const [selectedGroupList, setSelectedGroupList] = useState(null);
+//   const [selectedImage, setSelectedImage] = useState([]);
+//   const [dropdownOpen, setDropdownOpen] = useState(false);
+
+//   const [chats, setChats] = useState([
+//     {
+//       id: 1,
+//       name: "John Doe",
+//       phone: "+919672670732",
+//       image:
+//         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
+//       messages: [
+//         { text: "Hello!", sender: "John Doe" },
+//         { text: "Hi there!", sender: "You" },
+//       ],
+//     },
+//     {
+//       id: 2,
+//       name: "Jane Smith",
+//       phone: "+919672670733",
+//       image:
+//         "https://darrenjameseeley.files.wordpress.com/2014/09/expendables3.jpeg",
+//       messages: [
+//         { text: "Hey!", sender: "Jane Smith" },
+//         { text: "What's up?", sender: "You" },
+//       ],
+//     },
+//   ]);
+//   const [activeChat, setActiveChat] = useState(null);
+//   const [input, setInput] = useState("");
+//   const [waba, setWaba] = useState([]);
+//   const [selectedWaba, setSelectedWaba] = useState("");
+//   const [btnOption, setBtnOption] = useState("active");
+//   const [search, setSearch] = useState("");
+
+//   const inputRef = useRef(null);
+
+//   const insertEmoji = (emoji) => {
+//     if (inputRef.current) {
+//       const inputref = inputRef.current;
+//       const start = inputref.selectionStart;
+//       const end = inputref.selectionEnd;
+
+//       const newText = input.substring(0, start) + emoji + input.substring(end);
+
+//       setInput(newText);
+
+//       setTimeout(() => {
+//         inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+//         inputref.focus();
+//       }, 0);
+//     }
+//   };
+
+//   useEffect(() => {
+//     async function fetchWaba() {
+//       const res = await getWabaList();
+//       setWaba(res);
+//     }
+
+//     fetchWaba();
+//   }, []);
+
+//   function deleteImages(index) {
+//     setSelectedImage((prev) => {
+//       const newSelectedImage = [...prev];
+//       newSelectedImage.splice(index, 1);
+//       return newSelectedImage;
+//     });
+//   }
+
+//   const sendMessage = () => {
+//     if (input.trim() || selectedImage) {
+//       const updatedChats = chats.map((chat) =>
+//         chat.id === activeChat.id
+//           ? {
+//             ...chat,
+//             messages: [
+//               ...chat.messages,
+//               { text: selectedImage[0], sender: "You" },
+//               { text: "Auto-reply: Got it!", sender: activeChat.name },
+//             ],
+//           }
+//           : chat
+//       );
+//       setChats(updatedChats);
+//       setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
+//       setInput("");
+//       setSelectedImage("");
+//     }
+//   };
+
+//   const items = [
+//     {
+//       label: "Attachment",
+//       icon: <AttachmentOutlinedIcon />,
+//       command: () => {
+//         fileInputRef.current.click();
+//       },
+//     },
+//     {
+//       label: "Document",
+//       icon: <FilePresentOutlinedIcon />,
+//       command: () => {
+//         console.log("Document Btn");
+//       },
+//     },
+//     {
+//       label: "Template",
+//       icon: <BsJournalArrowDown />,
+//       command: () => {
+//         console.log("Template Btn");
+//       },
+//     },
+//   ];
+
+//   const handleFileChange = (e) => {
+//     const files = Array.from(e.target.files);
+//     if (files.length + selectedImage.length > 10) {
+//       toast.error("You can only upload up to 10 files.");
+//       return;
+//     }
+//     setSelectedImage((prev) => [...prev, ...files]);
+//   };
+
+//   return (
+//     <div className="flex h-[90vh] bg-gradient-to-br from-green-400 via-white to-blue-400 rounded-xl overflow-hidden shadow-lg">
+//       <AnimatePresence>
+//         {!selectedWaba && (
+//           <motion.div
+//             key="waba-selector"
+//             initial={{ opacity: 0, scale: 0.95 }}
+//             animate={{ opacity: 1, scale: 1 }}
+//             exit={{ opacity: 0, scale: 0.95 }}
+//             transition={{ duration: 0.5 }}
+//             className="flex flex-col items-center justify-center w-full h-[90vh] bg-gradient-to-br from-green-100 via-white to-blue-100 px-4"
+//           >
+//             <div className="text-center max-w-md w-full space-y-8 mb-35">
+//               <div className="w-40 h-40 mx-auto">
+//                 <lottie-player
+//                   autoplay
+//                   loop
+//                   mode="normal"
+//                   src='/animation/wabalivechatanimation.json'
+//                   style={{ width: "100%", height: "100%" }}
+//                 ></lottie-player>
+//               </div>
+//               <motion.h2
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.3 }}
+//                 className="text-3xl font-semibold text-green-900"
+//               >
+//                 Ready to Manage Your Conversations?
+//               </motion.h2>
+//               <motion.p
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.4 }}
+//                 className="text-gray-600 text-sm"
+//               >
+//                 Choose your WhatsApp Business Account to access live chats, track activity, and delight your customers.
+//               </motion.p>
+//               <motion.div
+//                 initial={{ opacity: 0, y: 10 }}
+//                 animate={{ opacity: 1, y: 0 }}
+//                 transition={{ delay: 0.5 }}
+//                 className="w-full max-w-sm mx-auto"
+//               >
+//                 <div className="relative">
+//                   <button
+//                     onClick={() => setDropdownOpen(!dropdownOpen)}
+//                     className="w-full flex justify-between items-center bg-green-100 p-4 rounded-lg shadow-lg cursor-pointer hover:bg-green-100 transition-all"
+//                   >
+//                     <span className="text-gray-500">
+//                       {selectedWaba || "Select WABA to continue"}
+//                     </span>
+//                     <svg
+//                       className="w-5 h-5 text-gray-500"
+//                       xmlns="http://www.w3.org/2000/svg"
+//                       fill="none"
+//                       viewBox="0 0 24 24"
+//                       stroke="currentColor"
+//                     >
+//                       <path
+//                         stroke-linecap="round"
+//                         stroke-linejoin="round"
+//                         stroke-width="2"
+//                         d="M19 9l-7 7-7-7"
+//                       />
+//                     </svg>
+//                   </button>
+
+//                   {dropdownOpen && (
+//                     <motion.div
+//                       initial={{ opacity: 0, y: 10 }}
+//                       animate={{ opacity: 1, y: 0 }}
+//                       exit={{ opacity: 0, y: 10 }}
+//                       transition={{ duration: 0.3 }}
+//                       className="absolute top-full left-0 w-full bg-white  rounded-lg shadow-lg mt-2 z-10"
+//                     >
+//                       <div className="max-h-40 overflow-auto">
+//                         {waba.map((w, idx) => (
+//                           <div
+//                             key={idx}
+//                             onClick={() => setSelectedWaba(w.name)}
+//                             className="cursor-pointer p-2.5 border-b hover:bg-gray-100"
+//                           >
+//                             {w.name}
+//                           </div>
+//                         ))}
+//                       </div>
+//                     </motion.div>
+//                   )}
+//                 </div>
+//               </motion.div>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {selectedWaba && (
+//           <motion.div
+//             key="chat-list"
+//             initial={{ x: "-100%" }}
+//             animate={{ x: 0 }}
+//             exit={{ x: "-100%" }}
+//             transition={{ type: "spring", stiffness: 100 }}
+//             className="w-full md:w-1/3 bg-white p-4 overflow-y-auto border-r"
+//           >
+//             <div className="flex justify-between items-center mb-4">
+//               <h3 className="text-xl font-bold text-gray-800">Active Users</h3>
+//               <button className="text-sm text-red-500 underline" onClick={() => setSelectedWaba("")}>Change WABA</button>
+//             </div>
+//             {chats.length === 0 ? (
+//               <div className="text-center text-gray-500 mt-20">
+//                 <p>No active users found for this WABA.</p>
+//               </div>
+//             ) : (
+//               chats.map((chat) => (
+//                 <div
+//                   key={chat.id}
+//                   className="p-3 mb-2 rounded-lg bg-gray-100 hover:bg-blue-100 cursor-pointer transition"
+//                   onClick={() => setActiveChat(chat)}
+//                 >
+//                   <div className="flex items-center gap-3">
+//                     <img
+//                       src={chat.image}
+//                       alt="avatar"
+//                       className="w-10 h-10 rounded-full object-cover"
+//                     />
+//                     <div>
+//                       <h4 className="font-semibold">{chat.name}</h4>
+//                       <p className="text-sm text-gray-500 truncate">
+//                         {chat.messages[chat.messages.length - 1].text}
+//                       </p>
+//                     </div>
+//                   </div>
+//                 </div>
+//               ))
+//             )}
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {selectedWaba && !activeChat && (
+//           <motion.div
+//             key="empty-chat"
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             exit={{ opacity: 0 }}
+//             className="flex-1 flex items-center justify-center bg-gray-100 rounded-r-xl"
+//           >
+//             <div className="text-center space-y-6">
+//               <div className="flex justify-center mb-4">
+//                 <div className="w-24 h-24 rounded-full bg-green-100 shadow-xl flex items-center justify-center animate-bounce">
+//                   <QuestionAnswerOutlinedIcon sx={{ fontSize: "3rem" }} className="text-green-700" />
+//                 </div>
+//               </div>
+//               <h2 className="text-2xl font-semibold text-gray-800 tracking-wide">Welcome to Celitix LiveChat!</h2>
+//               <p className="text-gray-500">Select a conversation from the left panel to start chatting.</p>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+
+//       <AnimatePresence>
+//         {activeChat && (
+//           <motion.div
+//             key="chat-window"
+//             initial={{ x: "100%", opacity: 0 }}
+//             animate={{ x: 0, opacity: 1 }}
+//             exit={{ x: "100%", opacity: 0 }}
+//             transition={{ type: "spring", stiffness: 100 }}
+//             className="flex flex-col flex-1 bg-white shadow-md"
+//           >
+//             <div className="flex items-center justify-between p-4 border-b">
+//               <div className="flex items-center gap-3">
+//                 <IoArrowBack
+//                   className="md:hidden text-xl cursor-pointer"
+//                   onClick={() => setActiveChat(null)}
+//                 />
+//                 <img
+//                   src={activeChat.image}
+//                   alt="avatar"
+//                   className="w-10 h-10 rounded-full object-cover"
+//                 />
+//                 <h4 className="font-semibold text-gray-700">
+//                   {activeChat.name}
+//                 </h4>
+//               </div>
+//             </div>
+
+//             <div className="flex-1 overflow-y-auto p-4 space-y-2">
+//               {activeChat.messages.map((msg, index) => (
+//                 <motion.div
+//                   key={index}
+//                   initial={{ opacity: 0, y: 10 }}
+//                   animate={{ opacity: 1, y: 0 }}
+//                   transition={{ delay: index * 0.05 }}
+//                   className={`p-2 rounded-lg max-w-xs ${msg.sender === "You"
+//                     ? "bg-blue-500 text-white self-end"
+//                     : "bg-gray-200 text-black self-start"}`}
+//                 >
+//                   {msg.text}
+//                 </motion.div>
+//               ))}
+//             </div>
+
+//             <div className="p-4 border-t flex items-center gap-2">
+//               <CustomEmojiPicker position="top" onSelect={insertEmoji} />
+//               <input
+//                 ref={inputRef}
+//                 type="text"
+//                 placeholder="Type a message..."
+//                 className="flex-1 p-2 border rounded-lg focus:outline-none"
+//                 value={input}
+//                 onChange={(e) => setInput(e.target.value)}
+//                 onKeyDown={(e) => e.key === "Enter" && sendMessage()}
+//               />
+//               <button
+//                 onClick={sendMessage}
+//                 className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+//               >
+//                 <FiSend />
+//               </button>
+//             </div>
+//           </motion.div>
+//         )}
+//       </AnimatePresence>
+//     </div>
+//   );
+// }
+
+// Harish Changes End
+
+// april 15 changes start
+// import { useEffect, useState, useRef, useCallback } from "react";
+// import { FiSend } from "react-icons/fi";
+// import { BsJournalArrowDown, BsThreeDotsVertical } from "react-icons/bs";
+// import { IoArrowBack } from "react-icons/io5";
+// import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+// import AnimatedDropdown from "../components/AnimatedDropdown";
+// import { FaReply } from "react-icons/fa6";
+// import {
+//   assignUserToAgent,
+//   downloadAttachment,
+//   fetchAllConversations,
+//   fetchSpecificConversations,
+//   getWabaList,
+//   getWabaShowGroupsList,
+//   getWabaTemplate,
+//   getWabaTemplateDetails,
+//   loadNewChat,
+//   readMessage,
+//   sendInputMessageToUser,
+//   sendMessageToUser,
+//   sendTemplateMessageToUser,
+//   uploadImageFile,
+// } from "../../apis/whatsapp/whatsapp";
+// import {
+//   BoltRounded,
+//   FormatBoldOutlined,
+//   FormatItalicOutlined,
+//   FormatStrikethroughOutlined,
+//   LocalPhoneOutlined,
+//   SearchOutlined,
+// } from "@mui/icons-material";
+// import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+// import { SpeedDial } from "primereact/speeddial";
+// import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+// import CustomEmojiPicker from "../components/CustomEmojiPicker";
+// import { Sidebar } from "primereact/sidebar";
+// import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+// import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+// import { Dialog } from "primereact/dialog";
+// import InputField from "../components/InputField";
+// import toast from "react-hot-toast";
+// import ImagePreview from "./ImagePreview";
+// import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+// import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
+// import { fetchAllAgents } from "@/apis/rcs/rcs";
+// import UniversalButton from "../components/UniversalButton";
+// import { RadioButton } from "primereact/radiobutton";
+// import Loader from "../components/Loader";
+// import { TemplatePreview } from "./component/TemplatePreview";
+// import dayjs from "dayjs";
+// import { getAgentList } from "@/apis/Agent/Agent";
+// import { Variables } from "./component/Variables";
+// import { Tooltip } from "primereact/tooltip";
+// import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+// import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
+
+// import { motion, AnimatePresence } from "framer-motion";
+
+// import UniversalSkeleton from "@/components/common/UniversalSkeleton";
+// import { ChatScreen } from "./component/chat/ChatScreen";
+// import { ChatSidebar } from "./component/chat/Sidebar";
+// import { InputData } from "./component/InputData";
+// import { select } from "@material-tailwind/react";
+
+// export default function WhatsappLiveChat() {
+//   const fileInputRef = useRef(null);
+//   const [visibleRight, setVisibleRight] = useState(false);
+//   const [dialogVisible, setDialogVisible] = useState(false);
+//   const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+//   const [agentList, setAgentList] = useState([]);
+//   const [agentName, setAgentname] = useState("");
+//   const [groupList, setGroupList] = useState([]);
+//   const [selectedAgentList, setSelectedAgentList] = useState(null);
+//   const [selectedGroupList, setSelectedGroupList] = useState(null);
+//   const [selectedImage, setSelectedImage] = useState("");
+//   const [activeChat, setActiveChat] = useState(null);
+//   const [input, setInput] = useState("");
+//   const [waba, setWaba] = useState([]);
+//   const [selectedWaba, setSelectedWaba] = useState("");
+//   const [btnOption, setBtnOption] = useState("active");
+//   const [search, setSearch] = useState("");
+
+//   const [allConvo, setAllConvo] = useState([]);
+//   const [specificConversation, setSpecificConversation] = useState([]);
+
+//   const [isFetching, setIsFetching] = useState(false);
+//   const [sendMessageDialogVisible, setSendMessageDialogVisible] =
+//     useState(false);
+//   const [messageType, setMessageType] = useState("template");
+//   const [allTemplated, setAllTemplated] = useState([]);
+//   const [sendmessageData, setSendMessageData] = useState({});
+//   const [templateDetails, setTemplateDetails] = useState("");
+//   const [templateType, setTemplateType] = useState("");
+//   const [selectedFile, setSelectedFile] = useState(null);
+//   const [varLength, setVarLength] = useState(0);
+//   const [btnVarLength, setBtnVarLength] = useState(0);
+//   const [latestMessageData, setLatestMessageData] = useState({
+//     srno: "",
+//     replayTime: "",
+//   });
+
+//   const [variables, setVariables] = useState([]);
+
+//   const [btnVariables, setBtnVariables] = useState("");
+
+//   const [replyData, setReplyData] = useState("");
+//   const [isReply, setIsReply] = useState(false);
+
+//   const inputRef = useRef(null);
+//   const messageRef = useRef(null);
+
+//   //merge related States
+//   const [chatState, setChatState] = useState({
+//     active: null,
+//     input: "",
+//     allConversations: [],
+//     specificConversation: [],
+//     latestMessage: {
+//       srno: "",
+//       replayTime: "",
+//     },
+//     replyData: "",
+//     isReply: false,
+//   });
+
+//   const [wabaState, setWabaState] = useState({
+//     waba: [],
+//     selectedWaba: "",
+//     wabaSrno: "",
+//   });
+
+//   const insertEmoji = (emoji) => {
+//     if (inputRef.current) {
+//       const inputref = inputRef.current;
+//       const start = inputref.selectionStart;
+//       const end = inputref.selectionEnd;
+
+//       const newText = input.substring(0, start) + emoji + input.substring(end);
+
+//       setInput(newText);
+
+//       setTimeout(() => {
+//         inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+//         inputref.focus();
+//       }, 0);
+//     }
+//   };
+
+//   useEffect(() => {
+//     async function fetchWaba() {
+//       const res = await getWabaList();
+//       // setWaba(res);
+//       setWabaState({ ...wabaState, waba: res });
+//     }
+
+//     fetchWaba();
+//   }, []);
+
+//   function deleteImages(index) {
+//     if (fileInputRef.current) {
+//       fileInputRef.current.value = "";
+//     }
+//     // setSelectedImage((prev) => {
+//     //   const newSelectedImage = [...prev];
+//     //   newSelectedImage.splice(index, 1);
+//     //   return newSelectedImage;
+//     // });
+//     setSelectedImage(null);
+//   }
+
+//   const sendMessage = async () => {
+//     // if (input.trim() || selectedImage) {
+//     //   const updatedChats = chats?.map((chat) =>
+//     //     chat.id === activeChat.id
+//     //       ? {
+//     //           ...chat,
+//     //           messages: [
+//     //             ...chat.messages,
+//     //             { text: selectedImage[0], sender: "You" },
+//     //             { text: "Auto-reply: Got it!", sender: activeChat.name },
+//     //           ],
+//     //         }
+//     //       : chat
+//     //   );
+//     //   setChats(updatedChats);
+//     //   setActiveChat(updatedChats.find((chat) => chat.id === activeChat.id));
+//     //   setInput("");
+//     //   setSelectedImage("");
+//     // }
+
+//     // console.log(isReply);
+//     // console.log(replyData);
+
+//     const fileType = selectedImage?.type?.split("/")[0];
+
+//     let replyType = "";
+
+//     switch (fileType) {
+//       case "image":
+//         replyType = "image";
+//         break;
+//       case "video":
+//         replyType = "video";
+//         break;
+//       case "audio":
+//         replyType = "audio";
+//         break;
+//       case "sticker":
+//         replyType = "sticker";
+//         break;
+//       default:
+//         replyType = "text";
+//         break;
+//     }
+
+//     const data = {
+//       mobile: chatState?.active.mobileNo,
+//       wabaNumber: wabaState?.selectedWaba,
+//       srno: chatState?.active.srno,
+//       message: input,
+//       contactName: chatState?.active.contectName || "",
+//       replyType: chatState?.isReply ? "" : replyType,
+//       replyFrom: "user",
+//       wabaSrNo: wabaState?.wabaSrno,
+//     };
+
+//     let body = {};
+//     if (chatState?.isReply && input.trim()) {
+//       body = {
+//         messaging_product: "whatsapp",
+//         context: {
+//           message_id: chatState?.replyData?.receiptNo,
+//         },
+//         to: chatState?.active.mobileNo,
+//         type: "text",
+//         text: {
+//           preview_url: "False",
+//           body: input,
+//         },
+//       };
+//       console.log(body);
+//     } else if (selectedImage) {
+//       const imageData = await uploadImageFile(selectedImage);
+
+//       body = {
+//         messaging_product: "whatsapp",
+//         to: chatState?.active?.mobileNo,
+//         type: replyType,
+//         [replyType]: {
+//           caption: input || "",
+//           link: imageData?.fileUrl,
+//         },
+//       };
+//     }
+
+//     try {
+//       setInput("");
+//       setSelectedImage(null);
+//       if (fileInputRef.current) {
+//         fileInputRef.current.value = "";
+//       }
+//       const res = await sendInputMessageToUser(data, body);
+//       if (res?.status !== "success") {
+//         return toast.error("Error sending message");
+//       }
+//       const audio = new Audio("./send-message.wav");
+//       audio.play().catch((e) => {
+//         console.log("Audio play error:", e);
+//       });
+//       setChatState((prev) => ({ ...prev, isReply: false }));
+//       await handleFetchSpecificConversation();
+//     } catch (e) {
+//       console.log("Error Sending Message");
+//       return;
+//     }
+//   };
+
+//   const items = [
+//     {
+//       label: "Attachment",
+//       icon: <AttachmentOutlinedIcon />,
+//       command: () => {
+//         fileInputRef.current.click();
+//       },
+//     },
+//     {
+//       label: "Document",
+//       icon: <FilePresentOutlinedIcon />,
+//       command: () => {
+//         console.log("Document Btn");
+//       },
+//     },
+//     {
+//       label: "Template",
+//       icon: <BsJournalArrowDown />,
+//       command: () => {
+//         setSendMessageDialogVisible(true);
+//       },
+//     },
+//   ];
+
+//   async function handleFetchAllConvo() {
+//     if (!wabaState?.selectedWaba) return;
+//     if (!btnOption) return;
+//     const userActive = btnOption == "active" ? 1 : 0;
+//     try {
+//       const data = {
+//         mobileNo: wabaState?.selectedWaba,
+//         srno: 0,
+//         active: userActive,
+//         search: search || "",
+//       };
+//       // setIsFetching(true);
+//       const res = await fetchAllConversations(data);
+
+//       if (!res.conversationEntityList[0]) {
+//         return;
+//       }
+
+//       const mappedConversations = res.conversationEntityList?.map((chat) => {
+//         const unread = res.unreadCounts.find(
+//           (unreadChat) => unreadChat.mobile === chat.mobileNo
+//         );
+//         return {
+//           ...chat,
+//           unreadCount: unread ? unread.unreadCount : 0,
+//         };
+//       });
+//       setChatState((prev) => ({
+//         ...prev,
+//         allConversations: mappedConversations,
+//       }));
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching all conversations");
+//     } finally {
+//       // setIsFetching(false);
+//     }
+//   }
+
+//   function handleSearch() {
+//     handleFetchAllConvo();
+//     // setActiveChat(null);
+//     setChatState((prev) => ({ ...prev, active: null }));
+//   }
+
+//   useEffect(() => {
+//     const intervalid = setInterval(() => {
+//       handleFetchAllConvo();
+//     }, 500);
+
+//     return () => clearInterval(intervalid);
+//   }, [wabaState.selectedWaba, btnOption]);
+
+//   useEffect(() => {
+//     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
+//   }, [wabaState.selectedWaba, btnOption]);
+
+//   async function handleFetchAllTemplates() {
+//     if (!wabaState.selectedWaba) {
+//       return;
+//     }
+//     try {
+//       const res = await getWabaTemplateDetails(wabaState.selectedWaba);
+//       setAllTemplated(res);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching all templates");
+//     }
+//   }
+//   useEffect(() => {
+//     handleFetchAllTemplates();
+//   }, [sendMessageDialogVisible === true]);
+
+//   const handleFileChange = async (e) => {
+//     // const filesUrl = [];
+//     // const files = Array.from(e.target.files);
+//     // try {
+//     //   files.forEach(async (file) => {
+//     //     const res = await uploadImageFile(file);
+//     //     // filesUrl.push(res);
+//     //     console.log(res);
+//     //   });
+//     // } catch (e) {
+//     //   console.log(e);
+//     //   return toast.error("Error uploading file");
+//     // }
+
+//     // if (files.length + selectedImage.length > 10) {
+//     //   toast.error("You can only upload up to 10 files.");
+//     //   return;
+//     // }
+//     // setSelectedImage((prev) => [...prev, ...files]);
+
+//     const files = e.target.files[0];
+//     setSelectedImage(files);
+//   };
+
+//   const formatDate = (dateString) => {
+//     if (!dateString) return "Unknown";
+//     const date = new Date(dateString);
+//     const day = String(date.getDate()).padStart(2, "0");
+//     const month = String(date.getMonth() + 1).padStart(2, "0");
+//     const year = String(date.getFullYear()).slice(-2);
+//     return `${day}/${month}/${year}`;
+//   };
+//   async function handleFetchSpecificConversation() {
+//     const payload = {
+//       mobileNo: chatState?.active?.mobileNo,
+//       wabaMobile: chatState?.active?.wabaNumber,
+//       chatNo: 0,
+//     };
+
+//     try {
+//       const res = await fetchSpecificConversations(payload);
+//       const messages = [...(res?.conversationEntityList || [])].reverse();
+
+//       setLatestMessageData({
+//         srno: res?.conversationEntityList[0]?.srno,
+//         replayTime: res?.conversationEntityList[0]?.replyTime,
+//       });
+
+//       const enrichedMessages = await Promise.all(
+//         messages.map(async (msg) => {
+//           let mediaPath = null;
+
+//           if (msg.isReceived && msg?.replyType === "image") {
+//             try {
+//               mediaPath = await downloadAttachment({
+//                 waba: wabaState.selectedWaba,
+//                 id: msg.mediaId,
+//                 conversionSrno: msg.srno,
+//               });
+//             } catch (err) {
+//               console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+//             }
+//           } else {
+//             mediaPath = msg.mediaPath;
+//           }
+
+//           return {
+//             ...msg,
+//             date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
+//             mediaPath,
+//             // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
+//           };
+//         })
+//       );
+
+//       // Group messages by date
+//       const grouped = enrichedMessages.reduce((acc, msg) => {
+//         if (!acc[msg.date]) {
+//           acc[msg.date] = [];
+//         }
+//         acc[msg.date].push(msg);
+//         return acc;
+//       }, {});
+
+//       const groupedArray = Object.entries(grouped).map(([date, messages]) => ({
+//         date,
+//         messages,
+//       }));
+
+//       // setSpecificConversation(groupedArray);
+//       setChatState((prev) => ({
+//         ...prev,
+//         specificConversation: groupedArray,
+//       }));
+//     } catch (e) {
+//       console.error("Error in handleFetchSpecificConversation:", e);
+//       toast.error("Error fetching specific conversation");
+//     }
+//   }
+
+//   useEffect(() => {
+//     if (messageRef.current) {
+//       messageRef.current.scrollTop = messageRef.current.scrollHeight;
+//     }
+//   }, [chatState?.active, specificConversation]);
+
+//   useEffect(() => {
+//     handleFetchSpecificConversation();
+//   }, [chatState?.active]);
+
+//   useEffect(() => {
+//     async function handleFetchAllAgent() {
+//       try {
+//         const res = await getAgentList();
+//         setAgentList(res);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+//     async function handleFetchAllGroup() {
+//       try {
+//         const res = await getWabaShowGroupsList();
+//         setGroupList(res);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+
+//     handleFetchAllAgent();
+//     handleFetchAllGroup();
+//   }, []);
+
+//   async function handleAssignAgent() {
+//     if (!selectedAgentList) {
+//       return toast.error("Please select agent");
+//     }
+//     // if (!agentName) {
+//     //   return toast.error("Please select agent display name");
+//     // }
+//     if (!selectedGroupList) {
+//       return toast.error("Please select group");
+//     }
+//     if (!chatState?.active.mobileNo) {
+//       return toast.error("Please select chat first");
+//     }
+
+//     const data = {
+//       waba: wabaState.selectedWaba,
+//       name: agentName,
+//       agentSrno: selectedAgentList,
+//       groupNo: selectedGroupList,
+//       mobileNo: chatState?.active.mobileNo,
+//     };
+
+//     try {
+//       setIsFetching(true);
+//       const res = await assignUserToAgent(data);
+//       if (res.message.includes("Successfully")) {
+//         toast.success("Agent assigned successfully.");
+//         setDialogVisible(false);
+//         setSelectedAgentList("");
+//         setSelectedGroupList("");
+//         setAgentname("");
+//       }
+//     } catch (e) {
+//       console.log(e);
+//       toast.error("Something went wrong. Please try again.");
+//     } finally {
+//       setIsFetching(false);
+//     }
+//   }
+
+//   async function handlesendMessage() {
+//     if (!chatState?.active) {
+//       return toast.error("Please select chat first");
+//     }
+
+//     if (messageType === "text" && !sendmessageData.message) {
+//       return toast.error("Please enter message");
+//     }
+
+//     let data = {};
+//     let func = "";
+//     if (messageType === "text") {
+//       data = {
+//         mobile: chatState?.active.mobileNo,
+//         wabaNumber: wabaState.selectedWaba,
+//         srno: chatState?.active.srno,
+//         message: sendmessageData.message,
+//         contactName: chatState?.active?.contectName || "",
+//         replyType: "text",
+//         replyFrom: "user",
+//         wabaSrNo: wabaState.wabaSrno,
+//       };
+//       func = sendMessageToUser;
+//     } else if (messageType === "template") {
+//       const templateType = allTemplated.find(
+//         (temp) => temp.templateName === sendmessageData?.templateName
+//       );
+
+//       if (templateType?.type === "image") {
+//         return toast.error("Please Select Image first");
+//       }
+
+//       const allvariables = [];
+//       console.log(variables.length);
+//       if (varLength[0]?.length > 0) {
+//         Object.keys(variables).forEach((key) => {
+//           allvariables.push(variables[key]);
+//         });
+//         // if (varLength[0]?.length != variables.length) {
+//         //   return toast.error("Please enter all variables");
+//         // }
+//       }
+
+//       if (btnVarLength?.length > 0 && !btnVariables) {
+//         return toast.error("Please enter Button variables");
+//       }
+//       data = {
+//         srno: chatState?.active.srno,
+//         templateUrlVariable: btnVariables,
+//         templateType: templateType?.type,
+//         templateName: sendmessageData?.templateName,
+//         templateLanguage: "en",
+//         wabaNumber: wabaState.selectedWaba,
+//         mobileno: chatState?.active.mobileNo,
+//         contactName: chatState?.active?.contectName || "",
+//         msgType: "template",
+//         variables: allvariables,
+//         mediaUrl: "",
+//         phoneDisplay: "",
+//         wabaSrNo: wabaState.wabaSrno,
+//         agentsrno: "",
+//       };
+//       func = sendTemplateMessageToUser;
+//     } else {
+//       return toast.error("Please select valid messageType");
+//     }
+
+//     try {
+//       setIsFetching(true);
+//       const res = await func(data);
+//       if (
+//         res?.msg?.includes("successfully") ||
+//         res?.msg?.includes("Successfully")
+//       ) {
+//         toast.success("Message sent successfully.");
+//         setSendMessageDialogVisible(false);
+//         setSendMessageData({});
+//         setVariables([]);
+//         setVarLength(0);
+//         setTemplateDetails("");
+//         return;
+//       }
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Something went wrong. Please try again.");
+//     } finally {
+//       setIsFetching(false);
+//     }
+//   }
+//   async function handlefetchTemplateDetails() {
+//     if (!sendmessageData?.templateName) {
+//       return;
+//     }
+//     const wabaId = wabaState.waba.find(
+//       (waba) => waba.mobileNo === wabaState.selectedWaba
+//     )?.wabaAccountId;
+//     try {
+//       const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
+//       setTemplateDetails(res.data[0]);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Error fetching template details");
+//     }
+//   }
+//   useEffect(() => {
+//     handlefetchTemplateDetails();
+//   }, [sendmessageData?.templateName, setSendMessageData]);
+
+//   function formatTime(dateString) {
+//     const date = new Date(dateString.replace(" ", "T"));
+
+//     const options = {
+//       hour: "numeric",
+//       minute: "2-digit",
+//       hour12: true,
+//     };
+
+//     const timeAMPM = date.toLocaleTimeString("en-US", options);
+//     return timeAMPM;
+//   }
+
+//   function fetchVaribles() {
+//     if (!templateDetails) return;
+
+//     templateDetails?.components?.map((item) => {
+//       if (item?.type === "BODY") {
+//         setVarLength(item?.example?.body_text);
+//       }
+//       if (item?.type === "BUTTONS") {
+//         item?.buttons?.map(({ type, example }) => {
+//           if (type === "URL") {
+//             setBtnVarLength(example);
+//           }
+//         });
+//       }
+//     });
+//   }
+
+//   useEffect(() => {
+//     fetchVaribles();
+//   }, [templateDetails]);
+
+//   useEffect(() => {
+//     async function handleLoadNewChat() {
+//       if (!wabaState.selectedWaba || !chatState?.active) return;
+
+//       try {
+//         const data = {
+//           mobile: chatState?.active.mobileNo,
+//           wabaNumber: wabaState.selectedWaba,
+//           ...latestMessageData,
+//         };
+//         const res = await loadNewChat(data);
+//         if (res?.conversationEntityList.length === 0) {
+//           return;
+//         }
+//         const audio = new Audio("./receive-message.mp3");
+//         audio.play().catch((e) => {
+//           console.log("Audio play error:", e);
+//         });
+//         await handleFetchSpecificConversation();
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+
+//     async function handleIsView() {
+//       if (!wabaState.selectedWaba || !chatState?.active) return;
+//       try {
+//         const data = {
+//           mobile: chatState?.active.mobileNo,
+//           waba: wabaState.selectedWaba,
+//           srno: latestMessageData.srno,
+//         };
+//         await readMessage(data);
+//       } catch (e) {
+//         console.log(e);
+//       }
+//     }
+//     const intervalId = setInterval(() => {
+//       handleLoadNewChat();
+//       handleIsView();
+//     }, 5000);
+//     return () => clearInterval(intervalId);
+//   }, [latestMessageData, chatState?.active]);
+
+//   async function handleAttachmentDownload(data) {
+//     try {
+//       const mediaPath = await downloadAttachment({
+//         waba: wabaState.selectedWaba,
+//         id: data.mediaId,
+//         conversionSrno: data.srno,
+//       });
+//     } catch (e) {
+//       console.log(e);
+//     }
+//   }
+
+//   return isFetching ? (
+//     <Loader height="35rem" width="100%" />
+//   ) : (
+//     <div className="flex h-[100%] bg-gray-100 overflow-hidden ">
+//       <div
+//         className={`w-full md:w-100  border-r overflow-hidden ${chatState?.active ? "hidden md:block" : "block"
+//           }`}
+//       >
+//         <InputData
+//           setSearch={setSearch}
+//           search={search}
+//           handleSearch={handleSearch}
+//           btnOption={btnOption}
+//           setBtnOption={setBtnOption}
+//           wabaState={wabaState}
+//           setWabaState={setWabaState}
+//           setChatState={setChatState}
+//         />
+
+//         <ChatSidebar
+//           formatDate={formatDate}
+//           chatState={chatState}
+//           setChatState={setChatState}
+//         />
+//       </div>
+
+//       {chatState.active && (
+//         <ChatScreen
+//           setVisibleRight={setVisibleRight}
+//           setDialogVisible={setDialogVisible}
+//           messageRef={messageRef}
+//           formatTime={formatTime}
+//           btnOption={btnOption}
+//           selectedImage={selectedImage}
+//           deleteImages={deleteImages}
+//           handleAttachmentDownload={handleAttachmentDownload}
+//           insertEmoji={insertEmoji}
+//           inputRef={inputRef}
+//           sendMessage={sendMessage}
+//           items={items}
+//           visibleRight={visibleRight}
+//           input={input}
+//           setInput={setInput}
+//           setSendMessageDialogVisible={setSendMessageDialogVisible}
+//           setChatState={setChatState}
+//           chatState={chatState}
+//         />
+//       )}
+
+//       <Dialog
+//         header="Transfer Chat to Agent"
+//         visible={dialogVisible}
+//         style={{ width: "50vw" }}
+//         draggable={false}
+//         onHide={() => {
+//           if (!dialogVisible) return;
+//           setDialogVisible(false);
+//         }}
+//       >
+//         <div className="space-y-3">
+//           <AnimatedDropdown
+//             options={agentList?.data?.map((agent) => ({
+//               value: agent.sr_no,
+//               label: agent.name,
+//             }))}
+//             id="agentList"
+//             name="agentList"
+//             label="Agent List"
+//             tooltipContent="Select Agent"
+//             tooltipPlacement="right"
+//             value={selectedAgentList}
+//             onChange={(value) => setSelectedAgentList(value)}
+//             placeholder="Agent List"
+//           />
+
+//           {/* <InputField
+//             label="Agent Display Name"
+//             tooltipContent="Enter Agent Name"
+//             id="agentname"
+//             name="agentname"
+//             type="tel"
+//             value={agentName}
+//             onChange={(e) => setAgentname(e.target.value)}
+//             placeholder="Enter Agent Display Name"
+//           /> */}
+//           <AnimatedDropdown
+//             options={groupList?.map((group) => ({
+//               value: group.groupCode,
+//               label: group.groupName,
+//             }))}
+//             id="group"
+//             name="group"
+//             label="Group"
+//             tooltipContent="Select Group"
+//             tooltipPlacement="right"
+//             value={selectedGroupList}
+//             onChange={(value) => setSelectedGroupList(value)}
+//             placeholder="Group"
+//           />
+
+//           <UniversalButton
+//             id={"assignAgent"}
+//             name={"assignAgent"}
+//             label="Assign Agent"
+//             onClick={handleAssignAgent}
+//           />
+//         </div>
+//       </Dialog>
+
+//       <Dialog
+//         header="Send Message to User"
+//         visible={sendMessageDialogVisible}
+//         style={{ width: "50rem", height: "40rem" }}
+//         draggable={false}
+//         onHide={() => {
+//           setSendMessageDialogVisible(false);
+//           setTemplateType(templateType);
+//           setBtnVarLength(0);
+//           setVarLength(0);
+//           setVariables({});
+//           setBtnVariables("");
+//           setTemplateDetails({});
+//           setSendMessageData({});
+//         }}
+//       >
+//         <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
+//           <div className="flex flex-col w-full gap-5">
+//             {/* <div className="flex gap-2">
+//               <div className="flex gap-2">
+//                 <RadioButton
+//                   inputId="mesageTemplateType"
+//                   name="mesageTemplateType"
+//                   value="template"
+//                   onChange={(e) => {
+//                     setMessageType(e.target.value);
+//                     setSendMessageData({});
+//                     setTemplateDetails("");
+//                   }}
+//                   checked={messageType === "template"}
+//                 />
+//                 <label
+//                   htmlFor="mesageTemplateType"
+//                   className="text-sm font-medium text-gray-700 cursor-pointer"
+//                 >
+//                   Template
+//                 </label>
+//               </div>
+//               <div className="flex items-center gap-2">
+//                 <RadioButton
+//                   inputId="mesageTextType"
+//                   name="mesageTextType"
+//                   value="text"
+//                   onChange={(e) => {
+//                     setMessageType(e.target.value);
+//                     setSendMessageData({});
+//                     setTemplateDetails("");
+//                   }}
+//                   checked={messageType === "text"}
+//                 />
+//                 <label
+//                   htmlFor="mesageTextType"
+//                   className="text-sm font-medium text-gray-700 cursor-pointer"
+//                 >
+//                   Custom Message
+//                 </label>
+//               </div>
+//             </div> */}
+//             <div>
+//               {messageType === "template" ? (
+//                 <div className="flex flex-col gap-3">
+//                   <AnimatedDropdown
+//                     id="selectTemplate"
+//                     name="selectTemplate"
+//                     label="Select Template"
+//                     placeholder="Select Template"
+//                     options={allTemplated?.map((template) => ({
+//                       value: template.templateName,
+//                       label: template.templateName,
+//                     }))}
+//                     value={sendmessageData.templateName}
+//                     onChange={(e) => {
+//                       setSendMessageData((prevData) => ({
+//                         ...prevData,
+//                         templateName: e,
+//                       }));
+//                       const templateType = allTemplated?.find(
+//                         (template) => template.templateName === e
+//                       )?.type;
+//                       setTemplateType(templateType);
+//                       setBtnVarLength(0);
+//                       setVarLength(0);
+//                       setVariables({});
+//                       setBtnVariables("");
+//                       setTemplateDetails("");
+//                     }}
+//                   />
+
+//                   <Variables
+//                     templateType={templateType}
+//                     selectedFile={selectedFile}
+//                     setSelectedFile={setSelectedFile}
+//                     varLength={varLength}
+//                     setVariables={setVariables}
+//                     variables={variables}
+//                     btnVariables={btnVariables}
+//                     btnVarLength={btnVarLength}
+//                     setBtnVariables={setBtnVariables}
+//                   />
+//                 </div>
+//               ) : null}
+//               {/* (
+//                 <div>
+//                   <InputField
+//                     label="Enter Message"
+//                     value={sendmessageData.message}
+//                     placeholder="Enter Message..."
+//                     onChange={(e) => {
+//                       setSendMessageData((prevData) => ({
+//                         ...prevData,
+//                         message: e.target.value,
+//                       }));
+//                     }}
+//                   />
+//                 </div>
+//               ) */}
+//             </div>
+//             <div>
+//               <UniversalButton label="Send" onClick={handlesendMessage} />
+//             </div>
+//           </div>
+//           <div>
+//             <TemplatePreview
+//               tempDetails={templateDetails}
+//               messageType={messageType}
+//               sendmessageData={sendmessageData}
+//             />
+//           </div>
+//         </div>
+//       </Dialog>
+//       <input
+//         type="file"
+//         ref={fileInputRef}
+//         style={{ display: "none" }}
+//         onChange={handleFileChange}
+//         accept="image/* video/* audio/*"
+//       // multiple
+//       />
+
+//       {imagePreviewVisible && (
+//         <ImagePreview
+//           imagePreviewVisible={imagePreviewVisible}
+//           setImagePreviewVisible={setImagePreviewVisible}
+//           images={[selectedImage]}
+//         />
+//       )}
+//     </div>
+//   );
+// }
+// april 15 changes end
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { FiSend } from "react-icons/fi";
+import { BsJournalArrowDown, BsThreeDotsVertical } from "react-icons/bs";
+import { IoArrowBack } from "react-icons/io5";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import { FaReply } from "react-icons/fa6";
+import {
+  assignUserToAgent,
+  downloadAttachment,
+  fetchAllConversations,
+  fetchSpecificConversations,
+  getWabaList,
+  getWabaShowGroupsList,
+  getWabaTemplate,
+  getWabaTemplateDetails,
+  loadNewChat,
+  readMessage,
+  sendInputMessageToUser,
+  sendMessageToUser,
+  sendTemplateMessageToUser,
+  uploadImageFile,
+} from "../../apis/whatsapp/whatsapp";
+import {
+  BoltRounded,
+  FormatBoldOutlined,
+  FormatItalicOutlined,
+  FormatStrikethroughOutlined,
+  LocalPhoneOutlined,
+  SearchOutlined,
+} from "@mui/icons-material";
+import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+import { SpeedDial } from "primereact/speeddial";
+import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
+import CustomEmojiPicker from "../components/CustomEmojiPicker";
+import { Sidebar } from "primereact/sidebar";
+import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+import { Dialog } from "primereact/dialog";
+import InputField from "../components/InputField";
+import toast from "react-hot-toast";
+import ImagePreview from "./ImagePreview";
+import AccessAlarmOutlinedIcon from "@mui/icons-material/AccessAlarmOutlined";
+import ArrowRightAltOutlinedIcon from "@mui/icons-material/ArrowRightAltOutlined";
+import { fetchAllAgents } from "@/apis/rcs/rcs";
+import UniversalButton from "../components/UniversalButton";
+import { RadioButton } from "primereact/radiobutton";
+import Loader from "../components/Loader";
+import { TemplatePreview } from "./component/TemplatePreview";
+import dayjs from "dayjs";
+import { getAgentList } from "@/apis/Agent/Agent";
+import { Variables } from "./component/Variables";
+import { Tooltip } from "primereact/tooltip";
+import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
+import QuestionAnswerOutlinedIcon from "@mui/icons-material/QuestionAnswerOutlined";
+
+import { motion, AnimatePresence } from "framer-motion";
+
+import UniversalSkeleton from "@/components/common/UniversalSkeleton";
+import { ChatScreen } from "./component/chat/ChatScreen";
+import { ChatSidebar } from "./component/chat/Sidebar";
+import { InputData } from "./component/InputData";
+import { select } from "@material-tailwind/react";
+import DropdownWithSearch from "../components/DropdownWithSearch";
+
+export default function WhatsappLiveChat() {
+  const fileInputRef = useRef(null);
+  const [visibleRight, setVisibleRight] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const [imagePreviewVisible, setImagePreviewVisible] = useState(false);
+
+  const [agentList, setAgentList] = useState([]);
+  const [agentName, setAgentname] = useState("");
+  const [groupList, setGroupList] = useState([]);
+  const [selectedAgentList, setSelectedAgentList] = useState(null);
+  const [selectedGroupList, setSelectedGroupList] = useState(null);
+  const [selectedImage, setSelectedImage] = useState("");
+  const [activeChat, setActiveChat] = useState(null);
+  const [input, setInput] = useState("");
+  const [waba, setWaba] = useState([]);
+  const [selectedWaba, setSelectedWaba] = useState("");
+  const [btnOption, setBtnOption] = useState("active");
+  const [search, setSearch] = useState("");
+
+  const [allConvo, setAllConvo] = useState([]);
+  const [specificConversation, setSpecificConversation] = useState([]);
+
+  const [isFetching, setIsFetching] = useState(false);
+  const [sendMessageDialogVisible, setSendMessageDialogVisible] =
+    useState(false);
+  const [messageType, setMessageType] = useState("template");
+  const [allTemplated, setAllTemplated] = useState([]);
+  const [sendmessageData, setSendMessageData] = useState({});
+  const [templateDetails, setTemplateDetails] = useState("");
+  const [templateType, setTemplateType] = useState("");
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [varLength, setVarLength] = useState(0);
+  const [btnVarLength, setBtnVarLength] = useState(0);
+  const [latestMessageData, setLatestMessageData] = useState({
+    srno: "",
+    replayTime: "",
+  });
+
+  const [variables, setVariables] = useState([]);
+  const [carFile, setCarFile] = useState([]);
+
+  const [btnVariables, setBtnVariables] = useState("");
+
+  const [replyData, setReplyData] = useState("");
+  const [isReply, setIsReply] = useState(false);
+
+  const inputRef = useRef(null);
+  const messageRef = useRef(null);
+
+  const [cardIndex, setCardIndex] = useState(0);
+
+  function handleNextCard() {
+    setCardIndex(cardIndex + 1);
+  }
+
+  function handlePreviousCard() {
+    if (cardIndex === 0) return;
+    setCardIndex(cardIndex - 1);
+  }
+
+  //merge related States
+  const [chatState, setChatState] = useState({
+    active: null,
+    input: "",
+    allConversations: [],
+    specificConversation: [],
+    latestMessage: {
+      srno: "",
+      replayTime: "",
+    },
+    replyData: "",
+    isReply: false,
+  });
+
+  const [wabaState, setWabaState] = useState({
+    waba: [],
+    selectedWaba: "",
+    wabaSrno: "",
+  });
+
+  async function fetchWaba() {
+    const res = await getWabaList();
+    console.log(res);
+    setWabaState((prev) => ({
+      ...prev,
+      waba: res,
+    }));
+  }
+  useEffect(() => {
+    fetchWaba();
+  }, []);
+  const insertEmoji = (emoji) => {
+    if (inputRef.current) {
+      const inputref = inputRef.current;
+      const start = inputref.selectionStart;
+      const end = inputref.selectionEnd;
+
+      const newText = input.substring(0, start) + emoji + input.substring(end);
+
+      setInput(newText);
+
+      setTimeout(() => {
+        inputref.setSelectionRange(start + emoji.length, start + emoji.length);
+        inputref.focus();
+      }, 0);
+    }
+  };
+
+  function deleteImages(index) {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    // setSelectedImage((prev) => {
+    //   const newSelectedImage = [...prev];
+    //   newSelectedImage.splice(index, 1);
+    //   return newSelectedImage;
+    // });
+    setSelectedImage(null);
+  }
+
+  const sendMessage = async () => {
+    const fileType = selectedImage?.type?.split("/")[0];
+
+    let replyType = "";
+
+    switch (fileType) {
+      case "image":
+        replyType = "image";
+        break;
+      case "video":
+        replyType = "video";
+        break;
+      case "audio":
+        replyType = "audio";
+        break;
+      case "sticker":
+        replyType = "sticker";
+        break;
+      default:
+        replyType = "text";
+        break;
+    }
+
+    const data = {
+      mobile: chatState?.active.mobileNo,
+      wabaNumber: wabaState?.selectedWaba,
+      srno: chatState?.active.srno,
+      message: input || "",
+      contactName: chatState?.active.contectName || "",
+      replyType: chatState?.isReply ? "" : replyType,
+      replyFrom: "user",
+      wabaSrNo: wabaState?.wabaSrno,
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
+    };
+
+    let body = {};
+
+    console.log(chatState?.isReply)
+    if (chatState?.isReply && input) {
+      body = {
+        messaging_product: "whatsapp",
+        context: {
+          message_id: chatState?.replyData?.receiptNo,
+        },
+        to: chatState?.active.mobileNo,
+        type: replyType,
+        [replyType]: {
+          preview_url: "False",
+          body: input,
+        },
+      };
+    } else if (selectedImage) {
+      const imageData = await uploadImageFile(selectedImage);
+
+      body = {
+        messaging_product: "whatsapp",
+        to: chatState?.active?.mobileNo,
+        type: replyType,
+        [replyType]: {
+          caption: input || "",
+          link: imageData?.fileUrl,
+        },
+      };
+    }
+
+    // console.log(body, data);
+
+    try {
+      setInput("");
+      setSelectedImage(null);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      const res = await sendInputMessageToUser(data, body);
+      if (res?.status !== "success") {
+        return toast.error("Error sending message");
+      }
+      const audio = new Audio("./send-message.wav");
+      audio.play().catch((e) => {
+        console.log("Audio play error:", e);
+      });
+      setChatState((prev) => ({ ...prev, isReply: false }));
+      await handleFetchSpecificConversation();
+    } catch (e) {
+      console.log("Error Sending Message");
+      return;
+    }
+  };
+
+  const items = [
+    {
+      label: "Attachment",
+      icon: <AttachmentOutlinedIcon />,
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
+      label: "Document",
+      icon: <FilePresentOutlinedIcon />,
+      command: () => {
+        console.log("Document Btn");
+      },
+    },
+    {
+      label: "Template",
+      icon: <BsJournalArrowDown />,
+      command: () => {
+        setSendMessageDialogVisible(true);
+      },
+    },
+  ];
+
+  async function handleFetchAllConvo() {
+    if (!wabaState?.selectedWaba) return;
+    if (!btnOption) return;
+    const userActive = btnOption == "active" ? 1 : 0;
+    try {
+      const data = {
+        mobileNo: wabaState?.selectedWaba,
+        srno: 0,
+        active: userActive,
+        search: search || "",
+      };
+      // setIsFetching(true);
+      const res = await fetchAllConversations(data);
+
+      if (!res.conversationEntityList[0]) {
+        return;
+      }
+
+      const mappedConversations = res.conversationEntityList?.map((chat) => {
+        const unread = res.unreadCounts.find(
+          (unreadChat) => unreadChat.mobile === chat.mobileNo
+        );
+        return {
+          ...chat,
+          unreadCount: unread ? unread.unreadCount : 0,
+        };
+      });
+      setChatState((prev) => ({
+        ...prev,
+        allConversations: mappedConversations,
+      }));
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching all conversations");
+    } finally {
+      // setIsFetching(false);
+    }
+  }
+
+  function handleSearch() {
+    handleFetchAllConvo();
+    // setActiveChat(null);
+    setChatState((prev) => ({ ...prev, active: null }));
+  }
+
+  useEffect(() => {
+    // handleFetchAllConvo();
+    if (!wabaState?.selectedWaba) return;
+    const intervalid = setInterval(() => {
+      handleFetchAllConvo();
+    }, 500);
+
+    return () => clearInterval(intervalid);
+  }, [wabaState.selectedWaba, btnOption]);
+
+  useEffect(() => {
+    setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
+  }, [wabaState.selectedWaba, btnOption]);
+
+  async function handleFetchAllTemplates() {
+    if (!wabaState.selectedWaba) {
+      return;
+    }
+    try {
+      const res = await getWabaTemplateDetails(wabaState.selectedWaba);
+      setAllTemplated(res);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching all templates");
+    }
+  }
+  useEffect(() => {
+    handleFetchAllTemplates();
+  }, [sendMessageDialogVisible === true]);
+
+  const handleFileChange = async (e) => {
+    // const filesUrl = [];
+    // const files = Array.from(e.target.files);
+    // try {
+    //   files.forEach(async (file) => {
+    //     const res = await uploadImageFile(file);
+    //     // filesUrl.push(res);
+    //     console.log(res);
+    //   });
+    // } catch (e) {
+    //   console.log(e);
+    //   return toast.error("Error uploading file");
+    // }
+
+    // if (files.length + selectedImage.length > 10) {
+    //   toast.error("You can only upload up to 10 files.");
+    //   return;
+    // }
+    // setSelectedImage((prev) => [...prev, ...files]);
+
+    const files = e.target.files[0];
+    setSelectedImage(files);
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return "Unknown";
+    const date = new Date(dateString);
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const year = String(date.getFullYear()).slice(-2);
+    return `${day}/${month}/${year}`;
+  };
+  async function handleFetchSpecificConversation() {
+    const payload = {
+      mobileNo: chatState?.active?.mobileNo,
+      wabaMobile: chatState?.active?.wabaNumber,
+      chatNo: 0,
+    };
+
+    try {
+      const res = await fetchSpecificConversations(payload);
+      const messages = [...(res?.conversationEntityList || [])].reverse();
+
+      setLatestMessageData({
+        srno: res?.conversationEntityList[0]?.srno,
+        replayTime: res?.conversationEntityList[0]?.replyTime,
+      });
+
+      const enrichedMessages = await Promise.all(
+        messages.map(async (msg) => {
+          let mediaPath = null;
+
+          if (msg.isReceived && msg?.replyType === "image") {
+            try {
+              mediaPath = await downloadAttachment({
+                waba: wabaState.selectedWaba,
+                id: msg.mediaId,
+                conversionSrno: msg.srno,
+              });
+            } catch (err) {
+              console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+            }
+          } else {
+            mediaPath = msg.mediaPath;
+          }
+
+          return {
+            ...msg,
+            date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
+            mediaPath,
+            // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
+          };
+        })
+      );
+
+      // Group messages by date
+      const grouped = enrichedMessages.reduce((acc, msg) => {
+        if (!acc[msg.date]) {
+          acc[msg.date] = [];
+        }
+        acc[msg.date].push(msg);
+        return acc;
+      }, {});
+
+      const groupedArray = Object.entries(grouped).map(([date, messages]) => ({
+        date,
+        messages,
+      }));
+
+      // setSpecificConversation(groupedArray);
+      setChatState((prev) => ({
+        ...prev,
+        specificConversation: groupedArray,
+      }));
+    } catch (e) {
+      console.error("Error in handleFetchSpecificConversation:", e);
+      toast.error("Error fetching specific conversation");
+    }
+  }
+
+  // useEffect(() => {
+  //   console.log(messageRef.current?.scrollTop);
+  //   console.log(messageRef.current?.scrollHeight);
+  //   if (messageRef.current) {
+  //     messageRef.current.scrollTop = messageRef.current.scrollHeight;
+  //   }
+  // }, [chatState?.active, specificConversation]);
+
+  useEffect(() => {
+    handleFetchSpecificConversation();
+  }, [chatState?.active]);
+
+  useEffect(() => {
+    async function handleFetchAllAgent() {
+      try {
+        const res = await getAgentList();
+        setAgentList(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    async function handleFetchAllGroup() {
+      try {
+        const res = await getWabaShowGroupsList();
+        setGroupList(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    handleFetchAllAgent();
+    handleFetchAllGroup();
+  }, []);
+
+  async function handleAssignAgent() {
+    if (!selectedAgentList) {
+      return toast.error("Please select agent");
+    }
+    // if (!agentName) {
+    //   return toast.error("Please select agent display name");
+    // }
+    if (!selectedGroupList) {
+      return toast.error("Please select group");
+    }
+    if (!chatState?.active.mobileNo) {
+      return toast.error("Please select chat first");
+    }
+
+    const data = {
+      waba: wabaState.selectedWaba,
+      name: agentName,
+      agentSrno: selectedAgentList,
+      groupNo: selectedGroupList,
+      mobileNo: chatState?.active.mobileNo,
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await assignUserToAgent(data);
+      if (res.message.includes("Successfully")) {
+        toast.success("Agent assigned successfully.");
+        setDialogVisible(false);
+        setSelectedAgentList("");
+        setSelectedGroupList("");
+        setAgentname("");
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+  async function handlesendMessage() {
+    if (!chatState?.active) {
+      return toast.error("Please select chat first");
+    }
+
+    if (messageType === "text" && !sendmessageData.message) {
+      return toast.error("Please enter message");
+    }
+
+    let data = {};
+    let func = "";
+    if (messageType === "text") {
+      data = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        srno: chatState?.active.srno,
+        message: sendmessageData.message,
+        contactName: chatState?.active?.contectName || "",
+        replyType: "text",
+        replyFrom: "user",
+        wabaSrNo: wabaState.wabaSrno,
+      };
+      func = sendMessageToUser;
+    } else if (messageType === "template") {
+      const templateType = allTemplated.find(
+        (temp) => temp.templateName === sendmessageData?.templateName
+      );
+
+      if (
+        ["image", "video", "document"].includes(templateType?.type) &&
+        !selectedFile?.fileUrl
+      ) {
+        return toast.error("Please Select Media first");
+      }
+
+      const allvariables = [];
+      if (varLength && varLength[0]?.length > 0) {
+        Object.keys(variables).forEach((key) => {
+          allvariables.push(variables[key]);
+        });
+        // if (varLength[0]?.length != variables.length) {
+        //   return toast.error("Please enter all variables");
+        // }
+      }
+
+      let imgCard = [];
+
+      let isError = false;
+
+      const isCaroual = templateDetails?.components?.find(
+        (item) => item?.type === "CAROUSEL"
+      )?.type;
+
+      if (isCaroual) {
+        Object.keys(carFile).forEach((key) => {
+          if (!carFile[key].filePath) {
+            toast.error(`Please upload a file for Card ${key + 1}.`);
+            isError = true;
+            return;
+          }
+          const filePath = carFile[key].filePath;
+          imgCard.push(filePath);
+        });
+
+        if (isError) {
+          return;
+        }
+      }
+
+      if (btnVarLength?.length > 0 && !btnVariables) {
+        return toast.error("Please enter Button variables");
+      }
+      data = {
+        srno: chatState?.active.srno,
+        templateUrlVariable: btnVariables,
+        templateType: templateType?.type,
+        templateName: sendmessageData?.templateName,
+        templateLanguage: "en",
+        wabaNumber: wabaState.selectedWaba,
+        mobileno: chatState?.active.mobileNo,
+        contactName: chatState?.active?.contectName || "",
+        msgType: "template",
+        variables: allvariables,
+        mediaUrl: selectedFile?.fileUrl,
+        phoneDisplay: "",
+        wabaSrNo: wabaState.wabaSrno,
+        agentsrno: "",
+        imgCards: imgCard,
+      };
+      func = sendTemplateMessageToUser;
+    } else {
+      return toast.error("Please select valid messageType");
+    }
+
+    try {
+      setIsFetching(true);
+      const res = await func(data);
+      if (
+        res?.msg?.includes("successfully") ||
+        res?.msg?.includes("Successfully")
+      ) {
+        toast.success("Message sent successfully.");
+        setSendMessageDialogVisible(false);
+        setSendMessageData({});
+        setVariables([]);
+        setVarLength(0);
+        setTemplateDetails("");
+        setSelectedFile(null);
+        return;
+      }
+    } catch (e) {
+      console.log(e);
+      return toast.error("Something went wrong. Please try again.");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+  async function handlefetchTemplateDetails() {
+    if (!sendmessageData?.templateName) {
+      return;
+    }
+    const wabaId = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selectedWaba
+    )?.wabaAccountId;
+    try {
+      const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
+      setTemplateDetails(res.data[0]);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching template details");
+    }
+  }
+  useEffect(() => {
+    handlefetchTemplateDetails();
+  }, [sendmessageData?.templateName, setSendMessageData]);
+
+  function formatTime(dateString) {
+    const date = new Date(dateString.replace(" ", "T"));
+
+    const options = {
+      hour: "numeric",
+      minute: "2-digit",
+      hour12: true,
+    };
+
+    const timeAMPM = date.toLocaleTimeString("en-US", options);
+    return timeAMPM;
+  }
+
+  function fetchVaribles() {
+    if (!templateDetails) return;
+
+    templateDetails?.components?.map((item) => {
+      if (item?.type === "BODY") {
+        setVarLength(item?.example?.body_text);
+      }
+      if (item?.type === "BUTTONS") {
+        item?.buttons?.map(({ type, example }) => {
+          if (type === "URL") {
+            setBtnVarLength(example);
+          }
+        });
+      }
+    });
+  }
+
+  useEffect(() => {
+    fetchVaribles();
+  }, [templateDetails]);
+
+  async function handleLoadNewChat() {
+    if (!wabaState.selectedWaba || !chatState?.active) return;
+
+    console.log("handleLoadNewChat");
+
+    try {
+      const data = {
+        mobile: chatState?.active.mobileNo,
+        wabaNumber: wabaState.selectedWaba,
+        ...latestMessageData,
+      };
+      const res = await loadNewChat(data);
+
+      if (res?.conversationEntityList.length === 0) {
+        return;
+      }
+      const audio = new Audio("./receive-message.mp3");
+      audio.play().catch((e) => {
+        console.log("Audio play error:", e);
+      });
+      await handleFetchSpecificConversation();
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  useEffect(() => {
+    async function handleIsView() {
+      if (!wabaState.selectedWaba || !chatState?.active) return;
+      try {
+        const data = {
+          mobile: chatState?.active.mobileNo,
+          waba: wabaState.selectedWaba,
+          srno: latestMessageData.srno,
+        };
+        await readMessage(data);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+    // handleLoadNewChat();
+    // handleIsView();
+    const intervalId = setInterval(() => {
+      handleLoadNewChat();
+      handleIsView();
+    }, 5000);
+    return () => clearInterval(intervalId);
+  }, [latestMessageData]);
+
+  async function handleAttachmentDownload(data) {
+    try {
+      const mediaPath = await downloadAttachment({
+        waba: wabaState.selectedWaba,
+        id: data.mediaId,
+        conversionSrno: data.srno,
+      });
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
+  return isFetching ? (
+    <Loader height="35rem" width="100%" />
+  ) : (
+    <div className="flex h-[100%] bg-gray-100 overflow-hidden">
+      <div
+        className={`w-full md:w-100  border-r overflow-hidden ${chatState?.active ? "hidden md:block" : "block"
+          }`}
+      >
+        <InputData
+          setSearch={setSearch}
+          search={search}
+          handleSearch={handleSearch}
+          btnOption={btnOption}
+          setBtnOption={setBtnOption}
+          wabaState={wabaState}
+          setWabaState={setWabaState}
+          setChatState={setChatState}
+        />
+
+        <ChatSidebar
+          formatDate={formatDate}
+          chatState={chatState}
+          setChatState={setChatState}
+        />
+      </div>
+
+      {chatState.active && (
+        <ChatScreen
+          setVisibleRight={setVisibleRight}
+          setDialogVisible={setDialogVisible}
+          messageRef={messageRef}
+          formatTime={formatTime}
+          btnOption={btnOption}
+          selectedImage={selectedImage}
+          deleteImages={deleteImages}
+          handleAttachmentDownload={handleAttachmentDownload}
+          insertEmoji={insertEmoji}
+          inputRef={inputRef}
+          sendMessage={sendMessage}
+          items={items}
+          visibleRight={visibleRight}
+          input={input}
+          setInput={setInput}
+          setSendMessageDialogVisible={setSendMessageDialogVisible}
+          setChatState={setChatState}
+          chatState={chatState}
+        // specificConversation={specificConversation}
+        />
+      )}
+
+      <Dialog
+        header="Transfer Chat to Agent"
+        visible={dialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          if (!dialogVisible) return;
+          setDialogVisible(false);
+        }}
+      >
+        <div className="space-y-3">
+          <AnimatedDropdown
+            options={agentList?.data?.map((agent) => ({
+              value: agent.sr_no,
+              label: agent.name,
+            }))}
+            id="agentList"
+            name="agentList"
+            label="Agent List"
+            tooltipContent="Select Agent"
+            tooltipPlacement="right"
+            value={selectedAgentList}
+            onChange={(value) => setSelectedAgentList(value)}
+            placeholder="Agent List"
+          />
+
+          {/* <InputField
+            label="Agent Display Name"
+            tooltipContent="Enter Agent Name"
+            id="agentname"
+            name="agentname"
+            type="tel"
+            value={agentName}
+            onChange={(e) => setAgentname(e.target.value)}
+            placeholder="Enter Agent Display Name"
+          /> */}
+          <AnimatedDropdown
+            options={groupList?.map((group) => ({
+              value: group.groupCode,
+              label: group.groupName,
+            }))}
+            id="group"
+            name="group"
+            label="Group"
+            tooltipContent="Select Group"
+            tooltipPlacement="right"
+            value={selectedGroupList}
+            onChange={(value) => setSelectedGroupList(value)}
+            placeholder="Group"
+          />
+
+          <UniversalButton
+            id={"assignAgent"}
+            name={"assignAgent"}
+            label="Assign Agent"
+            onClick={handleAssignAgent}
+          />
+        </div>
+      </Dialog>
+
+      <Dialog
+        header="Send Template to User"
+        visible={sendMessageDialogVisible}
+        style={{ width: "60rem", height: "40rem" }}
+        draggable={false}
+        onHide={() => {
+          setSendMessageDialogVisible(false);
+          setTemplateType(templateType);
+          setBtnVarLength(0);
+          setVarLength(0);
+          setVariables({});
+          setBtnVariables("");
+          setTemplateDetails({});
+          setSendMessageData({});
+        }}
+      >
+        <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
+          <div className="flex flex-col w-120 gap-5">
+            {/* <div className="flex gap-2">
+              <div className="flex gap-2">
+                <RadioButton
+                  inputId="mesageTemplateType"
+                  name="mesageTemplateType"
+                  value="template"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                    setTemplateDetails("");
+                  }}
+                  checked={messageType === "template"}
+                />
+                <label
+                  htmlFor="mesageTemplateType"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Template
+                </label>
+              </div>
+              <div className="flex items-center gap-2">
+                <RadioButton
+                  inputId="mesageTextType"
+                  name="mesageTextType"
+                  value="text"
+                  onChange={(e) => {
+                    setMessageType(e.target.value);
+                    setSendMessageData({});
+                    setTemplateDetails("");
+                  }}
+                  checked={messageType === "text"}
+                />
+                <label
+                  htmlFor="mesageTextType"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
+                >
+                  Custom Message
+                </label>
+              </div>
+            </div> */}
+            <div>
+              {messageType === "template" ? (
+                <div className="flex flex-col gap-3">
+                  <DropdownWithSearch
+                    id="selectTemplate"
+                    name="selectTemplate"
+                    label="Select Template"
+                    placeholder="Select Template"
+                    options={allTemplated?.map((template) => ({
+                      value: template.templateName,
+                      label: template.templateName,
+                    }))}
+                    value={sendmessageData.templateName}
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        templateName: e,
+                      }));
+                      const templateType = allTemplated?.find(
+                        (template) => template.templateName === e
+                      )?.type;
+                      setTemplateType(templateType);
+                      setBtnVarLength(0);
+                      setVarLength(0);
+                      setVariables({});
+                      setBtnVariables("");
+                      setTemplateDetails("");
+                    }}
+                  />
+
+                  <Variables
+                    templateType={templateType}
+                    selectedFile={selectedFile}
+                    setSelectedFile={setSelectedFile}
+                    varLength={varLength}
+                    setVariables={setVariables}
+                    variables={variables}
+                    btnVariables={btnVariables}
+                    btnVarLength={btnVarLength}
+                    setBtnVariables={setBtnVariables}
+                    setCarFile={setCarFile}
+                    carFile={carFile}
+                    cardIndex={cardIndex}
+                    setCardIndex={setCardIndex}
+                    handleNextCard={handleNextCard}
+                    handlePreviousCard={handlePreviousCard}
+                    tempDetails={templateDetails}
+                  />
+                </div>
+              ) : null}
+              {/* (
+                <div>
+                  <InputField
+                    label="Enter Message"
+                    value={sendmessageData.message}
+                    placeholder="Enter Message..."
+                    onChange={(e) => {
+                      setSendMessageData((prevData) => ({
+                        ...prevData,
+                        message: e.target.value,
+                      }));
+                    }}
+                  />
+                </div>
+              ) */}
+            </div>
+            <div className="flex items-center justify-center" >
+              <UniversalButton label="Send" onClick={handlesendMessage} />
+            </div>
+          </div>
+          <div>
+            <TemplatePreview
+              tempDetails={templateDetails}
+              messageType={messageType}
+              sendmessageData={sendmessageData}
+              selectedImage={selectedFile}
+              carFile={carFile}
+              cardIndex={cardIndex}
+              setCardIndex={setCardIndex}
+            />
+          </div>
+        </div>
+      </Dialog>
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: "none" }}
+        onChange={handleFileChange}
+        accept="image/* video/* audio/*"
+      // multiple
+      />
+
+      {imagePreviewVisible && (
+        <ImagePreview
+          imagePreviewVisible={imagePreviewVisible}
+          setImagePreviewVisible={setImagePreviewVisible}
+          images={[selectedImage]}
+        />
+      )}
+    </div>
+  );
+}

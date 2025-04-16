@@ -1086,6 +1086,7 @@ const ManageTemplate = () => {
                       options={[
                         { value: "text", label: "Text" },
                         { value: "image", label: "Image" },
+                        { value: "video", label: "Video" },
                         { value: "document", label: "Document" },
                         { value: "carousel", label: "Carousel" },
                       ]}

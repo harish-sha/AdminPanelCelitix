@@ -166,7 +166,7 @@ export const TemplatePreview = ({
             </div>
           ) : (
             <Carousel
-              showThumbs={false}
+              showThumbs={true}
               showStatus={false}
               infiniteLoop
               useKeyboardArrows
@@ -178,7 +178,6 @@ export const TemplatePreview = ({
                 const indicatorClass = isSelected
                   ? "bg-[#212529] w-3 h-3 rounded-full mx-1 cursor-pointer"
                   : "bg-[#7E7F80] w-3 h-3 rounded-full mx-1 cursor-pointer";
-
                 return (
                   <li
                     key={index}

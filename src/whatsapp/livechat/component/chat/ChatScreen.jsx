@@ -44,13 +44,10 @@ export const ChatScreen = ({
   const messageRef = useRef(null);
 
   useEffect(() => {
-    console.log(messageRef.current?.scrollTop);
-    console.log(messageRef.current?.scrollHeight);
     if (messageRef.current) {
       messageRef.current.scrollTop = messageRef.current.scrollHeight;
     }
-  }, [chatState]);
-
+  }, [chatState?.specificConversation]);
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
@@ -133,7 +130,7 @@ export const ChatScreen = ({
                                   src={
                                     isSent
                                       ? msg.mediaPath
-                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath?.path}`
+                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath}`
                                   }
                                   alt="Image"
                                   className={commonMediaClass}
@@ -141,7 +138,9 @@ export const ChatScreen = ({
                               ) : (
                                 <video
                                   src={
-                                    isSent ? msg.mediaPath : msg.mediaPath.msg
+                                    isSent
+                                      ? msg.mediaPath
+                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath}`
                                   }
                                   className={commonMediaClass}
                                   controls={true}

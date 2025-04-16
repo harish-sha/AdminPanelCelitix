@@ -250,7 +250,7 @@ export const Variables = ({
             };
 
             return (
-              <div key={index}>
+              <div key={index} className="" >
                 <h1>{`Upload file for card ${index + 1}`}</h1>
                 <div className="file-upload-container">
                   <input
@@ -311,11 +311,11 @@ export const Variables = ({
         </Carousel>
       )}
       {varLength?.length > 0 && (
-        <div className="mb-2">
+        <div className="mb-2 mt-3">
           <p className="font-semibold">Variable</p>
           {varLength?.map((item, index) =>
             item.map((item, index) => (
-              <div key={index}>
+              <div key={index} className="mt-4" >
                 <InputField
                   id={`${index + 1}`}
                   name={`${index + 1}`}

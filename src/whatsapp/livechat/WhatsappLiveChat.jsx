@@ -1627,7 +1627,6 @@ export default function WhatsappLiveChat() {
 
     let body = {};
 
-    console.log(chatState?.isReply)
     if (chatState?.isReply && input) {
       body = {
         messaging_product: "whatsapp",
@@ -1667,7 +1666,7 @@ export default function WhatsappLiveChat() {
       if (res?.status !== "success") {
         return toast.error("Error sending message");
       }
-      const audio = new Audio("./send-message.wav");
+      new Audio("./send-message.wav");
       audio.play().catch((e) => {
         console.log("Audio play error:", e);
       });
@@ -1830,20 +1829,20 @@ export default function WhatsappLiveChat() {
         messages.map(async (msg) => {
           let mediaPath = null;
 
-          if (msg.isReceived && msg?.replyType === "image") {
-            try {
-              mediaPath = await downloadAttachment({
-                waba: wabaState.selectedWaba,
-                id: msg.mediaId,
-                conversionSrno: msg.srno,
-              });
-            } catch (err) {
-              console.error(`Failed to fetch media for srno ${msg.srno}`, err);
-            }
-          } else {
-            mediaPath = msg.mediaPath;
-          }
+          // if (msg.isReceived && msg?.replyType === "image") {
+          //   try {
+          //     mediaPath = await downloadAttachment({
+          //       waba: wabaState.selectedWaba,
+          //       id: msg.mediaId,
+          //       conversionSrno: msg.srno,
+          //     });
+          //   } catch (err) {
+          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+          //   }
+          // } else {
+          // }
 
+          mediaPath = msg.mediaPath;
           return {
             ...msg,
             date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
@@ -2126,8 +2125,6 @@ export default function WhatsappLiveChat() {
   async function handleLoadNewChat() {
     if (!wabaState.selectedWaba || !chatState?.active) return;
 
-    console.log("handleLoadNewChat");
-
     try {
       const data = {
         mobile: chatState?.active.mobileNo,
@@ -2296,7 +2293,7 @@ export default function WhatsappLiveChat() {
       <Dialog
         header="Send Message to User"
         visible={sendMessageDialogVisible}
-        style={{ width: "50rem", height: "40rem" }}
+        style={{ width: "60rem", height: "40rem" }}
         draggable={false}
         onHide={() => {
           setSendMessageDialogVisible(false);
@@ -2310,7 +2307,7 @@ export default function WhatsappLiveChat() {
         }}
       >
         <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
-          <div className="flex flex-col w-full gap-5">
+          <div className="flex flex-col w-100 gap-5">
             {/* <div className="flex gap-2">
               <div className="flex gap-2">
                 <RadioButton

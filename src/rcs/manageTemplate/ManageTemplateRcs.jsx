@@ -20,7 +20,6 @@ import { FaLocationCrosshairs, FaReply } from "react-icons/fa6";
 import { TbLocationShare } from "react-icons/tb";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
-
 const ManageTemplateRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [templateData, setTemplateData] = useState({
@@ -45,7 +44,7 @@ const ManageTemplateRcs = () => {
 
   const handleFetchTempData = async () => {
     try {
-      setIsFetching(true);
+      // setIsFetching(true);
       const res = await fetchAllTemplates();
       setSummaryFilterData(res.Data);
       setSummaryTableData(res.Data);
@@ -124,7 +123,7 @@ const ManageTemplateRcs = () => {
 
   const handleTemplateDelete = async () => {
     try {
-      const res = await deleteTemplate(templateid);
+      const res = await deleteTemplate(templateid.srno);
       toast.success("Template Deleted Successfully");
       setTemplateDeleteVisible(false);
       await handleFetchTempData();
@@ -140,12 +139,12 @@ const ManageTemplateRcs = () => {
         return "bg-gray-200 text-gray-800";
       case "website":
         return "bg-green-500 text-white";
-      case "dialer":
+      case "mobile":
         return "bg-blue-500 text-white";
       case "view location":
         return "bg-yellow-500";
       case "share location":
-        return "bg-red-500";
+        return "bg-red-300 text-white";
       default:
         return "";
     }
@@ -157,7 +156,7 @@ const ManageTemplateRcs = () => {
         return <FaReply />;
       case "website":
         return <FaExternalLinkAlt />;
-      case "dialer":
+      case "mobile":
         return <BsTelephoneFill />;
       case "view location":
         return <FaLocationCrosshairs />;
@@ -167,8 +166,6 @@ const ManageTemplateRcs = () => {
         return "";
     }
   };
-
-
 
   return (
     <div className="w-full">
@@ -235,7 +232,8 @@ const ManageTemplateRcs = () => {
               name="status"
               options={[
                 { label: "Pending", value: "Pending" },
-                { label: "Approved", value: "Approved" },
+                { label: "Approved", value: "approved" },
+                { label: "Rejected", value: "rejected" },
                 { label: "Operator processing", value: "Operator processing" },
                 { label: "Submitted", value: "Submitted" },
               ]}
@@ -278,6 +276,7 @@ const ManageTemplateRcs = () => {
               setTemplateid={setTemplateid}
               setTemplateDeleteVisible={setTemplateDeleteVisible}
               fetchTemplateDataDetails={fetchTemplateDataDetails}
+              handleFetchTempData={handleFetchTempData}
             />
           </div>
         )}
@@ -308,7 +307,7 @@ const ManageTemplateRcs = () => {
               <pre>{templateDetails?.content}</pre>
             </div>
             {templateDetails?.suggestions?.map((suggestion, index) => (
-              <div key={index} className="flex flex-col gap-2">
+              <div key={index} className="flex flex-col gap-2 mb-2">
                 <button
                   className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
@@ -345,9 +344,7 @@ const ManageTemplateRcs = () => {
         <div className="p-4 text-center">
           <p className="text-[1.1rem] font-semibold text-gray-700">
             Are you sure you want to delete the template <br />
-            <span className="text-green-500">
-              "{templateDetails?.templateName}"
-            </span>
+            <span className="text-green-500">"{templateid?.templateName}"</span>
           </p>
           <p className="mt-2 text-sm text-gray-500">
             This action is irreversible.

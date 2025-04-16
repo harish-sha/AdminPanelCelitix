@@ -16,6 +16,14 @@ import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+import rcsicon from "../../assets/icons/RCS.svg"
+import twoway from "../../assets/icons/TWOWAY.svg"
+import callback from "../../assets/icons/Callback.svg"
+import missedcall from "../../assets/icons/Missedcall.svg"
+import obd from "../../assets/icons/OBD.svg"
+import ibd from "../../assets/icons/IBD.svg"
+import numberlookup from "../../assets/icons/Numberlookup.svg"
+import clicktwocall from "../../assets/icons/Click2Call.svg"
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -112,7 +120,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "Two Way SMS",
-      icon: <LuMessageSquareMore />,
+      // icon: <LuMessageSquareMore />,
+      icon: <img src={twoway} className="w-4.5 h-4.5" />,
+
       label: "Two Way SMS",
       type: "dropdown",
       links: [
@@ -123,7 +133,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "RCS",
-      icon: <LuMessageSquareMore />,
+      // icon: <LuMessageSquareMore />,
+      icon: <img src={rcsicon} className="w-5 h-5" />,
       label: "RCS",
       type: "dropdown",
       links: [
@@ -157,7 +168,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "Number Lookup",
-      icon: <LuMessageSquareMore />,
+      // icon: <LuMessageSquareMore />,
+      icon: <img src={numberlookup} className="w-4.5 h-4.5" />,
+
       label: "Number Lookup",
       type: "dropdown",
       links: [
@@ -187,7 +200,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "OBD",
-      icon: <MdOutlineEmail />,
+      // icon: <MdOutlineEmail />,
+      icon: <img src={obd} className="w-4.5 h-4.5" />,
+
       label: "OBD",
       type: "dropdown",
       links: [
@@ -199,7 +214,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "IBD",
-      icon: <MdOutlineEmail />,
+      // icon: <MdOutlineEmail />,
+      icon: <img src={ibd} className="w-4.5 h-4.5" />,
+
       label: "IBD",
       type: "dropdown",
       links: [
@@ -211,7 +228,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "Missed Call",
-      icon: <MdOutlineEmail />,
+      // icon: <MdOutlineEmail />,
+      icon: <img src={twoway} className="w-4.5 h-4.5" />,
+
       label: "Missed Call",
       type: "dropdown",
       links: [
@@ -221,7 +240,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "Click-2-Call",
-      icon: <MdOutlineEmail />,
+      // icon: <MdOutlineEmail />,
+      icon: <img src={clicktwocall} className="w-4.5 h-4.5" />,
+
       label: "Click-2-Call",
       type: "dropdown",
       links: [
@@ -241,7 +262,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     // },
     {
       name: 'CallBack',
-      icon: <MdOutlineEmail />,
+      // icon: <MdOutlineEmail />,
+      icon: <img src={callback} className="w-4.5 h-4.5" />,
       label: 'Callback',
       type: 'dropdown',
       links: [
