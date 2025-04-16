@@ -69,8 +69,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   };
 
   const collapsedClass = isCollapsed
-    ? "justify-center px-0"
-    : "justify-start px-4";
+    ? "justify-center px-0 "
+    : "justify-start px-4 ";
 
   useEffect(() => {
     const activeMenu = menuItems.find((item) =>
@@ -574,7 +574,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-2 py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800" : ""
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
                   }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
