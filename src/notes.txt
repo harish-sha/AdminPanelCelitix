@@ -76,5 +76,17 @@ feat: update card uploadMedia validations - done
 feat: update wabaSrno key - done
 
 
+15april - commits add to main from arihant 
+rcs>managetemplate>pages>addtemplates>addtemplatercs
 
+working files -
 
+rcs- managetemplate > pages > addtemplatercs.jsx
+rcs- managetemplate > components > variables.jsx, caraousel.jsx, card.jsx, preview.jsx,suggestionActions.jsx
+rcs - sendrcs > component > variablemanager.jsx , preview.jsx,campaigninputdetails.jsx
+rcs - sendrcs > sendrcs.jsx
+rcs - deliveryreport > deliveryreport.jsx
+whatsapp - launchCampaign > whatsapplaunchCampaign.jsx
+
+whatsapp - WhatsappCreateTemplate > WhatsappCreateTemplate.jsx
+whatsapp - livechat > whatsapplivechat.jsx

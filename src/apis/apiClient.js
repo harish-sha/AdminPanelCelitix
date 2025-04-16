@@ -5,11 +5,11 @@ import axios from "axios";
 export const fetchWithAuth = async (endpoint, options = {}) => {
   const token = localStorage.getItem("token");
 
-  if (!token) {
-    console.error("No token found, redirecting to login.");
-    window.location.href = "/login";
-    return;
-  }
+  // if (!token) {
+  //   console.error("No token found, redirecting to login.");
+  //   window.location.href = "/login";
+  //   return;
+  // }
 
   const headers = {
     // "Content-Type": "application/json",
@@ -52,10 +52,10 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     //   window.location.href = "/login";
     //   return null;
     // }
-    if (error?.status === 400) {
-      // console.log(error)
-      return error;
-    }
+    // if (error?.status === 400) {
+    //   console.log(error)
+    //   return error;
+    // }
     console.error("Network Error:", error);
   }
 };

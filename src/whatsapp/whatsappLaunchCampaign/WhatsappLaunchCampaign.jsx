@@ -74,6 +74,18 @@
 //   const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
 //   const [varLength, setVarLength] = useState(0);
 //   const [isUploaded, setIsUploaded] = useState(false);
+//   const [fileData, setFileData] = useState([]);
+
+//   const [cardIndex, setCardIndex] = useState(0);
+
+//   function handleNextCard() {
+//     setCardIndex(cardIndex + 1);
+//   }
+
+//   function handlePreviousCard() {
+//     if (cardIndex === 0) return;
+//     setCardIndex(cardIndex - 1);
+//   }
 
 //   const handleUrlIndexChange = (index) => {
 //     setUrlIndex(index);
@@ -197,14 +209,40 @@
 //     const headerComponent = templateDataNew.components.find(
 //       (comp) =>
 //         comp.type === "HEADER" &&
-//         ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp.format)
+//         ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp?.format)
 //     );
 
 //     if (
-//       ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent.format) &&
+//       ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent?.format) &&
 //       !imagePreview
 //     ) {
 //       toast.error("Please upload a media file.");
+//       return;
+//     }
+
+//     const isCarousal = templateDataNew.components.find(
+//       (comp) => comp.type === "CAROUSEL"
+//     );
+
+//     // console.log("isCarousal", isCarousal);
+//     const imgCards = [];
+
+//     let isError = false;
+
+//     if (isCarousal) {
+//       Object.keys(fileData).forEach((key) => {
+//         if (!fileData[key].filePath) {
+//           toast.error(`Please upload a file for Card ${key + 1}.`);
+//           isError = true;
+//           return;
+//         }
+//         const filePath = fileData[key].filePath;
+//         imgCards.push(filePath);
+//       });
+//     }
+//     // return
+
+//     if (isError) {
 //       return;
 //     }
 
@@ -299,6 +337,7 @@
 //       scheduleDateTime:
 //         schedule && scheduledDateTime ? scheduleDateFormat : "0",
 //       groupValues,
+//       imgCards,
 //     };
 
 //     // ✅ Send API request
@@ -345,6 +384,7 @@
 //         setIsSubmitting(false);
 //         setIsCountryCodeChecked(false);
 //         setVarLength(0);
+//         setFileData([]);
 //       } else {
 //         toast.error(response?.message || "Campaign launch failed.");
 //       }
@@ -571,6 +611,10 @@
 //                           selectedTemplateData={selectedTemplateData}
 //                           onUrlIndexChange={setUrlIndex}
 //                           setVarLength={setVarLength}
+//                           setCardIndex={setCardIndex}
+//                           cardIndex={cardIndex}
+//                           setFileData={setFileData}
+//                           fileData={fileData}
 //                         />
 //                       )
 //                     )}
@@ -597,17 +641,20 @@
 //               </div>
 
 //               <div className="w-full lg:w-1/3 px-5 lg:mt-0 mt-5 min-h-[80vh]">
-//                 {/* {isFetching ? (
+//                 {isFetching ? (
 //                   <div className="w-full">
 //                     <UniversalSkeleton height="46rem" width="100%" />
 //                   </div>
-//                 ) : ( */}
+//                 ) : (
 //                   <WhatsappLaunchPreview
 //                     templateDataNew={templateDataNew}
 //                     formData={formData}
 //                     uploadedImage={imagePreview}
+//                     setCardIndex={setCardIndex}
+//                     cardIndex={cardIndex}
+//                     fileData={fileData}
 //                   />
-//                 {/* )} */}
+//                 )}
 //               </div>
 //             </div>
 //             <div className="flex items-center justify-center mt-5">
@@ -724,6 +771,7 @@
 // };
 
 // export default WhatsappLaunchCampaign;
+
 
 import { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
@@ -1112,6 +1160,7 @@ const WhatsappLaunchCampaign = () => {
         setIsCountryCodeChecked(false);
         setVarLength(0);
         setFileData([]);
+        setIsGroup(-1);
       } else {
         toast.error(response?.message || "Campaign launch failed.");
       }
@@ -1362,7 +1411,7 @@ const WhatsappLaunchCampaign = () => {
                     uploadedFile={uploadedFile}
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
-                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>

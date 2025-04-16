@@ -29,6 +29,8 @@ const App = () => {
         />
       </Routes>
     </Router>
+
+
     // <Router>
     //   <GlobalToaster />
     //   <Routes>
@@ -37,7 +39,7 @@ const App = () => {
 
     //     {/* Temporarily remove PrivateRoute to allow direct access */}
     //     <Route path="/*" element={<Approutes />} />
-    //     <Route path="/*" element={<Apiroutes />} />
+    //     <Route path="/docs/*" element={<Apiroutes />} />
 
     //     <Route path="*" element={
     //       <div className='flex items-center justify-center min-h-[100vh]'>

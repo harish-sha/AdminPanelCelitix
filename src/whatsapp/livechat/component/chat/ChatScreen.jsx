@@ -18,11 +18,12 @@ import { Sidebar } from "primereact/sidebar";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import { ClosedChat } from "./CloseChat";
 import { ChatInput } from "./Input";
+import { useEffect, useRef } from "react";
 
 export const ChatScreen = ({
   setVisibleRight,
   setDialogVisible,
-  messageRef,
+  // messageRef,
   formatTime,
   btnOption,
   selectedImage,
@@ -36,10 +37,21 @@ export const ChatScreen = ({
   input,
   setInput,
   setSendMessageDialogVisible,
-
+  specificConversation,
   chatState,
   setChatState,
 }) => {
+  const messageRef = useRef(null);
+
+  useEffect(() => {
+    console.log(messageRef.current?.scrollTop);
+    console.log(messageRef.current?.scrollHeight);
+    if (messageRef.current) {
+      messageRef.current.scrollTop = messageRef.current.scrollHeight;
+    }
+  }, [chatState]);
+
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
       <div className="z-0 flex items-center justify-between w-full bg-white shadow-md h-15 px-2">
@@ -98,34 +110,30 @@ export const ChatScreen = ({
                 const isVideo = msg.replyType === "video";
                 const isText = ["text", "button"].includes(msg.replyType);
                 const commonMediaClass =
-                  "object-contain mb-2 border rounded-md pointer-events-none select-none h-48 w-48";
+                  "object-contain mb-2  pointer-events-none select-none h-48 w-48";
 
                 return (
                   <div
                     key={index}
-                    className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {(isImage || isVideo) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
-                          className={`p-2 ${
-                            msg?.caption
-                              ? "border border-gray-300 rounded-md"
-                              : ""
-                          }`}
+                          className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}
                         >
                           {msg?.mediaPath ? (
                             <>
                               {isImage ? (
                                 <img
                                   src={
-                                    isSent ? msg.mediaPath : msg.mediaPath.msg
+                                    isSent
+                                      ? msg.mediaPath
+                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath?.path}`
                                   }
                                   alt="Image"
                                   className={commonMediaClass}
@@ -137,14 +145,14 @@ export const ChatScreen = ({
                                   }
                                   className={commonMediaClass}
                                   controls={true}
-                                  // autoPlay
+                                // autoPlay
                                 />
                               )}
                               {msg?.caption && <p>{msg.caption}</p>}
                             </>
                           ) : (
                             <button
-                              className="mb-2 border rounded-md h-48 w-48 flex justify-center items-center"
+                              className="mb-2  h-48 w-48 flex justify-center items-center"
                               onClick={() => handleAttachmentDownload(msg)}
                             >
                               <FileDownloadOutlinedIcon />
@@ -154,6 +162,7 @@ export const ChatScreen = ({
                         {btnOption === "active" && (
                           <button
                             onClick={() => {
+                              console.log(msg);
                               setChatState((prev) => ({
                                 ...prev,
                                 replyData: msg,
@@ -169,16 +178,14 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
-                          className={`w-full border p-2 rounded-md ${
-                            isSent
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-black"
-                          }`}
+                          className={`w-full  p-2 rounded-md ${isSent
+                            ? "bg-blue-500 text-white"
+                            : "bg-gray-200 text-black"
+                            }`}
                         >
                           {msg.messageBody}
                         </div>
@@ -199,9 +206,8 @@ export const ChatScreen = ({
                     )}
 
                     <p
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>
@@ -216,16 +222,27 @@ export const ChatScreen = ({
       {/* Reply Preview */}
       {chatState.isReply && btnOption === "active" && (
         <div className="relative">
-          <div className="ml-2 mr-2 border p-2">
+          <div className="ml-2 mr-2  p-2">
             {chatState.replyData?.replyType === "image" && (
               <img
-                src={chatState.replyData?.mediaPath}
-                alt=""
-                className="object-contain mb-2 border rounded-md pointer-events-none select-none h-48 w-48"
+                src={
+                  chatState.replyData?.isReceived
+                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath.path}`
+                    : chatState.replyData?.mediaPath
+                }
+                alt={chatState.replyData?.mediaPath.path}
+                className="object-contain mb-2  pointer-events-none select-none h-48 w-48"
               />
             )}
             {chatState.replyData?.replyType === "video" && (
-              <video src={chatState.replyData?.mediaPath}></video>
+              <video
+                src={
+                  chatState.replyData?.isReceived
+                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath.path}`
+                    : chatState.replyData?.mediaPath
+                }
+                className="object-contain mb-2  pointer-events-none select-none h-48 w-48"
+              ></video>
             )}
             <p>{chatState.replyData?.messageBody}</p>
           </div>
@@ -235,7 +252,7 @@ export const ChatScreen = ({
               // setReplyData(null);
               setChatState({ ...chatState, isReply: false, replyData: null });
             }}
-            className="absolute -top-2 right-2 cursor-pointer"
+            className="absolute -top-1 left-50 cursor-pointer"
           >
             ❌
           </div>

@@ -1213,11 +1213,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-        "((\\d{1,3}\\.){3}\\d{1,3}))" +
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-        "(\\?[;&a-z\\d%_.~+=-]*)?" +
-        "(\\#[-a-z\\d_]*)?$",
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+      "((\\d{1,3}\\.){3}\\d{1,3}))" +
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+      "(\\?[;&a-z\\d%_.~+=-]*)?" +
+      "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -1352,7 +1352,7 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    if (selectedTemplateType != "carousel") {
+    if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
       if (!fileUploadUrl) {
         toast.error("Please upload a file");
         return;
@@ -1655,9 +1655,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                            mbno: selectedWaba,
-                            sno: selectedWabaSno,
-                          })
+                          mbno: selectedWaba,
+                          sno: selectedWabaSno,
+                        })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -1798,11 +1798,10 @@ const WhatsappCreateTemplate = () => {
                       disabled={
                         !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba && selectedCategory && templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"
@@ -1818,33 +1817,33 @@ const WhatsappCreateTemplate = () => {
                       <>
                         {
                           selectedTemplateType === "carousel" &&
-                            carouselMediaType && (
-                              <>
-                                <CarouselTemplateTypes
-                                  templateFormat={templateFormat}
-                                  setTemplateFormat={setTemplateFormat}
-                                  templateFooter={templateFooter}
-                                  setTemplateFooter={setTemplateFooter}
-                                  handleAddVariable={handleAddVariable}
-                                  handleEmojiSelect={handleEmojiSelect}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setSelectedCardIndex={setSelectedCardIndex}
-                                  cards={cards}
-                                  setCards={setCards}
-                                  file={file}
-                                  setFile={setFile}
-                                  onPreviewUpdate={handlePreviewUpdate}
-                                  setFileUploadUrl={setFileUploadUrl}
-                                  uploadImageFile={uploadImageFile}
-                                  setvariables={setVariables}
-                                />
-                                <CarouselInteractiveActions
-                                  cards={cards}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setCards={setCards}
-                                />
-                              </>
-                            )
+                          carouselMediaType && (
+                            <>
+                              <CarouselTemplateTypes
+                                templateFormat={templateFormat}
+                                setTemplateFormat={setTemplateFormat}
+                                templateFooter={templateFooter}
+                                setTemplateFooter={setTemplateFooter}
+                                handleAddVariable={handleAddVariable}
+                                handleEmojiSelect={handleEmojiSelect}
+                                selectedCardIndex={selectedCardIndex}
+                                setSelectedCardIndex={setSelectedCardIndex}
+                                cards={cards}
+                                setCards={setCards}
+                                file={file}
+                                setFile={setFile}
+                                onPreviewUpdate={handlePreviewUpdate}
+                                setFileUploadUrl={setFileUploadUrl}
+                                uploadImageFile={uploadImageFile}
+                                setvariables={setVariables}
+                              />
+                              <CarouselInteractiveActions
+                                cards={cards}
+                                selectedCardIndex={selectedCardIndex}
+                                setCards={setCards}
+                              />
+                            </>
+                          )
 
                           // : (
                           //   <div className="w-full">
@@ -1920,7 +1919,7 @@ const WhatsappCreateTemplate = () => {
                     </div>
                     <div className="flex items-start justify-center lg:mt-7">
                       {selectedTemplateType === "carousel" &&
-                      carouselMediaType ? (
+                        carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
                             scrollContainerRef={scrollableContainerRef}
@@ -1965,14 +1964,13 @@ const WhatsappCreateTemplate = () => {
                         !selectedTemplateType ||
                         !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba &&
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
                         selectedCategory &&
                         selectedTemplateType &&
                         templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"

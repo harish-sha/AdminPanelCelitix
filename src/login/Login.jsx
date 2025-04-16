@@ -180,7 +180,6 @@ const Login = () => {
                 value={userId}
                 onChange={(e) => setUserId(e.target.value)}
                 placeholder="Enter User ID"
-                type="text"
                 className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
                 required
               />
@@ -198,9 +197,9 @@ const Login = () => {
                   maxLength={8}
                 /> */}
                 <div className="text-[0.95rem] font-medium text-gray-700 mb-2">Password</div>
-                <input type="text"
+                <input
                   type={showPassword ? "text" : "password"}
-                  className="relative"
+                  // className="relative"
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
