@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../apiClient.js";
 
 // get contact by id
 export const getContactListByGrpId = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/contact/getAllContact", {
+  return await fetchWithAuth("/contact/getAllContact", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -10,14 +10,14 @@ export const getContactListByGrpId = async (data) => {
 
 // get group list
 export const getGrpList = async () => {
-  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
+  return await fetchWithAuth("/group/showGroups", {
     method: "POST",
   });
 };
 
 // add contact to group
 export const addContact = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/contact/addContact", {
+  return await fetchWithAuth("/contact/addContact", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -25,7 +25,7 @@ export const addContact = async (data) => {
 
 // import contact
 export const importContact = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/contact/importContact", {
+  return await fetchWithAuth("/contact/importContact", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -33,7 +33,7 @@ export const importContact = async (data) => {
 
 // add group
 export const addGrp = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/group/addGroup", {
+  return await fetchWithAuth("/group/addGroup", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -42,7 +42,7 @@ export const addGrp = async (data) => {
 // delete group
 export const deleteGrp = async (grpName, grpSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/group/deleteGroup?groupName=${grpName}&groupSrno=${grpSrno}`,
+    `/group/deleteGroup?groupName=${grpName}&groupSrno=${grpSrno}`,
     {
       method: "POST",
     }
@@ -52,7 +52,7 @@ export const deleteGrp = async (grpName, grpSrno) => {
 // update group name
 export const updateGroupName = async (grpSrno, grpName) => {
   return await fetchWithAuth(
-    `/proCpaasRest/group/updateGroup?groupSrno=${grpSrno}&groupName=${grpName}`,
+    `/group/updateGroup?groupSrno=${grpSrno}&groupName=${grpName}`,
     {
       method: "POST",
     }
@@ -60,7 +60,7 @@ export const updateGroupName = async (grpSrno, grpName) => {
 };
 export const getContactBySrno = async (conSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/contact/getContactBySrno?srNo=${conSrno}`,
+    `/contact/getContactBySrno?srNo=${conSrno}`,
     {
       method: "POST",
     }
@@ -74,7 +74,7 @@ export const uploadContactFile = async (file) => {
 
   try {
     const response = await fetchWithAuth(
-      "/proCpaasRest/campaignFile/UploadContactFile",
+      "/campaignFile/UploadContactFile",
       {
         method: "POST",
         body: formData,
@@ -92,7 +92,7 @@ export const uploadContactFile = async (file) => {
 
 // update contact details
 export const updateContactsDetails = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/contact/updateAddressBookData", {
+  return await fetchWithAuth("/contact/updateAddressBookData", {
     method: "POST",
     body: JSON.stringify(data),
   });

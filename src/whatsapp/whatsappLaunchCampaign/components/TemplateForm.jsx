@@ -609,7 +609,6 @@ const TemplateForm = ({
 
       const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
-      // ✅ If selecting for BUTTON URL, update `urlIndex`
       if (type === "button" && fileHeaders.includes(variable)) {
         const index = fileHeaders.indexOf(variable);
 
@@ -761,7 +760,7 @@ const TemplateForm = ({
   }
 
   return (
-    <div className="rounded-md shadow-sm">
+    <div className="rounded-md shadow-sm ">
       <div className="bg-[#128C7E] p-2 rounded-t-md">
         <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
           Template Category - {selectedTemplateData?.category || "N/A"}
@@ -771,7 +770,7 @@ const TemplateForm = ({
         </h3>
       </div>
 
-      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl">
+      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl ">
         {/* BODY Component: Handle Variables */}
         {templateDataNew?.components.map((component, idx) => {
           if (component.type === "BODY") {
@@ -956,11 +955,10 @@ const TemplateForm = ({
                         disabled={
                           imageState.uploading || !imageState.validFileSelected
                         }
-                        className={`px-2 py-[0.3rem] ${
-                          imageState.uploading || !imageState.validFileSelected
-                            ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-green-400 cursor-pointer hover:bg-green-500"
-                        } text-white text-sm rounded-md shadow-md focus:outline-none`}
+                        className={`px-2 py-[0.3rem] ${imageState.uploading || !imageState.validFileSelected
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-green-400 cursor-pointer hover:bg-green-500"
+                          } text-white text-sm rounded-md shadow-md focus:outline-none`}
                       >
                         {imageState.uploading ? (
                           <DoNotDisturbOutlinedIcon
@@ -996,7 +994,7 @@ const TemplateForm = ({
           })()}
 
         {isCarousal && (
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 ">
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium tracking-wide text-gray-700">
                 Upload File
@@ -1061,7 +1059,7 @@ const TemplateForm = ({
                 };
 
                 return (
-                  <div key={index} className="flex gap-2">
+                  <div key={index} className="flex gap-2 ">
                     <div className="flex items-start gap-2">
                       <input
                         type="file"

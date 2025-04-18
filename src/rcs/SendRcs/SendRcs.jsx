@@ -946,6 +946,7 @@ const SendRcs = () => {
     }
 
     handleFetchAllAgents();
+    handlefetchAllCountry();
     fetchAllGrps();
   }, []);
 

@@ -303,13 +303,13 @@ const ManageTemplateRcs = () => {
               /> */}
             </div>
             <div className="flex flex-col gap-2 py-2 overflow-scroll text-sm contentbox max-h-80">
-              <h1>{templateDetails?.contentTitle}</h1>
-              <pre>{templateDetails?.content}</pre>
+              <h1 className="font-semibold" >{templateDetails?.contentTitle}</h1>
+              <pre className="break-words text-wrap" >{templateDetails?.content}</pre>
             </div>
             {templateDetails?.suggestions?.map((suggestion, index) => (
               <div key={index} className="flex flex-col gap-2 mb-2">
                 <button
-                  className={`flex items-center justify-center px-4 py-2 text-sm  rounded-md  ${getTemplateTypeCss(
+                  className={`flex items-center justify-center px-4 py-2 text-sm cursor-pointer  rounded-md  ${getTemplateTypeCss(
                     suggestion.type
                   )}`}
                   title={suggestion.suggestionValue}

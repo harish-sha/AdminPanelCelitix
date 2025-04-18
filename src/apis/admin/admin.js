@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../apiClient";
 
 // fetch all users
 export const fetchAllUsers = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/user/getUserList", {
+  return await fetchWithAuth("/user/getUserList", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -10,7 +10,7 @@ export const fetchAllUsers = async (data) => {
 
 // fetch user by sr no
 export const fetchUserbySrno = async (srNo) => {
-  return await fetchWithAuth("/proCpaasRest/user/getuserdetailsById", {
+  return await fetchWithAuth("/user/getuserdetailsById", {
     method: "POST",
     body: JSON.stringify({ srNo }),
   });
@@ -18,7 +18,7 @@ export const fetchUserbySrno = async (srNo) => {
 
 // update user by srno
 export const updateUserbySrno = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/user/updateUserById", {
+  return await fetchWithAuth("/user/updateUserById", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -26,7 +26,7 @@ export const updateUserbySrno = async (data) => {
 
 // Save RCS Bot
 export const saveAgentRcs = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/rcs/bot/saveAgent", {
+  return await fetchWithAuth("/rcs/bot/saveAgent", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -35,7 +35,7 @@ export const saveAgentRcs = async (data) => {
 // fetch all bots list RCS
 export const fetchAllBotsList = async (agent_id = "") => {
   return await fetchWithAuth(
-    `/proCpaasRest/rcs/bot/getListOfAgents?agentId=${agent_id}`,
+    `/rcs/bot/getListOfAgents?agentId=${agent_id}`,
     {
       method: "POST",
     }
@@ -45,7 +45,7 @@ export const fetchAllBotsList = async (agent_id = "") => {
 // get bot details by srno
 export const getBotDetailsBySrNo = async (botSrNo) => {
   return await fetchWithAuth(
-    `/proCpaasRest/rcs/bot/getBotDetailsBySrNo?botSrNo=${botSrNo}`,
+    `/rcs/bot/getBotDetailsBySrNo?botSrNo=${botSrNo}`,
     {
       method: "POST",
     }
@@ -54,14 +54,14 @@ export const getBotDetailsBySrNo = async (botSrNo) => {
 
 // get Allowed services
 export const getAllowedServices = async () => {
-  return await fetchWithAuth("/proCpaasRest/service/getAllowedServices", {
+  return await fetchWithAuth("/service/getAllowedServices", {
     method: "POST",
   });
 };
 
 // save services by user
 export const saveServicesByUser = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/user/saveServicesByUser", {
+  return await fetchWithAuth("/user/saveServicesByUser", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -69,14 +69,14 @@ export const saveServicesByUser = async (data) => {
 
 // get transaction services
 export const getTransServices = async () => {
-  return await fetchWithAuth("/proCpaasRest/service/getTransServices", {
+  return await fetchWithAuth("/service/getTransServices", {
     method: "POST",
   });
 };
 
 // get promotional services
 export const getPromoServices = async () => {
-  return await fetchWithAuth("/proCpaasRest/service/getPromoServices", {
+  return await fetchWithAuth("/service/getPromoServices", {
     method: "POST",
   });
 };

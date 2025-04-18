@@ -455,16 +455,29 @@ const WhatsappLaunchPreview = ({
                         : `tel:${button.phone_number}`;
 
                       return (
-                        <a
+                        // <a
+                        //   key={index}
+                        //   href={hrefValue}
+                        //   title={hrefValue}
+                        //   target="_blank"
+                        //   rel="noopener noreferrer"
+                        //   className="block px-4 py-2 text-center text-white bg-blue-400 rounded-md"
+                        // >
+                        //   {button.text}
+                        // </a>
+                        <button
                           key={index}
-                          href={hrefValue}
+                          // href={hrefValue}
                           title={hrefValue}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="block px-4 py-2 text-center text-white bg-blue-400 rounded-md"
+                          // target="_blank"
+                          // rel="noopener noreferrer"
+                          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md cursor-pointer ${getBtnCss(
+                            button.type
+                          )}`}
                         >
+                          {getBtnIcon(button.type)}
                           {button.text}
-                        </a>
+                        </button>
                       );
                     })}
                 </div>
@@ -473,7 +486,7 @@ const WhatsappLaunchPreview = ({
           )}
 
           {isCarousal && (
-            <div className="flex flex-col gap-3 p-3 bg-white rounded-b-md">
+            <div className="flex flex-col gap-3 p-3 bg-white rounded-b-md ">
               <Carousel
                 showThumbs={false}
                 showStatus={false}
@@ -532,7 +545,7 @@ const WhatsappLaunchPreview = ({
 
                   return (
                     <div
-                      className="flex flex-col gap-3 p-3 bg-white rounded-b-md"
+                      className="flex flex-col gap-3 p-3 bg-white rounded-b-md min-h-125"
                       key={index}
                     >
                       {fileData[index]?.filePath ? (

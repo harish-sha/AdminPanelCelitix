@@ -554,23 +554,24 @@ export const Preview = ({
               {pree?.updatedCData.map((item, index) => (
                 <>
                   <div key={index}>
-                    <p>{item.cardTitle}</p>
-                    <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
-                      <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
-                        {item.cardDescription}
-                      </pre>
-                    </div>
+                    <p className="text-md" >{item.cardTitle}</p>
                     {item.fileTempPath && (
                       <img
                         src={URL.createObjectURL(item.fileTempPath)}
                         alt={item.cardTitle}
+                        className="h-30 p-1 rounded-xl"
                       />
                     )}
+                    <div className="overflow-y-scroll  max-h-[150px] max-w-[525px] p-1 break-words whitespace-pre-wrap rounded-md border min-h-[100px] text-start text-sm">
+                      <pre className="p-1 break-words whitespace-pre-wrap rounded-md ">
+                        {item.cardDescription}
+                      </pre>
+                    </div>
                   </div>
                   {/* {JSON.stringify(pree?.updatedCData, null, 2)} */}
 
                   {item.suggestions && (
-                    <div className="flex flex-wrap gap-2 w-full max-w-[500px] mt-5">
+                    <div className="flex flex-wrap flex-col gap-2 w-full  mt-2 min-h-50">
                       {item.suggestions?.map((item, index) => (
                         <button
                           key={index}

@@ -22,6 +22,7 @@ const PaginationList = styled("ul")({
   display: "flex",
   gap: "8px",
 });
+
 const CustomPagination = ({
   totalPages,
   paginationModel,
@@ -75,54 +76,7 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
-  const [open, setOpen] = useState(false); // ✅ Start as false
 
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
-    setOpen(false);
-  };
-
-  // const open = Boolean(anchorEl);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-    </div>
-  );
-};
 const DlttemplateTable = ({ id, name }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -293,58 +247,6 @@ const DlttemplateTable = ({ id, name }) => {
           }}
         />
       </Paper>
-
-      <Dialog
-        header="Template View"
-        visible={dialogVisible}
-        style={{ width: "27rem" }}
-        onHide={() => {
-          setDialogVisible(false);
-        }}
-        draggable={false}
-      >
-        <div className="modal-content rounded-xl">
-          <div className="modal-body border-2 p-2 rounded-xl border-gray-200">
-            <div className="imgbox">
-              <img
-                src={whatsappImg}
-                alt=""
-                className="h-45 w-full rounded-lg"
-              />
-            </div>
-            <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
-              <p>
-                As vibrant hues fill the canvas of life, may this festival of
-                colors bring immense joy, success and prosperity to your
-                corporate endeavors🎇💻
-              </p>
-              <p>
-                Wishing our esteemed patrons and partners a Holi filled with the
-                splendor of laughter, the warmth of togetherness and the
-                brightness of positivity.📞📞
-              </p>
-              <p>Here's to a colorful journey ahead!🎉🎊</p>
-              <p>Happy Holi!🎇✨</p>
-              <p>Best Regards,🎊🎉</p>
-              <p>Team Celitix</p>
-            </div>
-            <div className="flex flex-col gap-2">
-              <button className="flex items-center justify-center px-4 py-2 text-sm bg-blue-500 text-white rounded-md ">
-                <BsTelephoneFill className="mr-2" />
-                Contact us
-              </button>
-              <button className="flex items-center justify-center px-4 py-2 text-sm bg-green-500 text-white rounded-md ">
-                <FaExternalLinkAlt className="mr-2" />
-                Visit us
-              </button>
-              <button className="flex items-center justify-center px-4 py-2  bg-gray-200 text-gray-800 rounded-md text-sm w-full">
-                <FaReply className="mr-2" />
-                View more
-              </button>
-            </div>
-          </div>
-        </div>
-      </Dialog>
     </>
   );
 };

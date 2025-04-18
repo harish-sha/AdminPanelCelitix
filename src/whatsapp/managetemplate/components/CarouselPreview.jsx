@@ -196,7 +196,7 @@ const CarouselPreview = ({ carouselData }) => {
                   <img
                     src={mediaUrl}
                     alt="Card Media"
-                    className="object-contain w-full mb-4 rounded-md h-60"
+                    className="object-contain w-full mb-4 rounded-md h-60 border"
                   />
                 )}
 

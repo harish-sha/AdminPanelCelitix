@@ -193,14 +193,14 @@ const CarouselTemplatePreview = ({
               />
             )}
             <div className="pt-2 ">
-              <div
-                className="w-full px-2 py-2 mb-0 overflow-auto text-sm text-justify text-gray-800 break-words align-middle bg-gray-100 border-2 border-gray-200 rounded-md h-28"
+              <pre
+                className="w-full px-2 py-2 mb-0 overflow-auto text-sm text-justify text-gray-800 break-words align-middle bg-gray-100 border-2 border-gray-200 rounded-md h-28 text-wrap"
                 id="carousel-body-preview"
                 name="carousel-body-preview"
               >
                 {card.body ||
                   "This is a dummy card body. You can change this content later."}
-              </div>
+              </pre>
             </div>
 
             {index !== 0 && (

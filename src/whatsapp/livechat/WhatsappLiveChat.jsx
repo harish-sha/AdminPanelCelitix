@@ -1666,7 +1666,7 @@ export default function WhatsappLiveChat() {
       if (res?.status !== "success") {
         return toast.error("Error sending message");
       }
-      new Audio("./send-message.wav");
+      const audio = new Audio("./send-message.wav");
       audio.play().catch((e) => {
         console.log("Audio play error:", e);
       });
@@ -1748,10 +1748,10 @@ export default function WhatsappLiveChat() {
   }
 
   useEffect(() => {
-    handleFetchAllConvo();
+    // handleFetchAllConvo();
     if (!wabaState?.selectedWaba) return;
     const intervalid = setInterval(() => {
-      // handleFetchAllConvo();
+      handleFetchAllConvo();
     }, 500);
 
     return () => clearInterval(intervalid);
@@ -2159,11 +2159,11 @@ export default function WhatsappLiveChat() {
         console.log(e);
       }
     }
-    handleLoadNewChat();
-    handleIsView();
+    // handleLoadNewChat();
+    // handleIsView();
     const intervalId = setInterval(() => {
-      // handleLoadNewChat();
-      // handleIsView();
+      handleLoadNewChat();
+      handleIsView();
     }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);

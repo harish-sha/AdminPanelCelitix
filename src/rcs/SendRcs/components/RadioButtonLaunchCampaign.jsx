@@ -239,7 +239,7 @@ export const RadioButtonLaunchCampaign = ({
                     // isUploading ?
                     // "disabled" : ""
                     ""
-                  }`}
+                    }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -282,8 +282,8 @@ export const RadioButtonLaunchCampaign = ({
       {selectedOption === "contact" &&
         uploadedFile &&
         contactData?.fileHeaders?.length > 0 && (
-          <div className="flex flex-col w-full mt-5">
-            <div className="flex flex-col gap-2">
+          <div className="flex  flex-wrap items-start justify-between gap-2 mt-3 md:flex-wrap xl:flex-nowrap">
+            <div className="flex flex-col gap-2  w-full">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -323,7 +323,7 @@ export const RadioButtonLaunchCampaign = ({
                 }}
               />
             </div>
-            <div className="w-full">
+            <div className="w-full md:mt-2 lg:mt-4 xl:mt-7">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"

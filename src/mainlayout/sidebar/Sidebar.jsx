@@ -16,14 +16,14 @@ import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
-import rcsicon from "../../assets/icons/RCS.svg"
+import rcsicon from "../../assets/icons/RCS02.svg"
 import twoway from "../../assets/icons/TWOWAY.svg"
-import callback from "../../assets/icons/Callback.svg"
-import missedcall from "../../assets/icons/Missedcall.svg"
-import obd from "../../assets/icons/OBD.svg"
-import ibd from "../../assets/icons/IBD.svg"
+import callback from "../../assets/icons/Callback02.svg"
+import missedcall from "../../assets/icons/Missedcall2.svg"
+import obd from "../../assets/icons/OBD02.svg"
+import ibd from "../../assets/icons/IBD02.svg"
 import numberlookup from "../../assets/icons/Numberlookup.svg"
-import clicktwocall from "../../assets/icons/Click2Call.svg"
+import clicktwocall from "../../assets/icons/Click2Call02.svg"
 
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -121,7 +121,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "Two Way SMS",
       // icon: <LuMessageSquareMore />,
-      icon: <img src={twoway} className="w-4.5 h-4.5" />,
+      icon: <img src={twoway} className="w-4 h-4" />,
 
       label: "Two Way SMS",
       type: "dropdown",
@@ -134,7 +134,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "RCS",
       // icon: <LuMessageSquareMore />,
-      icon: <img src={rcsicon} className="w-5 h-5" />,
+      icon: <img src={rcsicon} className="w-4 h-4" />,
       label: "RCS",
       type: "dropdown",
       links: [
@@ -169,7 +169,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "Number Lookup",
       // icon: <LuMessageSquareMore />,
-      icon: <img src={numberlookup} className="w-4.5 h-4.5" />,
+      icon: <img src={numberlookup} className="w-4 h-4" />,
 
       label: "Number Lookup",
       type: "dropdown",
@@ -201,7 +201,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "OBD",
       // icon: <MdOutlineEmail />,
-      icon: <img src={obd} className="w-4.5 h-4.5" />,
+      icon: <img src={obd} className="w-4 h-4" />,
 
       label: "OBD",
       type: "dropdown",
@@ -215,7 +215,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "IBD",
       // icon: <MdOutlineEmail />,
-      icon: <img src={ibd} className="w-4.5 h-4.5" />,
+      icon: <img src={ibd} className="w-4 h-4" />,
 
       label: "IBD",
       type: "dropdown",
@@ -229,8 +229,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "Missed Call",
       // icon: <MdOutlineEmail />,
-      icon: <img src={twoway} className="w-4.5 h-4.5" />,
-
+      icon: <img src={missedcall} className="w-4 h-4" />,
       label: "Missed Call",
       type: "dropdown",
       links: [
@@ -241,7 +240,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "Click-2-Call",
       // icon: <MdOutlineEmail />,
-      icon: <img src={clicktwocall} className="w-4.5 h-4.5" />,
+      icon: <img src={clicktwocall} className="w-4 h-4" />,
 
       label: "Click-2-Call",
       type: "dropdown",
@@ -269,7 +268,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: '/callback', label: 'Call Back' }
       ]
-
     },
     {
       name: "managefunds",
@@ -473,7 +471,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       onAnimationComplete={() => {
         setCollapseAnimationDone(!isCollapsed);
       }}
-      className={`mainsidebar h-screen bg-white text-white px-0 flex flex-col fixed top-19 left-0 overflow-y-auto overflow-x-hidden z-9  
+      className={`mainsidebar h-screen bg-white text-white  px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 3.5rem)" }}
     >

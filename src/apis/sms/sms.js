@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../apiClient.js";
 
 // get campaign report
 export const fetchCampaignData = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getSMSCampaignData", {
+  return await fetchWithAuth("/getSMSCampaignData", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -10,7 +10,7 @@ export const fetchCampaignData = async (data) => {
 
 // campaign details reports
 export const getCampaignDetails = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getSMSCampaignDetails", {
+  return await fetchWithAuth("/getSMSCampaignDetails", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -18,7 +18,7 @@ export const getCampaignDetails = async (data) => {
 
 // get previous day report
 export const fetchPreviousDayReport = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getSMSPrevoiusDaysCampaignReport", {
+  return await fetchWithAuth("/getSMSPrevoiusDaysCampaignReport", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -26,7 +26,7 @@ export const fetchPreviousDayReport = async (data) => {
 
 // get previous day details report
 export const getPreviousCampaignDetails = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getPreviousSMSCampaignDetails", {
+  return await fetchWithAuth("/getPreviousSMSCampaignDetails", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -34,7 +34,7 @@ export const getPreviousCampaignDetails = async (data) => {
 
 // get summary report
 export const getSummaryReport = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getSummaryReport", {
+  return await fetchWithAuth("/getSummaryReport", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -42,7 +42,7 @@ export const getSummaryReport = async (data) => {
 
 // log report
 export const getAttachmentLogs = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/getAttachmentLogs", {
+  return await fetchWithAuth("/getAttachmentLogs", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -50,20 +50,58 @@ export const getAttachmentLogs = async (data) => {
 
 // download detailed logs
 export const downloadDetailedLogs = async (data) => {
+  return await fetchWithAuth(`/downloadDetailedLogs?campaignSrNo=${data}`, {
+    method: "POST",
+  });
+};
+
+// download detailed logs
+export const fetchDetailsAttachment = async (srno, mbno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/downloadDetailedLogs?campaignSrNo=${data}`,
+    `/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mbno}`,
     {
       method: "POST",
     }
   );
 };
 
-// download detailed logs 
-export const fetchDetailsAttachment = async (srno, mbno) => {
+// get all sms templates
+export const getAllTemplates = async (status) => {
+  return await fetchWithAuth(`/smsTemplate/getAlltemplates?status=${status}`, {
+    method: "POST",
+  });
+};
+
+// get template by id/tempsrno
+export const getSingleTemplate = async (tempSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/searchDetailLogsByMobileNo?campaignSrNo=${srno}&mobileNo=${mbno}`,
+    `/smsTemplate/getTemplateById?tempSrno=${tempSrno}`,
     {
       method: "POST",
     }
   );
 };
+
+// update template bysrno
+export const updateTemplateBySrno = async (srNo) => {
+  return await fetchWithAuth("/smsTemplate/updateTemplate", {
+    method: "POST",
+    body: JSON.stringify(srNo),
+  });
+};
+
+// delete single smsTemplate bysrno
+export const deleteSingleSmsTemplate = async (srNo) => {
+  return await fetchWithAuth(`/smsTemplate/deleteTemplateBySrNo?srNo=${srNo}`, {
+    method: "POST",
+  });
+};
+
+// delete multiple smsTemplate bysrno
+export const deleteMultipleSmsTemplate = async (srNoList) => {
+  return await fetchWithAuth(`/smsTemplate/deleteMultipleTemplates`, {
+    method: "POST",
+    body: JSON.stringify(srNoList),
+  });
+};
+

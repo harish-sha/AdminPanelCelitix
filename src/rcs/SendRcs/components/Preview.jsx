@@ -315,7 +315,7 @@ export const Preview = ({
     const baseStyle =
       "text-blue-500 text-sm border-b border-gray-200 space-x-1";
     switch (type) {
-      case "Reply":
+      case "reply button":
       case "website":
       case "mobile":
       case "view location":
@@ -328,7 +328,7 @@ export const Preview = ({
 
   const getBtnIcon = (type) => {
     switch (type) {
-      case "Reply":
+      case "reply button":
         return <FaReply />;
       case "website":
         return <FaExternalLinkAlt />;
@@ -447,18 +447,22 @@ export const Preview = ({
               return (
                 <>
                   <div key={index}>
-                    <p>{item.contentTitle}</p>
-                    <div className="overflow-y-scroll max-h-[250px] max-w-[525px] p-2 break-words whitespace-pre-wrap rounded-md border min-h-[50px]">
-                      <pre className="p-2 break-words whitespace-pre-wrap rounded-md">
+                    <p className="text-md">{item.contentTitle}</p>
+                    {item.imageUrl && (
+                      <img
+                        src={item.imageUrl}
+                        alt={item.contentTitle}
+                        className="h-30 p-1 rounded-xl"
+                      />
+                    )}
+                    <div className="overflow-y-scroll max-h-[150px] max-w-[525px] p-1 break-words whitespace-pre-wrap rounded-md border min-h-[50px] text-sm">
+                      <pre className="p-1 break-words whitespace-pre-wrap rounded-md">
                         {item.content}
                       </pre>
                     </div>
-                    {item.imageUrl && (
-                      <img src={item.imageUrl} alt={item.contentTitle} />
-                    )}
                   </div>
                   {item.suggestions && (
-                    <div className="flex flex-wrap gap-2 w-full max-w-[500px] mt-5">
+                    <div className="flex flex-wrap gap-2 flex-col w-full max-w-[500px] mt-2 min-h-40">
                       {item.suggestions?.map((item, index) => (
                         <button
                           key={index}

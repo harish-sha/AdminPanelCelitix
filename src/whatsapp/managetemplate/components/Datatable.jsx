@@ -633,7 +633,7 @@ const DataTable = ({
       <Dialog
         header={selectedRow?.templateName}
         visible={dialogVisible}
-        style={{ width: "27rem" }}
+        style={{ width: "31rem", height: "auto" }}
         onHide={handleClose}
         draggable={false}
       >

@@ -225,6 +225,7 @@ import email from "../assets/animation/email.json";
 import email2 from "../assets/animation/email2.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
+import toast from "react-hot-toast";
 
 const services = [
   {

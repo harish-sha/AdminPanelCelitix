@@ -463,7 +463,7 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* Country Code */}
-      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 lg:flex-nowrap">
+      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 md:flex-wrap xl:flex-nowrap">
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
             <div className="flex items-center gap-2">
@@ -503,10 +503,10 @@ function RadioButtonLaunchCampaign({
               <DropdownWithSearch
                 id="selectCountryCode"
                 name="selectCountryCode"
-                label="Select Country Code"
+                label="Country Code"
                 tooltipContent="check the - [ ✔ Add country code ] to apply country code"
                 tooltipPlacement="right"
-                placeholder="Select Country Code"
+                placeholder="Country Code"
                 disabled={!addCountryCode}
                 options={countryList
                   .sort((a, b) => a.countryName.localeCompare(b.countryName))
@@ -534,11 +534,11 @@ function RadioButtonLaunchCampaign({
         {/* Mobile Column Selection */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
-            <div className="w-full mt-2 lg:mt-9">
+            <div className="w-full md:mt-2 lg:mt-4 xl:mt-9">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"
-                label="Select Mobile Number Field"
+                label="Mobile Number Field"
                 tooltipContent="Select your mobile number Field!"
                 tooltipPlacement="right"
                 options={columns.map((col, index) => ({
@@ -547,7 +547,7 @@ function RadioButtonLaunchCampaign({
                 }))}
                 value={selectedMobileColumn}
                 onChange={handleMobileColumnChange}
-                placeholder="Select Mobile No."
+                placeholder=" Mobile No."
               />
             </div>
           </div>

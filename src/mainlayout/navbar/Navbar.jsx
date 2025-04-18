@@ -171,7 +171,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <Icon className="text-[18px]" />
                   )}
                 </span>
-
               </button>
             </CustomTooltip>
           ))}

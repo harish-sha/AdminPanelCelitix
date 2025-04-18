@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../apiClient.js";
 
 // Get Waba Details
 export const getWabaList = async () => {
-  return await fetchWithAuth("/proCpaasRest/whatsapp/getwabadetails", {
+  return await fetchWithAuth("/whatsapp/getwabadetails", {
     method: "GET",
   });
 };
@@ -10,7 +10,7 @@ export const getWabaList = async () => {
 // Get All Template Details
 export const getWabaTemplateDetails = async (wabaNumber) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}`,
+    `/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}`,
     {
       method: "GET",
     }
@@ -20,7 +20,7 @@ export const getWabaTemplateDetails = async (wabaNumber) => {
 // Get particular waba Template Details
 export const getWabaTemplate = async (wabaAccountId, templateName) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/getWhatsappTemplate?templateName=${templateName}&wabaAccountId=${wabaAccountId}`,
+    `/whatsapptemplate/getWhatsappTemplate?templateName=${templateName}&wabaAccountId=${wabaAccountId}`,
     {
       method: "GET",
     }
@@ -30,7 +30,7 @@ export const getWabaTemplate = async (wabaAccountId, templateName) => {
 // delete template
 export const deleteTemplate = async (data) => {
   return await fetchWithAuth(
-    `proCpaasRest/whatsapptemplate/deleteWabaTemplate?templateSrno=${data.srno}&wabaSrno=${data.waba}&templateName=${data.name}`,
+    `/whatsapptemplate/deleteWabaTemplate?templateSrno=${data.srno}&wabaSrno=${data.waba}&templateName=${data.name}`,
     {
       method: "POST",
     }
@@ -40,7 +40,7 @@ export const deleteTemplate = async (data) => {
 // refresh template (a)
 export const refreshTemplate = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/checkStatus?srno=${data}`,
+    `/whatsapptemplate/checkStatus?srno=${data}`,
     {
       method: "POST",
     }
@@ -49,7 +49,7 @@ export const refreshTemplate = async (data) => {
 
 // show groups list
 export const getWabaShowGroupsList = async () => {
-  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
+  return await fetchWithAuth("/group/showGroups", {
     method: "POST",
   });
 };
@@ -60,7 +60,7 @@ export const campaignUploadFile = async (file) => {
   formData.append("file", file);
 
   try {
-    const response = await fetchWithAuth("/proCpaasRest/campaignFile/upload", {
+    const response = await fetchWithAuth("/campaignFile/upload", {
       method: "POST",
       body: formData,
     });
@@ -83,7 +83,7 @@ export const uploadImageFile = async (file, generateHandler = 0) => {
   }
 
   try {
-    const response = await fetchWithAuth("/proCpaasRest/utility/upload", {
+    const response = await fetchWithAuth("/utility/upload", {
       method: "POST",
       body: formData,
     });
@@ -98,7 +98,7 @@ export const uploadImageFile = async (file, generateHandler = 0) => {
 // Send Whatsapp Campaign
 export const sendWhatsappCampaign = async (campaignData) => {
   try {
-    const response = await fetchWithAuth("/proCpaasRest/sendWhatsappCampaign", {
+    const response = await fetchWithAuth("/sendWhatsappCampaign", {
       method: "POST",
       body: JSON.stringify(campaignData),
     });
@@ -135,7 +135,7 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
     console.log("Sending Request:", requestBody);
 
     const response = await fetchWithAuth(
-      "/proCpaasRest/whatsapp/getCampaignReport",
+      "/whatsapp/getCampaignReport",
       {
         method: "POST",
         body: JSON.stringify(requestBody),
@@ -156,7 +156,7 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
 export const getWhatsappCampaignDetailsReport = async (data) => {
   try {
     const response = await fetchWithAuth(
-      "/proCpaasRest/whatsapp/whatsappCampaginDetailsReport",
+      "/whatsapp/whatsappCampaginDetailsReport",
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -180,7 +180,7 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
 // waba profile details
 export const getwabadetails = async (wabaNumber) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/getBusinessProfileDetails?wabaNumber=${wabaNumber}`,
+    `/whatsapp/getBusinessProfileDetails?wabaNumber=${wabaNumber}`,
     {
       method: "POST",
     }
@@ -191,7 +191,7 @@ export const getwabadetails = async (wabaNumber) => {
 export const updateWabaDetails = async (data, phone) => {
   try {
     const response = await fetchWithAuth(
-      `/proCpaasRest/whatsapp/UpdateBusinessProfileDetails?wabaNumber=${phone}`,
+      `/whatsapp/UpdateBusinessProfileDetails?wabaNumber=${phone}`,
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -208,7 +208,7 @@ export const updateWabaDetails = async (data, phone) => {
 export const getWhatsappLogReport = async (logdata) => {
   try {
     const response = await fetchWithAuth(
-      "/proCpaasRest/whatsapp/getWhatsappLogReport",
+      "/whatsapp/getWhatsappLogReport",
       {
         method: "POST",
         body: JSON.stringify(logdata),
@@ -225,7 +225,7 @@ export const getWhatsappLogReport = async (logdata) => {
 export const getSummaryReport = async (data) => {
   try {
     const response = await fetchWithAuth(
-      "/proCpaasRest/whatsapp/getSummeryReport",
+      "/whatsapp/getSummeryReport",
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -241,7 +241,7 @@ export const getSummaryReport = async (data) => {
 export const sendTemplatetoApi = async (data) => {
   try {
     const response = await fetchWithAuth(
-      "/proCpaasRest/whatsapptemplate/savewhatsapp",
+      "/whatsapptemplate/savewhatsapp",
       {
         method: "POST",
         body: JSON.stringify(data),
@@ -256,7 +256,7 @@ export const sendTemplatetoApi = async (data) => {
 // conversation report
 export const getConversationReport = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/getConversationReport?wabaSrno=${data.wabaSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
+    `/whatsapp/getConversationReport?wabaSrno=${data.wabaSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}&mobileNo=${data.mobileNo}&page=${data.page}`,
     {
       method: "POST",
     }
@@ -266,7 +266,7 @@ export const getConversationReport = async (data) => {
 // sync waba templates
 export const syncStatus = async (srno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/sync?wabaSrno=${srno}`,
+    `/whatsapptemplate/sync?wabaSrno=${srno}`,
     {
       method: "POST",
     }
@@ -276,7 +276,7 @@ export const syncStatus = async (srno) => {
 // refresh waba templates (h)
 export const refreshWhatsApp = async (srno) => {
   return await fetchWithAuth(
-    `proCpaasRest/whatsapptemplate/refreshWabaDetails?wabaSrno=${srno}`,
+    `/whatsapptemplate/refreshWabaDetails?wabaSrno=${srno}`,
     {
       method: "POST",
     }
@@ -286,7 +286,7 @@ export const refreshWhatsApp = async (srno) => {
 // delete waba template (H)
 export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapptemplate/deleteWabaTemplate?templateSrno=${tempsrno}&wabaSrno=${wabaNo}templateName=${tempName}`,
+    `/whatsapptemplate/deleteWabaTemplate?templateSrno=${tempsrno}&wabaSrno=${wabaNo}templateName=${tempName}`,
     {
       method: "POST",
     }
@@ -296,7 +296,7 @@ export const deleteWabaTemplate = async (tempsrno, wabaNo, tempName) => {
 // fetch all conversations (live chat)
 export const fetchAllConversations = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    `/LiveChat/LiveChatDetails?mobile=${data.mobileNo}&srno=${data.srno}&selectedMobileNumber=&searchMobileNumber=${data.search}&userActive=${data.active}`,
     {
       method: "POST",
     }
@@ -306,7 +306,7 @@ export const fetchAllConversations = async (data) => {
 // chat one user details (live chat)
 export const fetchSpecificConversations = async (data) => {
   return await fetchWithAuth(
-    `proCpaasRest/LiveChat/getWhatsappChatsOneUser?mobile=${data.mobileNo}&wabaMobile=${data.wabaMobile}&chatNo=${data.chatNo}`,
+    `/LiveChat/getWhatsappChatsOneUser?mobile=${data.mobileNo}&wabaMobile=${data.wabaMobile}&chatNo=${data.chatNo}`,
     {
       method: "POST",
     }
@@ -316,7 +316,7 @@ export const fetchSpecificConversations = async (data) => {
 // assign agent to user (live chat)
 export const assignUserToAgent = async (data) => {
   return await fetchWithAuth(
-    `proCpaasRest/LiveChat/addAgentToUser?wabaNumber=${data.waba}&name=${data.name}&agentSrno=${data.agentSrno}&groupNo=${data.groupNo}&mobileNo=${data.mobileNo}`,
+    `/LiveChat/addAgentToUser?wabaNumber=${data.waba}&name=${data.name}&agentSrno=${data.agentSrno}&groupNo=${data.groupNo}&mobileNo=${data.mobileNo}`,
     {
       method: "POST",
     }
@@ -326,7 +326,7 @@ export const assignUserToAgent = async (data) => {
 // send message to user (live chat)
 export const sendMessageToUser = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
     {
       method: "POST",
     }
@@ -335,7 +335,7 @@ export const sendMessageToUser = async (data) => {
 
 // send tempalte to use (live chat)
 export const sendTemplateMessageToUser = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/LiveChat/sendTemplateMsg", {
+  return await fetchWithAuth("/LiveChat/sendTemplateMsg", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -344,7 +344,7 @@ export const sendTemplateMessageToUser = async (data) => {
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
     {
       method: "POST",
       body: body,
@@ -355,7 +355,7 @@ export const sendInputMessageToUser = async (data, body) => {
 // load new chat (live chat)
 export const loadNewChat = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/loadNewChat?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&replayTime=${data.replayTime}`,
+    `/LiveChat/loadNewChat?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&replayTime=${data.replayTime}`,
     {
       method: "POST",
     }
@@ -365,7 +365,7 @@ export const loadNewChat = async (data) => {
 // download attachemnt (live chat)
 export const downloadAttachment = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/refreshAttachmentPro?wabaNumber=${data.waba}&id=${data.id}&conversionSrno=${data.conversionSrno}`,
+    `/LiveChat/refreshAttachmentPro?wabaNumber=${data.waba}&id=${data.id}&conversionSrno=${data.conversionSrno}`,
     {
       method: "POST",
     }
@@ -375,7 +375,7 @@ export const downloadAttachment = async (data) => {
 // read message (live chat)
 export const readMessage = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
+    `/LiveChat/isviewChat?srno=${data.srno}&wabaNumber=${data.waba}&mobile=${data.mobile}`,
     {
       method: "POST",
     }
@@ -384,7 +384,7 @@ export const readMessage = async (data) => {
 
 // Campaign Summary Info
 export const campaignSummaryInfo = async (data) => {
-  return await fetchWithAuth(`/proCpaasRest/whatsapp/getCampaignSummaryInfo`, {
+  return await fetchWithAuth(`/whatsapp/getCampaignSummaryInfo`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -392,7 +392,7 @@ export const campaignSummaryInfo = async (data) => {
 
 // get list of send messages
 export const getListofSendMsg = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/whatsapp/getListOfSentMsg", {
+  return await fetchWithAuth("/whatsapp/getListOfSentMsg", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -401,7 +401,7 @@ export const getListofSendMsg = async (data) => {
 // fetch curl of template
 export const fetchCurlData = async (data) => {
   return await fetchWithAuth(
-    `/proCpaasRest/wrapper/waba/getTemplate?templatename=${data.tempName}&wabaNumber=${data.waba}&curl`,
+    `/wrapper/waba/getTemplate?templatename=${data.tempName}&wabaNumber=${data.waba}&curl`,
     {
       method: "POST",
     }

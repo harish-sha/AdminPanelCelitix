@@ -3,7 +3,7 @@ import { fetchWithAuth } from "../apiClient";
 // get RCS Rate data by user
 export const getRCSRateData = async (userSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/rcs/getRCSRateData?userSrno=${userSrno}`,
+    `/rcs/getRCSRateData?userSrno=${userSrno}`,
     {
       method: "POST",
     }
@@ -12,7 +12,7 @@ export const getRCSRateData = async (userSrno) => {
 
 // save rcs rate
 export const saveEditRcsRate = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/rcs/saveEditRCSRate", {
+  return await fetchWithAuth("/rcs/saveEditRCSRate", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -21,7 +21,7 @@ export const saveEditRcsRate = async (data) => {
 // get rcs rate by srno
 export const getRCSRateBySrno = async (srno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/rcs/getRCSRateData?userSrno=${srno}`,
+    `/rcs/getRCSRateData?userSrno=${srno}`,
     {
       method: "POST",
     }
@@ -30,7 +30,7 @@ export const getRCSRateBySrno = async (srno) => {
 
 // delete rcs rate by srno
 export const deleteRCSRateBySrno = async (srno) => {
-  return await fetchWithAuth(`/proCpaasRest/rcs/deleteRCSRate?srno=${srno}`, {
+  return await fetchWithAuth(`/rcs/deleteRCSRate?srno=${srno}`, {
     method: "DELETE",
   });
 };
@@ -38,7 +38,7 @@ export const deleteRCSRateBySrno = async (srno) => {
 // get whatsapp rate by srno
 export const getWhatsappRateBySrno = async (srno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/getWhatsappRateBySrno?srno=${srno}`,
+    `/whatsapp/getWhatsappRateBySrno?srno=${srno}`,
     {
       method: "POST",
     }
@@ -47,7 +47,7 @@ export const getWhatsappRateBySrno = async (srno) => {
 
 // save whatsapp rate
 export const saveEditWhatsappRate = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/whatsapp/saveWhatsappRate", {
+  return await fetchWithAuth("/whatsapp/saveWhatsappRate", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -56,7 +56,7 @@ export const saveEditWhatsappRate = async (data) => {
 // get Whatsapp Rate data by user
 export const getWhatsappRateData = async (userSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/getWhatsappRate?userSrno=${userSrno}`,
+    `/whatsapp/getWhatsappRate?userSrno=${userSrno}`,
     {
       method: "POST",
     }
@@ -66,7 +66,7 @@ export const getWhatsappRateData = async (userSrno) => {
 // delete whatsapp rate by srno
 export const deleteWhatsappRateBySrno = async (srno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/whatsapp/deleteWhatsappRate?srno=${srno}`,
+    `/whatsapp/deleteWhatsappRate?srno=${srno}`,
     {
       method: "DELETE",
     }
@@ -75,7 +75,7 @@ export const deleteWhatsappRateBySrno = async (srno) => {
 
 // save voice rate
 export const saveVoiceRate = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/voice/addVoiceRate", {
+  return await fetchWithAuth("/voice/addVoiceRate", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -83,7 +83,7 @@ export const saveVoiceRate = async (data) => {
 
 // get voice rate by srno
 export const getVoiceRateBySrno = async (srNo) => {
-  return await fetchWithAuth(`/proCpaasRest/voice/getVoiceRate?srNo=${srNo}`, {
+  return await fetchWithAuth(`/voice/getVoiceRate?srNo=${srNo}`, {
     method: "POST",
   });
 };
@@ -91,7 +91,7 @@ export const getVoiceRateBySrno = async (srNo) => {
 // get voice rate data by user
 export const getVoiceRateByUser = async (userSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/voice/getVoiceRateByUser?userSrno=${userSrno}`,
+    `/voice/getVoiceRateByUser?userSrno=${userSrno}`,
     {
       method: "POST",
     }
@@ -101,7 +101,7 @@ export const getVoiceRateByUser = async (userSrno) => {
 // delete voice rate by srno
 export const deleteVoiceRateBySrno = async (srNo) => {
   return await fetchWithAuth(
-    `/proCpaasRest/voice/deleteVoiceRate?srNo=${srNo}`,
+    `/voice/deleteVoiceRate?srNo=${srNo}`,
     {
       method: "DELETE",
     }
@@ -110,7 +110,7 @@ export const deleteVoiceRateBySrno = async (srNo) => {
 
 // add sms pricing
 export const addSmsPricing = async (data) => {
-  return await fetchWithAuth("/proCpaasRest/sms/addSmsPricing", {
+  return await fetchWithAuth("/sms/addSmsPricing", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -119,7 +119,7 @@ export const addSmsPricing = async (data) => {
 // get sms rate data by user
 export const getSmsRateByUser = async (userSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/sms/getSmsPricing?userSrno=${userSrno}`,
+    `/sms/getSmsPricing?userSrno=${userSrno}`,
     {
       method: "GET",
     }
@@ -129,7 +129,7 @@ export const getSmsRateByUser = async (userSrno) => {
 // delete sms rate data by user
 export const deleteSmsRateByUser = async (userSrno) => {
   return await fetchWithAuth(
-    `/proCpaasRest/sms/deleteSmsPricing?userSrno=${userSrno}`,
+    `/sms/deleteSmsPricing?userSrno=${userSrno}`,
     {
       method: "DELETE",
     }

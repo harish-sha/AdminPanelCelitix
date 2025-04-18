@@ -2,13 +2,13 @@ import { fetchWithAuth } from "../apiClient.js";
 import axios from "axios";
 
 export const getCountryList = async () => {
-  return await fetchWithAuth("/proCpaasRest/getcountryList", {
+  return await fetchWithAuth("/getcountryList", {
     method: "POST",
   });
 };
 
 export const getAllGroups = async () => {
-  return await fetchWithAuth("/proCpaasRest/group/showGroups", {
+  return await fetchWithAuth("/group/showGroups", {
     method: "POST",
   });
 };

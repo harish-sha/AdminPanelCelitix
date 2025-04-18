@@ -130,7 +130,7 @@ export const ChatScreen = ({
                                   src={
                                     isSent
                                       ? msg.mediaPath
-                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath}`
+                                      : `https://cb.celitix.com${msg.mediaPath}`
                                   }
                                   alt="Image"
                                   className={commonMediaClass}
@@ -140,7 +140,7 @@ export const ChatScreen = ({
                                   src={
                                     isSent
                                       ? msg.mediaPath
-                                      : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath}`
+                                      : `https://cb.celitix.com${msg.mediaPath}`
                                   }
                                   className={commonMediaClass}
                                   controls={true}
@@ -226,7 +226,7 @@ export const ChatScreen = ({
               <img
                 src={
                   chatState.replyData?.isReceived
-                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath.path}`
+                    ? `https://cb.celitix.com${chatState.replyData?.mediaPath.path}`
                     : chatState.replyData?.mediaPath
                 }
                 alt={chatState.replyData?.mediaPath.path}
@@ -237,7 +237,7 @@ export const ChatScreen = ({
               <video
                 src={
                   chatState.replyData?.isReceived
-                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath.path}`
+                    ? `https://cb.celitix.com${chatState.replyData?.mediaPath.path}`
                     : chatState.replyData?.mediaPath
                 }
                 className="object-contain mb-2  pointer-events-none select-none h-48 w-48"

@@ -108,6 +108,7 @@
 
 
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import InputField from "@/whatsapp/components/InputField";
 
 export const HandleCampaignDetails = ({
@@ -172,7 +173,7 @@ export const HandleCampaignDetails = ({
         />
       </div>
       <div className="mb-3">
-        <AnimatedDropdown
+        <DropdownWithSearch
           id="selectRcsTemplate"
           name="selectRcsTemplate"
           label="Select RCS Template"
