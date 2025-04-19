@@ -1083,18 +1083,15 @@ const SendRcs = () => {
         setAllTemplates([]);
         setCampaignDetails({ agent: "", campaignName: "", templateSrno: "" });
         setSelectedIndex(0);
-
         setSelectedOption("group");
         setAllGroups([]);
         setselectedGrp("");
         setUploadFile(null);
         setContactData({});
         setCountryList([]);
-
         setVarLength(0);
         setVarList([]);
         setInputVariables([]);
-
         setConfirmDialogVisible(false);
         setTotalAudience(0);
         setScheduleData({

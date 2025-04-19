@@ -3,35 +3,51 @@ const API_BASE_URL = "/api";
 import axios from "axios";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
-  // if (!token) {
-  //   console.error("No token found, redirecting to login.");
-  //   window.location.href = "/login";
-  //   return;
+  if (!token) {
+    console.error("No token found, redirecting to login.");
+    window.location.href = "/login";
+    return;
+  }
+
+  // const headers = {
+  //   Authorization: `Bearer ${token}`,
+  //   ...options
+  // };
+
+  // if (options.body instanceof FormData) {
+  //   delete headers["Content-Type"];
+  // } else {
+  //   headers["Content-Type"] = "application/json";
   // }
 
-  const headers = {
-    // "Content-Type": "application/json",
+  const defaultHeaders = {
     Authorization: `Bearer ${token}`,
-    ...options.headers,
   };
 
-  // If FormData is used, do not set Content-Type header manually
-  if (options.body instanceof FormData) {
-    delete headers["Content-Type"];
-  } else {
-    headers["Content-Type"] = "application/json";
+  if (!(options.body instanceof FormData)) {
+    defaultHeaders["Content-Type"] = "application/json";
   }
 
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
 
+    // const response = await axios({
+    //   method: options.method || "GET",
+    //   url: `${API_BASE_URL}${endpoint}`,
+    //   data: options.body,
+    //   headers,
+    // });
+
     const response = await axios({
       method: options.method || "GET",
       url: `${API_BASE_URL}${endpoint}`,
       data: options.body,
-      headers,
+      headers: {
+        ...defaultHeaders,
+        ...(options.headers || {}), 
+      },
     });
 
     // if (response.statusText !== "OK") {
@@ -48,7 +64,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   } catch (error) {
     // if (error?.status === 401) {
     //   console.error("Session expired. Redirecting to login...");
-    //   localStorage.removeItem("token");
+    //   sessionStorage.removeItem("token");
     //   window.location.href = "/login";
     //   return null;
     // }

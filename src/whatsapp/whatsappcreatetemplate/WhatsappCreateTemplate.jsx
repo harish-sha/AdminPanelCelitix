@@ -1007,14 +1007,15 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { WhatsApp } from "@mui/icons-material";
 import { useOutletContext } from "react-router-dom";
-
 import AnimatedDropdown from "../components/AnimatedDropdown.jsx";
-import InputField from "../components/InputField.jsx";
-import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import LanguageSelect from "../components/LanguageSelect.jsx";
+import InputField from "../components/InputField.jsx";
+import { WhatsApp } from "@mui/icons-material";
+
+import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import TemplatePreview from "./components/TemplatePreview.jsx";
+import AuthPreview from "./components/AuthPreview.jsx";
 import InteractiveActions from "../whatsappcreatetemplate/components/InteractiveActions.jsx";
 import TemplateTypes from "../whatsappcreatetemplate/components/TemplateTypes.jsx";
 import CarouselTemplatePreview from "../whatsappcreatetemplate/components/CarouselTemplatePreview.jsx";
@@ -1321,6 +1322,17 @@ const WhatsappCreateTemplate = () => {
       whatsappSrno: selectedWabaSno,
       components: [],
     };
+
+    if (selectedTemplateType === "text" && templateHeader) {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        example: {
+          header_text: [],
+        },
+      });
+    }
 
     // insert data in component dynamicall
     if (varvalue.length > 0) {
@@ -1761,35 +1773,40 @@ const WhatsappCreateTemplate = () => {
             {selectedWaba && selectedCategory ? (
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
-                  <h1>Settings</h1>
-                  <div className="mt-4">
-                    <div className="flex gap-2 items-center">
-                      <label htmlFor="expiryTime">Expiry Time</label>
-                      <CustomTooltip
-                        title="Expiry Time should be in 1 min to 90 min"
-                        placement="top"
-                        arrow
-                      >
-                        <span>
-                          <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                        </span>
-                      </CustomTooltip>
-                    </div>
-                    <div className="flex items-center gap-2 mt-2">
-                      <div className="w-10">
-                        <InputField
-                          id="expiryTime"
-                          name="expiryTime"
-                          type="number"
-                          value={expiryTime}
-                          tooltipContent="Expiry Time should be in 1 min to 90 min"
-                          onChange={(e) => {
-                            setExpiryTime(e.target.value);
-                          }}
-                          maxLength="2"
-                        />
+
+                  <div className="grid lg:grid-cols-2 gap-5 mt-4">
+                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
+                      <div className="flex gap-2 items-center">
+                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
+                        <CustomTooltip
+                          title="Expiry Time should be in 1 min to 90 min"
+                          placement="top"
+                          arrow
+                        >
+                          <span>
+                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                          </span>
+                        </CustomTooltip>
                       </div>
-                      <p>Minutes</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="w-10">
+                          <InputField
+                            id="expiryTime"
+                            name="expiryTime"
+                            type="number"
+                            value={expiryTime}
+                            tooltipContent="Expiry Time should be in 1 min to 90 min"
+                            onChange={(e) => {
+                              setExpiryTime(e.target.value);
+                            }}
+                            maxLength="2"
+                          />
+                        </div>
+                        <p>Minutes</p>
+                      </div>
+                    </div>
+                    <div className="mb-2">
+                      <AuthPreview />
                     </div>
                   </div>
 

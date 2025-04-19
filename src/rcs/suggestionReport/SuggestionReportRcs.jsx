@@ -108,8 +108,8 @@ const SuggestionReportRcs = () => {
             <AnimatedDropdown
               label="Agent"
               options={allAgents.map((bot) => ({
-                label: bot.agentName,
-                value: bot.agentId,
+                label: bot.agent_name,
+                value: bot.agent_id,
               }))}
               id="suggestionagent"
               name="suggestionagent"

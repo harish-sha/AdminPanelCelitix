@@ -120,6 +120,7 @@ import Callback from "@/callback/Callback";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
 
 const Approutes = () => {
   return (
@@ -147,6 +148,7 @@ const Approutes = () => {
         <Route path="SMPPerrorcode" element={<SMPPErrorCode />} />
         <Route path="addservice" element={<AddService />} />
         <Route path="addoperator" element={<AddOperator />} />
+        <Route path="createwhatsapptemplateadmin" element={<CreateWhatsappTemplateAdmin />} />
 
         {/* SMS */}
         <Route path="sendsms" element={<SendSms />} />

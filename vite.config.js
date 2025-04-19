@@ -22,8 +22,8 @@ export default defineConfig(({ mode }) => {
       proxy: {
         "/api": {
           // target: "http://95.216.43.170:8080",
-          // target: process.env.VITE_API_BASE_URL || "http://95.216.43.170:8080/proCpaasRest",
-          target: "https://rest.celitix.com/proCpaasRest",
+          target: process.env.VITE_API_BASE_URL || "http://95.216.43.170:8080/proCpaasRest",
+          // target: "https://rest.celitix.com/proCpaasRest",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),

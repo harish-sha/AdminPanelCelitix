@@ -576,14 +576,14 @@ const DeliveryreportRcs = () => {
                     options={[
                       { label: "Text", value: "text" },
                       { label: "Image", value: "image" },
-                      {
-                        label: "Rich Card Stand Alone",
-                        value: "richcardstandalone",
-                      },
-                      {
-                        label: "Rich Card Carausel",
-                        value: "richcardcarousel",
-                      },
+                      // {
+                      //   label: "Rich Card Stand Alone",
+                      //   value: "richcardstandalone",
+                      // },
+                      // {
+                      //   label: "Rich Card Carausel",
+                      //   value: "richcardcarousel",
+                      // },
                     ]}
                     value={campaignData.templateType}
                     placeholder="Select Template Type"

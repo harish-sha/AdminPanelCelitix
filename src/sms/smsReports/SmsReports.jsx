@@ -1660,7 +1660,7 @@ const SmsReports = () => {
           setPreviousDayRows([]);
           setPreviousDayColumn([]);
         }}
-        className="w-full h-full"
+        className="w-fit "
         draggable={false}
       >
         <DataTable

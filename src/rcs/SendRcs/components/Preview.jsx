@@ -467,7 +467,7 @@ export const Preview = ({
                         <button
                           key={index}
                           title={item.suggestionValue}
-                          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
+                          className={`flex items-center justify-center cursor-pointer px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnStyle(
                             item.type
                           )}`}
                         >

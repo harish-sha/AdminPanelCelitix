@@ -131,10 +131,10 @@ const Login = () => {
 
       console.log("Received Token:", data.token);
 
-      localStorage.setItem("token", data.token);
+      sessionStorage.setItem("token", data.token);
       console.log(
         "Token saved in localStorage:",
-        localStorage.getItem("token")
+        sessionStorage.getItem("token")
       );
 
       toast.success("Login Successful!");

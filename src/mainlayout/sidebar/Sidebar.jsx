@@ -299,6 +299,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/manageprefix", label: "Manage Prefix" },
         { to: "/blacklist", label: "Blacklist" },
         { to: "/managenotifications", label: "ManageNotifications" },
+        { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
       ],
     },
     {
