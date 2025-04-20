@@ -49,8 +49,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     }
   }, [isCollapsed]);
 
-
-
   useEffect(() => {
     if (isCollapsed) {
       setOpenDropdown(null);

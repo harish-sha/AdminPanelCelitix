@@ -11,6 +11,10 @@ import { IoSearch } from "react-icons/io5";
 import { Dialog } from "primereact/dialog";
 import { Checkbox } from "primereact/checkbox";
 import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
 
 
 import Loader from "../../whatsapp/components/Loader.jsx";
@@ -23,6 +27,8 @@ import UniversalLabel from "../../whatsapp/components/UniversalLabel.jsx";
 import UniversalButton from "../../whatsapp/components/UniversalButton.jsx";
 import ObdDaySummaryTable from "./ObdDaySummaryTable.jsx";
 import { RadioButton } from "primereact/radiobutton";
+import { DataTable } from "@/components/layout/DataTable.jsx";
+import { IconButton } from "@mui/material";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +45,8 @@ const ObdCampaignReports = () => {
   const [campaign, setCampaign] = useState(null);
   const [dtmfResponse, setDtmfResponse] = useState(null);
   const [value, setValue] = useState(0);
+  const [selectedRows, setSelectedRows] = useState([]);
+
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
@@ -121,9 +129,9 @@ const ObdCampaignReports = () => {
     setVisibledialog(true);
   };
 
-  const handleSearchBtn = () => {};
+  const handleSearchBtn = () => { };
 
-  const handleSummarySearchBtn = () => {};
+  const handleSummarySearchBtn = () => { };
 
   const handleChangeOption = (event) => {
     const value = event.target.value;
@@ -139,9 +147,397 @@ const ObdCampaignReports = () => {
     setCustomdialognumber(e.target.value);
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
+
+
+  const obdCampColumns = [
+    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
+    { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
+    { field: 'type', headerName: 'Type', flex: 1, minWidth: 120 },
+    { field: 'template', headerName: 'Template', flex: 1, minWidth: 120 },
+    { field: 'date', headerName: 'Date', flex: 1, minWidth: 120 },
+    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
+    {
+      field: 'action',
+      headerName: 'Action',
+      flex: 1,
+      minWidth: 150,
+      renderCell: (params) => (
+        <>
+          <IconButton className='text-xs' onClick={() => handleView(params.row)}>
+            <VisibilityIcon
+              sx={{
+                fontSize: '1.2rem',
+                color: 'green'
+              }}
+            />
+          </IconButton>
+          <IconButton onClick={() => handleDuplicate(params.row)}>
+            <FileCopyIcon
+              sx={{
+                fontSize: '1.2rem',
+                color: 'gray',
+              }} />
+          </IconButton>
+          <IconButton onClick={(event) => handleDelete(event, params.row)}>
+            <DeleteForeverIcon
+              sx={{
+                fontSize: '1.2rem',
+                color: '#e31a1a',
+              }} />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
+
+
+  const obdCampRows = [
+    {
+      id: 1,
+      sn: 1,
+      campaignName: 'diwali',
+      type: 'Transactional',
+      template: 'Simple Broadcast',
+      date: '12/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 2,
+      sn: 2,
+      campaignName: 'holi',
+      type: 'Promotional',
+      template: 'Text-2-Speech',
+      date: '13/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 3,
+      sn: 3,
+      campaignName: 'christmas',
+      type: 'Transactional',
+      template: 'Simple Broadcast',
+      date: '15/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 4,
+      sn: 4,
+      campaignName: 'easter',
+      type: 'Promotional',
+      template: 'Multi Broadcast',
+      date: '13/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 5,
+      sn: 5,
+      campaignName: 'new year',
+      type: 'Transactional',
+      template: 'Simple Broadcast',
+      date: '01/01/2025',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 6,
+      sn: 6,
+      campaignName: 'thanksgiving',
+      type: 'Promotional',
+      template: 'Text-2-Speech',
+      date: '25/11/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 7,
+      sn: 7,
+      campaignName: 'eid',
+      type: 'Transactional',
+      template: 'Multi Broadcast',
+      date: '10/04/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 8,
+      sn: 8,
+      campaignName: 'halloween',
+      type: 'Promotional',
+      template: 'Simple Broadcast',
+      date: '31/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 9,
+      sn: 9,
+      campaignName: 'rakhi',
+      type: 'Transactional',
+      template: 'Multi Broadcast',
+      date: '19/08/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 10,
+      sn: 10,
+      campaignName: 'pongal',
+      type: 'Promotional',
+      template: 'Text-2-Speech',
+      date: '14/01/2025',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 11,
+      sn: 11,
+      campaignName: 'lohri',
+      type: 'Transactional',
+      template: 'Simple Broadcast',
+      date: '13/01/2025',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 12,
+      sn: 12,
+      campaignName: 'navratri',
+      type: 'Promotional',
+      template: 'Multi Broadcast',
+      date: '03/10/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 13,
+      sn: 13,
+      campaignName: 'guru purab',
+      type: 'Transactional',
+      template: 'Text-2-Speech',
+      date: '08/11/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 14,
+      sn: 14,
+      campaignName: 'valentine’s day',
+      type: 'Promotional',
+      template: 'Simple Broadcast',
+      date: '14/02/2025',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 15,
+      sn: 15,
+      campaignName: 'independence day',
+      type: 'Transactional',
+      template: 'Multi Broadcast',
+      date: '15/08/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 16,
+      sn: 16,
+      campaignName: 'republic day',
+      type: 'Promotional',
+      template: 'Text-2-Speech',
+      date: '26/01/2025',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 17,
+      sn: 17,
+      campaignName: 'ganesh chaturthi',
+      type: 'Transactional',
+      template: 'Simple Broadcast',
+      date: '07/09/2024',
+      status: 'Success',
+      action: 'True',
+    },
+    {
+      id: 18,
+      sn: 18,
+      campaignName: 'baisakhi',
+      type: 'Promotional',
+      template: 'Multi Broadcast',
+      date: '14/04/2024',
+      status: 'Success',
+      action: 'True',
+    }
+  ];
+
+  const ObdSummaryRows = [
+    {
+      sn: 1,
+      id: 1,
+      date: "20/03/2025",
+      totalunits: "3",
+      blocked: "0",
+      totalsent: "1",
+      success: "1",
+      failed: "1"
+    },
+    {
+      sn: 2,
+      id: 2,
+      date: "21/03/2025",
+      totalunits: "5",
+      blocked: "2",
+      totalsent: "3",
+      success: "2",
+      failed: "3"
+    },
+    {
+      sn: 3,
+      id: 3,
+      date: "22/03/2025",
+      totalunits: "6",
+      blocked: "1",
+      totalsent: "5",
+      success: "4",
+      failed: "2"
+    },
+    {
+      sn: 4,
+      id: 4,
+      date: "23/03/2025",
+      totalunits: "7",
+      blocked: "2",
+      totalsent: "5",
+      success: "3",
+      failed: "4"
+    },
+    {
+      sn: 5,
+      id: 5,
+      date: "24/03/2025",
+      totalunits: "4",
+      blocked: "0",
+      totalsent: "4",
+      success: "3",
+      failed: "1"
+    },
+    {
+      sn: 6,
+      id: 6,
+      date: "25/03/2025",
+      totalunits: "8",
+      blocked: "3",
+      totalsent: "5",
+      success: "4",
+      failed: "4"
+    },
+    {
+      sn: 7,
+      id: 7,
+      date: "26/03/2025",
+      totalunits: "6",
+      blocked: "2",
+      totalsent: "4",
+      success: "2",
+      failed: "4"
+    },
+    {
+      sn: 8,
+      id: 8,
+      date: "27/03/2025",
+      totalunits: "9",
+      blocked: "1",
+      totalsent: "8",
+      success: "7",
+      failed: "2"
+    },
+    {
+      sn: 9,
+      id: 9,
+      date: "28/03/2025",
+      totalunits: "10",
+      blocked: "3",
+      totalsent: "7",
+      success: "5",
+      failed: "5"
+    },
+    {
+      sn: 10,
+      id: 10,
+      date: "29/03/2025",
+      totalunits: "5",
+      blocked: "1",
+      totalsent: "4",
+      success: "3",
+      failed: "2"
+    },
+    {
+      sn: 11,
+      id: 11,
+      date: "30/03/2025",
+      totalunits: "7",
+      blocked: "2",
+      totalsent: "5",
+      success: "4",
+      failed: "3"
+    },
+    {
+      sn: 12,
+      id: 12,
+      date: "31/03/2025",
+      totalunits: "6",
+      blocked: "1",
+      totalsent: "5",
+      success: "4",
+      failed: "2"
+    },
+    {
+      sn: 13,
+      id: 13,
+      date: "01/04/2025",
+      totalunits: "8",
+      blocked: "2",
+      totalsent: "6",
+      success: "5",
+      failed: "3"
+    },
+    {
+      sn: 14,
+      id: 14,
+      date: "02/04/2025",
+      totalunits: "9",
+      blocked: "3",
+      totalsent: "6",
+      success: "5",
+      failed: "4"
+    },
+    {
+      sn: 15,
+      id: 15,
+      date: "03/04/2025",
+      totalunits: "7",
+      blocked: "2",
+      totalsent: "5",
+      success: "3",
+      failed: "4"
+    }
+  ];
+
+  const ObdSummaryColumns = [
+    { field: 'sn', headerName: 'S.No', flex: 1 },
+    { field: 'date', headerName: 'Date', flex: 1 },
+    { field: 'totalunits', headerName: 'Total Units', flex: 1 },
+    { field: 'totalsent', headerName: 'Total Sent', flex: 1 },
+    { field: 'success', headerName: 'Success', flex: 1 },
+    { field: 'failed', headerName: 'Failed', flex: 1 }
+  ]
 
   return (
     <>
@@ -273,7 +669,15 @@ const ObdCampaignReports = () => {
                   </div>
                 </div>
                 <div className="mt-5">
-                  <ObdCampaignTable />
+                  {/* <ObdCampaignTable /> */}
+                  <DataTable
+                    id="whatsapp-rate-table"
+                    name="whatsappRateTable"
+                    col={obdCampColumns}
+                    rows={obdCampRows}
+                    selectedRows={selectedRows}
+                    setSelectedRows={setSelectedRows}
+                  />
                 </div>
               </div>
             </CustomTabPanel>
@@ -298,9 +702,19 @@ const ObdCampaignReports = () => {
                   </div>
                 </div>
 
-                
-                  <ObdDaySummaryTable />
-                
+                <div>
+                  <DataTable
+                    id="whatsapp-rate-table"
+                    name="whatsappRateTable"
+                    col={ObdSummaryColumns}
+                    rows={ObdSummaryRows}
+                    selectedRows={selectedRows}
+                    setSelectedRows={setSelectedRows}
+                  />
+                </div>
+
+                {/* <ObdDaySummaryTable /> */}
+
               </div>
             </CustomTabPanel>
           </Box>
@@ -369,7 +783,7 @@ const ObdCampaignReports = () => {
               />
             </div>
             <div className="flex items-center lg:gap-x-20 gap-x-10  my-6">
-             <UniversalLabel text="Custom Columns" />
+              <UniversalLabel text="Custom Columns" />
 
               <div className="flex gap-4">
                 <div className="cursor-pointer">
@@ -691,7 +1105,7 @@ const ObdCampaignReports = () => {
               </div>
 
               <div className="flex flex-col mt-5">
-              <UniversalLabel text="Delivery Status"/>
+                <UniversalLabel text="Delivery Status" />
                 <div className="flex gap-x-5 lg:gap-x-20">
                   <div className="flex items-center">
                     <Checkbox

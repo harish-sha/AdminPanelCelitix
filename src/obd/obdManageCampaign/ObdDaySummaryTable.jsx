@@ -14,8 +14,6 @@ const ObdDaySummaryTable = (id, name) => {
     const [selectedRows, setSelectedRows] = useState([]);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
-
-
     const rows = [
         {
             sn: 1,

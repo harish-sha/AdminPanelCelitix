@@ -23,7 +23,8 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import VolumeUpOutlinedIcon from "@mui/icons-material/VolumeUpOutlined";
 import PlayCircleOutlinedIcon from "@mui/icons-material/PlayCircleOutlined";
 import ObdAudioplayer from "../components/ObdAudioplayer";
-import DummyAudio from "../../../../public/DummyAudio.MP3";
+// import DummyAudio from "../../../../public/DummyAudio.MP3";
+import DummyAudio from "../../../assets/audio/DummyAudio.MP3";
 
 const Obdmanagecampaign = (id, data) => {
   const [isVisible, setIsVisible] = useState(false);

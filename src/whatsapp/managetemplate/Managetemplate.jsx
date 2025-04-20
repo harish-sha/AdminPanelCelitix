@@ -1015,7 +1015,7 @@ const ManageTemplate = () => {
             <div className="w-full">
               <>
                 <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
-                  <div className="w-full sm:w-42">
+                  <div className="w-full sm:w-46">
                     <AnimatedDropdown
                       id="manageTemplateWaba"
                       name="manageTemplateWaba"

@@ -25,7 +25,7 @@ import {
 import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 
-const Navbar = ({ isCollapsed, setIsCollapsed }) => {
+const Navbar = ({ isCollapsed, setIsCollapsed }) => { 
   const [showModal, setShowModal] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -94,7 +94,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     (event) => setMenuAnchorEl(event?.currentTarget || null),
     []
   );
-
 
   useEffect(() => {
     console.log("isCollapsed", isCollapsed);
