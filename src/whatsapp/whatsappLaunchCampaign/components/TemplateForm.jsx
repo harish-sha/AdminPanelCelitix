@@ -509,7 +509,7 @@ const TemplateForm = ({
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
-  const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+  const [urlIndex, setUrlIndex] = useState(null); 
 
   const fileRef = useRef(null);
 
@@ -810,7 +810,7 @@ const TemplateForm = ({
                         className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                       />
                     </div>
-                    <div className="absolute top-0 right-0 z-50">
+                    <div className="absolute top-0 right-0 z-10">
                       <InputVariable
                         onSelect={(selectedVar) =>
                           handleSelectVariable(selectedVar, variable, "body")
@@ -1040,7 +1040,7 @@ const TemplateForm = ({
               }}
             >
               {CardsData.map((card, index) => {
-                console.log(card);
+                // console.log(card);
                 const handler = card.find(
                   (item) =>
                     item.type === "HEADER" &&

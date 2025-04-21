@@ -112,7 +112,7 @@ export const TemplatePreview = ({
       ({ type, text, buttons, format, example }, index) => {
         if (type === "HEADER" && !example?.header_handle?.[0]) return null;
 
-        console.log(buttons)
+        // console.log(buttons)
 
         return (
           <div key={index} className="flex flex-col w-full gap-3">

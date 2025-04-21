@@ -1555,7 +1555,7 @@ export default function WhatsappLiveChat() {
 
   async function fetchWaba() {
     const res = await getWabaList();
-    console.log(res);
+    // console.log(res);
     setWabaState((prev) => ({
       ...prev,
       waba: res,
@@ -1672,7 +1672,7 @@ export default function WhatsappLiveChat() {
       }
       const audio = new Audio("./send-message.wav");
       audio.play().catch((e) => {
-        console.log("Audio play error:", e);
+        // console.log("Audio play error:", e);
       });
       setChatState((prev) => ({
         ...prev,
@@ -1682,7 +1682,7 @@ export default function WhatsappLiveChat() {
       }));
       await handleFetchSpecificConversation();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return;
     }
   };
@@ -1699,7 +1699,7 @@ export default function WhatsappLiveChat() {
       label: "Document",
       icon: <FilePresentOutlinedIcon />,
       command: () => {
-        console.log("Document Btn");
+        // console.log("Document Btn");
       },
     },
     {
@@ -1743,7 +1743,7 @@ export default function WhatsappLiveChat() {
         allConversations: mappedConversations,
       }));
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error fetching all conversations");
     } finally {
       // setIsFetching(false);
@@ -1778,7 +1778,7 @@ export default function WhatsappLiveChat() {
       const res = await getWabaTemplateDetails(wabaState.selectedWaba);
       setAllTemplated(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error fetching all templates");
     }
   }
@@ -1904,7 +1904,7 @@ export default function WhatsappLiveChat() {
         const res = await getAgentList();
         setAgentList(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }
     async function handleFetchAllGroup() {
@@ -1912,7 +1912,7 @@ export default function WhatsappLiveChat() {
         const res = await getWabaShowGroupsList();
         setGroupList(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }
 
@@ -1953,7 +1953,7 @@ export default function WhatsappLiveChat() {
         setAgentname("");
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong. Please try again.");
     } finally {
       setIsFetching(false);
@@ -2071,7 +2071,7 @@ export default function WhatsappLiveChat() {
         return;
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Something went wrong. Please try again.");
     } finally {
       setIsFetching(false);
@@ -2089,7 +2089,7 @@ export default function WhatsappLiveChat() {
       const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
       setTemplateDetails(res.data[0]);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error fetching template details");
     }
   }
@@ -2147,11 +2147,11 @@ export default function WhatsappLiveChat() {
       }
       const audio = new Audio("./receive-message.mp3");
       audio.play().catch((e) => {
-        console.log("Audio play error:", e);
+        // console.log("Audio play error:", e);
       });
       await handleFetchSpecificConversation();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
   useEffect(() => {
@@ -2165,7 +2165,7 @@ export default function WhatsappLiveChat() {
         };
         await readMessage(data);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }
     handleLoadNewChat();
@@ -2185,7 +2185,7 @@ export default function WhatsappLiveChat() {
         conversionSrno: data.srno,
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 

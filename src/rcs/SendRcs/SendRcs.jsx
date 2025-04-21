@@ -920,7 +920,7 @@ const SendRcs = () => {
         const res = await fetchAllAgents();
         setAllAgents(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -930,7 +930,7 @@ const SendRcs = () => {
         const res = await getAllGroups();
         setAllGroups(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -940,7 +940,7 @@ const SendRcs = () => {
         const res = await getCountryList();
         setCountryList(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -956,7 +956,7 @@ const SendRcs = () => {
         const res = await fetchAllTemplates(campaignDetails?.agent);
         setAllTemplates(res?.Data);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -967,7 +967,7 @@ const SendRcs = () => {
         extractVariable(res);
         setTemplateDetails(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -1100,7 +1100,7 @@ const SendRcs = () => {
         });
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
       return;
     }

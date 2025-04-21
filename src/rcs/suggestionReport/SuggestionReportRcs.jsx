@@ -30,7 +30,7 @@ const SuggestionReportRcs = () => {
         setAllAgents(res);
       } catch (e) {
         toast.error("Something went wrong.");
-        console.log(e);
+        // console.log(e);
       } finally {
         setIsFetching(false);
       }
@@ -61,7 +61,7 @@ const SuggestionReportRcs = () => {
       const res = await fetchsuggestionReport(data);
       setSuggestionTableData(res.data);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);

@@ -436,7 +436,7 @@ const DeliveryreportRcs = () => {
       status: campaignData.status ?? "",
     };
 
-    console.log(data);
+    // console.log(data);
 
     try {
       setIsFetching(true);
@@ -445,7 +445,7 @@ const DeliveryreportRcs = () => {
       setCampaignTableData(res);
     } catch (e) {
       toast.error("Something went wrong.");
-      console.log(e);
+      // console.log(e);
     } finally {
       setIsFetching(false);
     }
@@ -470,7 +470,7 @@ const DeliveryreportRcs = () => {
       const res = await fetchSummaryReport(data);
       setSummaryTableData(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);

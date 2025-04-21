@@ -277,7 +277,7 @@ const WhatsappBot = () => {
   async function handledeleteBot(id) {
     try {
       const res = await deleteBot(id);
-      console.log(res);
+      // console.log(res);
       if (res?.status) {
         toast.success(res?.msg);
         setIsVisible(false);
@@ -285,7 +285,7 @@ const WhatsappBot = () => {
         handleFetchAllBot();
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
 

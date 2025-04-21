@@ -947,7 +947,6 @@ const WhatsappLaunchCampaign = () => {
       }
     }
 
-    // ✅ If all validations pass, open the review dialog
 
     let finalTotalRecords = 0;
 
@@ -976,7 +975,6 @@ const WhatsappLaunchCampaign = () => {
       (template) => template.templateName === selectedTemplate
     );
 
-    // ✅ Extract only BODY variables from templateDataNew
     const bodyVariables = templateDataNew?.components
       ?.filter((component) => component.type === "BODY")
       ?.flatMap((component) => extractVariablesFromText(component.text));
@@ -1029,7 +1027,6 @@ const WhatsappLaunchCampaign = () => {
       })
       ?.join(",");
 
-    // ✅ If using Groups, clear file-related data
     if (isGroup === 1) {
       setXlsxPath("");
       setTotalRecords("");
@@ -1037,13 +1034,11 @@ const WhatsappLaunchCampaign = () => {
       setSelectedMobileColumn("");
     }
 
-    // ✅ Ensure `groupValues` is formatted correctly
     const groupValues =
       isGroup === 1 && selectedGroups.length > 0
         ? selectedGroups.join(",")
         : "-1";
 
-    // ✅ Ensure groups data is available before using it
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
       console.error("Groups data is not available.");
       toast.error(
@@ -1086,7 +1081,6 @@ const WhatsappLaunchCampaign = () => {
       date.getMinutes()
     )}:${padZero(date.getSeconds())}`;
 
-    // ✅ Prepare Request Payload
     const requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
@@ -1101,7 +1095,7 @@ const WhatsappLaunchCampaign = () => {
       variables: [],
       xlsxpath: xlsxPath,
       // totalRecords: totalRecords,
-      totalRecords: finalTotalRecords, // ✅ Correct total records value
+      totalRecords: finalTotalRecords, 
       attachmentfile: imageFile || "",
       urlValues: "",
       urlIndex: urlIndex ?? -1,
@@ -1115,7 +1109,6 @@ const WhatsappLaunchCampaign = () => {
       imgCards,
     };
 
-    // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
       if (response?.status === true) {

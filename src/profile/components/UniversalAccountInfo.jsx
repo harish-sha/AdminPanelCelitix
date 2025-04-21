@@ -212,7 +212,7 @@ function AccountInfoModal({ show, handleClose }) {
   const handleWhatsAppSearch = () => {
     const filtered = whatsapprate.filter(
       (item) =>
-        item.countryName.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
+        item.country_name.toLowerCase()?.includes(searchTerm.toLowerCase()) ||
         item?.isoCode?.toString().includes(searchTerm.toString())
     );
     setFilteredWhatsAppData(filtered);
@@ -273,8 +273,8 @@ function AccountInfoModal({ show, handleClose }) {
     ? filteredWhatsAppData?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
-        countryName: item.countryName ?? "-",
-        countryCode: item.isoCode ?? "-",
+        countryName: item.country_name ?? "-",
+        countryCode: item.ISO_code ?? "-",
         transactional: item.transactional,
         promotional: item.promotional,
       }))

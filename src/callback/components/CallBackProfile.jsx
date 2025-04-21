@@ -70,7 +70,7 @@ const CallBackProfile = () => {
 
   const addValues = () => {
     setAddValue((prev) => [...prev, { id: Date.now(), value: "" }]);
-    console.log("addValue", addValue);
+    // console.log("addValue", addValue);
   };
 
   const handleParameterChange = (id, newValue) => {
@@ -79,7 +79,7 @@ const CallBackProfile = () => {
         addValue.id === id ? { ...addValue, value: newValue } : addValue
       )
     );
-    console.log("params change", addValue);
+    // console.log("params change", addValue);
   };
 
   const deleteValue = (id) => {

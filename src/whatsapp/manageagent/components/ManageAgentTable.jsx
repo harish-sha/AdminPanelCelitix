@@ -260,7 +260,7 @@ const ManageAgentTable = ({
   };
   // GET AGENT LIST
   useEffect(() => {
-    console.log("useEffect");
+    // console.log("useEffect");
     fetchAgentList();
   }, [refresh]);
 

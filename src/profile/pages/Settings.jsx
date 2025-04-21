@@ -11,6 +11,7 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import GeneratePasswordSettings from "../components/GeneratePasswordSettings";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
+import NotificationsActiveOutlinedIcon from '@mui/icons-material/NotificationsActiveOutlined';
 import outlined from "@material-tailwind/react/theme/components/timeline/timelineIconColors/outlined";
 import {
   getApiKey,
@@ -72,7 +73,7 @@ const Settings = () => {
         toast.error("Error fetching old API Key else");
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Error fetching old API Key");
     }
   }
@@ -109,35 +110,33 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
-            // variant="fullWidth"
+          // variant="fullWidth"
           >
             <Tab
               label={
-                // <span
-                //   style={{
-                //     display: "flex",
-                //     alignItems: "center",
-                //     gap: "0.5rem",
-                //   }}
-                // >
-                //   <span
-                //     style={{
-                //       paddingRight: "0.5rem",
-                //       borderRight: "1px solid #ccc",
-                //       display: "flex",
-                //       alignItems: "center",
-                //     }}
-                //   >
-                //     <PasswordOutlinedIcon fontSize="small" />
-                //   </span>
-                //   <span>Change Password</span>
-                // </span>
-
+                <span>
+                  <NotificationsActiveOutlinedIcon fontSize="small" /> Alert Notifications
+                </span>
+              }
+              {...a11yProps(0)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
                 <span>
                   <PasswordOutlinedIcon fontSize="small" /> Change Password
                 </span>
               }
-              {...a11yProps(0)}
+              {...a11yProps(1)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -171,7 +170,7 @@ const Settings = () => {
                   <span>Manage API Key</span>
                 </span>
               }
-              {...a11yProps(1)}
+              {...a11yProps(2)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -205,7 +204,7 @@ const Settings = () => {
                   <span>IP Restrictions</span>
                 </span>
               }
-              {...a11yProps(2)}
+              {...a11yProps(3)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -219,14 +218,84 @@ const Settings = () => {
             />
           </Tabs>
           <CustomTabPanel value={value} index={0}>
-            <p>Change Password</p>
+            <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+              <div className="border rounded-lg min-h-30 shadow-md">
+                <h1 className="bg-gray-700 text-white text-center p-2 rounded-tr-lg rounded-tl-lg">Funds Alert</h1>
+                <div className="grid grid-cols-2 p-2 gap-2.5 items-end">
+                  <span className="text-sm font-medium text-gray-700" >Current Balance</span>
+                  <span className="text-sm font-medium text-gray-700" >₹ 12528547</span>
+                  <span className="text-sm font-medium text-gray-700" >Send alert when available funds are</span>
+                  <InputField
+                    id="fundsNotification"
+                    name="fundsNotification"
+                    type="text"
+                    placeholder="Enter Balance..."
+                    onChange={(e) => console.log(e)}
+                  />
+                  <span className="text-sm font-medium text-gray-700" >Send Alerts On</span>
+                  <InputField
+                    id="fundsNotification"
+                    name="fundsNotification"
+                    type="text"
+                    placeholder="Enter Balance..."
+                    onChange={(e) => console.log(e)}
+                  />
+                </div>
+              </div>
+              <div className="border rounded-lg h-30 shadow-md">
+                <h1 className="bg-gray-700 text-white text-center p-2 rounded-tr-lg rounded-tl-lg">Expiry Alert</h1>
+                <div className="">
+
+
+                </div>
+
+              </div>
+              <div className="border rounded-lg min-h-30 shadow-md">
+                <h1 className="bg-gray-700 text-white text-center p-2 rounded-tr-lg rounded-tl-lg">Additional Email/Mobile For Receiving Alerts</h1>
+                <div className="p-1">
+                  <div className="flex gap-2 p-3" >
+
+                    <InputField
+                      id="receiveEmailNotifications"
+                      name="receiveEmailNotifications"
+                      type="text"
+                      label="Email"
+                      placeholder="Enter comma separated Email ID(s) (upto 5)..."
+                      onChange={(e) => console.log(e)}
+                    />
+                    <InputField
+                      id="receiveMobileNotifications"
+                      name="receiveMobileNotifications"
+                      type="text"
+                      label="Mobile Number"
+                      placeholder="Enter comma separated Mobile no. with country code (upto 5)..."
+                      onChange={(e) => console.log(e)}
+                    />
+                  </div>
+
+
+                </div>
+
+              </div>
+
+            </div>
+            <div className="flex justify-center mt-4">
+              <UniversalButton
+                label="Save"
+                id="saveAlertNotifications"
+                name="saveAlertNotifications"
+                variant="primary"
+              />
+            </div>
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={1}>
             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
               <div className="relative">
                 <InputField
                   id="oldPassword"
                   name="oldPassword"
                   type={showPassword ? "text" : "password"}
-                  label="Old Password"
+                  label="Current Password"
                   placeholder="Enter your old password"
                 />
                 <div
@@ -251,8 +320,7 @@ const Settings = () => {
               />
             </div>
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
-            <p>Manage API Key</p>
+          <CustomTabPanel value={value} index={2}>
             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
               <InputField
                 id="apimanagekey"
@@ -261,6 +329,7 @@ const Settings = () => {
                 label="Old key"
                 placeholder="Enter Old key"
                 value={oldApiKey}
+                onChange={(e) => console.log(e)}
               />
               <div className="flex items-end gap-2">
                 <div className="flex-1 ">
@@ -298,6 +367,35 @@ const Settings = () => {
               />
             </div>
           </CustomTabPanel>
+          <CustomTabPanel value={value} index={3}>
+            <p className="text-md text-gray-900 font-semibold" >IP Restriction (Restrict Login/ API access to allowed IP addresses)</p>
+            <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
+              <InputField
+                id="LoginIp"
+                name="LoginIp"
+                type="text"
+                label="Login"
+                placeholder="Enter comma separated IP addresses..."
+              />
+              <InputField
+                id="LoginIp"
+                name="LoginIp"
+                type="text"
+                label="IP Details"
+                placeholder="Enter comma separated IP addresses..."
+              />
+            </div>
+            <div className="flex justify-start mt-4">
+              <UniversalButton
+                label="Save"
+                id="IPDetailsSave"
+                name="IPDetailsSave"
+                variant="primary"
+              />
+            </div>
+
+          </CustomTabPanel>
+
         </Box>
       )}
     </div>

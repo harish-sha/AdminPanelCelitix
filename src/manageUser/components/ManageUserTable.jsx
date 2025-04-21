@@ -366,7 +366,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   const handleWhatsappAddCredit = () => {
-    console.log("handleWhatsAppCredit");
+    // console.log("handleWhatsAppCredit");
   };
 
   const handleChangewhatsapp = (event) => {
@@ -388,7 +388,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   const handleRcsAddCredit = () => {
-    console.log("handleRcsCredit");
+    // console.log("handleRcsCredit");
   };
 
   const handleChangercs = (event) => {

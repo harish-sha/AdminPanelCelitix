@@ -307,28 +307,28 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => {
-        let moreDetails = {};
+      let moreDetails = {};
 
-        try {
-          moreDetails =
-            item.moreDetails && item.moreDetails !== "null"
-              ? JSON.parse(item.moreDetails)
-              : {};
-        } catch (error) {
-          console.error("Error parsing moreDetails:", error);
-        }
+      try {
+        moreDetails =
+          item.moreDetails && item.moreDetails !== "null"
+            ? JSON.parse(item.moreDetails)
+            : {};
+      } catch (error) {
+        console.error("Error parsing moreDetails:", error);
+      }
 
-        const row = {
-          id: index + 1,
-          sn: index + 1,
-          ip: item.ip ?? "-",
-          user_id: item.user_id ?? "-",
-          insert_time: item.insert_time ?? "-",
-          ...moreDetails,
-        };
+      const row = {
+        id: index + 1,
+        sn: index + 1,
+        ip: item.ip ?? "-",
+        user_id: item.user_id ?? "-",
+        insert_time: item.insert_time ?? "-",
+        ...moreDetails,
+      };
 
-        return row;
-      })
+      return row;
+    })
     : [];
 
   // Function to filter out unwanted fields
@@ -356,8 +356,8 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
 
   // Handle View Details
   const handleView = (row) => {
-    const filteredRow = filterRowData(row); 
-    setSelectedRow(filteredRow); 
+    const filteredRow = filterRowData(row);
+    setSelectedRow(filteredRow);
   };
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

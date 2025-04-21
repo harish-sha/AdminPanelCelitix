@@ -47,9 +47,9 @@ const AddUser = () => {
     const fetchPincodeDetails = async () => {
       if (zipCode) {
         try {
-          console.log("Fetching pincode details for:", zipCode); // Debugging log
+          // console.log("Fetching pincode details for:", zipCode); // Debugging log
           const data = await getPincodeDetails(zipCode); // Call the API with the pincode
-          console.log("Pincode API response:", data); // Debugging log
+          // console.log("Pincode API response:", data); // Debugging log
 
           if (Array.isArray(data)) {
             const options = data.map((item) => ({

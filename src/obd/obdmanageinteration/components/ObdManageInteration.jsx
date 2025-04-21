@@ -91,7 +91,7 @@ const ObdManageIntegration = (id, data) => {
       prev.filter((integration) => integration.id !== id)
     );
     try {
-      console.log(integrationName);
+      // console.log(integrationName);
       toast.success("Integration deleted successfully");
     } catch (error) {
       toast.error("Something went wrong");

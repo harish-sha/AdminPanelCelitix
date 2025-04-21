@@ -49,7 +49,7 @@ const ManageTemplateRcs = () => {
       setSummaryFilterData(res.Data);
       setSummaryTableData(res.Data);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -93,7 +93,7 @@ const ManageTemplateRcs = () => {
         toast.error("Something went wrong.");
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     }
   };
@@ -116,7 +116,7 @@ const ManageTemplateRcs = () => {
         templateName: tempName.templateName,
       });
     } catch (err) {
-      console.log(err);
+      // console.log(err);
       toast.error("Something went wrong");
     }
   };
@@ -128,7 +128,7 @@ const ManageTemplateRcs = () => {
       setTemplateDeleteVisible(false);
       await handleFetchTempData();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     }
   };

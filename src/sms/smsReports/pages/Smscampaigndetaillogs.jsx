@@ -88,7 +88,7 @@ const Smscampaigndetaillogs = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Error fetching campaign details report");
     } finally {
       setIsFetching(false);

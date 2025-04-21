@@ -443,7 +443,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -464,7 +464,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      console.log(res);
+      // console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
@@ -524,7 +524,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -614,7 +614,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -712,7 +712,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     }
   };

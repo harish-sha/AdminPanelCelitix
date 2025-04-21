@@ -70,7 +70,7 @@ export const addDepartment = async (departmentName) => {
       }
     );
 
-    console.log("API Response:", response); 
+    // console.log("API Response:", response); 
 
     return response;
   } catch (error) {
@@ -82,7 +82,7 @@ export const addDepartment = async (departmentName) => {
 // Edit Department
 export const editDepartment = async (srno, name) => {
   try {
-    console.log("Sending Edit Request:", { srno, name });
+    // console.log("Sending Edit Request:", { srno, name });
 
     const response = await fetchWithAuth(
       "/department/editdepartmentBysrno",
@@ -92,7 +92,7 @@ export const editDepartment = async (srno, name) => {
       }
     );
 
-  console.log("Edit API Response:", response); 
+  // console.log("Edit API Response:", response); 
     return response;
   } catch (error) {
     console.error("Error updating department:", error);
@@ -110,7 +110,7 @@ export const deleteDepartment = async (srno) => {
         body: JSON.stringify({ srno }), 
       }
     );
-    console.log("Delete API Response:", response); 
+    // console.log("Delete API Response:", response); 
     if (response?.statusCode !== 200) {
       console.error(" Delete failed:", response);
     }

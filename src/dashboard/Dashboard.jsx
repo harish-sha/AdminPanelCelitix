@@ -542,6 +542,7 @@ import Animationsms from "../assets/animation/Animation-sms.json";
 import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
 import Animationobd from "../assets/animation/Animation-obd.json";
+import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
 import toast from "react-hot-toast";
@@ -550,7 +551,7 @@ const services = [
   {
     name: "WhatsApp",
     icon: WhatsApp,
-    animation: whatsappAnime2,
+    animation: Animationwhatsapp2,
     desc: "Send real-time notifications",
     color: "from-green-100 to-green-300",
   },
@@ -657,7 +658,6 @@ const Dashboard = () => {
       if (response && response.statusCode === 200) {
         const user = response.data[0];
 
-        // ✅ Populate formData with API response
         setUserData(user);
         setFormData({
           firstName: user.firstName || "",
@@ -759,7 +759,7 @@ const Dashboard = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-auto shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
+                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
               >
                 <div className="font-semibold text-lg text-gray-800">
                   {service.name}
@@ -775,7 +775,6 @@ const Dashboard = () => {
                           className="w-22 h-auto "
                         />
                       </div>
-
                     ) : (
                       <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
                     )}

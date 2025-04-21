@@ -37,6 +37,14 @@ export const deleteTemplate = async (data) => {
   );
 };
 
+// Hide Template Whatsapp
+export const isHideTemplate = async (id, body) => {
+  return await fetchWithAuth(`/whatsapptemplate/isHide?srno=${id}`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+
 // refresh template (a)
 export const refreshTemplate = async (data) => {
   return await fetchWithAuth(`/whatsapptemplate/checkStatus?srno=${data}`, {
@@ -63,7 +71,7 @@ export const campaignUploadFile = async (file) => {
     });
 
     if (response) {
-      console.log("excel file uplaod", response);
+      // console.log("excel file uplaod", response);
       return response;
     }
   } catch (error) {
@@ -129,7 +137,7 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
       template_category: filters.template_category || "all",
     };
 
-    console.log("Sending Request:", requestBody);
+    // console.log("Sending Request:", requestBody);
 
     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
       method: "POST",
@@ -157,7 +165,7 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
       }
     );
 
-    console.log("getWhatsappCampaignDetailsReport response", response);
+    // console.log("getWhatsappCampaignDetailsReport response", response);
 
     if (!response) {
       console.error("Failed to fetch campaign details report.");
@@ -407,18 +415,21 @@ export const fetchCurlData = async (data) => {
   );
 };
 
+// Get All Bot
 export const getAllBot = async () => {
   return await fetchWithAuth("/bot/getBotFlowList", {
     method: "POST",
   });
 };
 
+// Get Specific Bot
 export const getSpecificBot = async (id) => {
   return await fetchWithAuth(`/bot/editBot?botSrno=${id}`, {
     method: "POST",
   });
 };
 
+// Save or Edit Bot
 export const saveOrEditBot = async (body, id = "") => {
   return await fetchWithAuth(`/bot/saveBot?botSrno=${id}`, {
     method: "POST",
@@ -426,15 +437,9 @@ export const saveOrEditBot = async (body, id = "") => {
   });
 };
 
+// delete Bot
 export const deleteBot = async (id) => {
   return await fetchWithAuth(`/bot/deleteBotByBotSrNo?botSrno=${id}`, {
     method: "POST",
-  });
-};
-
-export const isHideTemplate = async (id, body) => {
-  return await fetchWithAuth(`/whatsapptemplate/isHide?srno=${id}`, {
-    method: "POST",
-    body: JSON.stringify(body),
   });
 };

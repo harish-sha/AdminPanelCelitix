@@ -130,10 +130,10 @@ const DataTable = ({
         await fetchTemplateData();
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Failed to update status.");
     }
-    console.log(data);
+    // console.log(data);
   };
 
   const [visible, setVisible] = useState(false);
@@ -185,7 +185,7 @@ const DataTable = ({
   };
 
   const handleApi = async (row) => {
-    console.log(row);
+    // console.log(row);
     setCurlDialogVisible(true);
 
     try {
@@ -196,7 +196,7 @@ const DataTable = ({
       const res = await fetchCurlData(data);
       setCurlData(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Error fetching curl data.");
     }
     // setCurlData
@@ -210,7 +210,7 @@ const DataTable = ({
   // };
 
   const handleDelete = (event, row) => {
-    console.log(row);
+    // console.log(row);
     setCurrentRow(row);
     setAnchorEl(event.currentTarget);
     setVisible(true);
@@ -264,7 +264,7 @@ const DataTable = ({
       toast.success("Refreshed Successfully");
       await fetchTemplateData();
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Failed to refresh template.");
     }
     toast.success("Refreshed Successfully");
@@ -521,7 +521,7 @@ const DataTable = ({
     };
     try {
       const res = await deleteTemplate(data);
-      console.log(res);
+      // console.log(res);
       if (res?.msg?.includes("Succefully")) {
         toast.success("Template deleted successfully.");
         setVisible(false);
@@ -529,7 +529,7 @@ const DataTable = ({
         return;
       }
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Failed to delete template.");
     }
   }

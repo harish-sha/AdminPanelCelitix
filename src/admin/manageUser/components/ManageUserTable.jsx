@@ -311,10 +311,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   // };
 
   const handleEdit = async (srNo) => {
-    console.log(srNo, "srNo");
+    // console.log(srNo, "srNo");
     try {
       const response = await fetchUserbySrno(srNo);
-      console.log(response, "fetch user details response");
+      // console.log(response, "fetch user details response");
       if (response?.userMstPojoList?.length > 0) {
         const userDetails = response.userMstPojoList[0];
         setUpdateDetails({
@@ -404,13 +404,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const fetchWhatsappRateData = async (userSrno) => {
     const res = await getWhatsappRateData(userSrno);
-    console.log("raw whatsapp rate response:", res);
+    // console.log("raw whatsapp rate response:", res);
 
     const list = Array.isArray(res) ? res : res?.data;
 
     if (Array.isArray(list)) {
       const formatted = list.map((item, index) => {
-        console.log("Mapping item:", item);
+        // console.log("Mapping item:", item);
         return {
           id: item.sr_no || index + 1,
           sn: index + 1,
@@ -425,7 +425,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         };
       });
 
-      console.log("formatted rows", formatted);
+      // console.log("formatted rows", formatted);
       setWhatsapprows(formatted);
     } else {
       console.warn("No valid data returned from API");
@@ -433,7 +433,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   };
 
   useEffect(() => {
-    console.log(" WhatsApp rows updated:", whatsapprows);
+    // console.log(" WhatsApp rows updated:", whatsapprows);
   }, [whatsapprows]);
 
   const handleWhatsappAddCredit = async () => {
@@ -464,10 +464,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-    console.log("Editing WhatsApp rate for srno:", srno);
+    // console.log("Editing WhatsApp rate for srno:", srno);
 
     const res = await getWhatsappRateBySrno(srno);
-    console.log("Edit API response:", res);
+    // console.log("Edit API response:", res);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -579,7 +579,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       promoService: promocheck ? String(promo) : "",
     };
 
-    console.log("Submitting SMS Pricing Payload:", payload);
+    // console.log("Submitting SMS Pricing Payload:", payload);
 
     const res = await addSmsPricing(payload);
     if (res?.statusCode === 200) {
@@ -853,7 +853,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleAssign = async (srNo) => {
     setAssignService(true);
     setCurrentUserSrno(srNo);
-    console.log("srNo", srNo);
+    // console.log("srNo", srNo);
 
     setTimeout(() => {
       fetchWhatsappRateData(srNo);

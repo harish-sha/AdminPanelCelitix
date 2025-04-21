@@ -31,11 +31,11 @@ const ManageBotRcs = () => {
   const [editBotDetails, setEditBotDetails] = useState(null);
 
   const handleEdit = async (srno) => {
-    console.log("srno bot", srno);
+    // console.log("srno bot", srno);
     try {
       setIsFetching(true);
       const response = await getBotDetailsBySrNo(srno);
-      console.log("Bot Details Response:", response);
+      // console.log("Bot Details Response:", response);
 
       if (Array.isArray(response) && response.length > 0) {
         const botDetails = response[0];
@@ -84,9 +84,9 @@ const ManageBotRcs = () => {
     };
 
     try {
-      console.log("Updating bot with payload:", payload);
+      // console.log("Updating bot with payload:", payload);
       const response = await saveAgentRcs(payload);
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
 
       if (response.status) {
         toast.success(response.msg || "Bot updated successfully!");
@@ -111,7 +111,7 @@ const ManageBotRcs = () => {
       setDisplayedBots(res);
     } catch (e) {
       toast.error("Something went wrong while fetching bots.");
-      console.log(e);
+      // console.log(e);
     } finally {
       setIsFetching(false);
       setIsLoading(false);
@@ -148,9 +148,9 @@ const ManageBotRcs = () => {
         setIsFetching(true);
         const res = await fetchAllUsers(data);
         setAllUsers(res.userMstPojoList);
-        console.log("res user list in manage bot", res)
+        // console.log("res user list in manage bot", res)
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong! Please try again later.");
       } finally {
         setIsFetching(false);
@@ -172,9 +172,9 @@ const ManageBotRcs = () => {
       assignUserSrNo: selectedUser,
     };
     try {
-      console.log("Saving bot with payload:", payload);
+      // console.log("Saving bot with payload:", payload);
       const response = await saveAgentRcs(payload);
-      console.log("API Response:", response);
+      // console.log("API Response:", response);
 
       if (response.status) {
         toast.success(response.msg || "Bot added successfully!");

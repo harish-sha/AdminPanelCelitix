@@ -22,13 +22,13 @@ export const getPincodeDetails = async (pincode) => {
       throw new Error("Pincode is required.");
     }
 
-    console.log("Calling API with pincode:", pincode);
+    // console.log("Calling API with pincode:", pincode);
 
     const response = await axios.get(`${BASE_URL}/pincode`, {
       params: { pincode },
     });
 
-    console.log("Full API response:", response.data);
+    // console.log("Full API response:", response.data);
 
     return response.data;
   } catch (error) {

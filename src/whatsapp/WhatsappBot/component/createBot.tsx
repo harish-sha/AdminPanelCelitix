@@ -875,7 +875,7 @@ const CreateWhatsAppBot = () => {
       }));
       toast.success("Bot Save Successfully");
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   };
 

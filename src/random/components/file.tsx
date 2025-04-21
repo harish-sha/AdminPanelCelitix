@@ -14,7 +14,7 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
   };
 
   useEffect(() => {
-    console.log(value);
+    // console.log(value);
   }, [value]);
   return (
     <div className="flex flex-col gap-2">

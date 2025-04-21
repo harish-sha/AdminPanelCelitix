@@ -100,7 +100,7 @@ export const ApiCampaignInfo = () => {
         const res = await getListofSendMsg(payload);
         setData(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         return toast.error("Error fetching data");
       }
     }

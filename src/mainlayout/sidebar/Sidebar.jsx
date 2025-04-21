@@ -472,7 +472,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       }}
       className={`mainsidebar h-screen bg-white text-white  px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
         ${isCollapsed ? "items-center " : "space-y-0"}`}
-      style={{ maxHeight: "calc(100vh - 3.5rem)" }}
+      style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
       {menuItems.map((item) =>
         item.type === "dropdown" ? (

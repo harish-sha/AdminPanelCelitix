@@ -96,7 +96,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   );
 
   useEffect(() => {
-    console.log("isCollapsed", isCollapsed);
+    // console.log("isCollapsed", isCollapsed);
   }, [isCollapsed]);
 
   return (

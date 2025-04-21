@@ -331,7 +331,7 @@ const ManageTemplate = () => {
       );
       setSyncStatusVisible(false);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Failed to sync template.");
     }
   };

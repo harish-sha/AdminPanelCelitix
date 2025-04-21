@@ -90,7 +90,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
   const navigate = useNavigate();
 
   const handleView = (row) => {
-    console.log("View campaign:", row);
+    // console.log("View campaign:", row);
   };
 
   const handleSummaryReport = (row) => {

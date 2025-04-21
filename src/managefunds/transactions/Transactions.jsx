@@ -135,10 +135,10 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-        ...item,
-        sn: index + 1,
-        id: index + 1,
-      }))
+      ...item,
+      sn: index + 1,
+      id: index + 1,
+    }))
     : [];
 
   const multiHistory = [
@@ -217,14 +217,14 @@ const Transactions = () => {
   };
 
   const handleSearchSummary = async () => {
-    console.log("Search Filters:");
-    console.log({
-      user: selectedMultiSummary,
-      dateFrom: selectedFromSummary,
-      dateTo: selectedToSummary,
-      service: selectedOptionServiceSummary,
-      type: selectedOptionTypeSummary,
-    });
+    // console.log("Search Filters:");
+    // console.log({
+    //   user: selectedMultiSummary,
+    //   dateFrom: selectedFromSummary,
+    //   dateTo: selectedToSummary,
+    //   service: selectedOptionServiceSummary,
+    //   type: selectedOptionTypeSummary,
+    // });
     setIsFetching(true);
     await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate data fetch
     setIsFetching(false);
@@ -325,6 +325,7 @@ const Transactions = () => {
                   id="transactionshistoryfrom"
                   name="transactionshistoryfrom"
                   label="From"
+                  defaultValue={new Date()}
                   // placeholder="Pick a start date"
                   tooltipContent="Select the starting date for your project"
                   tooltipPlacement="right"
@@ -348,6 +349,7 @@ const Transactions = () => {
                   tooltipPlacement="right"
                   errorText="Please select a valid date"
                   value={setFilterData.toDate}
+                  defaultValue={new Date()}
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,

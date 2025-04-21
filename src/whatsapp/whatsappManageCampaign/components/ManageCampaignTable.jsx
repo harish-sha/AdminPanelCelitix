@@ -407,26 +407,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // const handleView = async (row) => {
-  //   const id = row.id;
-  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
-
-  //   const fromDateStr = new Date(fromDate).toLocaleDateString("en-GB");
-  //   const formattedDate = fromDateStr.replace(/\//g, "-");
-
-  //   const data = {
-  //     campSrno: row?.campaignSrno,
-  //     fromDate: formattedDate,
-  //   };
-
-  //   try {
-  //     const res = await campaignSummaryInfo(data);
-  //     setCampaignInfo(res[0]);
-  //   } catch (e) {
-  //     console.log(e);
-  //   }
-  // };
-
   const handleView = async (row) => {
     const id = row.id;
 

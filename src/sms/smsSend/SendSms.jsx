@@ -43,7 +43,7 @@ const SendSms = () => {
         const res = await getAllTemplates(inputDetails?.templateType);
         setAllTemplates(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }
 
@@ -56,7 +56,7 @@ const SendSms = () => {
         const res = await getAllGroups();
         setAllGroups(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -66,7 +66,7 @@ const SendSms = () => {
         const res = await getCountryList();
         setCountryList(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -131,7 +131,7 @@ const SendSms = () => {
 
   return (
     <>
-      <div className="grid grid-cols-2 w-full">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
         <Grid1
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
