@@ -621,8 +621,8 @@ const AddTemplateRcs = () => {
   const [cardOrientation, setCardOrientation] = useState("");
 
   //caraousel
-  const [cardwidth, setCardwidth] = useState("small");
-  const [cardheight, setCardheight] = useState("small");
+  const [cardwidth, setCardwidth] = useState("");
+  const [cardheight, setCardheight] = useState("");
   const [caraousalData, setCaraousalData] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [allAgents, setAllAgents] = useState([]);

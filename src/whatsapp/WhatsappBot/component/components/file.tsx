@@ -1,17 +1,92 @@
 import { Input } from "@/components/ui/input";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import InputField from "@/whatsapp/components/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { Label } from "@/components/ui/label";
+import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
+import toast from "react-hot-toast";
+import { extractVariable } from "./helper/extractVariable";
 
-export const FileNodeContent = ({ accept }: { accept: string }) => {
-  const [value, setValue] = useState("");
-
-  const handleFileUpload = (event: any) => {
+export const FileNodeContent = ({
+  accept,
+  allVariables,
+  id,
+  nodesInputData,
+  setNodesInputData,
+  addVariable,
+}: {
+  accept?: string | null;
+  allVariables?: any[];
+  id: number;
+  nodesInputData: any;
+  setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
+  addVariable: (data: String) => void;
+}) => {
+  const fileRef = useRef<HTMLInputElement>(null);
+  const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
-    console.log(file);
-    setValue(URL.createObjectURL(file));
+
+    const type = file?.type?.split("/")[0];
+    // if (type !== "image" && type !== "video" && type !== accept) {
+    //   toast.error("Only " + accept + " files are allowed");
+    //   fileRef.current.value = "";
+    //   return;
+    // }
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        fileUrl: file,
+      },
+    }));
   };
+
+  const handleAddVariable = (e: any) => {
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        variable: e,
+      },
+    }));
+    const newTag = `{{${e}}}`;
+    if (!e) return;
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        fileCaption: (prev[id]?.fileCaption || "") + newTag,
+      },
+    }));
+  };
+
+  useEffect(() => {
+    const message =
+      nodesInputData[id]?.imageCaption ||
+      nodesInputData[id]?.videoCaption ||
+      nodesInputData[id]?.documentCaption;
+
+    const variable = extractVariable({ message: message });
+
+    addVariable(variable);
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        fileUrl:
+          nodesInputData[id]?.imageUrl ||
+          nodesInputData[id]?.videoUrl ||
+          nodesInputData[id]?.documentUrl,
+
+        fileCaption:
+          nodesInputData[id]?.imageCaption ||
+          nodesInputData[id]?.videoCaption ||
+          nodesInputData[id]?.documentCaption,
+      },
+    }));
+  }, []);
 
   return (
     <div className="flex flex-col gap-2">
@@ -24,23 +99,73 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
           onChange={handleFileUpload}
           accept={`${accept}/*`}
           required
+          ref={fileRef}
         />
       </div>
-      {value && <img src={value} alt={value} height={200} width={200} />}
+
+      {/* preview */}
+
+      {nodesInputData[id]?.fileUrl &&
+        (accept === "image" ? (
+          <img
+            src={
+              ["http", "https"].includes(nodesInputData[id].fileUrl.slice(0, 4))
+                ? nodesInputData[id].fileUrl
+                : URL.createObjectURL(nodesInputData[id].fileUrl)
+            }
+            alt={"Image"}
+            height={200}
+            width={200}
+          />
+        ) : accept === "video" ? (
+          <video
+            src={
+              ["http", "https"].includes(nodesInputData[id].fileUrl.slice(0, 4))
+                ? nodesInputData[id].fileUrl
+                : URL.createObjectURL(nodesInputData[id].fileUrl)
+            }
+            controls={true}
+            height={200}
+          ></video>
+        ) : accept === "document" ? (
+          <iframe
+            src={
+              ["http", "https"].includes(nodesInputData[id].fileUrl.slice(0, 4))
+                ? nodesInputData[id].fileUrl
+                : URL.createObjectURL(nodesInputData[id].fileUrl)
+            }
+            height={200}
+          ></iframe>
+        ) : null)}
+
       <InputField
         label="Caption text"
         id="captionText"
         name="captionText"
         placeholder="Enter Caption Text"
-        value={""}
-        onChange={() => {}}
+        value={nodesInputData[id]?.fileCaption}
+        onChange={(e: { target: { value: any } }) => {
+          setNodesInputData((prev) => ({
+            ...prev,
+            [id]: {
+              ...prev[id],
+              fileCaption: e.target.value,
+            },
+          }));
+        }}
       />
       <AnimatedDropdown
         id="selectVaribleDropdown"
         name="selectVaribleDropdown"
         label="Select Variable"
-        options={[{ label: "Variable 1", value: "variable1" }]}
-        onChange={() => {}}
+        options={allVariables.map((v) => ({
+          label: v,
+          value: v,
+        }))}
+        value={nodesInputData[id]?.variable}
+        onChange={(e: any) => {
+          handleAddVariable(e);
+        }}
       />
     </div>
   );

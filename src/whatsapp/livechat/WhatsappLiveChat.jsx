@@ -1,3 +1,6 @@
+// ============================================ april 21 
+
+
 // Harish Changes Start
 // import { useEffect, useState, useRef } from "react";
 // import { FiSend } from "react-icons/fi";
@@ -1617,12 +1620,12 @@ export default function WhatsappLiveChat() {
       mobile: chatState?.active.mobileNo,
       wabaNumber: wabaState?.selectedWaba,
       srno: chatState?.active.srno,
-      message: input || "",
+      // message: input || "",
       contactName: chatState?.active.contectName || "",
-      replyType: chatState?.isReply ? "" : replyType,
+      replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      // ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input || "" }),
     };
 
     let body = {};
@@ -1640,6 +1643,7 @@ export default function WhatsappLiveChat() {
           body: input,
         },
       };
+
     } else if (selectedImage) {
       const imageData = await uploadImageFile(selectedImage);
 
@@ -1664,16 +1668,21 @@ export default function WhatsappLiveChat() {
       }
       const res = await sendInputMessageToUser(data, body);
       if (res?.status !== "success") {
-        return toast.error("Error sending message");
+        return toast.error("Error sending message2");
       }
       const audio = new Audio("./send-message.wav");
       audio.play().catch((e) => {
         console.log("Audio play error:", e);
       });
-      setChatState((prev) => ({ ...prev, isReply: false }));
+      setChatState((prev) => ({
+        ...prev,
+        isReply: false,
+        replyData: "",
+        input: "",
+      }));
       await handleFetchSpecificConversation();
     } catch (e) {
-      console.log("Error Sending Message");
+      console.log(e);
       return;
     }
   };
@@ -1748,10 +1757,10 @@ export default function WhatsappLiveChat() {
   }
 
   useEffect(() => {
-    // handleFetchAllConvo();
+    handleFetchAllConvo();
     if (!wabaState?.selectedWaba) return;
     const intervalid = setInterval(() => {
-      handleFetchAllConvo();
+      // handleFetchAllConvo();
     }, 500);
 
     return () => clearInterval(intervalid);
@@ -2159,11 +2168,11 @@ export default function WhatsappLiveChat() {
         console.log(e);
       }
     }
-    // handleLoadNewChat();
-    // handleIsView();
+    handleLoadNewChat();
+    handleIsView();
     const intervalId = setInterval(() => {
-      handleLoadNewChat();
-      handleIsView();
+      // handleLoadNewChat();
+      // handleIsView();
     }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);

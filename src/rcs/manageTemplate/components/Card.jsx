@@ -391,7 +391,8 @@ export const Card = ({
 
   return (
     <div>
-      <div className="flex flex-col items-center justify-center gap-2 md:flex-row">
+      {/* <div className="flex flex-col items-center justify-center gap-2 md:flex-row"> */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:flex-row">
         <InputField
           id={"title"}
           name={"title"}
@@ -414,7 +415,7 @@ export const Card = ({
               value: "horizontal",
             },
           ]}
-          placeholder="Select Card Orientation"
+          placeholder="Select Card"
           value={cardOrientation}
           onChange={(e) => {
             setCardOrientation(e);
@@ -454,7 +455,7 @@ export const Card = ({
                 },
               ]
           }
-          placeholder="Select Media Height"
+          placeholder="Select Media"
           value={cardData.mediaHeight}
           onChange={(e) => {
             setCardData({

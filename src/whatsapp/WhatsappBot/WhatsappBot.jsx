@@ -89,6 +89,7 @@ import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlin
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { motion } from "framer-motion";
 
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
@@ -110,10 +111,13 @@ import {
 import { Carousel } from "primereact/carousel";
 import Loader from "../components/Loader";
 import { IoSearch } from "react-icons/io5";
+import { deleteBot, getAllBot } from "@/apis/whatsapp/whatsapp";
+import toast from "react-hot-toast";
+import { Dialog } from "primereact/dialog";
 
 const WhatsappBot = () => {
   const navigate = useNavigate();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const [searchActive, setSearchActive] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
@@ -124,36 +128,33 @@ const WhatsappBot = () => {
     "Edit",
     "Duplicate",
     "Share",
-    "Remove",
   ]);
+
+  const [id, setId] = useState(null);
+
+  const [allBots, setAllBots] = useState([]);
+
+  const [isVisible, setIsVisible] = useState(false);
 
   const handleNavigate = () => navigate("/createwhatsappbot");
 
+  async function handleFetchAllBot() {
+    try {
+      const res = await getAllBot();
+      setAllBots(res);
+    } catch (e) {
+      console.log(e);
+    }
+  }
+  useEffect(() => {
+    handleFetchAllBot();
+  }, []);
+
   const toggleDropdown = (id) => {
     setDropdownOpenId((prevId) => (prevId === id ? null : id));
-    console.log("bot id", id);
   };
 
   const closeDropdown = () => setDropdownOpenId(null);
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (!e.target.closest(".bot-settings")) {
-        closeDropdown();
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
-  // Fetch WABA List
-  useEffect(() => {
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 500);
-  }, []);
 
   const templates = [
     {
@@ -273,89 +274,28 @@ const WhatsappBot = () => {
     </div>
   );
 
-  const createdBots = [
-    {
-      id: 1,
-      name: "ChatBot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 2,
-      name: "Whatsapp",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 3,
-      name: "Restaurant Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 4,
-      name: "Blank Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 5,
-      name: "LiveChat After-Hours",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 6,
-      name: "Package Tracking Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 7,
-      name: "Customer Service Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 8,
-      name: "LiveChat After-Hours",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 9,
-      name: "University Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-    {
-      id: 10,
-      name: "Chat Bot",
-      status: "Draft",
-      versions: "latest",
-      integrations: "No Integrations added",
-      lastUpdated: "25 Mar 2025, 02:49pm",
-    },
-  ];
+  async function handledeleteBot(id) {
+    try {
+      const res = await deleteBot(id);
+      console.log(res);
+      if (res?.status) {
+        toast.success(res?.msg);
+        setIsVisible(false);
+        setId("");
+        handleFetchAllBot();
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }
 
+  async function handleBtnClick(item, id) {
+    if (item === "Edit") {
+      navigate("/createwhatsappbot", {
+        state: id
+      });
+    }
+  }
   return (
     <>
       {isLoading ? (
@@ -380,11 +320,10 @@ const WhatsappBot = () => {
                   <input
                     type="text"
                     className={`rounded-lg pr-3 pl-2 py-2 text-sm transition-all duration-300
-            ${
-              searchActive
-                ? "border border-gray-400 outline-none w-full opacity-100"
-                : "w-0 opacity-0"
-            }
+            ${searchActive
+                        ? "border border-gray-400 outline-none w-full opacity-100"
+                        : "w-0 opacity-0"
+                      }
             focus:outline-none`}
                     placeholder="Search Bots&Templates..."
                     onBlur={() => setSearchActive(false)}
@@ -492,12 +431,12 @@ const WhatsappBot = () => {
               className="custom-carousel"
               responsiveOptions={[
                 {
-                  breakpoint: "1024px", 
+                  breakpoint: "1024px",
                   numVisible: 2,
                   numScroll: 1,
                 },
                 {
-                  breakpoint: "768px", 
+                  breakpoint: "768px",
                   numVisible: 1,
                   numScroll: 1,
                 },
@@ -510,12 +449,12 @@ const WhatsappBot = () => {
               Created Bots <SmartToyOutlinedIcon />
             </h2>
             <div className="overflow-auto h-80">
-              {createdBots.map((bot) => {
-                const ref = dropdownButtonRefs[bot.id] || React.createRef();
+              {allBots.map((bot) => {
+                const ref = dropdownButtonRefs[bot.botSrno];
 
                 return (
                   <div
-                    key={bot.id}
+                    key={bot.botSrno}
                     className="border rounded-xl overflow-hidden hover:shadow-lg transition-all mb-4"
                   >
                     <div className="flex flex-col lg:flex-row lg:items-center justify-between bg-blue-50 px-6 py-4 gap-3">
@@ -526,29 +465,30 @@ const WhatsappBot = () => {
                         />
                         <div>
                           <p className="font-semibold text-gray-800">
-                            {bot.name}
+                            {bot.botName}
                           </p>
                           <span className="text-xs bg-orange-500 text-white px-2 py-0.5 rounded-full">
-                            {bot.status}
+                            {bot.isPublish ? "Published" : "Unpublished"}
                           </span>
                         </div>
                       </div>
-                      <div className="text-sm text-gray-700 flex-1">
+                      {/* <div className="text-sm text-gray-700 flex-1">
                         Versions: <strong>{bot.versions}</strong>
-                      </div>
-                      <div className="text-sm text-red-500 font-medium flex-1">
+                      </div> */}
+                      {/* <div className="text-sm text-red-500 font-medium flex-1">
                         {bot.integrations}
-                      </div>
+                      </div> */}
                       <div className="text-sm text-gray-500 flex-1 flex lg:flex-col md:flex-row items-center md:justify-start gap-1">
-                        Last Updated: <strong>{bot.lastUpdated}</strong>
+                        Last Updated: <strong>{bot.saveTime}</strong>
                       </div>
                       <div className="flex items-center gap-2 relative bot-settings">
                         <CustomTooltip title="Settings" arrow>
                           <IconButton
                             ref={(el) => {
-                              if (el) dropdownButtonRefs.current[bot.id] = el;
+                              if (el)
+                                dropdownButtonRefs.current[bot.botSrno] = el;
                             }}
-                            onClick={() => toggleDropdown(bot.id)}
+                            onClick={() => toggleDropdown(bot.botSrno)}
                           >
                             <SettingsOutlinedIcon
                               className="text-gray-600"
@@ -556,45 +496,41 @@ const WhatsappBot = () => {
                             />
                           </IconButton>
                         </CustomTooltip>
-                        {dropdownOpenId === bot.id && (
+                        {dropdownOpenId === bot.botSrno && (
                           <DropdownMenuPortal
                             targetRef={{
-                              current: dropdownButtonRefs.current[bot.id],
+                              current: dropdownButtonRefs.current[bot.botSrno],
                             }}
-                            onClose={closeDropdown}
                           >
-                            {dropdownItems.map((item, index) => (
-                              <button
-                                key={index}
-                                onClick={() => {
-                                  console.log(
-                                    `Clicked ${item} on bot ${bot.id}`
-                                  );
-                                  closeDropdown();
-                                }}
-                                className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
-                              >
-                                {item === "Edit" && (
-                                  <EditNoteIcon fontSize="small" />
-                                )}
-                                {item === "Duplicate" && (
-                                  <FaEnvelope size={14} />
-                                )}
-                                {item === "Share" && <FaGlobe size={14} />}
-                                {item === "Remove" && (
-                                  <MdOutlineDeleteForever
-                                    size={16}
-                                    className="text-red-500"
-                                  />
-                                )}
-                                {item}
-                              </button>
-                            ))}
+                            {dropdownItems.map((item, index) => {
+                              const iconMap = {
+                                Edit: <EditNoteIcon fontSize="small" />,
+                                Duplicate: <FaEnvelope size={14} />,
+                                Share: <FaGlobe size={14} />,
+                              };
+
+                              return (
+                                <button
+                                  key={index}
+                                  onClick={() => {
+                                    handleBtnClick(item, bot);
+                                  }}
+                                  className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                                >
+                                  {iconMap[item]}
+                                  {item}
+                                </button>
+                              );
+                            })}
                           </DropdownMenuPortal>
                         )}
+
                         <CustomTooltip title="Delete Bot" arrow>
                           <IconButton
-                            onClick={() => console.log(`Delete bot ${bot.id}`)}
+                            onClick={() => {
+                              setId(bot?.botSrno);
+                              setIsVisible(true);
+                            }}
                           >
                             <MdOutlineDeleteForever
                               className="text-red-500"
@@ -611,6 +547,50 @@ const WhatsappBot = () => {
           </div>
         </div>
       )}
+
+      <Dialog
+        header="Confirm Delete"
+        visible={isVisible}
+        onHide={() => setIsVisible(false)}
+        className="lg:w-[30rem] md:w-[40rem] w-[17rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{ fontSize: 64, color: "ff3f3f" }}
+            size={20}
+          />
+        </div>
+        <div>
+          <div className="p-4 text-center">
+            <p className="text-[1.1rem] font-semibold text-gray-600">
+              Are you sure ?
+            </p>
+            <p>
+              Do you really want to delete this bot? This process cannot be
+              undo.
+            </p>
+            <div className="flex justify-center gap-4 mt-2">
+              <UniversalButton
+                label="Cancel"
+                style={{
+                  backgroundColor: "#090909",
+                }}
+                onClick={() => setIsVisible(false)}
+              />
+              <UniversalButton
+                label="Delete"
+                style={
+                  {
+                    // backgroundColor: "red",
+                  }
+                }
+                onClick={() => handledeleteBot(id)}
+              />
+            </div>
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

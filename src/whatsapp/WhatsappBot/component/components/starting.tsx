@@ -2,11 +2,23 @@ import InputField from "@/whatsapp/components/InputField";
 import React, { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import toast from "react-hot-toast";
 
-export const StartingNodeContent = () => {
+export const StartingNodeContent = ({
+  id,
+  nodesInputData,
+  setNodesInputData,
+}: {
+  id: number;
+  nodesInputData: any;
+  setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
+}) => {
   const [inputFields, setInputFields] = useState([""]);
 
   function handleInputAddBtn() {
+    if (inputFields.length >= 5) {
+      return;
+    }
     setInputFields([...inputFields, ""]);
   }
 
@@ -19,8 +31,30 @@ export const StartingNodeContent = () => {
   function handleInputChange(index: number, value: string) {
     const newInputFields = [...inputFields];
     newInputFields[index] = value;
+
+    // const hasDuplicate = new Set(newInputFields).size !== newInputFields.length;
+    // if (hasDuplicate) {
+    //   return toast.error("Duplicate Starting Keyword is not allowed");
+    // }
+
     setInputFields(newInputFields);
   }
+
+  useEffect(() => {
+    nodesInputData[id]?.startingKeyword &&
+      setInputFields(nodesInputData[id]?.startingKeyword.split(","));
+  }, []);
+
+  useEffect(() => {
+    const joinedString = inputFields.filter(Boolean).join(", ");
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        startingKeyword: joinedString,
+      },
+    }));
+  }, [id, inputFields]);
 
   return (
     <div>

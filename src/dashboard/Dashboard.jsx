@@ -539,6 +539,9 @@ import auth from "../assets/animation/auth.json";
 import email from "../assets/animation/email.json";
 import email2 from "../assets/animation/email2.json";
 import Animationsms from "../assets/animation/Animation-sms.json";
+import Animationrcs from "../assets/animation/Animation-rcs.json";
+import Animationibd from "../assets/animation/Animation-ibd.json";
+import Animationobd from "../assets/animation/Animation-obd.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
 import toast from "react-hot-toast";
@@ -554,19 +557,21 @@ const services = [
   {
     name: "RCS",
     icon: Message,
-    animation: rcs,
+    animation: Animationrcs,
     desc: "Interactive messaging solution",
     color: "from-purple-100 to-purple-300",
   },
   {
     name: "OBD",
     icon: Call,
+    animation: Animationobd,
     desc: "Automated outbound dialer",
     color: "from-yellow-100 to-yellow-300",
   },
   {
     name: "IBD",
     icon: Call,
+    animation: Animationibd,
     desc: "Track inbound communications",
     color: "from-indigo-100 to-indigo-300",
   },
@@ -784,19 +789,18 @@ const Dashboard = () => {
       </Grid>
 
 
-      <div className="container h-50 my-4">
-        <div className="">
-          <ul className="week">
-            <li>Mon</li>
-            <li>Tue</li>
-            <li>Wed</li>
-            <li>Thu</li>
-            <li>Fri</li>
-            <li>Sat</li>
-            <li>Sun</li>
-          </ul>
-        </div>
-      </div>
+      {/* <div>
+        <ul className="week">
+          <li>Mon</li>
+          <li>Tue</li>
+          <li>Wed</li>
+          <li>Thu</li>
+          <li>Fri</li>
+          <li>Sat</li>
+          <li>Sun</li>
+        </ul>
+      </div> */}
+
 
       {/* Bot Section */}
       <motion.div

@@ -1,0 +1,91 @@
+{
+    "body": {
+      "1_START_1": {
+        "type": "START",
+        "value": "START_1",
+        "startingKeyword": "hello new node 8e5d",
+        "botName": "arihantfirstBot",
+        "wabaNumber": "917230000091",
+        "wabaSrno": 1,
+        "startKeyword": "hello new node 8e5d",
+        "nextNode": "text_2",
+        "position_left": "333.88931941986084px",
+        "position_top": "133.76822471618652px"
+      },
+      "2_text_2": {
+        "type": "text",
+        "value": "text_2",
+        "variable": "arihant",
+        "message": "sdgfdf",
+        "textMessage": "sdgfdf",
+        "prevNode": "START_1",
+        "nextNode": "document_3",
+        "position_left": "354.01041412353516px",
+        "position_top": "325.01041412353516px"
+      },
+      "3_document_3": {
+        "type": "document",
+        "value": "document_3",
+        "variable": "harish12",
+        "fileUrl": "http://95.216.43.170:8080/utilitypro//upload/image/d6333ab2-79a9-4cd5-b795-48779a49c403.png",
+        "fileCaption": "dfdsf",
+        "documentUrl": "http://95.216.43.170:8080/utilitypro//upload/image/d6333ab2-79a9-4cd5-b795-48779a49c403.png",
+        "documentCaption": "dfdsf",
+        "prevNode": "text_2",
+        "nextNode": "button_4",
+        "position_left": "329.01041412353516px",
+        "position_top": "503.01041412353516px"
+      },
+      "4_button_4": {
+        "type": "button",
+        "value": "button_4",
+        "options": ["svv", "vvv"],
+        "text": "dv",
+        "message": "sdv",
+        "imageUrl": "dv",
+        "buttonBody": "sdv",
+        "buttonTexts": ["svv", "vvv"],
+        "nextNode": ["list_5", "image_7"],
+        "prevNode": "document_3",
+        "position_left": "585.0104141235352px",
+        "position_top": "312.01041412353516px"
+      },
+      "5_list_5": {
+        "type": "list",
+        "value": "list_5",
+        "options": [
+          { "option": "o1", "value": "v1" },
+          { "option": "o2", "value": "v2" }
+        ],
+        "variable": "arihant",
+        "text": "svd",
+        "message": "sdvsd",
+        "nextNode": ["agent_6", "image_8"],
+        "listHeading": "svd",
+        "listUrl": "svd",
+        "listBody": "sdvsd",
+        "listType": "text",
+        "listItems": [
+          ["o1", "v1"],
+          ["o2", "v2"]
+        ],
+        "prevNode": "button_4",
+        "position_left": "827.0104141235352px",
+        "position_top": "305.01041412353516px"
+      },
+      "6_agent_6": {
+        "type": "agent",
+        "value": "agent_6",
+        "id": 181,
+        "radio": "agent",
+        "agentId": 181,
+        "departmentId": 181,
+        "prevNode": "list_5",
+        "nextNode": "",
+        "position_left": "1047.0104141235352px",
+        "position_top": "344.01041412353516px"
+      }
+      
+    }
+  }
+  

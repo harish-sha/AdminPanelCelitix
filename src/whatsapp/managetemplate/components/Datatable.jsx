@@ -26,6 +26,7 @@ import {
   refreshTemplate,
   deleteTemplate,
   fetchCurlData,
+  isHideTemplate,
 } from "../../../apis/whatsapp/whatsapp.js";
 import whatsappImg from "../../../assets/images/whatsappdummy.webp";
 import CustomTooltip from "../../components/CustomTooltip.jsx";
@@ -118,21 +119,21 @@ const DataTable = ({
   const [toggleStates, setToggleStates] = useState({});
 
   // Handle toggle change
-  const handleStatusChange = (templateName, currentValue) => {
-    const newValue = currentValue === 1 ? 0 : 1; // Toggle between 1 (Active) and 0 (Inactive)
-    setToggleStates((prevState) => ({
-      ...prevState,
-      [templateName]: newValue, // Use templateName as the key
-    }));
-
-    // Display the template name in the toast message
-    toast.success(
-      `"${templateName}" status updated to ${newValue === 1 ? "Active" : "Inactive"
-      }`
-    );
-
-    // Optionally, make an API call to update the status on the server
-    // console.log(`Toggled template "${templateName}" to ${newValue}`);
+  const handleStatusChange = async (data) => {
+    const body = {
+      isHide: Number(!data.is_hide),
+    };
+    try {
+      const res = await isHideTemplate(data?.templateSrno, body);
+      if (res?.msg.includes("updated")) {
+        toast.success("Status updated successfully.");
+        await fetchTemplateData();
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Failed to update status.");
+    }
+    console.log(data);
   };
 
   const [visible, setVisible] = useState(false);
@@ -283,26 +284,19 @@ const DataTable = ({
     { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
     { field: "createdDate", headerName: "Created At", flex: 1, minWidth: 120 },
     {
-      field: "TemplateData",
-      headerName: "TemplateData",
+      field: "is_hide",
+      headerName: "Visibility",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (
         <CustomTooltip
           arrow
           placement="top"
-          title={
-            toggleStates[params.row.templateName] === 1 ? "Active" : "Inactive"
-          }
+          title={params.row.is_hide === 1 ? "Hide" : "Show"}
         >
           <Switch
-            checked={toggleStates[params.row.templateName] === 1}
-            onChange={() =>
-              handleStatusChange(
-                params.row.templateName,
-                toggleStates[params.row.templateName] || 0
-              )
-            }
+            checked={params.row.is_hide === 1}
+            onChange={() => handleStatusChange(params.row)}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
@@ -407,6 +401,7 @@ const DataTable = ({
     status: item.status || "N/A",
     type: item.type || "N/A",
     createdDate: formatDate(item.createdDate),
+    is_hide: item.is_hide || "N/A",
     ...item,
     // createdDate: item.createdDate ? format(new Date(item.createdDate)) : "N/A", // Using timeago.js
   }));

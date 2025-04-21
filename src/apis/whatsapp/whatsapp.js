@@ -39,12 +39,9 @@ export const deleteTemplate = async (data) => {
 
 // refresh template (a)
 export const refreshTemplate = async (data) => {
-  return await fetchWithAuth(
-    `/whatsapptemplate/checkStatus?srno=${data}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/whatsapptemplate/checkStatus?srno=${data}`, {
+    method: "POST",
+  });
 };
 
 // show groups list
@@ -134,13 +131,10 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
 
     console.log("Sending Request:", requestBody);
 
-    const response = await fetchWithAuth(
-      "/whatsapp/getCampaignReport",
-      {
-        method: "POST",
-        body: JSON.stringify(requestBody),
-      }
-    );
+    const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
+      method: "POST",
+      body: JSON.stringify(requestBody),
+    });
     if (!response || !response.data) {
       console.error("Failed to fetch campaign report.");
       return [];
@@ -207,13 +201,10 @@ export const updateWabaDetails = async (data, phone) => {
 // fetch log report
 export const getWhatsappLogReport = async (logdata) => {
   try {
-    const response = await fetchWithAuth(
-      "/whatsapp/getWhatsappLogReport",
-      {
-        method: "POST",
-        body: JSON.stringify(logdata),
-      }
-    );
+    const response = await fetchWithAuth("/whatsapp/getWhatsappLogReport", {
+      method: "POST",
+      body: JSON.stringify(logdata),
+    });
     return response || [];
   } catch (error) {
     console.error("Error fetching whatsapp log report:", error);
@@ -224,13 +215,10 @@ export const getWhatsappLogReport = async (logdata) => {
 // fetch Summary Report
 export const getSummaryReport = async (data) => {
   try {
-    const response = await fetchWithAuth(
-      "/whatsapp/getSummeryReport",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetchWithAuth("/whatsapp/getSummeryReport", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
     return response;
   } catch (error) {
     console.error("Error fetching summary report:", error);
@@ -240,13 +228,10 @@ export const getSummaryReport = async (data) => {
 //send template to api
 export const sendTemplatetoApi = async (data) => {
   try {
-    const response = await fetchWithAuth(
-      "/whatsapptemplate/savewhatsapp",
-      {
-        method: "POST",
-        body: JSON.stringify(data),
-      }
-    );
+    const response = await fetchWithAuth("/whatsapptemplate/savewhatsapp", {
+      method: "POST",
+      body: JSON.stringify(data),
+    });
     return response;
   } catch (error) {
     console.error("Error fetching summary report:", error);
@@ -265,12 +250,9 @@ export const getConversationReport = async (data) => {
 
 // sync waba templates
 export const syncStatus = async (srno) => {
-  return await fetchWithAuth(
-    `/whatsapptemplate/sync?wabaSrno=${srno}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/whatsapptemplate/sync?wabaSrno=${srno}`, {
+    method: "POST",
+  });
 };
 
 // refresh waba templates (h)
@@ -341,10 +323,27 @@ export const sendTemplateMessageToUser = async (data) => {
   });
 };
 
+// // send input message to user (live chat)
+// export const sendInputMessageToUser = async (data, body) => {
+//   return await fetchWithAuth(
+//     `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+//     {
+//       method: "POST",
+//       body: body,
+//     }
+//   );
+// };
+
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
   return await fetchWithAuth(
-    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
+    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${
+      data.wabaNumber
+    }&srno=${data.srno}&contactName=${data.contactName}&replyType=${
+      data.replyType
+    }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo} ${
+      data.message ? `&message= ${data.message}` : ""
+    }`,
     {
       method: "POST",
       body: body,
@@ -406,4 +405,36 @@ export const fetchCurlData = async (data) => {
       method: "POST",
     }
   );
+};
+
+export const getAllBot = async () => {
+  return await fetchWithAuth("/bot/getBotFlowList", {
+    method: "POST",
+  });
+};
+
+export const getSpecificBot = async (id) => {
+  return await fetchWithAuth(`/bot/editBot?botSrno=${id}`, {
+    method: "POST",
+  });
+};
+
+export const saveOrEditBot = async (body, id = "") => {
+  return await fetchWithAuth(`/bot/saveBot?botSrno=${id}`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+};
+
+export const deleteBot = async (id) => {
+  return await fetchWithAuth(`/bot/deleteBotByBotSrNo?botSrno=${id}`, {
+    method: "POST",
+  });
+};
+
+export const isHideTemplate = async (id, body) => {
+  return await fetchWithAuth(`/whatsapptemplate/isHide?srno=${id}`, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
 };
