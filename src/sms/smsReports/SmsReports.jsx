@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
@@ -33,6 +33,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { useNavigate } from "react-router-dom";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
+import { ProgressSpinner } from "primereact/progressspinner";
+import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -89,6 +91,7 @@ const SmsReports = () => {
     smsType: "",
     fromDate: new Date(),
     toDate: new Date(),
+    selectOption: "daywise",
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
 
@@ -100,6 +103,13 @@ const SmsReports = () => {
   });
 
   const [attachmentTableData, setAttachmentTableData] = useState([]);
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -166,9 +176,9 @@ const SmsReports = () => {
   ];
 
   const campaignoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const previousoptions = [
     { label: "Transactional", value: "Transactional" },
@@ -443,7 +453,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -464,7 +474,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      // console.log(res);
+      console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
@@ -524,7 +534,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -614,7 +624,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -622,6 +632,8 @@ const SmsReports = () => {
   };
 
   const handlePreviosDayDetailDisplay = async (col) => {
+    if (!col) return;
+    const page = currentPage;
     const data = {
       summaryType: col,
       mobileNo: "",
@@ -629,13 +641,14 @@ const SmsReports = () => {
         "en-GB"
       ),
       toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
-      page: "0",
+      page: currentPage,
       source: "api",
     };
 
     setPreviousDayDetailsDialog(true);
     setSelectedColDetails(col);
     try {
+      setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
 
       setPreviousDayColumn([
@@ -712,10 +725,16 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    handlePreviosDayDetailDisplay();
+  }, [currentPage]);
 
   return (
     <div>
@@ -866,7 +885,10 @@ const SmsReports = () => {
                   value={campaignDataToFilter.campaingType}
                   placeholder="Select Campaign Type"
                   onChange={(value) => {
-                    console.log(value);
+                    setCampaignDataToFilter((prev) => ({
+                      ...prev,
+                      campaingType: value,
+                    }));
                   }}
                 />
               </div>
@@ -1060,14 +1082,14 @@ const SmsReports = () => {
                   name="SmsType"
                   options={[
                     { value: 1, label: "Day Wise" },
-                    { value: 1, label: "Sms type Wise" },
+                    { value: 2, label: "Sms type Wise" },
                   ]}
-                  value={daywiseDataToFilter.smsType}
+                  value={daywiseDataToFilter.selectOption}
                   placeholder="Select Type"
                   onChange={(value) => {
                     setDaywiseDataToFilter((prev) => ({
                       ...prev,
-                      smsType: value,
+                      selectOption: value,
                     }));
                   }}
                 />
@@ -1079,15 +1101,15 @@ const SmsReports = () => {
                   id="summaryType"
                   name="summaryType"
                   options={summaryoptions}
-                  value={daywiseDataToFilter.summaryType}
+                  value={daywiseDataToFilter.smsType}
                   placeholder="Select Type"
                   onChange={(value) => {
                     setDaywiseDataToFilter((prev) => ({
                       ...prev,
-                      summaryType: value,
+                      smsType: value,
                     }));
                   }}
-                  disabled={daywiseDataToFilter.smsType === 1}
+                  disabled={daywiseDataToFilter.selectOption === 1}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -1663,12 +1685,24 @@ const SmsReports = () => {
         className="w-fit "
         draggable={false}
       >
-        <DataTable
-          id="previousdaydetailstable"
-          name="previousdaydetailstable"
-          rows={previousDayRows}
-          col={previousDayColumn}
-        />
+        {isFetching ? (
+          <div className="card flex justify-content-center">
+            <ProgressSpinner strokeWidth="2" className="text-blue-500" />
+          </div>
+        ) : (
+          // <DataTable
+          //   id="previousdaydetailstable"
+          //   name="previousdaydetailstable"
+          //   rows={previousDayRows}
+          //   col={previousDayColumn}
+          // />
+          <PreviousDaysTableSms
+            id="previousdaydetailstable"
+            name="previousdaydetailstable"
+            rows={previousDayRows}
+            col={previousDayColumn}
+          />
+        )}
       </Dialog>
     </div>
   );

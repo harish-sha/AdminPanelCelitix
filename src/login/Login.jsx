@@ -116,7 +116,9 @@ const Login = () => {
 
     setLoading(true);
     try {
-      const response = await fetch("/api/auth/login", {
+      // const apiUrl = import.meta.env.VITE_API_BASE_URL;
+      const apiUrl = "/api";
+      const response = await fetch(`${apiUrl}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId, password }),
@@ -126,7 +128,7 @@ const Login = () => {
       console.log("Login API Response:", data);
 
       if (!response.ok || !data.token) {
-        throw new Error("Authentication failed! No valid token received.");
+        throw new Error("Authentication failed!");
       }
 
       console.log("Received Token:", data.token);

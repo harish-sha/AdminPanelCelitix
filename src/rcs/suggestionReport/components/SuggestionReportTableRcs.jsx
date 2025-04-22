@@ -27,12 +27,17 @@ const CustomPagination = ({
   totalPages,
   paginationModel,
   setPaginationModel,
+  handleSearch,
+  setCurrentPage,
 }) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page + 1,
-    onChange: (_, newPage) =>
-      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    onChange: (_, newPage) => {
+      console.log("newPage", newPage);
+      setPaginationModel({ ...paginationModel, page: newPage - 1 });
+      setCurrentPage(newPage);
+    },
   });
 
   return (
@@ -76,61 +81,17 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
-  const [open, setOpen] = useState(false); // ✅ Start as false
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
-    setOpen(false);
-  };
-
-  // const open = Boolean(anchorEl);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-    </div>
-  );
-};
-
-const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
+const SuggestionReportTableRcs = ({
+  id,
+  name,
+  data = [],
+  handleSearch,
+  paginationModel,
+  setPaginationModel,
+  setCurrentPage,
+  totalPage,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -185,17 +146,17 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
     },
   ];
 
-  const rows = Array.isArray(data)
-    ? data.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-        message: item.message,
-        receivetime: "27/01/2024 14:58:39",
-      }))
+  const rows = Array.isArray(data?.data)
+    ? data?.data?.map((item, i) => ({
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+      message: item.message,
+      receivetime: "27/01/2024 14:58:39",
+    }))
     : [];
 
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+  const totalPages = Math.ceil(data?.total / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
@@ -228,7 +189,7 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{data?.total}</span>
           </Typography>
         </Box>
 
@@ -243,6 +204,8 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
             totalPages={totalPages}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+            handleSearch={handleSearch}
+            setCurrentPage={setCurrentPage}
           />
         </Box>
       </GridFooterContainer>
@@ -256,16 +219,12 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
         name={name}
         rows={rows}
         columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
         rowHeight={45}
         slots={{
           footer: CustomFooter,
           noRowsOverlay: CustomNoRowsOverlay,
         }}
+        pageSizeOptions={[10, 20, 50]}
         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
         disableRowSelectionOnClick
         disableColumnResize

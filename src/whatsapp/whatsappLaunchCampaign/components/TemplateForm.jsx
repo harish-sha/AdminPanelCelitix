@@ -509,7 +509,7 @@ const TemplateForm = ({
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
-  const [urlIndex, setUrlIndex] = useState(null); 
+  const [urlIndex, setUrlIndex] = useState(null);
 
   const fileRef = useRef(null);
 
@@ -737,6 +737,9 @@ const TemplateForm = ({
       return toast.error("Please select a file first");
     }
     const res = await uploadImageFile(fileData[index]?.fileTempPath);
+    if (res?.fileUrl) {
+      toast.success("Media uploaded successfully!");
+    }
 
     setFileData((prev) => ({
       ...prev,
@@ -1059,7 +1062,7 @@ const TemplateForm = ({
                 };
 
                 return (
-                  <div key={index} className="flex gap-2 ">
+                  <div key={index} className="flex gap-2 items-end">
                     <div className="flex items-start gap-2">
                       <input
                         type="file"

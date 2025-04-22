@@ -18,9 +18,16 @@ const SuggestionReportRcs = () => {
     fromDate: new Date(),
     toDate: new Date(),
     mobileNumber: "",
-    offset: "0",
+    page: "1",
   });
   const [suggestionTableData, setSuggestionTableData] = useState([]);
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   useEffect(() => {
     async function fetchAllBotsData() {
@@ -48,18 +55,24 @@ const SuggestionReportRcs = () => {
   };
 
   const handleSearch = async () => {
+
+    if (!suggestionData?.botId) {
+      return;
+    }
+
     const data = {
       ...suggestionData,
-      // fromDate: formatDate(suggestionData.fromDate),
-      // toDate: formatDate(suggestionData.toDate),
-      fromDate: "2021-02-26",
-      toDate: "2025-02-26",
+      fromDate: formatDate(suggestionData.fromDate),
+      toDate: formatDate(suggestionData.toDate),
+      page: currentPage,
+      // fromDate: "2021-02-26",
+      // toDate: "2025-02-26",
     };
 
     try {
       setIsFetching(true);
       const res = await fetchsuggestionReport(data);
-      setSuggestionTableData(res.data);
+      setSuggestionTableData(res);
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -67,6 +80,12 @@ const SuggestionReportRcs = () => {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    handleSearch();
+  }, [currentPage]);
+
+  async function fetchNextPageData() { }
 
   return (
     <div className="w-full">
@@ -169,6 +188,11 @@ const SuggestionReportRcs = () => {
               id="suggestionreport"
               name="suggestionreport"
               data={suggestionTableData}
+              handleSearch={handleSearch}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              setCurrentPage={setCurrentPage}
+              totalPage={totalPage}
             />
           </div>
         )}

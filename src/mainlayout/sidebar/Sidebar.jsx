@@ -310,7 +310,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       name: "apiDocs",
       icon: <DescriptionOutlinedIcon fontSize="20" />,
-      label: "Api Docs",
+      label: "API Docs",
       type: "single",
       onClick: () => navigate("/docs"),
     },

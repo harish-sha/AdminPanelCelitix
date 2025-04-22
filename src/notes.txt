@@ -55,4 +55,15 @@ whatsapp > livechat > component > chat > chatscreen.jsx - Done
 src > components > ui > textarea.tsx - Done
 
 
-
+April 21 updated file
+src > components > common > CustomContentGenerate.jsx - Done
+sms > smsReports > SmsReports.jsx - Done
+sms > smsReports > components > PreviousDayDetailsTable.jsx - Done
+rcs > deliveryreport > components > DeliveryReport.jsx
+rcs > suggestionReport > SuggestionReport.jsx - Done
+rcs > suggestionReport > component > SuggestionReportTableRcs.jsx - Done
+rcs > managetemplate > component > carousel.jsx - Done
+rcs > managetemplate > component > variable.jsx - Done
+rcs > managetemplate > Pages > AddTemplateRcs.jsx - Done
+whatsapp > WhatsappCreateTemplate > components > carouselTemplateTypes.jsx - Done
+whatsapp > WhatsappCreateTemplate > components > TemplateTypes.jsx - Done

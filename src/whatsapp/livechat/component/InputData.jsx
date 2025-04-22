@@ -77,21 +77,19 @@ export const InputData = ({
         <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
           <button
             onClick={() => setBtnOption("active")}
-            className={`p-2 transition-all duration-300 rounded-lg ${
-              btnOption === "active"
-                ? "bg-blue-500 text-white scale-105 shadow-lg"
-                : "bg-white text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "active"
+              ? "bg-blue-500 text-white scale-105 shadow-lg"
+              : "bg-white text-gray-700 hover:bg-gray-300"
+              }`}
           >
             Active
           </button>
           <button
             onClick={() => setBtnOption("close")}
-            className={`p-2 transition-all duration-300 rounded-lg ${
-              btnOption === "close"
-                ? "bg-blue-500 text-white scale-105 shadow-lg"
-                : "bg-white text-gray-700 hover:bg-gray-300"
-            }`}
+            className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "close"
+              ? "bg-blue-500 text-white scale-105 shadow-lg"
+              : "bg-white text-gray-700 hover:bg-gray-300"
+              }`}
           >
             Close
           </button>

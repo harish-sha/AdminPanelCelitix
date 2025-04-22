@@ -312,7 +312,6 @@ const ManageDltTemplate = () => {
                 </div>
               </div>
               <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                Max 3 lacs records & mobile number should be with country code.{" "}
                 <br />
                 Supported File Formats: .xlsx
               </p>

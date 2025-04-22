@@ -441,9 +441,9 @@ const WhatsappLaunchPreview = ({
                 ))} */}
 
               {bodyComponent && (
-                <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
+                <pre className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words text-wrap">
                   {finalMessage}
-                </div>
+                </pre>
               )}
 
               {buttonsComponent && buttonsComponent.buttons.length > 0 && (
@@ -588,14 +588,14 @@ const WhatsappLaunchPreview = ({
                       )}
 
                       {bodyText && (
-                        <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
+                        <pre className="border border-gray-200 rounded-md p-2 w-full  bg-gray-100  text-[0.85rem] text-gray-800 overflow-y-auto min-h-20 max-h-40 break-words text-wrap">
                           {finalMessage}
-                        </div>
+                        </pre>
                       )}
                       {messageBody && (
-                        <div className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-20 max-h-40 break-words">
+                        <pre className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-10 max-h-40 break-words">
                           {messageBody}
-                        </div>
+                        </pre>
                       )}
 
                       {buttons.length > 0 && (

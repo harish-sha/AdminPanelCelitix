@@ -1095,7 +1095,7 @@ const WhatsappLaunchCampaign = () => {
       variables: [],
       xlsxpath: xlsxPath,
       // totalRecords: totalRecords,
-      totalRecords: finalTotalRecords, 
+      totalRecords: finalTotalRecords,
       attachmentfile: imageFile || "",
       urlValues: "",
       urlIndex: urlIndex ?? -1,
@@ -1106,7 +1106,9 @@ const WhatsappLaunchCampaign = () => {
       scheduleDateTime:
         schedule && scheduledDateTime ? scheduleDateFormat : "0",
       groupValues,
-      imgCards,
+      imgCard: imgCards,
+      cardsVariables: [],
+      vendor: "jio"
     };
 
     try {

@@ -715,6 +715,7 @@ import AutoFixHighOutlinedIcon from "@mui/icons-material/AutoFixHighOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import VariableManager from "../components/VariableManager";
 import { Button, IconButton } from "@mui/material";
+import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 
 const TemplateTypes = ({
   selectedTemplateType,
@@ -761,6 +762,14 @@ const TemplateTypes = ({
   const [hasInserted, setHasInserted] = useState(false);
   const [typingKey, setTypingKey] = useState(0);
   const [generationCount, setGenerationCount] = useState(0);
+
+  const [ai, setAi] = useState({
+    isGenerating: false,
+    text: "",
+    response: "",
+    typing: false,
+  });
+
 
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
@@ -819,9 +828,8 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-            }`,
+            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+              }`,
           },
         }
       );
@@ -1220,7 +1228,7 @@ const TemplateTypes = ({
             />
           </div>
 
-          <CustomTooltip title="Generate With AI" arrow placement="top">
+          {/* <CustomTooltip title="Generate With AI" arrow placement="top">
             <button
               onClick={() => setIsOpen(true)}
               className="absolute right-3 bottom-3 w-8 h-8 rounded-full flex items-center justify-center z-0 cursor-pointer"
@@ -1232,20 +1240,34 @@ const TemplateTypes = ({
                 style={{ width: "48px", height: "48px" }}
               />
             </button>
-          </CustomTooltip>
+          </CustomTooltip> */}
+          <GenerateAiContent
+            ai={ai}
+            setAi={setAi}
+            setIsOpen={setIsOpen}
+            isOpen={isOpen}
+            right={1}
+            bottom={1}
+            setMessageContent={setTemplateFormat}
+            messageContent={templateFormat}
+            length={2500}
+          />
         </div>
 
         {/* <div className="text-sm text-gray-500 mt-1">
           {templateFormat.length}/1024 characters
         </div> */}
 
-        <VariableManager
-          templateFormat={templateFormat}
-          setTemplateFormat={setTemplateFormat}
-          onUpdateVariables={updateVariables}
-        />
+        <div className="relative">
+          <VariableManager
+            templateFormat={templateFormat}
+            setTemplateFormat={setTemplateFormat}
+            onUpdateVariables={updateVariables}
+          />
 
-        <div className="w-full mb-4 relative">
+        </div>
+
+        {/* <div className="w-full mb-4 relative">
           <AnimatePresence>
             {isOpen && (
               <motion.div
@@ -1331,7 +1353,7 @@ const TemplateTypes = ({
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </div> */}
       </div>
 
       <div className="w-full mb-4">

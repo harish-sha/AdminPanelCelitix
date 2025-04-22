@@ -1,27 +1,26 @@
 export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
   return (
-    <div className="mt-4 h-[400px] overflow-y-auto">
+    <div className="mt-4 h-[70vh] overflow-y-scroll">
       {chatState?.allConversations
         ?.slice()
         ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
         ?.map((chat, index) => (
           <div
             key={chat.srno || index}
-            className={`p-3 border-b cursor-pointer select-none ${
-              chatState?.active?.srno === chat.srno ? "bg-gray-300" : ""
-            }`}
+            className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 shadow" : ""
+              }`}
             onClick={() => {
               // setActiveChat(chat);
               setChatState((prev) => ({ ...prev, active: chat }));
             }}
           >
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between ">
               <div className="flex items-center gap-2">
                 <div className="relative">
                   <img
                     src={chat.image || "/default-avatar.jpg"}
                     alt=""
-                    className="w-10 h-10 rounded-full"
+                    className="w-10 h-10 rounded-full shadow"
                   />
                   <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-lg"></div>
                 </div>

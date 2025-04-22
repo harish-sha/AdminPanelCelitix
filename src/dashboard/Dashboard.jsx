@@ -780,7 +780,7 @@ const Dashboard = () => {
                     )}
                   </div>
                 </motion.div>
-                <p className="text-sm opacity-70 mt-3 z-10">{service.desc}</p>
+                <p className="text-sm opacity-70 mt-3">{service.desc}</p>
               </motion.div>
             </Grid>
           );
