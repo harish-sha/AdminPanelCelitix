@@ -59,3 +59,33 @@ profile > pages > Settings.jsx - Done
 components > layout > InputField.jsx - Done
 components > layout > Datatable.jsx - Done
 
+
+April 26 to 28 
+sms > smsSend > SendSms.jsx
+sms > smsSend > components > grid1.jsx
+sms > smsSend > components > helper >isEnglish.js
+sms > smsDltTemplate > SmsDltTemplate.jsx
+sms > smsReports > SmsReports.jsx
+sms > smsReports > components >PreviousDaysTableSms.jsx
+
+manageContact > ManageContact.jsx
+
+whatsapp > WhatsappBot > component > createBot.tsx
+
+rcs > manageTemplate > pages > AddTemplateRcs.jsx
+rcs > deliveryreport > DeliveryReportRcs.jsx
+rcs > manageTemplate > ManageTemplateRcs.jsx
+rcs > manageTemplate > components > carousel.jsx
+rcs > manageTemplate > components > Variables.jsx
+rcs > manageTemplate > components > SuggestedActions.jsx
+rcs > manageTemplate > components > ManageTemplateTable.jsx
+rcs > suggestionReport > SuggestionReportRcs.jsx
+rcs > SendRcs > SendRcs.jsx
+rcs > SendRcs > components > variablemanager.jsx
+rcs > suggestionReport > component > suggestionReportTable.jsx
+
+whatsapp > manageTemplate > managetemplate.jsx
+whatsapp > whatsappConversation > whatsappConversation.jsx
+whatsapp > whatsappManageCampaign > whatsappManageCampaign.jsx
+
+

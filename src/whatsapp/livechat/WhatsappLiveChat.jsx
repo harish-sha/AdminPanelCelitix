@@ -1038,7 +1038,7 @@ export default function WhatsappLiveChat() {
         contactName: chatState?.active?.contectName || "",
         msgType: "template",
         variables: allvariables,
-        mediaUrl: selectedFile?.fileUrl,
+        mediaUrl: selectedFile?.fileUrl || "",
         phoneDisplay: "",
         wabaSrNo: wabaState.wabaSrno,
         agentsrno: "",

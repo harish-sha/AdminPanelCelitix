@@ -1934,7 +1934,7 @@ const WhatsappCreateTemplate = () => {
                         )}
                       </>
                     </div>
-                    <div className="flex items-start justify-center lg:mt-7">
+                    <div className="flex items-start justify-center lg:mt-7 ">
                       {selectedTemplateType === "carousel" &&
                         carouselMediaType ? (
                         <>

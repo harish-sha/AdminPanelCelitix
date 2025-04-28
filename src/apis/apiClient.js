@@ -3,7 +3,8 @@ const API_BASE_URL = "/api";
 import axios from "axios";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
+  const token =
+    sessionStorage.getItem("token") || localStorage.getItem("token");
 
   if (!token) {
     console.error("No token found, redirecting to login.");
@@ -46,7 +47,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       data: options.body,
       headers: {
         ...defaultHeaders,
-        ...(options.headers || {}), 
+        ...(options.headers || {}),
       },
     });
 
@@ -62,16 +63,16 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
     return response.data;
   } catch (error) {
-    // if (error?.status === 401) {
-    //   console.error("Session expired. Redirecting to login...");
-    //   sessionStorage.removeItem("token");
-    //   window.location.href = "/login";
-    //   return null;
-    // }
-    // if (error?.status === 400) {
-    //   console.log(error)
-    //   return error;
-    // }
+    if (error?.status === 401) {
+      console.error("Session expired. Redirecting to login...");
+      sessionStorage.removeItem("token");
+      window.location.href = "/login";
+      return null;
+    }
+    if (error?.status === 400) {
+      console.log(error);
+      return error;
+    }
     console.error("Network Error:", error);
   }
 };

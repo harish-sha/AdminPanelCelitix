@@ -17,7 +17,7 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
             <div className="flex items-center justify-between ">
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <img
+                  <img  
                     src={chat.image || "/default-avatar.jpg"}
                     alt=""
                     className="w-10 h-10 rounded-full shadow"

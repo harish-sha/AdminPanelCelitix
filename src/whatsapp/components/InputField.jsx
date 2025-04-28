@@ -16,10 +16,10 @@ const InputField = ({
   tooltipPlacement = "top",
   readOnly = false,
   style = {},
-  maxLength = "",
+  maxLength = 0,
   accept = "",
   required = false,
-  max = { maxLength },
+  // max = { maxLength },
   ref = null,
 }) => {
   // const handleChange = (e) => {
@@ -66,6 +66,7 @@ const InputField = ({
         }`}
         accept={accept}
         ref={ref}
+        inputMode={type === "number" ? "numeric" : "text"}
       />
 
       {error && <p className="mt-1 text-sm text-red-500">{errorText}</p>}

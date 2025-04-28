@@ -1208,7 +1208,7 @@ const TemplateTypes = ({
           <textarea
             id="createTemplateFormatTextarea"
             name="createTemplateFormatTextarea"
-            className="w-full h-40 p-2 pr-8 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
+            className="w-full h-40 p-2 pr-10 bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
             value={templateFormat}
             onChange={(e) => setTemplateFormat(e.target.value)}
             maxLength={1024}

@@ -88,7 +88,7 @@ const SuggestionReportRcs = () => {
     setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() {}
+  async function fetchNextPageData() { }
 
   return (
     <div className="w-full">
@@ -156,6 +156,8 @@ const SuggestionReportRcs = () => {
               name="suggestionmobile"
               type="number"
               label="Mobile Number"
+              inputMode="numeric"
+              maxLength={13}
               placeholder="Enter Mobile Number"
               value={suggestionData.mobileNumber}
               onChange={(e) => {
