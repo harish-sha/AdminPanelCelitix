@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { HashRouter as Router, Routes, Route } from "react-router-dom";
 import Approutes from "./routes/Approutes/Approutes";
 import GlobalToaster from "./components/GlobalToaster";
 import Apiroutes from "./routes/Apiroutes/Apiroutes";

@@ -8,6 +8,16 @@ export const fetchCampaignReport = async (data) => {
   });
 };
 
+// fetch campaign by srno
+export const fetchCampaignBySrno = async (campSrno) => {
+  return await fetchWithAuth(
+    `/rcs/getCampaignReportBySrno?campSrno=${campSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
 // get summary report
 export const fetchSummaryReport = async (data) => {
   return await fetchWithAuth("/rcs/getSummaryReport", {
