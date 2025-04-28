@@ -52,7 +52,7 @@ const Login = () => {
 
       sessionStorage.setItem("token", data.token);
       console.log(
-        "Token saved in localStorage:",
+        "Token saved in session storage:",
         sessionStorage.getItem("token")
       );
 

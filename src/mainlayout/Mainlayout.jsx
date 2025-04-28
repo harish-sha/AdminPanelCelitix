@@ -4,7 +4,7 @@ import Navbar from "./navbar/Navbar";
 import { Outlet } from "react-router-dom";
 
 const Mainlayout = () => {
-    const scrollableContainerRef = useRef(null);
+    // const scrollableContainerRef = useRef(null);
     const [isCollapsed, setIsCollapsed] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 1200);
 
@@ -27,12 +27,13 @@ const Mainlayout = () => {
                 <Sidebar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} isMobile={isMobile} />
 
                 <div
-                    ref={scrollableContainerRef}
+                    // ref={scrollableContainerRef}
                     className={`flex-1 transition-all duration-300 overflow-auto p-3 bg-gray-100 lg:rounded-tl-3xl 
                         ${isMobile ? "ml-0" : isCollapsed ? "ml-16" : "ml-60"}
                     `}
                 >
-                    <Outlet context={{ scrollableContainerRef }} />
+                    {/* <Outlet context={{ scrollableContainerRef }} /> */}
+                    <Outlet />
                 </div>
             </div>
         </div>

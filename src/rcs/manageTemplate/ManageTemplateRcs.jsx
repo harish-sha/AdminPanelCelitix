@@ -44,7 +44,7 @@ const ManageTemplateRcs = () => {
 
   const handleFetchTempData = async () => {
     try {
-      // setIsFetching(true);
+      setIsFetching(true);
       const res = await fetchAllTemplates();
       setSummaryFilterData(res.Data);
       setSummaryTableData(res.Data);
@@ -56,7 +56,8 @@ const ManageTemplateRcs = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
+    await handleFetchTempData();
     const data = {
       ...templateData,
       templateType: templateData.templateType ?? "",
@@ -79,6 +80,7 @@ const ManageTemplateRcs = () => {
     };
 
     try {
+      setIsFetching(true);
       const res = await updateTemplateStatusbySrno(updateData);
       if (res?.status) {
         toast.success("Status Updated Successfully");
@@ -95,6 +97,8 @@ const ManageTemplateRcs = () => {
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -251,35 +255,30 @@ const ManageTemplateRcs = () => {
           {/* Search Button */}
           <div className="w-max-content">
             <UniversalButton
-              label="Search"
+              label={isFetching ? "Searching..." : "Search"}
               id="manageSearch"
               name="manageSearch"
               variant="primary"
               icon={<IoSearch />}
               onClick={handleSearch}
+              disabled={isFetching}
             />
           </div>
         </div>
 
-        {isFetching ? (
-          <div className="w-full">
-            <UniversalSkeleton height="35rem" width="100%" />
-          </div>
-        ) : (
-          <div className="w-full">
-            <ManageTemplatetableRcs
-              id="manageTemplatetable"
-              name="manageTemplatetable"
-              updateTemplateStatus={updateTemplateStatus}
-              data={summaryFilterData}
-              setTemplateDialogVisible={setTemplateDialogVisible}
-              setTemplateid={setTemplateid}
-              setTemplateDeleteVisible={setTemplateDeleteVisible}
-              fetchTemplateDataDetails={fetchTemplateDataDetails}
-              handleFetchTempData={handleFetchTempData}
-            />
-          </div>
-        )}
+        <div className="w-full">
+          <ManageTemplatetableRcs
+            id="manageTemplatetable"
+            name="manageTemplatetable"
+            updateTemplateStatus={updateTemplateStatus}
+            data={summaryFilterData}
+            setTemplateDialogVisible={setTemplateDialogVisible}
+            setTemplateid={setTemplateid}
+            setTemplateDeleteVisible={setTemplateDeleteVisible}
+            fetchTemplateDataDetails={fetchTemplateDataDetails}
+            handleFetchTempData={handleFetchTempData}
+          />
+        </div>
       </div>
 
       {/* template details dialog */}
@@ -303,8 +302,10 @@ const ManageTemplateRcs = () => {
               />
             </div>
             <div className="flex flex-col gap-2 py-2 overflow-scroll text-sm contentbox max-h-80">
-              <h1 className="font-semibold" >{templateDetails?.contentTitle}</h1>
-              <pre className="break-words text-wrap" >{templateDetails?.content}</pre>
+              <h1 className="font-semibold">{templateDetails?.contentTitle}</h1>
+              <pre className="break-words text-wrap">
+                {templateDetails?.content}
+              </pre>
             </div>
             {templateDetails?.suggestions?.map((suggestion, index) => (
               <div key={index} className="flex flex-col gap-2 mb-2">

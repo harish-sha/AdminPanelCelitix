@@ -248,29 +248,24 @@ const DeliveryreportRcs = () => {
                 </div>
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Search"
+                    label={isFetching ? "Searching..." : "Search"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
                     onClick={handleCampaignSearch}
                     icon={<IoSearch />}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
             </div>
-            {isFetching ? (
-              <div className="">
-                <UniversalSkeleton height="35rem" width="100%" />
-              </div>
-            ) : (
-              <div className="w-full">
-                <CampaignsLogsTable
-                  id="whatsappManageCampaignTable"
-                  name="whatsappManageCampaignTable"
-                  data={campaignTableData}
-                />
-              </div>
-            )}
+            <div className="w-full">
+              <CampaignsLogsTable
+                id="whatsappManageCampaignTable"
+                name="whatsappManageCampaignTable"
+                data={campaignTableData}
+              />
+            </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
@@ -328,7 +323,7 @@ const DeliveryreportRcs = () => {
               </div>
               <div className="w-full sm:w-56">
                 <UniversalButton
-                  label="Show"
+                  label={isFetching ? "Showing..." : "Show"}
                   id="show"
                   name="show"
                   variant="primary"
@@ -337,18 +332,12 @@ const DeliveryreportRcs = () => {
                 />
               </div>
             </div>
-            {isFetching ? (
-              <div className="">
-                <UniversalSkeleton height="35rem" width="100%" />
-              </div>
-            ) : (
-              <div className="w-full">
-                <DayWiseSummarytableRcs
-                  data={summaryTableData}
-                  isMonthWise={summaryData.isMonthWise}
-                />
-              </div>
-            )}
+            <div className="w-full">
+              <DayWiseSummarytableRcs
+                data={summaryTableData}
+                isMonthWise={summaryData.isMonthWise}
+              />
+            </div>
           </CustomTabPanel>
         </Box>
       </div>

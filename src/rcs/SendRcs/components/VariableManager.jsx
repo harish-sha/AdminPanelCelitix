@@ -86,7 +86,7 @@ export const VariableManager = ({
   }
 
   return (
-    <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
+    <div className="">
       <h1>Variables</h1>
       <div className="flex gap-2 flex-col mt-2">
         {!isCarousal &&

@@ -168,7 +168,7 @@ export const Variables = ({
           onChange={(e) => handleContentMessage(e.target.value)}
           className="w-full px-3 py-2 mb-1 text-sm outline-none resize-none"
         ></textarea>
-        <div className="absolute -bottom-0 right-1">
+        <div className="absolute top-0 right-0.5">
           <CustomEmojiPicker onSelect={handleEmojiClick} />
         </div>
       </div>
@@ -194,39 +194,6 @@ export const Variables = ({
           Add Variables
         </button>
       </div>
-
-      {/* <div className="h-auto overflow-scroll max-h-[150px]">
-        {variablesData.map((variable, index) => (
-          <div
-            key={variable.id}
-            className="flex items-center w-full gap-5 px-1 mt-2"
-          >
-            <label htmlFor={`templateVariable${index}`} className="w-4">{`[${
-              index + 1
-            }]`}</label>
-            <input
-              id={`templateVariable${index}`}
-              name={`templateVariable${index}`}
-              type="text"
-              value={variable.value}
-              onChange={(e) =>
-                handleVariableChange(variable.id, e.target.value)
-              }
-              placeholder={`Enter value for {#${variable.id}#}`}
-              className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-            />
-            <button
-              onClick={() => removeVariable(variable.id)}
-              className="p-1 text-sm text-white bg-transparent rounded-md"
-            >
-              <MdOutlineDeleteForever
-                className="text-red-500 cursor-pointer hover:text-red-700"
-                size={24}
-              />
-            </button>
-          </div>
-        ))}
-      </div> */}
 
       <Dialog
         header="Select Variable"

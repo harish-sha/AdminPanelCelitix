@@ -74,7 +74,7 @@ const SmsReports = () => {
     campaingType: "1",
     senderId: "",
     message: "",
-    source: "api",
+    source: "",
     searchSrNo: "",
     searchUserId: "",
   });
@@ -181,14 +181,14 @@ const SmsReports = () => {
     { label: "International", value: "3" },
   ];
   const previousoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const summaryoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const attachmentoptions = [
     { label: "All", value: "All" },
@@ -462,13 +462,13 @@ const SmsReports = () => {
 
   const handleDayWiseSummary = async () => {
     const data = {
-      ...daywiseDataToFilter,
+      // ...daywiseDataToFilter,
       fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
         "en-GB"
       ),
       toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
       summaryType: "date,user",
-      smsType: daywiseDataToFilter.smsType ?? 1,
+      smsType: daywiseDataToFilter.smsType ?? "",
     };
 
     try {
@@ -831,7 +831,7 @@ const SmsReports = () => {
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
             <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
-              <div className="w-full sm:w-56">
+              {/* <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -844,8 +844,10 @@ const SmsReports = () => {
                     }));
                   }}
                   placeholder="Select Date"
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
-              </div>
+              </div> */}
               <div className="w-full sm:w-56">
                 <InputField
                   label="Campaign Name"
@@ -895,31 +897,26 @@ const SmsReports = () => {
               <div className="w-full sm:w-56">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Search"
+                    label={isFetching ? "Searching..." : "Search"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
                     icon={<IoSearch />}
                     onClick={handleCampaignSearch}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
             </div>
           </div>
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="CampaignTableSms"
-                name="CampaignTableSms"
-                rows={rows}
-                col={columns}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="CampaignTableSms"
+              name="CampaignTableSms"
+              rows={rows}
+              col={columns}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <div className="w-full">
@@ -937,6 +934,9 @@ const SmsReports = () => {
                       fromDate: value,
                     }));
                   }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
+                  defaultValue={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -952,6 +952,8 @@ const SmsReports = () => {
                       toDate: value,
                     }));
                   }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -967,6 +969,7 @@ const SmsReports = () => {
                       mobilesnodata: e.target.value,
                     }));
                   }}
+                  type="number"
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -981,6 +984,35 @@ const SmsReports = () => {
                     setPreviousDataToFilter((prev) => ({
                       ...prev,
                       campaingType: value,
+                    }));
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-56">
+                <AnimatedDropdown
+                  label="Source"
+                  id="previousSource"
+                  name="previousSource"
+                  options={[
+                    {
+                      label: "All",
+                      value: "",
+                    },
+                    {
+                      label: "API",
+                      value: "api",
+                    },
+                    {
+                      label: "GUI",
+                      value: "gui",
+                    },
+                  ]}
+                  placeholder="Select Type"
+                  value={previousDataToFilter.source}
+                  onChange={(value) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      source: value,
                     }));
                   }}
                 />
@@ -1029,20 +1061,14 @@ const SmsReports = () => {
               </div>
             </div>
           </div>
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="PreviousDaysTableSms"
-                name="PreviousDaysTableSms"
-                rows={rows}
-                col={columns}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="PreviousDaysTableSms"
+              name="PreviousDaysTableSms"
+              rows={rows}
+              col={columns}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <div className="w-full">
@@ -1126,20 +1152,14 @@ const SmsReports = () => {
             </div>
           </div>
 
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="DayWiseSummaryTableSms"
-                name="DayWiseSummaryTableSms"
-                col={columns}
-                rows={rows}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="DayWiseSummaryTableSms"
+              name="DayWiseSummaryTableSms"
+              col={columns}
+              rows={rows}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <div className="w-full">
@@ -1202,21 +1222,14 @@ const SmsReports = () => {
               </div>
             </div>
           </div>
-
-          {isFetching ? (
-            <div>
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="AttachmentTableSms"
-                name="AttachmentTableSms"
-                col={columns}
-                rows={rows}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="AttachmentTableSms"
+              name="AttachmentTableSms"
+              col={columns}
+              rows={rows}
+            />
+          </div>
         </CustomTabPanel>
       </Box>
 
@@ -1438,6 +1451,8 @@ const SmsReports = () => {
                     label="From Date"
                     id="customfromdatepicker"
                     name="customfromdatepicker"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div>
@@ -1445,6 +1460,8 @@ const SmsReports = () => {
                     label="To Date"
                     id="customtodatepicker"
                     name="customtodatepicker"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div>

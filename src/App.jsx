@@ -7,11 +7,20 @@ import Login from "./login/Login";
 import PrivateRoute from "./routes/Auth/PrivateRoute";
 import AuthRoute from "./routes/Auth/AuthRoute";
 import PageNotFound from "./NotFound/PageNotFound";
+import LoadingBar from "./utils/LoadingBar";
+import BeforeUnloadWarning from "./utils/BeforeUnloadWarning";
 
 const App = () => {
   return (
     <Router>
+      {/* Site Warning when leave or reload */}
+      <BeforeUnloadWarning />
+
+      {/* Toaster */}
       <GlobalToaster />
+
+      {/* Loading Top Progress Bar */}
+      <LoadingBar />
       <Routes>
         <Route
           path="/login"

@@ -1969,7 +1969,7 @@ const ManageTemplate = () => {
                     <UniversalButton
                       id="manageTemplateSearchBtn"
                       name="manageTemplateSearchBtn"
-                      label="Search"
+                      label={isFetching ? "Searching..." : "Search"}
                       icon={<IoSearch />}
                       onClick={handleSearch}
                       variant="primary"

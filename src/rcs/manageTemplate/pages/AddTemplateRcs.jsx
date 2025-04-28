@@ -202,19 +202,6 @@ const AddTemplateRcs = () => {
           return;
         }
 
-        if (type === "Dialer Action") {
-          console.log(typeof value);
-        }
-        // if (
-        //   type === "Dialer Action"
-        //   // value.length >= 13
-        //   oast.error(`Please enter a valid phone number for ${type}`);
-        //   ha// typeof value == "string"
-        // ) {
-        //   tsError = true;
-        //   return;
-        // }
-
         const actions = {
           "Url Action": () => {
             suggestions.website.push(value);
@@ -437,7 +424,7 @@ const AddTemplateRcs = () => {
         ...inputData,
         agentId: inputData.agentId.toString(),
         templateType: "image",
-        width: `${cardheight.toUpperCase()}_WIDTH`,
+        width: `${cardwidth.toUpperCase()}_WIDTH`,
         height: `${cardheight.toUpperCase()}_HEIGHT`,
         variables,
         imageList: imageList,
@@ -613,7 +600,7 @@ const AddTemplateRcs = () => {
                   setAi={setAi}
                   setIsOpen={setIsOpen}
                   isOpen={isOpen}
-                  right={2}
+                  right={0.5}
                   bottom={2.9}
                   setMessageContent={setMessageContent}
                   messageContent={messageContent}
@@ -680,101 +667,8 @@ const AddTemplateRcs = () => {
             />
           )}
         </div>
-        {/* {inputData.templateType !== "carousel" && isOpen && (
-          <div className="w-full mb-4 relative">
-            <AnimatePresence>
-              {isOpen && (
-                <motion.div
-                  initial={{ opacity: 0, y: 30 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 30 }}
-                  className="absolute top-full left-0 w-full mt-4 p-4 bg-white border rounded-xl shadow-lg z-50 space-y-4"
-                >
-                  <div className="flex justify-between items-center">
-                    <p className=" text-violet-700 font-medium">
-                      Ask AI to Generate Template <AutoAwesomeIcon />
-                    </p>
-                    <IconButton
-                      onClick={closePanel}
-                      sx={{ padding: "3px", fontSize: "18px" }}
-                    >
-                      <AiOutlineClose className="text-gray-500 hover:text-red-500 cursor-pointer" />
-                    </IconButton>
-                  </div>
 
-                  <div className="flex items-center justify-center relative">
-                    <input
-                      type="text"
-                      className="w-full p-2 border rounded-md text-sm pr-11"
-                      placeholder="e.g. Generate a welcome message for a food bot"
-                      value={ai.text}
-                      onChange={(e) => {
-                        setAi((prev) => ({
-                          ...prev,
-                          text: e.target.value,
-                        }));
-                      }}
-                    />
-
-                    <button
-                      onClick={handleGenerate}
-                      disabled={ai?.typing}
-                      className=" cursor-pointer absolute right-0 text-white px-4 py-2 rounded-md transition disabled:opacity-50"
-                    >
-                      {isGenerating ? (
-                        <LoopIcon className="animate-spin text-indigo-800" />
-                      ) : (
-                        <AutoFixHighOutlinedIcon className=" text-indigo-800" />
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="min-h-[60px] bg-gray-100 p-3 rounded-md border">
-                    {isGenerating ? (
-                      <div className="flex flex-col gap-2">
-                        <div className="animate-pulse h-4 w-full bg-gray-300 rounded" />
-                        <div className="animate-pulse h-4 w-full bg-gray-300 rounded" />
-                        <div className="animate-pulse h-4 w-full bg-gray-300 rounded" />
-                        <div className="animate-pulse h-4 w-full bg-gray-300 rounded" />
-                      </div>
-                    ) : aiSuggestion && !hasInserted ? (
-                      <TypingText
-                        key={typingKey}
-                        text={aiSuggestion}
-                        onDone={() => setIsTypingDone(true)}
-                      />
-                    ) : aiSuggestion ? (
-                      <pre className="whitespace-pre-wrap text-sm text-gray-800">
-                        {aiSuggestion}
-                      </pre>
-                    ) : (
-                      <p className="text-sm text-gray-400">
-                        AI response will appear here.
-                      </p>
-                    )}
-                  </div>
-
-                  {isTypingDone && aiSuggestion && !hasInserted && (
-                    <div className="flex items-center justify-center ">
-                      <button
-                        className="text-sm text-indigo-600 hover:underline cursor-pointer"
-                        onClick={() => {
-                          setTemplateFormat((prev) =>
-                            (prev + aiSuggestion).slice(0, 1024)
-                          );
-                          setHasInserted(true);
-                        }}
-                      >
-                        <FileUploadOutlinedIcon /> Insert into Template Format
-                      </button>
-                    </div>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-        )} */}
-        <div className="w-full p-3 bg-white rounded-lg shadow-md ">
+        <div className="p-3">
           <Preview
             btnData={btnData}
             variables={variables}

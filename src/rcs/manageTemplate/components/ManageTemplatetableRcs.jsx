@@ -138,9 +138,9 @@ const ManageTemplatetableRcs = ({
                     color: "#34C759",
                   },
                   "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                  {
-                    backgroundColor: "#34C759",
-                  },
+                    {
+                      backgroundColor: "#34C759",
+                    },
                 }}
               />
             </CustomTooltip>
@@ -189,6 +189,23 @@ const ManageTemplatetableRcs = ({
               </IconButton>
             </CustomTooltip>
           )}
+          {params?.row?.status === "Pending" && (
+            <CustomTooltip title="Delete Template" placement="top" arrow>
+              <IconButton
+                className="no-xs"
+                onClick={() => {
+                  console.log(params.row);
+                  setTemplateDeleteVisible(true);
+                  setTemplateid(params.row);
+                }}
+              >
+                <MdOutlineDeleteForever
+                  className="text-red-500 cursor-pointer hover:text-red-600"
+                  size={20}
+                />
+              </IconButton>
+            </CustomTooltip>
+          )}
           {params?.row?.status === "rejected" && (
             <CustomTooltip title="Delete Template" placement="top" arrow>
               <IconButton
@@ -213,10 +230,10 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-      id: item.srno,
-      sn: i + 1,
-      ...item,
-    }))
+        id: item.srno,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

@@ -4,6 +4,8 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { RadioButton } from "primereact/radiobutton";
 import { Variable } from "./Variable";
 import { all } from "axios";
+import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
+import { useState } from "react";
 
 export const Grid1 = ({
   inputDetails,
@@ -11,6 +13,23 @@ export const Grid1 = ({
   headers,
   allTemplates,
 }) => {
+  const [ai, setAi] = useState({
+    isGenerating: false,
+    text: "",
+    response: "",
+    typing: false,
+  });
+  const [isOpen, setIsOpen] = useState(false);
+
+  const closePanel = () => {
+    setIsOpen(false);
+    setAi({
+      isGenerating: false,
+      text: "",
+      response: "",
+      typing: false,
+    });
+  };
   return (
     <div className="border w-full p-2 space-y-2 rounded-lg shadow-md">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
@@ -224,11 +243,30 @@ export const Grid1 = ({
           </div>
         </div>
 
-        <Variable
-          setInputDetails={setInputDetails}
-          inputDetails={inputDetails?.message}
-          headers={headers}
-        />
+        <div className="relative">
+          <Variable
+            setInputDetails={setInputDetails}
+            inputDetails={inputDetails?.message}
+            headers={headers}
+          />
+          <GenerateAiContent
+            ai={ai}
+            setAi={setAi}
+            setIsOpen={setIsOpen}
+            isOpen={isOpen}
+            right={0.5}
+            bottom={1}
+            setMessageContent={(e) => {
+              setInputDetails((prev) => ({
+                ...prev,
+                message: e,
+              }));
+            }}
+            messageContent={inputDetails?.message}
+            length={1000}
+            type="carousel"
+          />
+        </div>
 
         <div className="grid grid-cols-2 gap-5">
           <div className="border text-sm border-gray-300 rounded-md p-1.5">

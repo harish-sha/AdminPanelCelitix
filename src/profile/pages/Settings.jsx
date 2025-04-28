@@ -269,7 +269,7 @@ const Settings = () => {
             indicatorColor="primary"
             // variant="fullWidth"
           >
-            <Tab
+            {/* <Tab
               label={
                 <span>
                   <NotificationsActiveOutlinedIcon fontSize="small" /> Alert
@@ -287,14 +287,14 @@ const Settings = () => {
                   borderRadius: "8px",
                 },
               }}
-            />
+            /> */}
             <Tab
               label={
                 <span>
                   <PasswordOutlinedIcon fontSize="small" /> Change Password
                 </span>
               }
-              {...a11yProps(1)}
+              {...a11yProps(0)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -328,7 +328,7 @@ const Settings = () => {
                   <span>Manage API Key</span>
                 </span>
               }
-              {...a11yProps(2)}
+              {...a11yProps(1)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -362,7 +362,7 @@ const Settings = () => {
                   <span>IP Restrictions</span>
                 </span>
               }
-              {...a11yProps(3)}
+              {...a11yProps(2)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -375,7 +375,7 @@ const Settings = () => {
               }}
             />
           </Tabs>
-          <CustomTabPanel value={value} index={0}>
+          {/* <CustomTabPanel value={value} index={0}>
             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
               <div className="border rounded-lg min-h-30 shadow-md">
                 <h1 className="bg-gray-700 text-white text-center p-2 rounded-tr-lg rounded-tl-lg">
@@ -450,8 +450,8 @@ const Settings = () => {
                 variant="primary"
               />
             </div>
-          </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
+          </CustomTabPanel> */}
+          <CustomTabPanel value={value} index={0}>
             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
               <div className="relative">
                 <InputField
@@ -492,7 +492,7 @@ const Settings = () => {
               />
             </div>
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={2}>
+          <CustomTabPanel value={value} index={1}>
             <div className="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
               <InputField
                 id="apimanagekey"
@@ -539,7 +539,7 @@ const Settings = () => {
               />
             </div>
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={3}>
+          <CustomTabPanel value={value} index={2}>
             <p className="text-md text-gray-900 font-semibold">
               IP Restriction (Restrict Login/ API access to allowed IP
               addresses)

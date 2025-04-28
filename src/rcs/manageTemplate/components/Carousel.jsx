@@ -20,8 +20,8 @@ const INITIAL_DROPDOWN_STATE = {
 };
 
 const INITIAL_CARD = {
-  cardTitle: "Sample Card1 Title",
-  cardDescription: "Sample Card1 Description",
+  cardTitle: "",
+  cardDescription: "",
   fileName: "",
   filePath: "",
   suggestions: INITIAL_DROPDOWN_STATE,
@@ -100,8 +100,8 @@ export const Carousel = ({
     }
 
     const newCard = {
-      cardTitle: `Sample Card ${caraousalData.length + 1} Title`,
-      cardDescription: `Sample Card ${caraousalData.length + 1} Description`,
+      cardTitle: "",
+      cardDescription: "",
       fileName: INITIAL_CARD.fileName,
       filePath: INITIAL_CARD.filePath,
       suggestions: INITIAL_DROPDOWN_STATE,
@@ -346,8 +346,9 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handlePreviousIndex} aria-label="Previous">
             <KeyboardArrowLeftOutlinedIcon
-              className={`text-black ${selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
-                } `}
+              className={`text-black ${
+                selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
+              } `}
             />
           </IconButton>
           {/* {selectedCardIndex > 0 && (
@@ -378,19 +379,74 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
-              className={`text-black ${selectedCardIndex < caraousalData.length - 1
-                ? "cursor-pointer"
-                : "cursor-not-allowed"
-                }`}
+              className={`text-black ${
+                selectedCardIndex < caraousalData.length - 1
+                  ? "cursor-pointer"
+                  : "cursor-not-allowed"
+              }`}
             />
           </IconButton>
         </div>
       </div>
+      <div className="flex gap-2">
+        <AnimatedDropdown
+          id="selectCardHeight"
+          label={`Select Card Height`}
+          name="selectCardHeight"
+          options={[
+            { label: "Short", value: "short" },
+            { label: "Medium", value: "medium" },
+          ]}
+          placeholder="Select Card Height"
+          value={cardheight}
+          onChange={(e) => {
+            setCardheight(e);
+            setCaraousalData((prev) => {
+              const newData = prev.map((item, index) => {
+                return { ...item, fileName: "", fileTempPath: "" };
+              });
 
+              return newData;
+            });
+            fileRefs.current = fileRefs.current.map((current) => {
+              if (current) {
+                current.value = "";
+              }
+            });
+          }}
+        />
+        <AnimatedDropdown
+          id="selectCardWidth"
+          label={`Select Card Width`}
+          name="selectCardWidth"
+          options={[
+            { label: "Small", value: "small" },
+            { label: "Medium", value: "medium" },
+          ]}
+          placeholder="Select Card Width"
+          value={cardwidth}
+          onChange={(e) => {
+            setCardwidth(e);
+            setCaraousalData((prev) => {
+              const newData = prev.map((item, index) => {
+                return { ...item, fileName: "", fileTempPath: "" };
+              });
+
+              return newData;
+            });
+            fileRefs.current = fileRefs.current.map((current) => {
+              if (current) {
+                current.value = "";
+              }
+            });
+          }}
+        />
+      </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         <InputField
           label={`Select Card ${selectedCardIndex + 1} Title`}
           value={currentCardTitle}
+          placeholder={`Sample Card ${selectedCardIndex + 1} Title`}
           onChange={handleCardTitleChange}
         />
         <div className="flex flex-col gap-2 mb-2">
@@ -415,55 +471,6 @@ export const Carousel = ({
             </button>
           </div>
         </div>
-
-        <AnimatedDropdown
-          id="selectCardHeight"
-          label={`Select Card ${selectedCardIndex + 1} Height`}
-          name="selectCardHeight"
-          options={[
-            { label: "Short", value: "short" },
-            { label: "Medium", value: "medium" },
-          ]}
-          placeholder="Select Card Height"
-          value={cardheight}
-          onChange={(e) => {
-            setCardheight(e);
-            setCaraousalData((prev) =>
-              prev.map((item, index) =>
-                index === selectedCardIndex
-                  ? { ...item, fileName: "", fileTempPath: "" }
-                  : item
-              )
-            );
-            if (fileRefs.current[selectedCardIndex]) {
-              fileRefs.current[selectedCardIndex].value = "";
-            }
-          }}
-        />
-        <AnimatedDropdown
-          id="selectCardWidth"
-          label={`Select Card ${selectedCardIndex + 1} Width`}
-          name="selectCardWidth"
-          options={[
-            { label: "Small", value: "small" },
-            { label: "Medium", value: "medium" },
-          ]}
-          placeholder="Select Card Width"
-          value={cardwidth}
-          onChange={(e) => {
-            setCardwidth(e);
-            setCaraousalData((prev) =>
-              prev.map((item, index) =>
-                index === selectedCardIndex
-                  ? { ...item, fileName: "", fileTempPath: "" }
-                  : item
-              )
-            );
-            if (fileRefs.current[selectedCardIndex]) {
-              fileRefs.current[selectedCardIndex].value = "";
-            }
-          }}
-        />
       </div>
 
       <div className="relative">
@@ -480,7 +487,7 @@ export const Carousel = ({
           setAi={setAi}
           setIsOpen={setIsOpen}
           isOpen={isOpen}
-          right={2}
+          right={0.5}
           bottom={3.3}
           messageContent={currentCardMessage}
           setMessageContent={updateMessageContent}

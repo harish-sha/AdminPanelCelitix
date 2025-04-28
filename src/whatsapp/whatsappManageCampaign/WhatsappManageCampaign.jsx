@@ -421,7 +421,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalButton
                     id="manageCampaignSearchBtn"
                     name="manageCampaignSearchBtn"
-                    label="Search"
+                    label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
                     onClick={handleSearch}
                     variant="primary"
@@ -524,7 +524,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalButton
                     id="manageCampaignLogsShowhBtn"
                     name="manageCampaignLogsShowhBtn"
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
                     onClick={handleShowLogs}
                     variant="primary"
@@ -665,7 +665,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalButton
                     id="manageCampaignLogsShowhBtn"
                     name="manageCampaignLogsShowhBtn"
-                    label="Show"
+                    label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
                     onClick={handleSummary}
                     variant="primary"

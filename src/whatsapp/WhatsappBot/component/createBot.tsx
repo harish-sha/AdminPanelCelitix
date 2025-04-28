@@ -256,7 +256,6 @@ const CreateWhatsAppBot = () => {
     data = options;
     node = nodes;
     edge = edges;
-
   }
 
   const [nodes, setNodes, onNodesChange] = useNodesState(node);
@@ -274,8 +273,8 @@ const CreateWhatsAppBot = () => {
 
   const [details, setDetails] = useState({
     waba: [],
-    selected: state?.wabaNumber ?? "",
-    name: state?.botName ?? "",
+    selected: "",
+    name: "",
   });
 
   const [agenstState, setAgentState] = useState({
@@ -312,10 +311,12 @@ const CreateWhatsAppBot = () => {
 
         setDetails((prev) => ({
           ...prev,
-          waba: res,
+          waba: res || [],
+          selected: state.wabaNumber || "",
+          name: state?.botName ?? "",
         }));
       } catch (e) {
-        return toast.error("Error fetching Department");
+        return toast.error("Error fetching Waba");
       }
     }
 
@@ -870,11 +871,15 @@ const CreateWhatsAppBot = () => {
         name: "",
       }));
       toast.success("Bot Save Successfully");
-      navigate("/wwhatsappbot")
+      navigate("/wwhatsappbot");
     } catch (e) {
       // console.log(e);
     }
   };
+
+  useEffect(() => {
+    console.log(details);
+  }, [details]);
 
   return (
     <>

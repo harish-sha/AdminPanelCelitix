@@ -14,6 +14,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import { Dialog } from "primereact/dialog";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -92,6 +94,29 @@ const SuggestionReportTableRcs = ({
   totalPage,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
+  const [fileData, setFileData] = useState({
+    url: "",
+    type: "",
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  function handleView(row) {
+    if (!row.fileUri || !row.mimeType) return;
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/gif",
+    ];
+
+    if (validImageTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "image",
+      });
+    }
+    setIsDialogOpen(true);
+  }
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -113,18 +138,26 @@ const SuggestionReportTableRcs = ({
       flex: 1,
       minWidth: 120,
       renderCell: (params) => {
-        if (params.row.messageType === "USER_IMAGE") {
+        if (params.row.messageType === "USER_FILE") {
           return (
-            <img
-              src={params.fileuri}
-              alt="User Upload"
-              style={{
-                width: 50,
-                height: 50,
-                objectFit: "cover",
-                borderRadius: 5,
-              }}
-            />
+            // <img
+            //   src={params.fileuri}
+            //   alt="User Upload"
+            //   style={{
+            //     width: 50,
+            //     height: 50,
+            //     objectFit: "cover",
+            //     borderRadius: 5,
+            //   }}
+            // />
+            <IconButton onClick={(e) => handleView(params.row)}>
+              <RemoveRedEyeOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
           );
         } else if (params.row.messageType === "LOCATION") {
           return (
@@ -148,12 +181,12 @@ const SuggestionReportTableRcs = ({
 
   const rows = Array.isArray(data?.data)
     ? data?.data?.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-      message: item.message,
-      receivetime: "27/01/2024 14:58:39",
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+        message: item.message,
+        receivetime: "27/01/2024 14:58:39",
+      }))
     : [];
 
   const totalPages = Math.ceil(data?.total / paginationModel.pageSize);
@@ -213,37 +246,57 @@ const SuggestionReportTableRcs = ({
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          pageSizeOptions={[10, 20, 50]}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cell": { outline: "none !important" },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
+          }}
+        />
+      </Paper>
+
+      <Dialog
+        header="View Message"
+        visible={isDialogOpen}
+        onHide={() => {
+          setIsDialogOpen(false);
+          setFileData({
+            url: "",
+            type: "",
+          });
         }}
-        pageSizeOptions={[10, 20, 50]}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cell": { outline: "none !important" },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-        }}
-      />
-    </Paper>
+        style={{ width: "50%" }}
+        draggable={false}
+      >
+        {fileData && fileData.type === "image" && (
+          <img src={fileData?.url} alt={fileData?.url} />
+        )}
+      </Dialog>
+    </>
   );
 };
 

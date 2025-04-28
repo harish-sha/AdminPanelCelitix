@@ -297,8 +297,8 @@ const SendRcs = () => {
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 ">
-        <div className=" p-2">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 mt-5">
+        <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
           <HandleCampaignDetails
             setCampaignDetails={setCampaignDetails}
             campaignDetails={campaignDetails}
@@ -342,7 +342,7 @@ const SendRcs = () => {
             setHeaders={setHeaders}
           />
         </div>
-        <div>
+        <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
           <Preview
             templateDetails={templateDetails}
             selectedIndex={selectedIndex}

@@ -293,7 +293,7 @@ const Transactions = () => {
         </div>
         <CustomTabPanel value={value} index={0} className="">
           <div className="w-full">
-            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex-wrap">
               {/* <div className="w-full sm:w-56">
                                 <div className="flex items-center gap-2 mb-2">
                                     <label className="text-sm font-medium text-gray-700">User</label>

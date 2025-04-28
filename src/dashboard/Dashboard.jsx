@@ -500,14 +500,7 @@
 
 // export default Dashboard;
 
-
-
-
 // changes by akhil start
-
-
-
-
 
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -641,11 +634,6 @@ const Dashboard = () => {
   const [userData, setUserData] = useState(null);
   const [formData, setFormData] = useState({
     firstName: "",
-    lastName: "",
-    emailId: "",
-    mobileNo: "",
-    address: "",
-    companyName: "",
   });
 
   const [loading, setLoading] = useState(false);
@@ -661,11 +649,6 @@ const Dashboard = () => {
         setUserData(user);
         setFormData({
           firstName: user.firstName || "",
-          lastName: user.lastName || "",
-          emailId: user.email || "",
-          mobileNo: user.mobileNo || "",
-          address: user.address || "",
-          companyName: user.companyName || "",
         });
       } else {
         console.error("Failed to load user details.");
@@ -677,38 +660,7 @@ const Dashboard = () => {
     fetchUserDetails();
   }, []);
 
-  const months = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
-  ];
 
-  useEffect(() => {
-    const date = new Date();
-    let dayNum = date.getDay();
-    dayNum = (dayNum === 0) ? 6 : dayNum - 1;
-
-    const weekItems = document.querySelectorAll(".week li");
-    if (weekItems[dayNum]) {
-      const active = weekItems[dayNum];
-      active.classList.add('current');
-
-      const day = date.getDate();
-      const month = months[date.getMonth()];
-      const year = date.getFullYear();
-
-      const h1 = document.createElement('h1');
-      h1.innerHTML = day;
-      active.appendChild(h1);
-
-      const h5 = document.createElement('h5');
-      h5.innerHTML = month;
-      active.appendChild(h5);
-
-      const h3 = document.createElement('h3');
-      h3.innerHTML = year;
-      active.appendChild(h3);
-    }
-  }, []);
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
       {/* Logged In User Card */}
@@ -787,20 +739,6 @@ const Dashboard = () => {
         })}
       </Grid>
 
-
-      {/* <div>
-        <ul className="week">
-          <li>Mon</li>
-          <li>Tue</li>
-          <li>Wed</li>
-          <li>Thu</li>
-          <li>Fri</li>
-          <li>Sat</li>
-          <li>Sun</li>
-        </ul>
-      </div> */}
-
-
       {/* Bot Section */}
       <motion.div
         className="mt-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-6"
@@ -869,4 +807,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

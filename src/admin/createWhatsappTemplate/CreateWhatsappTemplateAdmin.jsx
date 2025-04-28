@@ -27,7 +27,7 @@ import {
 
 const CreateWhatsappTemplateAdmin = () => {
   const navigate = useNavigate();
-  const { scrollableContainerRef } = useOutletContext();
+  // const { scrollableContainerRef } = useOutletContext();
   const [wabaList, setWabaList] = useState(null);
   const [selectedWaba, setSelectedWaba] = useState("");
   const [selectedWabaSno, setSelectedWabaSno] = useState("");
@@ -920,7 +920,7 @@ const CreateWhatsappTemplateAdmin = () => {
                         carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
-                            scrollContainerRef={scrollableContainerRef}
+                            // scrollContainerRef={scrollableContainerRef}
                             format={templateFormat}
                             cards={cards}
                             footer={templateFooter}
@@ -938,7 +938,7 @@ const CreateWhatsappTemplateAdmin = () => {
                       {selectedTemplateType != "carousel" && (
                         <>
                           <TemplatePreview
-                            scrollContainerRef={scrollableContainerRef}
+                            // scrollContainerRef={scrollableContainerRef}
                             header={templateHeader}
                             format={templateFormat}
                             footer={templateFooter}

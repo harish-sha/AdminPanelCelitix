@@ -88,7 +88,7 @@ const SuggestionReportRcs = () => {
     setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() { }
+  async function fetchNextPageData() {}
 
   return (
     <div className="w-full">
@@ -156,8 +156,6 @@ const SuggestionReportRcs = () => {
               name="suggestionmobile"
               type="number"
               label="Mobile Number"
-              inputMode="numeric"
-              maxLength={13}
               placeholder="Enter Mobile Number"
               value={suggestionData.mobileNumber}
               onChange={(e) => {
@@ -176,7 +174,7 @@ const SuggestionReportRcs = () => {
             <UniversalButton
               id="suggestionsearch"
               name="suggestionsearch"
-              label={"Search"}
+              label={isFetching ? "Searching..." : "Search"}
               icon={<IoSearch />}
               disabled={isFetching}
               onClick={handleSearch}
@@ -191,24 +189,18 @@ const SuggestionReportRcs = () => {
           </div>
         </div>
 
-        {isFetching ? (
-          <div className="w-full">
-            <UniversalSkeleton height="35rem" width="100%" />
-          </div>
-        ) : (
-          <div className="w-full">
-            <SuggestionReportTableRcs
-              id="suggestionreport"
-              name="suggestionreport"
-              data={suggestionTableData}
-              handleSearch={handleSearch}
-              paginationModel={paginationModel}
-              setPaginationModel={setPaginationModel}
-              setCurrentPage={setCurrentPage}
-              totalPage={totalPage}
-            />
-          </div>
-        )}
+        <div className="w-full">
+          <SuggestionReportTableRcs
+            id="suggestionreport"
+            name="suggestionreport"
+            data={suggestionTableData}
+            handleSearch={handleSearch}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+            setCurrentPage={setCurrentPage}
+            totalPage={totalPage}
+          />
+        </div>
       </div>
       {/* )} */}
     </div>

@@ -26,6 +26,7 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import toast from "react-hot-toast";
 import { uploadContactFile } from "@/apis/contact/contact";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import { exportToExcel } from "@/utils/utills";
 
 const SmsDLTtemplate = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -62,8 +63,9 @@ const SmsDLTtemplate = () => {
     setIsFetching(true);
     try {
       const rawData = await getAllTemplates("all");
+      const reverseData = rawData.reverse();
 
-      const mappedData = rawData.map((item, index) => ({
+      const mappedData = reverseData.map((item, index) => ({
         id: item.srNo,
         sn: index + 1,
         userid: item.userID || "-",
@@ -94,7 +96,7 @@ const SmsDLTtemplate = () => {
 
       setRows(mappedData);
     } catch (err) {
-      console.error("Error fetching templates:", err);
+      toast.error("Error fetching templates.");
     } finally {
       setIsFetching(false);
     }
@@ -124,16 +126,13 @@ const SmsDLTtemplate = () => {
         senderid: res[0]?.senderid,
       });
     } catch (e) {
-      console.log(e);
       return toast.error("Something went wrong");
     }
   };
   const handleEdit = async () => {
-    console.log("updateTemplateData", updateTemplateData);
-
     try {
       const res = await updateTemplateBySrno(updateTemplateData);
-      console.log(res);
+
       if (!res?.message.includes("successfully")) {
         return toast.error(res?.message);
       }
@@ -143,7 +142,6 @@ const SmsDLTtemplate = () => {
       setIsEditVisible(false);
       await fetchTemplates();
     } catch (e) {
-      console.log(e);
       return toast.error("Something went wrong");
     }
   };
@@ -207,7 +205,6 @@ const SmsDLTtemplate = () => {
             <IconButton
               className="no-xs"
               onClick={() => {
-                console.log(params.row);
                 setIsVisible(true);
                 setSelectedTemplateId(params.row.id);
               }}
@@ -262,7 +259,6 @@ const SmsDLTtemplate = () => {
 
     try {
       const res = await uploadContactFile(uploadedFile);
-      console.log(res);
       setContactData(res);
       setIsUploading(false);
       setIsUploaded(true);
@@ -285,16 +281,28 @@ const SmsDLTtemplate = () => {
     if (!contactData?.filepath) {
       return toast.error("Please upload a file.");
     }
-    Object.keys(templateData).forEach((key) => {
-      if (templateData[key] === "" || templateData[key] === null) {
-        isError = true;
-        return toast.error(`Please fill all the value of ${key}."`);
-      }
-    });
 
-    if (isError) {
-      return;
+    console.log(templateData);
+
+    const requiredTemplateData = {
+      templateName: "",
+      templateId: "",
+      type: "",
+      message: "",
+      status: "",
+      senderId: "",
+    };
+
+    for (const key of Object.keys(requiredTemplateData)) {
+      const value = templateData[key];
+      if (value === "" || value == null || value === "null") {
+        isError = true;
+        toast.error(`Please fill the value of ${key}.`);
+        break;
+      }
     }
+
+    if (isError) return;
 
     const data = {
       entityId: entityid,
@@ -312,11 +320,29 @@ const SmsDLTtemplate = () => {
 
     try {
       const res = await importTemplate(data);
-      console.log(res);
+
+      toast.success(res?.message);
+      setTemplateDltImport(false);
+      setEntityId("");
+      setTemplateData({});
+      setContactData({});
+      setIsUploading(false);
+      setIsUploaded(false);
+      setUploadedFile(null);
+      fileInputRef.current.value = "";
     } catch (e) {
-      console.log(e);
       return toast.error("Error importing template.");
     }
+  }
+
+  function handleDownload() {
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+    const name = "DLT Template List";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
   }
 
   return (
@@ -367,6 +393,7 @@ const SmsDLTtemplate = () => {
                 label={isFetching ? "Searching..." : "Search"}
                 icon={<IoSearch />}
                 disabled={isFetching}
+                onClick={fetchTemplates}
               />
             </div>
             <div className="w-max-content">
@@ -375,6 +402,8 @@ const SmsDLTtemplate = () => {
                 id="dlttemplatedelete"
                 name="dlttemplatedelete"
                 onClick={() => {
+                  if (selectedRows.length === 0) return;
+
                   setIsMultipleDelete(true);
                   setIsVisible(true);
                   setSelectedTemplateId(selectedRows);
@@ -386,6 +415,7 @@ const SmsDLTtemplate = () => {
                 id="dlttemplatedownload"
                 name="dlttemplatedownload"
                 label="Download"
+                onClick={handleDownload}
               />
             </div>
             <div className="w-max-content">
@@ -398,31 +428,30 @@ const SmsDLTtemplate = () => {
             </div>
           </div>
 
-          {isFetching ? (
-            <div className="w-full">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              {/* <DlttemplateTable id="dlttemplatetable" name="dlttemplatetable" /> */}
-              <DataTable
-                id="whatsapp-rate-table"
-                name="whatsappRateTable"
-                col={columns}
-                rows={rows}
-                selectedRows={selectedRows}
-                setSelectedRows={setSelectedRows}
-                checkboxSelection={true}
-              />
-            </div>
-          )}
+          <DataTable
+            id="whatsapp-rate-table"
+            name="whatsappRateTable"
+            col={columns}
+            rows={rows}
+            selectedRows={selectedRows}
+            setSelectedRows={setSelectedRows}
+            checkboxSelection={true}
+          />
         </div>
       )}
 
       <Dialog
         header="Import DLT Content Template"
         visible={templatedltimport}
-        onHide={() => setTemplateDltImport(false)}
+        onHide={() => {
+          setTemplateDltImport(false);
+          setEntityId("");
+          setTemplateData({});
+          setContactData({});
+          setIsUploading(false);
+          setIsUploaded(false);
+          setUploadedFile(null);
+        }}
         className="lg:w-[45rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
@@ -641,7 +670,6 @@ const SmsDLTtemplate = () => {
                   {contactData?.sampleRecords?.map((row, index) => (
                     <tr key={index} className="">
                       {contactData?.headers?.map((col, idx) => {
-                        console.log(col);
                         return (
                           <td
                             key={idx}

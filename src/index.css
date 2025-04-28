@@ -18,6 +18,17 @@
   }
 }
 
+
+#nprogress .bar {
+  background: #29d;        
+  height: 4px;            
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #29d, 0 0 5px #29d;
+}
+
+
 html,
 body {
   height: 100%;
@@ -433,3 +444,5 @@ a {
   color: #000;
   font-weight: 600;
 }
+
+

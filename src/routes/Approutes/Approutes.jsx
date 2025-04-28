@@ -56,6 +56,7 @@ import AddRouting from "@/admin/manageRouting/pages/AddRouting";
 import EditRouting from "@/admin/manageRouting/pages/EditRouting";
 import SMPPErrorCode from "@/admin/smmpErrorCode/SMPPErrorCode";
 import AddOperator from "@/admin/managePrefix/pages/AddOperator";
+import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
 
 // sms
 import SmsReports from "@/sms/smsReports/SmsReports";
@@ -120,7 +121,6 @@ import Callback from "@/callback/Callback";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
 import PageNotFound from "@/NotFound/PageNotFound";
 
 const Approutes = () => {
@@ -208,7 +208,7 @@ const Approutes = () => {
         <Route path="rcssuggestionreport" element={<SuggestionReportRcs />} />
         <Route path="rcsdeliveryreport" element={<DeliveryreportRcs />} />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
-        <Route path="rcslivechats" element={<RcsLiveChat />} />
+        {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 
         {/* profile */}
         <Route path="profile" element={<ProfilePage />} />
@@ -247,7 +247,7 @@ const Approutes = () => {
 
         {/* Number Lookup */}
         <Route path="/hlrlookup" element={<HlrLookup />} />
-        <Route path="/hlrlookupreports" element={<HlrLookupReports />} />
+        <Route path="/lookupreports" element={<HlrLookupReports />} />
 
         {/* Callback */}
         <Route path="/callback" element={<Callback />} />

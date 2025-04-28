@@ -176,8 +176,8 @@ const ManageContacts = () => {
     setSelectedAddImportContact(event.target.value);
   };
   const addwish = [
-    { value: "Yes", label: "Yes" },
-    { value: "No", label: "No" },
+    { value: 1, label: "Yes" },
+    { value: 0, label: "No" },
   ];
 
   const selectedManageGroups = (option, props) => {
@@ -274,7 +274,6 @@ const ManageContacts = () => {
       // "birthDate",
       "gender",
       "uniqueId",
-
     ];
     const emptyField = requiredFields.find((field) => {
       const value = addContactDetails[field];
@@ -752,10 +751,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-      id: grp.groupCode,
-      sn: index + 1,
-      groupName: grp.groupName,
-    }))
+        id: grp.groupCode,
+        sn: index + 1,
+        groupName: grp.groupName,
+      }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -877,18 +876,14 @@ const ManageContacts = () => {
         </div>
       </div>
 
-      {isFetching ? (
-        <UniversalSkeleton height="35rem" width="100%" />
-      ) : (
-        <WhatsappManageContactsTable
-          allContacts={filterContacts}
-          updateContactData={updateContactData}
-          setUpdateContactDetails={setUpdateContactDetails}
-          setUpdateContactVisible={setUpdateContactVisible}
-          setIdToDelete={setIdToDelete}
-          setDeleteContactDialogVisible={setDeleteContactDialogVisible}
-        />
-      )}
+      <WhatsappManageContactsTable
+        allContacts={filterContacts}
+        updateContactData={updateContactData}
+        setUpdateContactDetails={setUpdateContactDetails}
+        setUpdateContactVisible={setUpdateContactVisible}
+        setIdToDelete={setIdToDelete}
+        setDeleteContactDialogVisible={setDeleteContactDialogVisible}
+      />
 
       {/* <Button label="Show" icon="pi pi-external-link" onClick={() => setVisible(true)} /> */}
 
@@ -1152,7 +1147,6 @@ const ManageContacts = () => {
                 })
               }
               required={true}
-
             />
             {/* <RadioGroupField
                 label={"Allowishes?"}
@@ -1368,8 +1362,9 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                        }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                        isUploading ? "disabled" : ""
+                      }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}
@@ -1768,7 +1763,7 @@ const ManageContacts = () => {
                 id="mobilenumber"
                 name="mobilenumber"
                 type="number"
-                value={updateContactDetails.mobileno}
+                value={updateContactDetails?.mobileno?.replace(/^\+/, "")}
                 onChange={(e) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,
@@ -1785,11 +1780,11 @@ const ManageContacts = () => {
                 id="emailid"
                 name="emailid"
                 type="email"
-                value={addContactDetails.emailId}
+                value={updateContactDetails.email}
                 onChange={(e) =>
-                  setAddContactDetails({
-                    ...addContactDetails,
-                    emailId: e.target.value,
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
+                    email: e.target.value,
                   })
                 }
                 required={true}
@@ -1812,10 +1807,10 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Birth Date"
                 className="mb-0"
-                value={addContactDetails.birthDate}
+                value={updateContactDetails.birthDate}
                 onChange={(e) =>
-                  setAddContactDetails({
-                    ...addContactDetails,
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
                     birthDate: e,
                   })
                 }
@@ -1824,10 +1819,10 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Anniversary Date"
                 className="mb-0"
-                value={addContactDetails.mariageDate}
+                value={updateContactDetails.mariageDate}
                 onChange={(e) =>
-                  setAddContactDetails({
-                    ...addContactDetails,
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
                     mariageDate: e,
                   })
                 }
@@ -1839,11 +1834,20 @@ const ManageContacts = () => {
                 label={"Allowishes?"}
                 name="addwish"
                 id="addwish"
-                options={addwish}
-                value={addContactDetails.allowishes}
+                options={[
+                  {
+                    value: 1,
+                    label: "Yes",
+                  },
+                  {
+                    value: 0,
+                    label: "No",
+                  },
+                ]}
+                value={updateContactDetails?.allowishes}
                 onChange={(e) =>
-                  setAddContactDetails({
-                    ...addContactDetails,
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
                     allowishes: e.target.value,
                   })
                 }
@@ -1857,10 +1861,10 @@ const ManageContacts = () => {
                   { value: "m", label: "Male" },
                   { value: "f", label: "Female" },
                 ]}
-                value={addContactDetails.gender}
+                value={updateContactDetails.gender}
                 onChange={(e) =>
-                  setAddContactDetails({
-                    ...addContactDetails,
+                  setUpdateContactDetails({
+                    ...updateContactDetails,
                     gender: e.target.value,
                   })
                 }
@@ -1874,8 +1878,8 @@ const ManageContacts = () => {
                 name="activeStatus"
                 id="activeStatus"
                 options={[
-                  { value: 0, label: "Active" },
-                  { value: 1, label: "Inactive" },
+                  { value: 1, label: "Active" },
+                  { value: 0, label: "Inactive" },
                 ]}
                 value={updateContactDetails.status}
                 onChange={(e) =>
@@ -1955,7 +1959,6 @@ const ManageContacts = () => {
         </div>
       </Dialog>
       {/* delete contact end */}
-
     </div>
   );
 };

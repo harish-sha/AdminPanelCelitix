@@ -8,11 +8,12 @@ function isAscii(text) {
 export function isEnglish(text) {
   if (!isAscii(text)) return false;
 
-  if (text.length < 50) return true;
+  if (text.length < 954) return true;
 
   const langCode = franc(text);
   if (langCode === "und") return false;
 
   const language = langs.where("3", langCode);
+  console.log(language);
   return language?.name === "English";
 }

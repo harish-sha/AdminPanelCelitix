@@ -1,91 +1,33 @@
 merge arihant to main from april 22 to april 25
 
-working files 
-sms > smsReports > SmsReports.jsx - Done
-sms > smsSend > SendSms.jsx - Done
-sms > smsSend > > components > grid1.jsx - Done
-sms > smsSend > > components > variable.jsx - Done
-sms > smsSend > > components > RadioButtonLaunchSms.jsx - Done
-sms > smsDltTemplate> SmsDltTemplate.jsx - Done
-sms > smsDltTemplate> components > dltTemplateTable.jsx
-
-whatsapp > whatsappLiveChatSetting > whatsappLiveChatSettings.jsx - Done
-whatsapp > managetemplate > managetemplate.jsx - Done
 whatsapp > managetemplate > component > variables.jsx
-whatsapp > whatsapplaunchCampaign > components > InputVariable.jsx - Done
-Whatsapp > whatsapplaunchCampaign > whatsapplaunchCampaign.jsx - Done
-Whatsapp > whatsapplaunchCampaign >  components > RadioButtonLaunchCampaign.jsx - Done
-whatsapp > WhatsappBot > component > components > file.tsx - Done
-whatsapp > WhatsappBot > component > components > details.tsx - Done
-whatsapp > WhatsappBot > component > components > button.tsx - Done
-whatsapp > WhatsappBot > component > components > list.tsx - Done
-whatsapp > WhatsappBot > component >  createBot.tsx - Done
-whatsapp > WhatsappBot > WhatsappBot.jsx - Done
-whatsapp > WhatsappCreateTemplate > components >  TemplateTypes.jsx - Done
-whatsapp > components > GeneratePassword.jsx - Done
-whatsapp > components > CustomEmojiPicker.jsx - Done
-whatsapp > components > InputField.jsx - Done
-whatsapp > ManageAgent > manageAgent.jsx - Done
-
-login > Login.jsx - Done
-
-mainlayout > navbar > Navbar.jsx - Done
-
-rcs > deliveryreport > DeliveryReportRcs. - Done
-rcs > sendRcs > components > RadioButtonLaunchCampaign.jsx - Done
-rcs > sendRcs > component > Preview.jsx - Done
-rcs > sendRcs > component > variablemanager.jsx - Done
-rcs > sendRcs > component > campaigninputdetails.jsx - Done
-rcs > sendRcs >  SendRcs.jsx - Done
-rcs > managetemplate > pages > AddTemplateRcs.jsx - Done
-rcs > managetemplate > components > Preview.jsx - Done
-rcs > managetemplate > components > variables.jsx - Done
-rcs > suggestionReport > SuggestionReportRcs.jsx - Done
-
-
-apis > whatsapp.js - Done
-apis > setting.js - Done
-apis > sms.js - Done
-apis > auth.js - Done
-apis > apiClient.js - Done
-
-routes > AuthRoute.jsx - Done
-routes > PrivateRoute.jsx - Done
-
-
-profile > components > GeneratePasswordSettings.jsx - Done
-profile > pages > Settings.jsx - Done
-
-components > layout > InputField.jsx - Done
-components > layout > Datatable.jsx - Done
 
 
 April 26 to 28 
-sms > smsSend > SendSms.jsx
-sms > smsSend > components > grid1.jsx
-sms > smsSend > components > helper >isEnglish.js
-sms > smsDltTemplate > SmsDltTemplate.jsx
-sms > smsReports > SmsReports.jsx
-sms > smsReports > components >PreviousDaysTableSms.jsx
+sms > smsSend > SendSms.jsx - Done
+sms > smsSend > components > grid1.jsx - Done
+sms > smsSend > components > helper >isEnglish.js - Done
+sms > smsDltTemplate > SmsDltTemplate.jsx - Done
+sms > smsReports > SmsReports.jsx - Done
+sms > smsReports > components >PreviousDaysTableSms.jsx - Done
 
-manageContact > ManageContact.jsx
+manageContact > ManageContact.jsx - Done
 
-whatsapp > WhatsappBot > component > createBot.tsx
+whatsapp > WhatsappBot > component > createBot.tsx - Done
 
-rcs > manageTemplate > pages > AddTemplateRcs.jsx
-rcs > deliveryreport > DeliveryReportRcs.jsx
-rcs > manageTemplate > ManageTemplateRcs.jsx
-rcs > manageTemplate > components > carousel.jsx
-rcs > manageTemplate > components > Variables.jsx
-rcs > manageTemplate > components > SuggestedActions.jsx
-rcs > manageTemplate > components > ManageTemplateTable.jsx
-rcs > suggestionReport > SuggestionReportRcs.jsx
-rcs > SendRcs > SendRcs.jsx
-rcs > SendRcs > components > variablemanager.jsx
-rcs > suggestionReport > component > suggestionReportTable.jsx
+rcs > manageTemplate > pages > AddTemplateRcs.jsx - Done
+rcs > deliveryreport > DeliveryReportRcs.jsx - Done
+rcs > manageTemplate > ManageTemplateRcs.jsx - Done
+rcs > manageTemplate > components > carousel.jsx - Done
+rcs > manageTemplate > components > Variables.jsx - Done
+rcs > manageTemplate > components > SuggestedActions.jsx - Done
+rcs > manageTemplate > components > ManageTemplateTable.jsx- Done
+rcs > suggestionReport > SuggestionReportRcs.jsx - Done
+rcs > SendRcs > SendRcs.jsx - Done
+rcs > SendRcs > components > variablemanager.jsx - Done
+rcs > suggestionReport > component > suggestionReportTable.jsx - Done
 
-whatsapp > manageTemplate > managetemplate.jsx
-whatsapp > whatsappConversation > whatsappConversation.jsx
-whatsapp > whatsappManageCampaign > whatsappManageCampaign.jsx
-
+whatsapp > manageTemplate > managetemplate.jsx - Done
+whatsapp > whatsappConversation > whatsappConversation.jsx - Done
+whatsapp > whatsappManageCampaign > whatsappManageCampaign.jsx - Done
 
