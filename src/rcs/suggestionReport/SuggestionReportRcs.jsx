@@ -28,6 +28,7 @@ const SuggestionReportRcs = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     async function fetchAllBotsData() {
@@ -55,9 +56,8 @@ const SuggestionReportRcs = () => {
   };
 
   const handleSearch = async () => {
-
     if (!suggestionData?.botId) {
-      return;
+      return toast.error("Please select bot.");
     }
 
     const data = {
@@ -82,10 +82,13 @@ const SuggestionReportRcs = () => {
   };
 
   useEffect(() => {
-    handleSearch();
+    if (!initialLoad) {
+      handleSearch();
+    }
+    setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() { }
+  async function fetchNextPageData() {}
 
   return (
     <div className="w-full">
@@ -101,6 +104,8 @@ const SuggestionReportRcs = () => {
             <UniversalDatePicker
               id="suggestionfrom"
               name="suggestionfrom"
+              tooltipPlacement="top"
+              tooltipContent="Select From Date"
               label="From Date"
               maxDate={new Date()}
               value={suggestionData.fromDate}
@@ -116,6 +121,8 @@ const SuggestionReportRcs = () => {
               id="suggestionto"
               name="suggestionto"
               label="To Date"
+              tooltipPlacement="top"
+              tooltipContent="Select To Date"
               value={suggestionData.toDate}
               onChange={(newValue) => {
                 setSuggestionData({ ...suggestionData, toDate: newValue });
@@ -137,6 +144,8 @@ const SuggestionReportRcs = () => {
                 setSuggestionData({ ...suggestionData, botId: newValue });
               }}
               placeholder="Select Agent Name"
+              tooltipPlacement="top"
+              tooltipContent="Select Agent Name"
             />
           </div>
 
@@ -155,6 +164,8 @@ const SuggestionReportRcs = () => {
                   mobileNumber: e.target.value,
                 });
               }}
+              tooltipPlacement="top"
+              tooltipContent="Enter Mobile Number"
             />
           </div>
 
@@ -163,7 +174,7 @@ const SuggestionReportRcs = () => {
             <UniversalButton
               id="suggestionsearch"
               name="suggestionsearch"
-              label={isFetching ? "Searching..." : "Search"}
+              label={"Search"}
               icon={<IoSearch />}
               disabled={isFetching}
               onClick={handleSearch}

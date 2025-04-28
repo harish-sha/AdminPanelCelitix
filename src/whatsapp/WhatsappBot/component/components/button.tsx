@@ -2,10 +2,12 @@ import { Textarea } from "@/components/ui/textarea";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import { set } from "date-fns";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
 export const ButtonNodeContent = ({
   id,
@@ -17,6 +19,7 @@ export const ButtonNodeContent = ({
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
 }) => {
   const [options, setOptions] = useState([]);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   function handleOptionAdd() {
     if (options.length >= 3) {
@@ -71,9 +74,21 @@ export const ButtonNodeContent = ({
     }));
   }, [options]);
 
+  const handleFileUpload = async (event: any) => {
+    const file = event.target.files[0];
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        text: file,
+      },
+    }));
+  };
+
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center">
         <AnimatedDropdown
           id="type"
           name="type"
@@ -94,21 +109,66 @@ export const ButtonNodeContent = ({
             }));
           }}
         />
-        <InputField
-          id="text"
-          name="text"
-          label={"URL"}
-          value={nodesInputData[id]?.text}
-          onChange={(e: { target: { value: any } }) => {
-            setNodesInputData((prev) => ({
-              ...prev,
+
+        <AnimatedDropdown
+          id="selectChoice"
+          name="selectChoice"
+          label="Select Choice"
+          options={[
+            { value: "url", label: "Enter Url" },
+            { value: "upload", label: "Upload" },
+          ]}
+          value={nodesInputData[id]?.selectedOption}
+          onChange={(e) => {
+            setNodesInputData(() => ({
+              ...nodesInputData,
               [id]: {
-                ...prev[id],
-                text: e.target.value,
+                ...nodesInputData[id],
+                selectedOption: e,
+                text: "",
               },
             }));
           }}
         />
+
+        {nodesInputData[id]?.selectedOption === "upload" && (
+          <div className="flex flex-col gap-2 mt-0">
+            <Label
+              htmlFor="uplaodfile"
+              className="text-sm font-medium text-gray-800 font-"
+            >
+              Upload File
+            </Label>
+            <Input
+              type="file"
+              id="uplaodfile"
+              name="uplaodfile"
+              onChange={handleFileUpload}
+              accept={`${nodesInputData[id]?.type}/*`}
+              required
+              ref={fileRef}
+              className="w-[250px]"
+            />
+          </div>
+        )}
+
+        {nodesInputData[id]?.selectedOption === "url" && (
+          <InputField
+            id="text"
+            name="text"
+            label={"URL"}
+            value={nodesInputData[id]?.text}
+            onChange={(e: { target: { value: any } }) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  text: e.target.value,
+                },
+              }));
+            }}
+          />
+        )}
       </div>
 
       <div>

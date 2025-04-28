@@ -323,7 +323,7 @@ export const sendMessageToUser = async (data) => {
   );
 };
 
-// send tempalte to use (live chat)
+// send tempalte to user (live chat)
 export const sendTemplateMessageToUser = async (data) => {
   return await fetchWithAuth("/LiveChat/sendTemplateMsg", {
     method: "POST",
@@ -442,4 +442,24 @@ export const deleteBot = async (id) => {
   return await fetchWithAuth(`/bot/deleteBotByBotSrNo?botSrno=${id}`, {
     method: "POST",
   });
+};
+
+// Live Chat Settins
+export const getAutoAction = async (data) => {
+  return await fetchWithAuth(
+    `/getAutoAction?wabaNumber=${data.wabaNumber}&type=${data.type}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// Whatsapp Template Library
+export const getTemplateList = async (data) => {
+  return await fetchWithAuth(
+    `/whatsappTemplateLibrary/getTemplateList?category=${data.category}&industry=${data.industry}`,
+    {
+      method: "POST",
+    }
+  );
 };

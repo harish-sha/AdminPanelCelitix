@@ -1,69 +1,61 @@
-arihant commits changes - 
+merge arihant to main from april 22 to april 25
 
-feat: update wabaSrno key - done
-
-
-15april - commits add to main from arihant 
-rcs>managetemplate>pages>addtemplates>addtemplatercs
-
-working files -
-
-rcs- managetemplate > pages > addtemplatercs.jsx
-rcs- managetemplate > components > variables.jsx, caraousel.jsx, card.jsx, preview.jsx,suggestionActions.jsx
-rcs - sendrcs > component > variablemanager.jsx , preview.jsx,campaigninputdetails.jsx
-rcs - sendrcs > sendrcs.jsx
-rcs - deliveryreport > deliveryreport.jsx
-whatsapp - launchCampaign > whatsapplaunchCampaign.jsx
-
-whatsapp - WhatsappCreateTemplate > WhatsappCreateTemplate.jsx
-whatsapp - livechat > whatsapplivechat.jsx
-
-
-Working files merged from 21april arihant 
-
-SMS
-
-apis > sms > sms.js - Done
-sms > smsSend > SendSms.jsx - Done
-sms > smsSend > components > variable.jsx - Done
-sms > smsSend > components > grid1.jsx - Done
-sms > smsSend > components > RadioButtonLaunchSms.jsx - Done
-
-Whatsapp
-
-apis > whatsapp > whatsapp.js - Done
-whatsapp > components > universalTextarea.jsx - Done
-whatsapp > whatsappBot > WhatsappBot.jsx - Done
-whatsapp > whatsappBot > component > createbot.tsx - Done
-whatsapp > whatsappBot > component > components > answer.tsx - Done
-whatsapp > whatsappBot > component > components > starting.tsx - Done
-whatsapp > whatsappBot > component > components > file.tsx - Done
-whatsapp > whatsappBot > component > components > details.tsx - Done
-whatsapp > whatsappBot > component > components > agent.tsx - Done
-whatsapp > whatsappBot > component > components > button.tsx - Done
-whatsapp > whatsappBot > component > components > list.tsx - Done
-whatsapp > whatsappBot > component > components > file.tsx - Done
-whatsapp > whatsappBot > component > components > text.tsx - Done
-whatsapp > whatsappBot > component > components > helper > convertToReactFlow.ts - Done
-whatsapp > whatsappBot > component > components > helper > extractVariable.ts - Done
-whatsapp > whatsappBot > component > components > helper > generatePayload.ts - Done
-samplePayload.json
-
-whatsapp > livechat > whatsapplivechat.jsx - Done
-whatsapp > livechat > component > chat > chatscreen.jsx - Done
-
-src > components > ui > textarea.tsx - Done
-
-
-April 21 updated file
-src > components > common > CustomContentGenerate.jsx - Done
+working files 
 sms > smsReports > SmsReports.jsx - Done
-sms > smsReports > components > PreviousDayDetailsTable.jsx - Done
-rcs > deliveryreport > components > DeliveryReport.jsx
-rcs > suggestionReport > SuggestionReport.jsx - Done
-rcs > suggestionReport > component > SuggestionReportTableRcs.jsx - Done
-rcs > managetemplate > component > carousel.jsx - Done
-rcs > managetemplate > component > variable.jsx - Done
-rcs > managetemplate > Pages > AddTemplateRcs.jsx - Done
-whatsapp > WhatsappCreateTemplate > components > carouselTemplateTypes.jsx - Done
-whatsapp > WhatsappCreateTemplate > components > TemplateTypes.jsx - Done
+sms > smsSend > SendSms.jsx - Done
+sms > smsSend > > components > grid1.jsx - Done
+sms > smsSend > > components > variable.jsx - Done
+sms > smsSend > > components > RadioButtonLaunchSms.jsx - Done
+sms > smsDltTemplate> SmsDltTemplate.jsx - Done
+sms > smsDltTemplate> components > dltTemplateTable.jsx
+
+whatsapp > whatsappLiveChatSetting > whatsappLiveChatSettings.jsx - Done
+whatsapp > managetemplate > managetemplate.jsx - Done
+whatsapp > managetemplate > component > variables.jsx
+whatsapp > whatsapplaunchCampaign > components > InputVariable.jsx - Done
+Whatsapp > whatsapplaunchCampaign > whatsapplaunchCampaign.jsx - Done
+Whatsapp > whatsapplaunchCampaign >  components > RadioButtonLaunchCampaign.jsx - Done
+whatsapp > WhatsappBot > component > components > file.tsx - Done
+whatsapp > WhatsappBot > component > components > details.tsx - Done
+whatsapp > WhatsappBot > component > components > button.tsx - Done
+whatsapp > WhatsappBot > component > components > list.tsx - Done
+whatsapp > WhatsappBot > component >  createBot.tsx - Done
+whatsapp > WhatsappBot > WhatsappBot.jsx - Done
+whatsapp > WhatsappCreateTemplate > components >  TemplateTypes.jsx - Done
+whatsapp > components > GeneratePassword.jsx - Done
+whatsapp > components > CustomEmojiPicker.jsx - Done
+whatsapp > components > InputField.jsx - Done
+whatsapp > ManageAgent > manageAgent.jsx - Done
+
+login > Login.jsx - Done
+
+mainlayout > navbar > Navbar.jsx - Done
+
+rcs > deliveryreport > DeliveryReportRcs. - Done
+rcs > sendRcs > components > RadioButtonLaunchCampaign.jsx - Done
+rcs > sendRcs > component > Preview.jsx - Done
+rcs > sendRcs > component > variablemanager.jsx - Done
+rcs > sendRcs > component > campaigninputdetails.jsx - Done
+rcs > sendRcs >  SendRcs.jsx - Done
+rcs > managetemplate > pages > AddTemplateRcs.jsx - Done
+rcs > managetemplate > components > Preview.jsx - Done
+rcs > managetemplate > components > variables.jsx - Done
+rcs > suggestionReport > SuggestionReportRcs.jsx - Done
+
+
+apis > whatsapp.js - Done
+apis > setting.js - Done
+apis > sms.js - Done
+apis > auth.js - Done
+apis > apiClient.js - Done
+
+routes > AuthRoute.jsx - Done
+routes > PrivateRoute.jsx - Done
+
+
+profile > components > GeneratePasswordSettings.jsx - Done
+profile > pages > Settings.jsx - Done
+
+components > layout > InputField.jsx - Done
+components > layout > Datatable.jsx - Done
+

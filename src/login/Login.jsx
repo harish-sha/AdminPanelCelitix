@@ -1,86 +1,3 @@
-// import React, { useState } from "react";
-// import { useNavigate } from "react-router-dom";
-// import toast from "react-hot-toast";
-// import InputField from "../components/layout/InputField";
-// import UniversalButton from "../components/common/UniversalButton";
-
-// const Login = () => {
-//     const [userId, setUserId] = useState("");
-//     const [password, setPassword] = useState("");
-//     const [loading, setLoading] = useState(false);
-//     const navigate = useNavigate();
-
-//     const handleLogin = async (e) => {
-//         e.preventDefault();
-//         setLoading(true);
-
-//         // const apiUrl = import.meta.env.VITE_API_BASE_URL;
-//         const apiUrl = "/api";
-
-//         try {
-//             const response = await fetch(`${apiUrl}/proCpaasRest/auth/login`, {
-//                 method: "POST",
-//                 headers: { "Content-Type": "application/json" },
-//                 body: JSON.stringify({ userId, password }),
-//             });
-
-//             const data = await response.json();
-
-//             if (!response.ok || !data.token) {
-//                 throw new Error("Authentication failed! No valid token received.");
-//             }
-
-//             localStorage.setItem("token", data.token);
-
-//             toast.success("Login Successful!");
-//             navigate("/");
-//         } catch (error) {
-//             console.error("Login Error:", error);
-//             toast.error(error.message);
-//         } finally {
-//             setLoading(false);
-//         }
-//     };
-
-//     return (
-//         <div className="flex items-center justify-center min-h-screen bg-gray-100">
-//             <div className="p-6 bg-white rounded-lg shadow-lg w-96">
-//                 <h2 className="mb-4 text-2xl font-semibold text-center">Login</h2>
-//                 <form onSubmit={handleLogin} className="space-y-4">
-//                     <InputField
-//                         id="userId"
-//                         name="userId"
-//                         label="User ID"
-//                         value={userId}
-//                         onChange={(e) => setUserId(e.target.value)}
-//                         placeholder="Enter your User ID"
-//                     />
-//                     <InputField
-//                         id="password"
-//                         name="password"
-//                         label="Password"
-//                         type="password"
-//                         value={password}
-//                         onChange={(e) => setPassword(e.target.value)}
-//                         placeholder="Enter your password"
-//                     />
-//                     <div className="flex items-center justify-center" >
-
-//                         <UniversalButton
-//                             label={loading ? "Logging in..." : "Login"}
-//                             variant="primary"
-//                             type="submit"
-//                             disabled={loading}
-//                         />
-//                     </div>
-//                 </form>
-//             </div>
-//         </div>
-//     );
-// };
-
-// export default Login;
-
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import "./login.css";
@@ -162,17 +79,6 @@ const Login = () => {
               <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
                 Sign In
               </h1>
-              {/* <InputField
-                id="userId"
-                name="userId"
-                label="User ID"
-                value={userId}
-                onChange={(e) => setUserId(e.target.value)}
-                placeholder="Enter User ID"
-                type="text"
-                className="form-control"
-                required
-              /> */}
               <div className="text-[0.95rem] font-medium text-gray-700 mb-2">User ID</div>
               <input
                 type="text"
@@ -186,22 +92,9 @@ const Login = () => {
                 required
               />
               <div className="relative">
-                {/* <InputField
-                  type={showPassword ? "text" : "password"}
-                  className="relative"
-                  placeholder="Enter password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  id="password"
-                  name="password"
-                  label="Password"
-                  maxLength={8}
-                /> */}
                 <div className="text-[0.95rem] font-medium text-gray-700 mb-2">Password</div>
                 <input
                   type={showPassword ? "text" : "password"}
-                  // className="relative"
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -222,16 +115,6 @@ const Login = () => {
                 </div>
               </div>
               <div className="flex items-center justify-center">
-                {/* <UniversalButton
-                  label={loading ? "Logging in..." : "Login"}
-                  variant="primary"
-                  type="submit"
-                  disabled={loading}
-                /> */}
-                {/* <button class="custom-signin-btn" type="submit">
-                  <div class="back"></div>
-                  <span class="text">Login</span>
-                </button> */}
                 <button
                   className={`custom-signin-btn ${loading ? "loading" : ""}`}
                   disabled={loading}
@@ -272,3 +155,440 @@ const Login = () => {
 };
 
 export default Login;
+
+// Login Page with functionality of forgot password and OTP verification
+
+// import React, { useEffect, useState } from "react";
+// import toast from "react-hot-toast";
+// import "./login.css";
+// import InputField from "../components/layout/InputField";
+// import { Link, useNavigate } from "react-router-dom";
+// import UniversalButton from "../components/common/UniversalButton";
+// import celitix_logo from "../assets/images/celitix-logo-white.svg";
+// import Header from "./components/Header";
+// import Footer from "./components/Footer";
+// import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+// import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+// import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+// import axios from "axios";
+// import { forgotPassword, login, verifyOtp } from "@/apis/auth/auth";
+
+// const Login = () => {
+//   const navigate = useNavigate();
+
+//   const [step, setStep] = useState(1);
+//   const [showPassword, setShowPassword] = useState(false);
+//   const [phone, setPhone] = useState("");
+//   const [countdown, setCountdown] = useState(0);
+//   const [error, setError] = useState("");
+//   const [isBtnVisible, setIsBtnVisible] = useState(true);
+
+//   const [inputDetails, setInputDetails] = useState({
+//     userId: "",
+//     password: "",
+//     rememberMe: false,
+//   });
+
+//   const [forgotPassState, setForgotPassState] = useState({
+//     userId: inputDetails.userId,
+//     mobileNo: "",
+//   });
+
+//   const [otp, setOtp] = useState({
+//     email: "",
+//     mobileNo: "",
+//   });
+
+//   const [passwordState, setPasswordState] = useState({
+//     password: "",
+//     confirmPassword: "",
+//   });
+
+//   useEffect(() => {
+//     let timer;
+
+//     if (countdown > 0) {
+//       timer = setInterval(() => {
+//         setCountdown((prev) => prev - 1);
+//       }, 1000);
+//     } else if (countdown === 0) {
+//       // Countdown reached zero, show button and trigger OTP resend
+//       setIsBtnVisible(true);
+
+//       const handleResendOtp = async () => {
+//         if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
+//         try {
+//           const res = await forgotPassword(forgotPassState);
+//           console.log(res);
+
+//           if (!res?.data.status) {
+//             return toast.error(res?.data?.msg || "Unable to send OTP");
+//           }
+//           toast.success(res?.data?.msg);
+//         } catch (e) {
+//           console.log(e);
+//           toast.error("Unable to send OTP");
+//         }
+//       };
+
+//       handleResendOtp();
+//     }
+
+//     return () => clearInterval(timer);
+//   }, [countdown]);
+
+//   async function handleLogin() {
+//     if (!inputDetails.userId || !inputDetails.password)
+//       return toast.error("Enter email and password");
+
+//     try {
+//       const res = await login(inputDetails);
+
+//       if (!res?.data?.token) {
+//         return toast.error("Invalid credentials");
+//       }
+
+//       if (inputDetails?.rememberMe) {
+//         localStorage.setItem("token", res?.data?.token);
+//       } else {
+//         sessionStorage.setItem("token", res?.data?.token);
+//       }
+//       toast.success("Login Successful!");
+//       navigate("/");
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Login failed");
+//     }
+//   }
+
+//   async function handleSendOtp() {
+//     if (!forgotPassState.userId || !forgotPassState.mobileNo)
+//       return toast.error("Enter email and phone number");
+
+//     try {
+//       const res = await forgotPassword(forgotPassState);
+
+//       if (!res?.data.status) {
+//         return toast.error("Either user id or mobile number is incorrect");
+//       }
+//       toast.success(res?.data?.msg);
+//       setStep(3);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Unable to send OTP");
+//     }
+//   }
+
+//   async function handleVerifyOtp() {
+//     console.log(otp);
+//     if (!otp?.mobileNo) {
+//       return toast.error("Enter OTP");
+//     }
+
+//     const data = {
+//       userId: forgotPassState.userId,
+//       mobileNo: forgotPassState.mobileNo,
+//       otp: otp?.mobileNo,
+//     };
+//     try {
+//       const res = await verifyOtp(data);
+//       if (!res?.data?.status) {
+//         return toast.error(res?.data?.msg);
+//       }
+//       toast.success("OTP verified successfully");
+//       setStep(1);
+//     } catch (e) {
+//       console.log(e);
+//       return toast.error("Unable to verify OTP");
+//     }
+//   }
+
+//   async function handleResendOTP() {
+//     setCountdown(15);
+//     setIsBtnVisible(false);
+//   }
+
+//   return (
+//     <div className="min-h-screen w-full flex items-center justify-center ">
+//       <div className="flex items-center justify-center h-[95vh] w-fit  bg-[#f5f7fa] px-15 ">
+//         <div className="w-full max-w-5xl bg-white rounded-2xl shadow-xl overflow-hidden grid md:grid-cols-2 min-h-120">
+//           <div className="p-8 flex flex-col space-y-3  justify-center">
+//             <h2 className="text-4xl font-bold text-[#6952d1]  text-center font-poppins">
+//               {step === 1 && "Login"}
+//               {step === 2 && "Forgot Password"}
+//               {step === 3 && "Verify OTP"}
+//               {step === 4 && "Reset Password"}
+//             </h2>
+
+//             {step === 1 && (
+//               <>
+//                 <div className="flex flex-col space-y-3  justify-center">
+//                   <label className="text-md font-medium text-gray-500">
+//                     Enter Username
+//                   </label>
+//                   <input
+//                     type="email"
+//                     placeholder="Enter Email Address"
+//                     className="w-full text-md p-2  rounded-lg  bg-gray-100"
+//                     value={inputDetails.userId}
+//                     onChange={(e) => {
+//                       setInputDetails({
+//                         ...inputDetails,
+//                         userId: e.target.value,
+//                       });
+//                     }}
+//                   />
+//                   <label className="text-md font-medium mb-4 text-gray-500">
+//                     Enter Password
+//                   </label>
+//                   <div className="relative mb-4 ">
+//                     <input
+//                       type={showPassword ? "text" : "password"}
+//                       maxLength="8"
+//                       placeholder="Enter Password"
+//                       className="w-full text-md p-2  rounded-lg bg-gray-100 pr-10"
+//                       value={inputDetails.password}
+//                       onChange={(e) => {
+//                         setInputDetails({
+//                           ...inputDetails,
+//                           password: e.target.value,
+//                         });
+//                       }}
+//                     />
+//                     <span
+//                       className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+//                       onClick={() => setShowPassword(!showPassword)}
+//                     >
+//                       {showPassword ? (
+//                         <VisibilityOutlinedIcon />
+//                       ) : (
+//                         <VisibilityOffOutlinedIcon />
+//                       )}
+//                     </span>
+//                   </div>
+//                   <div className="flex items-center justify-between text-sm text-gray-900 ">
+//                     <label className="flex items-center gap-2">
+//                       <input
+//                         type="checkbox"
+//                         className="accent-blue-500"
+//                         checked={inputDetails.rememberMe}
+//                         onChange={(e) =>
+//                           setInputDetails({
+//                             ...inputDetails,
+//                             rememberMe: e.target.checked,
+//                           })
+//                         }
+//                       />
+//                       Remember Me?
+//                     </label>
+//                     <button
+//                       onClick={() => setStep(2)}
+//                       className="hover:underline"
+//                     >
+//                       Forgot Password?
+//                     </button>
+//                   </div>
+
+//                   <div className="flex justify-center">
+//                     <button
+//                       className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+//                       onClick={handleLogin}
+//                     >
+//                       Log In
+//                     </button>
+//                   </div>
+//                 </div>
+//               </>
+//             )}
+
+//             {step === 2 && (
+//               <>
+//                 <div className="flex flex-col space-y-3  justify-center">
+//                   <label className="text-md font-medium text-gray-500">
+//                     userId
+//                   </label>
+//                   <input
+//                     type="text"
+//                     placeholder="Enter userId"
+//                     className="w-full p-2 mb-4 rounded-lg  bg-gray-100  text-md"
+//                     value={forgotPassState.userId}
+//                     onChange={(e) => {
+//                       setForgotPassState({
+//                         ...forgotPassState,
+//                         userId: e.target.value,
+//                       });
+//                     }}
+//                   />
+
+//                   <label className="text-md font-medium text-gray-500 ">
+//                     Enter MobileNo
+//                   </label>
+//                   <input
+//                     maxLength={13}
+//                     placeholder="Enter Verified Phone Number"
+//                     className="w-full p-2 mb-4 rounded-lg  bg-gray-100 text-md "
+//                     value={forgotPassState.mobileNo}
+//                     onChange={(e) => {
+//                       setForgotPassState({
+//                         ...forgotPassState,
+//                         mobileNo: e.target.value,
+//                       });
+//                     }}
+//                   />
+//                   <div className="flex justify-center">
+//                     <button
+//                       className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+//                       onClick={handleSendOtp}
+//                     >
+//                       Send OTP
+//                     </button>
+//                   </div>
+//                 </div>
+//               </>
+//             )}
+
+//             {step === 3 && (
+//               <>
+//                 <div className="flex flex-col space-y-3  justify-center">
+//                   {/* <label className="text-md font-medium text-gray-500">
+//                     Enter Email Otp
+//                   </label>
+//                   <input
+//                     placeholder="Enter Email OTP"
+//                     className="w-full p-2  rounded-lg mb-3 bg-gray-100 text-center tracking-wide text-md "
+//                     value={otp.email}
+//                     otpEmail={123456}
+//                     maxLength={6}
+//                     onChange={(e) => {
+//                       setOtp((prevOtp) => ({
+//                         ...prevOtp,
+//                         email: e.target.value,
+//                       }));
+//                     }}
+//                   /> */}
+
+//                   <label className="text-md font-medium text-gray-500">
+//                     Enter Otp
+//                   </label>
+//                   <input
+//                     placeholder="Enter OTP"
+//                     className="w-full p-2  rounded-lg  bg-gray-100 text-center tracking-wide text-md "
+//                     value={otp.mobileNo}
+//                     // otpPhone={987654}
+//                     maxLength={6}
+//                     onChange={(e) => {
+//                       setOtp((prevOtp) => ({
+//                         ...prevOtp,
+//                         mobileNo: e.target.value,
+//                       }));
+//                     }}
+//                   />
+
+//                   {error && (
+//                     <p className="text-red-500 text-sm mb-2">{error}</p>
+//                   )}
+
+//                   <div className="flex justify-center">
+//                     <button
+//                       className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+//                       onClick={handleVerifyOtp}
+//                     >
+//                       Verify OTP
+//                     </button>
+//                   </div>
+
+//                   {countdown > 0 && (
+//                     <p className="text-md text-gray-800 mt-2 flex justify-center">
+//                       Resend OTP in {countdown}s
+//                     </p>
+//                   )}
+//                   {isBtnVisible && (
+//                     // <div className="mt-4">
+//                     <div className="flex justify-center">
+//                       <button
+//                         className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+//                         onClick={handleResendOTP}
+//                       >
+//                         Resend OTP
+//                       </button>
+//                     </div>
+//                   )}
+//                 </div>
+//               </>
+//             )}
+
+//             {/* {step === 4 && (
+//               <>
+//                 <div className="flex flex-col space-y-3  justify-center">
+//                   <label className="text-md font-medium text-gray-500 mb-4">
+//                     Enter New Password
+//                   </label>
+//                   <div className="relative mb-4">
+//                     <input
+//                       maxLength="8"
+//                       placeholder="Enter New Password"
+//                       className="w-full p-3 rounded-md bg-gray-100 text-md"
+//                       value={newPassword}
+//                       onChange={(e) => setNewPassword(e.target.value)}
+//                     />
+//                     <span
+//                       className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+//                       onClick={() => setShowPassword(!showPassword)}
+//                     >
+//                       {showPassword ? (
+//                         <VisibilityOutlinedIcon />
+//                       ) : (
+//                         <VisibilityOffOutlinedIcon />
+//                       )}
+//                     </span>
+//                   </div>
+
+//                   <label className="text-md font-medium text-gray-500 mb-4">
+//                     Enter Confirm Password
+//                   </label>
+//                   <div className="relative mb-4">
+//                     <input
+//                       maxLength="8"
+//                       placeholder="Confirm New Password"
+//                       className="w-full p-3 rounded-md bg-gray-100 text-md"
+//                       value={confirmPassword}
+//                       onChange={(e) => setConfirmPassword(e.target.value)}
+//                     />
+//                     <span
+//                       className="absolute inset-y-0 right-3 flex items-center text-gray-400 cursor-pointer"
+//                       onClick={() => setShowPassword(!showPassword)}
+//                     >
+//                       {showPassword ? (
+//                         <VisibilityOutlinedIcon />
+//                       ) : (
+//                         <VisibilityOffOutlinedIcon />
+//                       )}
+//                     </span>
+//                   </div>
+//                   <div className="flex justify-center">
+//                     <button
+//                       className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+//                       onClick={handleResetPassword}
+//                     >
+//                       Reset Password
+//                     </button>
+//                   </div>
+//                 </div>
+//               </>
+//             )} */}
+//           </div>
+
+//           <div className="bg-gradient-to-tr from-[#4f3ca2] to-[#8a63d2] text-white flex flex-col items-center justify-center p-8 font-poppins">
+//             <img src={celitix_logo} alt="logo" className="w-60 mb-6" />
+//             <p className="text-xl text-center font-medium">
+//               Welcome to the Future of Customer Communication —
+//               <br />
+//               Your Engagement Journey Begins Here.
+//             </p>
+//           </div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+// export default Login;

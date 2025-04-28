@@ -295,12 +295,12 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res?.map((item, i) => ({
-            id: item.receipt_no_of_duplicate_message,
-            sn: i + 1,
-            ...item,
-            total_audience: "-",
-            campaign_type: "-",
-          }))
+              id: item.receipt_no_of_duplicate_message,
+              sn: i + 1,
+              ...item,
+              total_audience: "-",
+              campaign_type: "-",
+            }))
           : []
       );
     } catch (e) {
@@ -446,10 +446,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -527,10 +527,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -617,10 +617,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -718,10 +718,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res)
           ? res.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+              sn: index + 1,
+              id: index + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {

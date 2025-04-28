@@ -7,13 +7,15 @@ export const Details = ({
   setDetails,
   details,
   handleSubmit,
+  isUpdate,
 }: {
   setDetails: React.Dispatch<React.SetStateAction<any>>;
   details: any;
   handleSubmit: () => void;
+  isUpdate: Boolean;
 }) => {
   return (
-    <div className="mb-2 flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <AnimatedDropdown
         id="selecetWaba"
         name="selectWaba"
@@ -51,7 +53,7 @@ export const Details = ({
       <UniversalButton
         id="saveBot"
         name="saveBot"
-        label="Create"
+        label={`${isUpdate ? "Update" : "Save"}`}
         onClick={handleSubmit}
         style={{}}
       />

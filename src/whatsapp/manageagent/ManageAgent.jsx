@@ -649,7 +649,7 @@ const ManageAgent = () => {
                     header="Edit Department"
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
-                     className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
+                    className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
                   >
                     <InputField
                       label="Department Name"
@@ -711,7 +711,7 @@ const ManageAgent = () => {
             header="Add Agent"
             draggable={false}
             visible={addAgentDialog}
-             className="lg:w-[35rem] md:w-[30rem] sm:w-[20rem]"
+            className="lg:w-[35rem] md:w-[30rem] sm:w-[20rem]"
             onHide={() => {
               setAddAgentDialog(false);
             }}
@@ -750,9 +750,8 @@ const ManageAgent = () => {
                 tooltipContent="Click to generate a secure password"
                 tooltipPlacement="right"
                 value={generatedPassword}
-                onPasswordGenerate={(newPassword) =>
-                  setGeneratedPassword(newPassword)
-                }
+                setGeneratedPassword={setGeneratedPassword}
+                onChange={(e) => setGeneratedPassword(e)}
               />
               <div className="mb-2">
                 <DropdownWithSearch

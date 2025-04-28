@@ -3,7 +3,7 @@ const API_BASE_URL = "/api";
 import axios from "axios";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token = sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("token") || localStorage.getItem("token");
 
   if (!token) {
     console.error("No token found, redirecting to login.");

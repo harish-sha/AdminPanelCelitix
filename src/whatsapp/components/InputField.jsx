@@ -20,6 +20,7 @@ const InputField = ({
   accept = "",
   required = false,
   max = { maxLength },
+  ref = null,
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -64,6 +65,7 @@ const InputField = ({
           error ? "border-red-500" : "border-gray-300"
         }`}
         accept={accept}
+        ref={ref}
       />
 
       {error && <p className="mt-1 text-sm text-red-500">{errorText}</p>}

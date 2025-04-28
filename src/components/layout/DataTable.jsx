@@ -74,7 +74,9 @@ export const DataTable = ({
   rows,
   setSelectedRows,
   selectedRows,
-  height = 558, // 👈 default height
+  height = 558,
+
+  checkboxSelection = false,
 }) => {
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -151,7 +153,7 @@ export const DataTable = ({
         pagination
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        // checkboxSelection
+        checkboxSelection={checkboxSelection}
         rowHeight={45}
         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}

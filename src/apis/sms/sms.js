@@ -90,7 +90,7 @@ export const updateTemplateBySrno = async (srNo) => {
   });
 };
 
-// delete single smsTemplate bysrno
+// delete single smsTemplate bysrno (H)
 export const deleteSingleSmsTemplate = async (srNo) => {
   return await fetchWithAuth(`/smsTemplate/deleteTemplateBySrNo?srNo=${srNo}`, {
     method: "POST",
@@ -105,3 +105,25 @@ export const deleteMultipleSmsTemplate = async (srNoList) => {
   });
 };
 
+// Send SMS
+export const sendSms = async (data) => {
+  return await fetchWithAuth("/sendSms/saveSMSCampaign", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Import Template
+export const importTemplate = async (data) => {
+  return await fetchWithAuth("/smsTemplate/importdltTemp", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Delete Template (A)
+export const deleteTemplate = async (srno) => {
+  return await fetchWithAuth(`/smsTemplate/deleteTemplateBySrNo?srNo=${srno}`, {
+    method: "POST",
+  });
+};

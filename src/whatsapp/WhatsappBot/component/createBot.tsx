@@ -47,7 +47,7 @@ import generateBotPayload from "./components/helper/generatePayload";
 import { List } from "./components/list";
 import { ButtonNodeContent } from "./components/button";
 
-import { useLocation } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   convertToReactFlow,
   transformNodesById,
@@ -241,6 +241,7 @@ function NodeComponent({
 }
 
 const CreateWhatsAppBot = () => {
+  const navigate = useNavigate();
   const { state } = useLocation();
 
   let node = [];
@@ -255,11 +256,12 @@ const CreateWhatsAppBot = () => {
     data = options;
     node = nodes;
     edge = edges;
+
   }
 
   const [nodes, setNodes, onNodesChange] = useNodesState(node);
   const [edges, setEdges, onEdgesChange] = useEdgesState(edge);
-  const [nodeId, setNodeId] = useState(1);
+  const [nodeId, setNodeId] = useState(node ? node.length + 1 : 1);
   const [isVisible, setIsVisible] = useState(false);
   const [type, setType] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState(null);
@@ -429,6 +431,12 @@ const CreateWhatsAppBot = () => {
         eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
       );
 
+      setEdges((eds) =>
+        eds.filter(
+          (edge) => edge.sourceHandler !== nodeId && edge.target !== nodeId
+        )
+      );
+
       setIsVisible(false);
     },
     [setNodes, setEdges]
@@ -593,29 +601,24 @@ const CreateWhatsAppBot = () => {
       image: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       audio: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       document: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       video: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       starting: {
         startingKeyword: "",
       },
       text: {
         message: "",
-        variable: "",
       },
       agent: {
         type: "",
@@ -625,7 +628,6 @@ const CreateWhatsAppBot = () => {
         type: "",
         text: "",
         message: "",
-        variable: "",
         options: [],
       },
       answer: {
@@ -744,29 +746,24 @@ const CreateWhatsAppBot = () => {
       image: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       audio: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       document: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       video: {
         fileUrl: "",
         fileCaption: "",
-        variable: "",
       },
       starting: {
         startingKeyword: "",
       },
       text: {
         message: "",
-        variable: "",
       },
       agent: {
         type: "",
@@ -780,7 +777,6 @@ const CreateWhatsAppBot = () => {
         type: "",
         text: "",
         message: "",
-        variable: "",
         options: [],
       },
       button: {
@@ -874,6 +870,7 @@ const CreateWhatsAppBot = () => {
         name: "",
       }));
       toast.success("Bot Save Successfully");
+      navigate("/wwhatsappbot")
     } catch (e) {
       // console.log(e);
     }
@@ -883,7 +880,7 @@ const CreateWhatsAppBot = () => {
     <>
       <div className="flex">
         <div
-          style={{ width: "90vw", height: "90vh" }}
+          style={{ width: "90vw", height: "auto" }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
@@ -912,8 +909,8 @@ const CreateWhatsAppBot = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[250px]">
-          <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3 h-fit">
+        <div className="flex flex-col justify-between w-[200px] gap-4">
+          <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
             <Button
               draggable
               onDragStart={(event) => handleDragStart(event, "starting")}
@@ -1013,6 +1010,7 @@ const CreateWhatsAppBot = () => {
             setDetails={setDetails}
             details={details}
             handleSubmit={handleSubmit}
+            isUpdate={state ?? false}
           />
         </div>
       </div>

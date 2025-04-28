@@ -54,7 +54,7 @@ const CustomEmojiPicker = ({ onSelect, position = 'bottom' }) => {
                         autoFocusSearch={false}
                         open={true}
                         reactionsDefaultOpen={true}
-                        height={400}
+                        height={350}
                         width={400}
                         // lazyLoadEmojis={true}
                         allowExpandReactions={true}

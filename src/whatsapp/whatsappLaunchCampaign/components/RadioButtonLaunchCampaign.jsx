@@ -29,6 +29,7 @@ function RadioButtonLaunchCampaign({
   uploadedFile,
   setIsUploaded,
   isUploaded,
+  fileRef
   // setIsCountryCodeChecked
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
@@ -409,6 +410,7 @@ function RadioButtonLaunchCampaign({
               id="fileInput"
               name="fileInput"
               accept=".xls,.xlsx,.xlsm"
+              ref={fileRef}
             />
             <div className="flex items-center justify-center gap-2">
               <label

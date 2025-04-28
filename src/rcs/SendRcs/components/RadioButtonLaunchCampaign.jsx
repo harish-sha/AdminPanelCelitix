@@ -19,6 +19,7 @@ export const RadioButtonLaunchCampaign = ({
   setContactData,
   contactData,
   countryList,
+  setHeaders,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -138,6 +139,7 @@ export const RadioButtonLaunchCampaign = ({
                     sampleRecords: "",
                     addcountryCode: false,
                   });
+                  setHeaders([]);
                 }}
                 checked={selectedOption === "group"}
               />
@@ -160,6 +162,7 @@ export const RadioButtonLaunchCampaign = ({
                 onChange={() => {
                   setSelectedOption("contact");
                   setselectedGrp("");
+                  setHeaders([]);
                 }}
                 checked={selectedOption === "contact"}
               />
@@ -239,7 +242,7 @@ export const RadioButtonLaunchCampaign = ({
                     // isUploading ?
                     // "disabled" : ""
                     ""
-                    }`}
+                  }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -280,8 +283,8 @@ export const RadioButtonLaunchCampaign = ({
       {selectedOption === "contact" &&
         uploadedFile &&
         contactData?.fileHeaders?.length > 0 && (
-          <div className="flex  flex-wrap items-start justify-between gap-2 mt-3 md:flex-wrap xl:flex-nowrap">
-            <div className="flex flex-col gap-2  w-full">
+          <div className="mt-2">
+            <div className="">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -321,7 +324,7 @@ export const RadioButtonLaunchCampaign = ({
                 }}
               />
             </div>
-            <div className="w-full md:mt-2 lg:mt-4 xl:mt-7">
+            <div className="w-full mt-2">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"
@@ -330,7 +333,7 @@ export const RadioButtonLaunchCampaign = ({
                 tooltipPlacement="right"
                 options={contactData?.fileHeaders.map((col, index) => ({
                   label: col,
-                  value: index,
+                  value: String(index),
                 }))}
                 value={contactData.selectedMobileColumn}
                 onChange={(e) => {

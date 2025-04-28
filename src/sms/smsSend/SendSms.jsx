@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Grid1 } from "./components/grid1";
-import { getAllTemplates } from "@/apis/sms/sms";
+import { getAllTemplates, sendSms } from "@/apis/sms/sms";
 import { RadioButtonLaunchSms } from "./components/RadioButtonLaunchSms";
 import { getAllGroups, getCountryList } from "@/apis/common/common";
 import toast from "react-hot-toast";
@@ -8,6 +8,8 @@ import UniversalButton from "@/components/common/UniversalButton";
 import { Dialog } from "primereact/dialog";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "@material-tailwind/react";
+import moment from "moment";
+import { isEnglish } from "./helper/isEnglish";
 
 const SendSms = () => {
   const [inputDetails, setInputDetails] = useState({
@@ -17,6 +19,8 @@ const SendSms = () => {
     unicode: 0,
     message: "",
     templateType: 1,
+    senderId: "",
+    sender: [],
   });
 
   const [allTemplates, setAllTemplates] = useState([]);
@@ -25,7 +29,9 @@ const SendSms = () => {
   const [allGroups, setAllGroups] = useState([]);
   const [selectedGrp, setselectedGrp] = useState("");
   const [uploadFile, setUploadFile] = useState(null);
-  const [contactData, setContactData] = useState({});
+  const [contactData, setContactData] = useState({
+    addcountryCode: false,
+  });
   const [countryList, setCountryList] = useState([]);
 
   const [confirmDialogVisible, setConfirmDialogVisible] = useState(false);
@@ -37,20 +43,16 @@ const SendSms = () => {
   });
 
   useEffect(() => {
-    if (!inputDetails?.templateType) return;
+    // if (!inputDetails?.templateType) return;
     async function handleFetchAllTemplates() {
       try {
-        const res = await getAllTemplates(inputDetails?.templateType);
+        const res = await getAllTemplates("all");
         setAllTemplates(res);
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
 
-    handleFetchAllTemplates();
-  }, [inputDetails?.templateType]);
-
-  useEffect(() => {
     async function fetchAllGrps() {
       try {
         const res = await getAllGroups();
@@ -71,9 +73,32 @@ const SendSms = () => {
       }
     }
 
+    handleFetchAllTemplates();
     handlefetchAllCountry();
     fetchAllGrps();
   }, []);
+
+  useEffect(() => {
+    if (!inputDetails?.templateId) return;
+    const data = allTemplates?.find(
+      (template) => template.templateId === inputDetails?.templateId
+    );
+
+    setInputDetails({
+      ...inputDetails,
+      message: data?.message,
+      sender: [data?.senderID],
+    });
+  }, [inputDetails?.templateId]);
+
+  useEffect(() => {
+    const isEnglishText = isEnglish(inputDetails?.message);
+
+    setInputDetails({
+      ...inputDetails,
+      unicode: isEnglishText ? 0 : 1,
+    });
+  }, [inputDetails?.message]);
 
   function handleReview() {
     let isError = false;
@@ -81,11 +106,21 @@ const SendSms = () => {
     if (!inputDetails?.campaingName) {
       return toast.error("Please enter a campaign name.");
     }
+    if (!inputDetails?.templateId) {
+      return toast.error("Please select a template.");
+    }
     if (!inputDetails?.message) {
       return toast.error("Please enter a message.");
     }
-    if (!inputDetails?.unicode) {
+    if (inputDetails?.templateType === 3 && !inputDetails?.unicode) {
       return toast.error("Please enter a language.");
+    }
+    if (!inputDetails?.senderId) {
+      return toast.error("Please enter a sender ID.");
+    }
+
+    if (!inputDetails?.templateType) {
+      return toast.error("Please select a template type.");
     }
 
     if (selectedOption === "group" && !selectedGrp) {
@@ -121,6 +156,7 @@ const SendSms = () => {
     ) {
       return toast.error("Please choose a country code.");
     }
+
     if (selectedOption === "contact" && !contactData.selectedMobileColumn) {
       return toast.error("Please choose a mobile number field.");
     }
@@ -129,12 +165,85 @@ const SendSms = () => {
     setConfirmDialogVisible(true);
   }
 
+  async function handleLaunchCampaign() {
+    if (scheduleData?.isSchedule && !scheduleData?.time) {
+      return toast.error("Please select a time.");
+    }
+
+    if (scheduleData?.isSchedule && scheduleData?.time < new Date()) {
+      return toast.error("Please select a valid time.");
+    }
+
+    const data = {
+      message: inputDetails?.message,
+      campaignName: inputDetails?.campaingName,
+      templateId: inputDetails?.templateId,
+      entityId: inputDetails?.entityId,
+      file: "",
+      senderId: inputDetails?.senderId,
+      //shortUrl: 0,
+      totalCount: totalAudience,
+      isSchedule: scheduleData?.isSchedule ? 1 : 0,
+      mobilenoIndex: contactData?.selectedMobileColumn || "-1",
+      scheduleTime: scheduleData?.isSchedule
+        ? moment(scheduleData?.time).format("MM/DD/YYYY h:mm A")
+        : "",
+
+      unicode: inputDetails?.unicode,
+      isGroup: selectedOption === "group" ? 1 : 0,
+      groupSrNoList: "16,28,17,56",
+      accountUsageTypeId: 1,
+      countryCode: "0",
+      attachmentType: "file",
+    };
+
+    try {
+      const res = await sendSms(data);
+
+      if (!res?.message.includes("Successfully")) {
+        return toast.error(res?.error);
+      }
+      toast.success("Message sent successfully.");
+      setConfirmDialogVisible(false);
+
+      setInputDetails({
+        campaingName: "",
+        templateId: "",
+        entityId: "",
+        unicode: 0,
+        message: "",
+        templateType: 1,
+        senderId: "",
+        sender: [],
+      });
+      setSelectedOption("group");
+      setselectedGrp(null);
+      setUploadFile(null);
+      setContactData(null);
+      setTotalAudience(0);
+      setScheduleData({
+        isSchedule: false,
+        time: new Date(),
+      });
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error launching campaign.");
+    }
+  }
+
+  useEffect(() => {
+    setScheduleData({
+      isSchedule: false,
+      time: new Date(),
+    });
+  }, [confirmDialogVisible]);
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
         <Grid1
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
+          allTemplates={allTemplates}
           headers={contactData?.fileHeaders || []}
         />
         <RadioButtonLaunchSms
@@ -173,41 +282,30 @@ const SendSms = () => {
       >
         <div className="space-y-5">
           <div className="grid grid-cols-2 p-3 space-y-2 text-gray-800 bg-gray-100 rounded-md shadow-lg text-md">
-            {/* <span className="font-semibold font-m">WABA Account : </span>
-            <p className="">
-              {allAgents?.find(
-                (agents) => agents.agent_id === campaignDetails.agent
-              )?.agent_name || "N/A"}
-            </p>
-            
-           
             <span className="font-semibold font-m">Template Name : </span>
             <p className="">
               {allTemplates?.find(
-                (template) => template.srno === campaignDetails.templateSrno
+                (template) => template.templateId === inputDetails.templateId
               )?.templateName || "N/A"}
             </p>
-            
-           
+
+            {/* 
             <span className="font-semibold font-m">Template Type : </span>
             <p className="">
-              {" "}
+              
               {allTemplates?.find(
                 (template) => template.srno === campaignDetails.templateSrno
               )?.templateType || "N/A"}
-            </p>
-            
+            </p>*/}
 
-           
             <span className="font-semibold font-m">Campaign Name : </span>
             <p className="w-full break-words">
-              {campaignDetails.campaignName || "N/A"}
+              {inputDetails.campaingName || "N/A"}
             </p>
-             */}
 
             <span className="font-semibold font-m">Total Audience : </span>
             <p className="">
-              {totalAudience || contactData.totalContacts || "N/A"}
+              {totalAudience || contactData?.totalContacts || "N/A"}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -245,7 +343,7 @@ const SendSms = () => {
           <div className="flex items-center justify-center">
             <UniversalButton
               label="Send Campaign"
-              onClick={() => { }}
+              onClick={handleLaunchCampaign}
               style={{
                 borderRadius: "40px",
                 letterSpacing: "1px",

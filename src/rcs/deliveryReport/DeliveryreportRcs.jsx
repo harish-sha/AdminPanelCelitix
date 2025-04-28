@@ -27,7 +27,7 @@ const DeliveryreportRcs = () => {
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
-    startDate: new Date().toLocaleDateString("en-GB"),
+    startDate: new Date(),
     templateType: "",
     campaignName: "",
     status: "",
@@ -290,13 +290,13 @@ const DeliveryreportRcs = () => {
                   minDate={new Date().setMonth(new Date().getMonth() - 3)}
                   maxDate={new Date()}
                 />
-            </div>
+              </div>
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
+                  defaultValue={new Date()}
                   label="To Date"
                   id="toDate"
                   name="toDate"
-                  defaultValue={new Date()}
                   value={setSummaryData.toDate}
                   onChange={(e) => {
                     setSummaryData({

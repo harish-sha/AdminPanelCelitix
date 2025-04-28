@@ -25,7 +25,7 @@ import {
 import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 
-const Navbar = ({ isCollapsed, setIsCollapsed }) => { 
+const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const [showModal, setShowModal] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -42,8 +42,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const handleBalance = async () => {
     setIsFetchingBalance(true);
     const res = await fetchBalance();
-    setBalance(res.balance);
-    setTimeout(() => setIsFetchingBalance(false), 600); 
+    setBalance(res.balance || 0);
+    setTimeout(() => setIsFetchingBalance(false), 600);
   };
 
   useEffect(() => {
@@ -114,7 +114,15 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             <path className="line" d="M7 16 27 16"></path>
           </svg>
         </label> */}
-        <input className="toggle-checkbox" id="toggle" type="checkbox" checked={isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
+        <input
+          className="toggle-checkbox"
+          id="toggle"
+          type="checkbox"
+          checked={isCollapsed}
+          onChange={(event) => {
+            setIsCollapsed((prev) => !prev);
+          }}
+        />
         <label className="hamburger" htmlFor="toggle">
           <div className="bar"></div>
           <div className="bar"></div>
@@ -142,7 +150,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               title: `Balance: ₹${balance}`,
               Icon: isFetchingBalance ? LoopIcon : WalletIcon,
               action: handleBalance,
-              showBalance: true
+              showBalance: true,
             },
             // { title: "Wallet", Icon: WalletIcon },
             {
@@ -228,9 +236,16 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           <IconButton onClick={handleMenu} className="text-gray-700">
             {/* <MoreIcon /> */}
             <label className="hamburger">
-              <input type="checkbox" checked={Boolean(menuAnchorEl)} onChange={(event) => (event?.currentTarget || null)} />
+              <input
+                type="checkbox"
+                checked={Boolean(menuAnchorEl)}
+                onChange={(event) => event?.currentTarget || null}
+              />
               <svg viewBox="0 0 32 32">
-                <path className="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                <path
+                  className="line line-top-bottom"
+                  d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
+                ></path>
                 <path className="line" d="M7 16 27 16"></path>
               </svg>
             </label>

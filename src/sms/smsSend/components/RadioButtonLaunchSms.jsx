@@ -336,7 +336,7 @@ export const RadioButtonLaunchSms = ({
                 tooltipPlacement="right"
                 options={contactData?.fileHeaders.map((col, index) => ({
                   label: col,
-                  value: index,
+                  value: String(index),
                 }))}
                 value={contactData.selectedMobileColumn}
                 onChange={(e) => {

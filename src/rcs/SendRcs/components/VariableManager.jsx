@@ -1,49 +1,9 @@
-// import InputField from "@/whatsapp/components/InputField";
-
-// export const VariableManager = ({
-//   templateDetails,
-//   varList,
-//   setVarList,
-//   varLength,
-//   setInputVariables,
-//   inputVariables,
-// }) => {
-//   function handleInputVariable(data, index) {
-//     setInputVariables((prev) => ({
-//       ...prev,
-//       [index]: data,
-//     }));
-//   }
-
-//   return (
-//     <div className=" p-3 bg-gray-100  lg:flex-1">
-//       <h1>Variables</h1>
-//       <div className="flex gap-2 flex-col mt-2">
-//         {varList?.map((input, index) => (
-//           <InputField
-//             key={index}
-//             id={index}
-//             label={`Variable ${index + 1}`}
-//             name={`variable${index + 1}`}
-//             placeholder={`Enter variable ${index + 1}`}
-//             onChange={(e) => {
-//               handleInputVariable(e.target.value, index);
-//             }}
-//             sx={{
-//               width: "100%",
-//               marginBottom: "1rem",
-//             }}
-//           />
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
-
-
 import InputField from "@/whatsapp/components/InputField";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import VariableDropdown from "@/whatsapp/components/VariableDropdown";
+import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 
 export const VariableManager = ({
   templateDetails,
@@ -57,8 +17,11 @@ export const VariableManager = ({
   setSelectedIndex,
   carVarInput,
   setCarVarInput,
+  headers,
+  selectedOption,
 }) => {
   const [isCarousal, setIsCarousal] = useState(false);
+  const textBoxRef = useRef(null);
 
   useEffect(() => {
     if (templateDetails.length > 1) {
@@ -85,6 +48,43 @@ export const VariableManager = ({
     });
   };
 
+  async function handleEmojiAdd(emoji, index) {
+    const input = textBoxRef.current;
+    if (!input) return;
+
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const newMessageContent =
+      inputVariables[index].slice(0, start) +
+      emoji +
+      inputVariables[index].slice(end);
+
+    setInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
+  }
+
+  function inputVariable(e, index) {
+    const input = textBoxRef.current;
+    if (!input) return;
+
+    const tag = `{#${e}#}`;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const newMessageContent =
+      inputVariables[index].slice(0, start) +
+      tag +
+      inputVariables[index].slice(end);
+
+    setInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
+  }
+
   return (
     <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
       <h1>Variables</h1>
@@ -92,20 +92,33 @@ export const VariableManager = ({
         {!isCarousal &&
           varLength > 0 &&
           varList?.map((input, index) => (
-            <InputField
-              key={index}
-              id={index}
-              label={`Variable ${index + 1}`}
-              name={`variable${index + 1}`}
-              placeholder={`Enter variable ${index + 1}`}
-              onChange={(e) => {
-                handleInputVariable(e.target.value, index);
-              }}
-              sx={{
-                width: "100%",
-                marginBottom: "1rem",
-              }}
-            />
+            <div className="relative w-full">
+              <InputField
+                key={index}
+                id={`variable${index + 1}`}
+                ref={textBoxRef}
+                label={`Variable ${index + 1}`}
+                name={`variable${index + 1}`}
+                placeholder={`Enter variable ${index + 1}`}
+                value={inputVariables[index]}
+                onChange={(e) => {
+                  handleInputVariable(e.target.value, index);
+                }}
+                sx={{
+                  width: "100%",
+                  marginBottom: "1rem",
+                }}
+              />
+              <div className="absolute top-[1.85rem] right-0">
+                <InputVariable
+                  variables={headers}
+                  onSelect={(e) => inputVariable(e, index)}
+                />
+              </div>
+              <div className="absolute top-[2.1rem] right-8">
+                <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
+              </div>
+            </div>
           ))}
 
         {isCarousal && carVar.length > 0 && (

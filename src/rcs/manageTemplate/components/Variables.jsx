@@ -37,10 +37,19 @@ export const Variables = ({
     if (!selectedVariable) return toast.error("Please select a variable");
     const variableTag = `{#${selectedVariable}#}`;
 
+    const input = textBoxRef.current;
+    if (!input) return;
+
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
     if (messageContent.length + variableTag.length > MAX_LENGTH) return;
 
     setVariablesData((prev) => [...prev, selectedVariable]);
-    setMessageContent(messageContent + variableTag);
+
+    const newMessageContent =
+      messageContent.slice(0, start) + variableTag + messageContent.slice(end);
+    setMessageContent(newMessageContent);
 
     setIsVariableVisible(false);
     setSelectedVariable("");
@@ -84,7 +93,7 @@ export const Variables = ({
     [messageContent, setMessageContent, MAX_LENGTH]
   );
 
-  const insertEmojiAtIndex = () => { };
+  const insertEmojiAtIndex = () => {};
 
   const handleEmojiClick = useCallback(
     (emoji) => {

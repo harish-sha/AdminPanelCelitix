@@ -7,6 +7,7 @@ export const getApiKey = async () => {
   });
 };
 
+// Old API KEY
 export const getOldApiKey = async () => {
   return await fetchWithAuth(`/settings/getApikey`, {
     method: "POST",
@@ -15,12 +16,9 @@ export const getOldApiKey = async () => {
 
 // Update API KEY
 export const updateApiKey = async (newAPIKey) => {
-  return await fetchWithAuth(
-    `/settings/changeuniquekey?newkey=${newAPIKey}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/settings/changeuniquekey?newkey=${newAPIKey}`, {
+    method: "POST",
+  });
 };
 
 // fetch Login Ip Details
@@ -40,8 +38,25 @@ export const fetchTransactions = async (filterData) => {
   );
 };
 
+// Fetch Account Balance
 export const fetchBalance = async () => {
   return await fetchWithAuth("/user/getAccountBalanceByUser", {
     method: "POST",
+  });
+};
+
+// Update Password
+export const updatePassword = async (data) => {
+  return await fetchWithAuth("/settings/changePassword", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Login Request Ip
+export const LoginRequestIp = async (data) => {
+  return await fetchWithAuth("/settings/setLoginRequestIp", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
 };

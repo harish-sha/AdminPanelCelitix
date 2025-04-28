@@ -134,6 +134,14 @@ const AddTemplateRcs = () => {
     setMessageContent("");
     setVariables([]);
     setBtnData([]);
+    setSelectedAction({
+      dropdown1: "",
+      dropdown2: "",
+      dropdown3: "",
+      dropdown4: "",
+    });
+
+    setBtnInputData({});
     setCardData({ title: "", mediaHeight: "", file: "" });
   }
 
@@ -451,7 +459,7 @@ const AddTemplateRcs = () => {
         return;
       }
       toast.success("Template added successfully");
-      setinputData({ agentId: "", templateName: "", templateType: "" });
+      setInputData({ agentId: "", templateName: "", templateType: "" });
       setBtnData([]);
       setVariables([]);
       setMessageContent("");

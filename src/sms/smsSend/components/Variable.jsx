@@ -27,13 +27,6 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
     }));
   }
 
-  useEffect(() => {
-    if (inputDetails?.length > 1000) {
-      toast.error("Message length should be less than 1000 characters.");
-      return;
-    }
-  }, [inputDetails]);
-
   return (
     <div className="relative">
       <label
@@ -57,7 +50,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
         }}
       />
 
-      <div className="absolute top-6 -right-0 text-gray-400 cursor-pointer z-9999">
+      <div className="absolute top-6 -right-0 text-gray-400 cursor-pointer">
         <InputVariable
           onSelect={(e) => {
             handleAddVariable(e);
