@@ -1,5 +1,5 @@
 import React from "react";
-import { HashRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Approutes from "./routes/Approutes/Approutes";
 import GlobalToaster from "./components/GlobalToaster";
 import Apiroutes from "./routes/Apiroutes/Apiroutes";
@@ -14,13 +14,14 @@ const App = () => {
   return (
     <Router>
       {/* Site Warning when leave or reload */}
-      <BeforeUnloadWarning />
+      {/* <BeforeUnloadWarning /> */}
 
       {/* Toaster */}
       <GlobalToaster />
 
       {/* Loading Top Progress Bar */}
       <LoadingBar />
+
       <Routes>
         <Route
           path="/login"

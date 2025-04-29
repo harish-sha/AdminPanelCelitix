@@ -218,7 +218,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                     { label: "Block", key: "block" },
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
-                    // { label: "Source", key: "source" },
+                    { label: "Source", key: "source" },
                     { label: "Charged Unit", key: "chargedUnit" },
                     { label: "Block Count", key: "blockCount" },
                     { label: "Busy", key: "busy" },

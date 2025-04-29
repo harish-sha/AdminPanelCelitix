@@ -937,7 +937,7 @@ export default function WhatsappLiveChat() {
       mobileNo: chatState?.active.mobileNo,
     };
 
-    try {
+    try {w
       setIsFetching(true);
       const res = await assignUserToAgent(data);
       if (res.message.includes("Successfully")) {

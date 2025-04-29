@@ -28,7 +28,7 @@ const Mainlayout = () => {
 
                 <div
                     // ref={scrollableContainerRef}
-                    className={`flex-1 transition-all duration-300 overflow-auto p-3 bg-gray-100 lg:rounded-tl-3xl 
+                    className={`flex-1 transition-all duration-300 overflow-auto p-3 bg-gray-100 lg:rounded-tl-3xl popf
                         ${isMobile ? "ml-0" : isCollapsed ? "ml-16" : "ml-60"}
                     `}
                 >

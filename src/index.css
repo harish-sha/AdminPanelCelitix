@@ -4,7 +4,8 @@
 @custom-variant dark (&:is(.dark *));
 
 * {
-  font-family: "Poppins", sans-serif;
+  /* font-family: "Poppins", sans-serif; */
+  /* font-family: "Lora", serif; */
 
   &::-webkit-scrollbar {
     width: 6px;
@@ -18,16 +19,65 @@
   }
 }
 
+.popf {
+  font-family: "Poppins", sans-serif !important;
+}
+
+.openf {
+  font-family: "Open Sans", sans-serif !important;
+}
+
+.robof {
+  font-family: "Roboto", sans-serif !important;
+}
+
+.playf {
+  font-family: "Playfair", serif;
+  font-weight: bolder !important;
+}
+
+.comicf {
+  font-family: "Comic Relief", system-ui;
+}
+
+.tiltw {
+  font-family: "Tilt Warp", sans-serif !important;
+  font-style: normal !important;
+  font-weight: 300 !important;
+}
+
+.barlow {
+  font-family: "Barlow", sans-serif;
+}
+
+.chivo {
+  font-family: "Chivo", sans-serif;
+}
+
+.spectral {
+  font-family: "Spectral", serif;
+}
+
+.rasa {
+  font-family: "Rasa", serif;
+}
+
+.lora {
+  font-family: "Lora", serif;
+}
+
+.notosans {
+  font-family: "Noto Sans", sans-serif;
+}
 
 #nprogress .bar {
-  background: #29d;        
-  height: 4px;            
+  background: #29d;
+  height: 4px;
 }
 
 #nprogress .peg {
   box-shadow: 0 0 10px #29d, 0 0 5px #29d;
 }
-
 
 html,
 body {
@@ -62,6 +112,9 @@ input[type="number"] {
 
 .font-m {
   font-family: "Montserrat", serif;
+}
+.monof {
+  font-family: "Montserrat", sans-serif;
 }
 
 li {
@@ -444,5 +497,3 @@ a {
   color: #000;
   font-weight: 600;
 }
-
-
