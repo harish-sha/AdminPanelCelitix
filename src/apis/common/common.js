@@ -7,6 +7,7 @@ export const getCountryList = async () => {
   });
 };
 
+
 export const getAllGroups = async () => {
   return await fetchWithAuth("/group/showGroups", {
     method: "POST",
@@ -27,8 +28,6 @@ export const getPincodeDetails = async (pincode) => {
     const response = await axios.get(`${BASE_URL}/pincode`, {
       params: { pincode },
     });
-
-    // console.log("Full API response:", response.data);
 
     return response.data;
   } catch (error) {

@@ -9,7 +9,6 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import "./mobilepanel.css";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
   const handleCheckboxChange = (index, optionIndex, checked) => {
@@ -30,7 +29,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
       }));
     }
   };
-  
+
   const handleDropdownChange = (index, selectedValue) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => ({
@@ -51,7 +50,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Heading
             case "heading":
               return (
-                <Typography key={index} variant="h3" className="heading-preview " >
+                <Typography
+                  key={index}
+                  // variant="h3"
+                  className="text-lg font-semibold mb-1"
+                >
                   {item.value || "Heading Placeholder"}
                 </Typography>
               );
@@ -59,7 +62,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Subheading
             case "subheading":
               return (
-                <Typography key={index} variant="h4" className="subheading-preview" >
+                <Typography
+                  key={index}
+                  // variant="h4"
+                  className="text-md font-semibold  mb-1"
+                >
                   {item.value || "Subheading Placeholder"}
                 </Typography>
               );
@@ -74,7 +81,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "textCaption":
               return (
-                <Typography key={index} variant="caption" sx={{ whiteSpace: "pre-line" }}>
+                <Typography
+                  key={index}
+                  variant="caption"
+                  sx={{ whiteSpace: "pre-line" }}
+                >
                   {item.value || "Text Caption Placeholder"}
                 </Typography>
               );
@@ -128,7 +139,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         <Checkbox
                           checked={item.checked?.[optionIndex] || false}
                           onChange={(e) =>
-                            handleCheckboxChange(index, optionIndex, e.target.checked)
+                            handleCheckboxChange(
+                              index,
+                              optionIndex,
+                              e.target.checked
+                            )
                           }
                         />
                       }

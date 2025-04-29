@@ -38,11 +38,6 @@
   margin: 10px 0px 0px 0px;
 }
 
-.inside-items {
-  /* width: calc(50% - 0px); */
-  /* margin-bottom: 10px; */
-}
-
 .sidebar-items {
   font-family: "Poppins", sans-serif !important;
   width: 140px;
@@ -52,8 +47,7 @@
 
 .sidebar-items-icon svg{
   width: 19px;
-  color: rgb(96, 59, 144);
-  
+  color: rgb(96, 59, 144); 
 }
 
 .sidebar-items:hover {

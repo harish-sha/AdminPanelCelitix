@@ -62,16 +62,10 @@ export const getDepartmentBySrNo = async (srno) => {
 // Add Department
 export const addDepartment = async (departmentName) => {
   try {
-    const response = await fetchWithAuth(
-      "/department/addDepartment",
-      {
-        method: "POST",
-        body: JSON.stringify({ name: departmentName }),
-      }
-    );
-
-    // console.log("API Response:", response); 
-
+    const response = await fetchWithAuth("/department/addDepartment", {
+      method: "POST",
+      body: JSON.stringify({ name: departmentName }),
+    });
     return response;
   } catch (error) {
     console.error("Error adding department:", error);
@@ -82,17 +76,10 @@ export const addDepartment = async (departmentName) => {
 // Edit Department
 export const editDepartment = async (srno, name) => {
   try {
-    // console.log("Sending Edit Request:", { srno, name });
-
-    const response = await fetchWithAuth(
-      "/department/editdepartmentBysrno",
-      {
-        method: "POST",
-        body: JSON.stringify({ srno, name }),
-      }
-    );
-
-  // console.log("Edit API Response:", response); 
+    const response = await fetchWithAuth("/department/editdepartmentBysrno", {
+      method: "POST",
+      body: JSON.stringify({ srno, name }),
+    });
     return response;
   } catch (error) {
     console.error("Error updating department:", error);
@@ -103,19 +90,15 @@ export const editDepartment = async (srno, name) => {
 // Delete Department
 export const deleteDepartment = async (srno) => {
   try {
-    const response = await fetchWithAuth(
-      "/department/deleteDepartmentByid",
-      {
-        method: "POST",
-        body: JSON.stringify({ srno }), 
-      }
-    );
-    // console.log("Delete API Response:", response); 
+    const response = await fetchWithAuth("/department/deleteDepartmentByid", {
+      method: "POST",
+      body: JSON.stringify({ srno }),
+    });
     if (response?.statusCode !== 200) {
       console.error(" Delete failed:", response);
     }
 
-    return response; 
+    return response;
   } catch (error) {
     console.error("Error deleting department:", error);
     return { statusCode: 500, message: "Internal Server Error" };
@@ -183,7 +166,7 @@ export const getAssignedTemplatesByAgentId = async (agentId) => {
       }
     );
 
-    return response.data; // Ensure this returns the JSON response
+    return response.data;
   } catch (error) {
     console.error("Error fetching assigned templates:", error);
     return null;

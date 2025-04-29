@@ -3,12 +3,9 @@ import { useDrop, useDrag } from "react-dnd";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
-import "./canvas.css";
 import toast from "react-hot-toast";
-// import "../App.css";
 
 const Canvas = ({ items, setItems, onEdit }) => {
-  // Set up the drop area for drag-and-drop functionality
   const [, drop] = useDrop(() => ({
     accept: [
       "heading",
@@ -25,7 +22,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
       setItems((prev) => [
         ...prev,
         { id: Date.now(), type: item.type, value: "" },
-      ]); // Add a new item with a unique id
+      ]); 
     },
   }));
 
@@ -57,7 +54,8 @@ const Canvas = ({ items, setItems, onEdit }) => {
         sx={{
           backgroundColor: getBackgroundColor(item.type),
         }}
-        className="fields"
+        // className="fields"
+        className="w-[450px] p-2 mb-2 rounded-lg shadow-md"
       >
         <Box
           style={{
@@ -87,7 +85,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
           label="Enter value"
           variant="outlined"
           fullWidth
-          className="text-field"
+          // className="text-field"
           value={item.value}
           onChange={(e) => handleInputChange(index, e.target.value)}
           multiline={item.type === "textArea"}
@@ -150,18 +148,9 @@ const Canvas = ({ items, setItems, onEdit }) => {
   return (
     <Box
       ref={drop}
-      sx={{
-        flexGrow: 1,
-        bgcolor: "#fff",
-        boxShadow: "0px 0px 5px #aaa9a9",
-        borderRadius: "15px",
-        p: 2,
-      }}
-      className="main-box"
+      className="relative flex-1 p-2 shadow-xl overflow-auto rounded-xl bg-white mt-13 mr-3 h-[900px] w-[500px]"
     >
-      <Typography variant="h6" gutterBottom className="heading">
-        Canvas
-      </Typography>
+      <span className="text-md tracking-wide font-semibold mb-2 text-center">Canvas</span>
 
       {/* Render all items on the canvas */}
       {items.map((item, index) => (

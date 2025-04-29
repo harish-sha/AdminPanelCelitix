@@ -1,6 +1,7 @@
 import axios from "axios";
 const apiUrl = "/api";
 
+// Login 
 export const login = async (inputDetails) => {
   return await axios.post(
     `${apiUrl}/auth/login`,
@@ -15,6 +16,8 @@ export const login = async (inputDetails) => {
     }
   );
 };
+
+// Forgot Password
 export const forgotPassword = async (inputDetails) => {
   return await axios.post(
     `${apiUrl}/user/forgotpassword`,
@@ -30,6 +33,7 @@ export const forgotPassword = async (inputDetails) => {
   );
 };
 
+// Verify OTP
 export const verifyOtp = async (data) => {
   return await axios.post(`${apiUrl}/user/validateOtp`, data, {
     headers: {

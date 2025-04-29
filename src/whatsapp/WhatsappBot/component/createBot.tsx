@@ -312,7 +312,7 @@ const CreateWhatsAppBot = () => {
         setDetails((prev) => ({
           ...prev,
           waba: res || [],
-          selected: state.wabaNumber || "",
+          selected: state?.wabaNumber || "",
           name: state?.botName ?? "",
         }));
       } catch (e) {

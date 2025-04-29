@@ -15,7 +15,8 @@ import {
   Select,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import "./edit-panel.css";
+import UniversalButton from "@/components/common/UniversalButton";
+import toast from "react-hot-toast";
 
 const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [value, setValue] = useState("");
@@ -36,11 +37,16 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const handleSave = () => {
     if (
       !value.trim() &&
-      ["heading", "subheading", "textBody", "textCaption", "textInput", "textArea"].includes(
-        selectedItem.type
-      )
+      [
+        "heading",
+        "subheading",
+        "textBody",
+        "textCaption",
+        "textInput",
+        "textArea",
+      ].includes(selectedItem.type)
     ) {
-      alert("Input cannot be empty!");
+      toast.error("Input cannot be empty!");
       return;
     }
 
@@ -77,7 +83,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   return (
     <Box>
-      <Paper elevation={3} className="Edit-panel">
+      <Paper
+        elevation={3}
+        className="bg-white z-10 p-5 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] md:w-[60%] lg:w-[40%] xl:w-[30%]"
+      >
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
           <Typography variant="h6">Edit Item</Typography>
           <IconButton onClick={onClose}>
@@ -97,7 +106,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           />
         )}
 
-        {["textBody", "textCaption", "textArea"].includes(selectedItem?.type) && (
+        {["textBody", "textCaption", "textArea"].includes(
+          selectedItem?.type
+        ) && (
           <TextField
             label={`Edit ${selectedItem.type}`}
             variant="outlined"
@@ -117,7 +128,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               Edit Checkboxes
             </Typography>
             {options.map((option, index) => (
-              <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <Box
+                key={index}
+                sx={{ display: "flex", alignItems: "center", mb: 1 }}
+              >
                 <FormControlLabel
                   control={<Checkbox checked={checked[index] || false} />}
                   label={option}
@@ -159,7 +173,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             </Typography>
             <RadioGroup value={selectedOption}>
               {options.map((option, index) => (
-                <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+                <Box
+                  key={index}
+                  sx={{ display: "flex", alignItems: "center", mb: 1 }}
+                >
                   <FormControlLabel
                     control={
                       <Radio
@@ -207,7 +224,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               Edit Dropdown Options
             </Typography>
             {options.map((option, index) => (
-              <Box key={index} sx={{ display: "flex", alignItems: "center", mb: 1 }}>
+              <Box
+                key={index}
+                sx={{ display: "flex", alignItems: "center", mb: 1 }}
+              >
                 <TextField
                   value={option}
                   onChange={(e) => handleOptionChange(index, e.target.value)}
@@ -239,9 +259,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
         {/* Save Button */}
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Button variant="contained" onClick={handleSave} className="btn-flow2" >
+          <UniversalButton
+            onClick={handleSave}
+            label="Save"
+            className="btn-flow2"
+          >
             Save
-          </Button>
+          </UniversalButton>
         </Box>
       </Paper>
     </Box>

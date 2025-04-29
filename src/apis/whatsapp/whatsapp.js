@@ -331,17 +331,6 @@ export const sendTemplateMessageToUser = async (data) => {
   });
 };
 
-// // send input message to user (live chat)
-// export const sendInputMessageToUser = async (data, body) => {
-//   return await fetchWithAuth(
-//     `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber}&srno=${data.srno}&message=${data.message}&contactName=${data.contactName}&replyType=${data.replyType}&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}`,
-//     {
-//       method: "POST",
-//       body: body,
-//     }
-//   );
-// };
-
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
   return await fetchWithAuth(

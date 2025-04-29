@@ -1,6 +1,7 @@
+import axios from "axios";
+
 // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 const API_BASE_URL = "/api";
-import axios from "axios";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
   const token =
@@ -12,17 +13,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
     return;
   }
 
-  // const headers = {
-  //   Authorization: `Bearer ${token}`,
-  //   ...options
-  // };
-
-  // if (options.body instanceof FormData) {
-  //   delete headers["Content-Type"];
-  // } else {
-  //   headers["Content-Type"] = "application/json";
-  // }
-
   const defaultHeaders = {
     Authorization: `Bearer ${token}`,
   };
@@ -33,13 +23,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   try {
     console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
-
-    // const response = await axios({
-    //   method: options.method || "GET",
-    //   url: `${API_BASE_URL}${endpoint}`,
-    //   data: options.body,
-    //   headers,
-    // });
 
     const response = await axios({
       method: options.method || "GET",

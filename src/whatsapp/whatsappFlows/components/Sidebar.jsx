@@ -39,7 +39,7 @@ const items = [
 
 const items2 = [
   { id: 1, type: "textInput", label: "Text Input", icon: <KeyboardIcon /> },
-  { id: 2, type: "textArea", label: "Text Area", icon: <TextFieldsIcon /> }, // Use a valid icon
+  { id: 2, type: "textArea", label: "Text Area", icon: <TextFieldsIcon /> }, 
 ];
 
 const items3 = [
@@ -69,7 +69,7 @@ const items4 = [
     type: "footerbutton",
     label: "Footer Button",
     icon: <GamepadIcon />,
-  }, // Use a valid icon
+  }, 
   {
     id: 2,
     type: "embeddedlink",
@@ -86,7 +86,7 @@ const items5 = [
 
 const items6 = [
   { id: 1, type: "ifelse", label: "if-Else", icon: <AccountTreeIcon /> },
-]; // Use a valid icon
+]; 
 
 const items7 = [
   { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
@@ -103,7 +103,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Basic Text
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -118,7 +117,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Text Entry
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items2.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -129,7 +127,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Select Controls
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items3.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -140,7 +137,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Buttons
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items4.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -151,7 +147,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Media Input
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items5.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -162,7 +157,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Conditions
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items6.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -173,7 +167,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Others
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items7.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">
@@ -184,7 +177,6 @@ const Sidebar = ({ onAdd }) => {
       <Typography variant="h6" gutterBottom className="heading">
         Templates
       </Typography>
-      {/* <Divider className="divider" /> */}
       <div container sx={{ mt: 1 }} className="inside-box">
         {items8.map((item) => (
           <div item xs={12} key={item.id} className="inside-items">

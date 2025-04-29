@@ -82,7 +82,6 @@ export const uploadContactFile = async (file) => {
     );
 
     if (response) {
-      // console.log("excel file uplaod", response);
       return response;
     }
   } catch (error) {
