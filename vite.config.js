@@ -21,10 +21,7 @@ export default defineConfig(({ mode }) => {
       historyApiFallback: true,
       proxy: {
         "/api": {
-          // target: "http://95.216.43.170:8080",
           target: env.VITE_API_BASE_URL,
-          // || "http://95.216.43.170:8080/proCpaasRest",
-          // target: "https://rest.celitix.com/proCpaasRest",
           changeOrigin: true,
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),

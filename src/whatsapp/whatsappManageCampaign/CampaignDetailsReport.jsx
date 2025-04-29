@@ -287,7 +287,7 @@ const CampaignDetailsReport = () => {
                         rows={rows}
                         columns={columns}
                         initialState={{ pagination: { paginationModel } }}
-                        checkboxSelection
+                        // checkboxSelection
                         rowHeight={45}
                         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
                         slotProps={{ footer: { totalRecords: rows.length } }}

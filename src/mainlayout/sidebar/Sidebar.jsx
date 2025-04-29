@@ -162,6 +162,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
+        { to: "/wwhatsappflows", label: "Flows" },
       ],
     },
     {
@@ -371,7 +372,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
+                className={`overflow-hidden whitespace-nowrap font-bold ml-2 ${
                   isCollapsed ? "w-0" : "w-auto"
                 }`}
               >

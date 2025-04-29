@@ -300,7 +300,7 @@ const CampaignLogCard = ({ log }) => {
         </Box>
         <Divider />
         {/* Stats List */}
-        <Box className="grid grid-cols-3 gap-4 w-full mt-4">
+        <Box className="grid md:grid-cols-3 grid-cols-1  gap-4 w-full mt-4">
           {[
             {
               label: "Delivered",

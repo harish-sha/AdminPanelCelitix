@@ -70,7 +70,7 @@ const DeliveryreportRcs = () => {
     try {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
-      console.log(res);
+      // console.log(res);
       setCampaignTableData(res);
     } catch (e) {
       toast.error("Something went wrong.");

@@ -699,6 +699,7 @@ const TemplateForm = ({
     onImageUpload(null);
     toast.success("Media removed successfully.");
   };
+  
   const isCarousal = templateDataNew?.components?.find(
     (comp) => comp.type === "CAROUSEL"
   );

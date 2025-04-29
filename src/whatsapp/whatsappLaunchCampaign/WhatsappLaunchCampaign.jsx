@@ -592,7 +592,8 @@ const WhatsappLaunchCampaign = () => {
                   </div>
                   <div>
                     {isFetching ? (
-                      <UniversalSkeleton height="15rem" width="100%" />
+                      // <UniversalSkeleton height="15rem" width="100%" />
+                      <></>
                     ) : (
                       templateDataNew && (
                         <TemplateForm
@@ -634,17 +635,17 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
-                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
 
               <div className="w-full lg:w-1/3 lg:px-5 md:px-2 px-2 lg:mt-0 mt-5 min-h-[80vh]">
-                {isFetching ? (
+                {/* {isFetching ? (
                   <div className="w-full">
                     <UniversalSkeleton height="46rem" width="100%" />
                   </div>
-                ) : (
+                ) : ( */}
                   <WhatsappLaunchPreview
                     templateDataNew={templateDataNew}
                     formData={formData}
@@ -653,7 +654,7 @@ const WhatsappLaunchCampaign = () => {
                     cardIndex={cardIndex}
                     fileData={fileData}
                   />
-                )}
+                {/* )} */}
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">

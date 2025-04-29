@@ -503,12 +503,18 @@ const ManageContacts = () => {
       firstName: updateContactDetails.firstName,
       middleName: updateContactDetails.middleName,
       lastName: updateContactDetails.lastName,
-      mobileno: updateContactDetails.mobileno,
-      email: updateContactDetails.email,
+      mobileNo: updateContactDetails.mobileno,
+      emailId: updateContactDetails.email,
       uniqueId: updateContactDetails.uniqueId,
       gender: updateContactDetails.gender,
       activeStatus: updatedContactDetails.status,
+      // key should check
+      birthDate: updatedContactDetails.birthDate,
+      anniversaryDate: updatedContactDetails.mariageDate,
+      allowishes: updatedContactDetails.allowishes,
     };
+
+    console.log("update contact data", data);
 
     const res = await updateContactsDetails(data);
   };
@@ -751,10 +757,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-        id: grp.groupCode,
-        sn: index + 1,
-        groupName: grp.groupName,
-      }))
+      id: grp.groupCode,
+      sn: index + 1,
+      groupName: grp.groupName,
+    }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -1134,7 +1140,7 @@ const ManageContacts = () => {
                   birthDate: e,
                 })
               }
-              // required={true}
+            // required={true}
             />
             <UniversalDatePicker
               label="Anniversary Date"
@@ -1362,9 +1368,8 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                        isUploading ? "disabled" : ""
-                      }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                        }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}

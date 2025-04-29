@@ -23,6 +23,10 @@ import ManageAgent from "@/whatsapp/manageagent/ManageAgent";
 import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
 import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
+import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
+import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+
+
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -200,6 +204,8 @@ const Approutes = () => {
         <Route path="wwhatsappbot" element={<WhatsappBot />} />
         <Route path="createwhatsappbot" element={<CreateWhatsAppBot />} />
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
+        <Route path="wwhatsappflows" element={<WhatsappFlows />} />
+        <Route path="wflowcreation" element={<FlowCreationPage />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />

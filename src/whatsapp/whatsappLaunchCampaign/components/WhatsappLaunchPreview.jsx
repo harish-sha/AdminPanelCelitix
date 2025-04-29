@@ -593,7 +593,7 @@ const WhatsappLaunchPreview = ({
                         </pre>
                       )}
                       {messageBody && (
-                        <pre className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto min-h-10 max-h-40 break-words">
+                        <pre className="border border-gray-200 rounded-md p-2 w-full bg-gray-100  text-[0.85rem] text-gray-800 overflow-auto text-wrap text-start min-h-10 max-h-40 break-words">
                           {messageBody}
                         </pre>
                       )}

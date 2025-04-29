@@ -219,10 +219,10 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
                     { label: "Source", key: "source" },
-                    { label: "Charged Unit", key: "chargedUnit" },
+                    // { label: "Charged Unit", key: "chargedUnit" },
                     { label: "Block Count", key: "blockCount" },
-                    { label: "Busy", key: "busy" },
-                    { label: "Busy Count", key: "busyCount" },
+                    // { label: "Busy", key: "busy" },
+                    // { label: "Busy Count", key: "busyCount" },
                     { label: "Delivered Count", key: "deliveredCount" },
                     { label: "Failed Count", key: "failedCount" },
                     { label: "Pending Count", key: "pendingCount" },
@@ -232,8 +232,8 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                     },
                     { label: "Read Count", key: "readCount" },
                     { label: "Sent Count", key: "sentCount" },
-                    { label: "Undelivered", key: "undelivered" },
-                    { label: "Undelivered Count", key: "undeliveredCount" },
+                    // { label: "Undelivered", key: "undelivered" },
+                    // { label: "Undelivered Count", key: "undeliveredCount" },
                   ].map(({ label, key }) => (
                     <React.Fragment key={key}>
                       <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
