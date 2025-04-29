@@ -31,7 +31,7 @@ export const Grid1 = ({
     });
   };
   return (
-    <div className="border w-full p-2 space-y-2 rounded-lg shadow-md">
+    <div className="border md:w-[40%] p-2 space-y-2 rounded-lg shadow-md w-full">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
         <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
           <RadioButton

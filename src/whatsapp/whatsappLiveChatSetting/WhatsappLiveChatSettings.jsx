@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Box, Grid, Paper, Typography, Button, Tooltip } from "@mui/material";
 import TagIcon from "@mui/icons-material/Tag";
 import EmailIcon from "@mui/icons-material/Email";
@@ -7,8 +7,17 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { motion } from "framer-motion";
 import { Switch } from "@mui/material";
 import AnimatedDropdown from "../components/AnimatedDropdown";
-import { getAutoAction, getWabaList } from "@/apis/whatsapp/whatsapp";
+import {
+  deleteAutoAction,
+  fetchTemplates,
+  fetchTemplatesValue,
+  getAutoAction,
+  getWabaList,
+  saveAutoAction,
+} from "@/apis/whatsapp/whatsapp";
 import toast from "react-hot-toast";
+import { ConfigureDialog } from "./components/configureDialog";
+import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
 
 const MotionPaper = motion(Paper);
 
@@ -18,18 +27,37 @@ const WhatsappLiveChatSettings = () => {
     selected: "",
   });
   const [cardDetails, setCardDetails] = React.useState({});
+  const [configureState, setConfigureState] = React.useState({
+    type: "",
+    open: false,
+  });
+
+  const [basicDetails, setBasicDetails] = React.useState({
+    sendMsgCheckbox: true,
+    msgType: "1",
+    message: "",
+    filePath: "",
+    tempJson: "",
+    mediaPath: "",
+  });
+  const [allTemplates, setAllTemplates] = React.useState([]);
+  const [specificTemplate, setSpecificTemplate] = React.useState({});
+  const [variablesData, setVariablesData] = React.useState({
+    length: 0,
+    data: [],
+    input: [],
+  });
+  const fileRef = React.useRef(null);
 
   React.useEffect(() => {
     async function handleFetchWaba() {
       try {
         const res = await getWabaList();
-        console.log(res);
         setWabaState((prev) => ({
           waba: res,
           selected: "",
         }));
       } catch (e) {
-        console.log(e);
         return toast.error("Error fetching Waba Details");
       }
     }
@@ -37,31 +65,173 @@ const WhatsappLiveChatSettings = () => {
     handleFetchWaba();
   }, []);
 
-  React.useEffect(() => {
+  async function handleGetAutoAction() {
     if (!wabaState.selected) return;
+    try {
+      const data = {
+        wabaNumber: wabaState.selected,
+        type: "-1",
+      };
+      const res = await getAutoAction(data);
+      res?.EntityMstActionScenerio &&
+        res.EntityMstActionScenerio.map(async (item) => {
+          data["type"] = item.actionScenario;
+          const res = await getAutoAction(data);
+          setCardDetails((prev) => ({
+            ...prev,
+            [item.actionScenario]: res,
+          }));
+        });
+    } catch (e) {
+      return toast.error("Error fetching auto action");
+    }
+  }
 
-    async function handleGetAutoAction() {
+  async function handleFetchAllTemplates() {
+    if (!wabaState.selected) return;
+    try {
+      const wabaSrno = wabaState.waba.find(
+        (waba) => waba.mobileNo === wabaState.selected
+      )?.wabaSrno;
+
+      const body = { officialWhatsappSrno: wabaSrno };
+      const res = await fetchTemplates(body);
+
+      const temps = Object.keys(res).map((key) => ({
+        value: key,
+        label: res[key],
+      }));
+
+      setAllTemplates(temps);
+    } catch (e) {
+      return toast.error("Error fetching all templates");
+    }
+  }
+  React.useEffect(() => {
+    handleGetAutoAction();
+    handleFetchAllTemplates();
+  }, [wabaState.selected]);
+
+  React.useEffect(() => {
+    if (!basicDetails?.template) return;
+    async function handleFetchTemplateValues() {
       try {
-        const data = {
-          wabaNumber: wabaState.selected,
-          type: "-1",
-        };
-        const res = await getAutoAction(data);
-        console.log(res?.EntityMstActionScenerio);
-        res?.EntityMstActionScenerio &&
-          res.EntityMstActionScenerio.map(async (item) => {
-            data["type"] = item.actionScenario;
-            const res = await getAutoAction(data);
-            console.log(res);
-          });
+        const res = await fetchTemplatesValue(basicDetails.template);
+        const variable = extractVariablesFromText(res?.message);
+        setVariablesData({
+          length: variable.length,
+          data: variable,
+          input: [],
+        });
+        setSpecificTemplate(res);
       } catch (e) {
-        console.log(e);
-        return toast.error("Error fetching auto action");
+        return toast.error("Error fetching template values");
       }
     }
 
-    handleGetAutoAction();
-  }, [wabaState.selected]);
+    handleFetchTemplateValues();
+  }, [basicDetails]);
+
+  function extractVariablesFromText(text) {
+    const regex = /{{(\d+)}}/g;
+    let match;
+    const variables = [];
+    while ((match = regex.exec(text)) !== null) {
+      if (!variables.includes(match[1])) {
+        variables.push(match[1]);
+      }
+    }
+    return variables;
+  }
+  function handleConfigure(type) {
+    if (!wabaState.selected) {
+      return toast.error("Please select WABA");
+    }
+    setConfigureState((prev) => ({
+      ...prev,
+      type,
+      open: true,
+    }));
+  }
+
+  async function deleteAction(type) {
+    try {
+      const data = {
+        wabaNumber: wabaState.selected,
+        type,
+        wabaSrno: wabaState.waba.find(
+          (waba) => waba.mobileNo === wabaState.selected
+        )?.wabaSrno,
+      };
+      const res = await deleteAutoAction(data);
+      console.log(res);
+    } catch (e) {
+      toast.error("Something went wrong");
+      return;
+    }
+  }
+
+  async function handleSave() {
+    let isError = false;
+    //validation start
+    if (!wabaState.selected) return toast.error("Please select WABA");
+    if (basicDetails?.msgType === "1" && !basicDetails?.message)
+      return toast.error("Please enter message");
+    if (basicDetails?.msgType === "2" && !basicDetails?.template)
+      return toast.error("Please select template");
+    if (basicDetails?.msgType === "2" && !basicDetails?.mediaPath)
+      return toast.error("Please upload media");
+    if (basicDetails?.msgType === "2" && variablesData.length) {
+      const length = variablesData?.input.filter((item) => item != "").length;
+
+      if (length !== variablesData?.length) {
+        return toast.error("Please fill all variables");
+      }
+    }
+    //validation end
+
+    const wabaSrno = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selected
+    )?.wabaSrno;
+    const data = {
+      actionSenario: configureState?.type,
+      wabaNumber: wabaState.selected,
+      wabaSrno,
+      ...basicDetails,
+    };
+
+    try {
+      await deleteAction(configureState.type);
+      const res = await saveAutoAction(data);
+      if (!res?.status) {
+        toast.error("Error saving data");
+      }
+      toast.success("Data saved successfully");
+      setConfigureState({
+        type: "",
+        open: false,
+      });
+      setBasicDetails({
+        sendMsgCheckbox: true,
+        msgType: "1",
+        message: "",
+        filePath: "",
+        tempJson: "",
+        mediaPath: "",
+        template: "",
+      });
+      setVariablesData({
+        length: 0,
+        data: [],
+        input: [],
+      });
+      setSpecificTemplate({});
+      fileRef.current.value = "";
+      await handleGetAutoAction();
+    } catch (e) {
+      toast.error("Error saving data");
+    }
+  }
 
   return (
     <>
@@ -83,6 +253,7 @@ const WhatsappLiveChatSettings = () => {
                 ...prev,
                 selected: e,
               }));
+              setCardDetails({});
             }}
           />
         </div>
@@ -154,24 +325,21 @@ const WhatsappLiveChatSettings = () => {
                 </Box>
 
                 <Box display="flex" alignItems="center" gap={1}>
-                  {/* <Typography variant="caption" color="text.secondary">
-          Active
-        </Typography> */}
                   <Switch
                     color="success"
-                    defaultChecked
+                    checked={cardDetails["welcome_message"]?.message || false}
                     inputProps={{ "aria-label": "welcome-message-toggle" }}
+                    value={cardDetails["welcome_message"]?.status || false}
+                    onClick={(e) => deleteAction("welcome_message")}
                   />
                 </Box>
               </Box>
 
-              {/* Description */}
               <Typography variant="body2" color="text.secondary">
                 Automatically greet customers when they message you during
                 working hours.
               </Typography>
 
-              {/* Message Preview */}
               <Box
                 sx={{
                   backgroundColor: "#fff",
@@ -181,20 +349,12 @@ const WhatsappLiveChatSettings = () => {
                 }}
               >
                 <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight={600}
-                  sx={{ textTransform: "uppercase", letterSpacing: 0.5 }}
-                >
-                  Hi!
-                </Typography>
-                <Typography
                   variant="body2"
                   fontWeight={600}
                   color="text.primary"
                 >
-                  Thanks for connecting. Someone from our team will get in touch
-                  soon.
+                  {cardDetails["welcome_message"]?.message ||
+                    "Click to configure"}
                 </Typography>
               </Box>
 
@@ -212,6 +372,7 @@ const WhatsappLiveChatSettings = () => {
                     px: 3,
                     ":hover": { backgroundColor: "#1ebc59" },
                   }}
+                  onClick={() => handleConfigure("welcome_message")}
                 >
                   Configure
                 </Button>
@@ -220,7 +381,7 @@ const WhatsappLiveChatSettings = () => {
           </Grid>
 
           {/* Card 2: Social Media Caption */}
-          <Grid item xs={12} sm={6}>
+          {/* <Grid item xs={12} sm={6}>
             <MotionPaper
               whileHover={{ scale: 1.015 }}
               whileTap={{ scale: 0.99 }}
@@ -272,9 +433,25 @@ const WhatsappLiveChatSettings = () => {
                 <Button variant="outlined">Try now →</Button>
               </Tooltip>
             </MotionPaper>
-          </Grid>
+          </Grid> */}
         </Grid>
       </Box>
+
+      {configureState?.open && (
+        <ConfigureDialog
+          configureState={configureState}
+          setconfigureState={setConfigureState}
+          setBasicDetails={setBasicDetails}
+          basicDetails={basicDetails}
+          handleSave={handleSave}
+          allTemplates={allTemplates}
+          specificTemplate={specificTemplate}
+          variablesData={variablesData}
+          setVariablesData={setVariablesData}
+          fileRef={fileRef}
+          setSpecificTemplate={setSpecificTemplate}
+        />
+      )}
     </>
   );
 };

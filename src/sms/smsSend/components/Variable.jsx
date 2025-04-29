@@ -38,7 +38,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
         id="manage"
         name="manage"
         placeholder="Type your message here..."
-        className="resize-none h-32"
+        className="resize-none h-32 pr-5"
         value={inputDetails}
         onChange={(e) => {
           if (e.target.value.length <= 1000) {

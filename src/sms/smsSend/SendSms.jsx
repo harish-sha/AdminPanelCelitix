@@ -10,6 +10,7 @@ import { Calendar } from "primereact/calendar";
 import { Checkbox } from "@material-tailwind/react";
 import moment from "moment";
 import { isEnglish } from "./helper/isEnglish";
+import { Preview } from "./components/Preview";
 
 const SendSms = () => {
   const [inputDetails, setInputDetails] = useState({
@@ -239,13 +240,14 @@ const SendSms = () => {
   }, [confirmDialogVisible]);
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 w-full">
+      <div className="flex gap-2 w-full mt-3 flex-col md:flex-row">
         <Grid1
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
           allTemplates={allTemplates}
           headers={contactData?.fileHeaders || []}
         />
+        {/* <div className="flex"> */}
         <RadioButtonLaunchSms
           allGroups={allGroups}
           setSelectedOption={setSelectedOption}
@@ -258,6 +260,8 @@ const SendSms = () => {
           contactData={contactData}
           countryList={countryList}
         />
+        <Preview inputDetails={inputDetails} />
+        {/* </div> */}
       </div>
 
       <UniversalButton

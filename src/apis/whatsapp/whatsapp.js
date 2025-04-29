@@ -444,7 +444,7 @@ export const deleteBot = async (id) => {
   });
 };
 
-// Live Chat Settins
+// Live Chat Settings
 export const getAutoAction = async (data) => {
   return await fetchWithAuth(
     `/getAutoAction?wabaNumber=${data.wabaNumber}&type=${data.type}`,
@@ -457,9 +457,47 @@ export const getAutoAction = async (data) => {
 // Whatsapp Template Library
 export const getTemplateList = async (data) => {
   return await fetchWithAuth(
-    `/whatsappTemplateLibrary/getTemplateList?category=${data.category}&industry=${data.industry}`,
+    `/whatsappTemplateLibrary/getTemplateList?category=${
+      data?.category || ""
+    }&industry=${data?.industry || ""}`,
     {
       method: "POST",
     }
   );
+};
+
+// save Livechatsettings
+export const saveAutoAction = async (data) => {
+  return await fetchWithAuth("/saveWhatsappAutoAction", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// live chat settings - delete action (enable/disable)
+export const deleteAutoAction = async (data) => {
+  return await fetchWithAuth(
+    `/deleteAction?wabaNumber=${data.wabaNumber}&type=${data.type}&wabaSrno=${data.wabaSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// fetch templates live chat settings
+export const fetchTemplates = async (data) => {
+  return await fetchWithAuth(`/sendWhatsappMessage`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// fetch templates value live chat settings
+export const fetchTemplatesValue = async (data) => {
+  return await fetchWithAuth(`/sendWhatsappMessageValue`, {
+    method: "POST",
+    body: JSON.stringify({
+      srno: data,
+    }),
+  });
 };
