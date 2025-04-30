@@ -133,12 +133,12 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
   }, []);
 
   const handleSummaryReport = (row) => {
-    // navigate("/wcampaigndetailsreport", {
-    //   state: {
-    //     campaignSrno: row.campaignSrno,
-    //     campaignName: row.campaignName,
-    //   },
-    // });
+    navigate("/rcsdeliverycampaigndetails", {
+      state: {
+        campaignSrno: row.campaignSrno,
+        campaignName: row.campaignName,
+      },
+    });
   };
 
   const columns = [
@@ -206,32 +206,32 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
             onClose={closeDropdown}
           >
             {campaignInfoMap[params.row.id] &&
-            campaignInfoMap[params.row.id][0] ? (
+              campaignInfoMap[params.row.id][0] ? (
               <div className="w-[280px] max-w-full">
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
                     { label: "Total", key: "total" },
-                    { label: "Delivered", key: "delivered" },
+                    { label: "Block", key: "block" },
                     { label: "Failed", key: "failed" },
                     { label: "Pending", key: "pending" },
-                    { label: "Read", key: "read" },
-                    { label: "Block", key: "block" },
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
+                    { label: "Delivered", key: "delivered" },
+                    { label: "Read", key: "read" },
                     { label: "Source", key: "source" },
                     // { label: "Charged Unit", key: "chargedUnit" },
-                    { label: "Block Count", key: "blockCount" },
+                    // { label: "Block Count", key: "blockCount" },
                     // { label: "Busy", key: "busy" },
                     // { label: "Busy Count", key: "busyCount" },
-                    { label: "Delivered Count", key: "deliveredCount" },
-                    { label: "Failed Count", key: "failedCount" },
-                    { label: "Pending Count", key: "pendingCount" },
-                    {
-                      label: "Pending Report Count",
-                      key: "pendingReportCount",
-                    },
-                    { label: "Read Count", key: "readCount" },
-                    { label: "Sent Count", key: "sentCount" },
+                    // { label: "Delivered Count", key: "deliveredCount" },
+                    // { label: "Failed Count", key: "failedCount" },
+                    // { label: "Pending Count", key: "pendingCount" },
+                    // {
+                    //   label: "Pending Report Count",
+                    //   key: "pendingReportCount",
+                    // },
+                    // { label: "Read Count", key: "readCount" },
+                    // { label: "Sent Count", key: "sentCount" },
                     // { label: "Undelivered", key: "undelivered" },
                     // { label: "Undelivered Count", key: "undeliveredCount" },
                   ].map(({ label, key }) => (
@@ -272,17 +272,17 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        createdOn: item.queTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaign_srno,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      createdOn: item.queTime || "N/A",
+      campaignName: item.campaignName || "N/A",
+      templateName: item.templateName || "N/A",
+      templateCategory: item.templateCategory || "N/A",
+      templateType: item.templateType || "N/A",
+      status: item.status || "N/A",
+      totalAudience: item.totalAudience || "0",
+      campaignSrno: item.campaign_srno,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

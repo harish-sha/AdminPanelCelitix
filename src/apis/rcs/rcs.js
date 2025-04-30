@@ -18,6 +18,20 @@ export const fetchCampaignBySrno = async (campSrno) => {
   );
 };
 
+// fetch campaign by srno
+export const fetchCampaignDetailReport = async (
+  campaignSrNo,
+  mobileNo,
+  page
+) => {
+  return await fetchWithAuth(
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
 // get summary report
 export const fetchSummaryReport = async (data) => {
   return await fetchWithAuth("/rcs/getSummaryReport", {
@@ -28,12 +42,9 @@ export const fetchSummaryReport = async (data) => {
 
 // fetch all bots list
 export const fetchAllBotsList = async (agent_id = "") => {
-  return await fetchWithAuth(
-    `/rcs/bot/getListOfAgents?agentId=${agent_id}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/rcs/bot/getListOfAgents?agentId=${agent_id}`, {
+    method: "POST",
+  });
 };
 
 // export const fetchAgentBySrNo = async (srno) => {
@@ -62,23 +73,17 @@ export const fetchAllAgents = async () => {
 
 // fetch all templates list
 export const fetchAllTemplates = async (data = "") => {
-  return await fetchWithAuth(
-    `/rcsTemplate/showTemplates?agentId=${data}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/rcsTemplate/showTemplates? =${data}`, {
+    method: "POST",
+  });
 };
 
 // update template status by srno
 export const updateTemplateStatusbySrno = async (data) => {
-  return await fetchWithAuth(
-    "/rcsTemplate/updateStatusByTemplateSrNo",
-    {
-      method: "POST",
-      body: JSON.stringify(data),
-    }
-  );
+  return await fetchWithAuth("/rcsTemplate/updateStatusByTemplateSrNo", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };
 
 // fetch template details by srno
@@ -93,12 +98,9 @@ export const fetchTemplateDetails = async (srno) => {
 
 // delete template by srno
 export const deleteTemplate = async (srno) => {
-  return await fetchWithAuth(
-    `/rcsTemplate/deleteTemplate?srno=${srno}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/rcsTemplate/deleteTemplate?srno=${srno}`, {
+    method: "POST",
+  });
 };
 
 // create template
@@ -109,6 +111,7 @@ export const saveRcsTemplate = async (data) => {
   });
 };
 
+// Send RCS message
 export const launchCampaign = async (data) => {
   return await fetchWithAuth("/sendRcs/sendRcsMessage", {
     method: "POST",
@@ -118,10 +121,7 @@ export const launchCampaign = async (data) => {
 
 // sync rcs template status
 export const syncTemplateRcs = async (srno) => {
-  return await fetchWithAuth(
-    `/rcsTemplate/getRcsStatus?srno=${srno}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/rcsTemplate/getRcsStatus?srno=${srno}`, {
+    method: "POST",
+  });
 };

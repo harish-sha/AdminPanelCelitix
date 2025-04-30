@@ -27,20 +27,42 @@ import toast from "react-hot-toast";
 import { uploadContactFile } from "@/apis/contact/contact";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import { exportToExcel } from "@/utils/utills";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import InfoPopover from "@/components/common/InfoPopover";
+
 
 const SmsDLTtemplate = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const [statusOption, setStatusOption] = useState(null);
+  // const [statusOption, setStatusOption] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRows, setSelectedRows] = useState([]);
   const [rows, setRows] = useState([]);
   const [templatedltimport, setTemplateDltImport] = useState(false);
+
+  const [templateIdFilter, setTemplateIdFilter] = useState("");
+  const [templateNameFilter, setTemplateNameFilter] = useState("");
 
   const [entityid, setEntityId] = useState("");
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isUploaded, setIsUploaded] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef(null);
+
+  const [clicked, setClicked] = useState([]);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const dropdownButtonRefs = useRef({});
+  const closeDropdown = () => setDropdownOpenId(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".bot-settings")) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
 
   const [contactData, setContactData] = useState({});
   const [templateData, setTemplateData] = useState({
@@ -59,13 +81,19 @@ const SmsDLTtemplate = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [updateTemplateData, setUpdateTemplateData] = useState({});
 
+
   const fetchTemplates = async () => {
     setIsFetching(true);
     try {
       const rawData = await getAllTemplates("all");
       const reverseData = rawData.reverse();
 
-      const mappedData = reverseData.map((item, index) => ({
+      const filteredData = reverseData.filter((item) =>
+        item.templateId?.toLowerCase().includes(templateIdFilter.toLowerCase()) &&
+        item.templateName?.toLowerCase().includes(templateNameFilter.toLowerCase())
+      );
+
+      const mappedData = filteredData.map((item, index) => ({
         id: item.srNo,
         sn: index + 1,
         userid: item.userID || "-",
@@ -76,11 +104,13 @@ const SmsDLTtemplate = () => {
         senderid: item.senderID?.split(",")?.[0]?.trim() || "-",
         smstype:
           item.type === 1
-            ? "Promotional"
-            : item.type === 2
             ? "Transactional"
-            : "Unknown",
-        consenttype: "-",
+            : item.type === 2
+              ? "Promotional"
+              : item.type === 3
+                ? "International"
+                : "Unknown",
+        // consenttype: "-",
         inserttime: item.insertDate
           ? new Date(item.insertDate).toLocaleString()
           : "-",
@@ -88,10 +118,10 @@ const SmsDLTtemplate = () => {
           item.status === 1
             ? "Approved"
             : item.status === 2
-            ? "Rejected"
-            : item.status === 3
-            ? "Pending"
-            : "Unknown",
+              ? "Rejected"
+              : item.status === 3
+                ? "Pending"
+                : "Unknown",
       }));
 
       setRows(mappedData);
@@ -101,14 +131,15 @@ const SmsDLTtemplate = () => {
       setIsFetching(false);
     }
   };
+
   useEffect(() => {
     fetchTemplates();
-  }, []);
+  }, [templateIdFilter, templateNameFilter]);
 
-  const statusOptions = [
-    { label: "Active", value: "active" },
-    { label: "Inactive", value: "inactive" },
-  ];
+  // const statusOptions = [
+  //   { label: "Active", value: "active" },
+  //   { label: "Inactive", value: "inactive" },
+  // ];
 
   const handleEditClick = async (id) => {
     setSelectedTemplateId(id);
@@ -123,7 +154,7 @@ const SmsDLTtemplate = () => {
         entityId: res[0]?.entityId,
         templateId: res[0]?.templateid,
         msgFormat: res[0]?.msg_format,
-        senderid: res[0]?.senderid,
+        senderId: res[0]?.senderid,
       });
     } catch (e) {
       return toast.error("Something went wrong");
@@ -163,35 +194,86 @@ const SmsDLTtemplate = () => {
     setSelectedTemplateId("");
   };
 
+  const handleView = (row) => {
+    setClicked({
+      TemplateID: row.templateid || "N/A",
+      EntityID: row.entityid || "N/A",
+      ConsentType: row.consentType || "N/A",
+    });
+    setDropdownOpenId(row.id);
+  };
+
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 1, minWidth: 55 },
-    { field: "userid", headerName: "UserId", flex: 1, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 55 },
+    { field: "userid", headerName: "UserId", flex: 0, minWidth: 100 },
     {
       field: "templatename",
       headerName: "Template Name",
       flex: 1,
       minWidth: 120,
     },
-    { field: "templateid", headerName: "Template ID", flex: 1, minWidth: 110 },
-    { field: "entityid", headerName: "Entity ID", flex: 1, minWidth: 80 },
-    { field: "message", headerName: "Message", flex: 1, minWidth: 250 },
-    { field: "senderid", headerName: "Sender ID", flex: 1, minWidth: 95 },
-    { field: "smstype", headerName: "SMS type", flex: 1, minWidth: 120 },
-    {
-      field: "consenttype",
-      headerName: "Consent type",
-      flex: 1,
-      minWidth: 120,
-    },
-    { field: "inserttime", headerName: "Insert time", flex: 1, minWidth: 110 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
+    // { field: "templateid", headerName: "Template ID", flex: 1, minWidth: 110 },
+    // { field: "entityid", headerName: "Entity ID", flex: 1, minWidth: 80 },
+    { field: "message", headerName: "Message", flex: 1, minWidth: 300 },
+    { field: "senderid", headerName: "Sender ID", flex: 1, minWidth: 130 },
+    { field: "smstype", headerName: "SMS Type", flex: 1, minWidth: 120 },
+    // {
+    //   field: "consenttype",
+    //   headerName: "Consent type",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
+    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 110 },
+    // { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
-      minWidth: 100,
+      minWidth: 120,
       renderCell: (params) => (
         <>
+          <CustomTooltip title="more Info" placement="top" arrow>
+            <IconButton
+              className="text-xs relative"
+              ref={(el) => {
+                if (el) dropdownButtonRefs.current[params.row.id] = el;
+              }}
+              onClick={() => handleView(params.row)}
+            >
+              <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "green" }} />
+            </IconButton>
+          </CustomTooltip>
+
+          <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={closeDropdown}
+          >
+            {clicked && Object.keys(clicked).length > 0 ? (
+              <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden"
+              >
+                <tbody>
+                  {Object.entries(clicked).map(([key, value], index) => (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                    >
+                      <td className="px-2 py-2 font-medium text-gray-600 capitalize w-1/3">
+                        {key}
+                      </td>
+                      <td className="px-4 py-2 text-gray-800">
+                        {value || "N/A"}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ) : (
+              <div className="text-sm text-gray-400 italic px-2 py-2">
+                No data available
+              </div>
+            )}
+          </InfoPopover>
           <CustomTooltip title="Edit Template" placement="top" arrow>
             <IconButton
               onClick={() => {
@@ -362,6 +444,8 @@ const SmsDLTtemplate = () => {
                 type="number"
                 label="Template ID"
                 placeholder="Enter Template ID"
+                value={templateIdFilter}
+                onChange={(e) => setTemplateIdFilter(e.target.value)}
               />
             </div>
             <div className="sm:w-56 w-full">
@@ -370,10 +454,12 @@ const SmsDLTtemplate = () => {
                 name="templateidname"
                 label="Template Name"
                 placeholder="Enter Template Name"
+                value={templateNameFilter}
+                onChange={(e) => setTemplateNameFilter(e.target.value)}
               />
             </div>
 
-            <div className="sm:w-56 w-full">
+            {/* <div className="sm:w-56 w-full">
               <AnimatedDropdown
                 label="Status"
                 options={statusOptions}
@@ -383,7 +469,7 @@ const SmsDLTtemplate = () => {
                 onChange={(newValue) => setStatusOption(newValue)}
                 placeholder="Select Status"
               />
-            </div>
+            </div> */}
 
             {/* Search Button */}
             <div className="w-max-content">
@@ -429,8 +515,8 @@ const SmsDLTtemplate = () => {
           </div>
 
           <DataTable
-            id="whatsapp-rate-table"
-            name="whatsappRateTable"
+            id="dlttemplateTable"
+            name="dlttemplateTable"
             col={columns}
             rows={rows}
             selectedRows={selectedRows}
@@ -491,9 +577,8 @@ const SmsDLTtemplate = () => {
                   <button
                     onClick={handleFileUpload}
                     disabled={isUploading}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                      isUploading ? "disabled" : ""
-                    }`}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                      }`}
                   >
                     <FileUploadOutlinedIcon
                       sx={{ color: "white", fontSize: "23px" }}
@@ -719,9 +804,8 @@ const SmsDLTtemplate = () => {
               Are you sure ?
             </p>
             <p>
-              {`Do you really want to delete ${
-                isMultipleDelete ? "these" : "this"
-              } record? This process cannot be undo.`}
+              {`Do you really want to delete ${isMultipleDelete ? "these" : "this"
+                } record? This process cannot be undo.`}
             </p>
             <div className="flex justify-center gap-4 mt-2">
               <UniversalButton
@@ -804,11 +888,11 @@ const SmsDLTtemplate = () => {
               id="senderId"
               name="senderId"
               label="Sender Id"
-              value={updateTemplateData.senderid}
+              value={updateTemplateData.senderId}
               onChange={(e) => {
                 setUpdateTemplateData({
                   ...updateTemplateData,
-                  senderid: e.target.value,
+                  senderId: e.target.value,
                 });
               }}
               className="resize-none "

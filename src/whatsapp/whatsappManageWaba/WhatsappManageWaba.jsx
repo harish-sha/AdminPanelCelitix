@@ -377,6 +377,59 @@ const WhatsappManageWaba = ({ id, name }) => {
     //   minWidth: 120,
     // },
     // { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
+    {
+      field: "quality",
+      headerName: "Quality",
+      flex: 0,
+      minWidth: 130,
+      renderCell: (params) => {
+        const quality = params.value || "UNKNOWN";
+        const qualityMap = {
+          GREEN: { color: "green", text: "High Quality" },
+          YELLOW: { color: "yellow", text: "Medium Quality" },
+          RED: { color: "red", text: "Low Quality" },
+          UNKNOWN: { color: "gray", text: "Unknown Quality" },
+        };
+
+        const { color, text } = qualityMap[quality] || qualityMap.UNKNOWN;
+
+        return (
+          <CustomTooltip title={text} placement="top" arrow>
+            <div
+              className="flex items-center h-full justify-center"
+              style={{
+                // display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              {/* Circle */}
+              {/* <span
+                style={{
+                  backgroundColor: color,
+                }}
+                className="h-5 w-5 rounded-full shadow-lg"
+              ></span> */}
+              {/* Capsule */}
+              <span
+                style={{
+                  // padding: "2px 8px",
+                  // borderRadius: "12px",
+                  backgroundColor: color,
+                  // color: "white",
+                  // fontSize: "0.8rem",
+                  // fontWeight: "bold",
+                  // textTransform: "capitalize",
+                }}
+                className="h-auto w-auto px-3 py-1 rounded-full text-white text-sm tracking-wide font-normal"
+              >
+                {quality.toLowerCase()}
+              </span>
+            </div>
+          </CustomTooltip>
+        );
+      },
+    },
     { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
     // {
     //   field: "wabaAccountId",
@@ -569,10 +622,11 @@ const WhatsappManageWaba = ({ id, name }) => {
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
+    quality: waba.qualityRate || "N/A",
     additionalInfo: {
       expiryDate: waba.expiryDate || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
-      quality: waba.qualityRate || "N/A",
+      // quality: waba.qualityRate || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
       phoneNumberId: waba.phoneNumberId || "N/A",
     },

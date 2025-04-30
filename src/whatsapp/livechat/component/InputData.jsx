@@ -74,21 +74,49 @@ export const InputData = ({
         </div>
       </div>
       {wabaState.selectedWaba && (
-        <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-lg">
+        <div className="flex justify-center p-2 mt-5 space-x-4 bg-gray-200 rounded-full">
           <button
-            onClick={() => setBtnOption("active")}
-            className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "active"
-              ? "bg-blue-500 text-white scale-105 shadow-lg"
-              : "bg-white text-gray-700 hover:bg-gray-300"
+            onClick={() => {
+              setBtnOption("active");
+              setChatState({
+                active: null,
+                input: "",
+                allConversations: [],
+                specificConversation: [],
+                latestMessage: {
+                  srno: "",
+                  replayTime: "",
+                },
+                replyData: "",
+                isReply: false,
+              });
+            }}
+            className={`p-2 transition-all duration-300 rounded-full ${btnOption === "active"
+                ? "bg-blue-500 text-white tracking-wider shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-300"
               }`}
           >
             Active
           </button>
           <button
-            onClick={() => setBtnOption("close")}
-            className={`p-2 transition-all duration-300 rounded-lg ${btnOption === "close"
-              ? "bg-blue-500 text-white scale-105 shadow-lg"
-              : "bg-white text-gray-700 hover:bg-gray-300"
+            onClick={() => {
+              setBtnOption("close");
+              setChatState({
+                active: null,
+                input: "",
+                allConversations: [],
+                specificConversation: [],
+                latestMessage: {
+                  srno: "",
+                  replayTime: "",
+                },
+                replyData: "",
+                isReply: false,
+              });
+            }}
+            className={`px-3 transition-all duration-300 rounded-full ${btnOption === "close"
+                ? "bg-blue-500 text-white tracking-wider shadow-lg"
+                : "bg-white text-gray-700 hover:bg-gray-300"
               }`}
           >
             Close

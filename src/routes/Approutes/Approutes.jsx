@@ -76,6 +76,8 @@ import DeliveryreportRcs from "@/rcs/deliveryReport/DeliveryreportRcs";
 import ManageBotRcs from "@/rcs/manageBot/ManageBotRcs";
 import AddTemplateRcs from "@/rcs/manageTemplate/pages/AddTemplateRcs";
 import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
+import CampaignDeliveryReportDetails from "@/rcs/deliveryReport/components/CampaignDeliveryReportDetails";
+
 
 // Download
 import Download from "@/profile/pages/Download";
@@ -214,6 +216,7 @@ const Approutes = () => {
         <Route path="rcsaddtemplatercs" element={<AddTemplateRcs />} />
         <Route path="rcssuggestionreport" element={<SuggestionReportRcs />} />
         <Route path="rcsdeliveryreport" element={<DeliveryreportRcs />} />
+        <Route path="rcsdeliverycampaigndetails" element={<CampaignDeliveryReportDetails />} />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
         {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 

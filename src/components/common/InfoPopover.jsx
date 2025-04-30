@@ -25,6 +25,8 @@ const InfoPopover = ({
           },
         },
       ]}
+      disableEnforceFocus
+      disableAutoFocus
     >
       <ClickAwayListener onClickAway={onClose}>
         <Paper
@@ -35,6 +37,7 @@ const InfoPopover = ({
             boxShadow: "0px 4px 20px rgba(0,0,0,0.2)",
             overflow: "hidden",
             backgroundColor: "#fff",
+            userSelect: "text",
           }}
         >
           <motion.div
@@ -42,7 +45,8 @@ const InfoPopover = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="p-3 min-w-[280px] max-w-full"
+            className="p-3 min-w-[280px] max-w-full select-text"
+            style={{ userSelect: "text" }}
           >
             {children}
           </motion.div>

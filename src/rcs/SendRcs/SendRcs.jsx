@@ -133,6 +133,7 @@ const SendRcs = () => {
 
   useEffect(() => {
     async function handleFetchAllTemplates() {
+      if (!campaignDetails?.agent) return;
       try {
         const res = await fetchAllTemplates(campaignDetails?.agent);
         setAllTemplates(res?.Data);
@@ -187,9 +188,9 @@ const SendRcs = () => {
       setTotalAudience(totalGrpCount);
     }
 
-    if (varLength !== Object.keys(inputVariables).length) {
-      return toast.error("Please enter all variables.");
-    }
+    // if (varLength !== Object.keys(inputVariables).length) {
+    //   return toast.error("Please enter all variables.");
+    // }
 
     if (selectedOption === "contact" && !uploadFile) {
       return toast.error("Please upload a file.");
@@ -204,6 +205,14 @@ const SendRcs = () => {
     }
     if (selectedOption === "contact" && !contactData.selectedMobileColumn) {
       return toast.error("Please choose a mobile number field.");
+    }
+
+    const validKeys = Object.keys(inputVariables).filter((key) => {
+      inputVariables[key] !== "" || inputVariables[key] !== undefined;
+    });
+
+    if (varLength !== validKeys?.length) {
+      return toast.error("Please enter all variables.");
     }
     if (isError) return;
 

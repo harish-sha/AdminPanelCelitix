@@ -7,21 +7,38 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
         ?.map((chat, index) => (
           <div
             key={chat.srno || index}
-            className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 shadow" : ""
+            className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 " : ""
               }`}
             onClick={() => {
               // setActiveChat(chat);
-              setChatState((prev) => ({ ...prev, active: chat }));
+              setChatState((prev) => ({
+                ...prev,
+                active: chat,
+                replyData: "",
+                isReply: false,
+              }));
             }}
           >
             <div className="flex items-center justify-between ">
               <div className="flex items-center gap-2">
                 <div className="relative">
-                  <img  
-                    src={chat.image || "/default-avatar.jpg"}
-                    alt=""
-                    className="w-10 h-10 rounded-full shadow"
-                  />
+                  {chat.image ? (
+                    <img
+                      src={chat.image}
+                      alt=""
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div
+                      className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${chatState?.active?.srno === chat.srno
+                          ? "bg-gray-500"
+                          : "bg-gray-300"
+                        }`}
+                    >
+                      {chat.contectName?.charAt(0)?.toUpperCase() || "?"}
+                    </div>
+                  )}
+
                   <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-lg"></div>
                 </div>
                 <div className="ml-2">

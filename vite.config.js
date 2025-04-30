@@ -26,6 +26,12 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
+        "/image": {
+          target: env.VITE_IMAGE_URL,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/image/, ""),
+        },
       },
     },
   };

@@ -216,7 +216,10 @@ export default function WhatsappLiveChat() {
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
       ...(chatState?.isReply ? {} : { message: input || "" }),
+      // ...(selectedImage ? {} : { message: input || "" }),
     };
+
+    console.log(data);
 
     let body = {};
 
@@ -235,6 +238,7 @@ export default function WhatsappLiveChat() {
       };
     } else if (selectedImage) {
       const imageData = await uploadImageFile(selectedImage);
+      delete data.message;
 
       body = {
         messaging_product: "whatsapp",
@@ -288,7 +292,7 @@ export default function WhatsappLiveChat() {
       label: "Document",
       icon: <FilePresentOutlinedIcon />,
       command: () => {
-        // console.log("Document Btn");
+        fileInputRef.current.click();
       },
     },
     {
@@ -346,10 +350,10 @@ export default function WhatsappLiveChat() {
   }
 
   useEffect(() => {
-    // handleFetchAllConvo();
+    handleFetchAllConvo();
     if (!wabaState?.selectedWaba) return;
     const intervalid = setInterval(() => {
-      handleFetchAllConvo();
+      // handleFetchAllConvo();
     }, 500);
 
     return () => clearInterval(intervalid);
@@ -585,13 +589,23 @@ export default function WhatsappLiveChat() {
       }
 
       const allvariables = [];
+
       if (varLength && varLength[0]?.length > 0) {
-        Object.keys(variables).forEach((key) => {
+        // const validKeys = variables?.filter(
+        //   (key) => key !== "" || key !== null
+        // );
+
+        const validKeys = Object.keys(variables).filter(
+          (key) => variables[key] !== ""
+        );
+
+        if (varLength[0]?.length != validKeys.length) {
+          return toast.error("Please enter all variables");
+        }
+        // return;
+        validKeys.forEach((key) => {
           allvariables.push(variables[key]);
         });
-        // if (varLength[0]?.length != variables.length) {
-        //   return toast.error("Please enter all variables");
-        // }
       }
 
       let imgCard = [];
@@ -636,7 +650,7 @@ export default function WhatsappLiveChat() {
         phoneDisplay: "",
         wabaSrNo: wabaState.wabaSrno,
         agentsrno: "",
-        imgCards: imgCard,
+        imgCard: imgCard,
       };
       func = sendTemplateMessageToUser;
     } else {
@@ -757,11 +771,11 @@ export default function WhatsappLiveChat() {
         // console.log(e);
       }
     }
-    // handleLoadNewChat();
-    // handleIsView();
+    handleLoadNewChat();
+    handleIsView();
     const intervalId = setInterval(() => {
-      handleLoadNewChat();
-      handleIsView();
+      // handleLoadNewChat();
+      // handleIsView();
     }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
@@ -780,12 +794,10 @@ export default function WhatsappLiveChat() {
     }
   }
 
-  return isFetching ? (
-    <Loader height="35rem" width="100%" />
-  ) : (
-    <div className="flex h-[100%] bg-gray-50 rounded-lg overflow-hidden p-1 border ">
+  return (
+    <div className="flex h-[100%] bg-gray-50 rounded-lg overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border overflow-hidden ${
+        className={`w-full md:w-100 p-1 border overflow-hidden border-tl-lg ${
           chatState?.active ? "hidden md:block" : "block"
         }`}
       >
@@ -814,7 +826,7 @@ export default function WhatsappLiveChat() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center bg-gray-100 rounded-xl border flex-1 m-1"
+            className="flex flex-col items-center justify-center bg-gray-100 border flex-1 border-tr-lg"
           >
             <div className="w-40 h-40 mx-auto">
               <lottie-player
@@ -831,7 +843,7 @@ export default function WhatsappLiveChat() {
               transition={{ delay: 0.3 }}
               className="text-3xl font-semibold text-green-900"
             >
-              Welcome to Celitix LiveChat!
+              Welcome to LiveChat!
             </motion.h2>
             <motion.h3
               initial={{ opacity: 0, y: 10 }}

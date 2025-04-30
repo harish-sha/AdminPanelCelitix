@@ -28,6 +28,7 @@ export const Variables = ({
   // fileData,
 }) => {
   const fileRef = useRef(null);
+  const fileCarRef = useRef([]);
   async function uploadFile(e) {
     if (!selectedFile?.fileTempPath) {
       return toast.error("Please select file first");
@@ -56,8 +57,8 @@ export const Variables = ({
 
   function deleteFileUpload() {
     if (fileRef.current) {
-      fileRef.current.value = "";
     }
+    fileRef.current.value = "";
     setSelectedFile(null);
   }
 
@@ -136,7 +137,12 @@ export const Variables = ({
         filePath: "",
       },
     }));
-    fileRef.current.value = "";
+
+    // Safety check to avoid errors
+    const fileInput = fileCarRef.current?.[index];
+    if (fileInput) {
+      fileInput.value = ""; // Clears the file input
+    }
   };
 
   return (
@@ -250,7 +256,7 @@ export const Variables = ({
             };
 
             return (
-              <div key={index} className="" >
+              <div key={index} className="">
                 <h1>{`Upload file for card ${index + 1}`}</h1>
                 <div className="file-upload-container">
                   <input
@@ -260,7 +266,7 @@ export const Variables = ({
                     className="hidden"
                     name="fileInput"
                     accept={acceptedTypes[handler.format] || "*/*"}
-                    ref={fileRef}
+                    ref={(el) => (fileCarRef.current[index] = el)}
                   />
                   <div className="flex items-center justify-center gap-2">
                     <label
@@ -315,7 +321,7 @@ export const Variables = ({
           <p className="font-semibold">Variable</p>
           {varLength?.map((item, index) =>
             item.map((item, index) => (
-              <div key={index} className="mt-4" >
+              <div key={index} className="mt-4">
                 <InputField
                   id={`${index + 1}`}
                   name={`${index + 1}`}

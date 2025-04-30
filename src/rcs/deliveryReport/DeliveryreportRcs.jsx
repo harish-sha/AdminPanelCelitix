@@ -71,7 +71,8 @@ const DeliveryreportRcs = () => {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
       // console.log(res);
-      setCampaignTableData(res);
+      const reversedData = res.reverse();
+      setCampaignTableData(reversedData);
     } catch (e) {
       toast.error("Something went wrong.");
       // console.log(e);
@@ -86,10 +87,10 @@ const DeliveryreportRcs = () => {
       toast.error("Please select from and to date.");
     }
     const data = {
-      // fromDate: formatDate(summaryData.fromDate),
-      //toDate: formatDate(summaryData.toDate),
-      fromDate: "2022-10-01",
-      toDate: "2025-02-26",
+      fromDate: formatDate(summaryData.fromDate),
+      toDate: formatDate(summaryData.toDate),
+      // fromDate: "2022-10-01",
+      // toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
     };

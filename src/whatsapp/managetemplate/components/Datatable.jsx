@@ -547,7 +547,7 @@ const DataTable = ({
           pagination
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
-          checkboxSelection
+          // checkboxSelection
           rowHeight={45}
           slots={{
             footer: CustomFooter,

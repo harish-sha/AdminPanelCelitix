@@ -85,10 +85,13 @@ const SendSms = () => {
       (template) => template.templateId === inputDetails?.templateId
     );
 
+    console.log(data);
+
     setInputDetails({
       ...inputDetails,
       message: data?.message,
-      sender: [data?.senderID],
+      // sender: [data?.senderID],
+      sender: data?.senderID?.split(","),
     });
   }, [inputDetails?.templateId]);
 
@@ -107,7 +110,11 @@ const SendSms = () => {
     if (!inputDetails?.campaingName) {
       return toast.error("Please enter a campaign name.");
     }
-    if (!inputDetails?.templateId) {
+    console.log(inputDetails.templateId);
+    if (inputDetails?.templateType === 1 && !inputDetails?.templateId) {
+      return toast.error("Please select a template.");
+    }
+    if (inputDetails?.templateType === 2 && !inputDetails?.templateId) {
       return toast.error("Please select a template.");
     }
     if (!inputDetails?.message) {

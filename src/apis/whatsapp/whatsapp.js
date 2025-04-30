@@ -338,8 +338,8 @@ export const sendInputMessageToUser = async (data, body) => {
       data.wabaNumber
     }&srno=${data.srno}&contactName=${data.contactName}&replyType=${
       data.replyType
-    }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo} ${
-      data.message ? `&message= ${data.message}` : ""
+    }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}${
+      data.message ? `&message=${data.message}` : ""
     }`,
     {
       method: "POST",

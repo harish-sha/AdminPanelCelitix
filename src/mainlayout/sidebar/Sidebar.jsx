@@ -344,7 +344,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       onAnimationComplete={() => {
         setCollapseAnimationDone(!isCollapsed);
       }}
-      className={`mainsidebar h-screen bg-white text-white lora px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
+      className={`mainsidebar h-screen bg-white text-white popf px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
@@ -372,7 +372,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-bold ml-2 ${
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
                   isCollapsed ? "w-0" : "w-auto"
                 }`}
               >

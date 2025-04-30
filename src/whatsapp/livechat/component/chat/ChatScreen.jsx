@@ -18,7 +18,11 @@ import { Sidebar } from "primereact/sidebar";
 import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
 import { ClosedChat } from "./CloseChat";
 import { ChatInput } from "./Input";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import toast from "react-hot-toast";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import { TemplateMessagePreview } from "./Template";
+import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -49,9 +53,20 @@ export const ChatScreen = ({
     }
   }, [chatState?.specificConversation]);
 
+  const mediaRender = (isSent) => {
+    return (
+      <div
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
+      >
+        <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
+      </div>
+    );
+  };
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-0 flex items-center justify-between w-full bg-white shadow-md h-15 px-2">
+      <div className="z-1 flex items-center justify-between w-full bg-white h-15 px-2 border rounded-tr-lg ">
         <div className="flex items-center gap-2">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
@@ -72,11 +87,18 @@ export const ChatScreen = ({
               });
             }}
           />
-          <img
-            src={chatState.active.image || "/default-avatar.jpg"}
-            alt={chatState.active.contectName}
-            className="w-10 h-10 rounded-full"
-          />
+          {chatState?.active.image ? (
+            <img
+              src={chatState.active.image || "/default-avatar.jpg"}
+              alt={chatState.active.contectName}
+              className="w-10 h-10 rounded-full"
+            />
+          ) : (
+            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold text-sm">
+              {chatState.active.contectName?.charAt(0)?.toUpperCase() || "?"}
+            </div>
+          )}
+
           <h3 className="text-lg font-semibold">
             {chatState.active.contectName || chatState.active.mobileNo}
           </h3>
@@ -93,11 +115,11 @@ export const ChatScreen = ({
 
       <div
         ref={messageRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5"
+        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/whatsapp_bg.jpg)]"
       >
         {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>
-            <div className="my-4 text-xs text-center text-gray-500">
+            <div className="my-4 text-xs text-center text-black font-semibold">
               {group?.date}
             </div>
             <div className="flex flex-col items-start space-y-2">
@@ -106,54 +128,88 @@ export const ChatScreen = ({
                 const isImage = msg.replyType === "image";
                 const isVideo = msg.replyType === "video";
                 const isDocument = msg.replyType === "document";
+                const templateType = msg?.templateType;
                 const isText = ["text", "button"].includes(msg.replyType);
-                const commonMediaClass =
-                  "object-contain mb-2  select-none h-48 w-48";
+                const commonMediaClass = "object-contain mb-2 select-none";
+                const mediaUrl = isSent
+                  ? msg?.mediaPath
+                  : `/image${msg?.mediaPath}`;
 
                 return (
                   <div
                     key={index}
-                    className={`p-2 rounded-lg max-w-[70%] my-1 w-50 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {(isImage || isVideo || isDocument) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
-                          className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}
+                          className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
                         >
                           {msg?.mediaPath ? (
                             <>
-                              {(() => {
-                                const mediaUrl = isSent
-                                  ? msg.mediaPath
-                                  : `http://95.216.43.170:8080/whatsappCallbackPro${msg.mediaPath}`;
-
-                                if (isImage) {
-                                  return (
-                                    <img
-                                      src={mediaUrl}
-                                      alt="Image"
-                                      className={`${commonMediaClass} pointer-events-none`}
-                                    />
-                                  );
-                                }
-
-                                return (
+                              {isImage && (
+                                <div
+                                  className={`${msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
+                                      : ""
+                                    }`}
+                                >
+                                  <img
+                                    src={mediaUrl}
+                                    alt="Image"
+                                    className={`mb-2 h-30 w-auto select-none pointer-events-none border border-gray-200 rounded-t-lg`}
+                                  />
+                                  {msg?.caption && (
+                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
+                                      {msg?.caption}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {isVideo && (
+                                <div
+                                  className={`${msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
+                                      : ""
+                                    }`}
+                                >
+                                  <video
+                                    src={mediaUrl}
+                                    controls
+                                    autoPlay={false}
+                                    className={`h-65 w-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
+                                  />
+                                  {msg?.caption && (
+                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
+                                      {msg?.caption}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                              {isDocument && (
+                                <div
+                                  className={`${msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
+                                      : ""
+                                    }`}
+                                >
                                   <iframe
                                     src={mediaUrl}
-                                    className={commonMediaClass}
-                                    allow="autoplay; encrypted-media"
+                                    className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
+                                    allow="encrypted-media;"
                                     allowFullScreen
                                   />
-                                );
-                              })()}
-
-                              {msg.caption && <p>{msg.caption}</p>}
+                                  {msg?.caption && (
+                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
+                                      {msg?.caption}
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </>
                           ) : (
                             <button
@@ -165,35 +221,50 @@ export const ChatScreen = ({
                           )}
                         </div>
                         {btnOption === "active" && (
-                          <button
-                            onClick={() => {
-                              setChatState((prev) => ({
-                                ...prev,
-                                replyData: msg,
-                                isReply: true,
-                              }));
-                            }}
-                          >
-                            <FaReply className="text-gray-500 size-3" />
-                          </button>
+                          <div className="flex gap-2">
+                            <button
+                              onClick={() => {
+                                setChatState((prev) => ({
+                                  ...prev,
+                                  replyData: msg,
+                                  isReply: true,
+                                }));
+                              }}
+                            >
+                              <FaReply className=" size-3" />
+                            </button>
+                            <a
+                              onClick={() => {
+                                toast.success("Downloading Start");
+                              }}
+                              href={
+                                isSent
+                                  ? msg.mediaPath
+                                  : `/image${msg.mediaPath}`
+                              }
+                              download={msg?.mediaId}
+                            >
+                              <FileDownloadOutlinedIcon className="size-2" />
+                            </a>
+                          </div>
                         )}
                       </div>
                     )}
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
-                      >
-                        <div
-                          className={`w-full  p-2 rounded-md ${
-                            isSent
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-black"
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
                           }`}
-                        >
-                          {msg.messageBody}
+                      >
+                        <div className="max-w-[250px]">
+                          <p
+                            className={`w-full whitespace-pre-wrap break-words  p-2 rounded-md ${isSent
+                                ? "bg-blue-500 text-white"
+                                : "bg-gray-200 text-black"
+                              }`}
+                          >
+                            {msg.messageBody}
+                          </p>
                         </div>
                         {btnOption === "active" && (
                           <button
@@ -205,16 +276,17 @@ export const ChatScreen = ({
                               }));
                             }}
                           >
-                            <FaReply className="text-gray-500 size-3" />
+                            <FaReply className=" size-3" />
                           </button>
                         )}
                       </div>
                     )}
 
+                    {templateType && <TemplateMessagePreview template={msg} />}
+
                     <p
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>
@@ -228,31 +300,47 @@ export const ChatScreen = ({
 
       {/* Reply Preview */}
       {chatState.isReply && btnOption === "active" && (
-        <div className="relative">
-          <div className="ml-2 mr-2  p-2">
+        <div className="relative border border-gray-300 rounded-md">
+          <div className="ml-2 mr-2 p-2">
             {chatState.replyData?.replyType === "image" && (
               <img
                 src={
                   chatState.replyData?.isReceived
-                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath}`
+                    ? `/image${chatState.replyData?.mediaPath}`
                     : chatState.replyData?.mediaPath
                 }
                 alt={chatState.replyData?.mediaPath}
-                className="object-contain mb-2  pointer-events-none select-none h-48 w-48"
+                className="mb-2 pointer-events-none select-none h-10 w-20"
               />
             )}
             {chatState.replyData?.replyType === "video" && (
               <video
                 src={
                   chatState.replyData?.isReceived
-                    ? `http://95.216.43.170:8080/whatsappCallbackPro${chatState.replyData?.mediaPath}`
+                    ? `/image${chatState.replyData?.mediaPath}`
                     : chatState.replyData?.mediaPath
                 }
-                controls
-                className="object-contain mb-2 h-48 w-48"
-              ></video>
+                controls={false}
+                autoPlay={false}
+                className="mb-2 h-30 w-20 pointer-events-none "
+              />
             )}
-            <p>{chatState.replyData?.messageBody}</p>
+            {chatState.replyData?.replyType === "document" && (
+              <iframe
+                src={
+                  chatState.replyData?.isReceived
+                    ? `/image${chatState.replyData?.mediaPath}`
+                    : chatState.replyData?.mediaPath
+                }
+                controls={false}
+                autoPlay={false}
+                allow=" encrypted-media"
+                className="object-contain mb-2 h-48 w-48 pointer-events-none "
+              ></iframe>
+            )}
+            {chatState.replyData?.messageBody && (
+              <p>{chatState.replyData?.messageBody}</p>
+            )}
           </div>
           <div
             onClick={() => {
@@ -260,9 +348,14 @@ export const ChatScreen = ({
               // setReplyData(null);
               setChatState({ ...chatState, isReply: false, replyData: null });
             }}
-            className="absolute -top-1 left-50 cursor-pointer"
+            className="absolute top-0 right-0 cursor-pointer "
           >
-            ❌
+            <CloseOutlinedIcon
+              sx={{
+                fontSize: "18px",
+                color: "gray",
+              }}
+            />
           </div>
         </div>
       )}

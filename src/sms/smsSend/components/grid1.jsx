@@ -5,7 +5,7 @@ import { RadioButton } from "primereact/radiobutton";
 import { Variable } from "./Variable";
 import { all } from "axios";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export const Grid1 = ({
   inputDetails,
@@ -30,6 +30,28 @@ export const Grid1 = ({
       typing: false,
     });
   };
+
+  function getSmsUnit(message, isUnicode = false) {
+    const length = message?.length;
+
+    const unicodeLimits = [70, 134, 201, 268, 335, 402, 469, 536, 603, 670];
+
+    const gsmLimits = [160, 306, 459, 612, 765, 918, 1071, 1224, 1377, 1530];
+
+    const limits = isUnicode ? unicodeLimits : gsmLimits;
+
+    for (let i = 0; i < limits.length; i++) {
+      if (length <= limits[i]) {
+        return i + 1;
+      }
+    }
+    return Math.ceil(length / (isUnicode ? 67 : 153));
+  }
+
+  // useEffect(() => {
+  //   console.log(inputDetails);
+  //   renderSmsUnit(inputDetails?.message);
+  // }, [inputDetails]);
   return (
     <div className="border md:w-[40%] p-2 space-y-2 rounded-lg shadow-md w-full">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
@@ -129,67 +151,64 @@ export const Grid1 = ({
         />
         {(inputDetails.templateType === 1 ||
           inputDetails.templateType === 2) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            <DropdownWithSearch
-              label="DLT Template"
-              id="Dlt Template"
-              name="Dlt Template"
-              options={allTemplates?.map((template) => ({
-                label: template.templateName,
-                value: template.templateId,
-              }))}
-              value={inputDetails.templateId}
-              onChange={(e) => {
-                const entity = allTemplates.find(
-                  (temp) => temp.templateId === e
-                );
-                setInputDetails((prev) => ({
-                  ...prev,
-                  templateId: e,
-                  entityId: entity?.entityId,
-                }));
-              }}
-            />
-            {/* <div className="z-99999"> */}
-            <DropdownWithSearch
-              label="Sender Id"
-              id="senderid"
-              name="senderid"
-              placeholder="Select Sender id"
-              options={inputDetails?.sender?.map((sender) => ({
-                label: sender,
-                value: sender,
-              }))}
-              value={inputDetails.senderId}
-              onChange={(e) => {
-                setInputDetails((prev) => ({
-                  ...prev,
-                  senderId: e,
-                }));
-              }}
-            />
-          </div>
-          // </div>
-        )}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              <DropdownWithSearch
+                label="DLT Template"
+                id="Dlt Template"
+                name="Dlt Template"
+                options={allTemplates?.map((template) => ({
+                  label: template.templateName,
+                  value: template.templateId,
+                }))}
+                value={inputDetails.templateId}
+                onChange={(e) => {
+                  const entity = allTemplates.find(
+                    (temp) => temp.templateId === e
+                  );
+                  setInputDetails((prev) => ({
+                    ...prev,
+                    templateId: e,
+                    entityId: entity?.entityId,
+                  }));
+                }}
+              />
+              {/* <div className="z-99999"> */}
+              <DropdownWithSearch
+                label="Sender Id"
+                id="senderid"
+                name="senderid"
+                placeholder="Select Sender id"
+                options={inputDetails?.sender?.map((sender) => ({
+                  label: sender,
+                  value: sender,
+                }))}
+                value={inputDetails.senderId}
+                onChange={(e) => {
+                  setInputDetails((prev) => ({
+                    ...prev,
+                    senderId: e,
+                  }));
+                }}
+              />
+            </div>
+            // </div>
+          )}
 
         {inputDetails.templateType === 3 && (
           <div>
-            <DropdownWithSearch
+            <InputField
               label="Sender Id"
               id="senderid"
               name="senderid"
               placeholder="Select Sender id"
-              options={inputDetails?.sender?.map((sender) => ({
-                label: sender,
-                value: sender,
-              }))}
               value={inputDetails.senderId}
               onChange={(e) => {
                 setInputDetails((prev) => ({
                   ...prev,
-                  senderId: e,
+                  senderId: e.target.value,
                 }));
               }}
+              maxLength={13}
             />
           </div>
         )}
@@ -273,7 +292,11 @@ export const Grid1 = ({
             Characters: {inputDetails?.message?.length}/1000
           </div>
           <div className="border text-sm border-gray-300 rounded-md p-1.5">
-            SMS Units: {Math.ceil(inputDetails?.message?.length / 153)}
+            SMS Units:
+            {getSmsUnit(
+              inputDetails?.message,
+              inputDetails?.unicode === 0 ? false : true
+            )}
           </div>
           <div className="border text-sm border-gray-300 rounded-md p-1.5">
             Entity ID: {inputDetails.entityId || "N/A"}

@@ -584,17 +584,17 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
                     "total",
-                    "delivered",
-                    "failed",
-                    "pending",
-                    "read",
                     "block",
+                    "failed",
                     "submitted",
+                    "pending",
                     "sent",
+                    "delivered",
+                    "read",
                     "source",
-                    "queTime",
+                    // "queTime",
                   ].map((key) => (
-                    <React.Fragment key={key}  >
+                    <React.Fragment key={key}>
                       <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
                         {key.replace(/([A-Z])/g, " $1")}
                       </div>
