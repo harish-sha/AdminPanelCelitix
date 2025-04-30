@@ -29,9 +29,9 @@ export const Preview = ({ inputDetails }) => {
           <div className="border w-7 h-7 rounded-full bg-white"></div>
           <p>{inputDetails?.senderId || "SenderId"}</p>
         </div>
-        <div className="p-4">
+        <div className="p-3">
           {inputDetails.message && (
-            <div className="bg-blue-500 text-white p-4 rounded-lg shadow-md max-w-lg mx-auto max-h-[15rem] overflow-y-auto">
+            <div className="bg-blue-500 text-white p-2 rounded-t-2xl rounded-br-2xl shadow-md max-w-lg mx-auto max-h-[15rem] overflow-y-auto">
               <pre className="text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
                 {inputDetails.message}
               </pre>
