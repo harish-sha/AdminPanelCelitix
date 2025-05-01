@@ -177,10 +177,28 @@ const SmsDLTtemplate = () => {
     }
   };
 
+  // const handleDelete = async (id) => {
+  //   await deleteSingleSmsTemplate(id);
+  //   await fetchTemplates();
+  //   setSelectedTemplateId("");
+  // };
+
   const handleDelete = async (id) => {
-    await deleteSingleSmsTemplate(id);
-    await fetchTemplates();
-    setSelectedTemplateId("");
+    try {
+      const res = await deleteSingleSmsTemplate(id);
+
+      if (res?.message?.includes("successfully")) {
+        toast.success(res.message);
+        await fetchTemplates();
+        setSelectedTemplateId("");
+      } else {
+        toast.error(res?.message || "Failed to delete the template.");
+      }
+    } catch (error) {
+      // Handle any unexpected errors
+      console.error("Error deleting template:", error);
+      toast.error("Something went wrong while deleting the template.");
+    }
   };
 
   const handleMultipleDelete = async (selectedRows) => {
@@ -881,7 +899,7 @@ const SmsDLTtemplate = () => {
                   msgFormat: e.target.value,
                 });
               }}
-              className="resize-none "
+              className="min-h-35 max-h-50"
             />
 
             <InputField

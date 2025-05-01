@@ -214,13 +214,38 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const data = {
-        ...campaignDataToFilter,
+        // ...campaignDataToFilter,
+        campaignName: campaignDataToFilter.campaingName,
+        campaignType: campaignDataToFilter.campaingType || "",
+        mobilesnodata: campaignDataToFilter.mobilesnodata,
         toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
+          "en-GB"
+        ),
+        fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
           "en-GB"
         ),
       };
       const res = await fetchCampaignData(data);
-      setCampaignTableData(res);
+
+      // Map account_usage_type_id to campaign types
+      const mappedData = Array.isArray(res)
+        ? res.map((item, i) => ({
+          id: item.receipt_no_of_duplicate_message,
+          sn: i + 1,
+          ...item,
+          campaign_type:
+            item.account_usage_type_id === 1
+              ? "Transactional"
+              : item.account_usage_type_id === 2
+                ? "Promotional"
+                : item.account_usage_type_id === 3
+                  ? "International"
+                  : "Unknown",
+        }))
+        : [];
+
+      setCampaignTableData(mappedData);
+      // setCampaignTableData(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "que_time", headerName: "CreatedOn", flex: 0, minWidth: 50 },
@@ -249,7 +274,7 @@ const SmsReports = () => {
           minWidth: 50,
         },
         {
-          field: "total_audience",
+          field: "smsCount",
           headerName: "Total Audience",
           flex: 1,
           minWidth: 50,
@@ -292,17 +317,18 @@ const SmsReports = () => {
           ),
         },
       ]);
-      setRows(
-        Array.isArray(res)
-          ? res?.map((item, i) => ({
-              id: item.receipt_no_of_duplicate_message,
-              sn: i + 1,
-              ...item,
-              total_audience: "-",
-              campaign_type: "-",
-            }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res?.map((item, i) => ({
+      //       id: item.receipt_no_of_duplicate_message,
+      //       sn: i + 1,
+      //       ...item,
+      //       total_audience: "-",
+      //       campaign_type: "-",
+      //     }))
+      //     : []
+      // );
+      setRows(mappedData);
     } catch (e) {
       console.log(e);
       toast.error("Something went wrong.");
@@ -446,10 +472,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -527,10 +553,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -617,10 +643,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -718,10 +744,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res)
           ? res.map((item, index) => ({
-              sn: index + 1,
-              id: index + 1,
-              ...item,
-            }))
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {

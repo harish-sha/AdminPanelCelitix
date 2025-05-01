@@ -212,6 +212,11 @@ export const Carousel = ({
           toast.error(
             "Please select a 5:4 ratio image for Short Height and Small Width card."
           );
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         }
         if (
@@ -222,6 +227,11 @@ export const Carousel = ({
           toast.error(
             "Please select a 2:1 ratio image for Short Height and Medium Width card."
           );
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         }
         if (
@@ -232,6 +242,11 @@ export const Carousel = ({
           toast.error(
             "Please select a 4:5 ratio image for Medium Height and Small Width card."
           );
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         }
         if (
@@ -242,6 +257,11 @@ export const Carousel = ({
           toast.error(
             "Please select a 4:3 ratio image for Medium Height and Small Width card."
           );
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         }
         setCaraousalData((prev) =>
@@ -346,9 +366,8 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handlePreviousIndex} aria-label="Previous">
             <KeyboardArrowLeftOutlinedIcon
-              className={`text-black ${
-                selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
-              } `}
+              className={`text-black ${selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
+                } `}
             />
           </IconButton>
           {/* {selectedCardIndex > 0 && (
@@ -379,11 +398,10 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
-              className={`text-black ${
-                selectedCardIndex < caraousalData.length - 1
+              className={`text-black ${selectedCardIndex < caraousalData.length - 1
                   ? "cursor-pointer"
                   : "cursor-not-allowed"
-              }`}
+                }`}
             />
           </IconButton>
         </div>

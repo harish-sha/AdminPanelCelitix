@@ -109,10 +109,42 @@ const SuggestionReportTableRcs = ({
       "image/gif",
     ];
 
+    const validVideoTypes = [
+      "video/mp4",
+      // "image/png",
+      // "image/jpg",
+      // "image/gif",
+    ];
+    const validDocumentTypes = [
+      "application/pdf",
+    ];
+    const validAudioTypes = [
+      "audio/mp4",
+    ];
+
     if (validImageTypes.includes(row.mimeType)) {
       setFileData({
         url: row.fileUri,
         type: "image",
+      });
+    }
+
+    if (validVideoTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "video",
+      });
+    }
+    if (validDocumentTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "pdf",
+      });
+    }
+    if (validAudioTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "audio",
       });
     }
     setIsDialogOpen(true);
@@ -181,12 +213,12 @@ const SuggestionReportTableRcs = ({
 
   const rows = Array.isArray(data?.data)
     ? data?.data?.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-        message: item.message,
-        receivetime: "27/01/2024 14:58:39",
-      }))
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+      message: item.message,
+      receivetime: "27/01/2024 14:58:39",
+    }))
     : [];
 
   const totalPages = Math.ceil(data?.total / paginationModel.pageSize);
@@ -289,12 +321,24 @@ const SuggestionReportTableRcs = ({
             type: "",
           });
         }}
-        style={{ width: "50%" }}
+        // style={{ width: "50%" }}
+        className="w-[40rem]"
         draggable={false}
       >
-        {fileData && fileData.type === "image" && (
-          <img src={fileData?.url} alt={fileData?.url} />
-        )}
+        <div className="flex items-center justify-center">
+          {fileData && fileData.type === "image" && (
+            <img src={fileData?.url} alt={fileData?.url} className="rounded-md max-w-full max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "video" && (
+            <video controls src={fileData?.url} className="rounded-md max-w-full max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "audio" && (
+            <audio controls src={fileData?.url} className="rounded-md max-w-full  max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "pdf" && (
+            <iframe src={fileData?.url} className="rounded-md max-w-full  max-h-[30rem]" />
+          )}
+        </div>
       </Dialog>
     </>
   );

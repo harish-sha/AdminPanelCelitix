@@ -58,13 +58,12 @@ export const updateGroupName = async (grpSrno, grpName) => {
     }
   );
 };
+
+// get contact by srno
 export const getContactBySrno = async (conSrno) => {
-  return await fetchWithAuth(
-    `/contact/getContactBySrno?srNo=${conSrno}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/contact/getContactBySrno?srNo=${conSrno}`, {
+    method: "POST",
+  });
 };
 
 // upload contact file
@@ -73,13 +72,10 @@ export const uploadContactFile = async (file) => {
   formData.append("file", file);
 
   try {
-    const response = await fetchWithAuth(
-      "/campaignFile/UploadContactFile",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const response = await fetchWithAuth("/campaignFile/UploadContactFile", {
+      method: "POST",
+      body: formData,
+    });
 
     if (response) {
       return response;
@@ -95,4 +91,29 @@ export const updateContactsDetails = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
+};
+
+// delete single contact
+// export const deleteContact = async (data) => {
+//   return await fetchWithAuth(
+//     `/contact/deleteMultipleAddressBookContacts?${data}`
+//   );
+// };
+
+export const deleteMultipleContact = async (data) => {
+  return await fetchWithAuth(
+    `/contact/deleteMultipleAddressBookContacts?${data}`
+  );
+};
+export const deleteContact = async (data) => {
+  return await fetchWithAuth(
+    `contact/deleteAddressBookContact?addSrno=${data}`
+  );
+};
+
+export const updateContactStatus = async (data) => {
+  return await fetchWithAuth(
+    `contact/updateStatus?addSrno=${data.srno}&activeStatus=${data.status}`,
+    { method: "POST" }
+  );
 };

@@ -1,3 +1,4 @@
+
 import React, { useEffect } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
@@ -58,33 +59,34 @@ const SendRcs = () => {
   });
   const [carVarInput, setCarVarInput] = useState([]);
   const [headers, setHeaders] = useState([]);
+  const [finalVarList, setFinalVarList] = useState([]);
 
   function extractVariable(data) {
-    let variable = "";
+    if (!data || !Array.isArray(data)) return;
 
     if (data.length === 1) {
-      variable = data[0].content;
-      const match = variable.match(/{#(.+?)#}/g);
+      const content = data[0]?.content || "";
+      const matches = content.match(/{#(.+?)#}/g) || [];
 
-      setVarLength(match?.length);
-      setVarList(match);
+      setVarLength(matches.length);
+      setVarList(matches);
     }
 
     if (data.length > 1) {
-      data?.map((item, index) => {
-        let count = "";
-        variable = item.content;
-        const match = variable.match(/{#(.+?)#}/g);
+      const result = data.reduce(
+        (acc, item, index) => {
+          const content = item?.content || "";
+          const matches = content.match(/{#(.+?)#}/g) || [];
 
-        setCarVar((prev) => ({
-          ...prev,
-          length: prev?.length + match?.length,
-          data: {
-            ...prev.data,
-            [index]: match,
-          },
-        }));
-      });
+          acc.totalLength += matches.length;
+          acc.data[index] = matches;
+
+          return acc;
+        },
+        { totalLength: 0, data: {} }
+      );
+
+      setCarVar({ length: result.totalLength, data: result.data });
     }
   }
 
@@ -101,7 +103,6 @@ const SendRcs = () => {
         const res = await fetchAllAgents();
         setAllAgents(res);
       } catch (e) {
-        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -111,7 +112,6 @@ const SendRcs = () => {
         const res = await getAllGroups();
         setAllGroups(res);
       } catch (e) {
-        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -121,7 +121,6 @@ const SendRcs = () => {
         const res = await getCountryList();
         setCountryList(res);
       } catch (e) {
-        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -133,12 +132,10 @@ const SendRcs = () => {
 
   useEffect(() => {
     async function handleFetchAllTemplates() {
-      if (!campaignDetails?.agent) return;
       try {
-        const res = await fetchAllTemplates(campaignDetails?.agent);
+        const res = await fetchAllTemplates(campaignDetails?.agent, 1);
         setAllTemplates(res?.Data);
       } catch (e) {
-        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -149,7 +146,6 @@ const SendRcs = () => {
         extractVariable(res);
         setTemplateDetails(res);
       } catch (e) {
-        // console.log(e);
         toast.error("Something went wrong.");
       }
     }
@@ -186,11 +182,9 @@ const SendRcs = () => {
         return toast.error("Selected group has no contacts.");
       }
       setTotalAudience(totalGrpCount);
+    } else {
+      setTotalAudience(contactData?.totalRecords);
     }
-
-    // if (varLength !== Object.keys(inputVariables).length) {
-    //   return toast.error("Please enter all variables.");
-    // }
 
     if (selectedOption === "contact" && !uploadFile) {
       return toast.error("Please upload a file.");
@@ -207,13 +201,20 @@ const SendRcs = () => {
       return toast.error("Please choose a mobile number field.");
     }
 
-    const validKeys = Object.keys(inputVariables).filter((key) => {
-      inputVariables[key] !== "" || inputVariables[key] !== undefined;
-    });
+    const validKeys = Object.keys(inputVariables).filter(
+      (key) => inputVariables[key] !== "" && inputVariables[key] !== undefined
+    );
 
     if (varLength !== validKeys?.length) {
       return toast.error("Please enter all variables.");
     }
+
+    // const finalVarList = [];
+    const finalVarList = varList?.map((item, index) => {
+      return `${item}:${inputVariables[index]}`;
+    });
+
+    setFinalVarList(finalVarList);
     if (isError) return;
 
     setConfirmDialogVisible(true);
@@ -229,20 +230,33 @@ const SendRcs = () => {
       allVar.push(inputVariables[key]);
     });
 
+    const regexx = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+
+    // let grp = "";
+    // if (selectedGrp) {
+    //   grp = selectedGrp.join(",");
+    // }
+
     let data = {
       agent: campaignDetails?.agent,
       campaignName: campaignDetails?.campaignName,
       templateSrno: campaignDetails?.templateSrno,
-      variableList: [],
-      variables: allVar,
+      variables: regexx,
+      variableList: allVar,
       totalCount:
         selectedOption === "group" ? totalAudience : contactData?.totalRecords,
       templateType: type,
-      mobileNumberIndex: "-1",
+      mobileNumberIndex: contactData.selectedMobileColumn || "-1",
       isGroup: selectedOption === "group" ? true : false,
-      countryCode: "0",
+      countryCode: contactData?.addcountryCode ? contactData?.selectedCountryCode : "0",
       groupSrNoList: selectedOption === "group" ? selectedGrp : [],
-      isSchedule: "0",
+      isSchedule: scheduleData?.isSchedule
+        ? contactData?.selectedCountryCode
+        : "0",
+      scheduleTime: scheduleData?.isSchedule
+        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss")
+        : "",
+      filePath: contactData?.filePath || "",
     };
     if (scheduleData?.isSchedule && !scheduleData?.time) {
       return toast.error("Please select a time.");
@@ -251,20 +265,20 @@ const SendRcs = () => {
       return toast.error("Please select a valid time.");
     }
 
-    if (scheduleData?.isSchedule) {
-      data = {
-        ...data,
-        isSchedule: "1",
-        scheduleTime: moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss"),
-      };
-    }
+    // if (scheduleData?.isSchedule) {
+    //   data = {
+    //     ...data,
+    //     isSchedule: "1",
+    //     scheduleTime: moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss"),
+    //   };
+    // }
 
-    if (contactData?.addcountryCode) {
-      data = {
-        ...data,
-        countryCode: contactData?.selectedCountryCode,
-      };
-    }
+    // if (contactData?.addcountryCode) {
+    //   data = {
+    //     ...data,
+    //     countryCode: contactData?.selectedCountryCode,
+    //   };
+    // }
     try {
       const res = await launchCampaign(data);
       if (res?.status === "success") {
@@ -274,7 +288,7 @@ const SendRcs = () => {
         setCampaignDetails({ agent: "", campaignName: "", templateSrno: "" });
         setSelectedIndex(0);
         setSelectedOption("group");
-        setAllGroups([]);
+        // setAllGroups([]);
         setselectedGrp("");
         setUploadFile(null);
         setContactData({});
@@ -288,9 +302,11 @@ const SendRcs = () => {
           isSchedule: false,
           time: "",
         });
+        setFinalVarList([]);
+        setCarVar([]);
+        setTemplateDetails({});
       }
     } catch (e) {
-      // console.log(e);
       toast.error("Something went wrong.");
       return;
     }
@@ -414,14 +430,12 @@ const SendRcs = () => {
             {/* </div> */}
             {/* <div> */}
             <span className="font-semibold font-m">Total Audience : </span>
-            <p className="">
-              {totalAudience || contactData.totalContacts || "N/A"}
-            </p>
+            <p className="">{totalAudience || "N/A"}</p>
             {/* </div> */}
           </div>
           <div className="flex items-center gap-2">
             <Checkbox
-              inputId="scheduleCheckbox"
+              inputid="scheduleCheckbox"
               checked={scheduleData.isSchedule}
               onChange={(e) => {
                 setScheduleData((prev) => ({

@@ -34,9 +34,9 @@ export const ChatInput = ({
         <button
           onClick={sendMessage}
           disabled={!selectedImage && !input}
-          className="flex items-center justify-center w-8 h-8 text-white transition-all bg-blue-600 rounded-full shadow-md hover:bg-blue-700 active:scale-95 md:mr-6"
+          className="flex items-center justify-center w-8 h-8 text-white transition-all bg-blue-600 rounded-full shadow-md hover:bg-blue-700 active:scale-95 md:mr-7"
         >
-          <FiSend className="w-4 h-4 mt-1 mr-1" />
+          <FiSend className="w-4 h-4 mt-1 mr-1"/>
         </button>
         <SpeedDial
           model={items}

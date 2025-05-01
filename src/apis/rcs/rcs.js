@@ -1,3 +1,4 @@
+import { is } from "date-fns/locale";
 import { fetchWithAuth } from "../apiClient";
 
 // get campaign report
@@ -72,10 +73,13 @@ export const fetchAllAgents = async () => {
 };
 
 // fetch all templates list
-export const fetchAllTemplates = async (data = "") => {
-  return await fetchWithAuth(`/rcsTemplate/showTemplates? =${data}`, {
-    method: "POST",
-  });
+export const fetchAllTemplates = async (data = "", isActive = "") => {
+  return await fetchWithAuth(
+    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 // update template status by srno

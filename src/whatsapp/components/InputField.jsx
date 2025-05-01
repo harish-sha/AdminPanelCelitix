@@ -20,6 +20,7 @@ const InputField = ({
   accept = "",
   required = false,
   // max = { maxLength },
+  className = "",
   ref = null,
 }) => {
   // const handleChange = (e) => {
@@ -61,7 +62,7 @@ const InputField = ({
         readOnly={readOnly}
         style={style}
         maxLength={maxLength}
-        className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${error ? "border-red-500" : "border-gray-300"
+        className={`block w-full  p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${error ? "border-red-500" : "border-gray-300"
           }`}
         accept={accept}
         ref={ref}

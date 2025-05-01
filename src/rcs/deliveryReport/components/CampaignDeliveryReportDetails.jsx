@@ -1,13 +1,3 @@
-// import React from 'react'
-
-// const CampaignDeliveryReportDetails = () => {
-//   return (
-//     <div>CampaignDeliveryReportDetails</div>
-//   )
-// }
-
-// export default CampaignDeliveryReportDetails
-
 import React from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -167,7 +157,7 @@ const CampaignDeliveryReportDetails = () => {
         // srNo: item.srNo || "N/A",
         sn: index + 1,
         mobileNo: item.mobileNo || "N/A",
-        status: item.status || "N/A",
+        status: item.status === "rcs_pending" ? "Pending" : item.status || "N/A",
         sentTime: item.sentTime || "-",
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
@@ -262,7 +252,7 @@ const CampaignDeliveryReportDetails = () => {
                         type="number"
                     />
                 </div>
-                <div className="w-full sm:w-64">
+                {/* <div className="w-full sm:w-64">
                     <AnimatedDropdown
                         id="campaignDeliveryStatusdropdown"
                         name="campaignDeliveryStatusdropdown"
@@ -280,7 +270,7 @@ const CampaignDeliveryReportDetails = () => {
                         onChange={setDeliveryStatus}
                         placeholder="Category"
                     />
-                </div>
+                </div> */}
                 <div className="w-max-content ">
                     <UniversalButton
                         id="manageCampaignSearchBtn"

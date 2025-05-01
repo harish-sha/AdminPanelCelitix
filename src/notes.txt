@@ -1,9 +1,21 @@
-tasks & Bugs April30
+tasks arihant 
 
- whatsapp > livechat > whatsapplivechat - Done
- whatsapp > livechat > component > InputData.jsx
- whatsapp > livechat > component > ChatScreen.jsx - Done
- whatsapp > livechat > component > Sidebar.jsx
+rcs > SendRcs > SendRcs.jsx
+rcs > SendRcs > components > VariableManager.jsx - Done
+rcs > manageTemplate > components > Carousel.jsx - done
+rcs > manageTemplate > ManageTemplateRcs.jsx    - done
 
- rcs > SendRcs> SendRcs.jsx
- 
+sms > smsSend > SendSms.jsx - done
+sms > smsSend > components > Variable.jsx - Done
+
+apis > contact.js - done
+apis > rcs.js - done
+
+manageContacts > ManageContacts.jsx
+
+index.css - Done
+
+whatsapp > components > UniversalTextArea.jsx - Done
+
+last commit Commits on May 1, 2025
+feat: update suggestionBtnSuggestion ui RcsManageTemplate
