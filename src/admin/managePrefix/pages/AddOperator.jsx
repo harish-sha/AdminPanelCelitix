@@ -212,7 +212,7 @@ const AddOperator = ({ id, name }) => {
       // const headers = Object.keys(jsonData[0]);
       const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
       // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-      console.log("Extracted headers:", headers);
+      // console.log("Extracted headers:", headers);
 
       setFileData(jsonData);
       setColumn(headers);

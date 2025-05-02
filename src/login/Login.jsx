@@ -42,24 +42,24 @@ const Login = () => {
       });
 
       const data = await response.json();
-      console.log("Login API Response:", data);
+      // console.log("Login API Response:", data);
 
       if (!response.ok || !data.token) {
         throw new Error("Authentication failed!");
       }
 
-      console.log("Received Token:", data.token);
+      // console.log("Received Token:", data.token);
 
       sessionStorage.setItem("token", data.token);
-      console.log(
-        "Token saved in session storage:",
-        sessionStorage.getItem("token")
-      );
+      // console.log(
+      //   "Token saved in session storage:",
+      //   sessionStorage.getItem("token")
+      // );
 
       toast.success("Login Successful!");
       navigate("/");
     } catch (error) {
-      console.error("Login Error:", error);
+      // console.error("Login Error:", error);
       toast.error(error.message);
     } finally {
       setLoading(false);

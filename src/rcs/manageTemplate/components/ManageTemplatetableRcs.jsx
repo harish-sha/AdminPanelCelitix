@@ -194,7 +194,7 @@ const ManageTemplatetableRcs = ({
               <IconButton
                 className="no-xs"
                 onClick={() => {
-                  console.log(params.row);
+                  // console.log(params.row);
                   setTemplateDeleteVisible(true);
                   setTemplateid(params.row);
                 }}
@@ -211,7 +211,7 @@ const ManageTemplatetableRcs = ({
               <IconButton
                 className="no-xs"
                 onClick={() => {
-                  console.log(params.row);
+                  // console.log(params.row);
                   setTemplateDeleteVisible(true);
                   setTemplateid(params.row);
                 }}
@@ -308,7 +308,7 @@ const ManageTemplatetableRcs = ({
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           onRowSelectionModelChange={(ids) => {
-            console.log(ids);
+            // console.log(ids);
           }}
           // checkboxSelection
           disableRowSelectionOnClick

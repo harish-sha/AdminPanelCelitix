@@ -202,14 +202,14 @@ const Transactions = () => {
   };
 
   const handleSearchHistory = async () => {
-    console.log("Search Filters:");
-    console.log({
-      user: selectedMultiHistory,
-      dateFrom: selectedHistoryFrom,
-      dateTo: selectedHistoryTo,
-      service: selectedHistoryService,
-      type: selectedHistoryType,
-    });
+    // console.log("Search Filters:");
+    // console.log({
+    //   user: selectedMultiHistory,
+    //   dateFrom: selectedHistoryFrom,
+    //   dateTo: selectedHistoryTo,
+    //   service: selectedHistoryService,
+    //   type: selectedHistoryType,
+    // });
     setIsFetching(true);
     await new Promise((resolve) => setTimeout(resolve, 1500));
     setIsFetching(false);

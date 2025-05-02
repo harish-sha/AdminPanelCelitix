@@ -149,7 +149,7 @@ export const Preview = ({
                 )}
               </div>
             )}
-            <div className="overflow-y-scroll max-h-[50px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
+            <div className="overflow-y-scroll max-h-[250px] text-sm font-medium break-words whitespace-pre-wrap px-1 py-2">
               <p>{data?.replacedContent}</p>
             </div>
             {data?.details[0]?.suggestions?.length > 0 && (

@@ -9,7 +9,7 @@ export const FileNodeContent = ({ accept }: { accept: string }) => {
 
   const handleFileUpload = (event: any) => {
     const file = event.target.files[0];
-    console.log(file);
+    // console.log(file);
     setValue(URL.createObjectURL(file));
   };
 

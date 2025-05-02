@@ -428,7 +428,7 @@ const SendSms = () => {
         const res = await getAllTemplates("all");
         setAllTemplates(res);
       } catch (e) {
-        console.log(e);
+        // console.log(e);
       }
     }
 
@@ -463,7 +463,7 @@ const SendSms = () => {
       (template) => template.templateId === inputDetails?.templateId
     );
 
-    console.log(data);
+    // console.log(data);
 
     setInputDetails({
       ...inputDetails,
@@ -617,7 +617,7 @@ const SendSms = () => {
         time: new Date(),
       });
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error launching campaign.");
     }
   }

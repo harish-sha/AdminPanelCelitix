@@ -36,7 +36,7 @@ const CustomPagination = ({
     count: totalPages,
     page: paginationModel.page + 1,
     onChange: (_, newPage) => {
-      console.log("newPage", newPage);
+      // console.log("newPage", newPage);
       setPaginationModel({ ...paginationModel, page: newPage - 1 });
       setCurrentPage(newPage);
     },

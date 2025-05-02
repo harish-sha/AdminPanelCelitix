@@ -1,5 +1,5 @@
 import InputField from "@/whatsapp/components/InputField";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Carousel } from "react-responsive-carousel";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import VariableDropdown from "@/whatsapp/components/VariableDropdown";
@@ -43,42 +43,100 @@ export const VariableManager = ({
     });
   };
 
-  const handleEmojiAdd = (emoji, index) => {
-    const input = textBoxRef.current;
-    if (!input) return;
+  // const handleEmojiAdd = (emoji, index) => {
+  //   const input = textBoxRef.current;
+  //   if (!input) return;
 
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
+  //   const start = input.selectionStart;
+  //   const end = input.selectionEnd;
 
-    const newMessageContent =
-      inputVariables[index].slice(0, start) +
-      emoji +
-      inputVariables[index].slice(end);
+  //   const newMessageContent =
+  //     inputVariables[index].slice(0, start) +
+  //     emoji +
+  //     inputVariables[index].slice(end);
 
-    setInputVariables((prev) => ({
-      ...prev,
-      [index]: newMessageContent,
-    }));
-  };
+  //   setInputVariables((prev) => ({
+  //     ...prev,
+  //     [index]: newMessageContent,
+  //   }));
+  // };
 
-  const insertVariable = (variable, index) => {
-    const input = textBoxRef.current;
-    if (!input) return;
+  // const insertVariable = (variable, index) => {
+  //   const input = textBoxRef.current;
+  //   if (!input) return;
 
-    const tag = `{#${variable}#}`;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
+  //   const tag = `{#${variable}#}`;
+  //   const start = input.selectionStart;
+  //   const end = input.selectionEnd;
 
-    const newMessageContent =
-      inputVariables[index].slice(0, start) +
-      tag +
-      inputVariables[index].slice(end);
+  //   const newMessageContent =
+  //     inputVariables[index].substring(0, start) +
+  //     tag +
+  //     inputVariables[index].substring(end);
 
-    setInputVariables((prev) => ({
-      ...prev,
-      [index]: newMessageContent,
-    }));
-  };
+  //   setInputVariables((prev) => ({
+  //     ...prev,
+  //     [index]: newMessageContent,
+  //   }));
+  // };
+
+  const handleEmojiAdd = useCallback(
+    (emoji, index) => {
+      const input = textBoxRef.current;
+      if (!input) return;
+
+      const inputData = inputVariables[index] || "";
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+
+      const newMessageContent =
+        inputData.slice(0, start) + emoji + inputData.slice(end);
+
+      setInputVariables((prev) => ({
+        ...prev,
+        [index]: newMessageContent,
+      }));
+
+      setTimeout(() => {
+        input.focus();
+        input.setSelectionRange(
+          newMessageContent.length,
+          newMessageContent.length
+        );pcam
+      }, 0);
+    },
+    [inputVariables, setInputVariables]
+  );
+
+  const insertVariable = useCallback(
+    (variable, index) => {
+      const input = textBoxRef.current;
+      if (!input) return;
+
+      const tag = `{#${variable}#}`;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+
+      const inputData = inputVariables[index] || "";
+
+      const newMessageContent =
+        inputData.slice(0, start) + tag + inputData.slice(end);
+
+      setInputVariables((prev) => ({
+        ...prev,
+        [index]: newMessageContent,
+      }));
+
+      setTimeout(() => {
+        input.focus();
+        input.setSelectionRange(
+          newMessageContent.length,
+          newMessageContent.length
+        );
+      }, 0);
+    },
+    [inputVariables, setInputVariables]
+  );
 
   const renderSimpleInput = () =>
     varList?.map((label, index) => (
@@ -95,13 +153,13 @@ export const VariableManager = ({
             sx={{ width: "100%", marginBottom: "1rem" }}
           />
         </div>
-        <div className="absolute top-[0.122rem] right-0 h-10">
+        <div className="absolute top-[0.58rem] right-2 h-10">
           <InputVariable
             variables={headers}
             onSelect={(e) => insertVariable(e, index)}
           />
         </div>
-        <div className="absolute top-[0.4rem] right-8">
+        <div className="absolute top-[0.8rem] right-10">
           <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
         </div>
       </div>

@@ -39,7 +39,7 @@ const ManageUser = () => {
       const res = await fetchAllUsers(data);
       setAllUsers(res.userMstPojoList);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong! Please try again later.");
     } finally {
       setIsFetching(false);

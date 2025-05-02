@@ -133,7 +133,7 @@ const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-      
+
         {/* dashboard */}
         <Route index element={<Dashboard />} />
 
@@ -270,6 +270,8 @@ const Approutes = () => {
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
       </Route>
+
+
 
       <Route path="dummy" element={<Dummy />} />
       <Route path="arihant" element={<Arihant />} />

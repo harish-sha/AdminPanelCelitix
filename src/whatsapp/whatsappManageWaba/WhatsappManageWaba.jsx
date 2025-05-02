@@ -198,47 +198,106 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image uploaded successfully.");
   };
 
+
+  // Harish 
+
+  // useEffect(() => {
+  //   window.fbAsyncInit = function () {
+  //     window.FB.init({
+  //       appId: "819027950096451",
+  //       cookie: true,
+  //       xfbml: true,
+  //       version: "v20.0",
+  //     });
+  //   };
+
+  //   (function (d, s, id) {
+  //     let js,
+  //       fjs = d.getElementsByTagName(s)[0];
+  //     if (d.getElementById(id)) return;
+  //     js = d.createElement(s);
+  //     js.id = id;
+  //     js.src = "https://connect.facebook.net/en_US/sdk.js";
+  //     fjs.parentNode.insertBefore(js, fjs);
+  //   })(document, "script", "facebook-jssdk");
+  // }, []);
+
+  // const handleFacebookLogin = () => {
+  //   window.FB.login(
+  //     (response) => {
+  //       if (response.authResponse) {
+  //         // console.log("User logged in", response);
+  //         window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
+  //           // console.log("User details", user);
+  //         });
+  //       } else {
+  //         // console.log("User canceled login or did not fully authorize.");
+  //         toast.error("User canceled login or did not fully authorize.")
+  //       }
+  //     },
+  //     { scope: "public_profile,email" },
+  //     {
+  //       config_id: "827520649332611",
+  //       response_type: "code",
+  //       override_default_response_type: true,
+  //       extras: {
+  //         feature: "whatsapp_embedded_signup",
+  //         version: 2,
+  //         setup: {
+  //           solutionID: "597385276367677",
+  //         },
+  //       },
+  //     }
+  //   );
+  // };
+
+  // Arhant
+
   useEffect(() => {
-    window.fbAsyncInit = function () {
-      window.FB.init({
-        appId: "819027950096451",
-        cookie: true,
-        xfbml: true,
-        version: "v20.0",
-      });
+    // Load the Facebook SDK
+    const loadFacebookSDK = () => {
+      window.fbAsyncInit = function () {
+        window.FB.init({
+          appId: "819027950096451",
+          autoLogAppEvents: true,
+          xfbml: true,
+          version: 'v20.0',
+        });
+      };
+
+      // Load the SDK script
+      if (!document.getElementById('facebook-jssdk')) {
+        const script = document.createElement('script');
+        script.id = 'facebook-jssdk';
+        // script.src = 'https://connect.facebook.net/en_US/sdk.js';
+        script.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
+        script.async = true;
+        script.defer = true;
+        script.crossOrigin = 'anonymous';
+        document.body.appendChild(script);
+      }
     };
 
-    (function (d, s, id) {
-      let js,
-        fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://connect.facebook.net/en_US/sdk.js";
-      fjs.parentNode.insertBefore(js, fjs);
-    })(document, "script", "facebook-jssdk");
+    loadFacebookSDK();
   }, []);
 
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
         if (response.authResponse) {
-          // console.log("User logged in", response);
-          window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
-            // console.log("User details", user);
-          });
+          const accessToken = response.authResponse.accessToken;
+          // console.log('Access Token:', accessToken);
+          // Use this token to call the debug_token API and get the shared WABA's ID
         } else {
-          // console.log("User canceled login or did not fully authorize.");
-          toast.error("User canceled login or did not fully authorize.")
+          // console.log('User cancelled login or did not fully authorize.');
         }
       },
-      { scope: "public_profile,email" },
       {
         config_id: "827520649332611",
-        response_type: "code",
+        response_type: 'code',
         override_default_response_type: true,
         extras: {
-          feature: "whatsapp_embedded_signup",
+          feature: 'whatsapp_embedded_signup',
           version: 2,
           setup: {
             solutionID: "597385276367677",
@@ -247,6 +306,10 @@ const WhatsappManageWaba = ({ id, name }) => {
       }
     );
   };
+
+
+
+
 
   const handleSelectFile = () => {
     fileInputRef.current.value = "";
@@ -404,14 +467,14 @@ const WhatsappManageWaba = ({ id, name }) => {
               }}
             >
               {/* Circle */}
-              {/* <span
+              <span
                 style={{
                   backgroundColor: color,
                 }}
-                className="h-5 w-5 rounded-full shadow-lg"
-              ></span> */}
+                className="h-5 w-10 rounded-full shadow-lg"
+              ></span>
               {/* Capsule */}
-              <span
+              {/* <span
                 style={{
                   // padding: "2px 8px",
                   // borderRadius: "12px",
@@ -424,7 +487,7 @@ const WhatsappManageWaba = ({ id, name }) => {
                 className="h-auto w-auto px-3 py-1 rounded-full text-white text-sm tracking-wide font-normal"
               >
                 {quality.toLowerCase()}
-              </span>
+              </span> */}
             </div>
           </CustomTooltip>
         );
@@ -777,13 +840,13 @@ const WhatsappManageWaba = ({ id, name }) => {
               Login with Facebook to start launching campaigns and analyse phone
               number quality.
             </p>
-            <a
-              href="#signup"
+            <button
+              // href="#signup"
               className="bg-[#4267b2] p-2.5 rounded-lg text-[1.1rem] text-white cursor-pointer font-medium tracking-wide"
               onClick={handleFacebookLogin}
             >
               Login with Facebook
-            </a>
+            </button>
           </div>
         </div>
       )}
@@ -1163,13 +1226,13 @@ const WhatsappManageWaba = ({ id, name }) => {
           <p className="mb-6 font-medium">
             To add another WABA account, link the new account through Facebook.
           </p>
-          <a
-            href="#signup"
+          <button
+            // href="#signup"
             className="bg-[#4267b2] p-2.5 rounded-lg lg:text-[1rem] md:text-[0.9rem] sm:text-[0.5rem] text-white cursor-pointer font-medium tracking-wide"
             onClick={handleFacebookLogin}
           >
             Login with Facebook
-          </a>
+          </button>
         </div>
       </Dialog>
     </div>

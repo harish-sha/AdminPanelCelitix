@@ -113,7 +113,7 @@ export const RadioButtonLaunchSms = ({
   }
 
   return (
-    <div className="max-h-full bg-gray-100 rounded-lg shadow-md lg:flex-1 border p-2 space-y-2 w-full">
+    <div className="max-h-full bg-gray-100 rounded-lg shadow-md lg:flex-1 border p-2 space-y-2 w-1/3">
       <div>
         <h2 className="mb-2 text-sm font-medium tracking-wide text-gray-800">
           Choose an Option
@@ -239,7 +239,7 @@ export const RadioButtonLaunchSms = ({
                     // isUploading ?
                     // "disabled" : ""
                     ""
-                  }`}
+                    }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}

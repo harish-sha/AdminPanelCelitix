@@ -139,7 +139,7 @@ const Settings = () => {
       localStorage.removeItem("token");
       navigate("/login");
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error updating password");
     }
   }
@@ -251,7 +251,7 @@ const Settings = () => {
         apiInput: "",
       });
     } catch (e) {
-      console.log(res);
+      // console.log(res);
       return toast.error("Error updating IP details");
     }
   }

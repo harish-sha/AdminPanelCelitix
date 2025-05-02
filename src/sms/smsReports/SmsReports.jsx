@@ -216,7 +216,7 @@ const SmsReports = () => {
       const data = {
         // ...campaignDataToFilter,
         campaignName: campaignDataToFilter.campaingName,
-        campaignType: campaignDataToFilter.campaingType || "",
+        campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
         toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
           "en-GB"
@@ -330,7 +330,7 @@ const SmsReports = () => {
       // );
       setRows(mappedData);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -479,7 +479,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -500,7 +500,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      console.log(res);
+      // console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
@@ -534,7 +534,7 @@ const SmsReports = () => {
                 <IconButton
                   className="no-xs"
                   onClick={() => {
-                    console.log(params.row);
+                    // console.log(params.row);
                   }}
                 >
                   <DownloadForOfflineOutlinedIcon
@@ -560,7 +560,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -624,7 +624,7 @@ const SmsReports = () => {
               <CustomTooltip title="Download" placement="top" arrow>
                 <IconButton
                   onClick={() => {
-                    console.log(params.row);
+                    // console.log(params.row);
                   }}
                 >
                   <DownloadForOfflineOutlinedIcon
@@ -650,7 +650,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -751,7 +751,7 @@ const SmsReports = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -857,7 +857,7 @@ const SmsReports = () => {
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
             <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
-              {/* <div className="w-full sm:w-56">
+              <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -873,7 +873,7 @@ const SmsReports = () => {
                   minDate={new Date().setMonth(new Date().getMonth() - 3)}
                   maxDate={new Date()}
                 />
-              </div> */}
+              </div>
               <div className="w-full sm:w-56">
                 <InputField
                   label="Campaign Name"

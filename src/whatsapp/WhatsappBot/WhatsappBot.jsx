@@ -64,7 +64,7 @@ const WhatsappBot = () => {
       const res = await getAllBot();
       setAllBots(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
     }
   }
   useEffect(() => {

@@ -24,7 +24,7 @@ const AddService = () => {
   ];
 
   const handleAddService = (service) => {
-    console.log(service);
+    // console.log(service);
   };
 
   const dataencodingoption = [
@@ -33,7 +33,7 @@ const AddService = () => {
   ];
 
   const handleAddDataEncoding = (data) => {
-    console.log(data);
+    // console.log(data);
   };
 
   const bindmodeoption = [
@@ -43,7 +43,7 @@ const AddService = () => {
   ];
 
   const handleAddBindMode = (bind) => {
-    console.log(bind);
+    // console.log(bind);
   };
 
   const totalsocketsaddoption = [
@@ -53,7 +53,7 @@ const AddService = () => {
   ];
 
   const handleAddTotalSockets = (sockets) => {
-    console.log(sockets);
+    // console.log(sockets);
   };
 
   const sourceoption = [
@@ -63,7 +63,7 @@ const AddService = () => {
   ];
 
   const handleAddSource = (source) => {
-    console.log(source);
+    // console.log(source);
   };
   const destinationoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -72,7 +72,7 @@ const AddService = () => {
   ];
 
   const handleAddDestination = (destination) => {
-    console.log(destination);
+    // console.log(destination);
   };
   const registereddeliveryoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -81,7 +81,7 @@ const AddService = () => {
   ];
 
   const handleAddRegisteredDelivery = (delivery) => {
-    console.log(delivery);
+    // console.log(delivery);
   };
   const windowsizeoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -90,7 +90,7 @@ const AddService = () => {
   ];
 
   const handleAddWindowSize = (windows) => {
-    console.log(windows);
+    // console.log(windows);
   };
 
   return (

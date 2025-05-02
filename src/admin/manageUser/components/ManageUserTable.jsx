@@ -537,7 +537,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   // ];
 
   const handleRcsAddCredit = () => {
-    console.log("handleRcsCredit");
+    // console.log("handleRcsCredit");
   };
 
   const handleChangercs = (event) => {

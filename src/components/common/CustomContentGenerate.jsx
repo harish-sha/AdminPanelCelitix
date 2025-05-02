@@ -55,7 +55,7 @@ export const GenerateAiContent = ({
             );
 
             const text = response.data.choices?.[0]?.message?.content || "";
-            console.log(text);
+            // console.log(text);
 
             const totalLength = messageContent.length + text.length;
             const finalText =

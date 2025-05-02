@@ -77,7 +77,7 @@ const CustomPaginatior = ({
 export const ApiCampaignInfo = () => {
   const { state } = useLocation();
 
-  const [data, setData] = useState(state);
+  const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -87,17 +87,21 @@ export const ApiCampaignInfo = () => {
   const [selectedRows, setSelectedRows] = useState([]);
 
   useEffect(() => {
-    if (!state) return;
+    if (!state) {
+      window.history.back();
+      return;
+    }
     async function handleFetchDetails() {
       try {
         const payload = {
           mobile: "",
           page: 0,
           source: "",
-          deliveryStatus: "sent",
+          deliveryStatus: state.log,
           status: "block",
         };
         const res = await getListofSendMsg(payload);
+        // console.log(res);
         setData(res);
       } catch (e) {
         // console.log(e);
@@ -126,19 +130,35 @@ export const ApiCampaignInfo = () => {
     { field: "que", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
-  const rows = Array.from({ length: 20 }, (_, i) => ({
+  // const rows = Array.from({ length: 20 }, (_, i) => ({
+  //   id: i + 1,
+  //   sn: i + 1,
+  //   wabaNumber: `WABA-${1000 + i}`,
+  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
+  //   source: "API",
+  //   status: "Pending",
+  //   deliveryStatus: "Sent",
+  //   reason: "N/A",
+  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
+  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
+  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
+  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
+  // }));
+
+  const rows = data?.map((item, i) => ({
     id: i + 1,
     sn: i + 1,
-    wabaNumber: `WABA-${1000 + i}`,
-    mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
-    source: "API",
-    status: "Pending",
-    deliveryStatus: "Sent",
-    reason: "N/A",
-    sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
-    deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
-    read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
-    que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
+    // wabaNumber: WABA-${1000 + i},
+    // mobileNo: 98765432${(10 + i).toString().slice(-2)},
+    // source: "API",
+    // status: "Pending",
+    // deliveryStatus: "Sent",
+    // reason: "N/A",
+    // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
+    // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
+    // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
+    // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
+    ...item,
   }));
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -220,7 +240,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize

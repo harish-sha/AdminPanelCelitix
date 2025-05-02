@@ -382,7 +382,7 @@ const SmsDLTtemplate = () => {
       return toast.error("Please upload a file.");
     }
 
-    console.log(templateData);
+    // console.log(templateData);
 
     const requiredTemplateData = {
       templateName: "",

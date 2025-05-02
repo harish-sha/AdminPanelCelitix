@@ -463,9 +463,9 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* Country Code */}
-      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 md:flex-wrap xl:flex-nowrap">
+      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 ">
         {selectedOption === "option2" && isUploaded && (
-          <div className="w-full">
+          <div className="flex flex-col w-full mt-2 gap-2">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -474,67 +474,41 @@ function RadioButtonLaunchCampaign({
               />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            {/* <div className="w-full mt-4">
-              <AnimatedDropdown
-                id="selectCountryCode"
-                name="selectCountryCode"
-                label="Select Country Code"
-                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
-                tooltipPlacement="right"
-                placeholder="Select Country Code"
-                options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
-                  .map((country) => ({
-                    label: `${country.countryName} (+${country.countryCode})`,
-                    value: `${country.countryCode}-${country.countryName}`,
-                  }))}
-                value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
-                onChange={(value) => {
-                  if (value) {
-                    const [code, name] = value.split('-');
-                    setSelectedCountryCode(code);
-                    setSelectedCountryName(name);
-                  }
-                }}
-                disabled={!addCountryCode}
-              />
-            </div> */}
-            <div className="w-full mt-4">
-              <DropdownWithSearch
-                id="selectCountryCode"
-                name="selectCountryCode"
-                label="Country Code"
-                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
-                tooltipPlacement="right"
-                placeholder="Country Code"
-                disabled={!addCountryCode}
-                options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
-                  .map((country) => ({
-                    label: `${country.countryName} (+${country.countryCode})`,
-                    value: `${country.countryCode}-${country.countryName}`,
-                  }))}
-                value={
-                  selectedCountryCode
-                    ? `${selectedCountryCode}-${selectedCountryName}`
-                    : ""
+            <DropdownWithSearch
+              id="selectCountryCode"
+              name="selectCountryCode"
+              label="Country Code"
+              tooltipContent="check the - [ ✔ Add country code ] to apply country code"
+              tooltipPlacement="right"
+              placeholder="Country Code"
+              disabled={!addCountryCode}
+              options={countryList
+                .sort((a, b) => a.countryName.localeCompare(b.countryName))
+                .map((country) => ({
+                  label: `${country.countryName} (+${country.countryCode})`,
+                  value: `${country.countryCode}-${country.countryName}`,
+                }))}
+              value={
+                selectedCountryCode
+                  ? `${selectedCountryCode}-${selectedCountryName}`
+                  : ""
+              }
+              onChange={(value) => {
+                if (value) {
+                  const [code, name] = value.split("-");
+                  setSelectedCountryCode(code);
+                  setSelectedCountryName(name);
                 }
-                onChange={(value) => {
-                  if (value) {
-                    const [code, name] = value.split("-");
-                    setSelectedCountryCode(code);
-                    setSelectedCountryName(name);
-                  }
-                }}
-              />
-            </div>
+              }}
+            />
+
           </div>
         )}
 
         {/* Mobile Column Selection */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
-            <div className="w-full md:mt-2 lg:mt-4 xl:mt-9">
+            <div className="w-full md:mt-2 lg:mt-4 xl:mt-2">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"

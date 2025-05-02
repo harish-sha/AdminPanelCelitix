@@ -4006,7 +4006,7 @@ const ManageContacts = () => {
         header="Edit Contact Details"
         visible={updateContactVisible}
         onHide={() => setUpdateContactVisible(false)}
-        className="w-[40rem] md:-[30rem] sm:w-[20]"
+        className="w-[40rem] md:[30rem] sm:w-[20]"
         draggable={false}
       >
         <div>

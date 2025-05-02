@@ -85,6 +85,7 @@ const AddTemplateRcs = () => {
     typing: false,
   });
   const [isOpen, setIsOpen] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
 
   const closePanel = () => {
     setIsOpen(false);
@@ -302,7 +303,7 @@ const AddTemplateRcs = () => {
         toast.error("Please upload a file");
         return;
       }
-      console.log(cardData);
+      // console.log(cardData);
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
@@ -440,6 +441,7 @@ const AddTemplateRcs = () => {
     }
 
     try {
+      setIsFetching(true);
       const res = await saveRcsTemplate(data);
       if (!res?.status) {
         toast.error(res?.msg);
@@ -468,6 +470,9 @@ const AddTemplateRcs = () => {
       setBtnInputData({});
     } catch (e) {
       toast.error("Something went wrong");
+    }
+    finally {
+      setIsFetching(false);
     }
 
     // setTimeout(() => {
@@ -691,6 +696,7 @@ const AddTemplateRcs = () => {
           name="saveTemplate"
           label="Submit"
           onClick={handleSubmit}
+          disabled={isFetching}
         />
       </div>
 

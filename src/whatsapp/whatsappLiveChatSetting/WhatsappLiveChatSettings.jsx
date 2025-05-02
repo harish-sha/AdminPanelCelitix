@@ -164,7 +164,7 @@ const WhatsappLiveChatSettings = () => {
         )?.wabaSrno,
       };
       const res = await deleteAutoAction(data);
-      console.log(res);
+      // console.log(res);
     } catch (e) {
       toast.error("Something went wrong");
       return;

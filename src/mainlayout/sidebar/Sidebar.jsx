@@ -30,6 +30,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const [collapseAnimationDone, setCollapseAnimationDone] = useState(
     !isCollapsed
   );
+
   const location = useLocation();
   const [openTooltips, setOpenTooltips] = useState({});
   const dropdownRefs = useRef({});
@@ -157,12 +158,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/wmanageoptin", label: "Manage Optin" },
         // { to: "/wchatwidget", label: "Chat Widget" },
         { to: "/wqrcode", label: "QR Code" },
-        { to: "/wlcsetting", label: "Live Chats Settings" },
+        // { to: "/wlcsetting", label: "Live Chats Settings" },
         { to: "/wmanagewaba", label: "Manage WABA" },
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
-        { to: "/wwhatsappflows", label: "Flows" },
+        // { to: "/wwhatsappflows", label: "Flows" },
       ],
     },
     {
@@ -307,7 +308,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "Wishmanagement",
-      icon: <LuWandSparkles fontSize="20" style={{fontSize: "17px"}} />,
+      icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
       label: "Wish Management",
       type: "single",
       to: "/smswishmanagement",
@@ -315,7 +316,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       name: "apiDocs",
-      icon: <DescriptionOutlinedIcon fontSize="20"  />,
+      icon: <DescriptionOutlinedIcon fontSize="20" />,
       label: "API Docs",
       type: "single",
       onClick: () => navigate("/docs"),
@@ -364,26 +365,23 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           >
             <motion.div
               onClick={() => handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
-                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-              }`}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+                }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
-                  isCollapsed ? "w-0" : "w-auto"
-                }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+                  }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${
-                    openDropdown === item.name ? "rotate-180" : "rotate-0"
-                  }`}
+                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                    }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -413,11 +411,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   <Link
                     to={link.to}
                     onClick={handleSingleRouteClick}
-                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${
-                      isActiveRoute(link.to)
+                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to)
                         ? "bg-[#e6f4ff] text-blue-800"
                         : "text-gray-800"
-                    }`}
+                      }`}
                   >
                     <FiberManualRecordIcon
                       sx={{
@@ -427,11 +424,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                       }}
                     />
                     <span
-                      className={`font-[600] ${
-                        isActiveRoute(link.to)
+                      className={`font-[600] ${isActiveRoute(link.to)
                           ? "text-blue-800"
                           : "text-gray-800"
-                      }`}
+                        }`}
                     >
                       {link.label}
                     </span>
@@ -460,9 +456,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
-                  isCollapsed ? "justify-center" : ""
-                }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+                  }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -473,17 +468,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
-                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
-                }`}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                  }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${
-                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                  }`}
+                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                    }`}
                 >
                   {item.label}
                 </motion.span>

@@ -878,7 +878,7 @@ const CreateWhatsAppBot = () => {
   };
 
   useEffect(() => {
-    console.log(details);
+    // console.log(details);
   }, [details]);
 
   return (

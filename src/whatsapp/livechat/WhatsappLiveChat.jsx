@@ -219,7 +219,7 @@ export default function WhatsappLiveChat() {
       // ...(selectedImage ? {} : { message: input || "" }),
     };
 
-    console.log(data);
+    // console.log(data);
 
     let body = {};
 
