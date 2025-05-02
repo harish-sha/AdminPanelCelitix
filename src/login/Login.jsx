@@ -8,6 +8,7 @@ import celitixLogo from "../assets/images/celitix-logo-white.svg";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { useUser } from "@/context/auth";
 
 const Login = () => {
   const [userId, setUserId] = useState("");
@@ -15,6 +16,7 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
+  const { authLogin } = useUser();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -57,6 +59,7 @@ const Login = () => {
       // );
 
       toast.success("Login Successful!");
+      authLogin(data?.role);
       navigate("/");
     } catch (error) {
       // console.error("Login Error:", error);

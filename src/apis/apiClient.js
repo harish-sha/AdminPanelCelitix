@@ -4,8 +4,7 @@ import axios from "axios";
 const API_BASE_URL = "/api";
 
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token =
-    sessionStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   if (!token) {
     // console.error("No token found, redirecting to login.");
@@ -23,8 +22,9 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   try {
     // console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
+    const instance = axios.create({ timeout: 10000 });
 
-    const response = await axios({
+    const response = await instance({
       method: options.method || "GET",
       url: `${API_BASE_URL}${endpoint}`,
       data: options.body,

@@ -108,6 +108,8 @@ const DataTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const [templateData, setTemplateData] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -520,6 +522,7 @@ const DataTable = ({
       waba: wabaSrno,
     };
     try {
+      setIsFetching(true);
       const res = await deleteTemplate(data);
       // console.log(res);
       if (res?.msg?.includes("Succefully")) {
@@ -531,6 +534,8 @@ const DataTable = ({
     } catch (e) {
       // console.log(e);
       return toast.error("Failed to delete template.");
+    } finally {
+      setIsFetching(false);
     }
   }
 
@@ -808,21 +813,24 @@ const DataTable = ({
         </div>
 
         <div className="flex justify-center gap-4 mt-2">
+          {!isFetching && (
+            <UniversalButton
+              label="Cancel"
+              style={{
+                backgroundColor: "#090909",
+              }}
+              onClick={() => setVisible(false)}
+            />
+          )}
           <UniversalButton
-            label="Cancel"
-            style={{
-              backgroundColor: "#090909",
-            }}
-            onClick={() => setVisible(false)}
-          />
-          <UniversalButton
-            label="Delete"
+            label={isFetching ? "Deleting..." : "Delete"}
             style={
               {
                 // backgroundColor: "red",
               }
             }
             onClick={handledeleteTemplate}
+            disabled={isFetching}
           />
         </div>
       </Dialog>

@@ -73,6 +73,9 @@ const WhatsappCreateTemplate = () => {
   const [carouselMediaType, setCarouselMediaType] = useState("");
   const [urlVariables, setUrlVariables] = useState([]);
 
+  const [isFetching, setIsFetching] = useState(false);
+
+
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -547,6 +550,7 @@ const WhatsappCreateTemplate = () => {
       // return;
     }
     try {
+      setIsFetching(true);
       const response = await sendTemplatetoApi(payload);
 
       if (response.message === "Template Name is duplicate") {
@@ -604,6 +608,7 @@ const WhatsappCreateTemplate = () => {
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -655,7 +660,7 @@ const WhatsappCreateTemplate = () => {
                       value: JSON.stringify({
                         mbno: waba.mobileNo,
                         sno: waba.wabaSrno,
-                      }), // Stringify object
+                      }),
                       label: waba.name,
                     }))}
                     value={
@@ -767,7 +772,6 @@ const WhatsappCreateTemplate = () => {
             {selectedWaba && selectedCategory ? (
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
-
                   <div className="grid lg:grid-cols-2 gap-5 mt-4">
                     <div className="border-2 border-gray-300 p-4 rounded-lg" >
                       <div className="flex gap-2 items-center">
@@ -973,7 +977,8 @@ const WhatsappCreateTemplate = () => {
                         !selectedWaba ||
                         !selectedCategory ||
                         !selectedTemplateType ||
-                        !templateName
+                        !templateName ||
+                        isFetching
                       }
                       className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
                         selectedCategory &&
@@ -986,7 +991,7 @@ const WhatsappCreateTemplate = () => {
                       id="submitTemplate"
                       name="submitTemplate"
                     >
-                      Submit Template
+                      {isFetching ? "Submitting..." : "Submit Template"}
                     </button>
                   </div>
                 </>

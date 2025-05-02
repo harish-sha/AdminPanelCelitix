@@ -9,6 +9,7 @@ import AuthRoute from "./routes/Auth/AuthRoute";
 import PageNotFound from "./NotFound/PageNotFound";
 import LoadingBar from "./utils/LoadingBar";
 import BeforeUnloadWarning from "./utils/BeforeUnloadWarning";
+import { PermissionRoute } from "./routes/Auth/PermissionRoute";
 
 const App = () => {
   return (
@@ -35,6 +36,11 @@ const App = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/*" element={<Approutes />} />
           <Route path="/docs/*" element={<Apiroutes />} />
+
+          {/* <Route element={<PermissionRoute />}>
+            <Route path="/*" element={<Approutes />} />
+            <Route path="/docs/*" element={<Apiroutes />} />
+          </Route> */}
         </Route>
 
         <Route path="*" element={<PageNotFound />} />

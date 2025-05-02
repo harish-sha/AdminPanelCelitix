@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import UniversalAccountInfo from "../../profile/components/UniversalAccountInfo";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
+import { useUser } from "@/context/auth";
 
 import {
   AccountBalanceWalletOutlined as WalletIcon,
@@ -26,6 +27,7 @@ import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
+  const { authLogout } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -87,6 +89,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const handleLogout = useCallback(() => {
     sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
+    authLogout();
     setTimeout(() => (window.location.href = "/login"), 1000);
   }, []);
 

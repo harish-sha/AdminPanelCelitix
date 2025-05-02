@@ -1,21 +1,3 @@
-tasks arihant 
+tasks pending may 02
+merge sidebar.jsx and login.jsx from arihant
 
-rcs > SendRcs > SendRcs.jsx
-rcs > SendRcs > components > VariableManager.jsx - Done
-rcs > manageTemplate > components > Carousel.jsx - done
-rcs > manageTemplate > ManageTemplateRcs.jsx    - done
-
-sms > smsSend > SendSms.jsx - done
-sms > smsSend > components > Variable.jsx - Done
-
-apis > contact.js - done
-apis > rcs.js - done
-
-manageContacts > ManageContacts.jsx
-
-index.css - Done
-
-whatsapp > components > UniversalTextArea.jsx - Done
-
-last commit Commits on May 1, 2025
-feat: update suggestionBtnSuggestion ui RcsManageTemplate

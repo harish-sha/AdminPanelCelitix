@@ -5,6 +5,7 @@ import UniversalTextArea from "../components/UniversalTextArea";
 import UniversalButton from "../components/UniversalButton";
 import qrPlaceholder from "../../assets/images/QRcode.png";
 import userPng from "../../assets/images/user.png";
+import toast from "react-hot-toast";
 
 const WhatsappQrCode = () => {
   const [phone, setPhone] = useState("");
@@ -20,21 +21,29 @@ const WhatsappQrCode = () => {
   };
 
   const generateQRCode = async () => {
-    if (phone) {
-      const formattedMessage = encodeURIComponent(message);
-      const url = `https://wa.me/${phone}?text=${formattedMessage}`;
-      setQrLink(url);
-      QRCode.toDataURL(url, (err, url) => {
-        if (!err) {
-          setQrImage(url);
-        }
-      });
+    if (!phone.trim()) {
+      toast.error("Please enter a valid phone number.");
+      return;
     }
+    const formattedMessage = encodeURIComponent(message);
+    const url = `https://wa.me/${phone}?text=${formattedMessage}`;
+    setQrLink(url);
+    QRCode.toDataURL(url, (err, url) => {
+      if (!err) {
+        setQrImage(url);
+        toast.success("QR Code generated successfully!");
+      } else {
+        toast.error("Failed to generate QR Code. Please try again.");
+      }
+    });
   };
 
   const copyToClipboard = () => {
-    navigator.clipboard.writeText(qrLink);
-    alert("Copied to clipboard!");
+    navigator.clipboard.writeText(qrLink).then(() => {
+      toast.success("Copied to clipboard!");
+    }).catch(() => {
+      toast.error("Failed to copy to clipboard. Please try again.");
+    });
   };
 
   return (
@@ -95,7 +104,7 @@ const WhatsappQrCode = () => {
       </div>
       <div className="bg-white p-5 rounded-[10px] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex flex-col gap-[15px] h-120">
         <div className=" flex items-center justify-center rounded-[5px] border border-[#ddd] p-0">
-         
+
           {qrImage && <img src={qrImage} alt="WhatsApp QR Code" className="h-60 w-60" />}
         </div>
         <InputField

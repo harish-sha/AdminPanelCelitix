@@ -158,7 +158,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/wmanageoptin", label: "Manage Optin" },
         // { to: "/wchatwidget", label: "Chat Widget" },
         { to: "/wqrcode", label: "QR Code" },
-        // { to: "/wlcsetting", label: "Live Chats Settings" },
+        { to: "/wlcsetting", label: "Live Chats Settings" },
         { to: "/wmanagewaba", label: "Manage WABA" },
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
@@ -201,7 +201,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       name: "OBD",
       // icon: <MdOutlineEmail />,
       icon: <img src={obd} className="w-4 h-4" />,
-
       label: "OBD",
       type: "dropdown",
       links: [
@@ -412,8 +411,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                     to={link.to}
                     onClick={handleSingleRouteClick}
                     className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to)
-                        ? "bg-[#e6f4ff] text-blue-800"
-                        : "text-gray-800"
+                      ? "bg-[#e6f4ff] text-blue-800"
+                      : "text-gray-800"
                       }`}
                   >
                     <FiberManualRecordIcon
@@ -425,8 +424,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                     />
                     <span
                       className={`font-[600] ${isActiveRoute(link.to)
-                          ? "text-blue-800"
-                          : "text-gray-800"
+                        ? "text-blue-800"
+                        : "text-gray-800"
                         }`}
                     >
                       {link.label}
