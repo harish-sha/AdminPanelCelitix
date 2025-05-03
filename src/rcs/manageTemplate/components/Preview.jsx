@@ -224,12 +224,12 @@ export const Preview = ({
               }}
             >
               {pree?.updatedCData.map((item, index) => (
-                <>
+                <div className="text-start p-2">
                   <div key={index}>
                     <p className="text-md">{item.cardTitle}</p>
                     {item.fileTempPath && (
                       <img
-                        src={URL.createObjectURL(item.fileTempPath)}
+                        src={item.filePath}
                         alt={item.cardTitle}
                         className="h-30 p-1 rounded-xl"
                       />
@@ -258,7 +258,7 @@ export const Preview = ({
                       ))}
                     </div>
                   )}
-                </>
+                </div>
               ))}
             </Carousel>
           </>

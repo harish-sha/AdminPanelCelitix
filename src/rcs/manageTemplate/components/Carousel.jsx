@@ -175,11 +175,21 @@ export const Carousel = ({
       const fileName = e.target.files[0];
       if (!fileName) {
         toast.error("No file selected.");
+        fileRefs.current = fileRefs.current.map((current) => {
+          if (current) {
+            current.value = "";
+          }
+        });
         return;
       }
 
       if (!cardheight) {
         toast.error("Please select card height");
+        fileRefs.current = fileRefs.current.map((current) => {
+          if (current) {
+            current.value = "";
+          }
+        });
         return;
       }
 
@@ -191,9 +201,19 @@ export const Carousel = ({
       if (fileName?.size) {
         if (fileType === "image" && fileName?.size > 1 * 1024 * 1024) {
           toast.error("File size must be less than 2MB.");
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         } else if (fileType === "video" && fileName?.size > 5 * 1024 * 1024) {
           toast.error("File size must be less than 10MB.");
+          fileRefs.current = fileRefs.current.map((current) => {
+            if (current) {
+              current.value = "";
+            }
+          });
           return;
         }
       }
@@ -285,6 +305,11 @@ export const Carousel = ({
       if (!caraousalData[selectedCardIndex]?.fileTempPath) {
         return toast.error("Please select a file first");
       }
+      if (caraousalData[selectedCardIndex]?.filePath) {
+        return toast.error(
+          "Image already uploaded, please choose a different one."
+        );
+      }
       const res = await uploadImageFile(
         caraousalData[selectedCardIndex]?.fileTempPath
       );
@@ -299,6 +324,17 @@ export const Carousel = ({
     } catch (e) {
       toast.error("Something went wrong");
     }
+  };
+
+  const handleDeleteFile = () => {
+    setCaraousalData((prev) =>
+      prev.map((item, index) =>
+        index === selectedCardIndex
+          ? { ...item, filePath: "", fileName: "", fileTempPath: "" }
+          : item
+      )
+    );
+    fileRefs.current[selectedCardIndex].value = null;
   };
 
   const currentCardSuggestions =
@@ -366,8 +402,9 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handlePreviousIndex} aria-label="Previous">
             <KeyboardArrowLeftOutlinedIcon
-              className={`text-black ${selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
-                } `}
+              className={`text-black ${
+                selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
+              } `}
             />
           </IconButton>
           {/* {selectedCardIndex > 0 && (
@@ -398,10 +435,11 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
-              className={`text-black ${selectedCardIndex < caraousalData.length - 1
+              className={`text-black ${
+                selectedCardIndex < caraousalData.length - 1
                   ? "cursor-pointer"
                   : "cursor-not-allowed"
-                }`}
+              }`}
             />
           </IconButton>
         </div>
@@ -481,12 +519,21 @@ export const Carousel = ({
               name={`uploadfile-${selectedCardIndex + 1}`}
               onChange={handleImageChange}
               ref={(el) => (fileRefs.current[selectedCardIndex] = el)}
+              // value={fileRefs.current[selectedCardIndex]?.value || ""}
               className="block w-full p-1.5 h-[2.275rem] border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm border-gray-300"
             />
 
             <button onClick={handleUploadFile}>
               <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
             </button>
+            {caraousalData[selectedCardIndex]?.fileName && (
+              <button onClick={handleDeleteFile}>
+                <MdOutlineDeleteForever
+                  className="text-red-500 cursor-pointer hover:text-red-600"
+                  size={20}
+                />
+              </button>
+            )}
           </div>
         </div>
       </div>

@@ -46,6 +46,8 @@ const WhatsappLiveChatSettings = () => {
     length: 0,
     data: [],
     input: [],
+    btn: [],
+    btnInput: [],
   });
   const fileRef = React.useRef(null);
 
@@ -118,11 +120,15 @@ const WhatsappLiveChatSettings = () => {
       try {
         const res = await fetchTemplatesValue(basicDetails.template);
         const variable = extractVariablesFromText(res?.message);
+        const btnVar = extractVariablesFromText(res?.url);
         setVariablesData({
           length: variable.length,
           data: variable,
           input: [],
+          btn: btnVar,
+          btnInput: [],
         });
+
         setSpecificTemplate(res);
       } catch (e) {
         return toast.error("Error fetching template values");
@@ -164,7 +170,11 @@ const WhatsappLiveChatSettings = () => {
         )?.wabaSrno,
       };
       const res = await deleteAutoAction(data);
-      // console.log(res);
+      setCardDetails({
+        ...cardDetails,
+        [type]: "",
+      });
+      await handleGetAutoAction();
     } catch (e) {
       toast.error("Something went wrong");
       return;
@@ -179,8 +189,8 @@ const WhatsappLiveChatSettings = () => {
       return toast.error("Please enter message");
     if (basicDetails?.msgType === "2" && !basicDetails?.template)
       return toast.error("Please select template");
-    if (basicDetails?.msgType === "2" && !basicDetails?.mediaPath)
-      return toast.error("Please upload media");
+    // if (basicDetails?.msgType === "2" && !basicDetails?.mediaPath)
+    //   return toast.error("Please upload media");
     if (basicDetails?.msgType === "2" && variablesData.length) {
       const length = variablesData?.input.filter((item) => item != "").length;
 
@@ -190,6 +200,25 @@ const WhatsappLiveChatSettings = () => {
     }
     //validation end
 
+    let variablemessage = "";
+    let btnVariable = "";
+
+    if (basicDetails?.msgType === "2" && variablesData.data.length) {
+      variablemessage = specificTemplate?.message.replace(
+        /{{(\d+)}}/g,
+        (_, index) => variablesData?.input[+index - 1] || ""
+      );
+    }
+    if (basicDetails?.msgType === "2" && variablesData.btn.length) {
+      btnVariable = specificTemplate?.url.replace(
+        /{{(\d+)}}/g,
+        (_, index) => variablesData?.btnInput[+index - 1] || ""
+      );
+    }
+
+    specificTemplate.message = variablemessage;
+    specificTemplate.urlValue = btnVariable;
+
     const wabaSrno = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selected
     )?.wabaSrno;
@@ -198,15 +227,23 @@ const WhatsappLiveChatSettings = () => {
       wabaNumber: wabaState.selected,
       wabaSrno,
       ...basicDetails,
+      message: variablemessage || basicDetails?.message,
+      tempJson: JSON.stringify(specificTemplate),
     };
 
     try {
       await deleteAction(configureState.type);
+
       const res = await saveAutoAction(data);
       if (!res?.status) {
         toast.error("Error saving data");
       }
       toast.success("Data saved successfully");
+
+      setCardDetails({
+        ...cardDetails,
+        [configureState.type]: "",
+      });
       setConfigureState({
         type: "",
         open: false,
@@ -224,9 +261,11 @@ const WhatsappLiveChatSettings = () => {
         length: 0,
         data: [],
         input: [],
+        btn: [],
+        btnInput: [],
       });
       setSpecificTemplate({});
-      fileRef.current.value = "";
+      // if (fileRef) fileRef.current.value = "";
       await handleGetAutoAction();
     } catch (e) {
       toast.error("Error saving data");
@@ -327,7 +366,7 @@ const WhatsappLiveChatSettings = () => {
                 <Box display="flex" alignItems="center" gap={1}>
                   <Switch
                     color="success"
-                    checked={cardDetails["welcome_message"]?.message || false}
+                    checked={cardDetails["welcome_message"]?.message || 0}
                     inputProps={{ "aria-label": "welcome-message-toggle" }}
                     value={cardDetails["welcome_message"]?.status || false}
                     onClick={(e) => deleteAction("welcome_message")}

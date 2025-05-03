@@ -78,7 +78,6 @@ import AddTemplateRcs from "@/rcs/manageTemplate/pages/AddTemplateRcs";
 import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
 import CampaignDeliveryReportDetails from "@/rcs/deliveryReport/components/CampaignDeliveryReportDetails";
 
-
 // Download
 import Download from "@/profile/pages/Download";
 
@@ -121,6 +120,7 @@ import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
 
 // Callback
 import Callback from "@/callback/Callback";
+// import { AddCallback } from "@/callback/page/addCallback";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -128,12 +128,12 @@ import PageNotFound from "@/NotFound/PageNotFound";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import { AddCallback } from "@/callback/page/addCallback";
 
 const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         <Route index element={<Dashboard />} />
 
@@ -216,7 +216,10 @@ const Approutes = () => {
         <Route path="rcsaddtemplatercs" element={<AddTemplateRcs />} />
         <Route path="rcssuggestionreport" element={<SuggestionReportRcs />} />
         <Route path="rcsdeliveryreport" element={<DeliveryreportRcs />} />
-        <Route path="rcsdeliverycampaigndetails" element={<CampaignDeliveryReportDetails />} />
+        <Route
+          path="rcsdeliverycampaigndetails"
+          element={<CampaignDeliveryReportDetails />}
+        />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
         {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 
@@ -261,6 +264,7 @@ const Approutes = () => {
 
         {/* Callback */}
         <Route path="/callback" element={<Callback />} />
+        <Route path="/addcallback" element={<AddCallback />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
@@ -270,8 +274,6 @@ const Approutes = () => {
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
       </Route>
-
-
 
       <Route path="dummy" element={<Dummy />} />
       <Route path="arihant" element={<Arihant />} />

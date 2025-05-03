@@ -35,26 +35,54 @@ export const Variables = ({
   }
   return (
     <div className="mt-2 space-y-2">
-      <h1>Variables</h1>
-
-      {variablesData?.length > 0 &&
+      {variablesData?.data?.length > 0 &&
         variablesData?.data?.map((input, index) => (
-          <div className="flex  gap-2 items-center  mt-2" key={index}>
-            <label htmlFor="templateMessage">
-              {`{{${variablesData?.data[index]}}}`}
-            </label>
-            <InputField
-              placeholder="{{name}}"
-              id="templateMessage"
-              name="templateMessage"
-              value={variablesData?.input[index]}
-              onChange={(e) => {
-                const updatedData = [...variablesData.input];
-                updatedData[index] = e.target.value;
-                setVariablesData((prev) => ({ ...prev, input: updatedData }));
-              }}
-              className="flex-1 w-full focus:outline-none"
-            />
+          <div key={index}>
+            <h1>Variables</h1>
+            <div className="flex  gap-2 items-center mt-2">
+              <label htmlFor="templateMessage">
+                {`{{${variablesData?.data[index]}}}`}
+              </label>
+              <InputField
+                placeholder="{{name}}"
+                id="templateMessage"
+                name="templateMessage"
+                value={variablesData?.input[index]}
+                onChange={(e) => {
+                  const updatedData = [...variablesData.input];
+                  updatedData[index] = e.target.value;
+                  setVariablesData((prev) => ({ ...prev, input: updatedData }));
+                }}
+                className="flex-1 w-full focus:outline-none"
+              />
+            </div>
+          </div>
+        ))}
+
+      {variablesData?.btn?.length > 0 &&
+        variablesData?.btn?.map((input, index) => (
+          <div key={index}>
+            <h1>Buttons</h1>
+            <div className="flex  gap-2 items-center mt-2">
+              <label htmlFor="templateMessage">
+                {`{{${variablesData?.btn[index]}}}`}
+              </label>
+              <InputField
+                placeholder="{{name}}"
+                id="templateMessage"
+                name="templateMessage"
+                value={variablesData?.btnInput[index]}
+                onChange={(e) => {
+                  const updatedData = [...variablesData.btnInput];
+                  updatedData[index] = e.target.value;
+                  setVariablesData((prev) => ({
+                    ...prev,
+                    btnInput: updatedData,
+                  }));
+                }}
+                className="flex-1 w-full focus:outline-none"
+              />
+            </div>
           </div>
         ))}
 

@@ -58,7 +58,7 @@ export const UserProvider = ({ children }) => {
         sessionStorage.removeItem("user");
     };
 
-    const value = useMemo(() => ({ user, authLogin, authLogout }), [user]);
+    // const value = useMemo(() => ({ user, authLogin, authLogout }), [user]);
 
     return (
         <UserContext.Provider value={{ user, authLogin, authLogout }}>

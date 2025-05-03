@@ -86,45 +86,65 @@ export const ApiCampaignInfo = () => {
   const [totalPage, setTotalPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
 
+  async function handleFetchDetails(page = 0) {
+    try {
+      // const payload = {
+      //   mobile: "",
+      //   page: 0,
+      //   source: "",
+      //   deliveryStatus: state.log,
+      //   status: "",
+      // };
+      // later update with upper code
+
+      const formattedFromDate = state.selectedDate
+        ? new Date(state.selectedDate).toLocaleDateString("en-GB")
+        : new Date().toLocaleDateString("en-GB");
+
+      let status = "";
+      let deliveryStatus = "";
+
+      const statusBased = ["failed", "submitted", "block", "busy"];
+      const deliveryBased = ["read", "delivered", "undelivered"];
+
+      if (statusBased.includes(state.log)) {
+        status = state.log;
+      } else if (deliveryBased.includes(state.log)) {
+        deliveryStatus = state.log;
+      }
+
+      const payload = {
+        fromDate: formattedFromDate,
+        toDate: formattedFromDate,
+        mobile: "",
+        page,
+        pageSize: paginationModel.pageSize,
+        source: "API",
+        deliveryStatus,
+        status,
+      };
+      const res = await getListofSendMsg(payload);
+      setTotalPage(5000); 
+      // console.log(res);
+      setData(res);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching data");
+    }
+  }
   useEffect(() => {
     if (!state) {
       window.history.back();
       return;
     }
-    async function handleFetchDetails() {
-      try {
-        // const payload = {
-        //   mobile: "",
-        //   page: 0,
-        //   source: "",
-        //   deliveryStatus: state.log,
-        //   status: "",
-        // };
-        // later update with upper code
-
-        // const formattedFromDate = selectedDate
-        //   ? new Date(selectedDate).toLocaleDateString("en-GB")
-        //   : new Date().toLocaleDateString("en-GB");
-
-        const payload = {
-          // fromDate: formattedFromDate,
-          // toDate: formattedFromDate,
-          mobile: "",
-          page: 0,
-          source: "API",
-          deliveryStatus: "",
-          status: "",
-        };
-        const res = await getListofSendMsg(payload);
-        // console.log(res);
-        setData(res);
-      } catch (e) {
-        // console.log(e);
-        return toast.error("Error fetching data");
-      }
-    }
     handleFetchDetails();
   }, [state]);
+
+  useEffect(() => {
+    if (state) {
+      handleFetchDetails(paginationModel.page + 1);
+    }
+  }, [paginationModel.page]);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -162,7 +182,8 @@ export const ApiCampaignInfo = () => {
 
   const rows = data?.map((item, i) => ({
     id: i + 1,
-    sn: i + 1,
+    // sn: i + 1,
+    sn: paginationModel.page * paginationModel.pageSize + i + 1,
     // wabaNumber: WABA-${1000 + i},
     // mobileNo: 98765432${(10 + i).toString().slice(-2)},
     // source: "API",
@@ -177,7 +198,7 @@ export const ApiCampaignInfo = () => {
   }));
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
-  const totalPages = Math.floor(rows.length / paginationModel.pageSize);
+  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
@@ -215,9 +236,9 @@ export const ApiCampaignInfo = () => {
             </Typography>
           )}
 
-          <Typography variant="body2">
+          {/* <Typography variant="body2">
             Total Records: <span className="font-semibold">{totalPage}</span>
-          </Typography>
+          </Typography> */}
         </Box>
 
         <Box
@@ -240,7 +261,7 @@ export const ApiCampaignInfo = () => {
 
   return (
     <>
-      <h1 className="text-2xl mb-5 text-gray-700">API Detail Report</h1>
+      <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
       <Paper sx={{ height: 558 }}>
         <DataGrid
           // id={id}
@@ -255,7 +276,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => { }}
+          onRowSelectionModelChange={(ids) => {}}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize

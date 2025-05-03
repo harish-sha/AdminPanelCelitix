@@ -1,11 +1,15 @@
 import { WhatsApp } from "@mui/icons-material";
+import { BsTelephoneFill } from "react-icons/bs";
+import { TbLocationShare } from "react-icons/tb";
+import { FaExternalLinkAlt } from "react-icons/fa";
+import { FaReply } from "react-icons/fa6";
 
 export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
   const getBtnIcon = (type) => {
     switch (type) {
-      case "PHONE_NUMBER":
+      case "phoneDisplay":
         return <BsTelephoneFill className="mr-2" />;
-      case "QUICK_REPLY":
+      case "replyButtons":
         return <FaReply className="mr-2" />;
       default:
         return <FaExternalLinkAlt className="mr-2" />;
@@ -14,9 +18,9 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
 
   const getBtnCss = (type) => {
     switch (type) {
-      case "PHONE_NUMBER":
+      case "phoneDisplay":
         return "bg-blue-500 text-white";
-      case "QUICK_REPLY":
+      case "replyButtons":
         return "text-gray-800 bg-gray-200";
       default:
         return "bg-green-500 text-white";
@@ -25,9 +29,9 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
 
   const getBtnTitle = (type, phone, url, text) => {
     switch (type) {
-      case "PHONE_NUMBER":
+      case "phoneDisplay":
         return `Contact us: ${phone}`;
-      case "QUICK_REPLY":
+      case "replyButtons":
         return `View more: ${text}`;
       default:
         return `Visit us: ${url}`;
@@ -91,6 +95,11 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
   };
 
   const isCarousal = false;
+
+  const title =
+    specificTemplate?.urlValue || specificTemplate?.phoneValue || "";
+  const type = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
+  const text = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
   return (
     <div className="p-3 bg-gray-200 rounded-xl overflow-hidden">
       <div className="w-full h-full transition-all bg-gray-100 rounded-lg shadow-md">
@@ -103,7 +112,7 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
           </div>
 
           {specificTemplate && (
-            <div className="space-y-3 p-2">
+            <div className="space-y-3 p-2 w-full">
               <div>
                 {["image", "video", "document"].includes(
                   specificTemplate.templateType
@@ -117,8 +126,49 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
               </div>
 
               {specificTemplate?.message && (
-                <pre>{specificTemplate.message}</pre>
+                <pre className="whitespace-pre-wrap">
+                  {specificTemplate.message}
+                </pre>
               )}
+
+              <div className="w-full space-y-2 p-2">
+                {specificTemplate?.urlDisplay && (
+                  <button
+                    title={specificTemplate?.urlValue}
+                    className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
+                      type
+                    )}`}
+                  >
+                    {getBtnIcon(specificTemplate?.urlDisplay)}
+                    <p className="ml-2">{specificTemplate?.urlDisplay}</p>
+                  </button>
+                )}
+                {specificTemplate?.phoneDisplay && (
+                  <button
+                    title={specificTemplate?.phoneValue || ""}
+                    className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full ${getBtnCss(
+                      "phoneDisplay"
+                    )}`}
+                  >
+                    {getBtnIcon("phoneDisplay")}
+                    <p className="ml-2">{specificTemplate?.phoneDisplay}</p>
+                  </button>
+                )}
+                {specificTemplate?.replyButtons &&
+                  specificTemplate?.replyButtons.length > 0 &&
+                  specificTemplate?.replyButtons.map((btn, index) => (
+                    <button
+                      key={index}
+                      title={btn || ""}
+                      className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
+                        "replyButtons"
+                      )}`}
+                    >
+                      {getBtnIcon("replyButtons")}
+                      <p className="ml-2">{btn}</p>
+                    </button>
+                  ))}
+              </div>
             </div>
           )}
         </div>

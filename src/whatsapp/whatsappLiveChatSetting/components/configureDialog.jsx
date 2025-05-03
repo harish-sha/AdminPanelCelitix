@@ -114,12 +114,12 @@ export const ConfigureDialog = ({
                     template: e,
                   }));
                   setFileData({ url: "", file: "" });
-                  fileRef ? (fileRef.current.value = "") : null;
+                  // fileRef ? (fileRef.current.value = "") : null;
                   setVariablesData({
                     length: 0,
                     data: [],
                     input: [],
-                  })
+                  });
                 }}
                 className="w-full"
               />

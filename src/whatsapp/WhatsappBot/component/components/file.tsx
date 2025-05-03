@@ -79,7 +79,9 @@ export const FileNodeContent = ({
 
     const variable = extractVariable({ message: message });
 
-    addVariable(variable);
+    if (variable) {
+      addVariable(variable);
+    }
 
     setNodesInputData((prev) => ({
       ...prev,

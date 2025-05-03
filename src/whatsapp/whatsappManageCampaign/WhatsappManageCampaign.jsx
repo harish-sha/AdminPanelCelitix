@@ -19,7 +19,6 @@ import { RadioButton } from "primereact/radiobutton";
 
 import { Checkbox } from "primereact/checkbox";
 
-
 import InputField from "../../components/layout/InputField";
 import Loader from "../components/Loader";
 import UniversalDatePicker from "../components/UniversalDatePicker";
@@ -33,7 +32,7 @@ import {
   getWhatsappLogReport,
   getSummaryReport,
   getWabaList,
-  getAllCampaignWhatsapp
+  getAllCampaignWhatsapp,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -205,9 +204,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -333,7 +332,6 @@ const WhatsappManageCampaign = () => {
     }
 
     setIsFetching(true);
-
 
     let FinalFromDate = new Date(
       new Date(selectedMonth).getFullYear(),
@@ -693,7 +691,11 @@ const WhatsappManageCampaign = () => {
                       </Box>
                     ) : (
                       logsData.map((log, index) => (
-                        <CampaignLogCard key={index} log={log} />
+                        <CampaignLogCard
+                          key={index}
+                          log={log}
+                          selectedDate={selectedDateLogs}
+                        />
                       ))
                     )}
                   </Box>
@@ -875,7 +877,7 @@ const WhatsappManageCampaign = () => {
                   label: item.campaignName,
                 }))}
                 onChange={handleCampaignChange}
-                value={selectedCampaign ? selectedCampaign.srNo : ''}
+                value={selectedCampaign ? selectedCampaign.srNo : ""}
                 placeholder="Search Campaign"
               />
             </div>
