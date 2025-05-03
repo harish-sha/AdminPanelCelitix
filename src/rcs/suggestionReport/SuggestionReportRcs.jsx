@@ -88,7 +88,7 @@ const SuggestionReportRcs = () => {
     setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() {}
+  async function fetchNextPageData() { }
 
   return (
     <div className="w-full">
@@ -100,6 +100,26 @@ const SuggestionReportRcs = () => {
       <div>
         <div className="flex flex-wrap items-end w-full gap-2 mb-5">
           {/* From Date Picker */}
+
+          <div className="w-full sm:w-48">
+            <AnimatedDropdown
+              label="Agent"
+              options={allAgents.map((bot) => ({
+                label: bot.agent_name,
+                value: bot.agent_id,
+              }))}
+              id="suggestionagent"
+              name="suggestionagent"
+              value={suggestionData.botId}
+              onChange={(newValue) => {
+                setSuggestionData({ ...suggestionData, botId: newValue });
+              }}
+              placeholder="Select Agent Name"
+              tooltipPlacement="top"
+              tooltipContent="Select Agent Name"
+            />
+          </div>
+
           <div className="w-full sm:w-48">
             <UniversalDatePicker
               id="suggestionfrom"
@@ -130,24 +150,6 @@ const SuggestionReportRcs = () => {
             />
           </div>
 
-          <div className="w-full sm:w-48">
-            <AnimatedDropdown
-              label="Agent"
-              options={allAgents.map((bot) => ({
-                label: bot.agent_name,
-                value: bot.agent_id,
-              }))}
-              id="suggestionagent"
-              name="suggestionagent"
-              value={suggestionData.botId}
-              onChange={(newValue) => {
-                setSuggestionData({ ...suggestionData, botId: newValue });
-              }}
-              placeholder="Select Agent Name"
-              tooltipPlacement="top"
-              tooltipContent="Select Agent Name"
-            />
-          </div>
 
           {/* Mobile Number Input Field */}
           <div className="w-full sm:w-48">
@@ -180,6 +182,7 @@ const SuggestionReportRcs = () => {
               onClick={handleSearch}
             />
           </div>
+          
           <div className="w-max-content">
             <UniversalButton
               label="Export"

@@ -490,3 +490,18 @@ export const fetchTemplatesValue = async (data) => {
     }),
   });
 };
+
+// get campaign list
+export const getAllCampaignWhatsapp = async () => {
+  return await fetchWithAuth("/whatsapp/getAllWhatsAppCampaign", {
+    method: "POST",
+  });
+};
+
+// Download Custom Reports
+export const downloadCustomWhatsappReport = async (data) => {
+  return await fetchWithAuth("/whatsapp/getCustomReport", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

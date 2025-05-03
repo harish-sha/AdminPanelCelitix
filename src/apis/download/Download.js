@@ -5,3 +5,4 @@ export const getAllDownloadsList = async () => {
     method: "GET",
   });
 };
+

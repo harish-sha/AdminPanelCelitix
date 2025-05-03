@@ -73,8 +73,9 @@ const Download = ({ id, name }) => {
         setIsFetching(true);
         try {
             const response = await getAllDownloadsList();
-            if (response?.data && Array.isArray(response.data)) {
-                const data = response.data.map((item, index) => ({
+            const data = response?.data || response?.result || response;
+            if (data && Array.isArray(data)) {
+                const mappedData = data.map((item, index) => ({
                     id: index + 1,
                     sn: index + 1,
                     insertTime: item.insertTime || "N/A",
@@ -83,7 +84,8 @@ const Download = ({ id, name }) => {
                     remark: item.remark || "N/A",
                     downloadPath: item.downloadPath || "N/A",
                 }));
-                setRows(data);
+
+                setRows(mappedData);
             } else {
                 console.error("Unexpected response structure:", response);
                 toast.error("Failed to fetch download list. Please try again.");
@@ -95,7 +97,6 @@ const Download = ({ id, name }) => {
         }
     };
 
-    // Fetch data on page load
     useEffect(() => {
         fetchDownloadList();
     }, []);
@@ -111,24 +112,44 @@ const Download = ({ id, name }) => {
             headerName: "Download Link",
             flex: 1,
             minWidth: 150,
-            renderCell: (params) => (
-                <CustomTooltip title="Download" placement="top" arrow>
-                    <IconButton
-                        className="no-xs"
-                        onClick={() => window.open(params.row.downloadPath, "_blank")}
-                    >
-                        <DownloadForOfflineOutlinedIcon
-                            sx={{
-                                fontSize: "1.2rem",
-                                color: "green",
-                            }}
-                        />
-                    </IconButton>
-                </CustomTooltip>
-            ),
+            renderCell: (params) => {
+                if (params.row.status === "complete") {
+                    return (
+                        <CustomTooltip title="Download" placement="top" arrow>
+                            <IconButton
+                                className="no-xs flex items-center justify-center"
+                                onClick={() => {
+                                    const baseURL = import.meta.env.VITE_IMAGE_URL;
+                                    const fullDownloadUrl = `${baseURL}${params.row.downloadPath}`;
+                                    console.log('Attempting to download from:', fullDownloadUrl);
+                                    const link = document.createElement("a");
+                                    link.href = fullDownloadUrl;
+                                    link.download = "";
+                                    link.click();
+                                }}
+                            >
+                                <DownloadForOfflineOutlinedIcon
+                                    sx={{
+                                        fontSize: "1.2rem",
+                                        color: "green",
+                                    }}
+                                />
+                            </IconButton>
+                        </CustomTooltip>
+                    );
+                } else {
+                    return (
+                        <div className='text-gray-700'>
+                            Link Not Available
+                        </div>
+                    );
+                }
+            },
         },
     ];
+
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
     const CustomFooter = () => {
         return (
             <GridFooterContainer sx={{
@@ -158,7 +179,7 @@ const Download = ({ id, name }) => {
             </GridFooterContainer>
         );
     };
-    
+
     return (
         <div>
             <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}>

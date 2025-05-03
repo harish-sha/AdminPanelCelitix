@@ -127,3 +127,18 @@ export const deleteTemplate = async (srno) => {
     method: "POST",
   });
 };
+
+// get campaign list
+export const getAllCampaignSms = async () => {
+  return await fetchWithAuth("/getAllCampaigns", {
+    method: "POST",
+  });
+};
+
+// Download Custom Reports
+export const downloadCustomSmsReport = async (data) => {
+  return await fetchWithAuth("/downloadCustomSmsReport", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

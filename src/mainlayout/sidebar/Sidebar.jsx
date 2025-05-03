@@ -175,7 +175,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
-        // { to: "/wwhatsappflows", label: "Flows" },
+        { to: "/wwhatsappflows", label: "Flows" },
       ],
     },
     {

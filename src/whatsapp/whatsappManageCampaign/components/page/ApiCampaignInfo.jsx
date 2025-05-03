@@ -93,12 +93,27 @@ export const ApiCampaignInfo = () => {
     }
     async function handleFetchDetails() {
       try {
+        // const payload = {
+        //   mobile: "",
+        //   page: 0,
+        //   source: "",
+        //   deliveryStatus: state.log,
+        //   status: "",
+        // };
+        // later update with upper code
+
+        // const formattedFromDate = selectedDate
+        //   ? new Date(selectedDate).toLocaleDateString("en-GB")
+        //   : new Date().toLocaleDateString("en-GB");
+
         const payload = {
+          // fromDate: formattedFromDate,
+          // toDate: formattedFromDate,
           mobile: "",
           page: 0,
-          source: "",
-          deliveryStatus: state.log,
-          status: "block",
+          source: "API",
+          deliveryStatus: "",
+          status: "",
         };
         const res = await getListofSendMsg(payload);
         // console.log(res);
