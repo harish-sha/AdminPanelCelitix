@@ -15,6 +15,7 @@ import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { motion } from "framer-motion";
+
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -25,7 +26,13 @@ import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import { LuWandSparkles } from "react-icons/lu";
 
+import { useUser } from "@/context/auth";
+import { all } from "axios";
+
 const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
+  const { user } = useUser();
+
+
   const [openDropdown, setOpenDropdown] = useState(null);
   const [collapseAnimationDone, setCollapseAnimationDone] = useState(
     !isCollapsed
@@ -92,6 +99,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
 
   const menuItems = [
     {
+      id: "",
       name: "Home",
       icon: <FaHome />,
       label: "Home",
@@ -106,6 +114,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     to: "/dummy",
     // },
     {
+      id: "",
       name: "SMS",
       icon: <LuMessageSquareMore />,
       label: "SMS",
@@ -118,6 +127,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "Two Way SMS",
       // icon: <LuMessageSquareMore />,
       icon: <img src={twoway} className="w-4 h-4" />,
@@ -131,6 +141,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "RCS",
       // icon: <LuMessageSquareMore />,
       icon: <img src={rcsicon} className="w-4 h-4" />,
@@ -146,6 +157,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "WhatsApp",
       icon: <FaWhatsapp />,
       label: "WhatsApp",
@@ -167,6 +179,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "Number Lookup",
       // icon: <LuMessageSquareMore />,
       icon: <img src={numberlookup} className="w-4 h-4" />,
@@ -178,6 +191,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "App Authenticator",
       icon: <SiGoogleauthenticator />,
       label: "App Authenticator",
@@ -188,6 +202,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "E-mail",
       icon: <MdOutlineEmail />,
       label: "E-mail",
@@ -198,6 +213,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "OBD",
       // icon: <MdOutlineEmail />,
       icon: <img src={obd} className="w-4 h-4" />,
@@ -211,6 +227,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "IBD",
       // icon: <MdOutlineEmail />,
       icon: <img src={ibd} className="w-4 h-4" />,
@@ -225,6 +242,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "Missed Call",
       // icon: <MdOutlineEmail />,
       icon: <img src={missedcall} className="w-4 h-4" />,
@@ -236,6 +254,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "Click-2-Call",
       // icon: <MdOutlineEmail />,
       icon: <img src={clicktwocall} className="w-4 h-4" />,
@@ -258,6 +277,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     ],
     // },
     {
+      id: "",
       name: "CallBack",
       // icon: <MdOutlineEmail />,
       icon: <img src={callback} className="w-4.5 h-4.5" />,
@@ -266,6 +286,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [{ to: "/callback", label: "Call Back" }],
     },
     {
+      id: "",
       name: "managefunds",
       icon: <IoWalletOutline />,
       label: "Manage Funds",
@@ -276,6 +297,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "admin",
       icon: <IoPersonOutline />,
       label: "Admin",
@@ -299,6 +321,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
     },
     {
+      id: "",
       name: "Managecontacts",
       icon: <GroupOutlinedIcon fontSize="20" />,
       label: "Manage Contacts",
@@ -306,6 +329,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/managecontacts",
     },
     {
+      id: "",
       name: "Wishmanagement",
       icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
       label: "Wish Management",
@@ -314,6 +338,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
 
     },
     {
+      id: "",
       name: "apiDocs",
       icon: <DescriptionOutlinedIcon fontSize="20" />,
       label: "API Docs",
