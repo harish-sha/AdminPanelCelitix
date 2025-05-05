@@ -102,6 +102,14 @@ import SettingsMissCall from "../../misscall/missCallSettings/SettingsMissCall";
 import Clicktosettings from "../../click2call/clickToSettings/Clicktosettings";
 import Clicktohistory from "../../click2call/clickToHistory/Clicktohistory";
 
+// HLR Lookup
+import HLRReports from "../../numberlookup/hlrLookupReports/HLRReports";
+import HLRLookup from "../../numberlookup/hlrLookup/HLRLookup";
+
+// App Authenticator
+import AppSettings from "../../appauthenticator/appSettings/AppSettings";
+import AppReport from "../../appauthenticator/appReports/AppReport";
+
 
 const Approutes = () => {
   return (
@@ -149,6 +157,14 @@ const Approutes = () => {
         <Route path="/managekeywords" element={<TwowayMangeKeyword />} />
         <Route path="/twowayreports" element={<TwowayReports />} />
         <Route path="/twowayintegration" element={<TwowayIntegration />} />
+
+        {/* HLR Lookup */}
+        <Route path="/hlrlookup" element={<HLRLookup />} />
+        <Route path="/hlrreports" element={<HLRReports />} />
+
+        {/* App Authenticator */}
+        <Route path="/authsettings" element={<AppSettings />} />
+        <Route path="/authreports" element={<AppReport />} />
 
         {/* IBD */}
         <Route path="/ibdcallhistory" element={<CallHistoryIBD />} />

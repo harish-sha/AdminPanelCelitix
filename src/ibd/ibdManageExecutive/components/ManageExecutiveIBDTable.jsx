@@ -72,6 +72,8 @@ const ManageExecutiveIBDTable = ({ id, name }) => {
     const [loginRequired, setLoginRequired] = useState(false);
     const [isInputEnabled, setIsInputEnabled] = useState(false);
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+    const [datefrom, setDatefrom] = useState(null);
+    const [dateto, setDateto] = useState(null);
 
     const handleEdit = (row) => {
         setEditExecutivePopup(true);
@@ -82,21 +84,21 @@ const ManageExecutiveIBDTable = ({ id, name }) => {
     };
 
     useEffect(() => {
-        // Format current time to hh:mm AM/PM
         const now = new Date();
-        const hours = now.getHours() % 12 || 12;
+        const rawHours = now.getHours() % 12 || 12; // 12-hour format
+        const hours = rawHours.toString().padStart(2, '0');
         const minutes = now.getMinutes().toString().padStart(2, '0');
         const ampm = now.getHours() >= 12 ? 'PM' : 'AM';
         setCurrentTimePlaceholder(`${hours}:${minutes} ${ampm}`);
-
-        // Allow only digits + colon in input
+      
+        // Allow only digits and colon in input
         const inputEl = inputRef.current?.input;
         if (inputEl) {
-            inputEl.addEventListener('input', (e) => {
-                e.target.value = e.target.value.replace(/[^\d:]/g, '');
-            });
+          inputEl.addEventListener('input', (e) => {
+            e.target.value = e.target.value.replace(/[^\d:]/g, '');
+          });
         }
-    }, []);
+      }, []);
 
     const numbertypeOptions = [
         { label: "Mobile", value: "mobile" },
@@ -272,6 +274,8 @@ const ManageExecutiveIBDTable = ({ id, name }) => {
                                 hourFormat="12"
                                 showIcon
                                 icon={<FaRegClock />}
+                                value={datefrom} 
+                                onChange={(e) => setDatefrom(e.value)}
                                 placeholder={currentTimePlaceholder}
                                 className="w-full h-10"
                                 inputRef={inputRef}
@@ -289,6 +293,8 @@ const ManageExecutiveIBDTable = ({ id, name }) => {
                                 hourFormat="12"
                                 showIcon
                                 icon={<FaRegClock />}
+                                value={dateto} 
+                                onChange={(e) => setDateto(e.value)}
                                 placeholder={currentTimePlaceholder}
                                 className="w-full h-10"
                                 inputRef={inputRef}

@@ -149,7 +149,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile, }) => {
             type: "dropdown",
             links: [
                 { to: '/hlrlookup', label: 'HLR Lookup' },
-                { to: '/hlrlookupreports', label: 'HLR Lookup Reports' },
+                { to: '/hlrreports', label: 'HLR Lookup Reports' },
             ],
         },
         {
