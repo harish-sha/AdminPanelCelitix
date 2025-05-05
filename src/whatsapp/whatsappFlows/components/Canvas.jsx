@@ -22,7 +22,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
       setItems((prev) => [
         ...prev,
         { id: Date.now(), type: item.type, value: "" },
-      ]); 
+      ]);
     },
   }));
 
@@ -85,7 +85,6 @@ const Canvas = ({ items, setItems, onEdit }) => {
           label="Enter value"
           variant="outlined"
           fullWidth
-          // className="text-field"
           value={item.value}
           onChange={(e) => handleInputChange(index, e.target.value)}
           multiline={item.type === "textArea"}
@@ -146,17 +145,19 @@ const Canvas = ({ items, setItems, onEdit }) => {
   };
 
   return (
-    <Box
+    <div
       ref={drop}
-      className="relative flex-1 p-2 shadow-xl overflow-auto rounded-xl bg-white mt-13 mr-3 h-[900px] w-[500px]"
+      className="relative shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
     >
-      <span className="text-md tracking-wide font-semibold mb-2 text-center">Canvas</span>
-
+      {/* Tabs for multiple screens */}
+      <div className="border-b shadow-sm px-2 py-2 w-full bg-blue-50">Screens</div>
       {/* Render all items on the canvas */}
-      {items.map((item, index) => (
-        <DraggableItem key={item.id} item={item} index={index} />
-      ))}
-    </Box>
+      <div className="px-2" >
+        {items.map((item, index) => (
+          <DraggableItem key={item.id} item={item} index={index} />
+        ))}
+      </div>
+    </div>
   );
 };
 

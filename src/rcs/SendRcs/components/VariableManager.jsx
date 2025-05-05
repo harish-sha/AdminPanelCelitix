@@ -102,7 +102,8 @@ export const VariableManager = ({
         input.setSelectionRange(
           newMessageContent.length,
           newMessageContent.length
-        );pcam
+        );
+        pcam;
       }, 0);
     },
     [inputVariables, setInputVariables]
@@ -141,7 +142,7 @@ export const VariableManager = ({
   const renderSimpleInput = () =>
     varList?.map((label, index) => (
       <div className="relative w-full p-2" key={index}>
-        <div className="flex gap-2 items-center mb-3">
+        <div className="flex gap-2 items-center mb-1">
           <label htmlFor={`variable${index + 1}`}>{label}</label>
           <InputField
             id={`variable${index + 1}`}
@@ -197,7 +198,7 @@ export const VariableManager = ({
     >
       {Object.keys(carVar?.data || {}).map((item, index) => (
         <div key={index} className="p-2">
-          <div className="flex gap-2 items-center mb-3">
+          <div className="flex gap-2 items-center mb-1">
             <p className="text-[0.9rem] text-start">Message Params</p>
             <CustomTooltip
               title="Insert all the variables value"
@@ -209,11 +210,22 @@ export const VariableManager = ({
               </span>
             </CustomTooltip>
           </div>
-          {Object.keys(carVar.data[item]).map((_, nestedIndex) => (
-            <div className="flex gap-2 items-center mb-3" key={nestedIndex}>
-              <label htmlFor={`${index}-${nestedIndex}`} className="w-1/3">
-                {carVar.data[item][nestedIndex]}
+          {carVar.data[item].map((label, nestedIndex) => (
+            <div
+              key={nestedIndex}
+              className={`flex flex-col md:flex-row gap-2 items-start text-left md:items-center mb-1 p-1 rounded-lg transition-all duration-300 ${
+                nestedIndex % 2 === 0
+                  ? "bg-gray-50" // Light row
+                  : "bg-gray-100" // Darker row
+              }`}
+            >
+              <label
+                htmlFor={`${index}-${nestedIndex}`}
+                className="w-full md:w-1/3 text-sm font-semibold text-gray-800"
+              >
+                {label}
               </label>
+
               <InputField
                 id={`${index}-${nestedIndex}`}
                 name={`variable${index}-${nestedIndex}`}
@@ -221,7 +233,7 @@ export const VariableManager = ({
                 onChange={(e) =>
                   handleCarInputVariable(e.target.value, index, nestedIndex)
                 }
-                sx={{ width: "66.6667%", marginBottom: "1rem" }}
+                className="w-full  border border-gray-300 rounded-md px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-200 focus:border-purple-100 transition"
               />
             </div>
           ))}
@@ -239,7 +251,7 @@ export const VariableManager = ({
           </h1>
         </div>
       )}
-      <div className="flex flex-col gap-2 mt-2">
+      <div className="flex flex-col gap-2">
         {!isCarousal && varLength > 0 && renderSimpleInput()}
         {isCarousal && carVar?.length > 0 && renderCarouselInput()}
       </div>

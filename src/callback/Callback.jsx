@@ -112,7 +112,7 @@ const Callback = () => {
         />
       </Tabs>
 
-      <div className="flex flex-row-reverse my-4">
+      <div className="flex flex-row-reverse">
         <UniversalButton label="Add Callback" onClick={handleOpen} />
       </div>
 

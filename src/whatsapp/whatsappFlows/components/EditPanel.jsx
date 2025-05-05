@@ -85,6 +85,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     <Box>
       <Paper
         elevation={3}
+        // className="bg-white z-10 p-5 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] md:w-[60%] lg:w-[40%] xl:w-[30%]"
         className="bg-white z-10 p-5 absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] w-[90%] md:w-[60%] lg:w-[40%] xl:w-[30%]"
       >
         <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>

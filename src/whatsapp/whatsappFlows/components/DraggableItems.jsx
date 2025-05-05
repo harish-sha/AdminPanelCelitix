@@ -10,24 +10,17 @@ const DraggableItem = ({ item, onClick }) => {
   });
 
   return (
-    <Box ref={drag} m={1} onClick={onClick} style={{ cursor: "pointer" }}>
-      <Paper
-        elevation={4}
-        sx={{
-          display: "grid",
-          alignItems: "center",
-          textAlign: "center",
-          padding: "8px",
-        }}
-        className="sidebar-items"
+    <div ref={drag} onClick={onClick} className="cursor-pointer">
+      <div
+        className="flex flex-col items-center justify-center p-2 w-40 mb-2 rounded-2xl border border-gray-100 shadow-lg hover:shadow-xl transition-shadow duration-200 ease-in-out"
       >
-        <span className="sidebar-items-icon" >{item.icon}</span>
+        <span className="sidebar-items-icon">{item.icon}</span>
         {/* Icon */}
-        <span style={{ fontSize: "13px", fontWeight: "600" }}>
+        <span className="text-sm font-semibold text-gray-700 mt-1">
           {item.label}
         </span>
-      </Paper>
-    </Box>
+      </div>
+    </div>
   );
 };
 

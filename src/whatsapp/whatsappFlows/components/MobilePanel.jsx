@@ -40,7 +40,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   };
 
   return (
-    <div className="relative h-[900px] w-[370px] rounded-3xl shadow-md mt-13 bg-white p-2 overflow-hidden border-3 border-black">
+    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2 overflow-hidden border-3 border-black">
       <Typography variant="h6" sx={{ textAlign: "center" }}>
         Preview
       </Typography>

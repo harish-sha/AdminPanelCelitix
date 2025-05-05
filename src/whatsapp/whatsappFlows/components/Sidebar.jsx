@@ -21,7 +21,7 @@ import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
 import "./sidebar.css";
 
 const items = [
-  { id: 1, type: "heading", label: "Text Heading", icon: <TextFieldsIcon  /> },
+  { id: 1, type: "heading", label: "Text Heading", icon: <TextFieldsIcon /> },
   {
     id: 2,
     type: "subheading",
@@ -39,7 +39,7 @@ const items = [
 
 const items2 = [
   { id: 1, type: "textInput", label: "Text Input", icon: <KeyboardIcon /> },
-  { id: 2, type: "textArea", label: "Text Area", icon: <TextFieldsIcon /> }, 
+  { id: 2, type: "textArea", label: "Text Area", icon: <TextFieldsIcon /> },
 ];
 
 const items3 = [
@@ -69,14 +69,14 @@ const items4 = [
     type: "footerbutton",
     label: "Footer Button",
     icon: <GamepadIcon />,
-  }, 
+  },
   {
     id: 2,
     type: "embeddedlink",
     label: "Embedded Link",
     icon: <AddLinkIcon />,
   },
-  { id: 3, type: "optin", label: "Opt in", icon: <MoreHorizIcon  size="small" fontSize="small"  /> },
+  { id: 3, type: "optin", label: "Opt in", icon: <MoreHorizIcon size="small" fontSize="small" /> },
 ];
 
 const items5 = [
@@ -86,7 +86,7 @@ const items5 = [
 
 const items6 = [
   { id: 1, type: "ifelse", label: "if-Else", icon: <AccountTreeIcon /> },
-]; 
+];
 
 const items7 = [
   { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
@@ -99,87 +99,87 @@ const items8 = [
 
 const Sidebar = ({ onAdd }) => {
   return (
-    <Box className="sidebar">
-      <Typography variant="h6" gutterBottom className="heading">
+    <Box className="h-[830px] w-[350px] bg-white py-2 px-2 rounded-2xl sidebar hide-scrollbar shadow-xl overflow-y-scroll">
+      <span className="text-sm tracking-wide font-semibold">
         Basic Text
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem
               item={item}
               onClick={() => onAdd(item)}
-              className="inside-item-draggable"
+              className=""
             />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Text Entry
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items2.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Select Controls
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items3.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Buttons
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items4.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Media Input
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items5.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Conditions
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items6.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Others
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items7.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
       </div>
-      <Typography variant="h6" gutterBottom className="heading">
+      <span className="text-sm tracking-wide font-semibold">
         Templates
-      </Typography>
-      <div container sx={{ mt: 1 }} className="inside-box">
+      </span>
+      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items8.map((item) => (
-          <div item xs={12} key={item.id} className="inside-items">
+          <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}

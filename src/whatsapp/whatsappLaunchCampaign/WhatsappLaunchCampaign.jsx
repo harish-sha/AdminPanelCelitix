@@ -646,14 +646,14 @@ const WhatsappLaunchCampaign = () => {
                     <UniversalSkeleton height="46rem" width="100%" />
                   </div>
                 ) : ( */}
-                  <WhatsappLaunchPreview
-                    templateDataNew={templateDataNew}
-                    formData={formData}
-                    uploadedImage={imagePreview}
-                    setCardIndex={setCardIndex}
-                    cardIndex={cardIndex}
-                    fileData={fileData}
-                  />
+                <WhatsappLaunchPreview
+                  templateDataNew={templateDataNew}
+                  formData={formData}
+                  uploadedImage={imagePreview}
+                  setCardIndex={setCardIndex}
+                  cardIndex={cardIndex}
+                  fileData={fileData}
+                />
                 {/* )} */}
               </div>
             </div>

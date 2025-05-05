@@ -31,7 +31,7 @@ export const AddCallback = () => {
       data: [...prev.data, { key: "", value: "" }],
     }));
   }
-  function deleteHeader() {}
+  function deleteHeader() { }
   async function handleAddCallback() {
     try {
       const data = {
@@ -291,35 +291,35 @@ export const AddCallback = () => {
         {(authorization === "1" ||
           details.allowCallBackDlr === "2" ||
           details.authorizationType === "2") && (
-          <div className="flex gap-2">
-            <InputField
-              id="userId"
-              name="userId"
-              label={"UserId"}
-              placeholder="Enter userId"
-              value={details.userId}
-              onChange={(e) => {
-                setDetails((prev) => ({
-                  ...prev,
-                  userId: e.target.value,
-                }));
-              }}
-            />
-            <InputField
-              id="password"
-              name="password"
-              label={"Password"}
-              placeholder="Enter Password"
-              value={details.password}
-              onChange={(e) => {
-                setDetails((prev) => ({
-                  ...prev,
-                  password: e.target.value,
-                }));
-              }}
-            />
-          </div>
-        )}
+            <div className="flex gap-2">
+              <InputField
+                id="userId"
+                name="userId"
+                label={"UserId"}
+                placeholder="Enter userId"
+                value={details.userId}
+                onChange={(e) => {
+                  setDetails((prev) => ({
+                    ...prev,
+                    userId: e.target.value,
+                  }));
+                }}
+              />
+              <InputField
+                id="password"
+                name="password"
+                label={"Password"}
+                placeholder="Enter Password"
+                value={details.password}
+                onChange={(e) => {
+                  setDetails((prev) => ({
+                    ...prev,
+                    password: e.target.value,
+                  }));
+                }}
+              />
+            </div>
+          )}
 
         <div className="flex justify-center mt-5">
           <UniversalButton

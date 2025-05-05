@@ -81,9 +81,7 @@ const TemplatePreview = ({
 
   return (
     <div
-      className={`${
-        isLargeScreen ? "fixed" : "static"
-      } top-[230px] sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg`}
+      className={" sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"}
     >
       <div className="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t-md">
         <h2 className="text-lg font-semibold">Template Preview</h2>

@@ -10,6 +10,7 @@ import InputField from '../../whatsapp/components/InputField';
 import CustomTooltip from '../../whatsapp/components/CustomTooltip';
 import { getAllDownloadsList } from '@/apis/download/Download';
 import toast from 'react-hot-toast';
+import UniversalButton from '@/components/common/UniversalButton';
 
 
 
@@ -68,6 +69,7 @@ const Download = ({ id, name }) => {
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
     const [isFetching, setIsFetching] = useState(false);
     const [rows, setRows] = useState([]);
+    
 
     const fetchDownloadList = async () => {
         setIsFetching(true);
@@ -183,14 +185,14 @@ const Download = ({ id, name }) => {
     return (
         <div>
             <Box sx={{ display: "flex", justifyContent: "flex-end", marginBottom: 2 }}>
-                <Button
+                <UniversalButton
                     variant="contained"
                     color="primary"
                     onClick={fetchDownloadList}
                     disabled={isFetching}
+                    label={isFetching ? "Refreshing..." : "Refresh"}
                 >
-                    {isFetching ? "Refreshing..." : "Refresh"}
-                </Button>
+                </UniversalButton>
             </Box>
 
             <Paper sx={{ height: 558 }} id={id} name={name}>
