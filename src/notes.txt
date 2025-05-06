@@ -1,0 +1,27 @@
+tasks merge may 02 from arihant pending 
+merge sidebar.jsx and login.jsx from arihant
+
+tasks merge may 03 from arihant pending
+
+context > auth.jsx - Done
+
+mainlayout > sidebar > sidebar.jsx
+
+routes > Auth > PermissionRoute.jsx - Done
+routes > Auth > PrivateRoute.jsx - Done
+
+whatsapp > WhatsappBot > component > components > file.tsx - Done
+whatsapp > whatsappLiveChatSetting > WhatsappLiveChatSettings.jsx - done
+whatsapp > whatsappLiveChatSetting > components > Variable.jsx - done
+whatsapp > whatsappLiveChatSetting > components > ConfigureDialog.jsx - done
+whatsapp > whatsappLiveChatSetting > components > Preview.jsx - done
+
+rcs > managetemplate > components > Preview.jsx - done
+rcs > managetemplate > components > Carousel.jsx - done
+rcs > managetemplate > managetemplatercs.jsx - done
+
+callback > callback.jsx - done
+
+
+
+

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { IoSearch } from "react-icons/io5";
 import { HiOutlineChat } from "react-icons/hi";
 import toast from "react-hot-toast";
@@ -22,7 +22,7 @@ const WhatsappConversation = () => {
   const [wabaList, setWabaList] = useState([]);
   const [data, setData] = useState(null);
   const [filters, setFilters] = useState({
-    wabaSrno: "",
+    wabaSrno: 1,
     fromDate: new Date(),
     toDate: new Date(),
     mobileNo: "",
@@ -36,6 +36,7 @@ const WhatsappConversation = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
   const [isMobileSearched, setIsMobileSearched] = useState(false);
+
 
   // Fetch WABA List
   useEffect(() => {
@@ -69,10 +70,7 @@ const WhatsappConversation = () => {
 
     if (isNewSearch) {
       setIsMobileSearched(true);
-      // setPaginationModel({ page: 0, pageSize: 10 });
     }
-
-    // console.log("isNewSearch" + isNewSearch);
 
     try {
       setIsFetching(true);
@@ -112,8 +110,9 @@ const WhatsappConversation = () => {
             </h1>
           </div>
 
-          <div className="flex items-end gap-4 mb-5">
+          <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             {/* Select WABA Dropdown */}
+            <div className="w-full sm:w-56">
             <AnimatedDropdown
               id="wabadropdown"
               label="Select WABA"
@@ -127,6 +126,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, wabaSrno: value }))
               }
             />
+            </div>
+            <div className="w-full sm:w-56">
 
             {/* From Date Picker */}
             <UniversalDatePicker
@@ -137,7 +138,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, fromDate: value }))
               }
             />
-
+               </div>
+               <div className="w-full sm:w-56">
             {/* To Date Picker */}
             <UniversalDatePicker
               id="conversationto"
@@ -147,7 +149,8 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, toDate: value }))
               }
             />
-
+             </div>
+             <div className="w-full sm:w-56">
             {/* Mobile Number Input Field */}
             <InputField
               id="conversationmobile"
@@ -159,8 +162,9 @@ const WhatsappConversation = () => {
                 setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
               }
             />
-
+             </div>
             {/* Search Button */}
+            <div className="w-max-content ">
             <UniversalButton
               id="conversationsearch"
               label={isFetching ? "Searching..." : "Search"}
@@ -168,13 +172,15 @@ const WhatsappConversation = () => {
               onClick={handleSearch}
               disabled={isFetching}
             />
-
+             </div>
             {/* Export Button */}
+            <div className="w-max-content ">
             <UniversalButton
               id="conversationexport"
               label="Export"
-              onClick={() => console.log("Export Clicked")}
+              // onClick={() => console.log("Export Clicked")}
             />
+             </div>
           </div>
 
           {/* Show Loader or Table */}

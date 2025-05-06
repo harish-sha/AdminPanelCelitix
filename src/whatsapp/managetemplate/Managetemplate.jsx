@@ -47,6 +47,7 @@ import UniversalButton from "../components/UniversalButton";
 import UniversalSkeleton from "../components/UniversalSkeleton";
 import Loader from "../components/Loader";
 import {
+  getTemplateList,
   getWabaList,
   getWabaTemplate,
   getWabaTemplateDetails,
@@ -95,6 +96,34 @@ const ManageTemplate = () => {
 
   const [searchActive, setSearchActive] = useState(false);
 
+  const [templates, setTemplates] = useState([]);
+
+  const [tempCount, setTempCount] = useState({
+    authentication: 0,
+    marketing: 0,
+    utility: 0,
+  });
+
+  const [industryCount, setIndustryCount] = useState({
+    marketing: 0,
+    utility: 0,
+    authentication: 0,
+    ecommerce: 0,
+    financial: 0,
+    education: 0,
+    banking: 0,
+    healthcare: 0,
+    logistics: 0,
+    retail: 0,
+    corporate: 0,
+    entertainment: 0,
+    travel: 0,
+    food: 0,
+    real_estate: 0,
+    manufacturing: 0,
+    science: 0,
+  });
+
   const handleChangeOptionsCategory = (event) => {
     setSelectedOptionCategory(event.target.value);
   };
@@ -103,34 +132,77 @@ const ManageTemplate = () => {
     setSelectedOptionIndustry(event.target.value);
   };
 
+  useEffect(() => {
+    async function handleFetch() {
+      const res = await getTemplateList();
+
+      const totalCount = {
+        authentication: 0,
+        marketing: 0,
+        utility: 0,
+      };
+
+      res.forEach((item) => {
+        if (item.category in totalCount) {
+          totalCount[item.category] += 1;
+        }
+      });
+
+      setTempCount(totalCount);
+    }
+
+    handleFetch();
+  }, []);
+
+  useEffect(() => {
+    async function handleFetch() {
+      const res = await getTemplateList({
+        category: selectedOptionCategory,
+      });
+
+      const industryCount = {
+        marketing: 0,
+        utility: 0,
+        authentication: 0,
+        ecommerce: 0,
+        financial: 0,
+        education: 0,
+        banking: 0,
+        healthcare: 0,
+        logistics: 0,
+        retail: 0,
+        corporate: 0,
+        entertainment: 0,
+        travel: 0,
+        food: 0,
+        real_estate: 0,
+        manufacturing: 0,
+        science: 0,
+      };
+
+      res.forEach((item) => {
+        if (item.industry in industryCount) {
+          industryCount[item.industry] += 1;
+        }
+      });
+
+      setIndustryCount(industryCount);
+    }
+
+    handleFetch();
+  }, [selectedOptionCategory]);
+
   // Dynamic template counts (Replace this with API data)
   const templateCounts = {
-    marketing: 30,
-    utility: 26,
-    authentication: 28,
-    ecommerce: 30,
-    financial: 26,
-    education: 28,
-    banking: 28,
-    healthcare: 22,
-    logistics: 18,
-    retail: 35,
-    corporate: 21,
-    entertainment: 19,
-    travel: 23,
-    food: 27,
-    real_estate: 20,
-    manufacturing: 25,
-    science: 17,
+    ...industryCount,
   };
-
   // Categories Data (Dynamic count)
   const categories = [
-    { id: "marketing", label: `Marketing (${templateCounts.marketing})` },
-    { id: "utility", label: `Utility (${templateCounts.utility})` },
+    { id: "marketing", label: `Marketing (${tempCount.marketing})` },
+    { id: "utility", label: `Utility (${tempCount.utility})` },
     {
       id: "authentication",
-      label: `Authentication (${templateCounts.authentication})`,
+      label: `Authentication (${tempCount.authentication})`,
     },
   ];
 
@@ -224,6 +296,22 @@ const ManageTemplate = () => {
     setHasSearched(false);
   }, [selectedWaba]);
 
+  useEffect(() => {
+    async function handleFetchAllTemplates() {
+      const data = {
+        category: selectedOptionCategory,
+        industry: selectedOptionIndustry,
+      };
+      try {
+        const res = await getTemplateList(data);
+        setTemplates(res);
+      } catch (e) {
+        toast.error("Failed to fetch templates.");
+      }
+    }
+    handleFetchAllTemplates();
+  }, [selectedOptionCategory, selectedOptionIndustry]);
+
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -239,35 +327,31 @@ const ManageTemplate = () => {
       setIsLoading(true);
       try {
         const response = await getWabaList();
-        console.log("WABA List:", response);
-        if (response) {
-          setWabaList(response);
-        } else {
-          console.error("Failed to fetch WABA List");
-        }
+        setWabaList(response);
       } catch (error) {
-        console.error("Error fetching WABA List:", error);
+        toast.error("Error fetching WABA List:", error);
       }
       setIsLoading(false);
     };
     fetchWabaList();
   }, []);
 
-  useEffect(() => {
-    const fetchTemplateData = async () => {
-      if (!selectedTemplate || !wabaAccountId) return;
-      try {
-        const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+  const fetchTemplateData = async () => {
+    if (!selectedTemplate || !wabaAccountId) return;
+    try {
+      const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
 
-        if (response && response.data && response.data.length > 0) {
-          setTemplateData(response.data[0]);
-        } else {
-          toast.error("Failed to load template data!");
-        }
-      } catch (error) {
-        toast.error("Error fetching template data.");
+      if (response && response.data && response.data.length > 0) {
+        setTemplateData(response.data[0]);
+      } else {
+        toast.error("Failed to load template data!");
       }
-    };
+    } catch (error) {
+      toast.error("Error fetching template data.");
+    }
+  };
+
+  useEffect(() => {
     fetchTemplateData();
   }, [selectedTemplate, wabaAccountId]);
 
@@ -286,7 +370,7 @@ const ManageTemplate = () => {
         setFilteredData([]);
       }
     } catch (error) {
-      console.error("Error fetching template data:", error);
+      toast.error("Error fetching template data:", error);
       setFilteredData([]);
     }
     setIsFetching(false);
@@ -320,414 +404,32 @@ const ManageTemplate = () => {
   };
 
   const handleSyncTemplate = async () => {
+    if (!syncWabaId) {
+      toast.error("Please select a WABA account to sync templates.");
+      return;
+    }
     try {
-      console.log("syncWabaId", syncWabaId);
       const res = await syncStatus(syncWabaId);
       toast(
         `InsertCount: ${res.InsertCount}, \nApproved: ${res.Approved},\nRejectedCount: ${res.Rejected}, \nInsertCount: ${res.InsertCount}, \nDuplicateCount: ${res.DuplicateCount}`
       );
       setSyncStatusVisible(false);
     } catch (e) {
-      console.log(e);
       toast.error("Failed to sync template.");
     }
   };
 
-  // Dummy Templates Data (Add this inside the ManageTemplate component)
-  const dummyTemplates = [
-    {
-      id: 1,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 2,
-      name: "Payment Reminder",
-      category: "utility",
-      industry: "banking",
-      header: "Payment Reminder",
-      body: "Your monthly subscription payment of ₹999 is due. Avoid service disruption by paying now.",
-      button: { type: "cta", text: "Pay Now", link: "#" },
-    },
-    {
-      id: 3,
-      name: "Appointment Booking",
-      category: "authentication",
-      industry: "healthcare",
-      header: "Your Appointment is Booked! ✅",
-      body: "Your appointment with Dr. Sharma is confirmed for 5th March, 10:00 AM. Location: XYZ Clinic.",
-      button: { type: "quick_reply", text: "Reschedule" },
-    },
-    {
-      id: 4,
-      name: "Discount Offer",
-      category: "marketing",
-      industry: "retail",
-      header: "Limited Time Offer! 🔥",
-      body: "Get 20% OFF on your next purchase! Use code *SAVE20* at checkout.",
-      button: { type: "cta", text: "Shop Now", link: "#" },
-    },
-    {
-      id: 5,
-      name: "Subscription Expiry Alert",
-      category: "utility",
-      industry: "education",
-      header: "Subscription Expiring Soon! ⏳",
-      body: "Your premium access to Online Courses will expire in 3 days. Renew now to continue learning!",
-      button: { type: "cta", text: "Renew Now", link: "#" },
-    },
-    {
-      id: 6,
-      name: "New Product Launch",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Introducing Our New Product! 🚀",
-      body: "Meet the all-new SmartWatch X with advanced features. Pre-order now!",
-      button: { type: "cta", text: "Pre-Order Now", link: "#" },
-    },
-    {
-      id: 7,
-      name: "Customer Support Response",
-      category: "utility",
-      industry: "corporate",
-      header: "We Received Your Query 📨",
-      body: "Our support team is reviewing your request. Expect a response within 24 hours.",
-      button: { type: "quick_reply", text: "Contact Support" },
-    },
-    {
-      id: 8,
-      name: "Flight Booking Confirmation",
-      category: "authentication",
-      industry: "travel",
-      header: "Your Flight is Confirmed! ✈️",
-      body: "Flight AI-123 from Delhi to Mumbai is confirmed for 10th March. Check-in starts 24 hours before departure.",
-      button: { type: "cta", text: "View Ticket", link: "#" },
-    },
-    {
-      id: 9,
-      name: "Food Order Update",
-      category: "utility",
-      industry: "food",
-      header: "Your Order is Being Prepared 🍕",
-      body: "Your food order will be ready in 15 minutes. Get ready to enjoy your meal!",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 10,
-      name: "Event Reminder",
-      category: "marketing",
-      industry: "entertainment",
-      header: "Reminder: Music Concert Tonight 🎶",
-      body: "Don't forget! Your ticket for the Coldplay Concert is valid for 7:00 PM tonight. See you there!",
-      button: { type: "quick_reply", text: "View Details" },
-    },
-    {
-      id: 11,
-      name: "Loan Application Status",
-      category: "authentication",
-      industry: "banking",
-      header: "Loan Application Approved! 🎉",
-      body: "Congrats! Your loan application has been approved. Check the details and next steps here.",
-      button: { type: "cta", text: "View Status", link: "#" },
-    },
-    {
-      id: 12,
-      name: "Health Checkup Reminder",
-      category: "utility",
-      industry: "healthcare",
-      header: "Time for Your Health Checkup! 🏥",
-      body: "Stay healthy! It's time for your routine checkup. Book an appointment now.",
-      button: { type: "cta", text: "Book Now", link: "#" },
-    },
-    {
-      id: 13,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 14,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 15,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-    {
-      id: 16,
-      name: "Order Confirmation",
-      category: "marketing",
-      industry: "ecommerce",
-      header: "Your Order is Confirmed! 🎉",
-      body: "Thank you for your purchase! Your order #12345 will be delivered soon. Track it here:",
-      button: { type: "cta", text: "Track Order", link: "#" },
-    },
-  ];
-
   // Updated Templates Display UI (Add this inside your JSX)
   <div className="grid grid-cols-3 gap-4 mt-4">
-    {dummyTemplates
-      .filter(
-        (template) =>
-          template.category === selectedOptionCategory &&
-          template.industry === selectedOptionIndustry
-      )
-      .map((template) => (
-        <div
-          key={template.id}
-          className="bg-white border border-gray-50 p-4 rounded-lg shadow-md duration-300 hover:shadow-lg transition-shadow"
-        >
-          <h3 className="text-gray-700 font-semibold">{template.header}</h3>
-          <p className="text-gray-500 text-sm mt-2">{template.body}</p>
-          <div className="mt-3">
-            {template.button.type === "cta" ? (
-              <a
-                href={template.button.link}
-                className="bg-blue-500 rounded-md text-sm text-white hover:bg-blue-600 px-4 py-2 transition-all"
-              >
-                {template.button.text}
-              </a>
-            ) : (
-              <button className="bg-gray-200 rounded-md text-gray-700 text-sm hover:bg-gray-300 px-4 py-2 transition-all">
-                {template.button.text}
-              </button>
-            )}
-          </div>
-        </div>
-      ))}
+    {templates.map((template) => (
+      <div
+        key={template.id}
+        className="p-4 transition-shadow duration-300 bg-white border rounded-lg shadow-md border-gray-50 hover:shadow-lg"
+      >
+        <h3 className="font-semibold text-gray-700">{template.header}</h3>
+        <p className="mt-2 text-sm text-gray-500">{template.body}</p>
+      </div>
+    ))}
   </div>;
 
   return (
@@ -738,13 +440,13 @@ const ManageTemplate = () => {
         <Box
           sx={{
             width: "100%",
-            maxHeight: "91vh",
+            // maxHeight: "91vh",
             overflow: "hidden",
           }}
         >
-          <div className="flex flex-wrap justify-between w-full gap-4 items-center mb-2">
+          <div className="flex flex-wrap items-center justify-between w-full gap-4 mb-2">
             <div>
-              <h1 className="text-gray-700 text-xl font-semibold">
+              <h1 className="text-xl font-semibold text-gray-700">
                 Manage Templates
               </h1>
             </div>
@@ -757,14 +459,14 @@ const ManageTemplate = () => {
                                 onBlur={() => setSearchActive(false)}
                             />
                             <IoSearch
-                                className="text-gray-600 absolute cursor-pointer right-3"
+                                className="absolute text-gray-600 cursor-pointer right-3"
                                 size={22}
                                 color='green'
                                 onClick={() => setSearchActive(true)}
                             />
                         </div> */}
             {/* Search Templates and Status */}
-            <div className="flex h-0 w-120 duration-500 items-center relative transition-all">
+            <div className="relative flex items-center h-0 transition-all duration-500 w-120">
               <div
                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
             ${searchActive ? "w-80 " : "w-0"} 
@@ -781,7 +483,7 @@ const ManageTemplate = () => {
                   onBlur={() => setSearchActive(false)}
                 />
                 <IoSearch
-                  className="text-gray-600 absolute cursor-pointer right-4"
+                  className="absolute text-gray-600 cursor-pointer right-4"
                   size={22}
                   color="green"
                   onClick={() => setSearchActive(true)}
@@ -789,7 +491,7 @@ const ManageTemplate = () => {
               </div>
 
               {!searchActive && (
-                <span className="text-gray-500 text-sm animate-fade-in duration-300 ml-2 transition-opacity">
+                <span className="ml-2 text-sm text-gray-500 transition-opacity duration-300 animate-fade-in">
                   Search Templates
                 </span>
               )}
@@ -829,7 +531,7 @@ const ManageTemplate = () => {
             <Tab
               label={
                 <span>
-                  <ExploreOutlinedIcon size={20} /> Explore
+                  <LibraryBooksOutlinedIcon size={20} /> All Templates
                 </span>
               }
               {...a11yProps(0)}
@@ -847,7 +549,7 @@ const ManageTemplate = () => {
             <Tab
               label={
                 <span>
-                  <LibraryBooksOutlinedIcon size={20} /> All Templates
+                  <ExploreOutlinedIcon size={20} /> Explore
                 </span>
               }
               {...a11yProps(1)}
@@ -862,13 +564,14 @@ const ManageTemplate = () => {
                 },
               }}
             />
+
           </Tabs>
-          <CustomTabPanel value={value} index={0}>
+          <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap gap-3 min-h-[90vh]">
               <div className="flex flex-col bg-[#e6f4ff] rounded-md shadow-md w-70 overflow-scroll px-2 py-2">
                 {/* categrories */}
                 <div className="">
-                  <label className="text-gray-600 text-md font-medium">
+                  <label className="font-medium text-gray-600 text-md">
                     Categories
                   </label>
                   {categories.map((category) => (
@@ -902,47 +605,49 @@ const ManageTemplate = () => {
 
                 {/* Industries */}
                 <div className="mt-2">
-                  <label className="text-gray-600 text-md font-medium mb-2">
+                  <label className="mb-2 font-medium text-gray-600 text-md">
                     Industries
                   </label>
                   <div
                     className={`overflow-y-auto transition-all duration-300 ${showAllIndustries ? "max-h-[400px]" : "max-h-[300px]"
                       } rounded-md`}
                   >
-                    {industries.map((industry, index) => (
-                      <div
-                        key={industry.id}
-                        className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
+                    {industries
+                      .slice(0, showAllIndustries ? industries.length : 4)
+                      .map((industry) => (
+                        <div
+                          key={industry.id}
+                          className={`cursor-pointer rounded-lg px-2 py-2.5 hover:shadow-xl transition-shadow duration-300 flex items-center gap-2 
                     ${selectedOptionIndustry === industry.id
-                            ? "bg-white"
-                            : "bg-transparent"
-                          }`}
-                      >
-                        <RadioButton
-                          inputId={`radio_${industry.id}`}
-                          name="radioGroupIndustry"
-                          value={industry.id}
-                          onChange={handleChangeOptionsIndustry}
-                          checked={selectedOptionIndustry === industry.id}
-                        />
-                        <label
-                          htmlFor={`radio_${industry.id}`}
-                          className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
-                        ${selectedOptionIndustry === industry.id
-                              ? "text-green-600"
-                              : "text-gray-700"
+                              ? "bg-white"
+                              : "bg-transparent"
                             }`}
                         >
-                          {industry.icon} {industry.label}
-                        </label>
-                      </div>
-                    ))}
+                          <RadioButton
+                            inputId={`radio_${industry.id}`}
+                            name="radioGroupIndustry"
+                            value={industry.id}
+                            onChange={handleChangeOptionsIndustry}
+                            checked={selectedOptionIndustry === industry.id}
+                          />
+                          <label
+                            htmlFor={`radio_${industry.id}`}
+                            className={`font-medium text-sm cursor-pointer flex gap-2 items-center 
+                        ${selectedOptionIndustry === industry.id
+                                ? "text-green-600"
+                                : "text-gray-700"
+                              }`}
+                          >
+                            {industry.icon} {industry.label}
+                          </label>
+                        </div>
+                      ))}
                   </div>
 
                   {industries.length > 4 && (
                     <div className="flex justify-center mt-2">
                       <button
-                        className="text-blue-500 text-sm cursor-pointer duration-300 font-medium hover:underline transition-all"
+                        className="text-sm font-medium text-blue-500 transition-all duration-300 cursor-pointer hover:underline"
                         onClick={() => setShowAllIndustries(!showAllIndustries)}
                       >
                         {showAllIndustries
@@ -954,65 +659,61 @@ const ManageTemplate = () => {
                 </div>
               </div>
               {/* Fixed Layout for Template Section */}
-              <div className="flex-2 bg-white p-2 rounded-md overflow-auto">
+              <div className="p-2 overflow-auto bg-white rounded-md flex-2">
                 <div>
-                  <div className="flex justify-between px-2 py-2">
-                    <h2 className="text-gray-500 text-sm font-semibold">
+                  <div className="flex justify-end px-2 py-2">
+                    {/* <h2 className="text-sm font-semibold text-gray-500">
                       Showing result <KeyboardArrowRightOutlinedIcon /> 50 of 12
-                    </h2>
-                    <h2 className="text-green-500 text-sm font-semibold">
-                      Marketing <KeyboardArrowRightOutlinedIcon />{" "}
-                      <ShoppingCartOutlinedIcon fontSize="small" /> E-commerce
+                    </h2> */}
+                    <h2 className="text-sm font-semibold text-green-500">
+                      {selectedOptionCategory.toUpperCase()}{" "}
+                      <KeyboardArrowRightOutlinedIcon />{" "}
+                      {/* <ShoppingCartOutlinedIcon fontSize="small" /> */}
+                      {selectedOptionIndustry.toUpperCase()}
                     </h2>
                     {/* <div></div> */}
                     {/* <div></div> */}
                     {/* <span></span> */}
                   </div>
 
-                  <div className="grid grid-cols-3 border-gray-400 border-t-2 gap-4 max-h-[74vh] mt-2 overflow-auto pt-2">
-                    {dummyTemplates
-                      .filter(
-                        (template) =>
-                          template.category === selectedOptionCategory &&
-                          template.industry === selectedOptionIndustry
-                      )
-                      .map((template) => (
-                        <div
-                          key={template.id}
-                          className="bg-white border-2 border-gray-200 p-4 rounded-lg shadow-md duration-500 hover:border-2 hover:border-green-500 hover:shadow-xl transition-shadow"
-                        >
-                          <h3 className="text-gray-700 font-semibold">
-                            {template.header}
-                          </h3>
-                          <p className="text-gray-500 text-sm mt-2">
-                            {template.body}
-                          </p>
-                          <div className="mt-3">
-                            {template.button.type === "cta" ? (
-                              <a
-                                href={template.button.link}
-                                className="bg-blue-500 rounded-md text-sm text-white hover:bg-blue-600 px-4 py-2 transition-all"
-                              >
-                                {template.button.text}
-                              </a>
-                            ) : (
-                              <button className="bg-gray-200 rounded-md text-gray-700 text-sm hover:bg-gray-300 px-4 py-2 transition-all">
-                                {template.button.text}
-                              </button>
-                            )}
-                          </div>
-                        </div>
-                      ))}
+                  <div className="grid md:grid-cols-3 grid-cols-1 border-gray-400 border-t-2 gap-4 max-h-[74vh] mt-2 overflow-auto pt-2">
+                    {templates?.map((template) => (
+                      <div
+                        key={template.sr_no}
+                        className="p-4 transition-shadow duration-500 bg-white border-2 border-gray-200 rounded-lg shadow-md hover:border-2 hover:border-green-500 hover:shadow-xl"
+                      >
+                        <h3 className="font-semibold text-gray-700">
+                          {template.template_title}
+                        </h3>
+                        <p className="mt-2 text-sm text-gray-500">
+                          {template.template_body}
+                        </p>
+                        {/* <div className="mt-3">
+                          {template.button.type === "cta" ? (
+                            <a
+                              href={template.button.link}
+                              className="px-4 py-2 text-sm text-white transition-all bg-blue-500 rounded-md hover:bg-blue-600"
+                            >
+                              {template.button.text}
+                            </a>
+                          ) : (
+                            <button className="px-4 py-2 text-sm text-gray-700 transition-all bg-gray-200 rounded-md hover:bg-gray-300">
+                              {template.button.text}
+                            </button>
+                          )}
+                        </div> */}
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
             </div>
           </CustomTabPanel>
-          <CustomTabPanel value={value} index={1}>
+          <CustomTabPanel value={value} index={0}>
             <div className="w-full">
               <>
-                <div className="flex flex-wrap justify-start w-full gap-4 items-end mb-5">
-                  <div className="w-full sm:w-56">
+                <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
+                  <div className="w-full sm:w-46">
                     <AnimatedDropdown
                       id="manageTemplateWaba"
                       name="manageTemplateWaba"
@@ -1028,7 +729,7 @@ const ManageTemplate = () => {
                       placeholder="Select WABA"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <UniversalDatePicker
                       id="manageTemplateDate"
                       name="manageTemplateDate"
@@ -1043,7 +744,7 @@ const ManageTemplate = () => {
                       maxDate={new Date()}
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <InputField
                       id="manageTemplateName"
                       name="manageTemplateName"
@@ -1056,7 +757,7 @@ const ManageTemplate = () => {
                     />
                   </div>
 
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateCategory"
                       name="manageTemplateCategory"
@@ -1073,7 +774,7 @@ const ManageTemplate = () => {
                       placeholder="Category"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateType"
                       name="manageTemplateType"
@@ -1083,6 +784,7 @@ const ManageTemplate = () => {
                       options={[
                         { value: "text", label: "Text" },
                         { value: "image", label: "Image" },
+                        { value: "video", label: "Video" },
                         { value: "document", label: "Document" },
                         { value: "carousel", label: "Carousel" },
                       ]}
@@ -1091,7 +793,7 @@ const ManageTemplate = () => {
                       placeholder="Type"
                     />
                   </div>
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-42">
                     <AnimatedDropdown
                       id="manageTemplateStatus"
                       name="manageTemplateStatus"
@@ -1113,45 +815,27 @@ const ManageTemplate = () => {
                     <UniversalButton
                       id="manageTemplateSearchBtn"
                       name="manageTemplateSearchBtn"
-                      label="Search"
+                      label={isFetching ? "Searching..." : "Search"}
                       icon={<IoSearch />}
                       onClick={handleSearch}
                       variant="primary"
+                      disabled={isFetching}
                     />
                   </div>
                 </div>
-                {isFetching ? (
-                  <UniversalSkeleton height="35rem" width="100%" />
-                ) : (
-                  // ) : !hasSearched ? (
-                  //     // Case 1: Initial Load - Ask user to select WABA account
-                  //     <div className="flex bg-white border-2 border-blue-500 border-dashed h-[55vh] justify-center rounded-2xl w-full items-center">
-                  //         <div className="p-8 rounded-2xl shadow-2xl shadow-blue-300 text-blue-500 text-center">
-                  //             <span className="text-2xl font-m font-medium tracking-wide">
-                  //                 Please select a WhatsApp Business Account (WABA) to
-                  //                 proceed.
-                  //             </span>
-                  //         </div>
-                  //     </div>
-                  // ) : filteredData.length === 0 ? (
-                  //     // Case 2: No data found after filtering
-                  //     <div className="flex bg-white border-2 border-dashed border-red-500 h-[55vh] justify-center rounded-2xl w-full items-center">
-                  //         <div className="p-8 rounded-2xl shadow-2xl shadow-red-300 text-center text-red-500">
-                  //             <span className="text-2xl font-m font-medium tracking-wide">
-                  //                 No matching records found. <br /> Please adjust your filters
-                  //                 and try again.
-                  //             </span>
-                  //         </div>
-                  //     </div>
-                  // Case 3: Show data in the table
-                  <DataTable
-                    id="whatsappManageTemplateTable"
-                    name="whatsappManageTemplateTable"
-                    wabaNumber={selectedWaba}
-                    wabaList={wabaList}
-                    data={filteredData}
-                  />
-                )}
+
+                <DataTable
+                  id="whatsappManageTemplateTable"
+                  name="whatsappManageTemplateTable"
+                  wabaNumber={selectedWaba}
+                  wabaSrno={
+                    wabaList.find((waba) => waba.mobileNo === selectedWaba)
+                      ?.wabaSrno
+                  } // Pass wabaSrno
+                  wabaList={wabaList}
+                  data={filteredData}
+                  fetchTemplateData={handleSearch}
+                />
               </>
             </div>
           </CustomTabPanel>

@@ -71,7 +71,7 @@ const Profile = () => {
                         <InputField id="companyName" name="companyName" label="Company Name" value={formData.companyName} onChange={handleChange} readOnly disabled />
 
                     </div>
-                    <div className="mt-6 flex justify-center">
+                    {/* <div className="mt-6 flex justify-center">
                         <UniversalButton
                             id="profile_Save"
                             name="profile_Save"
@@ -79,7 +79,7 @@ const Profile = () => {
                         >
                             Save
                         </UniversalButton>
-                    </div>
+                    </div> */}
                 </div>
             ) : (
                 <p className="text-center text-gray-500 mt-4">Failed to load user details.</p>

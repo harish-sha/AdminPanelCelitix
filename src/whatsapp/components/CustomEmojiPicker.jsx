@@ -48,13 +48,13 @@ const CustomEmojiPicker = ({ onSelect, position = 'bottom' }) => {
                 <FaRegFaceSmile className={`${showPicker ? 'text-gray-950' : 'text-gray-500'}`} />
             </button>
             {showPicker && (
-                <div className={`absolute z-10 ${getPositionClass()}}`}>
+                <div className={`absolute z-1000 ${getPositionClass()}}`}>
                     <EmojiPicker
                         onEmojiClick={handleEmojiClick}
                         autoFocusSearch={false}
                         open={true}
                         reactionsDefaultOpen={true}
-                        height={400}
+                        height={350}
                         width={400}
                         // lazyLoadEmojis={true}
                         allowExpandReactions={true}

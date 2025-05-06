@@ -1,0 +1,24 @@
+@media only screen and (max-width: 1300px) {
+  .sidebar {
+    width: 200px;
+  }
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  width: 0px;
+  visibility: hidden;
+}
+.hide-scrollbar::-webkit-scrollbar-thumb {
+  visibility: hidden;
+}
+
+
+
+.sidebar::-webkit-scrollbar-thumb {
+  visibility: hidden;
+}
+
+.sidebar-items-icon svg {
+  width: 19px;
+  color: rgb(96, 59, 144);
+}

@@ -19,7 +19,7 @@ const ManageUser = () => {
     userId: "",
     mobileNo: "",
     companyName: "",
-    status: "1",
+    status: "-1",
   });
 
   const handleAdduser = () => {
@@ -39,7 +39,7 @@ const ManageUser = () => {
       const res = await fetchAllUsers(data);
       setAllUsers(res.userMstPojoList);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong! Please try again later.");
     } finally {
       setIsFetching(false);
@@ -52,9 +52,10 @@ const ManageUser = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
-        {/* Name Input Field */}
-
+      <div className="flex flex-wrap items-end justify-between w-full gap-4 mb-3 align-middle">
+        <h1>
+          <span className="text-xl font-semibold text-gray-700">Manage Users</span>
+        </h1>
         <div className="w-max-content">
           <UniversalButton
             id="manageadduserbtn"
@@ -66,10 +67,9 @@ const ManageUser = () => {
       </div>
 
       <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-3 align-middle">
-        {/* Name Input Field */}
         <div className="w-full sm:w-48">
           <InputField
-            label="Name"
+            label="User ID"
             id="manageuserid"
             name="manageuserid"
             placeholder="Enter User ID"
@@ -83,7 +83,6 @@ const ManageUser = () => {
           />
         </div>
 
-        {/* Mobile Number Input */}
         <div className="w-full sm:w-48">
           <InputField
             label="Mobile Number"
@@ -100,6 +99,7 @@ const ManageUser = () => {
             }}
           />
         </div>
+
         <div className="w-full sm:w-48">
           <InputField
             label="Company Name"
@@ -124,6 +124,7 @@ const ManageUser = () => {
             id="managestatus"
             name="managestatus"
             options={[
+              { value: "-1", label: "All" },
               { value: "1", label: "Active" },
               { value: "0", label: "Inactive" },
             ]}
@@ -131,13 +132,12 @@ const ManageUser = () => {
             onChange={(e) => {
               setDataToFilter({
                 ...dataToFilter,
-                status: e,
+                status: e || "-1",
               });
             }}
           />
         </div>
 
-        {/* ✅ Search Button */}
         <div className="w-max-content">
           <UniversalButton
             id="managesearchbtn"
@@ -151,11 +151,12 @@ const ManageUser = () => {
       </div>
 
       <div>
-        {isFetching ? (
+        {/* {isFetching ? (
           <UniversalSkeleton height="35rem" width="100%" />
         ) : (
           <ManageUserTable allUsers={allUsers} />
-        )}
+        )} */}
+        <ManageUserTable allUsers={allUsers} />
       </div>
     </div>
   );

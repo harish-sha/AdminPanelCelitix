@@ -120,7 +120,6 @@ const CampaignDetailsReport = () => {
     const handleSearch = async () => {
         setIsFetching(true);
         setTimeout(() => {
-            console.log("Search clicked");
             setIsFetching(false);
         }, 500);
     };
@@ -223,7 +222,6 @@ const CampaignDetailsReport = () => {
     };
     function handlePag() {
         setCurrentPage(currentPage + 1);
-        console.log("current page", currentPage);
     }
     return (
         <div className="w-full">
@@ -289,7 +287,7 @@ const CampaignDetailsReport = () => {
                         rows={rows}
                         columns={columns}
                         initialState={{ pagination: { paginationModel } }}
-                        checkboxSelection
+                        // checkboxSelection
                         rowHeight={45}
                         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
                         slotProps={{ footer: { totalRecords: rows.length } }}

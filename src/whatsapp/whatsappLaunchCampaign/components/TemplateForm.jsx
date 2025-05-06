@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import DoNotDisturbOutlinedIcon from "@mui/icons-material/DoNotDisturbOutlined";
@@ -8,6 +8,7 @@ import InputVariable from "./InputVariable";
 import { uploadImageFile } from "../../../apis/whatsapp/whatsapp.js";
 import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { Carousel } from "react-responsive-carousel";
 
 // Function to extract variables from text (e.g., {{1}})
 const extractVariablesFromText = (text) => {
@@ -31,10 +32,16 @@ const TemplateForm = ({
   selectedTemplateData,
   onUrlIndexChange,
   setVarLength,
+  cardIndex,
+  setCardIndex,
+  setFileData,
+  fileData,
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
-  const [urlIndex, setUrlIndex] = useState(null); // ✅ Stores the selected URL column index
+  const [urlIndex, setUrlIndex] = useState(null);
+
+  const fileRef = useRef(null);
 
   const [imageState, setImageState] = useState({
     file: null,
@@ -126,14 +133,12 @@ const TemplateForm = ({
     onInputChange(value, `${type}${variable}`);
   };
 
-
   const handleSelectVariable = (variable, inputKey, type = "body") => {
     setInputValues((prev) => {
       const updatedValue = `{{${variable}}}`;
 
       const newState = { ...prev, [`${type}${inputKey}`]: updatedValue };
 
-      // ✅ If selecting for BUTTON URL, update `urlIndex`
       if (type === "button" && fileHeaders.includes(variable)) {
         const index = fileHeaders.indexOf(variable);
 
@@ -157,19 +162,19 @@ const TemplateForm = ({
       toast.error("No file selected.");
       return;
     }
-    const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Only jpg, jpeg, and png files are allowed.");
-      return;
-    }
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB.");
-      return;
-    }
-    if (/\s/.test(file.name)) {
-      toast.error("File name should not contain spaces.");
-      return;
-    }
+    // const allowedTypes = ["image/jpeg", "image/png", "image/jpg"];
+    // if (!allowedTypes.includes(file.type)) {
+    //   toast.error("Only jpg, jpeg, and png files are allowed.");
+    //   return;
+    // }
+    // if (file.size > 5 * 1024 * 1024) {
+    //   toast.error("File size must be less than 5MB.");
+    //   return;
+    // }
+    // if (/\s/.test(file.name)) {
+    //   toast.error("File name should not contain spaces.");
+    //   return;
+    // }
     setImageState({
       file,
       preview: URL.createObjectURL(file),
@@ -191,11 +196,9 @@ const TemplateForm = ({
     }
     setImageState((prev) => ({ ...prev, uploading: true }));
     try {
-      console.log("Uploading image:", imageState.file);
       const response = await uploadImageFile(imageState.file);
-      console.log("Upload Response:", response);
       if (response.status) {
-        toast.success("Image uploaded successfully!");
+        toast.success("Media uploaded successfully!");
         setImageState((prev) => ({
           ...prev,
           uploadedUrl: response.fileUrl,
@@ -204,10 +207,10 @@ const TemplateForm = ({
         }));
         onImageUpload(response.fileUrl);
       } else {
-        toast.error(response.msg || "Image upload failed.");
+        toast.error(response.msg || "Media upload failed.");
       }
     } catch (error) {
-      toast.error(error.message || "Error uploading image.");
+      toast.error(error.message || "Error uploading media.");
     } finally {
       setImageState((prev) => ({ ...prev, uploading: false }));
     }
@@ -222,12 +225,76 @@ const TemplateForm = ({
       uploadedUrl: null,
       validFileSelected: false,
     });
+    fileRef.current.value = "";
     onImageUpload(null);
-    toast.success("Image removed successfully.");
+    toast.success("Media removed successfully.");
   };
+  
+  const isCarousal = templateDataNew?.components?.find(
+    (comp) => comp.type === "CAROUSEL"
+  );
+  let CardsData = [];
+
+  isCarousal?.cards?.map(({ components: card }, index) => {
+    CardsData.push(card);
+  });
+
+  useEffect(() => {
+    isCarousal?.cards?.map((card, index) => {
+      setFileData((prev) => ({
+        ...prev,
+        [index]: {
+          fileTempPath: "",
+          filePath: "",
+        },
+      }));
+    });
+  }, [isCarousal]);
+
+  async function handleCarFileChange(e, index) {
+    const file = e.target.files[0];
+
+    setFileData((prev) => ({
+      ...prev,
+      [index]: {
+        fileTempPath: file,
+        filePath: "",
+      },
+    }));
+  }
+
+  async function handleUploadFile(index) {
+    if (!fileData[index]?.fileTempPath) {
+      return toast.error("Please select a file first");
+    }
+    const res = await uploadImageFile(fileData[index]?.fileTempPath);
+    if (res?.fileUrl) {
+      toast.success("Media uploaded successfully!");
+    }
+
+    setFileData((prev) => ({
+      ...prev,
+      [index]: {
+        ...prev[index],
+        filePath: res?.fileUrl,
+      },
+    }));
+  }
+
+  async function handleDeleteFile(index) {
+    setFileData((prev) => ({
+      ...prev,
+      [index]: {
+        fileTempPath: null,
+        filePath: "",
+      },
+    }));
+
+    fileRef.current.value = "";
+  }
 
   return (
-    <div className="rounded-md shadow-sm">
+    <div className="rounded-md shadow-sm ">
       <div className="bg-[#128C7E] p-2 rounded-t-md">
         <h3 className="text-[0.8rem] font-medium text-white tracking-wider ">
           Template Category - {selectedTemplateData?.category || "N/A"}
@@ -237,7 +304,7 @@ const TemplateForm = ({
         </h3>
       </div>
 
-      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl">
+      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl ">
         {/* BODY Component: Handle Variables */}
         {templateDataNew?.components.map((component, idx) => {
           if (component.type === "BODY") {
@@ -277,7 +344,7 @@ const TemplateForm = ({
                         className="pl-1 pr-6 py-1.5 w-full border rounded-sm text-[0.85rem] border-gray-300 shadow-sm focus:outline-none"
                       />
                     </div>
-                    <div className="absolute top-0 right-0 z-50">
+                    <div className="absolute top-0 right-0 z-10">
                       <InputVariable
                         onSelect={(selectedVar) =>
                           handleSelectVariable(selectedVar, variable, "body")
@@ -362,18 +429,112 @@ const TemplateForm = ({
           return null;
         })}
 
-        {/* HEADER Component: Handle Image Upload */}
-        {templateDataNew?.components.some(
-          (component) =>
-            component.type === "HEADER" && component.format === "IMAGE"
-        ) && (
-          <div className="flex flex-col gap-2">
+        {!isCarousal &&
+          (() => {
+            const mediaComponent = templateDataNew?.components.find(
+              (component) =>
+                component.type === "HEADER" &&
+                ["IMAGE", "VIDEO", "DOCUMENT"].includes(component.format)
+            );
+
+            if (!mediaComponent) return null;
+
+            const acceptedTypes = {
+              IMAGE: "image/*",
+              VIDEO: "video/*",
+              DOCUMENT: ".pdf,.doc,.docx,.xls,.xlsx",
+            };
+
+            return (
+              <div className="flex flex-col gap-2">
+                <div className="flex items-center gap-2">
+                  <p className="text-sm font-medium tracking-wide text-gray-700">
+                    Upload File
+                  </p>
+                  <CustomTooltip
+                    title="Only jpg, jpeg and png allowed (5 MB max)"
+                    placement="right"
+                    arrow
+                  >
+                    <span>
+                      <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                    </span>
+                  </CustomTooltip>
+                </div>
+
+                <div className="flex items-start gap-2">
+                  <input
+                    type="file"
+                    id="imageUpload"
+                    accept={acceptedTypes[mediaComponent.format] || "*/*"}
+                    onChange={handleImageChange}
+                    className="hidden"
+                    ref={fileRef}
+                  />
+
+                  <button
+                    type="button"
+                    onClick={() =>
+                      document.getElementById("imageUpload").click()
+                    }
+                    className="px-2 py-1.5 tracking-wide bg-blue-400 text-white text-[0.85rem] rounded-md shadow-md hover:bg-blue-500 focus:outline-none cursor-pointer"
+                  >
+                    Choose File
+                  </button>
+
+                  {(imageState.file || imageState.uploadedUrl) && (
+                    <>
+                      <button
+                        onClick={handleUpload}
+                        disabled={
+                          imageState.uploading || !imageState.validFileSelected
+                        }
+                        className={`px-2 py-[0.3rem] ${imageState.uploading || !imageState.validFileSelected
+                          ? "bg-gray-400 cursor-not-allowed"
+                          : "bg-green-400 cursor-pointer hover:bg-green-500"
+                          } text-white text-sm rounded-md shadow-md focus:outline-none`}
+                      >
+                        {imageState.uploading ? (
+                          <DoNotDisturbOutlinedIcon
+                            sx={{ color: "white", fontSize: "22px" }}
+                          />
+                        ) : (
+                          <FileUploadOutlinedIcon
+                            sx={{ color: "white", fontSize: "22px" }}
+                          />
+                        )}
+                      </button>
+
+                      <button
+                        onClick={handleDelete}
+                        className="p-2 rounded-full cursor-pointer focus:outline-none hover:bg-gray-200"
+                      >
+                        <MdOutlineDeleteForever
+                          className="text-red-500 hover:text-red-600"
+                          size={20}
+                        />
+                      </button>
+                    </>
+                  )}
+                </div>
+
+                {imageState.name && (
+                  <span className="text-[0.8rem] text-gray-700">
+                    {imageState.name}
+                  </span>
+                )}
+              </div>
+            );
+          })()}
+
+        {isCarousal && (
+          <div className="flex flex-col gap-2 ">
             <div className="flex items-center gap-2">
               <p className="text-sm font-medium tracking-wide text-gray-700">
-                Upload Image
+                Upload File
               </p>
               <CustomTooltip
-                title="Only jpg,jpeg and png allowed (5 MB max)"
+                title="Only jpg, jpeg and png allowed (5 MB max)"
                 placement="right"
                 arrow
               >
@@ -382,63 +543,107 @@ const TemplateForm = ({
                 </span>
               </CustomTooltip>
             </div>
-            <div className="flex items-start gap-2">
-              <input
-                type="file"
-                id="imageUpload"
-                accept="image/*"
-                onChange={handleImageChange}
-                className="hidden"
-              />
-              <button
-                type="button"
-                onClick={() => document.getElementById("imageUpload").click()}
-                className="px-2 py-1.5 tracking-wide bg-blue-400 text-white text-[0.85rem] rounded-md shadow-md hover:bg-blue-500 focus:outline-none cursor-pointer"
-              >
-                Choose File
-              </button>
 
-              {(imageState.file || imageState.uploadedUrl) && (
-                <>
-                  <button
-                    onClick={handleUpload}
-                    disabled={
-                      imageState.uploading || !imageState.validFileSelected
-                    }
-                    className={`px-2 py-[0.3rem] ${
-                      imageState.uploading || !imageState.validFileSelected
-                        ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-green-400 cursor-pointer hover:bg-green-500"
-                    } text-white text-sm rounded-md shadow-md focus:outline-none`}
-                  >
-                    {imageState.uploading ? (
-                      <DoNotDisturbOutlinedIcon
-                        sx={{ color: "white", fontSize: "22px" }}
+            <Carousel
+              showThumbs={false}
+              showStatus={false}
+              infiniteLoop
+              useKeyboardArrows
+              renderArrowPrev={() => null}
+              renderArrowNext={() => null}
+              selectedItem={cardIndex}
+              onChange={(index) => setCardIndex(index)}
+              renderIndicator={(onClickHandler, isSelected, index) => {
+                const baseClasses = "w-3 h-3 rounded-full mx-1 cursor-pointer";
+                const indicatorClass = isSelected
+                  ? "bg-[#212529]"
+                  : "bg-[#7E7F80]";
+                return (
+                  <li
+                    key={index}
+                    className={`inline-block ${baseClasses} ${indicatorClass}`}
+                    onClick={() => {
+                      onClickHandler();
+                      setCardIndex(index);
+                    }}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`Slide ${index + 1}`}
+                  />
+                );
+              }}
+            >
+              {CardsData.map((card, index) => {
+                // console.log(card);
+                const handler = card.find(
+                  (item) =>
+                    item.type === "HEADER" &&
+                    ["IMAGE", "VIDEO", "DOCUMENT"].includes(item.format)
+                );
+
+                if (!handler) {
+                  // Use empty div to avoid breaking Carousel layout
+                  return <div key={index} />;
+                }
+
+                const acceptedTypes = {
+                  IMAGE: "image/*",
+                  VIDEO: "video/*",
+                  DOCUMENT: ".pdf,.doc,.docx,.xls,.xlsx",
+                };
+
+                return (
+                  <div key={index} className="flex gap-2 items-end">
+                    <div className="flex items-start gap-2">
+                      <input
+                        type="file"
+                        id={`imageUpload-${index}`}
+                        accept={acceptedTypes[handler.format] || "*/*"}
+                        onChange={(e) => handleCarFileChange(e, index)}
+                        className="hidden"
+                        ref={fileRef}
                       />
-                    ) : (
-                      <FileUploadOutlinedIcon
-                        sx={{ color: "white", fontSize: "22px" }}
-                      />
+
+                      <button
+                        type="button"
+                        onClick={() =>
+                          document
+                            .getElementById(`imageUpload-${index}`)
+                            ?.click()
+                        }
+                        className="px-2 py-1.5 tracking-wide bg-blue-400 text-white text-[0.85rem] rounded-md shadow-md hover:bg-blue-500 focus:outline-none cursor-pointer"
+                      >
+                        Choose File
+                      </button>
+                    </div>
+
+                    {fileData[index] && (
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleUploadFile(index)}
+                          disabled={!fileData[index]}
+                          className="px-2 py-[0.3rem] bg-green-400 cursor-pointer hover:bg-green-500 text-white text-sm rounded-md shadow-md focus:outline-none"
+                        >
+                          <FileUploadOutlinedIcon
+                            sx={{ color: "white", fontSize: "22px" }}
+                          />
+                        </button>
+
+                        <button
+                          onClick={() => handleDeleteFile(index)}
+                          className="p-2 rounded-full cursor-pointer focus:outline-none hover:bg-gray-200"
+                        >
+                          <MdOutlineDeleteForever
+                            className="text-red-500 hover:text-red-600"
+                            size={20}
+                          />
+                        </button>
+                      </div>
                     )}
-                  </button>
-                  <button
-                    onClick={handleDelete}
-                    className="p-2 rounded-full cursor-pointer focus:outline-none hover:bg-gray-200"
-                  >
-                    <MdOutlineDeleteForever
-                      className="text-red-500 cursor-pointer hover:text-red-600"
-                      size={20}
-                    />
-                  </button>
-                </>
-              )}
-            </div>
-            {imageState.name && (
-              <span className="text-[0.8rem] text-gray-700">
-                {imageState.name}
-              </span>
-            )}
-            {/* <div className='text-[0.8rem] text-gray-600'>Only jpg,jpeg and png allowed (5 MB max)</div> */}
+                  </div>
+                );
+              })}
+            </Carousel>
           </div>
         )}
       </div>

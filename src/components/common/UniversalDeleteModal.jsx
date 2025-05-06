@@ -146,7 +146,6 @@ const UniversalDeleteModal = ({ id, name, icon }) => {
     const handleClose = () => setOpen(false);
 
     const handleDelete = () => {
-        console.log(`${name} `);
         setOpen(false);
     };
 

@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import UniversalAccountInfo from "../../profile/components/UniversalAccountInfo";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import celitixLogo from "../../assets/images/celitix-cpaas-solution-logo.svg";
+import { useUser } from "@/context/auth";
 
 import {
   AccountBalanceWalletOutlined as WalletIcon,
@@ -20,22 +21,33 @@ import {
   MoreVert as MoreIcon,
   History as HistoryIcon,
   Logout as LogoutIcon,
+  Loop as LoopIcon,
 } from "@mui/icons-material";
 import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
+  const { authLogout } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
   const navigate = useNavigate();
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [balance, setBalance] = useState(0);
+  const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+
+  // const handleBalance = async () => {
+  //   const res = await fetchBalance();
+  //   setBalance(res.balance);
+  // };
 
   const handleBalance = async () => {
+    setIsFetchingBalance(true);
     const res = await fetchBalance();
-    setBalance(res.balance);
+    setBalance(res.balance || 0);
+    setTimeout(() => setIsFetchingBalance(false), 600);
   };
+
   useEffect(() => {
     handleBalance();
   }, []);
@@ -44,7 +56,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     () => setIsCollapsed((prev) => !prev),
     [setIsCollapsed]
   );
-
 
   const handleProfileMenu = useCallback(
     (event) => setProfileAnchorEl(event?.currentTarget || null),
@@ -76,8 +87,9 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   }, [navigate]);
 
   const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
+    authLogout();
     setTimeout(() => (window.location.href = "/login"), 1000);
   }, []);
 
@@ -86,9 +98,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     []
   );
 
-
   useEffect(() => {
-    console.log("isCollapsed", isCollapsed);
+    // console.log("isCollapsed", isCollapsed);
   }, [isCollapsed]);
 
   return (
@@ -106,12 +117,16 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             <path className="line" d="M7 16 27 16"></path>
           </svg>
         </label> */}
-        <input className="toggle-checkbox" id="toggle" type="checkbox" checked={isCollapsed} onChange={(event) => { setIsCollapsed((prev) => !prev) }} />
-<<<<<<< HEAD
+        <input
+          className="toggle-checkbox"
+          id="toggle"
+          type="checkbox"
+          checked={isCollapsed}
+          onChange={(event) => {
+            setIsCollapsed((prev) => !prev);
+          }}
+        />
         <label className="hamburger" htmlFor="toggle">
-=======
-        <label className="hamburger" for="toggle">
->>>>>>> origin/main
           <div className="bar"></div>
           <div className="bar"></div>
           <div className="bar"></div>
@@ -119,7 +134,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
         {/* </button> */}
         {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
-        <img src={celitixLogo} width={100} height={80} alt="Celitix Logo" />
+        <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" />
       </div>
 
       {!isMobile ? (
@@ -130,11 +145,17 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               Icon: InfoIcon,
               action: () => setShowModal(true),
             },
+            // {
+            //   title: balance,
+            //   Icon: PaymentsIcon,
+            // },
             {
-              title: balance,
-              Icon: PaymentsIcon,
+              title: `Balance: ₹${balance}`,
+              Icon: isFetchingBalance ? LoopIcon : WalletIcon,
+              action: handleBalance,
+              showBalance: true,
             },
-            { title: "Wallet", Icon: WalletIcon },
+            // { title: "Wallet", Icon: WalletIcon },
             {
               title: "Downloads",
               Icon: DownloadIcon,
@@ -142,11 +163,24 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             },
           ].map(({ title, Icon, action }, idx) => (
             <CustomTooltip key={idx} title={title} placement="bottom" arrow>
-              <button
+              {/* <button
                 className="p-2 rounded-full cursor-pointer bg-[#e6f4ff] hover:bg-gray-200"
                 onClick={action}
               >
                 <Icon className="text-xl text-blue-700" />
+              </button> */}
+              <button
+                className="relative p-2 rounded-full bg-[#e6f4ff] group overflow-hidden transition-all duration-300  hover:shadow-md cursor-pointer"
+                onClick={action}
+              >
+                <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 bg-indigo-200 transition-transform origin-bottom duration-300 z-0"></div>
+                <span className="relative z-10 text-blue-700">
+                  {title.includes("Balance") && isFetchingBalance ? (
+                    <LoopIcon className="text-[18px] animate-spin" />
+                  ) : (
+                    <Icon className="text-[18px]" />
+                  )}
+                </span>
               </button>
             </CustomTooltip>
           ))}
@@ -201,20 +235,25 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           </Menu>
         </div>
       ) : (
-        // ✅ Small Screen Dropdown
         <div className="ml-auto">
           <IconButton onClick={handleMenu} className="text-gray-700">
             {/* <MoreIcon /> */}
             <label className="hamburger">
-              <input type="checkbox" checked={Boolean(menuAnchorEl)} onChange={(event) => (event?.currentTarget || null)} />
+              <input
+                type="checkbox"
+                checked={Boolean(menuAnchorEl)}
+                onChange={(event) => event?.currentTarget || null}
+              />
               <svg viewBox="0 0 32 32">
-                <path className="line line-top-bottom" d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"></path>
+                <path
+                  className="line line-top-bottom"
+                  d="M27 10 13 10C10.8 10 9 8.2 9 6 9 3.5 10.8 2 13 2 15.2 2 17 3.8 17 6L17 26C17 28.2 18.8 30 21 30 23.2 30 25 28.2 25 26 25 23.8 23.2 22 21 22L7 22"
+                ></path>
                 <path className="line" d="M7 16 27 16"></path>
               </svg>
             </label>
           </IconButton>
 
-          {/* Small Screen Dropdown Menu */}
           <Menu
             anchorEl={menuAnchorEl}
             open={Boolean(menuAnchorEl)}
@@ -226,8 +265,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 icon: <InfoIcon />,
                 action: () => setShowModal(true),
               },
-              { text: "Balance", icon: <PaymentsIcon /> },
-              { text: "Wallet", icon: <WalletIcon /> },
+              // { text: "Balance", icon: <PaymentsIcon /> },
+              { text: "Balance", icon: <WalletIcon /> },
               { text: "Download", icon: <DownloadIcon /> },
               {
                 text: "Profile",
@@ -270,7 +309,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       )}
 
-      {/* ✅ Account Info Modal */}
       {showModal && (
         <UniversalAccountInfo
           show={showModal}

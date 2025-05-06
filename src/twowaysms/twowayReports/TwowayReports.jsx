@@ -7,17 +7,17 @@ import AnimatedDropdown from '../../whatsapp/components/AnimatedDropdown';
 import TwowayReportsTable from './components/TwowayReportsTable';
 
 const TwowayReports = () => {
-   const [isFetching, setIsFetching] = useState(false);
-    const sourceOption = [
+  const [isFetching, setIsFetching] = useState(false);
+  const sourceOption = [
     { label: '56161', value: '56161' },
     { label: '56161', value: '56161' },
     { label: '56161', value: '56161' },
-    ]
-    const keywordOption = [
+  ]
+  const keywordOption = [
     { label: 'Keyword1', value: 'Keyword1' },
     { label: 'Keyword2', value: 'Keyword2' },
     { label: 'Keyword3', value: 'Keyword3' },
-    ]
+  ]
   return (
     <div className="w-full">
       {/* {isLoading ? (
@@ -26,7 +26,7 @@ const TwowayReports = () => {
       </>
     ) : ( */}
       <div>
-      <div className="flex flex-wrap items-end w-full gap-2 pb-1">
+        <div className="flex flex-wrap items-end w-full gap-2 pb-1">
           {/* From Date Picker */}
           <div className="w-full sm:w-56">
             <UniversalDatePicker
@@ -56,7 +56,7 @@ const TwowayReports = () => {
             />
           </div>
 
-           <div className="w-max-content">
+          <div className="w-max-content">
             <AnimatedDropdown
               label="Source"
               id="twowayreportssource"
@@ -66,7 +66,7 @@ const TwowayReports = () => {
               onChange={(e) => console.log(e)}
             />
           </div>
-           <div className="w-max-content">
+          <div className="w-max-content">
             <AnimatedDropdown
               label="Keyword"
               id="twowayreportskeyword"
@@ -80,9 +80,9 @@ const TwowayReports = () => {
           {/* Search Button */}
           <div className="w-max-content">
             <UniversalButton
-            label="Show"
-            id="twowayreportsshow"
-            name="twowayreportsshow"
+              label="Show"
+              id="twowayreportsshow"
+              name="twowayreportsshow"
             />
           </div>
         </div>
@@ -95,10 +95,10 @@ const TwowayReports = () => {
           </div>
         ) : (
           <div className="w-full">
-           <TwowayReportsTable
+            <TwowayReportsTable
               id="twowayreportstable"
-                name="twowayreportstable"
-           />
+              name="twowayreportstable"
+            />
           </div>
         )}
       </div>

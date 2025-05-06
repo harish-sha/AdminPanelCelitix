@@ -14,6 +14,8 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import { Dialog } from "primereact/dialog";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -27,12 +29,17 @@ const CustomPagination = ({
   totalPages,
   paginationModel,
   setPaginationModel,
+  handleSearch,
+  setCurrentPage,
 }) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page + 1,
-    onChange: (_, newPage) =>
-      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
+    onChange: (_, newPage) => {
+      // console.log("newPage", newPage);
+      setPaginationModel({ ...paginationModel, page: newPage - 1 });
+      setCurrentPage(newPage);
+    },
   });
 
   return (
@@ -76,61 +83,72 @@ const CustomPagination = ({
   );
 };
 
-const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
-  const [open, setOpen] = useState(false); // ✅ Start as false
-
-  const handlePopoverOpen = (event) => {
-    setAnchorEl(event.currentTarget);
-    setOpen(true);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
-    setOpen(false);
-  };
-
-  // const open = Boolean(anchorEl);
-
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(value);
-  };
-
-  return (
-    <div
-      style={{
-        whiteSpace: "nowrap",
-        overflow: "hidden",
-        textOverflow: "ellipsis",
-        maxWidth: "200px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-      }}
-      onMouseEnter={handlePopoverOpen}
-      onMouseLeave={handlePopoverClose}
-    >
-      <span style={{ flexGrow: 1, fontSize: "14px", fontWeight: "500" }}>
-        {value}
-      </span>
-
-      {/* <IconButton
-                size="small"
-                onClick={copyToClipboard}
-                sx={{ color: "#007BFF", "&:hover": { color: "#0056b3" } }}
-            >
-                <ContentCopyIcon fontSize="small" />
-            </IconButton> */}
-    </div>
-  );
-};
-
-const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
+const SuggestionReportTableRcs = ({
+  id,
+  name,
+  data = [],
+  handleSearch,
+  paginationModel,
+  setPaginationModel,
+  setCurrentPage,
+  totalPage,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
+  const [fileData, setFileData] = useState({
+    url: "",
+    type: "",
   });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  function handleView(row) {
+    if (!row.fileUri || !row.mimeType) return;
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/gif",
+    ];
+
+    const validVideoTypes = [
+      "video/mp4",
+      // "image/png",
+      // "image/jpg",
+      // "image/gif",
+    ];
+    const validDocumentTypes = [
+      "application/pdf",
+    ];
+    const validAudioTypes = [
+      "audio/mp4",
+    ];
+
+    if (validImageTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "image",
+      });
+    }
+
+    if (validVideoTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "video",
+      });
+    }
+    if (validDocumentTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "pdf",
+      });
+    }
+    if (validAudioTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "audio",
+      });
+    }
+    setIsDialogOpen(true);
+  }
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -152,18 +170,26 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
       flex: 1,
       minWidth: 120,
       renderCell: (params) => {
-        if (params.row.messageType === "USER_IMAGE") {
+        if (params.row.messageType === "USER_FILE") {
           return (
-            <img
-              src={params.fileuri}
-              alt="User Upload"
-              style={{
-                width: 50,
-                height: 50,
-                objectFit: "cover",
-                borderRadius: 5,
-              }}
-            />
+            // <img
+            //   src={params.fileuri}
+            //   alt="User Upload"
+            //   style={{
+            //     width: 50,
+            //     height: 50,
+            //     objectFit: "cover",
+            //     borderRadius: 5,
+            //   }}
+            // />
+            <IconButton onClick={(e) => handleView(params.row)}>
+              <RemoveRedEyeOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
           );
         } else if (params.row.messageType === "LOCATION") {
           return (
@@ -185,17 +211,17 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
     },
   ];
 
-  const rows = Array.isArray(data)
-    ? data.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-        message: item.message,
-        receivetime: "27/01/2024 14:58:39",
-      }))
+  const rows = Array.isArray(data?.data)
+    ? data?.data?.map((item, i) => ({
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+      message: item.message,
+      receivetime: "27/01/2024 14:58:39",
+    }))
     : [];
 
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+  const totalPages = Math.ceil(data?.total / paginationModel.pageSize);
 
   const CustomFooter = () => {
     return (
@@ -228,7 +254,7 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{data?.total}</span>
           </Typography>
         </Box>
 
@@ -243,6 +269,8 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
             totalPages={totalPages}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+            handleSearch={handleSearch}
+            setCurrentPage={setCurrentPage}
           />
         </Box>
       </GridFooterContainer>
@@ -250,41 +278,69 @@ const SuggestionReportTableRcs = ({ id, name, data = [] }) => {
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        initialState={{ pagination: { paginationModel } }}
-        pageSizeOptions={[10, 20, 50]}
-        pagination
-        paginationModel={paginationModel}
-        onPaginationModelChange={setPaginationModel}
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          pageSizeOptions={[10, 20, 50]}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cell": { outline: "none !important" },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
+          }}
+        />
+      </Paper>
+
+      <Dialog
+        header="View Message"
+        visible={isDialogOpen}
+        onHide={() => {
+          setIsDialogOpen(false);
+          setFileData({
+            url: "",
+            type: "",
+          });
         }}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cell": { outline: "none !important" },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-        }}
-      />
-    </Paper>
+        // style={{ width: "50%" }}
+        className="w-[40rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          {fileData && fileData.type === "image" && (
+            <img src={fileData?.url} alt={fileData?.url} className="rounded-md max-w-full max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "video" && (
+            <video controls src={fileData?.url} className="rounded-md max-w-full max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "audio" && (
+            <audio controls src={fileData?.url} className="rounded-md max-w-full  max-h-[30rem]" />
+          )}
+          {fileData && fileData.type === "pdf" && (
+            <iframe src={fileData?.url} className="rounded-md max-w-full  max-h-[30rem]" />
+          )}
+        </div>
+      </Dialog>
+    </>
   );
 };
 

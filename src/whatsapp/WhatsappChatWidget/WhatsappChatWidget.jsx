@@ -2,14 +2,12 @@ import React, { useState } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import InputWithLabel from "../components/InputWithLabel";
 import InputField from "../components/InputField";
-// import ColorPicker from '../components/colorPicker';
 import ColorPicker from '../components/ColorPicker'
 import RadioGroupFieldupdown from "../components/RadioGroupFieldupdown";
 import UniversalTextArea from "../components/UniversalTextArea";
 import UniversalButton from "../components/UniversalButton";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
-// import './chatWidget.css';
 
 const WhatsappChatWidget = () => {
   // State for inputs and chat toggle
@@ -38,6 +36,7 @@ const WhatsappChatWidget = () => {
     { value: "option1", label: "Bottom-Left" },
     { value: "option2", label: "Bottom-Right" },
   ];
+  
   // Handler for radio button change
   const handlePositionChange = (event) => {
     setChatButtonPosition(event.target.value);
@@ -50,7 +49,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
   const openwidget = [
@@ -59,7 +57,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange2 = (event) => {
     setSelectedOpenWidget(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
   const reopenwidget = [
@@ -68,7 +65,6 @@ const WhatsappChatWidget = () => {
   ];
   const handleOptionChange3 = (event) => {
     setSelectedReopenWidget(event.target.value);
-    console.log("Selected Option:", event.target.value);
   };
 
 

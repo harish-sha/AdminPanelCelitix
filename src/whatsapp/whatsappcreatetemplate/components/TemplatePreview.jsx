@@ -77,20 +77,11 @@ const TemplatePreview = ({
       return variable ? `[${variable.value || "empty"}]` : match;
     });
   };
+  const isLargeScreen = window.innerWidth >= 1024;
 
   return (
     <div
-      style={{
-        position: "absolute", // Position within the scrollable container
-        right: "20.5rem", // Tailwind's `right-10`
-        top: `${scrollOffset}px`, // Dynamic top position
-        width: "28rem",
-        minHeight: "35rem",
-        height: "auto",
-        overflowY: "auto",
-        // zIndex: 50,
-      }}
-      className="p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"
+      className={" sm:w-[20rem] md:w-[30rem] lg:w-[30rem] h-auto overflow-y-auto z-50 p-4 transition-all duration-300 bg-white border border-gray-400 rounded-md shadow-lg"}
     >
       <div className="flex items-center justify-between px-4 py-2 text-white bg-green-500 rounded-t-md">
         <h2 className="text-lg font-semibold">Template Preview</h2>
@@ -100,7 +91,7 @@ const TemplatePreview = ({
       </div>
 
       <div className="p-4 bg-white shadow-inner rounded-b-md">
-        {header && (
+        {/* {header && (
           <div
             className="w-full px-3 py-2 mb-4 text-sm text-gray-900 break-words bg-green-100 rounded-md max-h-20"
             id="templateHeaderPreview"
@@ -108,7 +99,7 @@ const TemplatePreview = ({
           >
             <strong className="text-lg font-semibold">{header}</strong>
           </div>
-        )}
+        )} */}
 
         {imageUrl && (
           <div className="mb-4">
@@ -138,7 +129,7 @@ const TemplatePreview = ({
 
         {documentUrl && (
           <div className="mb-4">
-            <a
+            {/* <a
               id="templateDocumentPreview"
               name="templateDocumentPreview"
               href={documentUrl}
@@ -147,7 +138,9 @@ const TemplatePreview = ({
               className="text-blue-500 underline"
             >
               View Document
-            </a>
+            </a> */}
+
+            <iframe src={documentUrl} frameborder="0"></iframe>
           </div>
         )}
 
@@ -188,7 +181,7 @@ const TemplatePreview = ({
             id="templateFormatPreview"
             name="templateFormatPreview"
           >
-            {renderWithVariables(format)}
+            <pre className="text-wrap">{renderWithVariables(format)}</pre>
           </div>
         )}
 

@@ -6,7 +6,6 @@ import { useState } from "react";
 import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
 import toast from "react-hot-toast";
 
-
 const PaginationList = styled("ul")({
   listStyle: "none",
   padding: 0,
@@ -75,8 +74,10 @@ export const DataTable = ({
   rows,
   setSelectedRows,
   selectedRows,
+  height = 558,
+
+  checkboxSelection = false,
 }) => {
-  console.log("Rows", rows);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -141,7 +142,7 @@ export const DataTable = ({
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
+    <Paper sx={{ height }} id={id} name={name}>
       <DataGrid
         id={id}
         name={name}
@@ -152,7 +153,7 @@ export const DataTable = ({
         pagination
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        // checkboxSelection
+        checkboxSelection={checkboxSelection}
         rowHeight={45}
         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}

@@ -65,16 +65,15 @@ const ManageAgent = () => {
   const [selectedDepartmentData, setSelectedDepartmentData] = useState(null);
   const [editedDepartmentName, setEditedDepartmentName] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const [isLoading, setIsLoading] = useState(true);
-
+  const [agentList, setAgentList] = useState([]);
 
   // Department LIST
   const fetchDepartmentList = async () => {
     try {
-
       const response = await getDepartmentList();
-      console.log("Fetched Department List Response:", response);
       if (response?.statusCode === 200 && Array.isArray(response.data)) {
         setDepartmentList(response.data);
       } else {
@@ -101,11 +100,6 @@ const ManageAgent = () => {
     };
     fetchData();
   }, []);
-
-  // check the value which is correct selected
-  useEffect(() => {
-    console.log("department selected", selectedadddepartment);
-  }, [selectedadddepartment]);
 
   const handleAddDepartment = async () => {
     if (!newDepartmentName.trim()) {
@@ -137,8 +131,6 @@ const ManageAgent = () => {
   };
 
   const handleEditClick = async (department) => {
-    console.log("Clicked Department Data:", department);
-
     if (!department || !department.id) {
       toast.error("Invalid department selected.");
       return;
@@ -148,7 +140,6 @@ const ManageAgent = () => {
       const response = await getDepartmentBySrNo(department.id);
 
       if (response?.statusCode === 200 && response.data) {
-        console.log("Fetched Department for Edit:", response.data);
         setSelectedDepartmentData(response.data);
         setEditedDepartmentName(response.data.departmentName);
         setEditDialog(true);
@@ -179,7 +170,7 @@ const ManageAgent = () => {
     const isDuplicate = departmentList.some(
       (dept) =>
         dept.departmentName.toLowerCase() ===
-        editedDepartmentName.toLowerCase() &&
+          editedDepartmentName.toLowerCase() &&
         dept.departmentId !== selectedDepartmentData?.departmentId
     );
 
@@ -191,17 +182,10 @@ const ManageAgent = () => {
     setIsProcessing(true);
 
     try {
-      console.log("Editing Department:", {
-        srno: selectedDepartmentData.departmentId,
-        name: editedDepartmentName.trim(),
-      });
-
       const response = await editDepartment(
         selectedDepartmentData.departmentId,
         editedDepartmentName.trim()
       );
-
-      console.log("Edit Response:", response);
 
       if (
         response?.statusCode === 200 &&
@@ -237,7 +221,6 @@ const ManageAgent = () => {
       return;
     }
 
-    console.log("Correctly Selected Department for Deletion:", selectedDept);
     setSelectedDepartmentData(selectedDept);
     setDeleteDialog(true);
   };
@@ -252,13 +235,9 @@ const ManageAgent = () => {
     setIsProcessing(true);
 
     try {
-      console.log("Deleting Department:", selectedDepartmentData.departmentId);
-
       const response = await deleteDepartment(
         selectedDepartmentData.departmentId
       );
-
-      console.log("Delete Response:", response);
 
       if (response?.statusCode === 200) {
         toast.success(
@@ -289,8 +268,10 @@ const ManageAgent = () => {
       return;
     }
 
-    if (!agentMobile.trim() || !/^\d{10}$/.test(agentMobile)) {
-      toast.error("Enter a valid 10-digit mobile number.");
+    if (!agentMobile.trim() || !/^(\+\d{1,3})?\d{10}$/.test(agentMobile)) {
+      toast.error(
+        "Enter a valid mobile number (10 digits or with country code)."
+      );
       return;
     }
 
@@ -323,60 +304,22 @@ const ManageAgent = () => {
       departmentName: department.departmentName,
       agentCode: "",
     };
+    const response = await addAgent(agentData);
 
-    console.log("Sending Add Agent Request:", agentData);
+    if (response?.status === 400) {
+      return toast.error(response?.response?.data?.message);
+    }
 
-    try {
-      setIsSubmitting(true);
-
-      const response = await addAgent(agentData);
-      //console.log("Agent data", agentData);
-
-      console.log("API Response:", response);
-
-      if (response?.statusCode === 201) {
-        toast.success("Agent added successfully.");
-        setAddAgentDialog(false);
-        setAgentName("");
-        setAgentEmail("");
-        setAgentMobile("");
-        setGeneratedPassword("");
-        setSelectedDepartment(null);
-        fetchDepartmentList();
-      }
-
-      else if (response?.statusCode == 400) {
-        let errorMessage = response.message;
-        toast.error(errorMessage);
-      }
-      else {
-        let errorMessage = response?.message || "Failed to add agent.";
-
-        console.log("API Error Message:", errorMessage);
-
-        if (errorMessage.includes("Email already exist")) {
-          toast.error("Email already exists. Please use another.");
-        } else if (errorMessage.includes("Mobile number already exists")) {
-          toast.error("Mobile number already exists. Please use another.");
-        } else {
-          toast.error(errorMessage);
-        }
-      }
-    } catch (error) {
-      console.error("Error adding agent:", error);
-
-      let errorMessage = "Something went wrong. Please try again.";
-
-      if (error?.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      } else if (error?.message) {
-        errorMessage = error.message;
-      }
-
-      console.log("Extracted Error Message:", errorMessage);
-      toast.error(errorMessage);
-    } finally {
-      setIsSubmitting(false);
+    if (response?.statusCode === 201) {
+      toast.success("Agent added successfully.");
+      setRefresh(true);
+      setAddAgentDialog(false);
+      setAgentName("");
+      setAgentEmail("");
+      setAgentMobile("");
+      setGeneratedPassword("");
+      setSelectedDepartment(null);
+      fetchDepartmentList();
     }
   };
 
@@ -456,7 +399,7 @@ const ManageAgent = () => {
       minWidth: 80,
       renderCell: (params) => {
         if (!params.row || !params.row.id) {
-          console.error("⚠️ Invalid row data:", params.row);
+          console.error(" Invalid row data:", params.row);
           return null;
         }
         return (
@@ -489,8 +432,8 @@ const ManageAgent = () => {
   const filteredDepartmentList =
     selectedadddepartment && selectedadddepartment !== "no-selection"
       ? departmentList.filter(
-        (dept) => dept.departmentId === selectedadddepartment
-      )
+          (dept) => dept.departmentId === selectedadddepartment
+        )
       : departmentList;
 
   const rows = filteredDepartmentList.map((item, index) => ({
@@ -567,8 +510,10 @@ const ManageAgent = () => {
         </>
       ) : (
         <>
-          <div className="flex flex-wrap items-center justify-between w-full mt-4 mb-5">
-            <h1 className="text-xl font-semibold text-gray-700">Manage Agent</h1>
+          <div className="flex flex-wrap items-center md:justify-between lg:justify-between justify-start gap-2 w-full mt-4 mb-5">
+            <h1 className="text-xl font-semibold text-gray-700">
+              Manage Agent
+            </h1>
             <div className="flex gap-5">
               <div className="w-max-content ">
                 <UniversalButton
@@ -590,26 +535,34 @@ const ManageAgent = () => {
           </div>
 
           {/* Manage Agent Table */}
-          <ManageAgentTable deptList={departmentList} />
+          <ManageAgentTable
+            deptList={departmentList}
+            refresh={refresh}
+            setRefresh={setRefresh}
+          />
 
           {/* Add Department dialog start  */}
           <Dialog
             header="Add Department"
             draggable={false}
             visible={adddepartment}
-            className="w-[40rem]"
+            className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
             onHide={() => {
               if (!adddepartment) return;
               setAddDepartment(false);
             }}
           >
             <TabView>
-              <TabPanel header="Add New" leftIcon="pi pi-calendar mr-2">
+              <TabPanel
+                header="Add New"
+                leftIcon="pi pi-calendar "
+                className=""
+              >
                 <InputField
                   id="adddepartmenname"
                   name="adddepartmenname"
                   label="Department Name"
-                  tooltipContent="25 character Maximum allowed"
+                  tooltipContent="20 character Maximum allowed"
                   type="text"
                   placeholder="Enter Department name..."
                   value={newDepartmentName}
@@ -635,7 +588,9 @@ const ManageAgent = () => {
                       tooltipContent="Select Department"
                       tooltipPlacement="right"
                       value={selectedadddepartment}
-                      onChange={(selected) => setSelectedAddDepartment(selected)}
+                      onChange={(selected) =>
+                        setSelectedAddDepartment(selected)
+                      }
                       options={departmentList.map((department) => ({
                         value: department.departmentId,
                         label: department.departmentName,
@@ -694,7 +649,7 @@ const ManageAgent = () => {
                     header="Edit Department"
                     visible={editDialog}
                     onHide={() => setEditDialog(false)}
-                    className="w-[30rem]"
+                    className="lg:w-[35rem] md:w-[30rem] sm:w-[25rem]"
                   >
                     <InputField
                       label="Department Name"
@@ -721,7 +676,7 @@ const ManageAgent = () => {
                     header="Delete Department"
                     visible={deleteDialog}
                     onHide={() => setDeleteDialog(false)}
-                    className="w-[25rem]"
+                    className="w-[30rem] md:w-[25rem] sm:w-[20rem]"
                   >
                     <Typography variant="body1" className="text-center">
                       Are you sure you want to delete <br />
@@ -756,7 +711,7 @@ const ManageAgent = () => {
             header="Add Agent"
             draggable={false}
             visible={addAgentDialog}
-            style={{ width: "40rem" }}
+            className="lg:w-[35rem] md:w-[30rem] sm:w-[20rem]"
             onHide={() => {
               setAddAgentDialog(false);
             }}
@@ -770,7 +725,7 @@ const ManageAgent = () => {
                 value={agentName}
                 onChange={(e) => setAgentName(e.target.value)}
               />
-              <div className="grid flex-wrap grid-cols-2 gap-3 lg:flex-nowrap">
+              <div className="grid flex-wrap lg:grid-cols-2 grid-cols-1 gap-3 lg:flex-nowrap">
                 <InputField
                   label="Email"
                   id="email"
@@ -794,9 +749,9 @@ const ManageAgent = () => {
                 name="agentPassword"
                 tooltipContent="Click to generate a secure password"
                 tooltipPlacement="right"
-                onPasswordGenerate={(newPassword) =>
-                  setGeneratedPassword(newPassword)
-                }
+                value={generatedPassword}
+                setGeneratedPassword={setGeneratedPassword}
+                onChange={(e) => setGeneratedPassword(e)}
               />
               <div className="mb-2">
                 <DropdownWithSearch
@@ -808,9 +763,9 @@ const ManageAgent = () => {
                   options={
                     Array.isArray(departmentList)
                       ? departmentList.map((department) => ({
-                        value: department.departmentId,
-                        label: department.departmentName,
-                      }))
+                          value: department.departmentId,
+                          label: department.departmentName,
+                        }))
                       : []
                   }
                   placeholder="Select Department"
@@ -820,7 +775,7 @@ const ManageAgent = () => {
               <RadioGroupFieldupdown
                 id="assign"
                 name="assign"
-                label="Assign"
+                label="Assign Type"
                 options={[
                   { label: "Auto", value: "Auto" },
                   { label: "Manual", value: "Manual" },
@@ -842,10 +797,8 @@ const ManageAgent = () => {
           {/* Add agent dialog end */}
         </>
       )}
-
     </div>
   );
 };
 
 export default ManageAgent;
-

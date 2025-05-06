@@ -112,7 +112,7 @@ const EditRouting = ({ id, name }) => {
   ];
 
   const handleEditServiceChange = (service) => {
-    console.log(service);
+    // console.log(service);
   };
 
   const useroptions = [
@@ -121,7 +121,7 @@ const EditRouting = ({ id, name }) => {
     { label: "Reseller", value: "Reseller" },
   ];
   const handleUserOptionsChange = (user) => {
-    console.log(user);
+    // console.log(user);
   };
 
   const rows = Array.from({ length: 5 }, (_, i) => ({

@@ -53,7 +53,7 @@ const SmsAttachmentdetaillog = () => {
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Error fetching attachment details");
     } finally {
       setIsFetching(false);

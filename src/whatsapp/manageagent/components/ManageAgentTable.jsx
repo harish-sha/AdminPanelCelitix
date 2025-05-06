@@ -62,13 +62,15 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
-    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${checked ? "bg-blue-400" : "bg-gray-300"
-      }`}
+    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${
+      checked ? "bg-blue-400" : "bg-gray-300"
+    }`}
     onClick={() => onChange(!checked)}
   >
     <div
-      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${checked ? "translate-x-5" : ""
-        }`}
+      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${
+        checked ? "translate-x-5" : ""
+      }`}
     />
   </button>
 );
@@ -163,7 +165,14 @@ const CustomPagination = ({
   );
 };
 
-const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
+const ManageAgentTable = ({
+  id,
+  name,
+  visible,
+  deptList = [],
+  refresh,
+  setRefresh,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [updateStatus, setUpdateStatus] = useState(false);
@@ -237,6 +246,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       const response = await getAgentList();
       if (response?.data) {
         setAgentList(response.data);
+        setRefresh(false);
       } else {
         console.error("Failed to fetch Agent details");
         toast.error("Failed to load Agent details!");
@@ -250,8 +260,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   };
   // GET AGENT LIST
   useEffect(() => {
+    // console.log("useEffect");
     fetchAgentList();
-  }, []);
+  }, [refresh]);
 
   // ================================================
 
@@ -341,7 +352,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
   // Handle Agent Status Update
   const handleStatusChange = async (srNo, currentStatus) => {
-    console.log(currentStatus);
     const agent = agentList.find((agent) => agent.sr_no === srNo);
     const agentName = agent ? agent.name : "Unknown Agent"; // Default to prevent undefined
 
@@ -429,11 +439,30 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   const handleSaveWorkingHours = async () => {
     const schedule = {};
     let hasValidationError = false;
+    let error = "";
 
     Object.keys(workingHours).forEach((day) => {
       if (workingHours[day].enabled) {
         if (!workingHours[day].start || !workingHours[day].end) {
           hasValidationError = true;
+          error = "Please assign hours to all enabled days before saving.";
+          return;
+        }
+        if (
+          workingHours[day]?.start?.format("HH:mm") >
+          workingHours[day]?.end?.format("HH:mm")
+        ) {
+          hasValidationError = true;
+          error = "Start time cannot be greater than end time.";
+          return;
+        }
+        if (
+          workingHours[day]?.start?.format("HH:mm") ==
+          workingHours[day]?.end?.format("HH:mm")
+        ) {
+          hasValidationError = true;
+          error = "Start time and end time cannot be same.";
+          return;
         }
         schedule[day.toLowerCase()] = {
           starttime: workingHours[day].start
@@ -454,7 +483,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     });
 
     if (hasValidationError) {
-      toast.error("Please assign hours to all enabled days before saving.");
+      toast.error(error);
       return;
     }
 
@@ -507,7 +536,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
   //   setSelectedAgentName(row.name);
   //   setWabaTemplates([{ wabaSrno: null, templates: [], templateList: [] }]);
   //   setManageAssign(true);
-  //   console.log("agent select for assign", row);
   // };
 
   const handleAssign = async (row) => {
@@ -577,14 +605,14 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
       password: data.password,
       name: data.name,
       mobileNumber: data.mobile,
-      allowAllChats: 1,
+      allowAllChats: parseInt(data.allowAllChats, 10),
       departmentId: data.departmentId,
     });
     setSelectedAgentId(data);
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "name", headerName: "Name", flex: 1, minWidth: 120 },
     { field: "email", headerName: "Email", flex: 1, minWidth: 120 },
     { field: "mobile", headerName: "Mobile No", flex: 1, minWidth: 120 },
@@ -598,7 +626,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
           arrow
           placement="top"
           title={params.row.status === 1 ? "Active" : "Inactive"}
-
         >
           <Switch
             checked={params.row.status}
@@ -611,9 +638,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -707,6 +734,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
     status: agent.status,
     user_sr_no: agent.userSrNo,
     departmentId: agent.department_srno,
+    allowAllChats: agent.allowAllChats,
   }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -735,7 +763,6 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
 
       // setEditSelectedDepartment
     } catch (error) {
-      console.log(error);
       toast.error("Error updating agent details.");
     }
   };
@@ -917,12 +944,12 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               />
             </div>
             {isActiveAgentOn && (
-              <div className="border border-gray-300 p-3 rounded-b">
+              <div className="p-3 border border-gray-300 rounded-b">
                 <InputText
                   placeholder="Set Auto Reply"
                   value={activeReply}
                   onChange={(e) => setActiveReply(e.target.value)}
-                  className="border border-gray-300 p-2 rounded w-full"
+                  className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
             )}
@@ -938,12 +965,12 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               />
             </div>
             {isInactiveAgentOn && (
-              <div className="border border-gray-300 p-3 rounded-b">
+              <div className="p-3 border border-gray-300 rounded-b">
                 <InputText
                   placeholder="Set Auto Reply"
                   value={inactiveReply}
                   onChange={(e) => setInactiveReply(e.target.value)}
-                  className="border border-gray-300 p-2 rounded w-full"
+                  className="w-full p-2 border border-gray-300 rounded"
                 />
               </div>
             )}
@@ -963,7 +990,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
             <div className="space-y-2">
               {/* If working hours are not assigned, show a message + Assign Now button */}
               {workingHours === null ? (
-                <div className="flex flex-col justify-center text-gray-500 text-lg items-center mt-5 space-y-5">
+                <div className="flex flex-col items-center justify-center mt-5 space-y-5 text-lg text-gray-500">
                   <p>{selectedAgentName} has not assigned working hours</p>
                   <button
                     className="bg-blue-400 rounded-md text-[1rem] text-white cursor-pointer hover:bg-blue-500 px-3 py-2"
@@ -986,16 +1013,16 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 Object.keys(workingHours).map((day) => (
                   <div
                     key={day}
-                    className="flex flex-wrap bg-white justify-between p-2 rounded-lg shadow-md gap-2 items-center"
+                    className="flex flex-wrap items-center justify-between gap-2 p-2 bg-white rounded-lg shadow-md"
                   >
                     {/* Toggle Open/Closed */}
                     <div className="flex items-center space-x-2">
                       <Switch
                         sx={{
                           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                          {
-                            backgroundColor: "#34C759",
-                          },
+                            {
+                              backgroundColor: "#34C759",
+                            },
                           "& .MuiSwitch-switchBase.Mui-checked": {
                             color: "#34C759",
                           },
@@ -1011,7 +1038,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                           }))
                         }
                       />
-                      <span className="text-blue-600 text-sm font-semibold">
+                      <span className="text-sm font-semibold text-blue-600">
                         {day}
                       </span>
                     </div>
@@ -1043,8 +1070,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                         />
                       </div>
                     ) : (
-                      <div className="flex justify-center p-2 w-10 items-center pr-10">
-                        <span className="text-gray-400 text-sm font-semibold">
+                      <div className="flex items-center justify-center w-10 p-2 pr-10">
+                        <span className="text-sm font-semibold text-gray-400">
                           Closed
                         </span>
                       </div>
@@ -1129,8 +1156,8 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                 /> */}
               </Tabs>
               <CustomTabPanel value={value} index={0} className="">
-                {/* <div className="flex flex-wrap gap-4 mb-5 mt-2 sm:grid-cols-2">
-                  <div className="flex justify-center cursor-pointer gap-2 items-center" >
+                {/* <div className="flex flex-wrap gap-4 mt-2 mb-5 sm:grid-cols-2">
+                  <div className="flex items-center justify-center gap-2 cursor-pointer" >
                     <RadioButton
                       inputId="radioOption1"
                       name="radioGroup"
@@ -1138,9 +1165,9 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option1'}
                     />
-                    <label htmlFor="radioOption1" className="text-gray-700 text-sm cursor-pointer font-medium">Enable</label>
+                    <label htmlFor="radioOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Enable</label>
                   </div>
-                  <div className="flex justify-center gap-2 items-center" >
+                  <div className="flex items-center justify-center gap-2" >
                     <RadioButton
                       inputId="radioOption2"
                       name="radioGroup"
@@ -1148,7 +1175,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       onChange={handleChangeOption}
                       checked={selectedOption === 'option2'}
                     />
-                    <label htmlFor="radioOption2" className="text-gray-700 text-sm cursor-pointer font-medium">Disable</label>
+                    <label htmlFor="radioOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Disable</label>
                   </div>
                 </div> */}
                 <div className="flex flex-col w-full gap-4">
@@ -1178,7 +1205,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                           text="Select Template"
                           tooltipContent="Select templates to assign"
                           tooltipPlacement="right"
-                          className="text-gray-700 text-sm block font-medium"
+                          className="block text-sm font-medium text-gray-700"
                         />
                         <Autocomplete
                           multiple
@@ -1197,6 +1224,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                               placeholder="Search Templates"
                             />
                           )}
+                          className="overflow-y-scroll max-h-[5rem]"
                         />
                       </div>
                       <button
@@ -1210,16 +1238,16 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
                       </button>
                     </div>
                   ))}
-                  <div className="flex justify-center gap-4 items-center">
+                  <div className="flex items-center justify-center gap-4">
                     <button
                       onClick={addWabaSelection}
-                      className="bg-blue-400 rounded-md text-sm text-white w-max cursor-pointer hover:bg-blue-500 px-4 py-2 transition"
+                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
                     >
                       Add More
                     </button>
                     <button
                       onClick={handleSaveAssignments}
-                      className="bg-blue-400 rounded-md text-sm text-white w-max cursor-pointer hover:bg-blue-500 px-4 py-2 transition"
+                      className="px-4 py-2 text-sm text-white transition bg-blue-400 rounded-md cursor-pointer w-max hover:bg-blue-500"
                       disabled={isSaving}
                     >
                       {isSaving ? "Saving..." : "Save"}
@@ -1339,7 +1367,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               onChange={(e) => {
                 setUpdateAgentData({
                   ...updateAgentData,
-                  allowAllChats: e.target.value,
+                  allowAllChats: parseInt(e.target.value, 10),
                 });
               }}
             />
@@ -1361,10 +1389,10 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
           header="Confirm Deletion"
           visible={deleteDialogVisible}
           onHide={() => setDeleteDialogVisible(false)}
-          className="w-[30rem]"
+          className="lg:w-[30rem] md:w-[25rem] sm:w-[20rem]"
           draggable={false}
         >
-          <div className="flex justify-center items-center">
+          <div className="flex items-center justify-center">
             {/* <ErrorOutlineOutlinedIcon
             sx={{
               fontSize: 64,
@@ -1382,7 +1410,7 @@ const ManageAgentTable = ({ id, name, visible, deptList = [] }) => {
               Are you sure you want to delete the agent <br />
               <span className="text-green-500">"{selectedAgentName}"</span>
             </p>
-            <p className="text-gray-500 text-sm mt-2">
+            <p className="mt-2 text-sm text-gray-500">
               This action is irreversible.
             </p>
           </div>

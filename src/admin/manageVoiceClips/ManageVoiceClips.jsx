@@ -54,28 +54,6 @@ const ManageVoiceClips = () => {
   };
 
 
-
-  // const parseFile = (file) => {
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     const workbook = XLSX.read(reader.result, { type: 'binary' });
-  //     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-  //     const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-  //     // const headers = Object.keys(jsonData[0]);
-  //     const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-  //     // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-  //     console.log("Extracted headers:", headers);
-
-  //     setFileData(jsonData);
-  //     setColumns(headers);
-  //     // setFileHeaders(headers);
-  //     setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-  //     // setTotalRecords(jsonData.length);
-  //   };
-  //   reader.readAsBinaryString(file);
-  // };
-
-
   // Handle Drag Over
   const handleDragOver = (event) => {
     event.preventDefault();
@@ -88,12 +66,8 @@ const ManageVoiceClips = () => {
     if (file) {
       const validExtensions = ['mp3', 'wav'];
       const fileExtension = file.name.split('.').pop().toLowerCase();
-      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, ""); // Remove extension
-
-      console.log("Full File Name:", file.name);
-      console.log("Extracted Name:", fileNameWithoutExt);
-      console.log("File Extension:", fileExtension);
-
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, ""); 
+      
       if (validExtensions.includes(fileExtension)) {
         if (isValidFileName(fileNameWithoutExt)) {
           setUploadedFile(file);
@@ -152,7 +126,7 @@ const ManageVoiceClips = () => {
     ) : ( */}
       <div>
 
-        <div className="flex flex-wrap gap-2 justify-end items-end pb-3 w-full">
+        <div className="flex flex-wrap items-end justify-end w-full gap-2 pb-3">
           {/* Search Button */}
           <div className="w-max-content">
             <UniversalButton
@@ -201,19 +175,19 @@ const ManageVoiceClips = () => {
         draggable={false}
       >
        <div className='space-y-4'>
-       <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+       <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
           {/* Option 1 */}
-          <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
             <div className="flex items-center gap-2" >
               <RadioButton inputId="addfileOption1" name="addfileredio" value="enable" onChange={handleChangeAddfile} checked={addfileStatus === 'enable'} />
-              <label htmlFor="addfileOption1" className="text-gray-700 font-medium text-sm cursor-pointer">Transactional</label>
+              <label htmlFor="addfileOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Transactional</label>
             </div>
           </div>
           {/* Option 2 */}
           <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
             <div className="flex items-center gap-2" >
               <RadioButton inputId="addfileOOption2" name="addfileredio" value="disable" onChange={handleChangeAddfile} checked={addfileStatus === 'disable'} />
-              <label htmlFor="addfileOOption2" className="text-gray-700 font-medium text-sm cursor-pointer">Promotional</label>
+              <label htmlFor="addfileOOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Promotional</label>
             </div>
           </div>
         </div>
@@ -226,7 +200,7 @@ const ManageVoiceClips = () => {
           />
         </div>
 
-        <div className="file-upload mt-2">
+        <div className="mt-2 file-upload">
           <div
             className="file-upload-container"
             onDrop={handleFileDrop}
@@ -241,7 +215,7 @@ const ManageVoiceClips = () => {
               accept=".mp3, .wav"
             />
             <div className="flex items-center justify-center gap-2" >
-              <label htmlFor="fileInput" className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider">
+              <label htmlFor="fileInput" className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500">
                 Choose or Drop File
               </label>
               <div className="upload-button-container ">
@@ -255,12 +229,11 @@ const ManageVoiceClips = () => {
               </div>
             </div>
             <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-              Max 3 lacs records & mobile number should be with country code. <br />
               Supported File Formats: mp3 and wav. 
             </p>
             <div className="mt-3" >
               {uploadedFile ? (
-                <div className="file-upload-info flex items-center justify-center  gap-1">
+                <div className="flex items-center justify-center gap-1 file-upload-info">
                   <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
                     {isUploaded ? (
                       "File Uploaded: "
@@ -280,7 +253,7 @@ const ManageVoiceClips = () => {
                   </button>
                 </div>
               ) : (
-                <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
+                <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
                   No file uploaded yet!
                 </p>
               )}

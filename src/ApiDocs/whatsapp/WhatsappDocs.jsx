@@ -7,3 +7,4 @@ const WhatsappDocs = () => {
 }
 
 export default WhatsappDocs
+

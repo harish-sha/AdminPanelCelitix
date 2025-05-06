@@ -29,6 +29,7 @@ function RadioButtonLaunchCampaign({
   uploadedFile,
   setIsUploaded,
   isUploaded,
+  fileRef
   // setIsCountryCodeChecked
 }) {
   const [selectedOption, setSelectedOption] = useState("option2");
@@ -307,10 +308,10 @@ function RadioButtonLaunchCampaign({
         <h2 className="mb-2 text-sm font-medium tracking-wide text-gray-800">
           Choose an Option
         </h2>
-        <div className="flex flex-wrap gap-4 mb-2 sm:grid-cols-2">
+        <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
           {/* Option 1 */}
-          <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center justify-center gap-2 cursor-pointer">
+          <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+            <div className="flex items-center justify-start gap-2 cursor-pointer">
               <RadioButton
                 inputId="radioOption1"
                 name="radioGroup"
@@ -328,8 +329,8 @@ function RadioButtonLaunchCampaign({
           </label>
 
           {/* Option 2 */}
-          <label className=" cursor-pointer bg-white border border-gray-300 rounded-lg px-4 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center justify-center gap-2">
+          <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+            <div className="flex items-center justify-start gap-2">
               <RadioButton
                 inputId="radioOption2"
                 name="radioGroup"
@@ -341,7 +342,7 @@ function RadioButtonLaunchCampaign({
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
-                import contact
+                Import contact
               </label>
             </div>
           </label>
@@ -409,6 +410,7 @@ function RadioButtonLaunchCampaign({
               id="fileInput"
               name="fileInput"
               accept=".xls,.xlsx,.xlsm"
+              ref={fileRef}
             />
             <div className="flex items-center justify-center gap-2">
               <label
@@ -421,9 +423,8 @@ function RadioButtonLaunchCampaign({
                 <button
                   onClick={handleFileUpload}
                   disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                    isUploading ? "disabled" : ""
-                  }`}
+                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                    }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -432,8 +433,6 @@ function RadioButtonLaunchCampaign({
               </div>
             </div>
             <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-              Max 3 lacs records & mobile number should be with country code.{" "}
-              <br />
               Supported File Formats: .xlsx
             </p>
             <div className="mt-3">
@@ -464,9 +463,9 @@ function RadioButtonLaunchCampaign({
       )}
 
       {/* Country Code */}
-      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 lg:flex-nowrap">
+      <div className="flex flex-wrap items-start justify-between gap-2 mt-3 ">
         {selectedOption === "option2" && isUploaded && (
-          <div className="w-full">
+          <div className="flex flex-col w-full mt-2 gap-2">
             <div className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -475,71 +474,45 @@ function RadioButtonLaunchCampaign({
               />
               <label className="text-sm font-medium">Add Country Code</label>
             </div>
-            {/* <div className="w-full mt-4">
-              <AnimatedDropdown
-                id="selectCountryCode"
-                name="selectCountryCode"
-                label="Select Country Code"
-                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
-                tooltipPlacement="right"
-                placeholder="Select Country Code"
-                options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
-                  .map((country) => ({
-                    label: `${country.countryName} (+${country.countryCode})`,
-                    value: `${country.countryCode}-${country.countryName}`,
-                  }))}
-                value={selectedCountryCode ? `${selectedCountryCode}-${selectedCountryName}` : ""}
-                onChange={(value) => {
-                  if (value) {
-                    const [code, name] = value.split('-');
-                    setSelectedCountryCode(code);
-                    setSelectedCountryName(name);
-                  }
-                }}
-                disabled={!addCountryCode}
-              />
-            </div> */}
-            <div className="w-full mt-4">
-              <DropdownWithSearch
-                id="selectCountryCode"
-                name="selectCountryCode"
-                label="Select Country Code"
-                tooltipContent="check the - [ ✔ Add country code ] to apply country code"
-                tooltipPlacement="right"
-                placeholder="Select Country Code"
-                disabled={!addCountryCode}
-                options={countryList
-                  .sort((a, b) => a.countryName.localeCompare(b.countryName))
-                  .map((country) => ({
-                    label: `${country.countryName} (+${country.countryCode})`,
-                    value: `${country.countryCode}-${country.countryName}`,
-                  }))}
-                value={
-                  selectedCountryCode
-                    ? `${selectedCountryCode}-${selectedCountryName}`
-                    : ""
+            <DropdownWithSearch
+              id="selectCountryCode"
+              name="selectCountryCode"
+              label="Country Code"
+              tooltipContent="check the - [ ✔ Add country code ] to apply country code"
+              tooltipPlacement="right"
+              placeholder="Country Code"
+              disabled={!addCountryCode}
+              options={countryList
+                .sort((a, b) => a.countryName.localeCompare(b.countryName))
+                .map((country) => ({
+                  label: `${country.countryName} (+${country.countryCode})`,
+                  value: `${country.countryCode}-${country.countryName}`,
+                }))}
+              value={
+                selectedCountryCode
+                  ? `${selectedCountryCode}-${selectedCountryName}`
+                  : ""
+              }
+              onChange={(value) => {
+                if (value) {
+                  const [code, name] = value.split("-");
+                  setSelectedCountryCode(code);
+                  setSelectedCountryName(name);
                 }
-                onChange={(value) => {
-                  if (value) {
-                    const [code, name] = value.split("-");
-                    setSelectedCountryCode(code);
-                    setSelectedCountryName(name);
-                  }
-                }}
-              />
-            </div>
+              }}
+            />
+
           </div>
         )}
 
         {/* Mobile Column Selection */}
         {selectedOption === "option2" && isUploaded && (
           <div className="w-full">
-            <div className="w-full mt-2 lg:mt-9">
+            <div className="w-full md:mt-2 lg:mt-4 xl:mt-2">
               <AnimatedDropdown
                 id="selectMobileColumn"
                 name="selectMobileColumn"
-                label="Select Mobile Number Field"
+                label="Mobile Number Field"
                 tooltipContent="Select your mobile number Field!"
                 tooltipPlacement="right"
                 options={columns.map((col, index) => ({
@@ -548,7 +521,7 @@ function RadioButtonLaunchCampaign({
                 }))}
                 value={selectedMobileColumn}
                 onChange={handleMobileColumnChange}
-                placeholder="Select Mobile No."
+                placeholder=" Mobile No."
               />
             </div>
           </div>

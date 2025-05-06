@@ -52,43 +52,43 @@ const Smscampaigndetaillogs = () => {
         },
         { field: "smsunit", headerName: "Sms Unit", flex: 1, minWidth: 60 },
         { field: "senderid", headerName: "Sender Id", flex: 1, minWidth: 90 },
-        {
-          field: "more",
-          headerName: "More",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Details" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() => handleInfo(params.row)}
-                >
-                  <InfoOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
+        // {
+        //   field: "more",
+        //   headerName: "More",
+        //   flex: 1,
+        //   minWidth: 100,
+        //   renderCell: (params) => (
+        //     <>
+        //       <CustomTooltip title="Details" placement="top" arrow>
+        //         <IconButton
+        //           className="no-xs"
+        //           onClick={() => handleInfo(params.row)}
+        //         >
+        //           <InfoOutlinedIcon
+        //             sx={{
+        //               fontSize: "1.2rem",
+        //               color: "green",
+        //             }}
+        //           />
+        //         </IconButton>
+        //       </CustomTooltip>
+        //     </>
+        //   ),
+        // },
       ]);
 
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              sn: i + 1,
-              id: i + 1,
-              ...item,
-              actual_status: item.actual_status === " " ? "-" : "-",
-            }))
+            sn: i + 1,
+            id: i + 1,
+            ...item,
+            actual_status: item.actual_status === " " ? "-" : "-",
+          }))
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Error fetching campaign details report");
     } finally {
       setIsFetching(false);

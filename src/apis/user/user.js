@@ -2,7 +2,7 @@ import { fetchWithAuth } from "../apiClient.js";
 
 // Get User Details
 export const getUserDetails = async () => {
-  return await fetchWithAuth("/proCpaasRest/auth/getuserdetails", {
+  return await fetchWithAuth("/auth/getuserdetails", {
     method: "GET",
   });
 };
@@ -10,7 +10,7 @@ export const getUserDetails = async () => {
 // get RCS Rate
 export const getRcsRate = async () => {
   return await fetchWithAuth(
-    "/proCpaasRest/accountInfo/getAllRCSRateData?countryCode=&countryName=",
+    "/accountInfo/getAllRCSRateData?countryCode=&countryName=",
     {
       method: "POST",
     }
@@ -20,7 +20,7 @@ export const getRcsRate = async () => {
 // get Whatsapp Rate
 export const getWhatsAppRate = async () => {
   return await fetchWithAuth(
-    "/proCpaasRest/accountInfo/getWhatsappRateAllData?countryCode=&countryName=",
+    "/accountInfo/getWhatsappRateAllData?countryCode=&countryName=",
     {
       method: "POST",
     }
@@ -29,7 +29,7 @@ export const getWhatsAppRate = async () => {
 
 // get AccountInfo
 export const getaccountInfo = async () => {
-  return await fetchWithAuth("/proCpaasRest/accountInfo/showAccountInfo", {
+  return await fetchWithAuth("/accountInfo/showAccountInfo", {
     method: "POST",
   });
 };
@@ -37,7 +37,7 @@ export const getaccountInfo = async () => {
 // get Sms Rate
 export const getSmsRate = async (sno) => {
   return await fetchWithAuth(
-    `proCpaasRest/accountInfo/getSmsPricing?srno=${sno}`,
+    `/accountInfo/getSmsPricing?srno=${sno}`,
     {
       method: "POST",
     }

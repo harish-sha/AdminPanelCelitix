@@ -8,19 +8,27 @@ import Loader from "../../whatsapp/components/Loader.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
 import SuggestionReportTableRcs from "./components/SuggestionReportTableRcs.jsx";
 import toast from "react-hot-toast";
-import { fetchAllAgents, fetchAllBotsList, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
+import { fetchAllAgents, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
 
 const SuggestionReportRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [allAgents, setAllAgents] = useState([]);
   const [suggestionData, setSuggestionData] = useState({
     botId: "",
-    fromDate: "",
-    toDate: "",
+    fromDate: new Date(),
+    toDate: new Date(),
     mobileNumber: "",
-    offset: "0",
+    page: "1",
   });
-  const[suggestionTableData, setSuggestionTableData] = useState([]);
+  const [suggestionTableData, setSuggestionTableData] = useState([]);
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+  const [initialLoad, setInitialLoad] = useState(true);
 
   useEffect(() => {
     async function fetchAllBotsData() {
@@ -30,7 +38,7 @@ const SuggestionReportRcs = () => {
         setAllAgents(res);
       } catch (e) {
         toast.error("Something went wrong.");
-        console.log(e);
+        // console.log(e);
       } finally {
         setIsFetching(false);
       }
@@ -48,25 +56,39 @@ const SuggestionReportRcs = () => {
   };
 
   const handleSearch = async () => {
+    if (!suggestionData?.botId) {
+      return toast.error("Please select bot.");
+    }
+
     const data = {
       ...suggestionData,
-      // fromDate: formatDate(suggestionData.fromDate),
-      // toDate: formatDate(suggestionData.toDate),
-      fromDate: "2021-02-26",
-      toDate: "2025-02-26",
+      fromDate: formatDate(suggestionData.fromDate),
+      toDate: formatDate(suggestionData.toDate),
+      page: currentPage,
+      // fromDate: "2021-02-26",
+      // toDate: "2025-02-26",
     };
 
     try {
       setIsFetching(true);
       const res = await fetchsuggestionReport(data);
-      setSuggestionTableData(res.data);
+      setSuggestionTableData(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    if (!initialLoad) {
+      handleSearch();
+    }
+    setInitialLoad(false);
+  }, [currentPage]);
+
+  async function fetchNextPageData() { }
 
   return (
     <div className="w-full">
@@ -76,39 +98,15 @@ const SuggestionReportRcs = () => {
         </>
       ) : ( */}
       <div>
-        <div className="flex flex-wrap items-end w-full gap-2 pb-1">
+        <div className="flex flex-wrap items-end w-full gap-2 mb-5">
           {/* From Date Picker */}
-          <div className="w-full sm:w-56">
-            <UniversalDatePicker
-              id="suggestionfrom"
-              name="suggestionfrom"
-              label="From Date"
-              value={suggestionData.fromDate}
-              onChange={(newValue) => {
-                setSuggestionData({ ...suggestionData, fromDate: newValue });
-              }}
-            />
-          </div>
 
-          {/* To Date Picker */}
-          <div className="w-full sm:w-56">
-            <UniversalDatePicker
-              id="suggestionto"
-              name="suggestionto"
-              label="To Date"
-              value={suggestionData.toDate}
-              onChange={(newValue) => {
-                setSuggestionData({ ...suggestionData, toDate: newValue });
-              }}
-            />
-          </div>
-
-          <div className="w-max-content">
+          <div className="w-full sm:w-48">
             <AnimatedDropdown
               label="Agent"
               options={allAgents.map((bot) => ({
-                label: bot.agentName,
-                value: bot.agentId,
+                label: bot.agent_name,
+                value: bot.agent_id,
               }))}
               id="suggestionagent"
               name="suggestionagent"
@@ -117,11 +115,44 @@ const SuggestionReportRcs = () => {
                 setSuggestionData({ ...suggestionData, botId: newValue });
               }}
               placeholder="Select Agent Name"
+              tooltipPlacement="top"
+              tooltipContent="Select Agent Name"
             />
           </div>
 
+          <div className="w-full sm:w-48">
+            <UniversalDatePicker
+              id="suggestionfrom"
+              name="suggestionfrom"
+              tooltipPlacement="top"
+              tooltipContent="Select From Date"
+              label="From Date"
+              maxDate={new Date()}
+              value={suggestionData.fromDate}
+              onChange={(newValue) => {
+                setSuggestionData({ ...suggestionData, fromDate: newValue });
+              }}
+            />
+          </div>
+
+          {/* To Date Picker */}
+          <div className="w-full sm:w-48">
+            <UniversalDatePicker
+              id="suggestionto"
+              name="suggestionto"
+              label="To Date"
+              tooltipPlacement="top"
+              tooltipContent="Select To Date"
+              value={suggestionData.toDate}
+              onChange={(newValue) => {
+                setSuggestionData({ ...suggestionData, toDate: newValue });
+              }}
+            />
+          </div>
+
+
           {/* Mobile Number Input Field */}
-          <div className="w-max-content">
+          <div className="w-full sm:w-48">
             <InputField
               id="suggestionmobile"
               name="suggestionmobile"
@@ -135,6 +166,8 @@ const SuggestionReportRcs = () => {
                   mobileNumber: e.target.value,
                 });
               }}
+              tooltipPlacement="top"
+              tooltipContent="Enter Mobile Number"
             />
           </div>
 
@@ -149,6 +182,7 @@ const SuggestionReportRcs = () => {
               onClick={handleSearch}
             />
           </div>
+          
           <div className="w-max-content">
             <UniversalButton
               label="Export"
@@ -158,20 +192,18 @@ const SuggestionReportRcs = () => {
           </div>
         </div>
 
-        {/* ✅ Show Loader or Table */}
-        {isFetching ? (
-          <div className="w-full">
-            <UniversalSkeleton height="35rem" width="100%" />
-          </div>
-        ) : (
-          <div className="w-full">
-            <SuggestionReportTableRcs
-              id="suggestionreport"
-              name="suggestionreport"
-              data={suggestionTableData}
-            />
-          </div>
-        )}
+        <div className="w-full">
+          <SuggestionReportTableRcs
+            id="suggestionreport"
+            name="suggestionreport"
+            data={suggestionTableData}
+            handleSearch={handleSearch}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+            setCurrentPage={setCurrentPage}
+            totalPage={totalPage}
+          />
+        </div>
       </div>
       {/* )} */}
     </div>

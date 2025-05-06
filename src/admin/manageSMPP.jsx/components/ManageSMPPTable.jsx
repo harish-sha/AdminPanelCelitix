@@ -98,7 +98,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditService = (service) => {
-    console.log(service);
+    // console.log(service);
   };
 
   const dataencodingoption = [
@@ -107,7 +107,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditDataEncoding = (data) => {
-    console.log(data);
+    // console.log(data);
   };
 
   const bindmodeoption = [
@@ -117,7 +117,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditBindMode = (bind) => {
-    console.log(bind);
+    // console.log(bind);
   };
 
   const totalsocketseditoption = [
@@ -127,7 +127,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditTotalSockets = (sockets) => {
-    console.log(sockets);
+    // console.log(sockets);
   };
 
   const sourceoption = [
@@ -137,7 +137,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditSource = (source) => {
-    console.log(source);
+    // console.log(source);
   };
   const destinationoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -146,7 +146,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditDestination = (destination) => {
-    console.log(destination);
+    // console.log(destination);
   };
   const registereddeliveryoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -155,7 +155,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditRegisteredDelivery = (delivery) => {
-    console.log(delivery);
+    // console.log(delivery);
   };
   const windowsizeoption = [
     { label: "Transmitter", value: "Transmitter" },
@@ -164,7 +164,7 @@ const ManageSMPPTable = ({ id, name }) => {
   ];
 
   const handleEditWindowSize = (windows) => {
-    console.log(windows);
+    // console.log(windows);
   };
 
   const handleEdit = () => {

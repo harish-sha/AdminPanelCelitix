@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
@@ -33,6 +33,8 @@ import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { useNavigate } from "react-router-dom";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
+import { ProgressSpinner } from "primereact/progressspinner";
+import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -72,7 +74,7 @@ const SmsReports = () => {
     campaingType: "1",
     senderId: "",
     message: "",
-    source: "api",
+    source: "",
     searchSrNo: "",
     searchUserId: "",
   });
@@ -89,6 +91,7 @@ const SmsReports = () => {
     smsType: "",
     fromDate: new Date(),
     toDate: new Date(),
+    selectOption: "daywise",
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
 
@@ -100,6 +103,13 @@ const SmsReports = () => {
   });
 
   const [attachmentTableData, setAttachmentTableData] = useState([]);
+
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -119,8 +129,6 @@ const SmsReports = () => {
 
     if (e.checked) _campaigncolumns.push(e.value);
     else _campaigncolumns.splice(_campaigncolumns.indexOf(e.value), 1);
-
-    console.log(_campaigncolumns);
 
     setCampaignColumns(_campaigncolumns);
   };
@@ -168,19 +176,19 @@ const SmsReports = () => {
   ];
 
   const campaignoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const previousoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const summaryoptions = [
-    { label: "Transactional", value: "Transactional" },
-    { label: "Promotional", value: "Promotional" },
-    { label: "International", value: "International" },
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+    { label: "International", value: "3" },
   ];
   const attachmentoptions = [
     { label: "All", value: "All" },
@@ -206,13 +214,38 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const data = {
-        ...campaignDataToFilter,
+        // ...campaignDataToFilter,
+        campaignName: campaignDataToFilter.campaingName,
+        campaignType: campaignDataToFilter.campaingType || "-1",
+        mobilesnodata: campaignDataToFilter.mobilesnodata,
         toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
+          "en-GB"
+        ),
+        fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
           "en-GB"
         ),
       };
       const res = await fetchCampaignData(data);
-      setCampaignTableData(res);
+
+      // Map account_usage_type_id to campaign types
+      const mappedData = Array.isArray(res)
+        ? res.map((item, i) => ({
+          id: item.receipt_no_of_duplicate_message,
+          sn: i + 1,
+          ...item,
+          campaign_type:
+            item.account_usage_type_id === 1
+              ? "Transactional"
+              : item.account_usage_type_id === 2
+                ? "Promotional"
+                : item.account_usage_type_id === 3
+                  ? "International"
+                  : "Unknown",
+        }))
+        : [];
+
+      setCampaignTableData(mappedData);
+      // setCampaignTableData(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "que_time", headerName: "CreatedOn", flex: 0, minWidth: 50 },
@@ -241,7 +274,7 @@ const SmsReports = () => {
           minWidth: 50,
         },
         {
-          field: "total_audience",
+          field: "smsCount",
           headerName: "Total Audience",
           flex: 1,
           minWidth: 50,
@@ -284,19 +317,20 @@ const SmsReports = () => {
           ),
         },
       ]);
-      setRows(
-        Array.isArray(res)
-          ? res?.map((item, i) => ({
-              id: item.receipt_no_of_duplicate_message,
-              sn: i + 1,
-              ...item,
-              total_audience: "-",
-              campaign_type: "-",
-            }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res?.map((item, i) => ({
+      //       id: item.receipt_no_of_duplicate_message,
+      //       sn: i + 1,
+      //       ...item,
+      //       total_audience: "-",
+      //       campaign_type: "-",
+      //     }))
+      //     : []
+      // );
+      setRows(mappedData);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -438,14 +472,14 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -454,19 +488,19 @@ const SmsReports = () => {
 
   const handleDayWiseSummary = async () => {
     const data = {
-      ...daywiseDataToFilter,
+      // ...daywiseDataToFilter,
       fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
         "en-GB"
       ),
       toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
       summaryType: "date,user",
-      smsType: daywiseDataToFilter.smsType ?? 1,
+      smsType: daywiseDataToFilter.smsType ?? "",
     };
 
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      console.log(res);
+      // console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
         { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
@@ -500,7 +534,7 @@ const SmsReports = () => {
                 <IconButton
                   className="no-xs"
                   onClick={() => {
-                    console.log(params.row);
+                    // console.log(params.row);
                   }}
                 >
                   <DownloadForOfflineOutlinedIcon
@@ -519,14 +553,14 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -548,7 +582,6 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
-      console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
         {
@@ -591,7 +624,7 @@ const SmsReports = () => {
               <CustomTooltip title="Download" placement="top" arrow>
                 <IconButton
                   onClick={() => {
-                    console.log(params.row);
+                    // console.log(params.row);
                   }}
                 >
                   <DownloadForOfflineOutlinedIcon
@@ -610,14 +643,14 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -625,6 +658,8 @@ const SmsReports = () => {
   };
 
   const handlePreviosDayDetailDisplay = async (col) => {
+    if (!col) return;
+    const page = currentPage;
     const data = {
       summaryType: col,
       mobileNo: "",
@@ -632,13 +667,14 @@ const SmsReports = () => {
         "en-GB"
       ),
       toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
-      page: "0",
+      page: currentPage,
       source: "api",
     };
 
     setPreviousDayDetailsDialog(true);
     setSelectedColDetails(col);
     try {
+      setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
 
       setPreviousDayColumn([
@@ -708,17 +744,23 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res)
           ? res.map((item, index) => ({
-              sn: index + 1,
-              id: index + 1,
-              ...item,
-            }))
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    handlePreviosDayDetailDisplay();
+  }, [currentPage]);
 
   return (
     <div>
@@ -805,12 +847,12 @@ const SmsReports = () => {
             />
           </Tabs>
 
-          <UniversalButton
+          {/* <UniversalButton
             label="Export"
             id="exportsmsreport"
             name="exportsmsreport"
             onClick={handleExports}
-          />
+          /> */}
         </div>
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
@@ -828,6 +870,8 @@ const SmsReports = () => {
                     }));
                   }}
                   placeholder="Select Date"
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -869,38 +913,36 @@ const SmsReports = () => {
                   value={campaignDataToFilter.campaingType}
                   placeholder="Select Campaign Type"
                   onChange={(value) => {
-                    console.log(value);
+                    setCampaignDataToFilter((prev) => ({
+                      ...prev,
+                      campaingType: value,
+                    }));
                   }}
                 />
               </div>
               <div className="w-full sm:w-56">
                 <div className="w-max-content">
                   <UniversalButton
-                    label="Search"
+                    label={isFetching ? "Searching..." : "Search"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
                     icon={<IoSearch />}
                     onClick={handleCampaignSearch}
+                    disabled={isFetching}
                   />
                 </div>
               </div>
             </div>
           </div>
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="CampaignTableSms"
-                name="CampaignTableSms"
-                rows={rows}
-                col={columns}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="CampaignTableSms"
+              name="CampaignTableSms"
+              rows={rows}
+              col={columns}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <div className="w-full">
@@ -918,6 +960,9 @@ const SmsReports = () => {
                       fromDate: value,
                     }));
                   }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
+                  defaultValue={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -933,6 +978,8 @@ const SmsReports = () => {
                       toDate: value,
                     }));
                   }}
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -948,6 +995,7 @@ const SmsReports = () => {
                       mobilesnodata: e.target.value,
                     }));
                   }}
+                  type="number"
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -962,6 +1010,35 @@ const SmsReports = () => {
                     setPreviousDataToFilter((prev) => ({
                       ...prev,
                       campaingType: value,
+                    }));
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-56">
+                <AnimatedDropdown
+                  label="Source"
+                  id="previousSource"
+                  name="previousSource"
+                  options={[
+                    {
+                      label: "All",
+                      value: "",
+                    },
+                    {
+                      label: "API",
+                      value: "api",
+                    },
+                    {
+                      label: "GUI",
+                      value: "gui",
+                    },
+                  ]}
+                  placeholder="Select Type"
+                  value={previousDataToFilter.source}
+                  onChange={(value) => {
+                    setPreviousDataToFilter((prev) => ({
+                      ...prev,
+                      source: value,
                     }));
                   }}
                 />
@@ -1010,20 +1087,14 @@ const SmsReports = () => {
               </div>
             </div>
           </div>
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="PreviousDaysTableSms"
-                name="PreviousDaysTableSms"
-                rows={rows}
-                col={columns}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="PreviousDaysTableSms"
+              name="PreviousDaysTableSms"
+              rows={rows}
+              col={columns}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <div className="w-full">
@@ -1056,21 +1127,21 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap w-full gap-4 sm:w-108">
+              <div className="flex flex-wrap w-full gap-4 sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
                   id="SmsTyoe"
                   name="SmsType"
                   options={[
                     { value: 1, label: "Day Wise" },
-                    { value: 1, label: "Sms type Wise" },
+                    { value: 2, label: "Sms type Wise" },
                   ]}
-                  value={daywiseDataToFilter.smsType}
+                  value={daywiseDataToFilter.selectOption}
                   placeholder="Select Type"
                   onChange={(value) => {
                     setDaywiseDataToFilter((prev) => ({
                       ...prev,
-                      smsType: value,
+                      selectOption: value,
                     }));
                   }}
                 />
@@ -1082,15 +1153,15 @@ const SmsReports = () => {
                   id="summaryType"
                   name="summaryType"
                   options={summaryoptions}
-                  value={daywiseDataToFilter.summaryType}
+                  value={daywiseDataToFilter.smsType}
                   placeholder="Select Type"
                   onChange={(value) => {
                     setDaywiseDataToFilter((prev) => ({
                       ...prev,
-                      summaryType: value,
+                      smsType: value,
                     }));
                   }}
-                  disabled={daywiseDataToFilter.smsType === 1}
+                  disabled={daywiseDataToFilter.selectOption === 1}
                 />
               </div>
               <div className="w-full sm:w-56">
@@ -1107,20 +1178,14 @@ const SmsReports = () => {
             </div>
           </div>
 
-          {isFetching ? (
-            <div className="">
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="DayWiseSummaryTableSms"
-                name="DayWiseSummaryTableSms"
-                col={columns}
-                rows={rows}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="DayWiseSummaryTableSms"
+              name="DayWiseSummaryTableSms"
+              col={columns}
+              rows={rows}
+            />
+          </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <div className="w-full">
@@ -1183,21 +1248,14 @@ const SmsReports = () => {
               </div>
             </div>
           </div>
-
-          {isFetching ? (
-            <div>
-              <UniversalSkeleton height="35rem" width="100%" />
-            </div>
-          ) : (
-            <div className="w-full">
-              <DataTable
-                id="AttachmentTableSms"
-                name="AttachmentTableSms"
-                col={columns}
-                rows={rows}
-              />
-            </div>
-          )}
+          <div className="w-full">
+            <DataTable
+              id="AttachmentTableSms"
+              name="AttachmentTableSms"
+              col={columns}
+              rows={rows}
+            />
+          </div>
         </CustomTabPanel>
       </Box>
 
@@ -1419,6 +1477,8 @@ const SmsReports = () => {
                     label="From Date"
                     id="customfromdatepicker"
                     name="customfromdatepicker"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div>
@@ -1426,6 +1486,8 @@ const SmsReports = () => {
                     label="To Date"
                     id="customtodatepicker"
                     name="customtodatepicker"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
                   />
                 </div>
                 <div>
@@ -1663,15 +1725,27 @@ const SmsReports = () => {
           setPreviousDayRows([]);
           setPreviousDayColumn([]);
         }}
-        className="w-full h-full"
+        className="w-fit "
         draggable={false}
       >
-        <DataTable
-          id="previousdaydetailstable"
-          name="previousdaydetailstable"
-          rows={previousDayRows}
-          col={previousDayColumn}
-        />
+        {isFetching ? (
+          <div className="card flex justify-content-center">
+            <ProgressSpinner strokeWidth="2" className="text-blue-500" />
+          </div>
+        ) : (
+          // <DataTable
+          //   id="previousdaydetailstable"
+          //   name="previousdaydetailstable"
+          //   rows={previousDayRows}
+          //   col={previousDayColumn}
+          // />
+          <PreviousDaysTableSms
+            id="previousdaydetailstable"
+            name="previousdaydetailstable"
+            rows={previousDayRows}
+            col={previousDayColumn}
+          />
+        )}
       </Dialog>
     </div>
   );

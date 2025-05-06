@@ -32,15 +32,6 @@ const WhatsappManageOptin = () => {
 
 
   const handleSearch = async () => {
-    console.log("🔍 Search Filters:");
-    console.log(
-      { Name: optinName || "Not Provided" },
-      { Mobile: optinMobile || "Not Provided" },
-      { "Opt-in": selectedOption || "Not Selected" },
-      { "Incoming Blocked": selectedOption2 || "Not Selected" }
-    );
-
-
     // ✅ Show Loader Before Fetching Data
     setIsFetching(true);
     await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulated API Call
@@ -103,16 +94,14 @@ const WhatsappManageOptin = () => {
 
   const handleStartChange = (event) => {
     setSelectedOptionStart(event.target.value);
-    console.log("Selected:", event.target.value);
   };
   const handleStopChange = (event) => {
     setSelectedOptionStop(event.target.value);
-    console.log("Selected:", event.target.value);
   };
   return (
     <>
       <div className={`tablebody ${isSettingsOpen ? "hidden" : "block"}`}>
-        <div className="flex flex-wrap gap-4 items-end justify-end align-middle pb-1 w-full">
+        <div className="flex flex-wrap items-end justify-end w-full gap-4 pb-1 align-middle">
           {/* Name Input Field */}
 
           <div className="w-max-content">
@@ -152,7 +141,7 @@ const WhatsappManageOptin = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4 items-end justify-start align-middle pb-3 w-full">
+        <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-3 align-middle">
           {/* Name Input Field */}
           <div className="w-full sm:w-48">
             <InputField
@@ -240,13 +229,12 @@ const WhatsappManageOptin = () => {
         />
       </div>
       <div className={`optionsetting ${isSettingsOpen ? "block" : "hidden"}`}>
-        <div className="flex flex-col justify-start bg-gray-100 min-h-screen">
+        <div className="flex flex-col justify-start min-h-screen bg-gray-100">
 
-          <div className="w-full flex justify-start">
+          <div className="flex justify-start w-full">
             <a
               href="#"
-              className="flex items-center gap-3 px-6 py-3 rounded-md text-blue-600 text-lg font-medium relative
-          transition-all duration-200 ease-in-out hover:text-blue-800 hover:scale-105 active:scale-95 group"
+              className="relative flex items-center gap-3 px-6 py-3 text-lg font-medium text-blue-600 transition-all duration-200 ease-in-out rounded-md hover:text-blue-800 hover:scale-105 active:scale-95 group"
               onClick={() => setIsSettingsOpen(false)} // ✅ Hide settings, show table
             >
               <span className="transition-transform duration-300 group-hover:-translate-x-2">
@@ -261,23 +249,23 @@ const WhatsappManageOptin = () => {
           </div>
 
           {/* Section 1: Opt-in Keywords */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 shadow-lg rounded-lg bg-white p-6">
+          <div className="grid grid-cols-1 gap-6 p-6 bg-white rounded-lg shadow-lg md:grid-cols-2">
 
             {/* Opt-in Start Section */}
-            <div className="p-6 bg-blue-50 rounded-lg shadow-md border border-gray-200">
+            <div className="p-6 border border-gray-200 rounded-lg shadow-md bg-blue-50">
               <UniversalLabel
                 id="userStart"
                 name="usermainStart"
                 text="Opt-in Keywords (Start)"
                 tooltipContent="The user will have to type exactly one of these messages on which they should be automatically opted-in"
-                className="text-gray-700 font-semibold"
+                className="font-semibold text-gray-700"
               />
 
-              <div className="overflow-y-auto max-h-42 p-1 rounded-lg space-y-2 border border-gray-300 bg-white shadow-sm">
+              <div className="p-1 space-y-2 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-sm max-h-42">
                 {inputsStart.map((input, index) => (
                   <div key={input.id} className="flex items-center space-x-3">
                     <InputField
-                      className="flex-grow border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:ring focus:ring-blue-300 bg-gray-50"
+                      className="flex-grow px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-blue-300 bg-gray-50"
                       placeholder="Start"
                       id={input.id}
                       name={input.id}
@@ -287,14 +275,14 @@ const WhatsappManageOptin = () => {
 
                     {inputsStart.length > 1 && (
                       <RemoveCircleIcon
-                        className="text-red-500 hover:text-red-700 cursor-pointer transition-transform transform hover:scale-110"
+                        className="text-red-500 transition-transform transform cursor-pointer hover:text-red-700 hover:scale-110"
                         fontSize="small"
                         onClick={() => removeInputField(input.id, setInputsStart, "optin")}
                       />
                     )}
 
                     <AddCircleIcon
-                      className="text-green-500 hover:text-green-700 cursor-pointer transition-transform transform hover:scale-110"
+                      className="text-green-500 transition-transform transform cursor-pointer hover:text-green-700 hover:scale-110"
                       fontSize="small"
                       onClick={() => addInputBelow(index, setInputsStart, "optin")}
                     />
@@ -304,13 +292,13 @@ const WhatsappManageOptin = () => {
             </div>
 
             {/* Opt-in Response */}
-            <div className="p-6 bg-blue-100 rounded-lg shadow-md border border-gray-200">
+            <div className="p-6 bg-blue-100 border border-gray-200 rounded-lg shadow-md">
               <UniversalLabel
                 id="Opt_in_responseStart"
                 name="Opt_in_responseStart"
                 text="Opt-in Response"
                 tooltipContent="Response message when a user opts in."
-                className="text-gray-700 font-semibold"
+                className="font-semibold text-gray-700"
               />
 
               <RadioGroupField
@@ -327,30 +315,30 @@ const WhatsappManageOptin = () => {
                   id="Opt_in_responseStart-input"
                   name="Opt_in_responseStart-input"
                   placeholder="You have been successfully opted in."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-3 bg-gray-50 shadow-sm focus:ring focus:ring-blue-300"
+                  className="w-full px-3 py-2 mt-3 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:ring focus:ring-blue-300"
                 />
               )}
             </div>
           </div>
 
           {/* Section 2: Opt-out Keywords */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 shadow-lg rounded-lg bg-white p-6 mt-6">
+          <div className="grid grid-cols-1 gap-6 p-6 mt-6 bg-white rounded-lg shadow-lg md:grid-cols-2">
 
 
-            <div className="p-6 bg-red-50 rounded-lg shadow-md border border-gray-200">
+            <div className="p-6 border border-gray-200 rounded-lg shadow-md bg-red-50">
               <UniversalLabel
                 id="userStop"
                 name="usermainStop"
                 text="Opt-out Keywords (Stop)"
                 tooltipContent="The user will have to type exactly one of these messages on which they should be automatically opted-out."
-                className="text-gray-700 font-semibold"
+                className="font-semibold text-gray-700"
               />
 
-              <div className="overflow-y-auto max-h-42 p-1 rounded-lg space-y-2 border border-gray-300 bg-white shadow-sm">
+              <div className="p-1 space-y-2 overflow-y-auto bg-white border border-gray-300 rounded-lg shadow-sm max-h-42">
                 {inputsStop.map((input, index) => (
                   <div key={input.id} className="flex items-center space-x-3">
                     <InputField
-                      className="flex-grow border border-gray-300 rounded-lg px-3 py-2 shadow-sm focus:ring focus:ring-red-300 bg-gray-50"
+                      className="flex-grow px-3 py-2 border border-gray-300 rounded-lg shadow-sm focus:ring focus:ring-red-300 bg-gray-50"
                       placeholder="Stop"
                       id={input.id}
                       name={input.id}
@@ -360,14 +348,14 @@ const WhatsappManageOptin = () => {
 
                     {inputsStop.length > 1 && (
                       <RemoveCircleIcon
-                        className="text-red-500 hover:text-red-700 cursor-pointer transition-transform transform hover:scale-110"
+                        className="text-red-500 transition-transform transform cursor-pointer hover:text-red-700 hover:scale-110"
                         fontSize="small"
                         onClick={() => removeInputField(input.id, setInputsStop, "optin-stop")}
                       />
                     )}
 
                     <AddCircleIcon
-                      className="text-green-500 hover:text-green-700 cursor-pointer transition-transform transform hover:scale-110"
+                      className="text-green-500 transition-transform transform cursor-pointer hover:text-green-700 hover:scale-110"
                       fontSize="small"
                       onClick={() => addInputBelow(index, setInputsStop, "optin-stop")}
                     />
@@ -377,13 +365,13 @@ const WhatsappManageOptin = () => {
             </div>
 
 
-            <div className="p-6 bg-red-100 rounded-lg shadow-md border border-gray-200">
+            <div className="p-6 bg-red-100 border border-gray-200 rounded-lg shadow-md">
               <UniversalLabel
                 id="Opt_in_responseStop"
                 name="Opt_in_responseStop"
                 text="Opt-out Response"
                 tooltipContent="Response message when a user opts out."
-                className="text-gray-700 font-semibold"
+                className="font-semibold text-gray-700"
               />
 
               <RadioGroupField
@@ -399,7 +387,7 @@ const WhatsappManageOptin = () => {
                   id="Opt_in_responseStop-input"
                   name="Opt_in_responseStop-input"
                   placeholder="You have been successfully opted out."
-                  className="w-full border border-gray-300 rounded-lg px-3 py-2 mt-3 bg-gray-50 shadow-sm focus:ring focus:ring-red-300"
+                  className="w-full px-3 py-2 mt-3 border border-gray-300 rounded-lg shadow-sm bg-gray-50 focus:ring focus:ring-red-300"
                 />
               )}
             </div>

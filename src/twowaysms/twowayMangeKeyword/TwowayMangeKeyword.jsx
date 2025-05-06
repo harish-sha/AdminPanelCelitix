@@ -5,9 +5,9 @@ import InputField from '../../whatsapp/components/InputField';
 import { DataTable } from '../../components/layout/DataTable';
 
 const TwowayMangeKeyword = () => {
-    const [isFetching, setIsFetching] = useState(false);
-      const [rows, setRows] = useState([]);
-      const [columns, setColumns] = useState([]);
+  const [isFetching, setIsFetching] = useState(false);
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
   const SourceOptions = [
     { label: '56161', value: '56161' },
     { label: '56161', value: '56161' },
@@ -58,12 +58,12 @@ const TwowayMangeKeyword = () => {
           </div>
         ) : (
           <div className="w-full">
-           <DataTable
-             id="twowaymanagekeywordtable"
-               name="twowaymanagekeywordtable" 
-               rows={rows}
-               col={columns}
-           />
+            <DataTable
+              id="twowaymanagekeywordtable"
+              name="twowaymanagekeywordtable"
+              rows={rows}
+              col={columns}
+            />
           </div>
         )}
       </div>

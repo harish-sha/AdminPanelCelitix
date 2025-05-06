@@ -23,8 +23,6 @@ import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { BsJournalArrowDown } from "react-icons/bs";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
 import EmergencyOutlinedIcon from "@mui/icons-material/EmergencyOutlined";
@@ -33,20 +31,55 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
 import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import DeleteIcon from "@mui/icons-material/Delete";
+import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
+import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
+import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { useEffect } from "react";
+import toast from "react-hot-toast";
+// import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
+// import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
+import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
+import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
+import LocationOnOutlinedIcon from "@mui/icons-material/LocationOnOutlined";
+import LocationCityOutlinedIcon from "@mui/icons-material/LocationCityOutlined";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
+import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
+import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
+import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
+import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import RadioGroupField from "../../../whatsapp/components/RadioGroupField";
 import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import InputField from "../../../whatsapp/components/InputField";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
-import DeleteIcon from "@mui/icons-material/Delete";
-import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
-import { useEffect } from "react";
-import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import toast from "react-hot-toast";
+import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import {
+  fetchUserbySrno,
+  getPromoServices,
+  getTransServices,
+  updateUserbySrno,
+} from "@/apis/admin/admin";
+import {
+  addSmsPricing,
+  deleteWhatsappRateBySrno,
+  getSmsRateByUser,
+  getWhatsappRateBySrno,
+  getWhatsappRateData,
+  saveEditWhatsappRate,
+} from "@/apis/admin/userRate";
+import { getCountryList } from "@/apis/common/common";
+import { DataTable } from "@/components/layout/DataTable";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -139,7 +172,7 @@ const CustomPagination = ({
 };
 
 const ContentCell = ({ value }) => {
-  const [anchorEl, setAnchorEl] = useState(null); // ✅ Start as null
+  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handlePopoverOpen = (event) => {
@@ -148,11 +181,10 @@ const ContentCell = ({ value }) => {
   };
 
   const handlePopoverClose = () => {
-    setAnchorEl(null); // ✅ Close popover immediately
+    setAnchorEl(null);
     setOpen(false);
   };
 
-  // const open = Boolean(anchorEl);
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(value);
@@ -198,8 +230,8 @@ const ContentCell = ({ value }) => {
             borderRadius: 2,
             boxShadow: 3,
           },
-          onMouseEnter: () => setOpen(true), // ✅ Keep open when inside popover
-          onMouseLeave: handlePopoverClose, // ✅ Close when moving outside popover
+          onMouseEnter: () => setOpen(true),
+          onMouseLeave: handlePopoverClose,
         }}
       >
         {/* <Paper sx={{ p: 1, maxWidth: 300, borderRadius: 2, boxShadow: 3 }}> */}
@@ -230,6 +262,7 @@ const ContentCell = ({ value }) => {
 };
 
 const ManageUserTable = ({ id, name, allUsers = [] }) => {
+
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -244,6 +277,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [reset, setreset] = useState(false);
   const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
+  const [selectedUserDetails, setSelectedUserDetails] = useState(null);
+  const [currentUserSrno, setCurrentUserSrno] = useState(null);
 
   //userId
   const [selectedId, setSelectedId] = useState("");
@@ -259,7 +294,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     lastName: "",
     address: "",
     companyName: "",
-    expiryDate: "",
+    expiryDate: new Date(),
     applicationType: "",
     userType: "",
     country: "",
@@ -267,30 +302,99 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     city: "",
     pinCode: "",
   });
+
+  // const handleDetailsUpdate = async () => {
+  //   const data = {
+  //     srno: selectedId,
+  //     ...updateDetails,
+  //   };
+  // };
+
+  const handleEdit = async (srNo) => {
+    // console.log(srNo, "srNo");
+    try {
+      const response = await fetchUserbySrno(srNo);
+      // console.log(response, "fetch user details response");
+      if (response?.userMstPojoList?.length > 0) {
+        const userDetails = response.userMstPojoList[0];
+        setUpdateDetails({
+          domain: userDetails.domain || "",
+          userId: userDetails.userId || "",
+          status: userDetails.status || "",
+          emailId: userDetails.emailId || "",
+          mobileNo: userDetails.mobileNo || "",
+          firstName: userDetails.firstName || "",
+          lastName: userDetails.lastName || "",
+          address: userDetails.address || "",
+          companyName: userDetails.companyName || "",
+          expiryDate: userDetails.expiryDate || new Date(),
+          applicationType: userDetails.applicationType || "",
+          userType: userDetails.userType || "",
+          country: userDetails.country || "",
+          state: userDetails.state || "",
+          city: userDetails.city || "",
+          pinCode: userDetails.pinCode || "",
+        });
+        setSelectedId(srNo);
+        setEditDetailsDialogVisible(true);
+      } else {
+        toast.error("No user details found for the selected user.");
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      toast.error("Failed to fetch user details. Please try again.");
+    }
+  };
+
   const handleDetailsUpdate = async () => {
+    const formattedExpiryDate = new Intl.DateTimeFormat("en-GB", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }).format(new Date(updateDetails.expiryDate));
+
     const data = {
       srno: selectedId,
       ...updateDetails,
+      expiryDate: formattedExpiryDate,
     };
-    console.log(data);
-  };
 
+    try {
+      const response = await updateUserbySrno(data);
+      if (response?.msg === "User Updated Successfully") {
+        toast.success("User details updated successfully!");
+        setEditDetailsDialogVisible(false);
+      } else {
+        toast.error(response?.message || "Failed to update user details.");
+      }
+    } catch (error) {
+      console.error("Error updating user details:", error);
+      toast.error("Failed to update user details. Please try again.");
+    }
+  };
   // assignService
-  // whatsapp
+
+  const [countryOptions, setCountryOptions] = useState([]);
+
+  // whatsapp Start
+  const [whatsapprows, setWhatsapprows] = useState([]);
   const [whatsappStatus, setWhatsappStatus] = useState("disable");
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
+  const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
+  const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
+  const [editingRow, setEditingRow] = useState(null);
 
-  const countryOptions = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-
-  const handleWhatsappAddCredit = () => {
-    console.log("hello world");
-  };
+  const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
+  const [editWhatsappForm, setEditWhatsappForm] = useState({
+    srno: "",
+    userSrno: "",
+    utility: "",
+    marketing: "",
+    countryCode: "",
+  });
 
   const handleChangewhatsapp = (event) => {
     setWhatsappStatus(event.target.value);
@@ -298,53 +402,196 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     // onOptionChange(value);
   };
 
-  // whatsapp
-  // RCS
-  const [rcsStatus, setRcsStatus] = useState("disable");
+  const fetchWhatsappRateData = async (userSrno) => {
+    const res = await getWhatsappRateData(userSrno);
+    // console.log("raw whatsapp rate response:", res);
+
+    const list = Array.isArray(res) ? res : res?.data;
+
+    if (Array.isArray(list)) {
+      const formatted = list.map((item, index) => {
+        // console.log("Mapping item:", item);
+        return {
+          id: item.sr_no || index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          userSrno: String(item.user_srno),
+          countryName: item.country_name || item.country_code || "Unknown",
+          countryCode: String(item.country_srno || ""),
+          utility: String(item.transactional || 0),
+          marketing: String(item.promotional || 0),
+          isoCode: String(item.ISO_code || ""),
+          updateTime: item.update_time || "-",
+        };
+      });
+
+      // console.log("formatted rows", formatted);
+      setWhatsapprows(formatted);
+    } else {
+      console.warn("No valid data returned from API");
+    }
+  };
+
+  useEffect(() => {
+    // console.log(" WhatsApp rows updated:", whatsapprows);
+  }, [whatsapprows]);
+
+  const handleWhatsappAddCredit = async () => {
+    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
+      toast.error("Please fill all the fields.");
+      return;
+    }
+
+    const payload = {
+      srno: "",
+      userSrno: String(currentUserSrno),
+      utility: String(whatsappUtility),
+      marketing: String(whatsappMarketing),
+      countryCode: String(whatsappCountry),
+    };
+
+    const res = await saveEditWhatsappRate(payload);
+    if (res?.message) {
+      toast[
+        res.message.toLowerCase().includes("success") ? "success" : "error"
+      ](res.message);
+    }
+
+    if (res?.message?.toLowerCase().includes("success")) {
+      await fetchWhatsappRateData(currentUserSrno);
+      resetWhatsappFields();
+    }
+  };
+
+  const handleWhatsappEdit = async (srno) => {
+    // console.log("Editing WhatsApp rate for srno:", srno);
+
+    const res = await getWhatsappRateBySrno(srno);
+    // console.log("Edit API response:", res);
+
+    const d = Array.isArray(res) ? res[0] : res?.data?.[0];
+
+    if (d) {
+      setEditWhatsappForm({
+        srno: d.srno ?? srno,
+        userSrno: String(d.user_srno),
+        utility: String(d.transactional),
+        marketing: String(d.promotional),
+        countryCode: String(d.country_srno),
+      });
+
+      setEditWhatsappVisible(true);
+    } else {
+      console.warn("No data found for srno:", srno);
+    }
+  };
+
+  const handleWhatsappUpdate = async () => {
+    const res = await saveEditWhatsappRate(editWhatsappForm);
+    if (res?.message?.toLowerCase().includes("success")) {
+      toast.success("Rate updated successfully");
+      setEditWhatsappVisible(false);
+      fetchWhatsappRateData(currentUserSrno);
+    } else {
+      toast.error(res?.message || "Failed to update");
+    }
+  };
+
+  const handleWhatsappDelete = (srno) => {
+    const row = whatsapprows.find((r) => r.srno === srno);
+    setEditingRow(row);
+    setWhatsappDeleteVisible(true);
+  };
+
+  const confirmWhatsappDelete = async () => {
+    if (!selectedWhatsappRow?.srno) return;
+
+    const res = await deleteWhatsappRateBySrno(selectedWhatsappRow.srno);
+    if (res?.message?.toLowerCase().includes("success")) {
+      toast.success("Rate deleted successfully.");
+      fetchWhatsappRateData(currentUserSrno);
+      setWhatsappDeleteVisible(false);
+      setSelectedWhatsappRow(null);
+    } else {
+      toast.error(res?.message || "Delete failed.");
+    }
+  };
+
+  const resetWhatsappFields = () => {
+    setWhatsappCountry(null);
+    setWhatsappUtility("");
+    setWhatsappMarketing("");
+  };
+
+  // whatsapp End
+
+  // RCS Start
+  const [rcsStatus, setRcsStatus] = useState("enable");
   const [rcsCountry, setRcsCountry] = useState(null);
   const [rcsrate, setRcsrate] = useState("");
 
-  const rcscountryOptions = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
+  // const rcscountryOptions = [
+  //   { value: "USA", label: "USA" },
+  //   { value: "UK", label: "UK" },
+  //   { value: "India", label: "India" },
+  // ];
 
   const handleRcsAddCredit = () => {
-    console.log("hello world");
+    // console.log("handleRcsCredit");
   };
 
   const handleChangercs = (event) => {
     setRcsStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // RCS
-  // SMS
+
+  // RCS End
+
+  // SMS Start
   const [smsStatus, setSmsStatus] = useState("disable");
   const [transcheck, setTranscheck] = useState(false);
   const [promocheck, setPromocheck] = useState(false);
   const [trans, setTrans] = useState(null);
   const [promo, setPromo] = useState(null);
   const [smsrate, setSmsRate] = useState("");
+  const [transOptions, setTransOptions] = useState([]);
+  const [promoOption, setPromoOption] = useState([]);
+  const [dltRate, setDltRate] = useState("");
 
-  const transOptions = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
-  const promoOption = [
-    { value: "USA", label: "USA" },
-    { value: "UK", label: "UK" },
-    { value: "India", label: "India" },
-  ];
+  const resetSmsFields = () => {
+    setTrans(null);
+    setPromo(null);
+    setTranscheck(false);
+    setPromocheck(false);
+    setSmsRate("");
+    setDltRate("");
+  };
 
   const handleChangesms = (event) => {
     setSmsStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // SMS
+  const handleSaveSmsPricing = async () => {
+    const payload = {
+      srno: "",
+      userSrno: String(currentUserSrno),
+      rate: smsrate,
+      dltRate: dltRate || "0",
+      transService: transcheck ? String(trans) : "",
+      promoService: promocheck ? String(promo) : "",
+    };
+
+    // console.log("Submitting SMS Pricing Payload:", payload);
+
+    const res = await addSmsPricing(payload);
+    if (res?.statusCode === 200) {
+      toast.success(res.message || "SMS Pricing saved successfully!");
+      resetSmsFields();
+      setAssignService(false);
+    } else {
+      toast.error(res.message || "Failed to save SMS Pricing.");
+    }
+  };
+  // SMS End
+
   // OBD
   const [obdStatus, setObdStatus] = useState("disable");
   const [transcheckobd, setTranscheckobd] = useState(false);
@@ -376,6 +623,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     // onOptionChange(value);
   };
   // OBD
+
   // two-way
   const [twowayStatus, setTwoWayStatus] = useState("disable");
   const [twowayAssign, setTwowayAssign] = useState(null);
@@ -384,12 +632,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangetwoway = (event) => {
     setTwoWayStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
   };
   // two-way
+
   // misscall
   const [misscallStatus, setMisscallStatus] = useState("disable");
   const [misscallAssign, setMisscallAssign] = useState(null);
@@ -398,12 +648,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeMisscall = (event) => {
     setMisscallStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
   };
   // misscall
+
   // C2C
   const [clickStatus, setClickStatus] = useState("disable");
   const handleChangeClick = (event) => {
@@ -415,12 +667,15 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   // Email
   const [emailStatus, setEmailStatus] = useState("disable");
+
   const [emailAssign, setEmailAssign] = useState(null);
+
   const emailOptions = [
     { value: "3 Months", label: "3 Months" },
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeEmail = (event) => {
     setEmailStatus(event.target.value);
     // setRcsStatus(value);
@@ -432,21 +687,25 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const [ibdStatus, setIbdStatus] = useState("disable");
   const [ibdpulseStatus, setibdPulseStatus] = useState("disable");
   const [ibdAssign, setIbdAssign] = useState(null);
+
   const ibdOptions = [
     { value: "3 Months", label: "3 Months" },
     { value: "6 Months", label: "6 Months" },
     { value: "12 Months", label: "12 Months" },
   ];
+
   const handleChangeIbd = (event) => {
     setIbdStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
   };
+
   const handleChangeibdPulse = (event) => {
     setibdPulseStatus(event.target.value);
     // setRcsStatus(value);
     // onOptionChange(value);
   };
+
   // IBD
   // Function to validate input
   const validateInput = (value, setter) => {
@@ -499,12 +758,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   // Dropdown options
   const useroption = [
-    { value: "User", label: "User" },
-    { value: "Reseller", label: "Reseller" },
+    { value: 1, label: "User" },
+    { value: 2, label: "Reseller" },
   ];
 
   useEffect(() => {
-    console.log("User Type Changed:", userType);
     setIsReadOnly(userType !== "Reseller");
     setAccountUrl("");
   }, [userType]);
@@ -512,23 +770,17 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
   };
+
   const handleChangeEditStatus = (event) => {
     setEditStatusStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  // Edit
 
-  {
-    /* Manage Api Key */
-  }
   const [newAPIKey, setNewAPIKey] = useState("");
 
   // Function to generate an API key with only lowercase letters and numbers.
   const generateAPIKey = (length = 10) => {
     const charset = "abcdefghijklmnopqrstuvwxyz0123456789";
     let key = "";
-    // Generate random part of full length
     for (let i = 0; i < length; i++) {
       key += charset.charAt(Math.floor(Math.random() * charset.length));
     }
@@ -539,22 +791,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     const apiKey = generateAPIKey();
     setNewAPIKey(apiKey);
   };
-  {
-    /* Manage Api Key */
-  }
 
-  {
-    /* reset service */
-  }
   const [newPassword, setNewPassword] = useState("");
-
-  {
-    /* reset service */
-  }
-  {
-    /* OTP details */
-  }
-  const [mobileNumbers, setMobileNumbers] = useState([""]); // Initial input field
+  const [mobileNumbers, setMobileNumbers] = useState([""]);
 
   // Add new input field (Max 5)
   const addMobileNumber = () => {
@@ -578,22 +817,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setMobileNumbers(updatedNumbers);
   };
 
-  {
-    /* OTP details */
-  }
-
-  {
-    /* User Report */
-  }
   const [userreportStatus, setUserReportStatus] = useState("disable");
   const handleChangeuserreport = (event) => {
     setUserReportStatus(event.target.value);
-    // setRcsStatus(value);
-    // onOptionChange(value);
   };
-  {
-    /* User Report */
-  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -602,24 +829,96 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleLonins = (id, name) => {
     setLogins(true);
   };
+
   const handleOtp = (id, name) => {
     setOtpService(true);
   };
-  const handleView = (id, name) => {
-    setViewService(true);
+
+  // view user details
+  const handleView = async (srNo) => {
+    try {
+      const response = await fetchUserbySrno(srNo);
+      if (response?.userMstPojoList?.length > 0) {
+        setSelectedUserDetails(response.userMstPojoList[0]);
+        setViewService(true);
+      } else {
+        toast.error("No user details found for the selected user.");
+      }
+    } catch (error) {
+      console.error("Error fetching user details:", error);
+      toast.error("Failed to fetch user details. Please try again.");
+    }
   };
-  const handleEdit = (id, name) => {
-    setEditDetailsDialogVisible(true);
-  };
-  const handleAssign = (id, name) => {
+
+  const handleAssign = async (srNo) => {
     setAssignService(true);
+    setCurrentUserSrno(srNo);
+    // console.log("srNo", srNo);
+
+    setTimeout(() => {
+      fetchWhatsappRateData(srNo);
+    }, 0);
+
+    const [transRes, promoRes, userSmsData, countryListRes, whatsappRateRes] =
+      await Promise.all([
+        getTransServices(),
+        getPromoServices(),
+        getSmsRateByUser(srNo),
+        getCountryList(),
+        getWhatsappRateData(srNo),
+      ]);
+
+    // Country List
+    if (countryListRes) {
+      setCountryOptions(
+        countryListRes.map((item) => ({
+          label: item.countryName,
+          value: String(item.countryCode),
+        }))
+      );
+    }
+
+    // Transaction
+    setTransOptions(
+      (transRes || []).map((item) => ({
+        label: item.serviceName,
+        value: String(item.serviceId),
+      }))
+    );
+
+    // Promotion
+    setPromoOption(
+      (promoRes || []).map((item) => ({
+        label: item.serviceName,
+        value: String(item.serviceId),
+      }))
+    );
+
+    // set SMS data
+    if (userSmsData?.data) {
+      const d = userSmsData.data;
+      setTranscheck(!!d.transService);
+      setPromocheck(!!d.promoService);
+      setTrans(d.transService || null);
+      setPromo(d.promoService || null);
+      setSmsRate(d.rate || "");
+      setDltRate(d.dltRate || "");
+    }
+
+    // set WhatsApp table data
+    if (whatsappRateRes?.data) {
+      setWhatsapprows(whatsappRateRes.data);
+    }
   };
+
   const handleApikey = (id, name) => {
     setManageApiKeys(true);
   };
+
   const handleReset = (id, name) => {
     setreset(true);
   };
+
   const handleReport = (id, name) => {
     setuserReports(true);
   };
@@ -639,7 +938,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Login" placement="top">
-            <IconButton onClick={() => handleLonins(params.row)}>
+            <IconButton onClick={() => handleLonins(params.row.srno)}>
               <LockOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -649,7 +948,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Otp" placement="top">
-            <IconButton onClick={() => handleOtp(params.row)}>
+            <IconButton onClick={() => handleOtp(params.row.srno)}>
               <EmergencyOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -659,7 +958,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="View User Details" placement="top">
-            <IconButton onClick={() => handleView(params.row)}>
+            <IconButton onClick={() => handleView(params.row.srno)}>
               <RemoveRedEyeOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -669,7 +968,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => setEditDetailsDialogVisible(true)}>
+            <IconButton onClick={() => handleEdit(params.row.srno)}>
               <EditNoteIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -679,7 +978,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Assign Service" placement="top">
-            <IconButton onClick={() => handleAssign(params.row)}>
+            <IconButton onClick={() => handleAssign(params.row.srno)}>
               <SettingsOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -689,7 +988,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Manage Api Key" placement="top">
-            <IconButton onClick={() => handleApikey(params.row)}>
+            <IconButton onClick={() => handleApikey(params.row.srno)}>
               <KeyOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -699,7 +998,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Reset Password" placement="top">
-            <IconButton onClick={() => handleReset(params.row)}>
+            <IconButton onClick={() => handleReset(params.row.srno)}>
               <LockOpenOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -709,7 +1008,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="User Reports" placement="top">
-            <IconButton onClick={() => handleReport(params.row)}>
+            <IconButton onClick={() => handleReport(params.row.srno)}>
               <AssignmentOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
@@ -724,45 +1023,25 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   ];
 
   const whatsaappcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "countryName", headerName: "Country", flex: 1 },
+    { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "marketing", headerName: "Marketing", flex: 1 },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
-      field: "utility",
-      headerName: "Utility (INR/Credit)",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "marketing",
-      headerName: "Marketing (INR/Credit)",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 100,
       renderCell: (params) => (
         <>
-          <CustomTooltip arrow title="Edit" placement="top">
-            <IconButton onClick={() => handleWhatsappEdit(params.row)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleWhatsappEdit(params.row.srno)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip arrow title="Delete" placement="top">
-            <IconButton onClick={() => handleWhatsappDelete(params.row)}>
-              <DeleteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => handleWhatsappDelete(params.row.srno)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
         </>
@@ -770,35 +1049,61 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     },
   ];
 
+  // const rcscolumns = [
+  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+  //   { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
+  //   { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
+  //   {
+  //     field: "action",
+  //     headerName: "Action",
+  //     flex: 1,
+  //     minWidth: 100,
+  //     renderCell: (params) => (
+  //       <>
+  //         <CustomTooltip arrow title="Edit" placement="top">
+  //           <IconButton onClick={() => handleRcsEdit(params.row)}>
+  //             <EditNoteIcon
+  //               sx={{
+  //                 fontSize: "1.2rem",
+  //                 color: "gray",
+  //               }}
+  //             />
+  //           </IconButton>
+  //         </CustomTooltip>
+  //         <CustomTooltip arrow title="Delete" placement="top">
+  //           <IconButton onClick={() => handleRcsDelete(params.row)}>
+  //             <DeleteIcon
+  //               sx={{
+  //                 fontSize: "1.2rem",
+  //                 color: "gray",
+  //               }}
+  //             />
+  //           </IconButton>
+  //         </CustomTooltip>
+  //       </>
+  //     ),
+  //   },
+  // ];
   const rcscolumns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-    { field: "rate", headerName: "Rate (INR/Credit)", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "countryName", headerName: "Country", flex: 1 },
+    { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "marketing", headerName: "Marketing", flex: 1 },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
-      field: "action",
-      headerName: "Action",
+      field: "actions",
+      headerName: "Actions",
       flex: 1,
-      minWidth: 100,
       renderCell: (params) => (
         <>
-          <CustomTooltip arrow title="Edit" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleRcsEdit(params.row.srno)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip arrow title="Delete" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row)}>
-              <DeleteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => handleRcsDelete(params.row.srno)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
         </>
@@ -808,19 +1113,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-      }))
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
-
-  const whatsapprows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    country: "India",
-    utility: "0.30",
-    marketing: "0.80",
-  }));
 
   const rcsrows = Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
@@ -828,6 +1125,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     country: "India",
     rate: "0.30",
   }));
+
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -931,7 +1229,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <div className="grid gap-4 mb-2 lg:grid-cols-2">
             <InputField
               label="User ID"
@@ -1212,6 +1510,262 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               onClick={handleDetailsUpdate}
             />
           </div>
+        </div> */}
+        <div className="space-y-3">
+          <div className="grid gap-4 mb-2 lg:grid-cols-2">
+            <InputField
+              label="User ID"
+              id="userid"
+              name="userid"
+              placeholder="Enter your User ID"
+              value={updateDetails.userId}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, userId: e.target.value })
+              }
+              required
+            />
+            <UniversalDatePicker
+              label="Expiry Date"
+              id="expiryDate"
+              name="expiryDate"
+              placeholder="Enter Expiry Date"
+              value={updateDetails.expiryDate}
+              onChange={(newValue) =>
+                setUpdateDetails({ ...updateDetails, expiryDate: newValue })
+              }
+            />
+          </div>
+          <div className="flex gap-2">
+            <AnimatedDropdown
+              label="User Type"
+              id="userType"
+              name="userType"
+              // options={useroption}
+              options={[
+                { value: 1, label: "User" },
+                { value: 2, label: "Reseller" },
+              ]}
+              value={updateDetails.userType}
+              onChange={(value) =>
+                setUpdateDetails({ ...updateDetails, userType: value })
+              }
+            />
+            <InputField
+              label="Domain"
+              id="domain"
+              name="domain"
+              placeholder="Enter Domain"
+              value={updateDetails.domain}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, domain: e.target.value })
+              }
+            />
+          </div>
+          {/* Row 3 */}
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
+              <UniversalLabel
+                text="Status"
+                id="editstatus"
+                name="editstatus"
+                className="text-sm font-medium text-gray-700"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                Active
+              </label>
+              <Checkbox
+                inputId="statusToggle"
+                name="statusToggle"
+                checked={updateDetails.status === 1}
+                onChange={(e) =>
+                  setUpdateDetails({
+                    ...updateDetails,
+                    status: e.checked ? 1 : 0,
+                  })
+                }
+              />
+              <label className="text-sm font-medium text-gray-700 cursor-pointer">
+                Inactive
+              </label>
+            </div>
+          </div>
+
+          {/* Row 4 */}
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
+              <UniversalLabel
+                text="Application Type"
+                id="applicationType"
+                name="applicationType"
+                className="text-sm font-medium text-gray-700"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="applicationType1"
+                name="applicationType"
+                value={1}
+                onChange={(e) =>
+                  setUpdateDetails({
+                    ...updateDetails,
+                    applicationType: e.value,
+                  })
+                }
+                checked={updateDetails.applicationType === 1}
+              />
+              <label
+                htmlFor="applicationType1"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Type 1
+              </label>
+            </div>
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="applicationType2"
+                name="applicationType"
+                value={2}
+                onChange={(e) =>
+                  setUpdateDetails({
+                    ...updateDetails,
+                    applicationType: e.value,
+                  })
+                }
+                checked={updateDetails.applicationType === 2}
+              />
+              <label
+                htmlFor="applicationType2"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
+              >
+                Type 2
+              </label>
+            </div>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
+            <InputField
+              label="First Name"
+              id="firstname"
+              name="firstname"
+              placeholder="Enter your First Name"
+              value={updateDetails.firstName}
+              onChange={(e) =>
+                setUpdateDetails({
+                  ...updateDetails,
+                  firstName: e.target.value,
+                })
+              }
+              required
+            />
+            <InputField
+              label="Last Name"
+              id="lastname"
+              name="lastname"
+              placeholder="Enter your Last Name"
+              value={updateDetails.lastName}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, lastName: e.target.value })
+              }
+              required
+            />
+            <InputField
+              label="Email ID"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your Email ID"
+              value={updateDetails.emailId}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, emailId: e.target.value })
+              }
+              required
+            />
+            <InputField
+              label="Mobile No."
+              id="mobile"
+              name="mobile"
+              placeholder="Enter your Mobile No."
+              type="number"
+              value={updateDetails.mobileNo}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, mobileNo: e.target.value })
+              }
+            />
+            <InputField
+              label="Company Name"
+              id="company"
+              name="company"
+              placeholder="Enter your Company Name"
+              value={updateDetails.companyName}
+              onChange={(e) =>
+                setUpdateDetails({
+                  ...updateDetails,
+                  companyName: e.target.value,
+                })
+              }
+            />
+            <InputField
+              label="Address"
+              id="address"
+              name="address"
+              placeholder="Enter your Address"
+              value={updateDetails.address}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, address: e.target.value })
+              }
+            />
+            <InputField
+              label="City"
+              id="city"
+              name="city"
+              placeholder="Enter your City"
+              value={updateDetails.city}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, city: e.target.value })
+              }
+            />
+            <InputField
+              label="State"
+              id="state"
+              name="state"
+              placeholder="Enter your State"
+              value={updateDetails.state}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, state: e.target.value })
+              }
+              required
+            />
+            <InputField
+              label="Country"
+              id="country"
+              name="country"
+              placeholder="Enter your Country"
+              value={updateDetails.country}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, country: e.target.value })
+              }
+            />
+            <InputField
+              label="Pincode"
+              id="Pincode"
+              name="Pincode"
+              placeholder="Enter your Pincode"
+              value={updateDetails.pinCode}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, pinCode: e.target.value })
+              }
+            />
+          </div>
+          <div className="flex justify-center mt-3">
+            <UniversalButton
+              label="Save"
+              id="saveButton"
+              name="saveButton"
+              onClick={handleDetailsUpdate}
+            />
+          </div>
         </div>
       </Dialog>
       {/* Edit Details */}
@@ -1236,8 +1790,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="max-w-md mx-auto bg-gradient-to-r from-white to-gray-100 shadow-xl rounded-lg p-6">
-          <h2 className="text-xl font-semibold text-gray-800 text-center mb-4">
+        <div className="max-w-md p-2 mx-auto rounded-lg border ">
+          <h2 className="mb-4 text-lg font-semibold text-center text-gray-800">
             Mobile Numbers
           </h2>
 
@@ -1258,7 +1812,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   // </IconButton>
                   <MdOutlineDeleteForever
                     onClick={() => removeMobileNumber(index)}
-                    className="text-red-500 cursor-pointer hover:text-red-600 absolute right-2"
+                    className="absolute text-red-500 cursor-pointer hover:text-red-600 right-2"
                     size={20}
                   />
                 )}
@@ -1281,7 +1835,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-              onClick={addMobileNumber}
+            // onClick={addMobileNumber}
             />
 
             {/* <IconButton
@@ -1308,11 +1862,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         header="View details"
         visible={viewService}
         onHide={() => setViewService(false)}
-        className="w-[40rem]"
+        className="w-[48rem] max-w-full"
         draggable={false}
       >
-        <div className="space-y-3">
-          <div className="grid lg:grid-cols-2 gap-4 mb-2">
+        {/* <div className="space-y-3">
+          <div className="grid gap-4 mb-2 lg:grid-cols-2">
             <InputField
               label="User ID"
               id="viewuserid"
@@ -1329,18 +1883,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             />
           </div>
           <div className="flex gap-2">
-            {/* <AnimatedDropdown
-                    label="User Type"
-                    id="viewuserType"
-                    name="viewuserType"
-                    options={useroption}
-                    value={userType} // Ensure correct value is set
-                    onChange={(selected) => {
-                      console.log("Dropdown selected:", selected); // Debugging log
-                      setUserType(selected); // Correctly update the state
-                    }}
-                  /> */}
-
             <InputField
               label="User Type"
               id="viewuserType"
@@ -1358,16 +1900,15 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           </div>
           {userType === "Reseller" && (
             <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex justify-center items-center">
+              <div className="flex items-center justify-center">
                 <UniversalLabel
                   text="Enable Postpaid"
                   id="viewenablepostpaid"
                   name="viewenablepostpaid"
-                  className="text-gray-700 font-medium text-sm"
+                  className="text-sm font-medium text-gray-700"
                   readOnly="true"
                 />
               </div>
-              {/* Option 1 */}
               <div className="flex items-center gap-2">
                 <RadioButton
                   inputId="viewenablepostpaidOption1"
@@ -1376,12 +1917,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption1"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   Yes
                 </label>
               </div>
-              {/* Option 2 */}
               <div className="flex items-center gap-2">
                 <RadioButton
                   inputId="viewenablepostpaidOption2"
@@ -1389,13 +1929,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                 />
                 <label
                   htmlFor="viewenablepostpaidOption2"
-                  className="text-gray-700 font-medium text-sm cursor-pointer"
+                  className="text-sm font-medium text-gray-700 cursor-pointer"
                 >
                   No
                 </label>
               </div>
 
-              {/* Conditional Display of Input Field */}
               {enablepostpaid === "enable" && (
                 <div>
                   <InputField
@@ -1408,16 +1947,16 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           )}
 
-          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4">
-            <div className="flex justify-center items-center">
+          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+            <div className="flex items-center justify-center">
               <UniversalLabel
                 text="Status"
                 id="vieweditstatus"
                 name="vieweditstatus"
-                className="text-gray-700 font-medium text-sm"
+                className="text-sm font-medium text-gray-700"
               />
             </div>
-            {/* Option 1 */}
+
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="viewstatusOption1"
@@ -1426,12 +1965,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="viewstatusOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Enable
               </label>
             </div>
-            {/* Option 2 */}
+
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="viewstatusOption2"
@@ -1440,14 +1979,14 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="viewstatusOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Disable
               </label>
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-4">
+          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
               label="First Name"
               id="viewfirstname"
@@ -1521,7 +2060,178 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               readOnly="true"
             />
           </div>
-        </div>
+        </div> */}
+        {selectedUserDetails ? (
+          <div className="space-y-6 p-3 border rounded-xl shadow-md">
+            {/* Row 1 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="flex items-center gap-2 text-sm">
+                <RemoveRedEyeOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong className="text-sm">User ID : </strong>
+                  {selectedUserDetails.userId || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2 text-sm">
+                <CalendarTodayOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Expiry Date : </strong>
+                  {selectedUserDetails.expiryDate || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 2 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <PersonOutlineOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>First Name : </strong>
+                  {selectedUserDetails.firstName || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <PersonOutlineOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Last Name : </strong>{" "}
+                  {selectedUserDetails.lastName || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 3 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <EmailOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Email ID : </strong>{" "}
+                  {selectedUserDetails.emailId || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <PhoneOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Mobile No. : </strong>{" "}
+                  {selectedUserDetails.mobileNo || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 4 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <BusinessOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Company Name : </strong>{" "}
+                  {selectedUserDetails.companyName || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <LocationOnOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Address : </strong>{" "}
+                  {selectedUserDetails.address || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 5 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <LocationCityOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>City : </strong>{" "}
+                  {selectedUserDetails.city || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <MapOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>State : </strong>{" "}
+                  {selectedUserDetails.state || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 6 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <PublicOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Country : </strong>{" "}
+                  {selectedUserDetails.country || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <PinDropOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Pincode : </strong>{" "}
+                  {selectedUserDetails.pinCode || "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 7 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <AccountTreeOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>User Type : </strong>{" "}
+                  {selectedUserDetails.userType || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <CheckCircleOutlineOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Status : </strong>{" "}
+                  {selectedUserDetails.status === 1
+                    ? "Active"
+                    : selectedUserDetails.status === 0
+                      ? "Inactive"
+                      : "Not Available"}
+                </p>
+              </div>
+            </div>
+
+            {/* Row 8 */}
+            {/* <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <CampaignOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Promo Service : </strong>
+                  {selectedUserDetails.promoService || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <SmsOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Trans Service : </strong>
+                  {selectedUserDetails.transService || "Not Available"}
+                </p>
+              </div>
+            </div> */}
+
+            {/* Row 9 */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
+              <div className="flex items-center gap-2">
+                <KeyOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Domain : </strong>{" "}
+                  {selectedUserDetails.domain || "Not Available"}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <LockOutlinedIcon className="text-gray-600" />
+                <p>
+                  <strong>Virtual Balance : </strong>{" "}
+                  {selectedUserDetails.virtualBalance || "Not Available"}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-500">Loading user details...</p>
+        )}
       </Dialog>
       {/* View details */}
 
@@ -1561,7 +2271,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             />
             <Tab
               label={
-                <span className="flex gap-2 items-center">
+                <span className="flex items-center gap-2">
                   <BsJournalArrowDown size={18} />
                   RCS
                 </span>
@@ -1711,11 +2421,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               }}
             />
           </Tabs>
+
+          {/* whatsapp */}
           <CustomTabPanel value={value} index={0} className="">
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="whatsaapOption1"
@@ -1726,7 +2438,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="whatsaapOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -1744,7 +2456,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="whatsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -1762,8 +2474,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               {whatsappStatus === "enable" && (
                 <>
                   <div id="whatsapptable">
-                    <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
-                      <AnimatedDropdown
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
+                      <DropdownWithSearch
                         id="whatsappcountryselect"
                         name="whatsappcountryselect"
                         label="Select Country"
@@ -1806,61 +2518,140 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                       />
                     </div>
 
-                    <Paper sx={{ height: 250 }} id={id} name={name}>
-                      <DataGrid
-                        id={id}
-                        name={name}
-                        rows={whatsapprows}
-                        columns={whatsaappcolumns}
-                        initialState={{ pagination: { paginationModel } }}
-                        pageSizeOptions={[10, 20, 50]}
-                        pagination
-                        paginationModel={paginationModel}
-                        onPaginationModelChange={setPaginationModel}
-                        rowHeight={45}
-                        slots={{
-                          footer: CustomFooter,
-                          noRowsOverlay: CustomNoRowsOverlay,
-                        }}
-                        onRowSelectionModelChange={(ids) =>
-                          setSelectedRows(ids)
-                        }
-                        disableRowSelectionOnClick
-                        disableColumnResize
-                        disableColumnMenu
-                        sx={{
-                          border: 0,
-                          "& .MuiDataGrid-cell": { outline: "none !important" },
-                          "& .MuiDataGrid-columnHeaders": {
-                            color: "#193cb8",
-                            fontSize: "14px",
-                            fontWeight: "bold !important",
-                          },
-                          "& .MuiDataGrid-row--borderBottom": {
-                            backgroundColor: "#e6f4ff !important",
-                          },
-                          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-                        }}
-                      />
-                    </Paper>
+                    <DataTable
+                      height={288}
+                      id="whatsapp-rate-table"
+                      name="whatsappRateTable"
+                      col={whatsaappcolumns}
+                      rows={whatsapprows}
+                      selectedRows={selectedRows}
+                      setSelectedRows={setSelectedRows}
+                    />
                   </div>
                   <div className="flex justify-center mt-3">
-                    <UniversalButton
+                    {/* <UniversalButton
                       label="Save"
                       id="whatsappsave"
                       name="whatsappsave"
-                    />
+                    /> */}
                   </div>
                 </>
               )}
+
+              {/* Edit whatsapp Rate */}
+              <Dialog
+                header="Edit WhatsApp Rate"
+                visible={editWhatsappVisible}
+                onHide={() => setEditWhatsappVisible(false)}
+                style={{ width: "30rem" }}
+                draggable={false}
+              >
+                <div className="space-y-4">
+                  <DropdownWithSearch
+                    id="editCountry"
+                    name="editCountry"
+                    label="Country"
+                    value={editWhatsappForm.countryCode}
+                    options={countryOptions}
+                    onChange={(val) =>
+                      setEditWhatsappForm((prev) => ({
+                        ...prev,
+                        countryCode: val,
+                      }))
+                    }
+                  />
+                  <div className="flex items-center gap-5">
+                    <InputField
+                      label="Utility"
+                      value={editWhatsappForm.utility}
+                      onChange={(e) =>
+                        validateInput(e.target.value, (val) =>
+                          setEditWhatsappForm((prev) => ({
+                            ...prev,
+                            utility: val,
+                          }))
+                        )
+                      }
+                    />
+
+                    <InputField
+                      label="Marketing"
+                      value={editWhatsappForm.marketing}
+                      onChange={(e) =>
+                        validateInput(e.target.value, (val) =>
+                          setEditWhatsappForm((prev) => ({
+                            ...prev,
+                            marketing: val,
+                          }))
+                        )
+                      }
+                    />
+                  </div>
+
+
+                  <div className="flex justify-center">
+                    <UniversalButton
+                      label="Update"
+                      onClick={handleWhatsappUpdate}
+                    />
+                  </div>
+                </div>
+              </Dialog>
+
+              {/* Delete whatsapp Rate  */}
+              <Dialog
+                header="Delete WhatsApp Rate"
+                visible={whatsappDeleteVisible}
+                style={{ width: "27rem" }}
+                onHide={() => setWhatsappDeleteVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon sx={{ fontSize: 64, color: "#ff3f3f" }} />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Delete rate for{" "}
+                    <span className="text-green-600">
+                      {editingRow?.countryName}
+                    </span>
+                    ?
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex justify-center gap-4 mt-4">
+                  <UniversalButton
+                    label="Cancel"
+                    onClick={() => setWhatsappDeleteVisible(false)}
+                  />
+                  <UniversalButton
+                    label="Delete"
+                    onClick={async () => {
+                      const res = await deleteWhatsappRateBySrno(
+                        editingRow.srno
+                      );
+                      if (res?.message?.toLowerCase().includes("success")) {
+                        toast.success("Rate deleted.");
+                        fetchWhatsappRateData(currentUserSrno);
+                        setWhatsappDeleteVisible(false);
+                      } else {
+                        toast.error(res.message || "Delete failed.");
+                      }
+                    }}
+                  />
+                </div>
+              </Dialog>
             </div>
           </CustomTabPanel>
 
+          {/* RCS */}
           <CustomTabPanel value={value} index={1}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="rcsOption1"
@@ -1871,7 +2662,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="rcsOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -1889,7 +2680,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="rcsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -1908,12 +2699,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               {rcsStatus === "enable" && (
                 <>
                   <div id="rcstable">
-                    <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
-                      <AnimatedDropdown
+                    <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
+                      <DropdownWithSearch
                         id="rcscountryselect"
                         name="rcscountryselect"
                         label="Select Country"
-                        options={rcscountryOptions}
+                        options={countryOptions}
                         value={rcsCountry}
                         onChange={(value) => setRcsCountry(value)}
                       />
@@ -1976,20 +2767,31 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         }}
                       />
                     </Paper>
+
+                    {/* <DataTable
+                      height={280}
+                      id="rcs-rate-table"
+                      name="rcsRateTable"
+                      rows={rcsrows}
+                      columns={rcscolumns}
+                      selectedRows={selectedRows}
+                      setSelectedRows={setSelectedRows}
+                    /> */}
                   </div>
-                  <div className="flex justify-center mt-3">
+                  {/* <div className="flex justify-center mt-3">
                     <UniversalButton label="Save" id="rcssave" name="rcssave" />
-                  </div>
+                  </div> */}
                 </>
               )}
             </div>
           </CustomTabPanel>
 
+          {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="smsOption1"
@@ -2000,7 +2802,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="smsOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2018,7 +2820,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="smsOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2027,62 +2829,86 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
 
               {smsStatus === "enable" && (
-                <div>
-                  <div className="flex lg:w-100 md:w-100 mb-2">
-                    <Checkbox
-                      id="smsstatus"
-                      name="smsstatus"
-                      onChange={(e) => setTranscheck(e.checked)}
-                      checked={transcheck}
-                      className="m-2"
-                    />
+                <div className="">
+                  <div className="space-y-2">
+                    <p>Transaction Service</p>
+                    <div className="flex mb-2 lg:w-100 md:w-100">
+                      <Checkbox
+                        id="smsstatus"
+                        name="smsstatus"
+                        onChange={(e) => setTranscheck(e.checked)}
+                        checked={transcheck}
+                        className="m-2"
+                      />
 
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={transOptions}
-                      value={trans}
-                      onChange={(value) => setTrans(value)}
-                      disabled={!transcheck}
-                    />
-                  </div>
-                  <div className="flex lg:w-100 md:w-100">
-                    <Checkbox
-                      id="smspromo"
-                      name="smspromo"
-                      onChange={(e) => setPromocheck(e.checked)}
-                      checked={promocheck}
-                      className="m-2"
-                    />
-
-                    <AnimatedDropdown
-                      id="transdropdown"
-                      name="transdropdown"
-                      options={promoOption}
-                      value={promo}
-                      onChange={(value) => setPromo(value)}
-                      disabled={!promocheck}
-                    />
+                      <AnimatedDropdown
+                        id="transdropdown"
+                        name="transdropdown"
+                        options={transOptions}
+                        value={trans} // <- should be the selected serviceId
+                        onChange={(selected) => setTrans(selected)} // selected.value if needed
+                        disabled={!transcheck}
+                      />
+                    </div>
                   </div>
 
-                  <div className=" lg:w-100 md:w-100">
-                    <InputField
-                      id="translimit"
-                      name="translimit"
-                      label="Rate"
-                      placeholder="(INR / Credit)"
-                      value={smsrate}
-                      onChange={(e) =>
-                        validateInput(e.target.value, setSmsRate)
-                      }
-                      type="number"
-                    />
+                  <div className="space-y-2">
+                    <p>Promotion Service</p>
+                    <div className="flex lg:w-100 md:w-100">
+                      <Checkbox
+                        id="smspromo"
+                        name="smspromo"
+                        onChange={(e) => setPromocheck(e.checked)}
+                        checked={promocheck}
+                        className="m-2"
+                      />
+
+                      <AnimatedDropdown
+                        id="promodropdown"
+                        name="promodropdown"
+                        options={promoOption}
+                        value={promo}
+                        onChange={(selected) => setPromo(selected)}
+                        disabled={!promocheck}
+                      />
+                    </div>
                   </div>
+
+                  <div className="flex gap-5 items-center justify-start mt-3">
+                    <div className=" lg:w-100 md:w-100">
+                      <InputField
+                        id="translimit"
+                        name="translimit"
+                        label="Rate"
+                        placeholder="(INR / Credit)"
+                        value={smsrate}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setSmsRate)
+                        }
+                        type="number"
+                      />
+                    </div>
+                    <div className=" lg:w-100 md:w-100">
+                      <InputField
+                        id="dltRate"
+                        name="dltRate"
+                        label="Dlt Rate"
+                        placeholder="(INR / Credit)"
+                        value={dltRate}
+                        onChange={(e) =>
+                          validateInput(e.target.value, setDltRate)
+                        }
+                        type="number"
+                      />
+                    </div>
+                  </div>
+
                   <div className="flex justify-center mt-3">
                     <UniversalButton
                       label="Save"
-                      id="whatsappsave"
-                      name="whatsappsave"
+                      id="smsSave"
+                      name="smsSave"
+                      onClick={handleSaveSmsPricing}
                     />
                   </div>
                 </div>
@@ -2090,11 +2916,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="obdOption1"
@@ -2105,7 +2932,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="obdOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2123,7 +2950,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="obdOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2133,7 +2960,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
               {obdStatus === "enable" && (
                 <div>
-                  <div className="flex lg:w-100 md:w-100 mb-2">
+                  <div className="flex mb-2 lg:w-100 md:w-100">
                     <Checkbox
                       id="obdstatusobd"
                       name="obdstatusobd"
@@ -2171,7 +2998,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   </div>
 
                   <div className=" lg:w-100 md:w-100">
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
                       <div className="flex items-center gap-2">
                         <RadioButton
@@ -2183,7 +3010,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="obdrateOption1"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           @ 15 sec
                         </label>
@@ -2199,7 +3026,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="obdrateOption2"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           @ 30 sec
                         </label>
@@ -2229,11 +3056,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Two way sms */}
           <CustomTabPanel value={value} index={4}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="twowayOption1"
@@ -2244,7 +3072,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="twowayOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2262,7 +3090,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="twowayOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2271,7 +3099,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {twowayStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="twowayselect"
                       name="twowayselect"
@@ -2300,11 +3128,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Missed Call */}
           <CustomTabPanel value={value} index={5}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="misscallOption1"
@@ -2315,7 +3144,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="misscallOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2333,7 +3162,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="misscallOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2342,7 +3171,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {misscallStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="misscallselect"
                       name="misscallselect"
@@ -2371,11 +3200,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* C2C */}
           <CustomTabPanel value={value} index={6}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="clickOption1"
@@ -2386,7 +3216,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="clickOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2404,7 +3234,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="clickOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2413,7 +3243,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {clickStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full lg:w-100 md:w-100">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap lg:w-100 md:w-100">
                     <InputField
                       id="clickrate"
                       name="clickrate"
@@ -2434,11 +3264,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             </div>
           </CustomTabPanel>
 
+          {/* Email */}
           <CustomTabPanel value={value} index={7}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="emailOption1"
@@ -2449,7 +3280,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="emailOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2467,7 +3298,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="emailOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2476,7 +3307,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {emailStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="emailselect"
                       name="emailselect"
@@ -2505,11 +3336,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               )}
             </div>
           </CustomTabPanel>
+
+          {/* IBD */}
           <CustomTabPanel value={value} index={8}>
             <div>
-              <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+              <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
                 {/* Option 1 */}
-                <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
                   <div className="flex items-center gap-2">
                     <RadioButton
                       inputId="ibdOption1"
@@ -2520,7 +3353,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="ibdOption1"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Enable
                     </label>
@@ -2538,7 +3371,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                     <label
                       htmlFor="ibdOption2"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
                     >
                       Disable
                     </label>
@@ -2547,7 +3380,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               </div>
               {ibdStatus === "enable" && (
                 <>
-                  <div className="flex flex-wrap lg:flex-nowrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                  <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <AnimatedDropdown
                       id="ibdselect"
                       name="ibdselect"
@@ -2565,7 +3398,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                     />
                   </div>
                   <div className=" lg:w-100 md:w-100">
-                    <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 my-2 ">
+                    <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
                       {/* Option 1 */}
                       <div className="flex items-center gap-2">
                         <RadioButton
@@ -2577,7 +3410,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="ibdpulseOption1"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           Enable
                         </label>
@@ -2593,7 +3426,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                         />
                         <label
                           htmlFor="ibdpulseOption2"
-                          className="text-gray-700 font-medium text-sm cursor-pointer"
+                          className="text-sm font-medium text-gray-700 cursor-pointer"
                         >
                           Disable
                         </label>
@@ -2637,7 +3470,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             placeholder="Enter Old key"
             readOnly
           />
-          <div className="flex gap-2 items-end">
+          <div className="flex items-end gap-2">
             <div className="flex-1 ">
               <InputField
                 id="newapikey"
@@ -2653,7 +3486,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             <div>
               <button
                 onClick={handleGenerateAPIKey}
-                className="bg-blue-400 hover:bg-blue-500 text-white text-sm py-2 px-2 rounded-md shadow-md focus:outline-none"
+                className="px-2 py-2 text-sm text-white bg-blue-400 rounded-md shadow-md hover:bg-blue-500 focus:outline-none"
               >
                 Generate Key
               </button>
@@ -2716,9 +3549,9 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         className="w-[30rem]"
         draggable={false}
       >
-        <div className="lg:w-100 md:w-100 flex flex-wrap gap-2 mb-2">
+        <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
           {/* Option 1 */}
-          <div className="flex-1 cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-3 hover:shadow-lg transition-shadow duration-300">
+          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
             <div className="flex items-center gap-2">
               <RadioButton
                 inputId="userreportOption1"
@@ -2729,7 +3562,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="userreportOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Enable
               </label>
@@ -2747,7 +3580,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               />
               <label
                 htmlFor="userreportOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
+                className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Disable
               </label>

@@ -19,6 +19,9 @@ import { useState } from "react";
 import { useEffect } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay.jsx";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip.jsx";
+import { useRef } from "react";
+import InfoPopover from "@/components/common/InfoPopover.jsx";
+import { fetchCampaignBySrno } from "@/apis/rcs/rcs.js";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -89,17 +92,53 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
   });
   const navigate = useNavigate();
 
-  const handleView = (row) => {
-    console.log("View campaign:", row);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const dropdownButtonRefs = useRef({});
+
+  // const handleView = (row) => {
+  //   // console.log("View campaign:", row);
+  // };
+
+  const handleView = async (row) => {
+    const id = row.id;
+
+    // Reset for this row
+    setDropdownOpenId(null);
+
+    try {
+      const res = await fetchCampaignBySrno(row.campaignSrno);
+
+      setCampaignInfoMap((prev) => ({
+        ...prev,
+        [id]: res || null,
+      }));
+
+      setDropdownOpenId(id); // Open only after data is ready
+    } catch (e) {
+      console.error("Error fetching campaign details:", e);
+    }
   };
 
+  const closeDropdown = () => setDropdownOpenId(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest(".bot-settings")) {
+        closeDropdown();
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const handleSummaryReport = (row) => {
-    // navigate("/wcampaigndetailsreport", {
-    //   state: {
-    //     campaignSrno: row.campaignSrno,
-    //     campaignName: row.campaignName,
-    //   },
-    // });
+    navigate("/rcsdeliverycampaigndetails", {
+      state: {
+        campaignSrno: row.campaignSrno,
+        campaignName: row.campaignName,
+      },
+    });
   };
 
   const columns = [
@@ -146,16 +185,72 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
           <CustomTooltip title="View Campaign" placement="top" arrow={true}>
             <IconButton
               className="text-xs"
+              ref={(el) => {
+                if (el) dropdownButtonRefs.current[params.row.id] = el;
+              }}
               onClick={() => handleView(params.row)}
             >
-              <InfoOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "green",
-                }}
-              />
+              <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "green" }} />
             </IconButton>
           </CustomTooltip>
+          {/* <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={() => setDropdownOpenId(null)}
+          >
+            <InfoPopoverContent campaignInfo={campaignInfoMap[params.row.id]} />
+          </InfoPopover> */}
+          <InfoPopover
+            anchorEl={dropdownButtonRefs.current[params.row.id]}
+            open={dropdownOpenId === params.row.id}
+            onClose={closeDropdown}
+          >
+            {campaignInfoMap[params.row.id] &&
+              campaignInfoMap[params.row.id][0] ? (
+              <div className="w-[280px] max-w-full">
+                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                  {[
+                    { label: "Total", key: "total" },
+                    { label: "Block", key: "block" },
+                    { label: "Failed", key: "failed" },
+                    { label: "Pending", key: "pending" },
+                    { label: "Submitted", key: "submitted" },
+                    { label: "Sent", key: "sent" },
+                    { label: "Delivered", key: "delivered" },
+                    { label: "Read", key: "read" },
+                    { label: "Source", key: "source" },
+                    // { label: "Charged Unit", key: "chargedUnit" },
+                    // { label: "Block Count", key: "blockCount" },
+                    // { label: "Busy", key: "busy" },
+                    // { label: "Busy Count", key: "busyCount" },
+                    // { label: "Delivered Count", key: "deliveredCount" },
+                    // { label: "Failed Count", key: "failedCount" },
+                    // { label: "Pending Count", key: "pendingCount" },
+                    // {
+                    //   label: "Pending Report Count",
+                    //   key: "pendingReportCount",
+                    // },
+                    // { label: "Read Count", key: "readCount" },
+                    // { label: "Sent Count", key: "sentCount" },
+                    // { label: "Undelivered", key: "undelivered" },
+                    // { label: "Undelivered Count", key: "undeliveredCount" },
+                  ].map(({ label, key }) => (
+                    <React.Fragment key={key}>
+                      <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                        {label}
+                      </div>
+                      <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                        {campaignInfoMap[params.row.id][0]?.[key] ?? "N/A"}
+                      </div>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-500">No Data Available</div>
+            )}
+          </InfoPopover>
+
           <CustomTooltip
             title="Campaign Detail Report"
             placement="top"
@@ -177,17 +272,17 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        createdOn: item.queTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaignSrno,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      createdOn: item.queTime || "N/A",
+      campaignName: item.campaignName || "N/A",
+      templateName: item.templateName || "N/A",
+      templateCategory: item.templateCategory || "N/A",
+      templateType: item.templateType || "N/A",
+      status: item.status || "N/A",
+      totalAudience: item.totalAudience || "0",
+      campaignSrno: item.campaign_srno,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

@@ -1,67 +1,62 @@
-// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-const API_BASE_URL = "/api";
 import axios from "axios";
 
+// const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = "/api";
+
 export const fetchWithAuth = async (endpoint, options = {}) => {
-  const token = localStorage.getItem("token");
+  const token = sessionStorage.getItem("token");
 
   if (!token) {
-    console.error("No token found, redirecting to login.");
+    // console.error("No token found, redirecting to login.");
     window.location.href = "/login";
     return;
   }
 
-  const headers = {
-    // "Content-Type": "application/json",
+  const defaultHeaders = {
     Authorization: `Bearer ${token}`,
-    ...options.headers,
   };
 
-  // If FormData is used, do not set Content-Type header manually
-  if (options.body instanceof FormData) {
-    delete headers["Content-Type"];
-  } else {
-    headers["Content-Type"] = "application/json";
+  if (!(options.body instanceof FormData)) {
+    defaultHeaders["Content-Type"] = "application/json";
   }
 
   try {
-    console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
+    // console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
+    const instance = axios.create({ timeout: 10000 });
 
-    // const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    //   ...options,
-    //   method: options.method || "GET",
-    //   headers,
-    // });
-    const response = await axios({
+    const response = await instance({
       method: options.method || "GET",
       url: `${API_BASE_URL}${endpoint}`,
       data: options.body,
-      headers,
+      headers: {
+        ...defaultHeaders,
+        ...(options.headers || {}),
+      },
     });
+    
 
-    if (response.status === 401) {
-      console.error("Session expired. Redirecting to login...");
-      localStorage.removeItem("token");
-      window.location.href = "/login";
-      return null;
-    } else if (response.status === 400) {
-      return await response.json();
-    }
-
-    // if (!response.ok) {
+    // if (response.statusText !== "OK") {
     //   console.error(`API Error: ${response.status} ${response.statusText}`);
-    //   return null;
+    //   return;
     // }
-    // return await response.json();
 
-    if (response.statusText !== "OK") {
-      console.error(`API Error: ${response.status} ${response.statusText}`);
-      return null;
+    if (response.status !== 200) {
+      // console.error(`API Error: ${response.status}`);
+      return;
     }
 
     return response.data;
   } catch (error) {
-    console.error("Network Error:", error);
-    return null;
+    if (error?.status === 401) {
+      // console.error("Session expired. Redirecting to login...");
+      sessionStorage.removeItem("token");
+      window.location.href = "/login";
+      return null;
+    }
+    if (error?.status === 400) {
+      // console.log(error);
+      return error;
+    }
+    // console.error("Network Error:", error);
   }
 };

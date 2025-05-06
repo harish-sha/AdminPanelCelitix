@@ -76,10 +76,10 @@ const CustomPagination = ({
 };
 const TwowayIntegrationTable = ({ id, name, }) => {
     const [selectedRows, setSelectedRows] = useState([]);
-      const [editintegration, setEditIntegration] = useState(false);
-        const [editintegrationoption, setEditIntegrationOption] = useState("enable");
-      const [viewintegration, setViewIntegration] = useState(false);
-        const [viewintegrationoption, setViewIntegrationOption] = useState("enable");
+    const [editintegration, setEditIntegration] = useState(false);
+    const [editintegrationoption, setEditIntegrationOption] = useState("enable");
+    const [viewintegration, setViewIntegration] = useState(false);
+    const [viewintegrationoption, setViewIntegrationOption] = useState("enable");
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 10,
@@ -87,10 +87,10 @@ const TwowayIntegrationTable = ({ id, name, }) => {
 
     const handleChangeEditStatus = (e) => {
         setEditIntegrationOption(e.value);
-      };
+    };
     const handleChangeViewStatus = (e) => {
         setViewIntegrationOption(e.value);
-      };
+    };
     const handleEdit = () => {
         setEditIntegration(true);
     };
@@ -102,30 +102,30 @@ const TwowayIntegrationTable = ({ id, name, }) => {
         { label: '56161', value: '56161' },
         { label: '56161', value: '56161' },
         { label: '56161', value: '56161' },
-      ]
-      const editkeywordOption = [
+    ]
+    const editkeywordOption = [
         { label: 'Keyword1', value: 'Keyword1' },
         { label: 'Keyword2', value: 'Keyword2' },
         { label: 'Keyword3', value: 'Keyword3' },
-      ]
-      const editrespinseOption = [
+    ]
+    const editrespinseOption = [
         { label: 'SMS', value: 'sms' },
         { label: 'Voice', value: 'voice' },
-      ]
+    ]
     const viewsourceOption = [
         { label: '56161', value: '56161' },
         { label: '56161', value: '56161' },
         { label: '56161', value: '56161' },
-      ]
-      const viewkeywordOption = [
+    ]
+    const viewkeywordOption = [
         { label: 'Keyword1', value: 'Keyword1' },
         { label: 'Keyword2', value: 'Keyword2' },
         { label: 'Keyword3', value: 'Keyword3' },
-      ]
-      const viewrespinseOption = [
+    ]
+    const viewrespinseOption = [
         { label: 'SMS', value: 'sms' },
         { label: 'Voice', value: 'voice' },
-      ]
+    ]
 
     const rows = Array.from({ length: 20 }, (_, i) => ({
         id: i + 1,
@@ -300,59 +300,59 @@ const TwowayIntegrationTable = ({ id, name, }) => {
                 />
             </Paper>
             <Dialog
-                    header="Edit Integration"
-                    visible={editintegration}
-                    onHide={() => setEditIntegration(false)}
-                    className="lg:w-[45rem] md:w-[30rem] w-[20rem]"
-                    draggable={false}
-                  >
-                    <div className='space-y-2'>
-                      <div className='grid grid-cols-2 gap-2'>
+                header="Edit Integration"
+                visible={editintegration}
+                onHide={() => setEditIntegration(false)}
+                className="lg:w-[45rem] md:w-[30rem] w-[20rem]"
+                draggable={false}
+            >
+                <div className='space-y-2'>
+                    <div className='grid grid-cols-2 gap-2'>
                         <div className='w-max-56'>
-                          <InputField
-                            label="Integration Name"
-                            id="editintegrationname"
-                            name="editintegrationname"
-                            placeholder="Enter Integration Name"
-                          />
+                            <InputField
+                                label="Integration Name"
+                                id="editintegrationname"
+                                name="editintegrationname"
+                                placeholder="Enter Integration Name"
+                            />
                         </div>
                         <div className='w-max-56'>
-                          <AnimatedDropdown
-                            label="Source"
-                            id="editintergrationsource"
-                            name="editintergrationsource"
-                            placeholder="Select Source"
-                            options={editsourceOption}
-                            onChange={(e) => console.log(e)}
-                          />
+                            <AnimatedDropdown
+                                label="Source"
+                                id="editintergrationsource"
+                                name="editintergrationsource"
+                                placeholder="Select Source"
+                                options={editsourceOption}
+                                onChange={(e) => console.log(e)}
+                            />
                         </div>
-                      </div>
-                      <div className='grid grid-cols-2 gap-2'>
+                    </div>
+                    <div className='grid grid-cols-2 gap-2'>
                         <div className='w-max-content'>
-            
-                          <AnimatedDropdown
-                            label="Keyword"
-                            id="editintergrationkeyword"
-                            name="editintergrationkeyword"
-                            placeholder="Enter Keyword"
-                            options={editkeywordOption}
-                            onChange={(e) => console.log(e)}
-                          />
+
+                            <AnimatedDropdown
+                                label="Keyword"
+                                id="editintergrationkeyword"
+                                name="editintergrationkeyword"
+                                placeholder="Enter Keyword"
+                                options={editkeywordOption}
+                                onChange={(e) => console.log(e)}
+                            />
                         </div>
                         <div className='w-max-content'>
-            
-                          <AnimatedDropdown
-                            label="Response"
-                            id="editintergrationresponse"
-                            name="editintergrationresponse"
-                            placeholder="Enter Response"
-                            options={editrespinseOption}
-                            onChange={(e) => console.log(e)}
-            
-                          />
+
+                            <AnimatedDropdown
+                                label="Response"
+                                id="editintergrationresponse"
+                                name="editintergrationresponse"
+                                placeholder="Enter Response"
+                                options={editrespinseOption}
+                                onChange={(e) => console.log(e)}
+
+                            />
                         </div>
-                      </div>
-                      <div className="flex flex-wrap gap-4 ">
+                    </div>
+                    <div className="flex flex-wrap gap-4 ">
                         {/* <div className="flex items-center justify-center">
                           <UniversalLabel
                             text="Status"
@@ -361,168 +361,168 @@ const TwowayIntegrationTable = ({ id, name, }) => {
                             className="text-sm font-medium text-gray-700"
                           />
                         </div> */}
-            
+
                         <div className="flex items-center gap-2">
-                          <RadioButton
-                            inputId="editintegrationOption1"
-                            name="editintegrationredio"
-                            value="enable"
-                            onChange={handleChangeEditStatus}
-                            checked={editintegrationoption === "enable"}
-                          />
-                          <label
-                            htmlFor="editintegrationOption1"
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            SMS
-                          </label>
+                            <RadioButton
+                                inputId="editintegrationOption1"
+                                name="editintegrationredio"
+                                value="enable"
+                                onChange={handleChangeEditStatus}
+                                checked={editintegrationoption === "enable"}
+                            />
+                            <label
+                                htmlFor="editintegrationOption1"
+                                className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                                SMS
+                            </label>
                         </div>
-            
+
                         <div className="flex items-center gap-2">
-                          <RadioButton
-                            inputId="editintegrationOption2"
-                            name="editintegrationredio"
-                            value="disable"
-                            onChange={handleChangeEditStatus}
-                            checked={editintegrationoption === "disable"}
-                          />
-                          <label
-                            htmlFor="editintegrationOption2"
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            Voice
-                          </label>
+                            <RadioButton
+                                inputId="editintegrationOption2"
+                                name="editintegrationredio"
+                                value="disable"
+                                onChange={handleChangeEditStatus}
+                                checked={editintegrationoption === "disable"}
+                            />
+                            <label
+                                htmlFor="editintegrationOption2"
+                                className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                                Voice
+                            </label>
                         </div>
                         {editintegrationoption === "enable" && (
-                          <div className='w-full'>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="User Name"
-                                id="editintegrationusername"
-                                name="editintegrationusername"
-                                placeholder="Enter User Name"
-                              />
-                              <InputField
-                                label="API Key"
-                                id="editintegrationapi"
-                                name="editintegrationapi"
-                                placeholder="Enter API Key"
-                              />
+                            <div className='w-full'>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="User Name"
+                                        id="editintegrationusername"
+                                        name="editintegrationusername"
+                                        placeholder="Enter User Name"
+                                    />
+                                    <InputField
+                                        label="API Key"
+                                        id="editintegrationapi"
+                                        name="editintegrationapi"
+                                        placeholder="Enter API Key"
+                                    />
+                                </div>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="DLT Approved Sender ID"
+                                        id="editintegrationdltsenderid"
+                                        name="editintegrationdltsenderid"
+                                        placeholder="Enter DLT Approved Sender ID"
+                                    />
+                                    <InputField
+                                        label="DLT Template ID"
+                                        id="editintegrationdlttemplateid"
+                                        name="editintegrationdlttemplateid"
+                                        placeholder="Enter DLT Template ID"
+                                    />
+                                </div>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="DLT Entity ID"
+                                        id="editintegrationdlentityid"
+                                        name="editintegrationdlentityid"
+                                        placeholder="Enter DLT Entity ID"
+                                    />
+                                    <UniversalTextArea
+                                        label="Content"
+                                        id="editintegrationcontent"
+                                        name="editintegrationcontent"
+                                        placeholder="Enter Content"
+                                        rows={10}
+                                    />
+                                </div>
                             </div>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="DLT Approved Sender ID"
-                                id="editintegrationdltsenderid"
-                                name="editintegrationdltsenderid"
-                                placeholder="Enter DLT Approved Sender ID"
-                              />
-                              <InputField
-                                label="DLT Template ID"
-                                id="editintegrationdlttemplateid"
-                                name="editintegrationdlttemplateid"
-                                placeholder="Enter DLT Template ID"
-                              />
-                            </div>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="DLT Entity ID"
-                                id="editintegrationdlentityid"
-                                name="editintegrationdlentityid"
-                                placeholder="Enter DLT Entity ID"
-                              />
-                              <UniversalTextArea
-                                label="Content"
-                                id="editintegrationcontent"
-                                name="editintegrationcontent"
-                                placeholder="Enter Content"
-                                rows={10}
-                              />
-                            </div>
-                          </div>
-            
+
                         )}
                         {editintegrationoption === "disable" && (
-                          <div className='w-full'>
-                            <AnimatedDropdown
-                              label="File"
-                              id="editintergrationfile"
-                              name="editintergrationfile"
-                              placeholder="Select File"
-                              options={[{ label: 'File1', value: 'File1' }]}
-                              onChange={(e) => console.log(e)}
-                            />
-                          </div>
-            
+                            <div className='w-full'>
+                                <AnimatedDropdown
+                                    label="File"
+                                    id="editintergrationfile"
+                                    name="editintergrationfile"
+                                    placeholder="Select File"
+                                    options={[{ label: 'File1', value: 'File1' }]}
+                                    onChange={(e) => console.log(e)}
+                                />
+                            </div>
+
                         )}
-            
-                      </div>
-                      <div className='flex justify-center'>
-                        <UniversalButton
-                          label="Submit"
-                          id="editintegrationsubmit"
-                          name="editintegrationsubmit"
-                        />
-                      </div>
+
                     </div>
+                    <div className='flex justify-center'>
+                        <UniversalButton
+                            label="Submit"
+                            id="editintegrationsubmit"
+                            name="editintegrationsubmit"
+                        />
+                    </div>
+                </div>
             </Dialog>
             <Dialog
-                    header="View Integration"
-                    visible={viewintegration}
-                    onHide={() => setViewIntegration(false)}
-                    className="lg:w-[45rem] md:w-[30rem] w-[20rem]"
-                    draggable={false}
-                  >
-                    <div className='space-y-2'>
-                      <div className='grid grid-cols-2 gap-2'>
+                header="View Integration"
+                visible={viewintegration}
+                onHide={() => setViewIntegration(false)}
+                className="lg:w-[45rem] md:w-[30rem] w-[20rem]"
+                draggable={false}
+            >
+                <div className='space-y-2'>
+                    <div className='grid grid-cols-2 gap-2'>
                         <div className='w-max-56'>
-                          <InputField
-                            label="Integration Name"
-                            id="viewintegrationname"
-                            name="viewintegrationname"
-                            placeholder="Enter Integration Name"
-                            readOnly={true}
-                          />
+                            <InputField
+                                label="Integration Name"
+                                id="viewintegrationname"
+                                name="viewintegrationname"
+                                placeholder="Enter Integration Name"
+                                readOnly={true}
+                            />
                         </div>
                         <div className='w-max-56'>
-                          <AnimatedDropdown
-                            label="Source"
-                            id="viewintergrationsource"
-                            name="viewintergrationsource"
-                            placeholder="Select Source"
-                            options={viewsourceOption}
-                            onChange={(e) => console.log(e)}
-                            readOnly={true}
-                          />
+                            <AnimatedDropdown
+                                label="Source"
+                                id="viewintergrationsource"
+                                name="viewintergrationsource"
+                                placeholder="Select Source"
+                                options={viewsourceOption}
+                                onChange={(e) => console.log(e)}
+                                readOnly={true}
+                            />
                         </div>
-                      </div>
-                      <div className='grid grid-cols-2 gap-2'>
+                    </div>
+                    <div className='grid grid-cols-2 gap-2'>
                         <div className='w-max-content'>
-            
-                          <AnimatedDropdown
-                            label="Keyword"
-                            id="viewintergrationkeyword"
-                            name="viewintergrationkeyword"
-                            placeholder="Enter Keyword"
-                            options={viewkeywordOption}
-                            onChange={(e) => console.log(e)}
-                            readOnly={true}
-                          />
+
+                            <AnimatedDropdown
+                                label="Keyword"
+                                id="viewintergrationkeyword"
+                                name="viewintergrationkeyword"
+                                placeholder="Enter Keyword"
+                                options={viewkeywordOption}
+                                onChange={(e) => console.log(e)}
+                                readOnly={true}
+                            />
                         </div>
                         <div className='w-max-content'>
-            
-                          <AnimatedDropdown
-                            label="Response"
-                            id="viewintergrationresponse"
-                            name="viewintergrationresponse"
-                            placeholder="Enter Response"
-                            options={viewrespinseOption}
-                            onChange={(e) => console.log(e)}
-                            readOnly={true}
-            
-                          />
+
+                            <AnimatedDropdown
+                                label="Response"
+                                id="viewintergrationresponse"
+                                name="viewintergrationresponse"
+                                placeholder="Enter Response"
+                                options={viewrespinseOption}
+                                onChange={(e) => console.log(e)}
+                                readOnly={true}
+
+                            />
                         </div>
-                      </div>
-                      <div className="flex flex-wrap gap-4 ">
+                    </div>
+                    <div className="flex flex-wrap gap-4 ">
                         {/* <div className="flex items-center justify-center">
                           <UniversalLabel
                             text="Status"
@@ -531,108 +531,108 @@ const TwowayIntegrationTable = ({ id, name, }) => {
                             className="text-sm font-medium text-gray-700"
                           />
                         </div> */}
-            
+
                         <div className="flex items-center gap-2">
-                          <RadioButton
-                            inputId="viewintegrationOption1"
-                            name="viewintegrationredio"
-                            value="enable"
-                            onChange={handleChangeViewStatus}
-                            checked={viewintegrationoption === "enable"}
-                          />
-                          <label
-                            htmlFor="viewintegrationOption1"
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            SMS
-                          </label>
+                            <RadioButton
+                                inputId="viewintegrationOption1"
+                                name="viewintegrationredio"
+                                value="enable"
+                                onChange={handleChangeViewStatus}
+                                checked={viewintegrationoption === "enable"}
+                            />
+                            <label
+                                htmlFor="viewintegrationOption1"
+                                className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                                SMS
+                            </label>
                         </div>
-            
+
                         <div className="flex items-center gap-2">
-                          <RadioButton
-                            inputId="viewintegrationOption2"
-                            name="viewintegrationredio"
-                            value="disable"
-                            onChange={handleChangeViewStatus}
-                            checked={viewintegrationoption === "disable"}
-                          />
-                          <label
-                            htmlFor="viewintegrationOption2"
-                            className="text-sm font-medium text-gray-700 cursor-pointer"
-                          >
-                            Voice
-                          </label>
+                            <RadioButton
+                                inputId="viewintegrationOption2"
+                                name="viewintegrationredio"
+                                value="disable"
+                                onChange={handleChangeViewStatus}
+                                checked={viewintegrationoption === "disable"}
+                            />
+                            <label
+                                htmlFor="viewintegrationOption2"
+                                className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                                Voice
+                            </label>
                         </div>
                         {viewintegrationoption === "enable" && (
-                          <div className='w-full'>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="User Name"
-                                id="viewintegrationusername"
-                                name="viewintegrationusername"
-                                placeholder="Enter User Name"
-                                readOnly={true}
-                              />
-                              <InputField
-                                label="API Key"
-                                id="viewintegrationapi"
-                                name="viewintegrationapi"
-                                placeholder="Enter API Key"
-                                readOnly={true}
-                              />
+                            <div className='w-full'>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="User Name"
+                                        id="viewintegrationusername"
+                                        name="viewintegrationusername"
+                                        placeholder="Enter User Name"
+                                        readOnly={true}
+                                    />
+                                    <InputField
+                                        label="API Key"
+                                        id="viewintegrationapi"
+                                        name="viewintegrationapi"
+                                        placeholder="Enter API Key"
+                                        readOnly={true}
+                                    />
+                                </div>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="DLT Approved Sender ID"
+                                        id="viewintegrationdltsenderid"
+                                        name="viewintegrationdltsenderid"
+                                        placeholder="Enter DLT Approved Sender ID"
+                                        readOnly={true}
+                                    />
+                                    <InputField
+                                        label="DLT Template ID"
+                                        id="viewintegrationdlttemplateid"
+                                        name="viewintegrationdlttemplateid"
+                                        placeholder="Enter DLT Template ID"
+                                        readOnly={true}
+                                    />
+                                </div>
+                                <div className='grid grid-cols-2 gap-2'>
+                                    <InputField
+                                        label="DLT Entity ID"
+                                        id="viewintegrationdlentityid"
+                                        name="viewintegrationdlentityid"
+                                        placeholder="Enter DLT Entity ID"
+                                        readOnly={true}
+                                    />
+                                    <UniversalTextArea
+                                        label="Content"
+                                        id="viewintegrationcontent"
+                                        name="viewintegrationcontent"
+                                        placeholder="Enter Content"
+                                        rows={10}
+                                        readOnly={true}
+                                    />
+                                </div>
                             </div>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="DLT Approved Sender ID"
-                                id="viewintegrationdltsenderid"
-                                name="viewintegrationdltsenderid"
-                                placeholder="Enter DLT Approved Sender ID"
-                                readOnly={true}
-                              />
-                              <InputField
-                                label="DLT Template ID"
-                                id="viewintegrationdlttemplateid"
-                                name="viewintegrationdlttemplateid"
-                                placeholder="Enter DLT Template ID"
-                                readOnly={true}
-                              />
-                            </div>
-                            <div className='grid grid-cols-2 gap-2'>
-                              <InputField
-                                label="DLT Entity ID"
-                                id="viewintegrationdlentityid"
-                                name="viewintegrationdlentityid"
-                                placeholder="Enter DLT Entity ID"
-                                readOnly={true}
-                              />
-                              <UniversalTextArea
-                                label="Content"
-                                id="viewintegrationcontent"
-                                name="viewintegrationcontent"
-                                placeholder="Enter Content"
-                                rows={10}
-                                readOnly={true}
-                              />
-                            </div>
-                          </div>
-            
+
                         )}
                         {viewintegrationoption === "disable" && (
-                          <div className='w-full'>
-                            <AnimatedDropdown
-                              label="File"
-                              id="viewintergrationfile"
-                              name="viewintergrationfile"
-                              placeholder="Select File"
-                              options={[{ label: 'File1', value: 'File1' }]}
-                              onChange={(e) => console.log(e)}
-                            />
-                          </div>
-            
+                            <div className='w-full'>
+                                <AnimatedDropdown
+                                    label="File"
+                                    id="viewintergrationfile"
+                                    name="viewintergrationfile"
+                                    placeholder="Select File"
+                                    options={[{ label: 'File1', value: 'File1' }]}
+                                    onChange={(e) => console.log(e)}
+                                />
+                            </div>
+
                         )}
-            
-                      </div>
+
                     </div>
+                </div>
             </Dialog>
         </div>
     )

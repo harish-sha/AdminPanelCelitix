@@ -43,14 +43,14 @@ const DocsSidebar = ({ isCollapsed, setIsCollapsed }) => {
     };
 
     // const navigate = useNavigate();
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        toast.success("Logged out successfully!");
-        // window.location.href = "/login";
-        setTimeout(() => {
-            window.location.href = "/login";
-        }, 1000)
-    };
+    // const handleLogout = () => {
+    //     localStorage.removeItem("token");
+    //     toast.success("Logged out successfully!");
+    //     // window.location.href = "/login";
+    //     setTimeout(() => {
+    //         window.location.href = "/login";
+    //     }, 1000)
+    // };
 
 
     useEffect(() => {

@@ -22,7 +22,7 @@ const SMPPErrorCode = () => {
     { value: 'Service3', label: 'Service3' },
   ];
   const handleServiceAdd = (service) => {
-    console.log(service);
+    // console.log(service);
   };
   const displaytypeOptions = [
     { value: 'Display1', label: 'Display1' },
@@ -30,7 +30,7 @@ const SMPPErrorCode = () => {
     { value: 'Display3', label: 'Display3' },
   ];
   const handleDisplaytyperAdd = (display) => {
-    console.log(display);
+    // console.log(display);
   };
   const displayreasonOptions = [
     { value: 'Vendor1', label: 'Vendor1' },
@@ -38,7 +38,7 @@ const SMPPErrorCode = () => {
     { value: 'Vendor3', label: 'Vendor3' },
   ];
   const handleDisplayreasonAdd = (reason) => {
-    console.log(reason);
+    // console.log(reason);
   };
 
 

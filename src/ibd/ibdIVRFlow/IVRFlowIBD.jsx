@@ -56,24 +56,24 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 };
 const IVRFlowIBD = ({ id, name }) => {
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
-        const [selectedRows, setSelectedRows] = useState([]);
-  const columns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 100 },
-    { field: 'displaynumber', headerName: 'Display Number', flex: 1, minWidth: 140 },
-    { field: 'from', headerName: 'From', flex: 1, minWidth: 90 },
-    { field: 'to', headerName: 'To', flex: 1, minWidth: 80 },
-    { field: 'starttime', headerName: 'Start Time', flex: 1, minWidth: 100 },
-    { field: 'endtime', headerName: 'End Time', flex: 1, minWidth: 80 },
-    { field: 'duration', headerName: 'Duration', flex: 1, minWidth: 100 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 80 },
-    {
-        field: 'action',
-        headerName: 'Action',
-        flex: 1,
-        minWidth: 200,
-        renderCell: (params) => (
-            <>
-                {/* <CustomTooltip
+    const [selectedRows, setSelectedRows] = useState([]);
+    const columns = [
+        { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 100 },
+        { field: 'displaynumber', headerName: 'Display Number', flex: 1, minWidth: 140 },
+        { field: 'from', headerName: 'From', flex: 1, minWidth: 90 },
+        { field: 'to', headerName: 'To', flex: 1, minWidth: 80 },
+        { field: 'starttime', headerName: 'Start Time', flex: 1, minWidth: 100 },
+        { field: 'endtime', headerName: 'End Time', flex: 1, minWidth: 80 },
+        { field: 'duration', headerName: 'Duration', flex: 1, minWidth: 100 },
+        { field: 'status', headerName: 'Status', flex: 1, minWidth: 80 },
+        {
+            field: 'action',
+            headerName: 'Action',
+            flex: 1,
+            minWidth: 200,
+            renderCell: (params) => (
+                <>
+                    {/* <CustomTooltip
                     title="Play"
                     placement="top"
                     arrow
@@ -86,58 +86,58 @@ const IVRFlowIBD = ({ id, name }) => {
                             }} />
                     </IconButton>
                 </CustomTooltip> */}
-               
-            </>
-        ),
-    },
-];
 
-const rows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    displaynumber: '1102584632',
-    from: '8524569852',
-    to: '7425863256',
-    starttime: '14:58:08',
-    endtime: '15:58:08',
-    duration: '22-09-2023',
-    status: 'Failed',
-}));
+                </>
+            ),
+        },
+    ];
 
-const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+    const rows = Array.from({ length: 20 }, (_, i) => ({
+        id: i + 1,
+        sn: i + 1,
+        displaynumber: '1102584632',
+        from: '8524569852',
+        to: '7425863256',
+        starttime: '14:58:08',
+        endtime: '15:58:08',
+        duration: '22-09-2023',
+        status: 'Failed',
+    }));
 
-const CustomFooter = () => {
-    return (
-        <GridFooterContainer sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            justifyContent: { xs: "center", lg: "space-between" },
-            alignItems: "center",
-            padding: 1,
-            gap: 2,
-            overflowX: "auto",
-        }}>
-            <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
-                {selectedRows.length > 0 && (
-                    <Typography variant="body2" sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}>
-                        {selectedRows.length} Rows Selected
+    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
+    const CustomFooter = () => {
+        return (
+            <GridFooterContainer sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: { xs: "center", lg: "space-between" },
+                alignItems: "center",
+                padding: 1,
+                gap: 2,
+                overflowX: "auto",
+            }}>
+                <Box sx={{ display: "flex", alignItems: "center", flexWrap: "wrap", gap: 1.5 }}>
+                    {selectedRows.length > 0 && (
+                        <Typography variant="body2" sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}>
+                            {selectedRows.length} Rows Selected
+                        </Typography>
+                    )}
+
+                    <Typography variant="body2">
+                        Total Records: <span className='font-semibold'>{rows.length}</span>
                     </Typography>
-                )}
+                </Box>
 
-                <Typography variant="body2">
-                    Total Records: <span className='font-semibold'>{rows.length}</span>
-                </Typography>
-            </Box>
-
-            <Box sx={{ display: "flex", justifyContent: "center", width: { xs: "100%", sm: "auto" } }}>
-                <CustomPagination totalPages={totalPages} paginationModel={paginationModel} setPaginationModel={setPaginationModel} />
-            </Box>
-        </GridFooterContainer>
-    );
-};
-  return (
-    <div>
-     <Paper sx={{ height: 558 }} id={id} name={name}>
+                <Box sx={{ display: "flex", justifyContent: "center", width: { xs: "100%", sm: "auto" } }}>
+                    <CustomPagination totalPages={totalPages} paginationModel={paginationModel} setPaginationModel={setPaginationModel} />
+                </Box>
+            </GridFooterContainer>
+        );
+    };
+    return (
+        <div>
+            <Paper sx={{ height: 558 }} id={id} name={name}>
                 <DataGrid
                     id={id}
                     name={name}
@@ -167,8 +167,8 @@ const CustomFooter = () => {
                     }}
                 />
             </Paper>
-    </div>
-  )
+        </div>
+    )
 }
 
 export default IVRFlowIBD

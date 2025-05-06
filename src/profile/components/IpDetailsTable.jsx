@@ -76,12 +76,6 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
     pageSize: 10,
   });
 
-  const handleView = (row) => {
-    console.log("view details:", row);
-    setSelectedRow(row);
-  };
-
-
   // const columns = [
   //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
   //   {
@@ -336,6 +330,35 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
       return row;
     })
     : [];
+
+  // Function to filter out unwanted fields
+  const filterRowData = (row) => {
+    const excludedFields = [
+      "id",
+      "sn",
+      "network",
+      "languages",
+      "country_area",
+      "country_population",
+      "country_tld",
+      "continent_code",
+      "in_eu",
+      "utc_offset",
+    ];
+    const filteredRow = Object.keys(row)
+      .filter((key) => !excludedFields.includes(key))
+      .reduce((acc, key) => {
+        acc[key] = row[key];
+        return acc;
+      }, {});
+    return filteredRow;
+  };
+
+  // Handle View Details
+  const handleView = (row) => {
+    const filteredRow = filterRowData(row);
+    setSelectedRow(filteredRow);
+  };
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 

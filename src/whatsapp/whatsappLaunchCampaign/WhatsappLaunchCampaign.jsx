@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
@@ -18,6 +18,7 @@ import TemplateForm from "./components/TemplateForm.jsx";
 import InputField from "../../components/layout/InputField.jsx";
 import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
+import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -73,6 +74,20 @@ const WhatsappLaunchCampaign = () => {
   const [isCountryCodeChecked, setIsCountryCodeChecked] = useState(false);
   const [varLength, setVarLength] = useState(0);
   const [isUploaded, setIsUploaded] = useState(false);
+  const [fileData, setFileData] = useState([]);
+
+  const [cardIndex, setCardIndex] = useState(0);
+
+  const fileRef = useRef(null);
+
+  function handleNextCard() {
+    setCardIndex(cardIndex + 1);
+  }
+
+  function handlePreviousCard() {
+    if (cardIndex === 0) return;
+    setCardIndex(cardIndex - 1);
+  }
 
   const handleUrlIndexChange = (index) => {
     setUrlIndex(index);
@@ -134,7 +149,6 @@ const WhatsappLaunchCampaign = () => {
         );
         return;
       }
-
     }
 
     if (selectedOption === "option1") {
@@ -148,11 +162,10 @@ const WhatsappLaunchCampaign = () => {
       Object.entries(formData).filter(([key, value]) => value !== "")
     );
 
-
-    if (varLength !== Object.keys(filterObj).length) {
-      toast.error("Please enter a all variable values!");
-      return;
-    }
+    // if (varLength !== Object.keys(filterObj).length) {
+    //   toast.error("Please enter a all variable values!");
+    //   return;
+    // }
 
     if (isCountryCodeChecked) {
       if (!selectedCountryCode || selectedCountryCode === "no") {
@@ -160,8 +173,6 @@ const WhatsappLaunchCampaign = () => {
         return;
       }
     }
-
-    // ✅ If all validations pass, open the review dialog
 
     let finalTotalRecords = 0;
 
@@ -190,10 +201,49 @@ const WhatsappLaunchCampaign = () => {
       (template) => template.templateName === selectedTemplate
     );
 
-    // ✅ Extract only BODY variables from templateDataNew
     const bodyVariables = templateDataNew?.components
       ?.filter((component) => component.type === "BODY")
       ?.flatMap((component) => extractVariablesFromText(component.text));
+
+    const headerComponent = templateDataNew.components.find(
+      (comp) =>
+        comp.type === "HEADER" &&
+        ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp?.format)
+    );
+
+    if (
+      ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent?.format) &&
+      !imagePreview
+    ) {
+      toast.error("Please upload a media file.");
+      return;
+    }
+
+    const isCarousal = templateDataNew.components.find(
+      (comp) => comp.type === "CAROUSEL"
+    );
+
+    // console.log("isCarousal", isCarousal);
+    const imgCards = [];
+
+    let isError = false;
+
+    if (isCarousal) {
+      Object.keys(fileData).forEach((key) => {
+        if (!fileData[key].filePath) {
+          toast.error(`Please upload a file for Card ${key + 1}.`);
+          isError = true;
+          return;
+        }
+        const filePath = fileData[key].filePath;
+        imgCards.push(filePath);
+      });
+    }
+    // return
+
+    if (isError) {
+      return;
+    }
 
     const contentValues = bodyVariables
       ?.map((variable) => {
@@ -203,7 +253,6 @@ const WhatsappLaunchCampaign = () => {
       })
       ?.join(",");
 
-    // ✅ If using Groups, clear file-related data
     if (isGroup === 1) {
       setXlsxPath("");
       setTotalRecords("");
@@ -211,13 +260,11 @@ const WhatsappLaunchCampaign = () => {
       setSelectedMobileColumn("");
     }
 
-    // ✅ Ensure `groupValues` is formatted correctly
     const groupValues =
       isGroup === 1 && selectedGroups.length > 0
         ? selectedGroups.join(",")
         : "-1";
 
-    // ✅ Ensure groups data is available before using it
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
       console.error("Groups data is not available.");
       toast.error(
@@ -250,7 +297,16 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
-    // ✅ Prepare Request Payload
+    const date = new Date(scheduledDateTime);
+
+    const padZero = (num) => num.toString().padStart(2, "0");
+
+    const scheduleDateFormat = `${date.getFullYear()}-${padZero(
+      date.getMonth() + 1
+    )}-${padZero(date.getDate())} ${padZero(date.getHours())}:${padZero(
+      date.getMinutes()
+    )}:${padZero(date.getSeconds())}`;
+
     const requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
@@ -265,7 +321,7 @@ const WhatsappLaunchCampaign = () => {
       variables: [],
       xlsxpath: xlsxPath,
       // totalRecords: totalRecords,
-      totalRecords: finalTotalRecords, // ✅ Correct total records value
+      totalRecords: finalTotalRecords,
       attachmentfile: imageFile || "",
       urlValues: "",
       urlIndex: urlIndex ?? -1,
@@ -273,14 +329,16 @@ const WhatsappLaunchCampaign = () => {
       isGroup: isGroup,
       countryCode: selectedCountryCode || "",
       ScheduleCheck: schedule && scheduledDateTime ? "1" : "0",
-      scheduleDateTime: schedule && scheduledDateTime ? scheduledDateTime : "0",
+      scheduleDateTime:
+        schedule && scheduledDateTime ? scheduleDateFormat : "0",
       groupValues,
+      imgCard: imgCards,
+      cardsVariables: [],
+      vendor: "jio",
     };
 
-    // ✅ Send API request
     try {
       const response = await sendWhatsappCampaign(requestData);
-      console.log(requestData);
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setIsLoading(false);
@@ -322,6 +380,9 @@ const WhatsappLaunchCampaign = () => {
         setIsSubmitting(false);
         setIsCountryCodeChecked(false);
         setVarLength(0);
+        setFileData([]);
+        setIsGroup(-1);
+        fileRef.current.value = "";
       } else {
         toast.error(response?.message || "Campaign launch failed.");
       }
@@ -467,7 +528,7 @@ const WhatsappLaunchCampaign = () => {
           <div className="container-fluid">
             <div className="flex flex-wrap">
               <div className=" w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
-                <div className="w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
+                <div className="w-100 p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 ">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div className="flex-1">
                       <AnimatedDropdown
@@ -493,7 +554,7 @@ const WhatsappLaunchCampaign = () => {
                         value={selectedWabaMobileNo.join(", ")}
                         readOnly
                         disabled
-                        placeholder="Your Waba Mobile No"
+                        placeholder="Phone No."
                       />
                     </div>
                   </div>
@@ -510,7 +571,7 @@ const WhatsappLaunchCampaign = () => {
                     />
                   </div>
                   <div className="mb-3">
-                    <AnimatedDropdown
+                    <DropdownWithSearch
                       id="selectTemplateType"
                       name="selectTemplateType"
                       label="Select Template"
@@ -531,7 +592,8 @@ const WhatsappLaunchCampaign = () => {
                   </div>
                   <div>
                     {isFetching ? (
-                      <UniversalSkeleton height="15rem" width="100%" />
+                      // <UniversalSkeleton height="15rem" width="100%" />
+                      <></>
                     ) : (
                       templateDataNew && (
                         <TemplateForm
@@ -548,6 +610,10 @@ const WhatsappLaunchCampaign = () => {
                           selectedTemplateData={selectedTemplateData}
                           onUrlIndexChange={setUrlIndex}
                           setVarLength={setVarLength}
+                          setCardIndex={setCardIndex}
+                          cardIndex={cardIndex}
+                          setFileData={setFileData}
+                          fileData={fileData}
                         />
                       )
                     )}
@@ -568,23 +634,27 @@ const WhatsappLaunchCampaign = () => {
                     uploadedFile={uploadedFile}
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
+                    fileRef={fileRef}
                   // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
 
-              <div className="w-full lg:w-1/3 px-5 lg:mt-0 mt-5 min-h-[80vh]">
-                {isFetching ? (
+              <div className="w-full lg:w-1/3 lg:px-5 md:px-2 px-2 lg:mt-0 mt-5 min-h-[80vh]">
+                {/* {isFetching ? (
                   <div className="w-full">
                     <UniversalSkeleton height="46rem" width="100%" />
                   </div>
-                ) : (
-                  <WhatsappLaunchPreview
-                    templateDataNew={templateDataNew}
-                    formData={formData}
-                    uploadedImage={imagePreview}
-                  />
-                )}
+                ) : ( */}
+                <WhatsappLaunchPreview
+                  templateDataNew={templateDataNew}
+                  formData={formData}
+                  uploadedImage={imagePreview}
+                  setCardIndex={setCardIndex}
+                  cardIndex={cardIndex}
+                  fileData={fileData}
+                />
+                {/* )} */}
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">

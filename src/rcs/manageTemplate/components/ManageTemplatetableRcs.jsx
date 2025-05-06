@@ -9,6 +9,9 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Switch } from "@mui/material";
+import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
+import toast from "react-hot-toast";
+import { syncTemplateRcs } from "@/apis/rcs/rcs";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -78,7 +81,8 @@ const ManageTemplatetableRcs = ({
   setTemplateid,
   setTemplateDeleteVisible,
   updateTemplateStatus,
-  fetchTemplateDataDetails
+  fetchTemplateDataDetails,
+  handleFetchTempData,
 }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [selectedRow, setSelectedRow] = useState(null);
@@ -86,6 +90,13 @@ const ManageTemplatetableRcs = ({
     page: 0,
     pageSize: 10,
   });
+
+  const handleRefreshStatus = async (data) => {
+    const res = await syncTemplateRcs(data?.srno);
+    toast.success("Status Updated Successfully");
+
+    await handleFetchTempData(id);
+  };
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -111,27 +122,29 @@ const ManageTemplatetableRcs = ({
       minWidth: 120,
       renderCell: (params) => (
         <>
-          <CustomTooltip
-            arrow
-            placement="top"
-            title={params.row.active === 1 ? "Active" : "Inactive"}
-          >
-            <Switch
-              checked={params.row.active === 1}
-              onChange={() => {
-                updateTemplateStatus(params.row);
-              }}
-              sx={{
-                "& .MuiSwitch-switchBase.Mui-checked": {
-                  color: "#34C759",
-                },
-                "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+          {params?.row?.status === "approved" && (
+            <CustomTooltip
+              arrow
+              placement="top"
+              title={params.row.active === 1 ? "Active" : "Inactive"}
+            >
+              <Switch
+                checked={params.row.active === 1}
+                onChange={() => {
+                  updateTemplateStatus(params.row);
+                }}
+                sx={{
+                  "& .MuiSwitch-switchBase.Mui-checked": {
+                    color: "#34C759",
+                  },
+                  "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
                   {
                     backgroundColor: "#34C759",
                   },
-              }}
-            />
-          </CustomTooltip>
+                }}
+              />
+            </CustomTooltip>
+          )}
         </>
       ),
     },
@@ -158,30 +171,58 @@ const ManageTemplatetableRcs = ({
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip title="Edit Template" placement="top" arrow>
-            <IconButton onClick={() => handleEdit(params.row)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
+
+          {["Operator processing", "Submitted"].includes(params.row.status) && (
+            <CustomTooltip title="Sync Status" placement="top" arrow>
+              <IconButton
+                className="text-xs"
+                onClick={() => {
+                  handleRefreshStatus(params.row);
                 }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip title="Delete Template" placement="top" arrow>
-            <IconButton
-              className="no-xs"
-              onClick={() => {
-                setTemplateDeleteVisible(true);
-                setTemplateid(params.row.srno);
-              }}
-            >
-              <MdOutlineDeleteForever
-                className="text-red-500 cursor-pointer hover:text-red-600"
-                size={20}
-              />
-            </IconButton>
-          </CustomTooltip>
+              >
+                <SyncOutlinedIcon
+                  sx={{
+                    fontSize: "1.2rem",
+                    color: "green",
+                  }}
+                />
+              </IconButton>
+            </CustomTooltip>
+          )}
+          {params?.row?.status === "Pending" && (
+            <CustomTooltip title="Delete Template" placement="top" arrow>
+              <IconButton
+                className="no-xs"
+                onClick={() => {
+                  // console.log(params.row);
+                  setTemplateDeleteVisible(true);
+                  setTemplateid(params.row);
+                }}
+              >
+                <MdOutlineDeleteForever
+                  className="text-red-500 cursor-pointer hover:text-red-600"
+                  size={20}
+                />
+              </IconButton>
+            </CustomTooltip>
+          )}
+          {params?.row?.status === "rejected" && (
+            <CustomTooltip title="Delete Template" placement="top" arrow>
+              <IconButton
+                className="no-xs"
+                onClick={() => {
+                  // console.log(params.row);
+                  setTemplateDeleteVisible(true);
+                  setTemplateid(params.row);
+                }}
+              >
+                <MdOutlineDeleteForever
+                  className="text-red-500 cursor-pointer hover:text-red-600"
+                  size={20}
+                />
+              </IconButton>
+            </CustomTooltip>
+          )}
         </>
       ),
     },
@@ -189,11 +230,12 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: item.srno,
-        sn: i + 1,
-        ...item,
-      }))
+      id: item.srno,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
+
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
   const CustomFooter = () => {
@@ -266,9 +308,9 @@ const ManageTemplatetableRcs = ({
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           onRowSelectionModelChange={(ids) => {
-            console.log(ids)
+            // console.log(ids);
           }}
-          checkboxSelection
+          // checkboxSelection
           disableRowSelectionOnClick
           disableColumnResize
           disableColumnMenu

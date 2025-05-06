@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
-import { WhatsApp } from "@mui/icons-material";
 import { useOutletContext } from "react-router-dom";
-
 import AnimatedDropdown from "../components/AnimatedDropdown.jsx";
-import InputField from "../components/InputField.jsx";
-import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import LanguageSelect from "../components/LanguageSelect.jsx";
+import InputField from "../components/InputField.jsx";
+import { WhatsApp } from "@mui/icons-material";
+
+import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import TemplatePreview from "./components/TemplatePreview.jsx";
+import AuthPreview from "./components/AuthPreview.jsx";
 import InteractiveActions from "../whatsappcreatetemplate/components/InteractiveActions.jsx";
 import TemplateTypes from "../whatsappcreatetemplate/components/TemplateTypes.jsx";
 import CarouselTemplatePreview from "../whatsappcreatetemplate/components/CarouselTemplatePreview.jsx";
@@ -20,26 +21,25 @@ import {
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
+import { te } from "date-fns/locale";
+import CustomTooltip from "../components/CustomTooltip.jsx";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
-  const { scrollableContainerRef } = useOutletContext();
-
+  // const { scrollableContainerRef } = useOutletContext();
   const [wabaList, setWabaList] = useState(null);
   const [selectedWaba, setSelectedWaba] = useState("");
   const [selectedWabaSno, setSelectedWabaSno] = useState("");
-
   const [valueWithoutSpaces, setValueWithoutSpaces] = useState("");
-
   const [templateName, setTemplateName] = useState("");
   // const [selectedOption, setSelectedOption] = useState('');
   const [selectedOption2, setSelectedOption2] = useState("");
   const [selectedOption3, setSelectedOption3] = useState("");
-
   const [selectedLanguage, setSelectedLanguage] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
-
-  const [selectedTemplateType, setSelectedTemplateType] = useState("");
+  const [selectedTemplateType, setSelectedTemplateType] = useState("text");
   const [templateHeader, setTemplateHeader] = useState("");
   const [templateFormat, setTemplateFormat] = useState("");
   const [templateFooter, setTemplateFooter] = useState("");
@@ -49,9 +49,7 @@ const WhatsappCreateTemplate = () => {
   const [locationUrl, setLocationUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [file, setFile] = useState(null);
-
   const [selectedCardIndex, setSelectedCardIndex] = useState(0);
-
   const [interactiveAction, setInteractiveAction] = useState("none");
   const [phoneNumber, setPhoneNumber] = useState("");
   const [phoneTitle, setPhoneTitle] = useState("");
@@ -59,6 +57,7 @@ const WhatsappCreateTemplate = () => {
   const [urlTitle, setUrlTitle] = useState("");
   const [quickReplies, setQuickReplies] = useState([]);
   const [urlValid, setUrlValid] = useState(true);
+  const [fileUploadUrl, setFileUploadUrl] = useState("");
   const [cards, setCards] = useState([
     {
       mediaType: "image",
@@ -66,27 +65,29 @@ const WhatsappCreateTemplate = () => {
       body: "This is a dummy card body. You can change this content later.",
       footer: "This is a dummy footer. You can change this content later.",
       actions: [],
+      uploadUrl: "",
     },
   ]);
   const [variables, setVariables] = useState([]);
-
   const [templatePreview, setTemplatePreview] = useState("");
   const [carouselMediaType, setCarouselMediaType] = useState("");
   const [urlVariables, setUrlVariables] = useState([]);
 
+  const [isFetching, setIsFetching] = useState(false);
+
+
+  const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
   };
-
   const templateTypeOptions = [
     { value: "text", label: "Text" },
     { value: "image", label: "Image" },
     { value: "video", label: "Video" },
     { value: "document", label: "Document" },
-    { value: "location", label: "Location" },
-    { value: "carousel", label: "Carousel" }, // Only for marketing
+    // { value: "location", label: "Location" },
+    { value: "carousel", label: "Carousel" },
   ];
-
   const handleDeleteCard = (index) => {
     setCards(cards.filter((_, i) => i !== index));
   };
@@ -97,7 +98,6 @@ const WhatsappCreateTemplate = () => {
       try {
         setIsLoading(true);
         const response = await getWabaList();
-        console.log(response);
 
         if (response) {
           setWabaList(response);
@@ -142,6 +142,14 @@ const WhatsappCreateTemplate = () => {
   const handleTemplateTypeChange = (value) => {
     setSelectedTemplateType(value);
     setCarouselMediaType("");
+    setTemplateHeader("");
+    setTemplateFormat("");
+    setTemplateFooter("");
+    setImageUrl(null);
+    setVideoUrl(null);
+    setDocumentUrl(null);
+    setLocationUrl("");
+    setFile(null);
   };
 
   const handleCarouselMediaTypeChange = (value) => {
@@ -160,12 +168,26 @@ const WhatsappCreateTemplate = () => {
   };
 
   const handleAddVariable = (setState, variable) => {
+    if (templateFormat.length + variable.length >= 1024) return;
     setState((prev) => `${prev} {${variable}}`);
   };
 
-  const handleEmojiSelect = (setState, emoji) => {
+  const handleEmojiSelect = (setState, emoji, len, type) => {
+    if (type.length + emoji.length >= len) return;
     setState((prev) => `${prev}${emoji}`);
   };
+
+  useEffect(() => {
+    if (templateFormat.length > 1024) {
+      toast.error("Maximum 1024 characters allowed");
+    }
+  }, [templateFormat]);
+
+  useEffect(() => {
+    if (templateFooter.length > 60) {
+      toast.error("Maximum 60 characters allowed");
+    }
+  }, [templateFooter]);
 
   const handleQuickReplyChange = (index, value) => {
     const newQuickReplies = [...quickReplies];
@@ -216,10 +238,12 @@ const WhatsappCreateTemplate = () => {
       toast.error("Please select a category.");
       return;
     }
-    if (!selectedTemplateType) {
+
+    if (selectedCategory !== "AUTHENTICATION" && !selectedTemplateType) {
       toast.error("Please select a template type.");
       return;
     }
+
     // if (!carouselMediaType) {
     //   toast.error("Please select a carousel media type.");
     //   return;
@@ -232,16 +256,27 @@ const WhatsappCreateTemplate = () => {
       toast.error("Template name is required.");
       return;
     }
-    if (!templateFormat) {
+    if (selectedCategory !== "AUTHENTICATION" && !templateFormat) {
       toast.error("Template format is required.");
       return;
     }
 
-    // const imageSent = await uploadImageFile(imageUrl)
-    // console.log(imageSent.fileUrl);
-    // return
+    if (selectedCategory === "AUTHENTICATION" && !expiryTime) {
+      toast.error("Expiry time is required.");
+      return;
+    }
 
-    const varvalue = variables.map((variable) => variable.value);
+    if (expiryTime > 90) {
+      toast.error("Expiry time should be less than 90 mins");
+      return;
+    }
+
+    const varvalue = variables.map((variable, index) => {
+      if (!variable.value) {
+        return toast.error(`Please enter value for variable ${index + 1}`);
+      }
+      return variable.value;
+    });
 
     const btns = [];
     if (phoneTitle && phoneNumber) {
@@ -285,6 +320,17 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
+    // if (selectedTemplateType === "text" && templateHeader) {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: "TEXT",
+    //     text: templateHeader,
+    //     example: {
+    //       header_text: [],
+    //     },
+    //   });
+    // }
+
     // insert data in component dynamicall
     if (varvalue.length > 0) {
       data.components.push({
@@ -315,35 +361,254 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
-    if (selectedCategory === "UTILITY") {
-      data.components.push({
-        type: "HEADER",
-        format: selectedTemplateType,
-      });
+    if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
+      if (!fileUploadUrl) {
+        toast.error("Please upload a file");
+        return;
+      }
     }
 
+    if (selectedTemplateType != "text") {
+      data.components.push({
+        type: "HEADER",
+        format: selectedTemplateType.toUpperCase(),
+        example: {
+          header_handle: [fileUploadUrl],
+        },
+      });
+    }
+    // "components": [
+    //         // {
+    //         //     "type": "body",
+    //         //     "add_security_recommendation": "" // Optional
+    //         // },
+    //         {
+    //             "type": "footer",
+    //             "code_expiration_minutes": "90" // Optional
+    //         }
+    //         // {
+    //         //     "type": "buttons",
+    //         //     "buttons": [
+    //         //         {
+    //         //             "type": "otp",
+    //         //             "otp_type": "one_tap",
+    //         //             "text": "copy code new", // Optional
+    //         //             "autofill_text": "auto fill" // Optional
+    //         //         }
+    //         //     ]
+    //         // }
+    //     ]
+    let carData = {};
+
+    if (selectedTemplateType === "carousel") {
+      carData = {
+        name: templateName,
+        category: selectedCategory,
+        language: selectedLanguage,
+        wabaMobile: selectedWaba,
+        whatsappSrno: selectedWabaSno,
+        components: [
+          {
+            type: "CAROUSEL",
+            cards: [],
+          },
+        ],
+      };
+
+      if (varvalue.length > 0) {
+        carData.components.push({
+          type: "BODY",
+          text: templateFormat,
+          example: {
+            body_text: [varvalue],
+          },
+        });
+      } else {
+        carData.components.push({
+          type: "BODY",
+          text: templateFormat,
+        });
+      }
+
+      let isError = false;
+
+      cards.length > 0 &&
+        cards.map((i, index) => {
+          let btns = {
+            type: "BUTTONS",
+            buttons: [],
+          };
+
+          if (i.actions.length === 0) {
+            isError = true;
+            return toast.error(
+              `At least one action is required for Card ${index + 1}`
+            );
+          }
+
+          if (!i.uploadUrl) {
+            isError = true;
+            return toast.error(`Please upload media for Card ${index + 1}`);
+          }
+
+          i.actions.map((btn) => {
+            if (btn.type === "url") {
+              if (!btn.url || btn.url.trim() === "http://") {
+                isError = true;
+                return toast.error("Please enter url ");
+              }
+              if (!btn.title) {
+                isError = true;
+                return toast.error("Please enter title");
+              }
+              btns.buttons.push({
+                type: "URL",
+                text: btn.title,
+                url: btn.url,
+              });
+            }
+            if (btn.type === "phone") {
+              if (!btn.phoneNumber || btn.phoneNumber.trim() === "+91") {
+                isError = true;
+                return toast.error("Please enter a valid phone number");
+              }
+              if (!btn.title) {
+                isError = true;
+                return toast.error("Please enter title");
+              }
+              btns.buttons.push({
+                type: "PHONE_NUMBER",
+                text: btn.title,
+                phone_number: btn.phoneNumber,
+              });
+            }
+            if (btn.type === "quickReply") {
+              if (!btn.title) {
+                isError = true;
+                return toast.error("Please enter title");
+              }
+              btns.buttons.push({
+                type: "QUICK_REPLY",
+                text: btn.title,
+              });
+            }
+          });
+          const cardsdata = {
+            components: [
+              {
+                type: "HEADER",
+                format: carouselMediaType.toUpperCase(),
+                example: {
+                  header_handle: [i.uploadUrl],
+                },
+              },
+              {
+                type: "BODY",
+                text: i.body,
+              },
+            ],
+          };
+
+          if (btns.buttons.length > 0) {
+            cardsdata.components.push(btns);
+          }
+
+          carData.components[0].cards.push(cardsdata);
+        });
+
+      if (isError) {
+        return;
+      }
+    }
+
+    let authPayLoad = {};
+    if (selectedCategory === "AUTHENTICATION") {
+      authPayLoad = {
+        name: templateName,
+        category: selectedCategory,
+        language: selectedLanguage,
+        wabaMobile: selectedWaba,
+        whatsappSrno: selectedWabaSno,
+        components: [
+          {
+            type: "footer",
+            code_expiration_minutes: expiryTime,
+          },
+        ],
+      };
+    }
+    let payload = "";
+
+    if (selectedCategory === "AUTHENTICATION") {
+      payload = authPayLoad;
+      // return;
+    } else if (selectedTemplateType != "carousel") {
+      payload = data;
+      // return;
+    } else if (selectedTemplateType === "carousel") {
+      payload = carData;
+      // return;
+    }
     try {
-      setIsLoading(true);
-      const response = await sendTemplatetoApi(data);
+      setIsFetching(true);
+      const response = await sendTemplatetoApi(payload);
 
       if (response.message === "Template Name is duplicate") {
-        toast.error("Template name is already in use. Please choose another.");
+        return toast.error(
+          "Template name is already in use. Please choose another."
+        );
       } else if (response.message === "Template Save Successfully") {
+        setIsLoading(true);
         toast.success("Template submitted successfully!");
+        setSelectedWaba("");
+        setSelectedCategory("");
+        setSelectedLanguage("");
+        setSelectedWabaSno("");
+        setTemplateHeader("");
+        setTemplateFormat("");
+        setTemplateFooter("");
+        setImageUrl(null);
+        setVideoUrl(null);
+        setDocumentUrl(null);
+        setLocationUrl("");
+        setFile(null);
+        setSelectedTemplateType("text");
+        setExpiryTime(10);
+        setCarouselMediaType("");
+        setTemplateName("");
+        setFileUploadUrl("");
+        setCards([
+          {
+            mediaType: "image",
+            mediaUrl: "",
+            body: "This is a dummy card body. You can change this content later.",
+            footer:
+              "This is a dummy footer. You can change this content later.",
+            actions: [],
+            uploadUrl: "",
+          },
+        ]);
+
+        setPhoneNumber("");
+        setPhoneTitle("");
+        setUrl("");
+        setUrlTitle("");
+        setQuickReplies([]);
       } else if (
         response?.includes("language") &&
         response?.includes("not available")
       ) {
-        toast.error(
+        return toast.error(
           "The selected language is not available for message templates. Please try a different language."
         );
       } else {
-        toast.error("An unknown error occurred. Please try again.");
+        return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      toast.error(e.message || "Something went wrong.");
+      return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
+      setIsFetching(false);
     }
   };
 
@@ -362,11 +627,11 @@ const WhatsappCreateTemplate = () => {
         <>
           <div className="w-full">
             <div className="">
-              <h1 className="text-center text-gray-800 text-md font-semibold lg:text-start mb-4">
+              <h1 className="mb-4 font-semibold text-center text-gray-800 text-md lg:text-start">
                 Create Template
               </h1>
-              <div className="flex flex-wrap align-middle justify-start gap-4 items-end pb-5">
-                <div className="w-full sm:w-56">
+              <div className="flex flex-wrap items-end justify-start gap-4 pb-5 align-middle">
+                <div className="w-full sm:w-48">
                   {/* <AnimatedDropdown
                     id="createSelectWaba"
                     name="createSelectWaba"
@@ -395,7 +660,7 @@ const WhatsappCreateTemplate = () => {
                       value: JSON.stringify({
                         mbno: waba.mobileNo,
                         sno: waba.wabaSrno,
-                      }), // Stringify object
+                      }),
                       label: waba.name,
                     }))}
                     value={
@@ -420,7 +685,7 @@ const WhatsappCreateTemplate = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="category"
                     name="category"
@@ -438,8 +703,8 @@ const WhatsappCreateTemplate = () => {
                   />
                 </div>
 
-                {selectedCategory && (
-                  <div className="w-full sm:w-56">
+                {selectedCategory && selectedCategory !== "AUTHENTICATION" && (
+                  <div className="w-full sm:w-48">
                     <AnimatedDropdown
                       id="templateType"
                       name="templateType"
@@ -459,7 +724,7 @@ const WhatsappCreateTemplate = () => {
                 )}
 
                 {selectedTemplateType === "carousel" && (
-                  <div className="w-full sm:w-56">
+                  <div className="w-full sm:w-48">
                     <AnimatedDropdown
                       id="carouselMediaType"
                       name="carouselMediaType"
@@ -477,7 +742,7 @@ const WhatsappCreateTemplate = () => {
                   </div>
                 )}
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <LanguageSelect
                     id="language"
                     name="language"
@@ -489,7 +754,7 @@ const WhatsappCreateTemplate = () => {
                   />
                 </div>
 
-                <div className="w-full sm:w-56">
+                <div className="w-full sm:w-48">
                   <InputField
                     id="templateName"
                     name="templateName"
@@ -504,98 +769,53 @@ const WhatsappCreateTemplate = () => {
               </div>
             </div>
 
-            {selectedWaba && selectedCategory && selectedTemplateType ? (
-              <div className="flex">
-                <div className="w-1/3 px-2 py-0">
-                  <>
-                    {selectedTemplateType === "carousel" &&
-                      carouselMediaType ? (
-                      <CarouselTemplateTypes
-                        templateFormat={templateFormat}
-                        setTemplateFormat={setTemplateFormat}
-                        templateFooter={templateFooter}
-                        setTemplateFooter={setTemplateFooter}
-                        handleAddVariable={handleAddVariable}
-                        handleEmojiSelect={handleEmojiSelect}
-                        selectedCardIndex={selectedCardIndex}
-                        setSelectedCardIndex={setSelectedCardIndex}
-                        cards={cards}
-                        setCards={setCards}
-                        file={file}
-                        setFile={setFile}
-                        onPreviewUpdate={handlePreviewUpdate}
-                      />
-                    ) : (
-                      <TemplateTypes
-                        selectedTemplateType={selectedTemplateType}
-                        templateHeader={templateHeader}
-                        setTemplateHeader={setTemplateHeader}
-                        templateFormat={templateFormat}
-                        setTemplateFormat={setTemplateFormat}
-                        templateFooter={templateFooter}
-                        setTemplateFooter={setTemplateFooter}
-                        handleAddVariable={handleAddVariable}
-                        handleEmojiSelect={handleEmojiSelect}
-                        imageUrl={imageUrl}
-                        setImageUrl={setImageUrl}
-                        videoUrl={videoUrl}
-                        setVideoUrl={setVideoUrl}
-                        documentUrl={documentUrl}
-                        setDocumentUrl={setDocumentUrl}
-                        locationUrl={locationUrl}
-                        setLocationUrl={setLocationUrl}
-                        file={file}
-                        setFile={setFile}
-                        onPreviewUpdate={handlePreviewUpdate}
-                        setvariables={setVariables}
-                      />
-                    )}
+            {selectedWaba && selectedCategory ? (
+              selectedCategory === "AUTHENTICATION" ? (
+                <div>
+                  <div className="grid lg:grid-cols-2 gap-5 mt-4">
+                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
+                      <div className="flex gap-2 items-center">
+                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
+                        <CustomTooltip
+                          title="Expiry Time should be in 1 min to 90 min"
+                          placement="top"
+                          arrow
+                        >
+                          <span>
+                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                          </span>
+                        </CustomTooltip>
+                      </div>
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="w-10">
+                          <InputField
+                            id="expiryTime"
+                            name="expiryTime"
+                            type="number"
+                            value={expiryTime}
+                            tooltipContent="Expiry Time should be in 1 min to 90 min"
+                            onChange={(e) => {
+                              setExpiryTime(e.target.value);
+                            }}
+                            maxLength="2"
+                          />
+                        </div>
+                        <p>Minutes</p>
+                      </div>
+                    </div>
+                    <div className="mb-2">
+                      <AuthPreview />
+                    </div>
+                  </div>
 
-                    {selectedTemplateType === "carousel" &&
-                      carouselMediaType ? (
-                      <CarouselInteractiveActions
-                        cards={cards}
-                        selectedCardIndex={selectedCardIndex}
-                        setCards={setCards}
-                      />
-                    ) : (
-                      <InteractiveActions
-                        interactiveAction={interactiveAction}
-                        setInteractiveAction={setInteractiveAction}
-                        phoneNumber={phoneNumber}
-                        setPhoneNumber={setPhoneNumber}
-                        phoneTitle={phoneTitle}
-                        setPhoneTitle={setPhoneTitle}
-                        url={url}
-                        setUrl={setUrl}
-                        urlTitle={urlTitle}
-                        setUrlTitle={setUrlTitle}
-                        quickReplies={quickReplies}
-                        setQuickReplies={setQuickReplies}
-                        urlValid={urlValid}
-                        validateUrl={validateUrl}
-                        handlePhoneNumberChange={handlePhoneNumberChange}
-                        handleQuickReplyChange={handleQuickReplyChange}
-                        addQuickReply={addQuickReply}
-                        removeQuickReply={removeQuickReply}
-                        setUrlVariables={setUrlVariables}
-                      />
-                    )}
-                  </>
-                  <div className="flex justify-center w-full items-center mt-6">
+                  <div className="flex items-center justify-center w-full mt-2">
                     <button
                       disabled={
-                        !selectedWaba ||
-                        !selectedCategory ||
-                        !selectedTemplateType ||
-                        !templateName
+                        !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
-                          selectedCategory &&
-                          selectedTemplateType &&
-                          templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
                         }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
@@ -605,56 +825,196 @@ const WhatsappCreateTemplate = () => {
                     </button>
                   </div>
                 </div>
-                <div className="w-1/3">
-                  {selectedTemplateType === "carousel" && carouselMediaType ? (
-                    <CarouselTemplatePreview
-                      scrollContainerRef={scrollableContainerRef}
-                      format={templateFormat}
-                      cards={cards}
-                      footer={templateFooter}
-                      setCards={setCards}
-                      selectedCardIndex={selectedCardIndex}
-                      setSelectedCardIndex={setSelectedCardIndex}
-                      onAddCard={(newCard) => setCards([...cards, newCard])}
-                      onDeleteCard={handleDeleteCard}
-                    />
-                  ) : (
-                    <TemplatePreview
-                      scrollContainerRef={scrollableContainerRef}
-                      header={templateHeader}
-                      format={templateFormat}
-                      footer={templateFooter}
-                      imageUrl={imageUrl}
-                      videoUrl={videoUrl}
-                      documentUrl={documentUrl}
-                      locationUrl={locationUrl}
-                      phoneTitle={phoneTitle}
-                      urlTitle={urlTitle}
-                      quickReplies={quickReplies}
-                    />
+              ) : (
+                <>
+                  <div className="grid lg:grid-cols-2 gap-4">
+                    <div>
+                      <>
+                        {
+                          selectedTemplateType === "carousel" &&
+                          carouselMediaType && (
+                            <>
+                              <CarouselTemplateTypes
+                                templateFormat={templateFormat}
+                                setTemplateFormat={setTemplateFormat}
+                                templateFooter={templateFooter}
+                                setTemplateFooter={setTemplateFooter}
+                                handleAddVariable={handleAddVariable}
+                                handleEmojiSelect={handleEmojiSelect}
+                                selectedCardIndex={selectedCardIndex}
+                                setSelectedCardIndex={setSelectedCardIndex}
+                                cards={cards}
+                                setCards={setCards}
+                                file={file}
+                                setFile={setFile}
+                                onPreviewUpdate={handlePreviewUpdate}
+                                setFileUploadUrl={setFileUploadUrl}
+                                uploadImageFile={uploadImageFile}
+                                setvariables={setVariables}
+                              />
+                              <CarouselInteractiveActions
+                                cards={cards}
+                                selectedCardIndex={selectedCardIndex}
+                                setCards={setCards}
+                              />
+                            </>
+                          )
 
-                    // <></>
-                  )}
-                </div>
-              </div>
+                          // : (
+                          //   <div className="w-full">
+                          //     <div className="border-blue-500  rounded-2xl w-full">
+                          //       <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
+                          //         <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
+                          //           <WhatsApp
+                          //             className="inline-block"
+                          //             sx={{ fontSize: "35px", color: "#22d614" }}
+                          //           />
+                          //           Please select your WABA, template category, and
+                          //           type to begin creating your template. Select the
+                          //           carousel media also for creating the carousel
+                          //           cards.
+                          //         </p>
+                          //       </div>
+                          //     </div>
+                          //   </div>
+                          // )
+                        }
+                        {selectedTemplateType != "carousel" && (
+                          <>
+                            <TemplateTypes
+                              selectedTemplateType={selectedTemplateType}
+                              templateHeader={templateHeader}
+                              setTemplateHeader={setTemplateHeader}
+                              templateFormat={templateFormat}
+                              setTemplateFormat={setTemplateFormat}
+                              templateFooter={templateFooter}
+                              setTemplateFooter={setTemplateFooter}
+                              handleAddVariable={handleAddVariable}
+                              handleEmojiSelect={handleEmojiSelect}
+                              imageUrl={imageUrl}
+                              setImageUrl={setImageUrl}
+                              videoUrl={videoUrl}
+                              setVideoUrl={setVideoUrl}
+                              documentUrl={documentUrl}
+                              setDocumentUrl={setDocumentUrl}
+                              locationUrl={locationUrl}
+                              setLocationUrl={setLocationUrl}
+                              file={file}
+                              setFile={setFile}
+                              onPreviewUpdate={handlePreviewUpdate}
+                              setvariables={setVariables}
+                              uploadImageFile={uploadImageFile}
+                              setFileUploadUrl={setFileUploadUrl}
+                            />
+
+                            <InteractiveActions
+                              interactiveAction={interactiveAction}
+                              setInteractiveAction={setInteractiveAction}
+                              phoneNumber={phoneNumber}
+                              setPhoneNumber={setPhoneNumber}
+                              phoneTitle={phoneTitle}
+                              setPhoneTitle={setPhoneTitle}
+                              url={url}
+                              setUrl={setUrl}
+                              urlTitle={urlTitle}
+                              setUrlTitle={setUrlTitle}
+                              quickReplies={quickReplies}
+                              setQuickReplies={setQuickReplies}
+                              urlValid={urlValid}
+                              validateUrl={validateUrl}
+                              handlePhoneNumberChange={handlePhoneNumberChange}
+                              handleQuickReplyChange={handleQuickReplyChange}
+                              addQuickReply={addQuickReply}
+                              removeQuickReply={removeQuickReply}
+                              setUrlVariables={setUrlVariables}
+                            />
+                          </>
+                        )}
+                      </>
+                    </div>
+                    <div className="flex items-start justify-center lg:mt-7 ">
+                      {selectedTemplateType === "carousel" &&
+                        carouselMediaType ? (
+                        <>
+                          <CarouselTemplatePreview
+                            // scrollContainerRef={scrollableContainerRef}
+                            format={templateFormat}
+                            cards={cards}
+                            footer={templateFooter}
+                            setCards={setCards}
+                            selectedCardIndex={selectedCardIndex}
+                            setSelectedCardIndex={setSelectedCardIndex}
+                            onAddCard={(newCard) =>
+                              setCards([...cards, newCard])
+                            }
+                            onDeleteCard={handleDeleteCard}
+                          />
+                        </>
+                      ) : null}
+
+                      {selectedTemplateType != "carousel" && (
+                        <>
+                          <TemplatePreview
+                            // scrollContainerRef={scrollableContainerRef}
+                            header={templateHeader}
+                            format={templateFormat}
+                            footer={templateFooter}
+                            imageUrl={imageUrl}
+                            videoUrl={videoUrl}
+                            documentUrl={documentUrl}
+                            locationUrl={locationUrl}
+                            phoneTitle={phoneTitle}
+                            urlTitle={urlTitle}
+                            quickReplies={quickReplies}
+                          />
+                        </>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center w-full mt-2">
+                    <button
+                      disabled={
+                        !selectedWaba ||
+                        !selectedCategory ||
+                        !selectedTemplateType ||
+                        !templateName ||
+                        isFetching
+                      }
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                        selectedCategory &&
+                        selectedTemplateType &&
+                        templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
+                      onClick={handleSubmit}
+                      id="submitTemplate"
+                      name="submitTemplate"
+                    >
+                      {isFetching ? "Submitting..." : "Submit Template"}
+                    </button>
+                  </div>
+                </>
+              )
             ) : (
               <>
-                <div className="border-2 border-blue-500 border-dashed p-2 rounded-2xl">
-                  <div className="flex bg-gradient-to-r h-96 justify-center rounded-lg shadow-lg text-center w-full from-blue-500 items-center py-4 to-purple-500">
-                    <p className="flex text-2xl text-white font-m font-medium gap-2 items-center">
+                <div className=" border-blue-500  rounded-2xl">
+                  <div className="flex items-center justify-center w-full py-4 text-center rounded-lg shadow-lg bg-gradient-to-r h-96 from-blue-500 to-purple-500">
+                    <p className="flex items-center gap-2 text-2xl font-medium text-white font-m">
                       <WhatsApp
                         className="inline-block"
                         sx={{ fontSize: "35px", color: "#22d614" }}
                       />
                       Please select your WABA, template category, and type to
                       begin creating your template.
-                      {selectedTemplateType === "carousel" && (
-                        <>
-                          <br />
-                          select the carousel media also for creating the
-                          carousel cards.
-                        </>
-                      )}
+                      {selectedTemplateType === "carousel" &&
+                        !carouselMediaType && (
+                          <>
+                            <br />
+                            select the carousel media also for creating the
+                            carousel cards.
+                          </>
+                        )}
                     </p>
                   </div>
                 </div>

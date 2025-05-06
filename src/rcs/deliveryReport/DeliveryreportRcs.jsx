@@ -27,7 +27,7 @@ const DeliveryreportRcs = () => {
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
-    startDate: new Date().toLocaleDateString("en-GB"),
+    startDate: new Date(),
     templateType: "",
     campaignName: "",
     status: "",
@@ -36,8 +36,8 @@ const DeliveryreportRcs = () => {
 
   //summaryState
   const [summaryData, setSummaryData] = useState({
-    fromDate: new Date().toLocaleDateString("en-GB"),
-    toDate: new Date().toLocaleDateString("en-GB"),
+    fromDate: new Date(),
+    toDate: new Date(),
     isMonthWise: false,
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
@@ -58,22 +58,24 @@ const DeliveryreportRcs = () => {
   //fetchCampaignData
   const handleCampaignSearch = async () => {
     const data = {
-      // startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      // endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      startDate: "01/10/2024",
-      endDate: "01/10/2024",
+      startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
+      endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
       templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
     };
 
+    // console.log(data);
+
     try {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
-      setCampaignTableData(res);
+      // console.log(res);
+      const reversedData = res.reverse();
+      setCampaignTableData(reversedData);
     } catch (e) {
       toast.error("Something went wrong.");
-      console.log(e);
+      // console.log(e);
     } finally {
       setIsFetching(false);
     }
@@ -85,10 +87,10 @@ const DeliveryreportRcs = () => {
       toast.error("Please select from and to date.");
     }
     const data = {
-      // fromDate: formatDate(summaryData.fromDate),
-      //toDate: formatDate(summaryData.toDate),
-      fromDate: "2022-10-01",
-      toDate: "2025-02-26",
+      fromDate: formatDate(summaryData.fromDate),
+      toDate: formatDate(summaryData.toDate),
+      // fromDate: "2022-10-01",
+      // toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
     };
@@ -98,7 +100,7 @@ const DeliveryreportRcs = () => {
       const res = await fetchSummaryReport(data);
       setSummaryTableData(res);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -116,14 +118,18 @@ const DeliveryreportRcs = () => {
           <Tabs
             value={value}
             onChange={handleChange}
-            aria-label="Manage Campaigns Tabs"
+            aria-label="Deliveryre Report Tabs"
             textColor="primary"
             indicatorColor="primary"
+            variant="scrollable"
+            scrollButtons="auto"
+            allowScrollButtonsMobile
+            className="w-full"
           >
             <Tab
               label={
-                <span>
-                  <GradingOutlinedIcon size={20} /> Campaigns Logs
+                <span className="flex items-center gap-1 text-sm md:text-base">
+                  <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
                 </span>
               }
               {...a11yProps(0)}
@@ -140,8 +146,8 @@ const DeliveryreportRcs = () => {
             />
             <Tab
               label={
-                <span>
-                  <LibraryBooksOutlinedIcon size={20} /> Day Wise Summary
+                <span className="flex items-center gap-1 text-sm md:text-base">
+                  <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
                 </span>
               }
               {...a11yProps(1)}
@@ -157,14 +163,16 @@ const DeliveryreportRcs = () => {
               }}
             />
           </Tabs>
+
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
-              <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
                 <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     label="Created On"
                     id="created"
                     name="created"
+                    defaultValue={new Date()}
                     value={setCampaignData.startDate}
                     onChange={(e) => {
                       setCampaignData({
@@ -199,14 +207,14 @@ const DeliveryreportRcs = () => {
                     options={[
                       { label: "Text", value: "text" },
                       { label: "Image", value: "image" },
-                      {
-                        label: "Rich Card Stand Alone",
-                        value: "richcardstandalone",
-                      },
-                      {
-                        label: "Rich Card Carausel",
-                        value: "richcardcarousel",
-                      },
+                      // {
+                      //   label: "Rich Card Stand Alone",
+                      //   value: "richcardstandalone",
+                      // },
+                      // {
+                      //   label: "Rich Card Carausel",
+                      //   value: "richcardcarousel",
+                      // },
                     ]}
                     value={campaignData.templateType}
                     placeholder="Select Template Type"
@@ -239,42 +247,36 @@ const DeliveryreportRcs = () => {
                     }}
                   />
                 </div>
-                <div className="w-full sm:w-56">
-                  <div className="w-max-content">
-                    <UniversalButton
-                      label="Search"
-                      id="campaignsearch"
-                      name="campaignsearch"
-                      variant="primary"
-                      onClick={handleCampaignSearch}
-                      icon={<IoSearch />}
-                    />
-                  </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetching ? "Searching..." : "Search"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    onClick={handleCampaignSearch}
+                    icon={<IoSearch />}
+                    disabled={isFetching}
+                  />
                 </div>
               </div>
             </div>
-            {isFetching ? (
-              <div className="">
-                <UniversalSkeleton height="35rem" width="100%" />
-              </div>
-            ) : (
-              <div className="w-full">
-                <CampaignsLogsTable
-                  id="whatsappManageCampaignTable"
-                  name="whatsappManageCampaignTable"
-                  data={campaignTableData}
-                />
-              </div>
-            )}
+            <div className="w-full">
+              <CampaignsLogsTable
+                id="whatsappManageCampaignTable"
+                name="whatsappManageCampaignTable"
+                data={campaignTableData}
+              />
+            </div>
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
-            <div className="flex flex-wrap items-end justify-start w-full gap-4 mb-5">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"
                   id="fromDate"
                   name="fromDate"
-                  value={setSummaryData.fromDate}
+                  defaultValue={new Date()}
+                  value={setSummaryData?.fromDate}
                   onChange={(e) => {
                     setSummaryData({
                       ...summaryData,
@@ -287,6 +289,7 @@ const DeliveryreportRcs = () => {
               </div>
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
+                  defaultValue={new Date()}
                   label="To Date"
                   id="toDate"
                   name="toDate"
@@ -321,7 +324,7 @@ const DeliveryreportRcs = () => {
               </div>
               <div className="w-full sm:w-56">
                 <UniversalButton
-                  label="Show"
+                  label={isFetching ? "Showing..." : "Show"}
                   id="show"
                   name="show"
                   variant="primary"
@@ -330,18 +333,12 @@ const DeliveryreportRcs = () => {
                 />
               </div>
             </div>
-            {isFetching ? (
-              <div className="">
-                <UniversalSkeleton height="35rem" width="100%" />
-              </div>
-            ) : (
-              <div className="w-full">
-                <DayWiseSummarytableRcs
-                  data={summaryTableData}
-                  isMonthWise={summaryData.isMonthWise}
-                />
-              </div>
-            )}
+            <div className="w-full">
+              <DayWiseSummarytableRcs
+                data={summaryTableData}
+                isMonthWise={summaryData.isMonthWise}
+              />
+            </div>
           </CustomTabPanel>
         </Box>
       </div>

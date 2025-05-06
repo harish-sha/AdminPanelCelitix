@@ -5,6 +5,7 @@
 // import './Dummy.css';
 
 // import celitix_logo from '../assets/images/celitix-logo-white.svg'
+// import toast from 'react-hot-toast';
 
 // const Dummy = () => {
 //     const [isSignUp, setIsSignUp] = useState(false);
@@ -18,6 +19,26 @@
 //         setIsSignUp(false);
 //     };
 
+//     const handletoast = () => {
+//         // toast(`"InsertCount": 0,
+//         //     "TotalTemplate": 78,
+//         //     "Approved": 68,
+//         //     "Rejected": 10,
+//         //     "DuplicateCount": 67`,
+//         //     {
+//         //         duration: 6000,
+//         //     }
+//         // );
+//         toast((t) => (
+//             <span>
+//               Custom and <b>bold</b>
+//               <button onClick={() => toast.dismiss(t.id)}>
+//                 Dismiss
+//               </button>
+//             </span>
+//           ));
+//     }
+
 //     return (
 //         <div className='parent-container-login' >
 
@@ -25,8 +46,8 @@
 //                 <div className="form-container sign-up-container">
 //                     <form action="#">
 //                         <h1 className='head' >Create Account</h1>
-//                         <div className="social-container">
-//                             <a href="#" className="social">
+//                         <div className="social-container flex gap-3">
+//                             <a href="#" className="social"  >
 //                                 {/* <i className="fab fa-facebook-f"></i> */}
 //                                 <FacebookOutlinedIcon />
 //                             </a>
@@ -50,8 +71,8 @@
 //                 <div className="form-container sign-in-container">
 //                     <form action="#">
 //                         <h1 className='head'>Sign in</h1>
-//                         <div className="social-container">
-//                             <a href="#" className="social">
+//                         <div className="social-container flex gap-4">
+//                             <a href="#" className="social" onClick={handletoast} >
 //                                 {/* <i className="fab fa-facebook-f"></i> */}
 //                                 <FacebookOutlinedIcon />
 //                             </a>
@@ -272,479 +293,363 @@
 // }
 
 
-
-
-// Updated Dummy.jsx with step-based form navigation
-
-import React, { useState } from "react";
-import { RadioButton } from "primereact/radiobutton";
-import CallOutlinedIcon from "@mui/icons-material/CallOutlined";
-import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
-import MailOutlineOutlinedIcon from "@mui/icons-material/MailOutlineOutlined";
-import toast from "react-hot-toast";
-import InputField from "../components/layout/InputField";
-import Stepper from "@mui/material/Stepper";
-import Step from "@mui/material/Step";
-import StepLabel from "@mui/material/StepLabel";
-import Button from "@mui/material/Button";
-
-const steps = ["Bot Details", "Contact Info", "Other Details"];
+import { Dispatch, SetStateAction, useState } from "react";
+import {
+    FiBarChart,
+    FiChevronDown,
+    FiChevronsRight,
+    FiDollarSign,
+    FiHome,
+    FiMonitor,
+    FiShoppingCart,
+    FiTag,
+    FiUsers,
+    FiEdit,
+    FiTrash,
+    FiShare,
+    FiPlusSquare,
+} from "react-icons/fi";
+import { motion } from "framer-motion";
+// import { IconType } from "react-icons";
 
 const Dummy = () => {
-  const [activeStep, setActiveStep] = useState(0);
-  const [selectedOption, setSelectedOption] = useState("option2");
-  const [displayName, setDisplayName] = useState("Title");
-  const [companyName, setCompanyName] = useState("");
-  const [description, setDescription] = useState("Celitix is a SMS panel to send updates on transactions important information to customers");
-  const [color, setColor] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("860-886-6162");
-  const [phoneLabel, setPhoneLabel] = useState("Customer Care Number");
-  const [emailId, setEmailId] = useState("whistle@whistle.mobi");
-  const [emailLabel, setEmailLabel] = useState("Email Address");
-  const [website, setWebsite] = useState("https://whistle.mobi/");
-  const [websiteLabel, setWebsiteLabel] = useState("Official Website");
-  const [privacy, setPrivacy] = useState("");
-  const [termCondition, setTermCondition] = useState("");
-  const [botLanguage, setBotLanguage] = useState("");
-  const [webHook, setWebHook] = useState("");
+    const [open, setOpen] = useState(false);
 
-  const handleNext = () => {
-    setActiveStep((prev) => prev + 1);
-  };
+    return (
+        <div className="flex bg-indigo-50">
+            <Sidebar />
+            <ExampleContent />
+        </div>
+    )
+}
 
-  const handleBack = () => {
-    setActiveStep((prev) => prev - 1);
-  };
+const Sidebar = () => {
+    const [open, setOpen] = useState(true);
+    const [selected, setSelected] = useState("Dashboard");
 
-  const handleChangeEnable = (event) => {
-    const value = event.target.value;
-    setSelectedOption(value);
-  };
+    return (
+        <motion.nav
+            layout
+            className="sticky top-0 h-screen shrink-0 border-r border-slate-300 bg-white p-2"
+            style={{
+                width: open ? "225px" : "fit-content",
+            }}
+        >
+            <TitleSection open={open} />
+            <ToggleClose open={open} setOpen={setOpen} />
 
-  const validateEmail = (emailId) => /^[^\s@]+@gmail\.com$/.test(emailId);
-
-  const validatePhoneNumber = (phoneNumber) => {
-    const patterns = [
-      /^\d{10}$/,
-      /^\d{3}-\d{3}-\d{4}$/,
-      /^\d{3} \d{3} \d{4}$/,
-      /^\+1 \d{3}-\d{3}-\d{4}$/,
-      /^\(\d{3}\) \d{3}-\d{4}$/,
-    ];
-    return patterns.some((pattern) => pattern.test(phoneNumber));
-  };
-
-  const handleSubmit = () => {
-    if (!validateEmail(emailId)) return toast.error("Only valid Gmail addresses are allowed");
-    if (!validatePhoneNumber(phoneNumber)) return toast.error("Phone number should be digits");
-    toast.success("Form submitted successfully");
-  };
-
-  return (
-    <div className="grid grid-cols-2 md:grid-cols-2">
-    <div className="p-4">
-      <Stepper activeStep={activeStep} alternativeLabel>
-        {steps.map((label) => (
-          <Step key={label}>
-            <StepLabel>{label}</StepLabel>
-          </Step>
-        ))}
-      </Stepper>
-
-      <div className="mt-8">
-        {activeStep === 0 && (
-           <div className="stapone">
-           <h2 className="text-2xl font-bold text-blue-500  justify-center items-center popf">
-             Bot Details
-           </h2>
-   
-           <div className="flex gap-2">
-             <label className="text-md font-semibold text-gray-500 popf ">
-               Bot Type:
-             </label>
-             <p className="text-gray-500">Domestics</p>
-           </div>
-           <div className="flex flex-col gap-3 popf">
-             <div>
-               <label className="text-md font-semibold popf text-gray-500">
-                 Message Type*:
-               </label>
-               <div className="flex flex-wrap gap-2">
-                 <div className="flex align-items-center">
-                   <RadioButton
-                     inputId="messageotp"
-                     name="messageotp"
-                     value="option1"
-                     checked={selectedOption === "option1"}
-                     onChange={handleChangeEnable}
-                     
-                   />
-                   <label htmlFor="messageotp" className="ml-2">
-                     OTP
-                   </label>
-                 </div>
-                 <div className="flex align-items-center">
-                   <RadioButton
-                     inputId="messagepromotional"
-                     name="messagepromotional"
-                     value="option2"
-                     checked={selectedOption === 'option2'}
-                     onChange={handleChangeEnable}
-                   />
-                   <label htmlFor="messagepromotional" className="ml-2">
-                     Promotional
-                   </label>
-                 </div>
-                 <div className="flex align-items-center">
-                   <RadioButton
-                     inputId="messageTransactional"
-                     name="messageTransactional"
-                     value="option3"
-                     checked={selectedOption === 'option3'}
-                     onChange={handleChangeEnable}
-                   />
-                   <label htmlFor="messageTransactional" className="ml-2">
-                     Trasactional
-                   </label>
-                 </div>
-               </div>
-             </div>
-             <div className=" w-full gap-6  grid grid-cols-3">
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={20}
-                   value={displayName}
-                   label="Bot Display Name*"
-                   type="text"
-                   placeholder="Enter Bot Name"
-                   onChange={(e) => setDisplayName(e.target.value)}
-                 />
-               </div>
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={30}
-                   value={companyName}
-                   label="Brand/Company Name*"
-                   placeholder="Enter Brand/Company Name"
-                   type="text"
-                   onChange={(e) => setCompanyName(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={200}
-                   value={description}
-                   label="Bot Description"
-                   placeholder="Enter Bot Description"
-                   type="text"
-                 onChange={(e)=> setDescription(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 
-                 <InputField
-                   value={color}
-                   label="Color*"
-                   type="color"
-                  onChange={(e)=> setColor(e.target.value)}
-                 />
-                 {/* <ColorPicker
-                   disabled/> */}
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={10}
-                   value={phoneNumber}
-                   label="Primary Phone Number*"
-                   placeholder="Enter Primary Phone Number"
-                   type="mobileNo"
-                   onChange={(e)=>setPhoneNumber(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={15}
-                   value={phoneLabel}
-                   label="Primary Phone Label*"
-                   placeholder="Enter Primary Phone Label"
-                   type="text"
-                   onChange={(e) => setPhoneLabel(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                   value={emailId}
-                   label="Primary Email Id*"
-                   placeholder="info@celitix.com"
-                   type="email"
-                  onChange={(e)=>setEmailId(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={10}
-                   value={emailLabel}
-                   label="Primary Email label*"
-                   placeholder="Email"
-                   type="text"
-                   onChange={(e) => setEmailLabel(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                   value={website}
-                   label="Website*"
-                   placeholder="Enter URL"
-                   type="url"
-                   onChange={(e) => setWebsite(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={20}
-                   value={websiteLabel}
-                   label="Website Label*"
-                   placeholder="Website"
-                   type="text"
-                   onChange={(e) => setWebsiteLabel(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                   value={privacy}
-                   label="Privacy Policy URL*"
-                   placeholder="Enter Privacy Policy URL"
-                   type="text"
-                   onChange={(e) => setPrivacy(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                   value={termCondition}
-                   label="Term & Conditions URL*"
-                   placeholder="Enter Term & Conditions URL "
-                   type="text"
-                   onChange={(e) => setTermCondition(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-                 maxLength={15}
-                   value={botLanguage}
-                   label="Bot Language*"
-                   placeholder="Enter Language Name "
-                   type="text"
-                   onChange={(e) => setBotLanguage(e.target.value)}
-                 />
-               </div>
-   
-               <div className="w-full sm:w-46">
-                 <InputField
-   
-                   value={webHook}
-                   label="Webhook URL*"
-                   placeholder="Enter Webhook URL"
-                   type="text"
-                   onChange={(e) => setWebHook(e.target.value)}
-                 />
-               </div>
-             </div>
-           </div>
-   
-          
-   
-           {/* <div className="flex justify-center mt-5">
-             <button className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-             onClick={handleSubmit}
-             >
-               Submit
-             </button>
-           </div> */}
-           </div>
-        )}
-
-        {activeStep === 1 && (
-          <h1>step 2</h1>
-        )}
-
-        {activeStep === 2 && (
-          <h3>step3</h3>
-        )}
-
-<div className="flex justify-between mt-8">
-<Button variant="outlined" disabled={activeStep === 0} onClick={handleBack}>Back</Button>
-  {activeStep === steps.length - 1 ? (
-    <Button variant="contained" onClick={handleSubmit}>Submit</Button>
-  ) : (
-    <Button variant="contained" onClick={handleNext}>Next</Button>
-  )}
- 
-</div>
-
-      </div>
-
-    </div>
-    <div className="flex justify-center items-center mt-15 popf min-h-[90vh]">
-          {/* <div className="bg-gray-400"> */}
-
-          <div className="p-6 max-w-80 border bg-gray-50 rounded-4xl shadow-gray-700 space-y-4 ">
-            <div className="flex items-center justify-center">
-              <div className="bg-gray-300 h-3 rounded-full w-25 "></div>
+            <div className="space-y-1">
+                <Option
+                    Icon={FiHome}
+                    title="Dashboard"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                />
+                <Option
+                    Icon={FiDollarSign}
+                    title="Sales"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                    notifs={3}
+                    dropdownItems={["Daily Sales", "Monthly Sales", "Yearly Sales"]}
+                />
+                <Option
+                    Icon={FiMonitor}
+                    title="View Site"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                />
+                <Option
+                    Icon={FiShoppingCart}
+                    title="Products"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                    dropdownItems={["Add Product", "Manage Products", "Product Categories"]}
+                />
+                <Option
+                    Icon={FiTag}
+                    title="Tags"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                />
+                <Option
+                    Icon={FiBarChart}
+                    title="Analytics"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                />
+                <Option
+                    Icon={FiUsers}
+                    title="Members"
+                    selected={selected}
+                    setSelected={setSelected}
+                    open={open}
+                />
             </div>
-            <div className="flex flex-col relative h-45 items-center">
-              {/* <img
-                src={IMG1}
-                alt="Image Preview"
-                className="w-75 rounded-t-2xl"
-              /> */}
-              <div className="flex justify-center items-center absolute bottom-0 ">
-                {/* <img className="w-15 rounded-full  " src={IMG2} alt="Logo" /> */}
-              </div>
-            </div>
-            <div>
-              <div className="flex flex-col justify-center items-center">
-                <p className="font-bold text-2xl"
-                > {displayName}</p>
-                <p className=" text-gray-400 text-center"> {description}
-                
-                </p>
-              </div>
 
-              <div className="flex flex-row justify-center rounded-xl border-gray-300 border-2 p-2 gap-6  mt-3 text-[#337ab7] text-center">
-                <div className="">
-                  <CallOutlinedIcon className="text-lg" />
-                  <p>Call</p>
-                </div>
-                <div>
-                  <LanguageOutlinedIcon className=" text-lg" />
-                  <a href="#" target="_blank">
-                    <p className="">Website</p>
-                  </a>
-                </div>
-                <div className="">
-                  <MailOutlineOutlinedIcon className="text-lg" />
-                  <p>Email</p>
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-5 mt-5  ">
-                <div className="border-t-2 border-gray-300 flex items-center gap-x-5 pt-2">
-                  <CallOutlinedIcon className="text-lg  text-[#337ab7] " />
-                  <div className="flex flex-col justify-center items-center">
-                    <p className="text-[#337ab7]" maxLength={10}>
-                      +91 <span className="text-[#337ab7]">{phoneNumber}</span>
-                    </p>
-                    <p className="text-[#337ab7]">{phoneLabel}</p>
-                  </div>
-                </div>
-
-                <div className=" border-t-2 border-gray-300 flex items-center gap-x-5 pt-2">
-                  <LanguageOutlinedIcon className="text-[#337ab7] text-lg" />
-                  <div className="flex flex-col justify-center items-center">
-                    <p className="text-[#337ab7]"> {website}</p>
-                    <p className="text-[#337ab7]">{websiteLabel}</p>
-                  </div>
-                </div>
-
-                <div className=" border-t-2 border-gray-300 flex items-center gap-x-5 pt-2">
-                  <MailOutlineOutlinedIcon className="text-lg text-[#337ab7] " />
-                  <div className="flex flex-col justify-center items-center">
-                    <p className="text-[#337ab7]" maxLength={15}>{emailId}</p>
-                    <p className="text-[#337ab7]">{emailLabel}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center justify-center border-t-2 border-gray-300">
-              <div className="bg-gray-300 h-10 rounded-full w-10 mt-2"></div>
-            </div>
-          </div>
-          <div>
-            {/* right-panel */}
-            {/* <div className="">
-             <label>
-             Banner image<span
-                    className="w-50"
-                  ></span>
-             </label>
-                 
-               <label>
-               Bot Logo<span className="w-50"></span>
-               </label>
-               
-                  
-                <label>
-                Short Description<span
-                    className="w-50"
-                  ></span>
-                </label>
-               
-                  <label>
-                  Color<span className="w-50"></span>
-                  </label>
-               <label>
-               Label for phone Number<span
-                   className="w-50"
-                  ></span>
-               </label>
-               
-                 <label>
-                 Label for website<span
-                  className="w-50"
-                  ></span>
-                 </label>
-               
-                
-                  <label>
-                  Label for email<span
-                    className="w-50"
-                    
-                  ></span>
-                  </label>
-              </div> */}
-            {/* left-panel */}
-
-            {/* <div >
-               <label>
-               Bot name<span className="w-75"></span>
-               </label>
-                
-               
-               <label>
-               Phone Number<span
-                    className="w-50"
-                  ></span>
-              
-               </label>
-                 
-               <label>
-               Website<span className="w-50"></span>
-               </label>
-                 
-              <label>
-              Email<span className="w-50"></span>
-              </label>
-                    
-              
-              </div> */}
-          </div>
-    </div>
-    </div>
-  );
+        </motion.nav>
+    );
 };
 
-export default Dummy;
+const Option = ({ Icon, title, selected, setSelected, open, notifs, dropdownItems }) => {
+    const [dropdownOpen, setDropdownOpen] = useState(false);
+    return (
+        <motion.div layout className="relative">
+
+            <motion.button
+                layout
+                onClick={() => {
+                    setSelected(title);
+                    if (dropdownItems) setDropdownOpen((prev) => !prev);
+                }}
+                className={`relative flex h-10 w-full items-center rounded-md transition-colors ${selected === title ? "bg-indigo-100 text-indigo-800" : "text-slate-500 hover:bg-slate-100"}`}
+            >
+                <motion.div
+                    layout
+                    className="grid h-full w-10 place-content-center text-lg"
+                >
+                    <Icon />
+                </motion.div>
+                {open && (
+                    <motion.span
+                        layout
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.125 }}
+                        className="text-xs font-medium"
+                    >
+                        {title}
+                    </motion.span>
+                )}
+
+                {notifs && open && (
+                    <motion.span
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{
+                            opacity: 1,
+                            scale: 1,
+                        }}
+                        style={{ y: "-50%" }}
+                        transition={{ delay: 0.5 }}
+                        className="absolute right-2 top-1/2 size-4 rounded bg-indigo-500 text-xs text-white"
+                    >
+                        {notifs}
+                    </motion.span>
+                )}
+            </motion.button>
+
+            {/* Dropdown Menu */}
+            {dropdownItems && dropdownOpen && (
+                <motion.div
+                    initial={{ opacity: 0, y: -10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    className="absolute left-10 top-full mt-1 w-40 bg-white shadow-lg rounded-md border border-slate-200 z-10"
+                >
+                    {dropdownItems.map((item, index) => (
+                        <button
+                            key={index}
+                            onClick={() => console.log(`Clicked ${item}`)}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100"
+                        >
+                            {item}
+                        </button>
+                    ))}
+                </motion.div>
+            )}
+        </motion.div>
+
+    );
+};
+
+const TitleSection = ({ open }) => {
+    return (
+        <div className="mb-3 border-b border-slate-300 pb-3">
+            <div className="flex cursor-pointer items-center justify-between rounded-md transition-colors hover:bg-slate-100">
+                <div className="flex items-center gap-2">
+                    <Logo />
+                    {open && (
+                        <motion.div
+                            layout
+                            initial={{ opacity: 0, y: 12 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.125 }}
+                        >
+                            <span className="block text-xs font-semibold">TomIsLoading</span>
+                            <span className="block text-xs text-slate-500">Pro Plan</span>
+                        </motion.div>
+                    )}
+                </div>
+                {open && <FiChevronDown className="mr-2" />}
+            </div>
+        </div>
+    );
+};
+
+const Logo = () => {
+    // Temp logo from https://logoipsum.com/
+    return (
+        <motion.div
+            layout
+            className="grid size-10 shrink-0 place-content-center rounded-md bg-indigo-600"
+        >
+            <svg
+                width="24"
+                height="auto"
+                viewBox="0 0 50 39"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+                className="fill-slate-50"
+            >
+                <path
+                    d="M16.4992 2H37.5808L22.0816 24.9729H1L16.4992 2Z"
+                    stopColor="#000000"
+                ></path>
+                <path
+                    d="M17.4224 27.102L11.4192 36H33.5008L49 13.0271H32.7024L23.2064 27.102H17.4224Z"
+                    stopColor="#000000"
+                ></path>
+            </svg>
+        </motion.div>
+    );
+};
+
+const ToggleClose = ({ open, setOpen }) => {
+    return (
+        <motion.button
+            layout
+            onClick={() => setOpen((pv) => !pv)}
+            className="absolute bottom-0 left-0 right-0 border-t border-slate-300 transition-colors hover:bg-slate-100"
+        >
+            <div className="flex items-center p-2">
+                <motion.div
+                    layout
+                    className="grid size-10 place-content-center text-lg"
+                >
+                    <FiChevronsRight
+                        className={`transition-transform ${open && "rotate-180"}`}
+                    />
+                </motion.div>
+                {open && (
+                    <motion.span
+                        layout
+                        initial={{ opacity: 0, y: 12 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.125 }}
+                        className="text-xs font-medium"
+                    >
+                        Hide
+                    </motion.span>
+                )}
+            </div>
+        </motion.button>
+    );
+};
+
+const wrapperVariants = {
+    open: {
+        scaleY: 1,
+        transition: {
+            when: "beforeChildren",
+            staggerChildren: 0.1,
+        },
+    },
+    closed: {
+        scaleY: 0,
+        transition: {
+            when: "afterChildren",
+            staggerChildren: 0.1,
+        },
+    },
+};
+
+const iconVariants = {
+    open: { rotate: 180 },
+    closed: { rotate: 0 },
+};
+
+const itemVariants = {
+    open: {
+        opacity: 1,
+        y: 0,
+        transition: {
+            when: "beforeChildren",
+        },
+    },
+    closed: {
+        opacity: 0,
+        y: -15,
+        transition: {
+            when: "afterChildren",
+        },
+    },
+};
+
+const actionIconVariants = {
+    open: { scale: 1, y: 0 },
+    closed: { scale: 0, y: -7 },
+};
+
+const Optionbtn = ({ text, Icon, setOpen }) => {
+    return (
+        <motion.li
+            variants={itemVariants}
+            onClick={() => setOpen(false)}
+            className="flex items-center gap-2 w-full p-2 text-xs font-medium whitespace-nowrap rounded-md hover:bg-indigo-100 text-slate-700 hover:text-indigo-500 transition-colors cursor-pointer"
+        >
+            <motion.span variants={actionIconVariants}>
+                <Icon />
+            </motion.span>
+            <span>{text}</span>
+        </motion.li>
+    );
+};
+
+const ExampleContent = () => {
+    const [open, setOpen] = useState(false);
+
+
+    return (
 
 
 
+        <div className="w-full h-full">
+            <div className="p-8  flex items-center justify-center bg-white">
+                <motion.div animate={open ? "open" : "closed"} className="relative">
+                    <button
+                        onClick={() => setOpen((pv) => !pv)}
+                        className="flex items-center gap-2 px-3 py-2 rounded-md text-indigo-50 bg-indigo-500 hover:bg-indigo-500 transition-colors"
+                    >
+                        <span className="font-medium text-sm">Post actions</span>
+                        <motion.span variants={iconVariants}>
+                            <FiChevronDown />
+                        </motion.span>
+                    </button>
+
+                    <motion.ul
+                        initial={wrapperVariants.closed}
+                        variants={wrapperVariants}
+                        style={{ originY: "top", translateX: "-50%" }}
+                        className="flex flex-col gap-2 p-2 rounded-lg bg-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
+                    >
+                        <Optionbtn setOpen={setOpen} Icon={FiEdit} text="Edit" />
+                        <Optionbtn setOpen={setOpen} Icon={FiPlusSquare} text="Duplicate" />
+                        <Optionbtn setOpen={setOpen} Icon={FiShare} text="Share" />
+                        <Optionbtn setOpen={setOpen} Icon={FiTrash} text="Remove" />
+                    </motion.ul>
+                </motion.div>
+            </div>
+
+
+
+        </div>
+    )
+}
+
+export default Dummy

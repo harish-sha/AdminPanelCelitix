@@ -47,7 +47,7 @@ const ManageOptinblockModal = ({ open, handleClose, selectedContacts, id,
                 Manage Conversation Preferences
             </DialogTitle>
 
-            <DialogContent>
+            <DialogContent className="space-y-4">
                 <Box
                     sx={{
                         padding: 2,
@@ -64,7 +64,7 @@ const ManageOptinblockModal = ({ open, handleClose, selectedContacts, id,
                     </Typography>
                 </Box>
 
-                <Box sx={{ display: "flex", gap: 3, mt: 3 }}>
+                <Box className="grid lg:grid-cols-2 md:grid-cols-2 sm:grid-cols-1 gap-4">
                     <AnimatedDropdown
                         label="Incoming"
                         tooltipContent="Make no change to incoming message behaviour."

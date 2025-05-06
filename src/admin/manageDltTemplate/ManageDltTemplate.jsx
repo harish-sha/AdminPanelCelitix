@@ -126,7 +126,7 @@ const ManageDltTemplate = () => {
       // const headers = Object.keys(jsonData[0]);
       const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
       // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-      console.log("Extracted headers:", headers);
+      // console.log("Extracted headers:", headers);
 
       setFileData(jsonData);
       setColumns(headers);
@@ -312,7 +312,6 @@ const ManageDltTemplate = () => {
                 </div>
               </div>
               <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                Max 3 lacs records & mobile number should be with country code.{" "}
                 <br />
                 Supported File Formats: .xlsx
               </p>
