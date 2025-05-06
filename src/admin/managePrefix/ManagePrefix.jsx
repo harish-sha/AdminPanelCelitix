@@ -41,6 +41,7 @@ const ManagePrefix = () => {
   const handleAddPrefix = () => {
     setPrefixAdd(true);
   };
+
   return (
     <div>
       <div className="flex flex-wrap gap-2 items-end justify-between pb-3 w-full">

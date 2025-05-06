@@ -66,9 +66,14 @@ a {
   background-color: #dde7ee !important;
 }
 
+<<<<<<< HEAD
 
 
 
+=======
+/*hamburger  */
+/* From Uiverse.io by JulanDeAlb */
+>>>>>>> origin/main
 .hamburger {
   cursor: pointer;
 }
@@ -148,4 +153,8 @@ a {
 .toggle-checkbox:checked + .hamburger .bar:nth-child(3) {
   transform: rotate(-45deg) scale(0.9);
   transition-delay: 0.6s;
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> origin/main

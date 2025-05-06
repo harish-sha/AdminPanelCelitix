@@ -31,7 +31,7 @@ const Profile = () => {
                 setFormData({
                     firstName: user.firstName || "",
                     lastName: user.lastName || "",
-                    emailId: user.emailId || "",
+                    emailId: user.email || "",
                     mobileNo: user.mobileNo || "",
                     address: user.address || "",
                     companyName: user.companyName || "",
