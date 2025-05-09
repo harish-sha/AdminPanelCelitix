@@ -101,78 +101,74 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
   const type = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
   const text = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
   return (
-    <div className="p-3 bg-gray-200 rounded-xl overflow-hidden">
-      <div className="w-full h-full transition-all bg-gray-100 rounded-lg shadow-md">
-        <div className="max-w-2xl mx-auto transition-all duration-300 ease-in shadow-md w-100 rounded-xl">
-          <div className="flex items-center justify-between bg-[#128C7E] text-white px-4 py-3 rounded-t-xl">
-            <h2 className="font-medium tracking-wide text-md">
-              Template Preview
-            </h2>
-            <WhatsApp />
+    <div className="transition-all duration-300 ease-in shadow-md rounded-xl">
+      <div className="flex items-center justify-between bg-[#128C7E] text-white px-2 py-3 rounded-t-xl">
+        <h2 className="font-medium tracking-wide text-md">
+          Template Preview
+        </h2>
+        <WhatsApp />
+      </div>
+
+      {specificTemplate && (
+        <div className="space-y-3 p-2 w-full bg-gray-100">
+          <div>
+            {["image", "video", "document"].includes(
+              specificTemplate.templateType
+            ) && (
+                <MediaRenderer
+                  format={specificTemplate.templateType}
+                  fallbackUrl={specificTemplate.media_path}
+                  fileUrl={basicDetails.mediaPath}
+                />
+              )}
           </div>
 
-          {specificTemplate && (
-            <div className="space-y-3 p-2 w-full">
-              <div>
-                {["image", "video", "document"].includes(
-                  specificTemplate.templateType
-                ) && (
-                  <MediaRenderer
-                    format={specificTemplate.templateType}
-                    fallbackUrl={specificTemplate.media_path}
-                    fileUrl={basicDetails.mediaPath}
-                  />
-                )}
-              </div>
-
-              {specificTemplate?.message && (
-                <pre className="whitespace-pre-wrap">
-                  {specificTemplate.message}
-                </pre>
-              )}
-
-              <div className="w-full space-y-2 p-2">
-                {specificTemplate?.urlDisplay && (
-                  <button
-                    title={specificTemplate?.urlValue}
-                    className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
-                      type
-                    )}`}
-                  >
-                    {getBtnIcon(specificTemplate?.urlDisplay)}
-                    <p className="ml-2">{specificTemplate?.urlDisplay}</p>
-                  </button>
-                )}
-                {specificTemplate?.phoneDisplay && (
-                  <button
-                    title={specificTemplate?.phoneValue || ""}
-                    className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full ${getBtnCss(
-                      "phoneDisplay"
-                    )}`}
-                  >
-                    {getBtnIcon("phoneDisplay")}
-                    <p className="ml-2">{specificTemplate?.phoneDisplay}</p>
-                  </button>
-                )}
-                {specificTemplate?.replyButtons &&
-                  specificTemplate?.replyButtons.length > 0 &&
-                  specificTemplate?.replyButtons.map((btn, index) => (
-                    <button
-                      key={index}
-                      title={btn || ""}
-                      className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
-                        "replyButtons"
-                      )}`}
-                    >
-                      {getBtnIcon("replyButtons")}
-                      <p className="ml-2">{btn}</p>
-                    </button>
-                  ))}
-              </div>
-            </div>
+          {specificTemplate?.message && (
+            <pre className="whitespace-pre-wrap">
+              {specificTemplate.message}
+            </pre>
           )}
+
+          <div className="w-full space-y-2 p-2">
+            {specificTemplate?.urlDisplay && (
+              <button
+                title={specificTemplate?.urlValue}
+                className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
+                  type
+                )}`}
+              >
+                {getBtnIcon(specificTemplate?.urlDisplay)}
+                <p className="ml-2">{specificTemplate?.urlDisplay}</p>
+              </button>
+            )}
+            {specificTemplate?.phoneDisplay && (
+              <button
+                title={specificTemplate?.phoneValue || ""}
+                className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full ${getBtnCss(
+                  "phoneDisplay"
+                )}`}
+              >
+                {getBtnIcon("phoneDisplay")}
+                <p className="ml-2">{specificTemplate?.phoneDisplay}</p>
+              </button>
+            )}
+            {specificTemplate?.replyButtons &&
+              specificTemplate?.replyButtons.length > 0 &&
+              specificTemplate?.replyButtons.map((btn, index) => (
+                <button
+                  key={index}
+                  title={btn || ""}
+                  className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full  ${getBtnCss(
+                    "replyButtons"
+                  )}`}
+                >
+                  {getBtnIcon("replyButtons")}
+                  <p className="ml-2">{btn}</p>
+                </button>
+              ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

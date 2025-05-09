@@ -8,10 +8,11 @@ import { useUser } from "@/context/auth";
 import UniversalButton from "../components/common/UniversalButton";
 import celitixLogo from "../assets/images/celitix-logo-white.svg";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
+// import Footer from "./components/Footer";
 import InputField from "../components/layout/InputField";
 
 import "./login.css";
+import Footer from "./components/Footer";
 
 const Login = () => {
   const [userId, setUserId] = useState("");
@@ -74,8 +75,8 @@ const Login = () => {
 
   return (
     <>
-      <Header />
-      <div className="flex items-center justify-center min-h-screen bg-[#edf5ff]">
+      {/* <Header /> */}
+      <div className="flex items-center justify-center min-h-screen bg-[#edf5ff] overflow-y-scroll">
         <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
           <div className="grid grid-cols-1 md:grid-cols-2 h-full">
             <form
@@ -155,14 +156,14 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
 
 export default Login;
 
-// Login Page with functionality of forgot password, OTP verification TTl, 
+// Login Page with functionality of forgot password, OTP verification TTl,
 
 // import React, { useEffect, useState } from "react";
 // import toast from "react-hot-toast";

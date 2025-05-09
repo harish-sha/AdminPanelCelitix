@@ -6,6 +6,8 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 
 // dashboard
 import Dashboard from "@/dashboard/Dashboard";
+import ResellerDashboard from "@/dashboard/ResellerDashboard";
+
 
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
@@ -120,7 +122,7 @@ import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
 
 // Callback
 import Callback from "@/callback/Callback";
-// import { AddCallback } from "@/callback/page/addCallback";
+import { AddCallback } from "@/callback/page/addCallback";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -128,7 +130,6 @@ import PageNotFound from "@/NotFound/PageNotFound";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import { AddCallback } from "@/callback/page/addCallback";
 
 const Approutes = () => {
   return (
@@ -136,6 +137,8 @@ const Approutes = () => {
       <Route path="/" element={<Mainlayout />}>
         {/* dashboard */}
         <Route index element={<Dashboard />} />
+        <Route path="resellerdash" element={<ResellerDashboard />} />
+
 
         {/* admin */}
         <Route path="manageuser" element={<ManageUser />} />

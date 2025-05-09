@@ -143,6 +143,8 @@ export default function WhatsappLiveChat() {
     wabaSrno: "",
   });
 
+  const [isSubscribe, setIsSubscribe] = useState(false);
+
   async function fetchWaba() {
     const res = await getWabaList();
     // console.log(res);
@@ -322,6 +324,13 @@ export default function WhatsappLiveChat() {
         return;
       }
 
+      if (res?.unreadCounts?.length > 0) {
+        const audio = new Audio("./receive-message.mp3");
+        audio.play().catch((e) => {
+          // console.log("Audio play error:", e);
+        });
+      }
+
       const mappedConversations = res.conversationEntityList?.map((chat) => {
         const unread = res.unreadCounts.find(
           (unreadChat) => unreadChat.mobile === chat.mobileNo
@@ -349,14 +358,34 @@ export default function WhatsappLiveChat() {
     setChatState((prev) => ({ ...prev, active: null }));
   }
 
-  useEffect(() => {
-    // handleFetchAllConvo();
-    if (!wabaState?.selectedWaba) return;
-    const intervalid = setInterval(() => {
-      handleFetchAllConvo();
-    }, 500);
+  // useEffect(() => {
+  //   // handleFetchAllConvo();
+  //   if (!wabaState?.selectedWaba) return;
+  //   const intervalid = setInterval(() => {
+  //     handleFetchAllConvo();
+  //   }, 500);
 
-    return () => clearInterval(intervalid);
+  //   return () => clearInterval(intervalid);
+  // }, [wabaState.selectedWaba, btnOption]);
+
+  useEffect(() => {
+
+    if (!wabaState?.selectedWaba) return;
+    // if (!wabaState?.selectedWaba || !isSubscribe) {
+    //   handleFetchAllConvo();
+    //   return;
+    // }
+
+    // handleFetchAllConvo();
+    // setIsSubscribe(true);
+
+    const intervalId = setInterval(() => {
+      handleFetchAllConvo();
+    }, 5000);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, [wabaState.selectedWaba, btnOption]);
 
   useEffect(() => {
@@ -776,7 +805,7 @@ export default function WhatsappLiveChat() {
     const intervalId = setInterval(() => {
       handleLoadNewChat();
       handleIsView();
-    }, 5000);
+    }, 500);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
 
@@ -797,9 +826,8 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-lg overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border overflow-hidden border-tl-lg ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100 p-1 border overflow-hidden border-tl-lg ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -816,6 +844,7 @@ export default function WhatsappLiveChat() {
           formatDate={formatDate}
           chatState={chatState}
           setChatState={setChatState}
+          setSelectedAgentList={setSelectedAgentList}
         />
       </div>
 
@@ -906,7 +935,7 @@ export default function WhatsappLiveChat() {
           setSendMessageDialogVisible={setSendMessageDialogVisible}
           setChatState={setChatState}
           chatState={chatState}
-          // specificConversation={specificConversation}
+        // specificConversation={specificConversation}
         />
       )}
 
@@ -1117,7 +1146,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

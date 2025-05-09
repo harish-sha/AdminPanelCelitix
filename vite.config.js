@@ -17,7 +17,7 @@ export default defineConfig(({ mode }) => {
         "@": path.resolve(__dirname, "./src"),
       },
     },
-    server: {
+    server: {  
       historyApiFallback: true,
       proxy: {
         "/api": {

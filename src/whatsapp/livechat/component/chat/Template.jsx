@@ -52,7 +52,7 @@ export const TemplateMessagePreview = ({ template }) => {
         <img
           src={mediaPath}
           alt={mediaPath}
-          className={`h-40 w-auto select-none pointer-events-none border border-gray-200`}
+          className={`h-40 w-auto select-none pointer-events-none border border-gray-200 rounded-md`}
         />
       )}
       {isVideo && (
@@ -60,7 +60,7 @@ export const TemplateMessagePreview = ({ template }) => {
           src={mediaPath}
           controls={true}
           autoPlay={false}
-          className={`h-30 w-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
+          className={`h-45 m-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
         />
       )}
       {isDocument && (

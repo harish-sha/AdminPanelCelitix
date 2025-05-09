@@ -10,6 +10,10 @@ import SuggestionReportTableRcs from "./components/SuggestionReportTableRcs.jsx"
 import toast from "react-hot-toast";
 import { fetchAllAgents, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
 
+import { IconButton } from "@mui/material";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
+import { exportToExcel } from "@/utils/utills.js";
+
 const SuggestionReportRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [allAgents, setAllAgents] = useState([]);
@@ -29,6 +33,104 @@ const SuggestionReportRcs = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [initialLoad, setInitialLoad] = useState(true);
+
+  const [fileData, setFileData] = useState({
+    url: "",
+    type: "",
+  });
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  function handleView(row) {
+    if (!row.fileUri || !row.mimeType) return;
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/gif",
+    ];
+
+    const validVideoTypes = [
+      "video/mp4",
+      // "image/png",
+      // "image/jpg",
+      // "image/gif",
+    ];
+    const validDocumentTypes = ["application/pdf"];
+    const validAudioTypes = ["audio/mp4"];
+
+    if (validImageTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "image",
+      });
+    }
+
+    if (validVideoTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "video",
+      });
+    }
+    if (validDocumentTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "pdf",
+      });
+    }
+    if (validAudioTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "audio",
+      });
+    }
+    setIsDialogOpen(true);
+  }
+
+  function handleView(row) {
+    if (!row.fileUri || !row.mimeType) return;
+    const validImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/jpg",
+      "image/gif",
+    ];
+
+    const validVideoTypes = [
+      "video/mp4",
+      // "image/png",
+      // "image/jpg",
+      // "image/gif",
+    ];
+    const validDocumentTypes = ["application/pdf"];
+    const validAudioTypes = ["audio/mp4"];
+
+    if (validImageTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "image",
+      });
+    }
+
+    if (validVideoTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "video",
+      });
+    }
+    if (validDocumentTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "pdf",
+      });
+    }
+    if (validAudioTypes.includes(row.mimeType)) {
+      setFileData({
+        url: row.fileUri,
+        type: "audio",
+      });
+    }
+    setIsDialogOpen(true);
+  }
 
   useEffect(() => {
     async function fetchAllBotsData() {
@@ -89,6 +191,93 @@ const SuggestionReportRcs = () => {
   }, [currentPage]);
 
   async function fetchNextPageData() { }
+
+  const columns = [
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    {
+      field: "mobileNo",
+      headerName: "Mobile Number",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "messageType",
+      headerName: "Messaging Type",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "message",
+      headerName: "Message",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        if (params.row.messageType === "USER_FILE") {
+          return (
+            // <img
+            //   src={params.fileuri}
+            //   alt="User Upload"
+            //   style={{
+            //     width: 50,
+            //     height: 50,
+            //     objectFit: "cover",
+            //     borderRadius: 5,
+            //   }}
+            // />
+            <IconButton onClick={(e) => handleView(params.row)}>
+              <RemoveRedEyeOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
+          );
+        } else if (params.row.messageType === "LOCATION") {
+          return (
+            <>
+              <p>
+                {params.row.latitude} , {params.row.longitude}
+              </p>
+              {/* <p>{params.row.longitude}</p> */}
+            </>
+          );
+        } else return params.row.message;
+      },
+    },
+    {
+      field: "insertTime",
+      headerName: "Receive Time",
+      flex: 1,
+      minWidth: 120,
+    },
+  ];
+
+  async function handleExport() {
+    if (!suggestionTableData?.data?.length) {
+      return toast.error("No data to download");
+    }
+
+    const col = columns.map((col) => col.field);
+
+    const row = suggestionTableData.data.map((rowData, index) =>
+      col.map((field) => {
+        if (field === "sn") return index + 1;
+        if (field === "message" && rowData.messageType === "USER_FILE") {
+          return rowData.fileUri;
+        }
+        if (field === "message" && rowData.messageType === "LOCATION") {
+          return `${rowData.latitude} , ${rowData.longitude}`;
+        }
+        return rowData[field];
+      })
+    );
+
+    const name = "Contact Data";
+    exportToExcel(col, row, name);
+    // console.log(row);
+    toast.success("File Downloaded Successfully");
+  }
 
   return (
     <div className="w-full">
@@ -182,12 +371,13 @@ const SuggestionReportRcs = () => {
               onClick={handleSearch}
             />
           </div>
-          
+
           <div className="w-max-content">
             <UniversalButton
               label="Export"
               id="suggestionexport"
               name="suggestionexport"
+              onClick={handleExport}
             />
           </div>
         </div>
@@ -202,6 +392,11 @@ const SuggestionReportRcs = () => {
             setPaginationModel={setPaginationModel}
             setCurrentPage={setCurrentPage}
             totalPage={totalPage}
+            columns={columns}
+            fileData={fileData}
+            setFileData={setFileData}
+            isDialogOpen={isDialogOpen}
+            setIsDialogOpen={setIsDialogOpen}
           />
         </div>
       </div>

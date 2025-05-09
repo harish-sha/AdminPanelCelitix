@@ -630,7 +630,7 @@ const SendSms = () => {
   }, [confirmDialogVisible]);
   return (
     <>
-      <div className="flex gap-2 w-full mt-3 flex-col md:flex-row">
+      <div className="flex gap-2 w-full mt-3 flex-col lg:flex-row">
         <Grid1
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}

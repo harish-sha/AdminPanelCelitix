@@ -3,6 +3,7 @@ import { Paper, Typography, Box, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 
 import { motion } from "framer-motion";
 import {
@@ -761,7 +762,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       ? wabadetails.websites[0].replace("https://www.", "").replace(/\/$/, "")
       : "";
   const phoneNumber = selectedWaba?.wabaNumber || "";
-  const whatsappLinkPreview = `wa.${website}/${phoneNumber}`;
+  const whatsappLinkPreview = `wa.me/${phoneNumber}`;
 
   return (
     <div className="">
@@ -920,14 +921,44 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <FaWhatsapp className="text-[#25D366] text-lg" />
                 {selectedWaba?.wabaNumber || "N/A"}
               </p>
-              <a
+              {/* <a
                 href={`https://wa.me/${selectedWaba?.wabaNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#25D366] text-sm hover:underline"
               >
                 {whatsappLinkPreview}
-              </a>
+              </a> */}
+              <div>
+                <a
+                  href={`https://wa.me/${selectedWaba?.wabaNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#25D366] text-sm hover:underline"
+                >
+                  {whatsappLinkPreview}
+                </a>
+                <button
+                  onClick={() => {
+                    navigator.clipboard
+                      .writeText(whatsappLinkPreview)
+                      .then(() => {
+                        toast.success("Copied to clipboard!");
+                      })
+                      .catch(() => {
+                        toast.error("Failed to copy password.");
+                      });
+                  }}
+                  className="p-1 bg-transparent rounded-full shadow-2xl cursor-pointer hover:bg-gray-200 focus:outline-none"
+                >
+                  <ContentCopyOutlinedIcon
+                    sx={{
+                      fontSize: "1rem",
+                      color: "#999",
+                    }}
+                  />
+                </button>
+              </div>
             </div>
 
             <motion.div

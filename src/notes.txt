@@ -1,27 +1,59 @@
-tasks merge may 02 from arihant pending 
+tasks merge from may 02  (arihant) pending 
 merge sidebar.jsx and login.jsx from arihant
 
-tasks merge may 03 from arihant pending
-
-context > auth.jsx - Done
-
+tasks merge from may 03  (arihant) pending
 mainlayout > sidebar > sidebar.jsx
 
-routes > Auth > PermissionRoute.jsx - Done
-routes > Auth > PrivateRoute.jsx - Done
+tasks merge from may 05 to 08 (arihant) pending
 
-whatsapp > WhatsappBot > component > components > file.tsx - Done
-whatsapp > whatsappLiveChatSetting > WhatsappLiveChatSettings.jsx - done
-whatsapp > whatsappLiveChatSetting > components > Variable.jsx - done
-whatsapp > whatsappLiveChatSetting > components > ConfigureDialog.jsx - done
-whatsapp > whatsappLiveChatSetting > components > Preview.jsx - done
+working pages 
 
-rcs > managetemplate > components > Preview.jsx - done
-rcs > managetemplate > components > Carousel.jsx - done
-rcs > managetemplate > managetemplatercs.jsx - done
+npm i ua-parser-js
 
-callback > callback.jsx - done
+callback > page > addCallback.jsx
+callback > components > Preview.jsx
+
+rcs > SendRcs > components > VariableManager.jsx
+rcs > suggestionReport > SuggestionReportRcs.jsx
+rcs > suggestionReport > component > SuggestionReportTableRcs.jsx
+rcs > manageTemplate > components > SuggestedActions.jsx
+
+apis > whatsapp > whatsapp.js
+apis > obd > obd.js
+apis > download > download.js
+
+whatsapp > whatsappLaunchCampaign > components > TemplateForm.jsx
+whatsapp > livechat > WhatsappLiveChat.jsx
+whatsapp > livechat > component > InputData.jsx
+whatsapp > livechat > component > chat > Sidebar.jsx
+whatsapp > livechat > component > chat > Template.jsx
+whatsapp > livechat > component > chat > ChatScreen.jsx
+whatsapp > WhatsappManageWaba >WhatsappManageWaba.jsx
+whatsapp > whatsappManageCampaign >whatsappManageCampaign.jsx
+whatsapp > components > exportDialog.jsx
+
+sms > smsReports > SmsReports.jsx
+sms > smsReports > components > PreviousDayDetailsTable.jsx
+sms > smsReports > components > PreviousDaysTableSms.jsx
+sms > smsReports > components > exportDialog.jsx
+
+profile > components > UniversalAccountInfo.jsx
+profile > components > IpDetailsTable.jsx
+
+mainlayout > sidebar > Sidebar.jsx
+mainlayout > navbar > Navbar.jsx
+
+routes > Auth > PermissionRoute.jsx
+routes > Approutes > Approutes.jsx
+
+====================================================================================
+
+Akhil start 
+
+from may 06 to may 08
+
+only - obd reports are pending 
 
 
 
-
+may - 09 - last merge commit arihant - add copyIcon to copy wabaurl in clipboard manageWaba

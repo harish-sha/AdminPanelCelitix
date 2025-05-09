@@ -63,7 +63,6 @@ const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) =
 
 const ObdCampaignTable = (id) => {
     const [selectedRows, setSelectedRows] = useState([]);
-
     const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
 
     const columns = [

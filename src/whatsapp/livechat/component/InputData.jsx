@@ -78,18 +78,18 @@ export const InputData = ({
           <button
             onClick={() => {
               setBtnOption("active");
-              setChatState({
-                active: null,
-                input: "",
-                allConversations: [],
-                specificConversation: [],
-                latestMessage: {
-                  srno: "",
-                  replayTime: "",
-                },
-                replyData: "",
-                isReply: false,
-              });
+              // setChatState({
+              //   active: null,
+              //   input: "",
+              //   allConversations: [],
+              //   specificConversation: [],
+              //   latestMessage: {
+              //     srno: "",
+              //     replayTime: "",
+              //   },
+              //   replyData: "",
+              //   isReply: false,
+              // });
             }}
             className={`p-2 transition-all duration-300 rounded-full ${btnOption === "active"
                 ? "bg-blue-500 text-white tracking-wider shadow-lg"
@@ -101,18 +101,18 @@ export const InputData = ({
           <button
             onClick={() => {
               setBtnOption("close");
-              setChatState({
-                active: null,
-                input: "",
-                allConversations: [],
-                specificConversation: [],
-                latestMessage: {
-                  srno: "",
-                  replayTime: "",
-                },
-                replyData: "",
-                isReply: false,
-              });
+              // setChatState({
+              //   active: null,
+              //   input: "",
+              //   allConversations: [],
+              //   specificConversation: [],
+              //   latestMessage: {
+              //     srno: "",
+              //     replayTime: "",
+              //   },
+              //   replyData: "",
+              //   isReply: false,
+              // });
             }}
             className={`px-3 transition-all duration-300 rounded-full ${btnOption === "close"
                 ? "bg-blue-500 text-white tracking-wider shadow-lg"

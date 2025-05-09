@@ -103,7 +103,6 @@ export const VariableManager = ({
           newMessageContent.length,
           newMessageContent.length
         );
-        pcam;
       }, 0);
     },
     [inputVariables, setInputVariables]
@@ -143,7 +142,9 @@ export const VariableManager = ({
     varList?.map((label, index) => (
       <div className="relative w-full p-2" key={index}>
         <div className="flex gap-2 items-center mb-1">
-          <label htmlFor={`variable${index + 1}`}>{label}</label>
+          <label htmlFor={`variable${index + 1}`}
+            className="w-[5rem] max-w-[10rem] text-sm text-start"
+          >{label}</label>
           <InputField
             id={`variable${index + 1}`}
             ref={textBoxRef}
@@ -210,14 +211,13 @@ export const VariableManager = ({
               </span>
             </CustomTooltip>
           </div>
-          {carVar.data[item].map((label, nestedIndex) => (
+          {Object.keys(carVar.data[item]).map((_, nestedIndex) => (
             <div
               key={nestedIndex}
-              className={`flex flex-col md:flex-row gap-2 items-start text-left md:items-center mb-1 p-1 rounded-lg transition-all duration-300 ${
-                nestedIndex % 2 === 0
-                  ? "bg-gray-50" // Light row
-                  : "bg-gray-100" // Darker row
-              }`}
+              className={`flex flex-col md:flex-row gap-2 items-start text-left md:items-center mb-1 p-1 rounded-lg transition-all duration-300 ${nestedIndex % 2 === 0
+                ? "bg-gray-50" // Light row
+                : "bg-gray-100" // Darker row
+                }`}
             >
               <label
                 htmlFor={`${index}-${nestedIndex}`}

@@ -1,4 +1,12 @@
-export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
+export const ChatSidebar = ({ formatDate, chatState, setChatState, setSelectedAgentList }) => {
+  async function fetchAgentDetails(srno) {
+    try {
+      const res = await getAgentList();
+      return res?.data?.find((agent) => agent.sr_no === srno)?.name;
+    } catch (e) {
+      console.log(e);
+    }
+  }
   return (
     <div className="mt-4 h-[70vh] overflow-y-scroll">
       {chatState?.allConversations
@@ -9,7 +17,7 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
             key={chat.srno || index}
             className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 " : ""
               }`}
-            onClick={() => {
+            onClick={async () => {
               // setActiveChat(chat);
               setChatState((prev) => ({
                 ...prev,
@@ -17,6 +25,7 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
                 replyData: "",
                 isReply: false,
               }));
+              setSelectedAgentList(chat?.agentSrno);
             }}
           >
             <div className="flex items-center justify-between ">
@@ -31,8 +40,8 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState }) => {
                   ) : (
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${chatState?.active?.srno === chat.srno
-                          ? "bg-gray-500"
-                          : "bg-gray-300"
+                        ? "bg-gray-500"
+                        : "bg-gray-300"
                         }`}
                     >
                       {chat.contectName?.charAt(0)?.toUpperCase() || "?"}

@@ -1,177 +1,256 @@
-import React, { useRef, useState } from 'react';
-import UniversalButton from '../../components/UniversalButton';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { TurnstileComponent } from '../../utils/TurnstileComponent';
+import InputField from "@/whatsapp/components/InputField";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Carousel } from "react-responsive-carousel";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import VariableDropdown from "@/whatsapp/components/VariableDropdown";
+import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
-const Blog = () => {
-    const navigate = useNavigate();
-    const [form, setForm] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: '',
-        consent: false,
-    });
+export const VariableManager = ({
+    templateDetails,
+    varList,
+    setVarList,
+    varLength,
+    setInputVariables,
+    inputVariables,
+    carVar,
+    selectedIndex,
+    setSelectedIndex,
+    carVarInput,
+    setCarVarInput,
+    headers,
+    selectedOption,
+}) => {
+    const [isCarousal, setIsCarousal] = useState(false);
+    const textBoxRef = useRef(null);
 
-    const [otp, setOtp] = useState(Array(6).fill(''));
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [resendTimer, setResendTimer] = useState(0);
-    const [isOtpVerified, setIsOtpVerified] = useState(false);
-    const otpRefs = useRef([]);
+    useEffect(() => {
+        setIsCarousal(templateDetails.length > 1);
+    }, [templateDetails]);
 
-    const validatePhoneNumber = (phone) => /^[0-9]{10,13}$/.test(phone);
-    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-
-    const sendOtp = () => {
-        const phone = form.phone.trim();
-        const email = form.email.trim();
-
-        if (!validatePhoneNumber(phone)) {
-            toast.error('Enter a valid phone number.');
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            toast.error('Enter a valid email address.');
-            return;
-        }
-
-        // Set verified if validations pass
-        setIsOtpVerified(true); // ✅ This line added
-
-        if (resendTimer === 0) {
-            console.log('OTP sent to:', phone);
-            toast.success('OTP sent successfully!');
-            setIsOtpSent(true);
-            setResendTimer(30);
-            startResendTimer();
-        }
+    const handleInputVariable = (value, index) => {
+        setInputVariables((prev) => ({ ...prev, [index]: value }));
     };
 
-    const startResendTimer = () => {
-        const interval = setInterval(() => {
-            setResendTimer((prev) => {
-                if (prev <= 1) {
-                    clearInterval(interval);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
+    const handleCarInputVariable = (value, index, nestedIndex) => {
+        setCarVarInput((prev) => {
+            const updated = { ...prev };
+            const current = updated[index] || [];
+            current[nestedIndex] = value;
+            updated[index] = current;
+            return updated;
+        });
     };
 
-    const handleOtpChange = (index, value) => {
-        if (/^\d?$/.test(value)) {
-            const updatedOtp = [...otp];
-            updatedOtp[index] = value;
-            setOtp(updatedOtp);
+    // const handleEmojiAdd = (emoji, index) => {
+    //   const input = textBoxRef.current;
+    //   if (!input) return;
 
-            if (value !== '' && index < otp.length - 1) {
-                otpRefs.current[index + 1].focus();
-            } else if (value === '' && index > 0) {
-                otpRefs.current[index - 1].focus();
-            }
-        }
-    };
+    //   const start = input.selectionStart;
+    //   const end = input.selectionEnd;
 
-    const verifyOtp = () => {
-        const enteredOtp = otp.join('');
-        const validOtp = '123456';
+    //   const newMessageContent =
+    //     inputVariables[index].slice(0, start) +
+    //     emoji +
+    //     inputVariables[index].slice(end);
 
-        if (enteredOtp.length < 6) {
-            toast.error('Please enter the complete 6-digit OTP.');
-            return;
-        }
+    //   setInputVariables((prev) => ({
+    //     ...prev,
+    //     [index]: newMessageContent,
+    //   }));
+    // };
 
-        if (enteredOtp === validOtp) {
-            toast.success('OTP Verified Successfully!');
-            setIsOtpSent(false);
-            setIsOtpVerified(true);
-            setOtp(Array(6).fill(''));
-        } else {
-            toast.error('Invalid OTP. Please try again.');
-        }
-    };
+    // const insertVariable = (variable, index) => {
+    //   const input = textBoxRef.current;
+    //   if (!input) return;
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const { name, email, phone, service } = form;
+    //   const tag = `{#${variable}#}`;
+    //   const start = input.selectionStart;
+    //   const end = input.selectionEnd;
 
-        // Validate OTP before form submission
-        const enteredOtp = otp.join('');
-        if (!isOtpVerified || enteredOtp.length < 6) {
-            toast.error('Please verify your phone number with OTP.');
-            return;
-        }
+    //   const newMessageContent =
+    //     inputVariables[index].substring(0, start) +
+    //     tag +
+    //     inputVariables[index].substring(end);
 
-        // Validate other fields
-        if (!name.trim()) return toast.error('Name is required.');
-        if (!email.trim() || !validateEmail(email)) return toast.error('Enter a valid email address.');
-        if (!validatePhoneNumber(phone)) return toast.error('Enter a valid phone number.');
-        if (!service.trim()) return toast.error('Please select a service.');
+    //   setInputVariables((prev) => ({
+    //     ...prev,
+    //     [index]: newMessageContent,
+    //   }));
+    // };
 
-        toast.success('Form submitted successfully!');
-        console.log('Form submitted:', form);
-        navigate('/thank-you');
-    };
+    const handleEmojiAdd = useCallback(
+        (emoji, index) => {
+            const input = textBoxRef.current;
+            if (!input) return;
 
-    const [turnstileResponse, setTurnstileResponse] = useState(null); // To store the Turnstile response token
-    // Handle Turnstile success response
-    const handleTurnstileChange = (token) => {
-        setTurnstileResponse(token);
-        console.log("Turnstile Token:", token); // Print the Turnstile token
-    };
+            const inputData = inputVariables[index] || "";
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+
+            const newMessageContent =
+                inputData.slice(0, start) + emoji + inputData.slice(end);
+
+            setInputVariables((prev) => ({
+                ...prev,
+                [index]: newMessageContent,
+            }));
+
+            setTimeout(() => {
+                input.focus();
+                input.setSelectionRange(
+                    newMessageContent.length,
+                    newMessageContent.length
+                );
+            }, 0);
+        },
+        [inputVariables, setInputVariables]
+    );
+
+    const insertVariable = useCallback(
+        (variable, index) => {
+            const input = textBoxRef.current;
+            if (!input) return;
+
+            const tag = `{#${variable}#}`;
+            const start = input.selectionStart;
+            const end = input.selectionEnd;
+
+            const inputData = inputVariables[index] || "";
+
+            const newMessageContent =
+                inputData.slice(0, start) + tag + inputData.slice(end);
+
+            setInputVariables((prev) => ({
+                ...prev,
+                [index]: newMessageContent,
+            }));
+
+            setTimeout(() => {
+                input.focus();
+                input.setSelectionRange(
+                    newMessageContent.length,
+                    newMessageContent.length
+                );
+            }, 0);
+        },
+        [inputVariables, setInputVariables]
+    );
+
+    const renderSimpleInput = () =>
+        varList?.map((label, index) => (
+            <div className="relative w-full p-2" key={index}>
+                <div className="flex gap-2 items-center mb-3">
+                    <label
+                        htmlFor={`variable${index + 1}`}
+                        className="w-[5rem] max-w-[10rem] text-sm text-start"
+                    >
+                        {label}
+                    </label>
+                    <InputField
+                        id={`variable${index + 1}`}
+                        ref={textBoxRef}
+                        name={`variable${index + 1}`}
+                        placeholder={`Enter variable ${index + 1}`}
+                        value={inputVariables[index]}
+                        onChange={(e) => handleInputVariable(e.target.value, index)}
+                        sx={{ width: "100%", marginBottom: "1rem" }}
+                    />
+                </div>
+                <div className="absolute top-[0.58rem] right-2 h-10">
+                    <InputVariable
+                        variables={headers}
+                        onSelect={(e) => insertVariable(e, index)}
+                    />
+                </div>
+                <div className="absolute top-[0.8rem] right-10">
+                    <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
+                </div>
+            </div>
+        ));
+
+    const renderCarouselInput = () => (
+        <Carousel
+            showThumbs={false}
+            showStatus={false}
+            infiniteLoop
+            useKeyboardArrows
+            renderArrowPrev={() => null}
+            renderArrowNext={() => null}
+            selectedItem={selectedIndex}
+            onChange={(index) => setSelectedIndex(index)}
+            renderIndicator={(onClickHandler, isSelected, index) => {
+                const indicatorClass = isSelected
+                    ? "bg-[#212529] w-3 h-3 rounded-full mx-1 cursor-pointer"
+                    : "bg-[#7E7F80] w-3 h-3 rounded-full mx-1 cursor-pointer";
+
+                return (
+                    <li
+                        key={index}
+                        className={`inline-block ${indicatorClass}`}
+                        onClick={() => {
+                            onClickHandler();
+                            setSelectedIndex(index);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                        aria-label={`Slide ${index + 1}`}
+                    />
+                );
+            }}
+        >
+            {Object.keys(carVar?.data || {}).map((item, index) => (
+                <div key={index} className="p-2">
+                    <div className="flex gap-2 items-center mb-3">
+                        <p className="text-[0.9rem] text-start">Message Params</p>
+                        <CustomTooltip
+                            title="Insert all the variables value"
+                            placement="top"
+                            arrow
+                        >
+                            <span>
+                                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                            </span>
+                        </CustomTooltip>
+                    </div>
+                    {Object.keys(carVar.data[item]).map((_, nestedIndex) => (
+                        <div className="flex gap-2 items-center mb-3" key={nestedIndex}>
+                            <label
+                                htmlFor={`${index}-${nestedIndex}`}
+                                className="w-[5rem] max-w-[10rem] text-sm text-start"
+                            >
+                                {carVar.data[item][nestedIndex]}
+                            </label>
+                            <InputField
+                                id={`${index}-${nestedIndex}`}
+                                name={`variable${index}-${nestedIndex}`}
+                                placeholder={`Enter variable ${nestedIndex + 1}`}
+                                onChange={(e) =>
+                                    handleCarInputVariable(e.target.value, index, nestedIndex)
+                                }
+                                sx={{ width: "66.6667%", marginBottom: "1rem" }}
+                            />
+                        </div>
+                    ))}
+                </div>
+            ))}
+        </Carousel>
+    );
 
     return (
-        <div className="bg-white border border-gray-300 rounded-xl p-1 md:p-6 shadow-sm">
-            <form onSubmit={handleSubmit} className="space-y-4 bg-white border border-gray-300 rounded-xl p-4 md:p-6 shadow-sm">
-                <input type="text" name="name" placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-                <input type="text" name="email" placeholder="Email Address" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" disabled={isOtpVerified} />
-
-                <div className="flex gap-2 items-center">
-                    <input type="text" name="phone" placeholder="Phone No." disabled={isOtpVerified} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/[^\d]/g, '').slice(0, 13), isOtpVerified: false })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-                    <UniversalButton label="Verify" type="button" variant="brutal" disable={!validatePhoneNumber(form.phone) || resendTimer > 0} onClick={sendOtp} className="bg-[#9B44B6] border-[#9B44B6] text-white px-3 py-1 rounded hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] disabled:bg-gray-300 disabled:text-gray-700 disabled:cursor-not-allowed" />
+        <div className="bg-white pb-2 rounded-md">
+            {templateDetails[0] && (
+                <div className="bg-[#128C7E] p-2 rounded-t-md">
+                    <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
+                        Template Type: {templateDetails[0].templateType}
+                    </h1>
                 </div>
-
-                {isOtpSent && resendTimer > 0 && (
-                    <div className="text-sm text-gray-600 mt-1">Resend in {resendTimer} seconds</div>
-                )}
-
-                {isOtpSent && (
-                    <div className="flex items-center gap-2 flex-wrap mt-2">
-                        {otp.map((digit, index) => (
-                            <input key={index} ref={(el) => (otpRefs.current[index] = el)} type="text" maxLength={1} inputMode="numeric" value={digit} onChange={(e) => handleOtpChange(index, e.target.value)} className="w-10 h-10 text-center border border-gray-300 rounded" />
-                        ))}
-                        <UniversalButton label="Submit" variant="brutal" type="button" onClick={verifyOtp} className="bg-[#9B44B6] border-[#9B44B6] text-white hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] px-3 py-1 rounded-md mx-1" />
-                    </div>
-                )}
-
-                <input type="text" name="company" placeholder="Company Name" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-
-                <select name="service" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })} className="form-select w-full border border-gray-300 rounded-md p-2 text-gray-500">
-                    <option value="" disabled>Select Service</option>
-                    <option value="WhatsApp Business API">WhatsApp Business API</option>
-                    <option value="RCS Business Messaging">RCS Business Messaging</option>
-                    <option value="SMS Solution">SMS Solution</option>
-                    <option value="IVR/Missed Call">Virtual Receptionist (IVR)/Missed Call</option>
-                    <option value="User Verification">Chatbot Services</option>
-                    <option value="API Integration">API Integrations</option>
-                    <option value="2-way SMS">2 Way SMS (Long/Shortcode)</option>
-                    <option value="Missed Call Services">Missed Call Services</option>
-                    <option value="Other CPaaS Solutions">Other CPaaS Solutions</option>
-                </select>
-
-                <textarea name="message" placeholder="How can we help you?" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="form-textarea w-full border border-gray-300 rounded-md p-2" />
-
-                <TurnstileComponent onChange={handleTurnstileChange} />
-
-                <UniversalButton label="Submit" type="submit" variant="brutal" className="bg-[#9B44B6] border-[#9B44B6] text-white hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] px-4 py-2 rounded-md" />
-            </form>
+            )}
+            <div className="flex flex-col gap-2 mt-2">
+                {!isCarousal && varLength > 0 && renderSimpleInput()}
+                {isCarousal && carVar?.length > 0 && renderCarouselInput()}
+            </div>
         </div>
     );
 };
-
-export default Blog;

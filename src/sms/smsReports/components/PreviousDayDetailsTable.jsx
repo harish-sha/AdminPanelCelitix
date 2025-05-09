@@ -87,6 +87,7 @@ const PreviousDayDetailsTable = ({
     paginationModel,
     setPaginationModel,
     setCurrentPage,
+    totalPage = 500,
     totalPage,
     col,
     row,

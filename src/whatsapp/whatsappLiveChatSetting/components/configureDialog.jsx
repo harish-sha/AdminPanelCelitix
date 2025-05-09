@@ -20,10 +20,12 @@ export const ConfigureDialog = ({
   setVariablesData,
   setSpecificTemplate,
 }) => {
+
   const [fileData, setFileData] = useState({
     url: "",
     file: "",
   });
+
   return (
     <Dialog
       header="Configure"
@@ -95,8 +97,8 @@ export const ConfigureDialog = ({
         )}
 
         {basicDetails?.msgType === "2" && (
-          <div className="flex gap-2">
-            <div className="w-[50%]">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="w-full">
               <DropdownWithSearch
                 id="templateMessage"
                 name="templateMessage"
@@ -135,7 +137,7 @@ export const ConfigureDialog = ({
                 />
               )}
             </div>
-            <div className="w-[50%]">
+            <div className="w-full">
               <Preview
                 specificTemplate={specificTemplate}
                 variablesData={variablesData}
