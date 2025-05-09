@@ -14,14 +14,10 @@ import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-
-
-
 import Loader from "../../whatsapp/components/Loader.jsx";
 import InputField from "../../whatsapp/components/InputField.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
 import UniversalDatePicker from "../../whatsapp/components/UniversalDatePicker.jsx";
-
 import ObdCampaignTable from "./ObdCampaignTable.jsx";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel.jsx";
 import UniversalButton from "../../whatsapp/components/UniversalButton.jsx";
@@ -29,6 +25,8 @@ import ObdDaySummaryTable from "./ObdDaySummaryTable.jsx";
 import { RadioButton } from "primereact/radiobutton";
 import { DataTable } from "@/components/layout/DataTable.jsx";
 import { IconButton } from "@mui/material";
+import { fetchDayWiseSummaryObd, fetchSummaryLogsObd } from "@/apis/obd/obd.js";
+import toast from "react-hot-toast";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -46,6 +44,136 @@ const ObdCampaignReports = () => {
   const [dtmfResponse, setDtmfResponse] = useState(null);
   const [value, setValue] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
+
+  const [isFetching, setIsFetching] = useState(false);
+
+
+
+
+
+  const formatDateToDDMMYYYY = (dateStr) => {
+    const date = new Date(dateStr);
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+
+
+  const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
+    fromDate: new Date(),
+    toDate: new Date(),
+  });
+
+  const [columns, setColumns] = useState([]);
+  const [rows, setRows] = useState([]);
+  // const [isFetching, setIsFetching] = useState(false);
+
+  const handleDayWiseSummary = async () => {
+    const data = {
+      queTimeStart: formatDateToDDMMYYYY(daywiseDataToFilter.fromDate),
+      queTimeEnd: formatDateToDDMMYYYY(daywiseDataToFilter.toDate),
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await fetchDayWiseSummaryObd(data);
+      console.log("API Response:", res);
+
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
+        { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
+        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
+        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
+      ]);
+
+      setRows(
+        Array.isArray(res)
+          ? res.map((item, i) => ({
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
+          : []
+      );
+    } catch (error) {
+      console.error("Fetch error:", error);
+      toast.error("Something went wrong while fetching data.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+
+
+
+  const voiceType = [
+    { label: "Transactional", value: "1" },
+    { label: "Promotional", value: "2" },
+  ];
+  
+  // ✅ Date formatting helper
+  const formatDateToDDMMYYYY2 = (date) => {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}/${month}/${year}`;
+  };
+  
+  const [summaryDataToFilter, setSummaryDataToFilter] = useState({
+    fromDate: new Date(),
+    toDate: new Date(),
+    voiceType: "",
+  });
+  
+  const [summarycolumns, setSummaryColumns] = useState([]);
+  const [summaryrows, setSummaryRows] = useState([]);
+
+  
+  
+  const handleSummaryLogs = async () => {
+    const data = {
+      queTimeStart: formatDateToDDMMYYYY2(summaryDataToFilter.fromDate),
+      queTimeEnd: formatDateToDDMMYYYY2(summaryDataToFilter.toDate),
+      voiceType: summaryDataToFilter.voiceType || "",
+    };
+  
+    try {
+      setIsFetching(true);
+      const res = await fetchSummaryLogsObd(data); 
+      console.log("API Response:", res);
+  
+      setSummaryColumns([
+        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
+        { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
+        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
+        { field: "sent", headerName: "Sent", flex: 1, minWidth: 100 },
+        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
+      ]);
+  
+      setSummaryRows(
+        Array.isArray(res)
+          ? res.map((item, i) => ({
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
+          : []
+      );
+    } catch (error) {
+      console.error("Fetch error:", error);
+      toast.error("Something went wrong while fetching data.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+
+
+
 
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -377,167 +505,167 @@ const ObdCampaignReports = () => {
     }
   ];
 
-  const ObdSummaryRows = [
-    {
-      sn: 1,
-      id: 1,
-      date: "20/03/2025",
-      totalunits: "3",
-      blocked: "0",
-      totalsent: "1",
-      success: "1",
-      failed: "1"
-    },
-    {
-      sn: 2,
-      id: 2,
-      date: "21/03/2025",
-      totalunits: "5",
-      blocked: "2",
-      totalsent: "3",
-      success: "2",
-      failed: "3"
-    },
-    {
-      sn: 3,
-      id: 3,
-      date: "22/03/2025",
-      totalunits: "6",
-      blocked: "1",
-      totalsent: "5",
-      success: "4",
-      failed: "2"
-    },
-    {
-      sn: 4,
-      id: 4,
-      date: "23/03/2025",
-      totalunits: "7",
-      blocked: "2",
-      totalsent: "5",
-      success: "3",
-      failed: "4"
-    },
-    {
-      sn: 5,
-      id: 5,
-      date: "24/03/2025",
-      totalunits: "4",
-      blocked: "0",
-      totalsent: "4",
-      success: "3",
-      failed: "1"
-    },
-    {
-      sn: 6,
-      id: 6,
-      date: "25/03/2025",
-      totalunits: "8",
-      blocked: "3",
-      totalsent: "5",
-      success: "4",
-      failed: "4"
-    },
-    {
-      sn: 7,
-      id: 7,
-      date: "26/03/2025",
-      totalunits: "6",
-      blocked: "2",
-      totalsent: "4",
-      success: "2",
-      failed: "4"
-    },
-    {
-      sn: 8,
-      id: 8,
-      date: "27/03/2025",
-      totalunits: "9",
-      blocked: "1",
-      totalsent: "8",
-      success: "7",
-      failed: "2"
-    },
-    {
-      sn: 9,
-      id: 9,
-      date: "28/03/2025",
-      totalunits: "10",
-      blocked: "3",
-      totalsent: "7",
-      success: "5",
-      failed: "5"
-    },
-    {
-      sn: 10,
-      id: 10,
-      date: "29/03/2025",
-      totalunits: "5",
-      blocked: "1",
-      totalsent: "4",
-      success: "3",
-      failed: "2"
-    },
-    {
-      sn: 11,
-      id: 11,
-      date: "30/03/2025",
-      totalunits: "7",
-      blocked: "2",
-      totalsent: "5",
-      success: "4",
-      failed: "3"
-    },
-    {
-      sn: 12,
-      id: 12,
-      date: "31/03/2025",
-      totalunits: "6",
-      blocked: "1",
-      totalsent: "5",
-      success: "4",
-      failed: "2"
-    },
-    {
-      sn: 13,
-      id: 13,
-      date: "01/04/2025",
-      totalunits: "8",
-      blocked: "2",
-      totalsent: "6",
-      success: "5",
-      failed: "3"
-    },
-    {
-      sn: 14,
-      id: 14,
-      date: "02/04/2025",
-      totalunits: "9",
-      blocked: "3",
-      totalsent: "6",
-      success: "5",
-      failed: "4"
-    },
-    {
-      sn: 15,
-      id: 15,
-      date: "03/04/2025",
-      totalunits: "7",
-      blocked: "2",
-      totalsent: "5",
-      success: "3",
-      failed: "4"
-    }
-  ];
+  // const ObdSummaryRows = [
+  //   {
+  //     sn: 1,
+  //     id: 1,
+  //     date: "20/03/2025",
+  //     totalunits: "3",
+  //     blocked: "0",
+  //     totalsent: "1",
+  //     success: "1",
+  //     failed: "1"
+  //   },
+  //   {
+  //     sn: 2,
+  //     id: 2,
+  //     date: "21/03/2025",
+  //     totalunits: "5",
+  //     blocked: "2",
+  //     totalsent: "3",
+  //     success: "2",
+  //     failed: "3"
+  //   },
+  //   {
+  //     sn: 3,
+  //     id: 3,
+  //     date: "22/03/2025",
+  //     totalunits: "6",
+  //     blocked: "1",
+  //     totalsent: "5",
+  //     success: "4",
+  //     failed: "2"
+  //   },
+  //   {
+  //     sn: 4,
+  //     id: 4,
+  //     date: "23/03/2025",
+  //     totalunits: "7",
+  //     blocked: "2",
+  //     totalsent: "5",
+  //     success: "3",
+  //     failed: "4"
+  //   },
+  //   {
+  //     sn: 5,
+  //     id: 5,
+  //     date: "24/03/2025",
+  //     totalunits: "4",
+  //     blocked: "0",
+  //     totalsent: "4",
+  //     success: "3",
+  //     failed: "1"
+  //   },
+  //   {
+  //     sn: 6,
+  //     id: 6,
+  //     date: "25/03/2025",
+  //     totalunits: "8",
+  //     blocked: "3",
+  //     totalsent: "5",
+  //     success: "4",
+  //     failed: "4"
+  //   },
+  //   {
+  //     sn: 7,
+  //     id: 7,
+  //     date: "26/03/2025",
+  //     totalunits: "6",
+  //     blocked: "2",
+  //     totalsent: "4",
+  //     success: "2",
+  //     failed: "4"
+  //   },
+  //   {
+  //     sn: 8,
+  //     id: 8,
+  //     date: "27/03/2025",
+  //     totalunits: "9",
+  //     blocked: "1",
+  //     totalsent: "8",
+  //     success: "7",
+  //     failed: "2"
+  //   },
+  //   {
+  //     sn: 9,
+  //     id: 9,
+  //     date: "28/03/2025",
+  //     totalunits: "10",
+  //     blocked: "3",
+  //     totalsent: "7",
+  //     success: "5",
+  //     failed: "5"
+  //   },
+  //   {
+  //     sn: 10,
+  //     id: 10,
+  //     date: "29/03/2025",
+  //     totalunits: "5",
+  //     blocked: "1",
+  //     totalsent: "4",
+  //     success: "3",
+  //     failed: "2"
+  //   },
+  //   {
+  //     sn: 11,
+  //     id: 11,
+  //     date: "30/03/2025",
+  //     totalunits: "7",
+  //     blocked: "2",
+  //     totalsent: "5",
+  //     success: "4",
+  //     failed: "3"
+  //   },
+  //   {
+  //     sn: 12,
+  //     id: 12,
+  //     date: "31/03/2025",
+  //     totalunits: "6",
+  //     blocked: "1",
+  //     totalsent: "5",
+  //     success: "4",
+  //     failed: "2"
+  //   },
+  //   {
+  //     sn: 13,
+  //     id: 13,
+  //     date: "01/04/2025",
+  //     totalunits: "8",
+  //     blocked: "2",
+  //     totalsent: "6",
+  //     success: "5",
+  //     failed: "3"
+  //   },
+  //   {
+  //     sn: 14,
+  //     id: 14,
+  //     date: "02/04/2025",
+  //     totalunits: "9",
+  //     blocked: "3",
+  //     totalsent: "6",
+  //     success: "5",
+  //     failed: "4"
+  //   },
+  //   {
+  //     sn: 15,
+  //     id: 15,
+  //     date: "03/04/2025",
+  //     totalunits: "7",
+  //     blocked: "2",
+  //     totalsent: "5",
+  //     success: "3",
+  //     failed: "4"
+  //   }
+  // ];
 
-  const ObdSummaryColumns = [
-    { field: 'sn', headerName: 'S.No', flex: 1 },
-    { field: 'date', headerName: 'Date', flex: 1 },
-    { field: 'totalunits', headerName: 'Total Units', flex: 1 },
-    { field: 'totalsent', headerName: 'Total Sent', flex: 1 },
-    { field: 'success', headerName: 'Success', flex: 1 },
-    { field: 'failed', headerName: 'Failed', flex: 1 }
-  ]
+  // const ObdSummaryColumns = [
+  //   { field: 'sn', headerName: 'S.No', flex: 1 },
+  //   { field: 'date', headerName: 'Date', flex: 1 },
+  //   { field: 'totalunits', headerName: 'Total Units', flex: 1 },
+  //   { field: 'totalsent', headerName: 'Total Sent', flex: 1 },
+  //   { field: 'success', headerName: 'Success', flex: 1 },
+  //   { field: 'failed', headerName: 'Failed', flex: 1 }
+  // ]
 
   return (
     <>
@@ -576,6 +704,23 @@ const ObdCampaignReports = () => {
                   label={
                     <span>
                       <PollOutlinedIcon size={20} /> Day-wise Summary
+                    </span>
+                  }
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    color: "text.secondary",
+                    "&:hover": {
+                      color: "primary.main",
+                      backgroundColor: "#f0f4ff",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+                <Tab
+                  label={
+                    <span>
+                      <PollOutlinedIcon size={20} />Summary Logs
                     </span>
                   }
                   sx={{
@@ -683,39 +828,120 @@ const ObdCampaignReports = () => {
             </CustomTabPanel>
             <CustomTabPanel value={value} index={1}>
               <div className="w-full">
-                <div className="flex flex-col md:flex-row lg:flex-row flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
-                  <div className="w-full sm:w-56 ">
-                    <UniversalDatePicker label="Created At" />
-                  </div>
-                  <div className="w-full sm:w-56 ">
-                    <UniversalDatePicker label="End Date" />
+                {/* Filter Section */}
+                <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      label="From Date"
+                      id="summaryfromDate"
+                      name="summaryfromDate"
+                      value={daywiseDataToFilter.fromDate}
+                      onChange={(e) =>
+                        setDaywiseDataToFilter((prev) => ({
+                          ...prev,
+                          fromDate: e,
+                        }))
+                      }
+                    />
                   </div>
 
-                  <div className="w-full sm:w-56 ">
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      label="To Date"
+                      id="summarytodate"
+                      name="summarytodate"
+                      value={daywiseDataToFilter.toDate}
+                      onChange={(e) =>
+                        setDaywiseDataToFilter((prev) => ({
+                          ...prev,
+                          toDate: e,
+                        }))
+                      }
+                    />
+                  </div>
+
+                  <div className="w-full sm:w-56">
                     <UniversalButton
                       id="obdSummarySearchBtn"
                       name="obdSummarySearchBtn"
                       label="Search"
-                      onClick={handleSummarySearchBtn}
                       icon={<IoSearch />}
+                      onClick={handleDayWiseSummary}
+                      disabled={isFetching}
                     />
                   </div>
                 </div>
 
-                <div>
-                  <DataTable
-                    id="whatsapp-rate-table"
-                    name="whatsappRateTable"
-                    col={ObdSummaryColumns}
-                    rows={ObdSummaryRows}
-                    selectedRows={selectedRows}
-                    setSelectedRows={setSelectedRows}
-                  />
-                </div>
-
-                {/* <ObdDaySummaryTable /> */}
-
+                {/* Table Section */}
+                <DataTable
+                  id="obd-daywise-table"
+                  name="obdDayWiseTable"
+                  col={columns}
+                  rows={rows}
+                  loading={isFetching}
+                />
               </div>
+            </CustomTabPanel>
+            <CustomTabPanel value={value} index={2}>
+            <div className="w-full p-4">
+      {/* Filters */}
+      <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end pb-5">
+        <div className="w-full sm:w-56">
+          <UniversalDatePicker
+            label="From Date"
+            value={summaryDataToFilter.fromDate}
+            onChange={(e) =>
+              setSummaryDataToFilter((prev) => ({ ...prev, fromDate: e }))
+            }
+          />
+        </div>
+
+        <div className="w-full sm:w-56">
+          <UniversalDatePicker
+            label="To Date"
+            value={summaryDataToFilter.toDate}
+            onChange={(e) =>
+              setSummaryDataToFilter((prev) => ({ ...prev, toDate: e }))
+            }
+          />
+        </div>
+
+        <div className="w-full sm:w-56">
+          <AnimatedDropdown
+            label="Voice Type"
+            id="voiceType"
+            name="voiceType"
+            options={voiceType}
+            value={summaryDataToFilter.voiceType}
+            placeholder="Select Type"
+            onChange={(value) =>
+              setSummaryDataToFilter((prev) => ({
+                ...prev,
+                voiceType: value,
+              }))
+            }
+          />
+        </div>
+
+        <div className="w-full sm:w-56">
+          <UniversalButton
+            label="Search"
+            icon={<IoSearch />}
+            onClick={handleSummaryLogs}
+            disabled={isFetching}
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      <DataTable
+        id="obd-summary-table"
+        name="obdSummaryTable"
+        col={summarycolumns}
+        rows={summaryrows}
+        loading={isFetching}
+      />
+    </div>
             </CustomTabPanel>
           </Box>
         )}

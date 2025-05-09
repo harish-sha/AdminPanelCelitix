@@ -856,8 +856,8 @@ const SmsReports = () => {
         </div>
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
-            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
-              <div className="w-full sm:w-56">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-52">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -874,7 +874,7 @@ const SmsReports = () => {
                   maxDate={new Date()}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-52">
                 <InputField
                   label="Campaign Name"
                   id="campaignName"
@@ -889,7 +889,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-52">
                 <InputField
                   label="Mobile Number"
                   id="campaignnumber"
@@ -904,14 +904,14 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-52">
                 <AnimatedDropdown
                   label="Campaign Type"
                   id="campaignType"
                   name="campaignType"
                   options={campaignoptions}
                   value={campaignDataToFilter.campaingType}
-                  placeholder="Select Campaign Type"
+                  placeholder="Select Type"
                   onChange={(value) => {
                     setCampaignDataToFilter((prev) => ({
                       ...prev,
@@ -920,7 +920,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              
                 <div className="w-max-content">
                   <UniversalButton
                     label={isFetching ? "Searching..." : "Search"}
@@ -932,7 +932,6 @@ const SmsReports = () => {
                     disabled={isFetching}
                   />
                 </div>
-              </div>
             </div>
           </div>
           <div className="w-full">
@@ -946,8 +945,8 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <div className="w-full">
-            <div className="flex items-end justify-start w-full gap-2 pb-5 align-middle flex--wrap">
-              <div className="w-full sm:w-56">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-42">
                 <UniversalDatePicker
                   label="From Date"
                   id="previousfromDate"
@@ -965,7 +964,7 @@ const SmsReports = () => {
                   defaultValue={new Date()}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <UniversalDatePicker
                   label="To Date"
                   id="previoustodate"
@@ -982,7 +981,7 @@ const SmsReports = () => {
                   maxDate={new Date()}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <InputField
                   label="Mobile Number"
                   id="previousnumber"
@@ -998,7 +997,7 @@ const SmsReports = () => {
                   type="number"
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Type"
                   id="previousType"
@@ -1014,7 +1013,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Source"
                   id="previousSource"
@@ -1043,7 +1042,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1058,7 +1057,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="w-full sm:w-42">
                 <InputField
                   label="Content"
                   id="previouscontent"
@@ -1073,8 +1072,6 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-
-              <div className="w-full sm:w-56">
                 <div className="w-max-content">
                   <UniversalButton
                     label="Show"
@@ -1084,7 +1081,6 @@ const SmsReports = () => {
                     onClick={handlePreviousDaysSearch}
                   />
                 </div>
-              </div>
             </div>
           </div>
           <div className="w-full">
@@ -1098,7 +1094,7 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <div className="w-full">
-            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"
@@ -1127,7 +1123,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap w-full gap-4 sm:w-56">
+              <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
                   id="SmsTyoe"
@@ -1146,7 +1142,6 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   label="Type"
@@ -1164,8 +1159,7 @@ const SmsReports = () => {
                   disabled={daywiseDataToFilter.selectOption === 1}
                 />
               </div>
-              <div className="w-full sm:w-56">
-                <div className="w-max-content">
+              <div className="w-max-content">
                   <UniversalButton
                     label="Show"
                     id="summaryshow"
@@ -1173,7 +1167,6 @@ const SmsReports = () => {
                     variant="primary"
                     onClick={handleDayWiseSummary}
                   />
-                </div>
               </div>
             </div>
           </div>
@@ -1189,7 +1182,7 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <div className="w-full">
-            <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex--wrap">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"
@@ -1218,7 +1211,6 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   label="Type"
@@ -1235,8 +1227,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
-                <div className="w-max-content">
+              <div className="w-max-content">
                   <UniversalButton
                     label="Show"
                     id="attachmentshow"
@@ -1244,7 +1235,6 @@ const SmsReports = () => {
                     variant="primary"
                     onClick={handleAttachmentSearch}
                   />
-                </div>
               </div>
             </div>
           </div>

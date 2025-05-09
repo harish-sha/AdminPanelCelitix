@@ -1,11 +1,11 @@
 import React from 'react'
 
-const HlrLookup = () => {
+const HLRLookup = () => {
   return (
     <div>
-      HlrLookup
+      HLRLookup
     </div>
   )
 }
 
-export default HlrLookup
+export default HLRLookup

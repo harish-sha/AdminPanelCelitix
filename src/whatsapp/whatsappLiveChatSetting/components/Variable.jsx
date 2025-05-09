@@ -34,11 +34,15 @@ export const Variables = ({
     fileRef.current.value = "";
   }
   return (
-    <div className="mt-2 space-y-2">
+    <div className="mt-2 space-y-2 border p-3 rounded-xl">
       {variablesData?.data?.length > 0 &&
         variablesData?.data?.map((input, index) => (
-          <div key={index}>
+          <div>
+
+            <div className="">
             <h1>Variables</h1>
+            </div>
+          <div key={index}>
             <div className="flex  gap-2 items-center mt-2">
               <label htmlFor="templateMessage">
                 {`{{${variablesData?.data[index]}}}`}
@@ -56,6 +60,7 @@ export const Variables = ({
                 className="flex-1 w-full focus:outline-none"
               />
             </div>
+          </div>
           </div>
         ))}
 

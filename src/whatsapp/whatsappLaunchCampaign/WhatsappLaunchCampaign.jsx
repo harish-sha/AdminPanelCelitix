@@ -528,7 +528,7 @@ const WhatsappLaunchCampaign = () => {
           <div className="container-fluid">
             <div className="flex flex-wrap">
               <div className=" w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
-                <div className="w-100 p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 ">
+                <div className="w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 ">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div className="flex-1">
                       <AnimatedDropdown

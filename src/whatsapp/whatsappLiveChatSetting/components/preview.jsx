@@ -101,10 +101,10 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
   const type = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
   const text = specificTemplate?.urlDisplay || specificTemplate?.phoneDisplay;
   return (
-    <div className="p-3 bg-gray-200 rounded-xl overflow-hidden">
-      <div className="w-full h-full transition-all bg-gray-100 rounded-lg shadow-md">
-        <div className="max-w-2xl mx-auto transition-all duration-300 ease-in shadow-md w-100 rounded-xl">
-          <div className="flex items-center justify-between bg-[#128C7E] text-white px-4 py-3 rounded-t-xl">
+ 
+   
+        <div className="transition-all duration-300 ease-in shadow-md rounded-xl">
+          <div className="flex items-center justify-between bg-[#128C7E] text-white px-2 py-3 rounded-t-xl">
             <h2 className="font-medium tracking-wide text-md">
               Template Preview
             </h2>
@@ -112,7 +112,7 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
           </div>
 
           {specificTemplate && (
-            <div className="space-y-3 p-2 w-full">
+            <div className="space-y-3 p-2 w-full bg-gray-100">
               <div>
                 {["image", "video", "document"].includes(
                   specificTemplate.templateType
@@ -172,7 +172,6 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
             </div>
           )}
         </div>
-      </div>
-    </div>
+   
   );
 };

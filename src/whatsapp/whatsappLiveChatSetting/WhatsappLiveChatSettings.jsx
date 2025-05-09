@@ -274,50 +274,49 @@ const WhatsappLiveChatSettings = () => {
 
   return (
     <>
-      <div className="flex justify-end w-full items-center mb-4 mr-5">
-        <div className="w-[15%]">
-          <AnimatedDropdown
-            id="waba"
-            name="waba"
-            label="Select WABA"
-            tooltipContent="Select your whatsapp business account"
-            tooltipPlacement="right"
-            options={wabaState?.waba?.map((waba) => ({
-              value: waba.mobileNo,
-              label: waba.name,
-            }))}
-            value={wabaState.selected}
-            onChange={(e) => {
-              setWabaState((prev) => ({
-                ...prev,
-                selected: e,
-              }));
-              setCardDetails({});
-            }}
-          />
-        </div>
-      </div>
-      <Box
-        sx={{
-          background: "linear-gradient(to bottom right, #f0f4ff, #ffffff)",
-          py: 5,
-          px: 4,
-        }}
-      >
+      <div className="bg-gradient-to-br from-[#f0f4ff] to-white py-2 px-4 h-dvh">
         {/* Heading */}
         <Box maxWidth="lg" mx="auto" textAlign="center" mb={8}>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            color="text.primary"
-            gutterBottom
-          >
-            💬 WhatsApp Live Chat Settings
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Configure and automate your WhatsApp experience for smoother
-            customer communication.
-          </Typography>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          
+          <div className="flex flex-col justify-start items-start">
+            <Typography
+              variant="h5"
+              fontWeight="bold"
+              color="text.primary"
+              gutterBottom
+            >
+              WhatsApp Live Chat Settings
+            </Typography>
+            {/* <Typography variant="subtitle1" color="text.secondary">
+              Configure and automate your WhatsApp experience for smoother
+              customer communication.
+            </Typography> */}
+          </div>
+          <div className="flex justify-start md:justify-end w-full items-start">
+            <div className="md:w-48 w-full">
+              <AnimatedDropdown
+                id="waba"
+                name="waba"
+                label="Select WABA"
+                tooltipContent="Select your whatsapp business account"
+                tooltipPlacement="right"
+                options={wabaState?.waba?.map((waba) => ({
+                  value: waba.mobileNo,
+                  label: waba.name,
+                }))}
+                value={wabaState.selected}
+                onChange={(e) => {
+                  setWabaState((prev) => ({
+                    ...prev,
+                    selected: e,
+                  }));
+                  setCardDetails({});
+                }}
+              />
+            </div>
+          </div>
+          </div>
         </Box>
 
         <Grid container spacing={5} justifyContent="center" maxWidth="lg">
@@ -474,7 +473,7 @@ const WhatsappLiveChatSettings = () => {
             </MotionPaper>
           </Grid> */}
         </Grid>
-      </Box>
+      </div>
 
       {configureState?.open && (
         <ConfigureDialog

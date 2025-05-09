@@ -8,10 +8,10 @@ import { useUser } from "@/context/auth";
 import UniversalButton from "../components/common/UniversalButton";
 import celitixLogo from "../assets/images/celitix-logo-white.svg";
 import Header from "./components/Header";
-import Footer from "./components/Footer";
 import InputField from "../components/layout/InputField";
 
 import "./login.css";
+import Footer from "./components/Footer";
 
 const Login = () => {
   const [userId, setUserId] = useState("");
@@ -73,9 +73,9 @@ const Login = () => {
   };
 
   return (
-    <>
-      <Header />
-      <div className="flex items-center justify-center min-h-screen bg-[#edf5ff]">
+    <div className="bg-[#edf5ff] h-screen overflow-y-auto">
+      <Header/>
+      <div className="flex items-center justify-center py-5">
         <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
           <div className="grid grid-cols-1 md:grid-cols-2 h-full">
             <form
@@ -155,8 +155,8 @@ const Login = () => {
           </div>
         </div>
       </div>
-      <Footer />
-    </>
+      <Footer/>
+    </div>
   );
 };
 

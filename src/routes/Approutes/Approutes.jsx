@@ -7,6 +7,7 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 // dashboard
 import Dashboard from "@/dashboard/Dashboard";
 
+
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
 import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
@@ -129,6 +130,7 @@ import PageNotFound from "@/NotFound/PageNotFound";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import { AddCallback } from "@/callback/page/addCallback";
+import ResellerDashboard from "../../ResellerDashboard";
 
 const Approutes = () => {
   return (
@@ -279,6 +281,13 @@ const Approutes = () => {
       <Route path="arihant" element={<Arihant />} />
 
       <Route path="*" element={<PageNotFound />} />
+
+
+      
+      <Route path="/reseller" element={<ResellerDashboard/>} />
+
+
+     
     </Routes>
   );
 };
