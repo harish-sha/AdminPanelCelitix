@@ -125,7 +125,7 @@ export const SuggestedActions = ({
                           selectedAction.dropdown1 === "Url Action"
                             ? "text"
                             : selectedAction.dropdown1 === "Dialer Action"
-                            ? "number"
+                            ? "text"
                             : "text"
                         }
                       />

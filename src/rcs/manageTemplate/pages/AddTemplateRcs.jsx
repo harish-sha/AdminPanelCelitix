@@ -304,6 +304,16 @@ const AddTemplateRcs = () => {
         return;
       }
       // console.log(cardData);
+      const key = {
+        HORIZONTAL: "cardAlignment",
+        VERTICAL: "mediaHeight",
+      };
+      const isVertical = cardOrientation.toUpperCase() === "VERTICAL";
+
+      const dynamicKey = key[cardOrientation.toUpperCase()];
+      const value = isVertical
+        ? `${cardData.mediaHeight.toUpperCase()}_HEIGHT`
+        : cardData.mediaHeight.toUpperCase();
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
@@ -315,7 +325,8 @@ const AddTemplateRcs = () => {
             title: cardData.title,
             caption: messageContent,
             cardOrientation: cardOrientation.toUpperCase(),
-            mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
+            // mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
+            [dynamicKey]: value,
             suggestions: suggestions,
           },
         ],

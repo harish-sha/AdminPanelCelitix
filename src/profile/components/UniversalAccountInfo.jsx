@@ -417,7 +417,7 @@ function AccountInfoModal({ show, handleClose }) {
                 />
               </Paper>
             ) : (
-              <h1>
+              <h1 className="text-center text-xl text-gray-700 font-semibold" >
                 Your account is expired. Please contact Admin to activate your
                 account.
               </h1>

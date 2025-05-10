@@ -37,6 +37,8 @@ import {
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
+import { ExportDialog } from "./components/exportDialog";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -119,6 +121,19 @@ const WhatsappManageCampaign = () => {
     source: false,
   });
 
+  const [dataToExport, setDataToExport] = useState({
+    campaignName: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    srno: 0,
+    isCustomField: 0,
+    customColumns: "",
+    campaignType: "",
+    status: "",
+    delStatus: {},
+    type: "campaign",
+  });
+
   const [customcheckboxStates, setcustomCheckboxStates] = useState({
     campaignName: false,
     mobileNo: false,
@@ -147,12 +162,14 @@ const WhatsappManageCampaign = () => {
       setIsLoading(true);
       try {
         const response = await getAllCampaignWhatsapp();
-        if (response && Array.isArray(response)) {
-          setCampaignList(response);
-        } else {
-          setCampaignList([]);
-        }
+        setCampaignList(response);
+        // if (response && Array.isArray(response)) {
+        //   setCampaignList(response);
+        // } else {
+        //   setCampaignList([]);
+        // }
       } catch (error) {
+        console.log(error);
         toast.error("Error fetching Campaign List:", error);
       }
       setIsLoading(false);
@@ -168,7 +185,7 @@ const WhatsappManageCampaign = () => {
   const handleCheckboxChange = (e, name) => {
     setCampaignCheckboxStates((prevState) => ({
       ...prevState,
-      [name]: e.checked,
+      [name]: e.target.checked,
     }));
   };
 
@@ -204,9 +221,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
 
   //Export Download Reports end
 
@@ -820,7 +837,17 @@ const WhatsappManageCampaign = () => {
 
       {/* Campaign Export Dialog Start*/}
 
-      <Dialog
+      {visibledialog && (
+        <ExportDialog
+          visibledialog={visibledialog}
+          setVisibledialog={setVisibledialog}
+          allCampaigns={campaignList}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
+
+      {/* <Dialog
         visible={visibledialog}
         style={{ width: "45rem" }}
         onHide={() => {
@@ -901,7 +928,6 @@ const WhatsappManageCampaign = () => {
                     </label>
                   </div>
                 </div>
-                {/* Option 2 */}
                 <div className="cursor-pointer">
                   <div className="flex items-center gap-2">
                     <RadioButton
@@ -1313,7 +1339,6 @@ const WhatsappManageCampaign = () => {
                       </label>
                     </div>
                   </div>
-                  {/* Option 2 */}
                   <div className="cursor-pointer">
                     <div className="flex items-center gap-2">
                       <RadioButton
@@ -1603,7 +1628,7 @@ const WhatsappManageCampaign = () => {
             </div>
           </>
         )}
-      </Dialog>
+      </Dialog> */}
 
       {/* Campaign Export Dialog End*/}
     </div>

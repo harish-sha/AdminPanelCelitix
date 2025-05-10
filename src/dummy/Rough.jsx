@@ -1,256 +1,573 @@
-import InputField from "@/whatsapp/components/InputField";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { Carousel } from "react-responsive-carousel";
-import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
-import VariableDropdown from "@/whatsapp/components/VariableDropdown";
-import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
-import CustomTooltip from "@/components/common/CustomTooltip";
-import { AiOutlineInfoCircle } from "react-icons/ai";
+import React, { useState, useRef, useEffect } from "react";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
+import { IoPersonOutline } from "react-icons/io5";
+import { SiGoogleauthenticator } from "react-icons/si";
+import { LuMessageSquareMore } from "react-icons/lu";
+import { IoSettingsOutline } from "react-icons/io5";
+import { IoWalletOutline } from "react-icons/io5";
+import Tooltip from "@mui/material/Tooltip";
+import Divider from "@mui/material/Divider";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
-export const VariableManager = ({
-    templateDetails,
-    varList,
-    setVarList,
-    varLength,
-    setInputVariables,
-    inputVariables,
-    carVar,
-    selectedIndex,
-    setSelectedIndex,
-    carVarInput,
-    setCarVarInput,
-    headers,
-    selectedOption,
-}) => {
-    const [isCarousal, setIsCarousal] = useState(false);
-    const textBoxRef = useRef(null);
+import rcsicon from "../../assets/icons/RCS02.svg";
+import twoway from "../../assets/icons/TWOWAY.svg";
+import callback from "../../assets/icons/Callback02.svg";
+import missedcall from "../../assets/icons/Missedcall2.svg";
+import obd from "../../assets/icons/OBD02.svg";
+import ibd from "../../assets/icons/IBD02.svg";
+import numberlookup from "../../assets/icons/Numberlookup.svg";
+import clicktwocall from "../../assets/icons/Click2Call02.svg";
+import { LuWandSparkles } from "react-icons/lu";
+import { useUser } from "@/context/auth";
+import { all } from "axios";
+
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
+    const { user } = useUser();
+
+    const [openDropdown, setOpenDropdown] = useState(null);
+    const [collapseAnimationDone, setCollapseAnimationDone] = useState(
+        !isCollapsed
+    );
+
+    const location = useLocation();
+    const [openTooltips, setOpenTooltips] = useState({});
+    const dropdownRefs = useRef({});
+    const navigate = useNavigate();
+
+    const handleTooltipOpen = (key) => {
+        setOpenTooltips((prev) => ({ ...prev, [key]: true }));
+    };
+
+    const handleTooltipClose = (key) => {
+        setOpenTooltips((prev) => ({ ...prev, [key]: false }));
+    };
 
     useEffect(() => {
-        setIsCarousal(templateDetails.length > 1);
-    }, [templateDetails]);
+        if (!isCollapsed) {
+            setOpenTooltips({});
+        }
+    }, [isCollapsed]);
 
-    const handleInputVariable = (value, index) => {
-        setInputVariables((prev) => ({ ...prev, [index]: value }));
+    useEffect(() => {
+        if (isCollapsed) {
+            setOpenDropdown(null);
+        }
+    }, [isCollapsed]);
+
+    const handleDropdownClick = (dropdownName) => {
+        if (isCollapsed) {
+            setIsCollapsed(false);
+            return;
+        }
+        setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
     };
 
-    const handleCarInputVariable = (value, index, nestedIndex) => {
-        setCarVarInput((prev) => {
-            const updated = { ...prev };
-            const current = updated[index] || [];
-            current[nestedIndex] = value;
-            updated[index] = current;
-            return updated;
+    const handleSingleRouteClick = () => {
+        if (isMobile) setIsCollapsed(true);
+    };
+
+    const isActiveRoute = (route) => {
+        if (route === "/") {
+            return location.pathname === "/";
+        }
+        return location.pathname.startsWith(route);
+    };
+
+    const collapsedClass = isCollapsed
+        ? "justify-center px-0 "
+        : "justify-start px-4 ";
+
+    useEffect(() => {
+        const activeMenu = menuItems.find((item) =>
+            item.links?.some((link) => isActiveRoute(link.to))
+        );
+        if (activeMenu) {
+            setOpenDropdown(activeMenu.name);
+        } else {
+            setOpenDropdown(null);
+        }
+    }, [location.pathname]);
+
+    const menuItems = [
+        {
+            id: "",
+            name: "Home",
+            icon: <FaHome />,
+            label: "Home",
+            type: "single",
+            to: "/",
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Dummy",
+            icon: <FaHome />,
+            label: "Home",
+            type: "single",
+            to: "/dummy",
+            roles: ["ADMIN"],
+        },
+        {
+            id: "1",
+            name: "SMS",
+            icon: <LuMessageSquareMore />,
+            label: "SMS",
+            type: "dropdown",
+            links: [
+                { to: "/sendsms", label: "Send SMS" },
+                { to: "/smsreports", label: "Reports" },
+                { to: "/smsdlttemplates", label: "DLT Template" },
+                {
+                    to: "/smscampaigndetaillogs",
+                    label: "Sms Details Logs",
+                    isHide: true,
+                },
+                {
+                    to: "/smsAttachmentdetaillog",
+                    label: "Sms Details Logs",
+                    isHide: true,
+                },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Two Way SMS",
+            icon: <img src={twoway} className="w-4 h-4" />,
+            label: "Two Way SMS",
+            type: "dropdown",
+            links: [
+                { to: "/managekeywords", label: "Manage Keyword" },
+                { to: "/twowayreports", label: "Reports" },
+                { to: "/twowayintegration", label: "Integration" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "3",
+            name: "RCS",
+            icon: <img src={rcsicon} className="w-4 h-4" />,
+            label: "RCS",
+            type: "dropdown",
+            links: [
+                { to: "/sendrcs", label: "Send RCS" },
+                { to: "/rcsmanagetemplate", label: "Manage Template" },
+                { to: "/rcssuggestionreport", label: "Suggestion Report" },
+                { to: "/rcsdeliveryreport", label: "Delivery Report" },
+                {
+                    to: "/rcsdeliverycampaigndetails",
+                    label: "Delivery Campaign Report",
+                    isHide: true,
+                },
+                {
+                    to: "/rcsaddtemplatercs",
+                    label: "RcsAddTemplate",
+                    isHide: true,
+                },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "2",
+            name: "WhatsApp",
+            icon: <FaWhatsapp />,
+            label: "WhatsApp",
+            type: "dropdown",
+            links: [
+                { to: "/wlaunchcampaign", label: "Launch Campaigns" },
+                { to: "/wlivechat", label: "Live Chats" },
+                { to: "/wlcsetting", label: "Live Chat Settings" },
+                { to: "/wmanagecampaign", label: "Manage Campaigns" },
+                { to: "/managetemplate", label: "Manage Templates" },
+                { to: "/wqrcode", label: "QR Code" },
+                { to: "/wmanagewaba", label: "Manage WABA" },
+                { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
+                { to: "/wwhatsappmanageagent", label: "Manage Agent" },
+                { to: "/wwhatsappbot", label: "Manage Bot" },
+                { to: "/whatsappflow", label: "WhatsApp Flow" },
+                { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
+                { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+                { to: "/createtemplate", label: "Create Bot", isHide: true },
+                { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Number Lookup",
+            icon: <img src={numberlookup} className="w-4 h-4" />,
+            label: "Number Lookup",
+            type: "dropdown",
+            links: [
+                { to: "/hlrlookup", label: "HLR Lookup" },
+                { to: "/lookupreports", label: "HLR Lookup Reports" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "App Authenticator",
+            icon: <SiGoogleauthenticator />,
+            label: "App Authenticator",
+            type: "dropdown",
+            links: [
+                { to: "/authsettings", label: "Settings" },
+                { to: "/authreports", label: "Reports" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+
+            name: "E-mail",
+            icon: <MdOutlineEmail />,
+            label: "E-mail",
+            type: "dropdown",
+            links: [
+                { to: "/emailtemplate", label: "Email Template" },
+                { to: "/emailreports", label: "Reports" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "7",
+            name: "OBD",
+            icon: <img src={obd} className="w-4 h-4" />,
+            label: "OBD",
+            type: "dropdown",
+            links: [
+                { to: "/obdcreatecampaign", label: "Create Campaign" },
+                { to: "/obdmanagecampaign", label: "Reports" },
+                { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+                { to: "/obdIntegration", label: "Integration" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "IBD",
+            icon: <img src={ibd} className="w-4 h-4" />,
+            label: "IBD",
+            type: "dropdown",
+            links: [
+                { to: "/ibdcallhistory", label: "Call History" },
+                { to: "/ibdmanageexecutive", label: "Manage Executive" },
+                { to: "/ibdivrflow", label: "IVR Flow" },
+                { to: "/ibdsettings", label: "Settings" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Missed Call",
+            icon: <img src={missedcall} className="w-4 h-4" />,
+            label: "Missed Call",
+            type: "dropdown",
+            links: [
+                { to: "/missedcallhistory", label: "Call History" },
+                { to: "/missedcallsettings", label: "Settings" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Click-2-Call",
+            icon: <img src={clicktwocall} className="w-4 h-4" />,
+            label: "Click-2-Call",
+            type: "dropdown",
+            links: [
+                { to: "/clicktohistory", label: "Call History" },
+                { to: "/clicktosettings", label: "Settings" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "CallBack",
+            icon: <img src={callback} className="w-4.5 h-4.5" />,
+            label: "Callback",
+            type: "dropdown",
+            links: [
+                { to: "/callback", label: "Call Back" },
+                { to: "/addcallback", label: "Add Call Back", isHide: true },
+                { to: "/editcallback", label: "Edit Call Back", isHide: true },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "managefunds",
+            icon: <IoWalletOutline />,
+            label: "Manage Funds",
+            type: "dropdown",
+            links: [{ to: "/recharge", label: "Recharge" }],
+            roles: ["ADMIN", "DIRECTUSER"],
+        },
+        {
+            id: "",
+            name: "admin",
+            icon: <IoPersonOutline />,
+            label: "Admin",
+            type: "dropdown",
+            links: [
+                { to: "/manageuser", label: "Manage User" },
+                { to: "/managedlttemplate", label: "Manage DLT Template" },
+                { to: "/rcsmanagebot", label: "Manage Bot" },
+                { to: "/managevoiceclips", label: "Manage Voice Clips" },
+                { to: "/manageplan", label: "Manage Plan" },
+                { to: "/accountmanager", label: "Account Manager" },
+                { to: "/graphmain", label: "Graph Main" },
+                { to: "/graphuserwise", label: "Graph User Wise" },
+                { to: "/manageSMPP", label: "Manage SMPP" },
+                { to: "/managerouting", label: "Manage Routing" },
+                { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+                { to: "/manageprefix", label: "Manage Prefix" },
+                { to: "/blacklist", label: "Blacklist" },
+                { to: "/managenotifications", label: "ManageNotifications" },
+                { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+                { to: "/whatsappFlow", label: "whatsapp Flow" },
+            ],
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "Managecontacts",
+            icon: <GroupOutlinedIcon fontSize="20" />,
+            label: "Manage Contacts",
+            type: "single",
+            to: "/managecontacts",
+            roles: ["ADMIN", "DIRECTUSER"],
+        },
+        {
+            id: "",
+            name: "Wishmanagement",
+            icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+            label: "Wish Management",
+            type: "single",
+            to: "/smswishmanagement",
+            roles: ["ADMIN"],
+        },
+        {
+            id: "",
+            name: "apiDocs",
+            icon: <DescriptionOutlinedIcon fontSize="20" />,
+            label: "API Docs",
+            type: "single",
+            onClick: () => navigate("/docs"),
+            roles: ["ADMIN"],
+        },
+    ];
+
+    const getFilteredMenuItems = (menuItems, userState) => {
+        let allowedServices = [];
+
+        if (userState.role === "ADMIN") {
+            return menuItems;
+        }
+
+        if (userState.role === "AGENT") {
+            return [
+                {
+                    id: "",
+                    name: "WhatsApp LiveChat",
+                    icon: <FaWhatsapp />,
+                    label: "WhatsApp LiveChat",
+                    type: "single",
+                    to: "/wlivechat",
+                    roles: ["AGENT"],
+                },
+            ];
+        }
+
+        menuItems.forEach((item) => {
+            if (item.roles.includes(userState.role)) allowedServices.push(item);
+            userState.services.forEach((service, index) => {
+                if (item.id == service.service_type_id) {
+                    allowedServices.push(item);
+                }
+            });
+            if (item.name === "Home") {
+                allowedServices.push(item);
+            }
+            if (item.name === "apiDocs") {
+                allowedServices.push(item);
+            }
+            if (item.name === "CallBack") {
+                allowedServices.push(item);
+            }
         });
+
+        return allowedServices;
     };
 
-    // const handleEmojiAdd = (emoji, index) => {
-    //   const input = textBoxRef.current;
-    //   if (!input) return;
-
-    //   const start = input.selectionStart;
-    //   const end = input.selectionEnd;
-
-    //   const newMessageContent =
-    //     inputVariables[index].slice(0, start) +
-    //     emoji +
-    //     inputVariables[index].slice(end);
-
-    //   setInputVariables((prev) => ({
-    //     ...prev,
-    //     [index]: newMessageContent,
-    //   }));
-    // };
-
-    // const insertVariable = (variable, index) => {
-    //   const input = textBoxRef.current;
-    //   if (!input) return;
-
-    //   const tag = `{#${variable}#}`;
-    //   const start = input.selectionStart;
-    //   const end = input.selectionEnd;
-
-    //   const newMessageContent =
-    //     inputVariables[index].substring(0, start) +
-    //     tag +
-    //     inputVariables[index].substring(end);
-
-    //   setInputVariables((prev) => ({
-    //     ...prev,
-    //     [index]: newMessageContent,
-    //   }));
-    // };
-
-    const handleEmojiAdd = useCallback(
-        (emoji, index) => {
-            const input = textBoxRef.current;
-            if (!input) return;
-
-            const inputData = inputVariables[index] || "";
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-
-            const newMessageContent =
-                inputData.slice(0, start) + emoji + inputData.slice(end);
-
-            setInputVariables((prev) => ({
-                ...prev,
-                [index]: newMessageContent,
-            }));
-
-            setTimeout(() => {
-                input.focus();
-                input.setSelectionRange(
-                    newMessageContent.length,
-                    newMessageContent.length
-                );
-            }, 0);
-        },
-        [inputVariables, setInputVariables]
-    );
-
-    const insertVariable = useCallback(
-        (variable, index) => {
-            const input = textBoxRef.current;
-            if (!input) return;
-
-            const tag = `{#${variable}#}`;
-            const start = input.selectionStart;
-            const end = input.selectionEnd;
-
-            const inputData = inputVariables[index] || "";
-
-            const newMessageContent =
-                inputData.slice(0, start) + tag + inputData.slice(end);
-
-            setInputVariables((prev) => ({
-                ...prev,
-                [index]: newMessageContent,
-            }));
-
-            setTimeout(() => {
-                input.focus();
-                input.setSelectionRange(
-                    newMessageContent.length,
-                    newMessageContent.length
-                );
-            }, 0);
-        },
-        [inputVariables, setInputVariables]
-    );
-
-    const renderSimpleInput = () =>
-        varList?.map((label, index) => (
-            <div className="relative w-full p-2" key={index}>
-                <div className="flex gap-2 items-center mb-3">
-                    <label
-                        htmlFor={`variable${index + 1}`}
-                        className="w-[5rem] max-w-[10rem] text-sm text-start"
-                    >
-                        {label}
-                    </label>
-                    <InputField
-                        id={`variable${index + 1}`}
-                        ref={textBoxRef}
-                        name={`variable${index + 1}`}
-                        placeholder={`Enter variable ${index + 1}`}
-                        value={inputVariables[index]}
-                        onChange={(e) => handleInputVariable(e.target.value, index)}
-                        sx={{ width: "100%", marginBottom: "1rem" }}
-                    />
-                </div>
-                <div className="absolute top-[0.58rem] right-2 h-10">
-                    <InputVariable
-                        variables={headers}
-                        onSelect={(e) => insertVariable(e, index)}
-                    />
-                </div>
-                <div className="absolute top-[0.8rem] right-10">
-                    <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
-                </div>
-            </div>
-        ));
-
-    const renderCarouselInput = () => (
-        <Carousel
-            showThumbs={false}
-            showStatus={false}
-            infiniteLoop
-            useKeyboardArrows
-            renderArrowPrev={() => null}
-            renderArrowNext={() => null}
-            selectedItem={selectedIndex}
-            onChange={(index) => setSelectedIndex(index)}
-            renderIndicator={(onClickHandler, isSelected, index) => {
-                const indicatorClass = isSelected
-                    ? "bg-[#212529] w-3 h-3 rounded-full mx-1 cursor-pointer"
-                    : "bg-[#7E7F80] w-3 h-3 rounded-full mx-1 cursor-pointer";
-
-                return (
-                    <li
-                        key={index}
-                        className={`inline-block ${indicatorClass}`}
-                        onClick={() => {
-                            onClickHandler();
-                            setSelectedIndex(index);
-                        }}
-                        role="button"
-                        tabIndex={0}
-                        aria-label={`Slide ${index + 1}`}
-                    />
-                );
-            }}
-        >
-            {Object.keys(carVar?.data || {}).map((item, index) => (
-                <div key={index} className="p-2">
-                    <div className="flex gap-2 items-center mb-3">
-                        <p className="text-[0.9rem] text-start">Message Params</p>
-                        <CustomTooltip
-                            title="Insert all the variables value"
-                            placement="top"
-                            arrow
-                        >
-                            <span>
-                                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                            </span>
-                        </CustomTooltip>
-                    </div>
-                    {Object.keys(carVar.data[item]).map((_, nestedIndex) => (
-                        <div className="flex gap-2 items-center mb-3" key={nestedIndex}>
-                            <label
-                                htmlFor={`${index}-${nestedIndex}`}
-                                className="w-[5rem] max-w-[10rem] text-sm text-start"
-                            >
-                                {carVar.data[item][nestedIndex]}
-                            </label>
-                            <InputField
-                                id={`${index}-${nestedIndex}`}
-                                name={`variable${index}-${nestedIndex}`}
-                                placeholder={`Enter variable ${nestedIndex + 1}`}
-                                onChange={(e) =>
-                                    handleCarInputVariable(e.target.value, index, nestedIndex)
-                                }
-                                sx={{ width: "66.6667%", marginBottom: "1rem" }}
-                            />
-                        </div>
-                    ))}
-                </div>
-            ))}
-        </Carousel>
-    );
+    const filteredItems = getFilteredMenuItems(menuItems, user);
 
     return (
-        <div className="bg-white pb-2 rounded-md">
-            {templateDetails[0] && (
-                <div className="bg-[#128C7E] p-2 rounded-t-md">
-                    <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
-                        Template Type: {templateDetails[0].templateType}
-                    </h1>
-                </div>
+        <motion.div
+            layout
+            initial={{ x: isMobile ? -240 : 0, width: isCollapsed ? 64 : 240 }}
+            animate={{
+                x: isMobile ? (isCollapsed ? -240 : 0) : 0,
+                width: isCollapsed ? 64 : 240,
+            }}
+            transition={{ type: "tween", stiffness: 260, damping: 30 }}
+            onAnimationStart={() => {
+                if (isCollapsed) setCollapseAnimationDone(false);
+            }}
+            onAnimationComplete={() => {
+                setCollapseAnimationDone(!isCollapsed);
+            }}
+            className={`mainsidebar h-screen bg-white text-white popf px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
+        ${isCollapsed ? "items-center " : "space-y-0"}`}
+            style={{ maxHeight: "calc(100vh - 4rem)" }}
+        >
+            {filteredItems.map((item) =>
+                item.type === "dropdown" ? (
+                    <Tooltip
+                        key={item.name}
+                        title={item.label}
+                        placement="right"
+                        arrow
+                        open={isCollapsed ? openTooltips[item.name] : false}
+                        onOpen={() => handleTooltipOpen(item.name)}
+                        onClose={() => handleTooltipClose(item.name)}
+                        disableHoverListener={!isCollapsed}
+                        disableFocusListener={!isCollapsed}
+                        disableTouchListener={!isCollapsed}
+                    >
+                        <motion.div
+                            onClick={() => handleDropdownClick(item.name)}
+                            className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+                                }`}
+                        >
+                            <span className="text-black flex-shrink-0">{item.icon}</span>
+                            <motion.span
+                                animate={{ opacity: isCollapsed ? 0 : 1 }}
+                                transition={{ duration: 0.15 }}
+                                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+                                    }`}
+                            >
+                                {item.label}
+                            </motion.span>
+
+                            {!isCollapsed && (
+                                <div
+                                    className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                                        }`}
+                                >
+                                    {openDropdown === item.name ? (
+                                        <MdExpandLess />
+                                    ) : (
+                                        <MdExpandMore />
+                                    )}
+                                </div>
+                            )}
+                        </motion.div>
+
+                        {/*Dropdown Content */}
+                        <motion.div
+                            initial={{ height: 0, opacity: 0 }}
+                            animate={{
+                                height:
+                                    openDropdown === item.name
+                                        ? dropdownRefs[item.name]?.scrollHeight
+                                        : 0,
+                                opacity: openDropdown === item.name ? 1 : 0,
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="overflow-hidden"
+                            ref={(el) => (dropdownRefs[item.name] = el)}
+                        >
+                            {item.links.map((link) => {
+                                const isActive = isActiveRoute(link.to);
+                                return (
+                                    <React.Fragment key={link.to}>
+                                        <Link
+                                            to={link.to}
+                                            onClick={handleSingleRouteClick}
+                                            className={`block px-4 py-2.5 text-sm transition-all duration-300
+          ${isActive ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800"}
+          ${link?.isHide ? "hidden" : ""}
+          hover:bg-[#e6f4ff]"
+        `}
+                                        >
+                                            <FiberManualRecordIcon
+                                                sx={{
+                                                    color: isActive ? "blue" : "black",
+                                                    fontSize: "10px",
+                                                    marginRight: "10px",
+                                                }}
+                                            />
+                                            <span
+                                                className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
+                                                    }`}
+                                            >
+                                                {link.label}
+                                            </span>
+                                        </Link>
+                                        <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+                                    </React.Fragment>
+                                );
+                            })}
+                        </motion.div>
+                    </Tooltip>
+                ) : (
+                    <Tooltip
+                        key={item.name}
+                        title={isCollapsed ? item.label : ""}
+                        placement="right"
+                        arrow
+                        open={isCollapsed ? openTooltips[item.name] : false}
+                        onOpen={() => handleTooltipOpen(item.name)}
+                        onClose={() => handleTooltipClose(item.name)}
+                        disableHoverListener={!isCollapsed}
+                        disableFocusListener={!isCollapsed}
+                        disableTouchListener={!isCollapsed}
+                    >
+                        {item.onClick ? (
+                            <motion.div
+                                onClick={() => {
+                                    item.onClick();
+                                    handleSingleRouteClick();
+                                }}
+                                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+                                    }`}
+                            >
+                                <span className="flex-shrink-0">{item.icon}</span>
+                                <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
+                                    {item.label}
+                                </span>
+                            </motion.div>
+                        ) : (
+                            <Link
+                                to={item.to}
+                                onClick={handleSingleRouteClick}
+                                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                                    }`}
+                            >
+                                <span className="flex-shrink-0 text-lg">{item.icon}</span>
+                                <motion.span
+                                    animate={{ opacity: isCollapsed ? 0 : 1 }}
+                                    transition={{ duration: 0.15 }}
+                                    className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                                        }`}
+                                >
+                                    {item.label}
+                                </motion.span>
+                            </Link>
+                        )}
+                    </Tooltip>
+                )
             )}
-            <div className="flex flex-col gap-2 mt-2">
-                {!isCarousal && varLength > 0 && renderSimpleInput()}
-                {isCarousal && carVar?.length > 0 && renderCarouselInput()}
-            </div>
-        </div>
+        </motion.div>
     );
 };
+
+export default Sidebar;

@@ -22,6 +22,7 @@ import {
   fetchCampaignData,
   fetchPreviousDayReport,
   getAttachmentLogs,
+  getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
 } from "../../apis/sms/sms";
@@ -35,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
+import { ExportDialog } from "./components/exportDialog";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -111,6 +113,21 @@ const SmsReports = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [allCampaigns, setAllCampaigns] = useState([]);
+  const [dataToExport, setDataToExport] = useState({
+    campaignName: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    srno: 0,
+    isCustomField: 0,
+    customColumns: "",
+    campaignType: "",
+    status: "",
+    delStatus: {},
+    type: "campaign",
+  });
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -210,6 +227,19 @@ const SmsReports = () => {
     setColumns([]);
     setRows([]);
   };
+
+  useEffect(() => {
+    async function handleFetchAllSms() {
+      try {
+        const res = await getAllCampaignSms();
+        setAllCampaigns(res);
+      } catch (e) {
+        toast.error("Something went wrong");
+        return;
+      }
+    }
+    handleFetchAllSms();
+  }, [isExportDialogOpen]);
 
   const handleCampaignSearch = async () => {
     try {
@@ -928,7 +958,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-52">
+              <div className="w-full sm:w-52 flex gap-2">
                 <div className="w-max-content">
                   <UniversalButton
                     label={isFetching ? "Searching..." : "Search"}
@@ -940,6 +970,16 @@ const SmsReports = () => {
                     disabled={isFetching}
                   />
                 </div>
+                <UniversalButton
+                  label={"Export"}
+                  id="exportCampaign"
+                  name="exportCampaign"
+                  variant="primary"
+                  onClick={() => {
+                    setIsExportDialogOpen(true);
+                  }}
+                  disabled={isFetching}
+                />
               </div>
             </div>
           </div>
@@ -1265,7 +1305,7 @@ const SmsReports = () => {
         </CustomTabPanel>
       </Box>
 
-      <Dialog
+      {/* <Dialog
         header="Export"
         visible={exports}
         onHide={() => setExports(false)}
@@ -1721,7 +1761,7 @@ const SmsReports = () => {
             </div>
           )}
         </div>
-      </Dialog>
+      </Dialog> */}
 
       <Dialog
         header={selectedColDetails}
@@ -1771,6 +1811,17 @@ const SmsReports = () => {
           totalPage={totalPage}
         />
       </Dialog>
+
+      {/* exportDialogStart */}
+      {isExportDialogOpen && (
+        <ExportDialog
+          visibledialog={isExportDialogOpen}
+          setVisibledialog={setIsExportDialogOpen}
+          allCampaigns={allCampaigns}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
     </div>
   );
 };

@@ -505,3 +505,10 @@ export const downloadCustomWhatsappReport = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+// Get User Agent
+export const getUserAgent = async (data) => {
+  return await fetchWithAuth(`/agent/getAgentName?mobileNo=${data}`, {
+    method: "POST",
+  });
+};

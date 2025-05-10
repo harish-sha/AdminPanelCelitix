@@ -27,7 +27,7 @@ import { fetchBalance } from "../../apis/settings/setting";
 import { collapse } from "@material-tailwind/react";
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
-  const { authLogout } = useUser();
+  const { authLogout, user } = useUser();
   const [showModal, setShowModal] = useState(false);
   const [profileAnchorEl, setProfileAnchorEl] = useState(null);
   const [menuAnchorEl, setMenuAnchorEl] = useState(null);
@@ -48,9 +48,19 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     setTimeout(() => setIsFetchingBalance(false), 600);
   };
 
+
+  // later change when route is set properly - may 10 - (start)
+
   useEffect(() => {
     handleBalance();
   }, []);
+
+  // useEffect(() => {
+  //   if (user?.role === "AGENT") return;
+  //   handleBalance();
+  // }, []);
+  
+  // later change when route is set properly - may 10 - (end)
 
   const toggleSidebar = useCallback(
     () => setIsCollapsed((prev) => !prev),

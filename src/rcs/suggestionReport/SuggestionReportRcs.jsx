@@ -273,7 +273,7 @@ const SuggestionReportRcs = () => {
       })
     );
 
-    const name = "Contact Data";
+    const name = `${suggestionData?.fromDate}_${suggestionData?.toDate}_suggestionReport`;
     exportToExcel(col, row, name);
     // console.log(row);
     toast.success("File Downloaded Successfully");

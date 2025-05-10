@@ -1,3 +1,7 @@
+
+import { getAgentList } from "@/apis/Agent/Agent";
+import { getUserAgent } from "@/apis/whatsapp/whatsapp";
+
 export const ChatSidebar = ({ formatDate, chatState, setChatState, setSelectedAgentList }) => {
   async function fetchAgentDetails(srno) {
     try {
@@ -18,12 +22,14 @@ export const ChatSidebar = ({ formatDate, chatState, setChatState, setSelectedAg
             className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 " : ""
               }`}
             onClick={async () => {
+              const agentName = await getUserAgent(chat?.mobileNo);
               // setActiveChat(chat);
               setChatState((prev) => ({
                 ...prev,
                 active: chat,
                 replyData: "",
                 isReply: false,
+                agentName: agentName,
               }));
               setSelectedAgentList(chat?.agentSrno);
             }}

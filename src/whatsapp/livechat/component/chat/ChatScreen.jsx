@@ -342,7 +342,7 @@ export const ChatScreen = ({
                 controls={false}
                 autoPlay={false}
                 allow=" encrypted-media"
-                className="object-contain mb-2 h-48 w-48 pointer-events-none "
+                className="object-contain mb-2 h-48 w-48 pointer-events-none"
               ></iframe>
             )}
             {chatState.replyData?.messageBody && (
@@ -474,23 +474,25 @@ export const ChatScreen = ({
             <p>{chatState?.active.mobileNo}</p>
           </div>
         </div>
-        <div className="space-x-1 text-[0.8rem] mt-3 border-1 rounded-md">
+        <div className="space-x-1 text-[0.8rem] mt-3 border-1 rounded-md space-y-2">
           {[
-            ["Status", "-"],
-            ["Last Active", "-"],
-            ["Template Messages", "-"],
-            ["Session Messages", "-"],
-            ["Unresolved Queries", "-"],
-            ["Source", "-"],
-            ["First Message", "-"],
-            ["WA Conversation", "-"],
-            ["MAU Status", "-"],
-            ["Incoming", "-"],
-            ["Circle", "-"],
+            ["Agent", chatState?.agentName?.agentName || "-"],
+            ["Group", chatState?.agentName?.groupName || "-"],
+            // ["Status", "-"],
+            // ["Last Active", "-"],
+            // ["Template Messages", "-"],
+            // ["Session Messages", "-"],
+            // ["Unresolved Queries", "-"],
+            // ["Source", "-"],
+            // ["First Message", "-"],
+            // ["WA Conversation", "-"],
+            // ["MAU Status", "-"],
+            // ["Incoming", "-"],
+            // ["Circle", "-"],
           ].map(([label, value]) => (
             <div
               key={label}
-              className="grid grid-cols-2 gap-2 p-2 border-gray-300 border-t"
+              className="grid grid-cols-2 gap-2 p-2 border-gray-300 border-t mb-2"
             >
               <p>{label}</p>
               <p className="text-right">{value}</p>

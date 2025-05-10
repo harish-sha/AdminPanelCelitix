@@ -87,9 +87,9 @@ const Obdmanagecampaign = (id, data) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -632,15 +632,17 @@ const Obdmanagecampaign = (id, data) => {
           </div>
         </Dialog>
 
-        <Dialog
-          header={selectedPlay}
-          visible={isOpenPlay}
-          onHide={() => setIsOpenPlay(false)}
-          className="lg:w-[30rem] md:w-[40rem] w-[20rem]"
-          draggable={false}
-        >
-          <ObdAudioplayer />
-        </Dialog>
+        {isOpenPlay && (
+          <Dialog
+            header={selectedPlay}
+            visible={isOpenPlay}
+            onHide={() => setIsOpenPlay(false)}
+            className="lg:w-[30rem] md:w-[40rem] w-[20rem]"
+            draggable={false}
+          >
+            <ObdAudioplayer />
+          </Dialog>
+        )}
       </div>
     </>
   );

@@ -208,7 +208,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/authreports", label: "Reports" },
       ],
     },
-    {
+    { 
       id: "",
       name: "E-mail",
       icon: <MdOutlineEmail />,
