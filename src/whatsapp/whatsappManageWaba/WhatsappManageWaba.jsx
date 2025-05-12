@@ -287,10 +287,10 @@ const WhatsappManageWaba = ({ id, name }) => {
       (response) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.accessToken;
-          // console.log('Access Token:', accessToken);
+          console.log('Access Token:', accessToken);
           // Use this token to call the debug_token API and get the shared WABA's ID
         } else {
-          // console.log('User cancelled login or did not fully authorize.');
+          console.log('User cancelled login or did not fully authorize.');
         }
       },
       {
@@ -333,6 +333,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
+    console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };

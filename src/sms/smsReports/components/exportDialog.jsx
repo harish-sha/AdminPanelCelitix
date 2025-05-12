@@ -61,6 +61,7 @@ export const ExportDialog = ({
             return;
         }
         // console.log(dataToExport);
+        delete dataToExport.type
 
         try {
             const res = await downloadCustomSmsReport(dataToExport);
@@ -201,7 +202,7 @@ export const ExportDialog = ({
                             name="campaign"
                             label="Select Campaign"
                             options={allCampaigns?.map((item) => ({
-                                value: item.srNo,
+                                value: item.srno,
                                 label: item.campaignName,
                             }))}
                             onChange={(e) =>

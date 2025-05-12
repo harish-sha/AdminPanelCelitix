@@ -9,8 +9,10 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
+import InputField from "../../components/InputField";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
+  console.log("Items:", items);
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
@@ -39,6 +41,26 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
+  const handleFileUpload = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      console.log("File uploaded:", selectedFile.name);
+    } else {
+      alert("Please select a file to upload.");
+    }
+  };
+
+  const handlePhotoUpload = (e) => {
+    const selectedPhoto = e.target.files[0];
+    if (selectedPhoto) {
+      setUploadPhoto(selectedPhoto);
+      console.log("Photo uploaded:", selectedPhoto.name);
+    } else {
+      alert("Please choose a photo.");
+    }
+  };
+
   return (
     <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2 overflow-hidden border-3 border-black">
       <Typography variant="h6" sx={{ textAlign: "center" }}>
@@ -52,7 +74,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Typography
                   key={index}
-                  // variant="h3"
+                  variant="h5"
                   className="text-lg font-semibold mb-1"
                 >
                   {item.value || "Heading Placeholder"}
@@ -64,27 +86,27 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Typography
                   key={index}
-                  // variant="h4"
-                  className="text-md font-semibold  mb-1"
+                  variant="h8"
+                  className="text-md font-medium  mb-1"
                 >
                   {item.value || "Subheading Placeholder"}
                 </Typography>
               );
 
             // Render Text Body and Text Caption
-            case "textBody":
+            case "textbody":
               return (
-                <Typography key={index} sx={{ whiteSpace: "pre-line" }}>
-                  {item.value || "Text Body Placeholder"}
+                <Typography key={index} variant="h8" sx={{ whiteSpace: "pre-line" }}>
+                  {item.value || "Text Body "}
                 </Typography>
               );
 
-            case "textCaption":
+            case "textcaption":
               return (
                 <Typography
                   key={index}
                   variant="caption"
-                  sx={{ whiteSpace: "pre-line" }}
+                // sx={{ whiteSpace: "pre-line" }}
                 >
                   {item.value || "Text Caption Placeholder"}
                 </Typography>
@@ -93,7 +115,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Text Input
             case "textInput":
               return (
-                <TextField
+                <InputField
                   key={index}
                   fullWidth
                   value={item.value || ""}
@@ -111,7 +133,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Text Area
             case "textArea":
               return (
-                <TextField
+                <InputField
                   key={index}
                   fullWidth
                   multiline
@@ -175,6 +197,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Dropdown
             case "dropDown":
               return (
+
                 <Select
                   key={index}
                   value={item.selectedOption || ""}
@@ -187,7 +210,160 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     </MenuItem>
                   ))}
                 </Select>
+
               );
+
+            case "footerbutton":
+              return (
+                <>
+
+                  <InputField
+                    label=" "
+                    placeholder="Input 1"
+                    value={item.value || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
+                    }
+                  />
+                  <InputField
+                    label=" "
+                    placeholder="Input 2"
+                    value={item.value || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
+                    }
+                  />
+                </>
+              );
+
+            case "embeddedlink":
+              return (
+                <InputField
+                  type="url"
+                  placeholder="Enter a valid URL"
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+                  }
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+
+              )
+
+            case "optin":
+              return (
+                <InputField
+                  placeholder="Opt-In"
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+
+                  }
+                />
+              )
+
+            case "photo":
+              return (
+                <Box key={index}>
+                  <InputField
+                    type="file"
+                    id="file-upload"
+                    accept=".png, .jpeg,"
+                    onChange={handlePhotoUpload}
+                  />
+                </Box>
+              )
+
+            case "document":
+              return (
+                <InputField
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+
+                  }
+                />
+              )
+
+            case "ifelse":
+              return (
+                <InputField
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+
+                  }
+                />
+              )
+
+            case "image":
+              return (
+                <InputField
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+
+                  }
+                />
+              )
+
+            case "date":
+              return (
+                <InputField
+                  value={item.value || ""}
+                  onChange={(value) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: value,
+                    }))
+
+                  }
+                />
+              )
+
+            case "userdetail":
+              return (
+                <InputField
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+
+                  }
+                />
+              )
 
             default:
               return null;

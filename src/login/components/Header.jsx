@@ -110,8 +110,6 @@ const Header = () => {
                 className={`lg:px-12 md:px-10 px-0 w-full z-100 transition-all duration-500 ease-in-out ${scrolled ? 'top-0' : 'top-10'
                     }`}
             >
-
-
                 <div className="flex items-center justify-between px-4 md:px-6 py-4 bg-white md:rounded-2xl shadow-md relative">
                     <div className="flex-shrink-0 cursor-pointer">
                         <Link href="celitix.com" to="/">

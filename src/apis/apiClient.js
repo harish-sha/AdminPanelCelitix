@@ -22,7 +22,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   try {
     // console.log(`Fetching API: ${API_BASE_URL}${endpoint}`);
-    const instance = axios.create({ timeout: 10000 });
+    const instance = axios.create({ timeout: 20000 });
 
     const response = await instance({
       method: options.method || "GET",
@@ -33,7 +33,6 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
         ...(options.headers || {}),
       },
     });
-    
 
     // if (response.statusText !== "OK") {
     //   console.error(`API Error: ${response.status} ${response.statusText}`);

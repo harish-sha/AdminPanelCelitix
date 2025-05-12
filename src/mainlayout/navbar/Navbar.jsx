@@ -263,8 +263,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     backgroundColor: "#e6f4ff",
                     color: "#1e3a8a",
                     boxShadow: "0 4px 20px rgba(0, 0, 0, 0.09)",
-                    scale: 1.02,
-                    transition: "all 0.2s ease-in-out",
+                    scale: 1.01,
+                    transition: "all 0.2s ease-in",
                   },
                 }}
                 onClick={action}

@@ -253,6 +253,44 @@ const WhatsappLaunchCampaign = () => {
       })
       ?.join(",");
 
+    // const contentValues = bodyVariables
+    //   ?.map((variable) => {
+    //     const key = `body${variable}`;
+    //     const value = formData[key] || "";
+
+    //     const parts = [];
+    //     let lastIndex = 0;
+
+    //     // Match all {{...}} template variables
+    //     const regex = /{{(.*?)}}/g;
+    //     let match;
+
+    //     while ((match = regex.exec(value)) !== null) {
+    //       const textBefore = value.slice(lastIndex, match.index);
+    //       if (textBefore.trim()) {
+    //         parts.push(`${textBefore}`);
+    //       } else if (textBefore) {
+    //         // Preserve spaces
+    //         parts.push(`${textBefore.replace(/"/g, '\\"')}`);
+    //       }
+
+    //       parts.push(`#${match[1]}#`);
+    //       lastIndex = match.index + match[0].length;
+    //     }
+
+    //     const remainingText = value.slice(lastIndex);
+    //     if (remainingText.trim()) {
+    //       parts.push(`${remainingText}`);
+    //     } else if (remainingText) {
+    //       parts.push(`${remainingText.replace(/"/g, '\\"')}`);
+    //     }
+
+    //     return parts.join(" ");
+    //   })
+    //   ?.join(",");
+
+
+
     if (isGroup === 1) {
       setXlsxPath("");
       setTotalRecords("");

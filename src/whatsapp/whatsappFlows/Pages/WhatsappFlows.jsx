@@ -45,7 +45,7 @@
 // export default WhatsappFlows;
 
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   IconButton,
   Menu,
@@ -59,10 +59,16 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { Dialog } from 'primereact/dialog';
+import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+
+
 import AnimatedDropdown from '@/whatsapp/components/AnimatedDropdown';
 import InputWithLabel from '@/whatsapp/components/InputWithLabel';
 import UniversalButton from "@/components/common/UniversalButton";
 import InputField from "@/components/layout/InputField";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { getFlowList, getWabaList } from "@/apis/whatsapp/whatsapp";
 
 const allFlows = [
   { name: 'flow6', status: 'Published', createdAt: '30 Apr 2025, 11:15am' },
@@ -76,13 +82,47 @@ const allFlows = [
 ];
 
 const WhatsappFlows = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [menuAnchor, setMenuAnchor] = useState(null);
   const [selectedFlow, setSelectedFlow] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
+  const [wabaList, setWabaList] = useState([]);
+  const [flowList, setFlowList] = useState([]);
+  const [selectedWaba, setSelectedWaba] = useState("");
 
   const rowsPerPage = 4;
+
+  // Fetch WABA List
+  useEffect(() => {
+    const fetchWabaList = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getWabaList();
+        setWabaList(response);
+      } catch (error) {
+        toast.error("Error fetching WABA List:", error);
+      }
+      setIsLoading(false);
+    };
+    fetchWabaList();
+  }, []);
+
+  // fetch flow list
+  useEffect(() => {
+    const fetchFlowList = async () => {
+      setIsLoading(true);
+      try {
+        const response = await getFlowList();
+        console.log("Flow List:", response);
+        setFlowList(response);
+      } catch (error) {
+        console.error("Error fetching flow list:", error);
+      }
+      setIsLoading(false);
+    }
+  })
 
   const filteredFlows = allFlows.filter(flow =>
     flow.name.toLowerCase().includes(search.toLowerCase())
@@ -140,7 +180,7 @@ const WhatsappFlows = () => {
                 setSearch(e.target.value);
                 setCurrentPage(1);
               }}
-              className="border border-gray-300 rounded px-3 py-2 w-full sm:w-64"
+              className="border border-gray-300 rounded-md px-3 py-1.5 w-full sm:w-64 text-sm"
             />
             <UniversalButton
               label="+ Create New Flow"
@@ -156,16 +196,20 @@ const WhatsappFlows = () => {
           {paginatedFlows.map((flow, index) => (
             <div
               key={index}
-              className="bg-blue-100 border border-blue-200 rounded-lg px-4 py-5 flex items-center justify-between flex-wrap sm:flex-nowrap"
+              className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 flex items-center justify-between flex-wrap sm:flex-nowrap"
             >
               <div className="flex items-center gap-3 min-w-[180px]">
-                <div className="bg-white p-2 rounded-full shadow">
-                  <div className="w-8 h-8 bg-gray-400 rounded"></div>
+                <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
+                  {/* <div className="w-8 h-8 bg-gray-400 rounded"></div> */}
+                  <RadioButtonCheckedOutlinedIcon
+                    className="text-green-500"
+                    fontSize="small"
+                  />
                 </div>
                 <div>
                   <div className="font-semibold text-sm">{flow.name}</div>
                   <span
-                    className={`text-xs font-bold px-2 py-1 rounded ${flow.status === 'Draft'
+                    className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === 'Draft'
                       ? 'bg-orange-500 text-white'
                       : 'bg-blue-500 text-white'
                       }`}
@@ -176,7 +220,7 @@ const WhatsappFlows = () => {
               </div>
 
               <div className="text-sm text-center min-w-[80px]">
-                <div className="font-semibold text-sm">Flow Type</div>
+                <div className="font-semibold text-sm mb-2">Flow Type</div>
                 <span className="text-xs font-bold px-2 py-1 bg-blue-300 text-blue-900 rounded">STATIC</span>
               </div>
 
@@ -191,28 +235,20 @@ const WhatsappFlows = () => {
               </div>
 
               <div className="flex items-center gap-3 mt-3 sm:mt-0">
-                <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded text-sm flex items-center gap-1">
+                <button className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-1 rounded text-sm flex items-center gap-1">
                   ▶ {flow.status === 'Published' ? 'Draft' : 'Publish'}
                 </button>
-                <IconButton onClick={(e) => handleMenuOpen(e, flow)} size="small">
-                  <MoreVertIcon />
-                </IconButton>
+                <CustomTooltip title="Settings" arrow >
+                  <IconButton onClick={(e) => handleMenuOpen(e, flow)} size="small">
+                    {/* <MoreVertIcon /> */}
+                    <SettingsOutlinedIcon
+                      className="text-gray-600"
+                      fontSize="small"
+                    />
+                  </IconButton>
+                </CustomTooltip>
               </div>
             </div>
-          ))}
-        </div>
-
-        {/* Pagination */}
-        <div className="flex justify-end items-center mt-4 gap-2">
-          {Array.from({ length: totalPages }, (_, i) => (
-            <button
-              key={i + 1}
-              className={`text-sm px-3 py-1 border rounded hover:bg-gray-100 ${currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
-                }`}
-              onClick={() => setCurrentPage(i + 1)}
-            >
-              {i + 1}
-            </button>
           ))}
         </div>
 
@@ -238,6 +274,21 @@ const WhatsappFlows = () => {
           </MenuItem>
         </Menu>
 
+        {/* Pagination */}
+        <div className="flex justify-end items-center mt-4 gap-2">
+          {Array.from({ length: totalPages }, (_, i) => (
+            <button
+              key={i + 1}
+              className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${currentPage === i + 1 ? 'bg-blue-500 text-white' : ''
+                }`}
+              onClick={() => setCurrentPage(i + 1)}
+            >
+              {i + 1}
+            </button>
+          ))}
+        </div>
+
+
         <Dialog
           visible={showDialog}
           onHide={() => setShowDialog(false)}
@@ -248,6 +299,8 @@ const WhatsappFlows = () => {
           <form onSubmit={handleSubmit}>
             <div className='flex flex-col gap-4'>
               <InputField
+                tooltipContent="Enter flow name"
+                tooltipPlacement="right"
                 label="Flow Name"
                 id="flowname"
                 name="flowname"
@@ -260,6 +313,8 @@ const WhatsappFlows = () => {
                 label="Select Categories"
                 id="flowcategories"
                 name="flowcategories"
+                tooltipContent="Select flow categories"
+                tooltipPlacement="right"
                 options={[
                   { value: 'signup', label: 'SIGN_UP' },
                   { value: 'signin', label: 'SIGN_IN' },
@@ -273,7 +328,7 @@ const WhatsappFlows = () => {
                 placeholder='Select Flow Categories'
                 onChange={(value) => console.log(value)}
               />
-              <AnimatedDropdown
+              {/* <AnimatedDropdown
                 label="Whatsapp integration"
                 id="whatsappintegration"
                 name="whatsappintegration"
@@ -283,6 +338,20 @@ const WhatsappFlows = () => {
                 ]}
                 placeholder='Select Whatsapp Integration'
                 onChange={(value) => console.log(value)}
+              /> */}
+              <AnimatedDropdown
+                id="manageTemplateWaba"
+                name="manageTemplateWaba"
+                label="Select Whatsapp integration"
+                tooltipContent="Select your whatsapp business account"
+                tooltipPlacement="right"
+                options={wabaList.map((waba) => ({
+                  value: waba.mobileNo,
+                  label: waba.name,
+                }))}
+                value={selectedWaba}
+                onChange={setSelectedWaba}
+                placeholder="Select WABA"
               />
               <div className="max-w-content flex items-center justify-center" >
                 <UniversalButton

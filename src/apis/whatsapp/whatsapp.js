@@ -512,3 +512,15 @@ export const getUserAgent = async (data) => {
     method: "POST",
   });
 };
+
+// whatapp flows
+
+// get flow list
+export const getFlowList = async () => {
+  return (
+    await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`),
+    {
+      method: "POST",
+    }
+  );
+};

@@ -457,7 +457,7 @@ const ObdManageVoiceClips = () => {
               placeholder="Search"
               label="Search"
               onClick={() => {
-                setIsSearchTriggered(true); 
+                setIsSearchTriggered(true);
                 handlefetchAllVoiceClips();
               }}
               icon={<IoSearch />}
