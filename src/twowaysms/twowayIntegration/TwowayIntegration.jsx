@@ -52,7 +52,7 @@ const TwowayIntegration = () => {
       </>
     ) : ( */}
       <div>
-        <div className="flex flex-wrap items-end justify-between w-full gap-2 pb-1">
+        <div className="flex flex-wrap items-end justify-between w-full gap-2 mb-4">
           <div className='flex flex-wrap items-end gap-2'>
             {/* Mobile Number Input Field */}
             <div className="w-max-content">

@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useMediaQuery, Menu, MenuItem, IconButton } from "@mui/material";
 import { FaBars } from "react-icons/fa";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
 
 import UniversalAccountInfo from "../../profile/components/UniversalAccountInfo";
 import CustomTooltip from "../../components/common/CustomTooltip";
@@ -48,7 +49,6 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     setTimeout(() => setIsFetchingBalance(false), 600);
   };
 
-
   // later change when route is set properly - may 10 - (start)
 
   useEffect(() => {
@@ -59,7 +59,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   //   if (user?.role === "AGENT") return;
   //   handleBalance();
   // }, []);
-  
+
   // later change when route is set properly - may 10 - (end)
 
   const toggleSidebar = useCallback(
@@ -210,6 +210,18 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             anchorEl={profileAnchorEl}
             open={Boolean(profileAnchorEl)}
             onClose={() => handleProfileMenu()}
+            PaperProps={{
+              sx: {
+                borderRadius: "15px",
+                padding: "5px 0",
+                boxShadow: "0 4px 20px rgba(0, 0, 0, 0.08)",
+              },
+              component: motion.div,
+              initial: { opacity: 0, y: -10 },
+              animate: { opacity: 1, y: 0 },
+              exit: { opacity: 0, y: -10 },
+              transition: { duration: 0.2 },
+            }}
           >
             {[
               {
@@ -236,7 +248,25 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             ].map(({ text, icon, action }, idx) => (
               <MenuItem
                 key={idx}
-                sx={{ fontSize: "15px", fontWeight: "500" }}
+                sx={{
+                  fontSize: "15px",
+                  fontWeight: 500,
+                  display: "flex",
+                  alignItems: "center",
+                  px: 2,
+                  mx: 1,
+                  gap: 0.5,
+                  borderRadius: "8px",
+                  borderBottom: "1px solid #e0e0e0",
+                  marginBottom: "3px",  
+                  "&:hover": {
+                    backgroundColor: "#e6f4ff",
+                    color: "#1e3a8a",
+                    boxShadow: "0 4px 20px rgba(0, 0, 0, 0.09)",
+                    scale: 1.02,
+                    transition: "all 0.2s ease-in-out",
+                  },
+                }}
                 onClick={action}
               >
                 {icon} <span className="ml-2">{text}</span>

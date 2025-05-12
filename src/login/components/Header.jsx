@@ -1,44 +1,3 @@
-// import React from 'react';
-// import { Link } from 'react-router-dom';
-// import LocalPostOfficeOutlinedIcon from '@mui/icons-material/LocalPostOfficeOutlined';
-// import PhoneOutlinedIcon from '@mui/icons-material/PhoneOutlined';
-// import '../login.css'
-
-// const Header = () => {
-//     return (
-//         <header>
-//             <div className='fixed w-full text-white tracking-wider font-normal text-sm top-0 z-50 bg-gradient-to-r from-[#2b40b0] to-[#8447c6] ' >
-//                 <div className="lg:flex flex-wrap justify-between py-1 px-16">
-//                     <div className="text-center text-md-start text-lg-start">
-//                         <Link to="mailto:support@celitix.com" >
-//                             <LocalPostOfficeOutlinedIcon sx={{ scale: 0.8, marginRight: '2px' }} />support@celitix.com
-//                         </Link>
-//                     </div>
-//                     <div className="text-center text-lg-end text-md-end">
-//                         <Link to="tel:+919680006460">
-//                             <PhoneOutlinedIcon sx={{ scale: 0.8, marginRight: '2px' }} />
-//                             +91 968-000-6460
-//                         </Link>
-//                     </div>
-//                 </div>
-//             </div>
-//             {/* <div id='menurow' className='' >
-//                 <nav className="navbar navbar-expand-lg navbar-light bg-light">
-//                     <div className="container-fluid">
-//                         <Link className="navbar-brand" to="/">
-//                             <img src="src/assets/images/celitix-cpaas-solution-logo.svg" alt="Celitix" style={{ width: '200px' }} />
-//                         </Link>
-//                     </div>
-//                 </nav>
-//             </div> */}
-//         </header>
-//     );
-// };
-
-// export default Header;
-
-
-
 import React, { useEffect, useState } from 'react';
 import { FaEnvelope, FaPhoneAlt, FaBars, FaTimes } from 'react-icons/fa';
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from "react-icons/md";
@@ -132,7 +91,7 @@ const Header = () => {
         <>
 
             {/* <div className="bg-gradient-to-r from-blue-800 to-purple-600 text-white text-sm md:px-3 px-1 py-2 flex justify-between items-center flex-wrap"> */}
-            <div className="bg-[#9B44B6] text-white text-sm md:px-3 px-1 pt-1 pb-0 flex justify-between items-center flex-wrap">
+            <div className="bg-[#9B44B6] text-white text-sm md:px-3 px-1 pt-1 pb-0 flex justify-between items-center flex-wrap z-30">
 
                 {/* Email Section */}
                 <div className="flex items-center gap-1 md:gap-2 mb-2">
@@ -148,7 +107,7 @@ const Header = () => {
             </div>
             {/* <nav className="bg-[#f6edf9] md:py-10 py-5 md:px-6 px-0 fixed top-10 w-full z-50"> */}
             <nav
-                className={`lg:px-12 md:px-10 px-0 w-full z-50 transition-all duration-500 ease-in-out ${scrolled ? 'top-0' : 'top-10'
+                className={`lg:px-12 md:px-10 px-0 w-full z-100 transition-all duration-500 ease-in-out ${scrolled ? 'top-0' : 'top-10'
                     }`}
             >
 
@@ -380,10 +339,10 @@ const Header = () => {
                             <LogBtn label="Book Demo" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
               hover:shadow-[4px_4px_0px_#9B44B6]'/>
                         </Link>
-                        <Link href="https://app.celitix.com" passHref>
+                        {/* <Link href="https://app.celitix.com" passHref>
                             <LogBtn label="Login" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
               hover:shadow-[4px_4px_0px_#9B44B6]'/>
-                        </Link>
+                        </Link> */}
                         {/* <button className="px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
                   Book Demo
                 </button>
@@ -562,13 +521,12 @@ const Header = () => {
                                 </Link>
                                 {/* <ResourcesItem title="Case Studies" desc="How Celitix Helps" /> */}
                             </div>
-
                         </div>
-                        <div className=" flex  gap-2">
+                        <div className="flex gap-2">
                             <LogBtn label="Book Demo" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
               hover:shadow-[4px_4px_0px_#9B44B6] mb-2'/>
-                            <LogBtn label="Login" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
-              hover:shadow-[4px_4px_0px_#9B44B6] mb-2'/>
+                            {/* <LogBtn label="Login" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
+              hover:shadow-[4px_4px_0px_#9B44B6] mb-2'/> */}
 
                             {/* <button className="w-full px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
                     Book Demo

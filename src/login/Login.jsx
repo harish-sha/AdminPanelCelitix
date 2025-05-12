@@ -2,17 +2,17 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { motion } from "framer-motion";
 
 import { useUser } from "@/context/auth";
 
 import UniversalButton from "../components/common/UniversalButton";
 import celitixLogo from "../assets/images/celitix-logo-white.svg";
 import Header from "./components/Header";
-// import Footer from "./components/Footer";
 import InputField from "../components/layout/InputField";
+import Footer from "./components/Footer";
 
 import "./login.css";
-import Footer from "./components/Footer";
 
 const Login = () => {
   const [userId, setUserId] = useState("");
@@ -74,9 +74,16 @@ const Login = () => {
   };
 
   return (
-    <>
-      {/* <Header /> */}
-      <div className="flex items-center justify-center min-h-screen bg-[#edf5ff] overflow-y-scroll">
+    <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
+      <motion.div
+        initial={{ y: -100, opacity: 0 }} 
+        animate={{ y: 0, opacity: 1 }} 
+        transition={{ duration: 0.8, ease: "easeOut" }} 
+        className="fixed w-full top-0"
+      >
+        <Header />
+      </motion.div>
+      <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
         <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
           <div className="grid grid-cols-1 md:grid-cols-2 h-full">
             <form
@@ -86,7 +93,9 @@ const Login = () => {
               <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
                 Sign In
               </h1>
-              <div className="text-[0.95rem] font-medium text-gray-700 mb-2">User ID</div>
+              <label className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                User ID
+              </label>
               <input
                 type="text"
                 id="userId"
@@ -99,7 +108,9 @@ const Login = () => {
                 required
               />
               <div className="relative">
-                <div className="text-[0.95rem] font-medium text-gray-700 mb-2">Password</div>
+                <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                  Password
+                </div>
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter password"
@@ -141,13 +152,20 @@ const Login = () => {
                 borderRadius: "150px 10px 10px 100px",
               }}
             >
-              <Link className="mb-5" to="https://celitix.com">
-                <img
-                  src={celitixLogo}
-                  alt="Celitix"
-                  style={{ width: "220px" }}
-                />
-              </Link>
+              <motion.div
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className="mb-5"
+              >
+                <Link to="https://celitix.com">
+                  <img
+                    src={celitixLogo}
+                    alt="Celitix"
+                    style={{ width: "220px" }}
+                  />
+                </Link>
+              </motion.div>
               <p className="text-center text-md">
                 Welcome to the Future of Customer Communication - Your
                 Engagement Journey Begins Here.
@@ -156,8 +174,8 @@ const Login = () => {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
-    </>
+      <Footer />
+    </div>
   );
 };
 
