@@ -62,8 +62,17 @@ export const ExportDialog = ({
         }
         // console.log(dataToExport);
 
+        const payload = {
+            ...dataToExport,
+            fromDate: dataToExport.fromDate
+                ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
+                : "",
+            toDate: dataToExport.toDate ? new Date(dataToExport.toDate).toLocaleDateString("en-GB") : "",
+            type: dataToExport?.type === "campaign" ? "1" : "2",
+        };
+
         try {
-            const res = await downloadCustomSmsReport(dataToExport);
+            const res = await downloadCustomSmsReport(payload);
             if (!res.status) return toast.error(res.msg);
             toast.success(res.msg);
             setVisibledialog(false);
@@ -201,7 +210,7 @@ export const ExportDialog = ({
                             name="campaign"
                             label="Select Campaign"
                             options={allCampaigns?.map((item) => ({
-                                value: item.srNo,
+                                value: item.srno,
                                 label: item.campaignName,
                             }))}
                             onChange={(e) =>

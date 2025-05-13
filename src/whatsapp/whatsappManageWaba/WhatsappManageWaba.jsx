@@ -200,60 +200,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   };
 
 
-  // Harish 
-
-  // useEffect(() => {
-  //   window.fbAsyncInit = function () {
-  //     window.FB.init({
-  //       appId: "819027950096451",
-  //       cookie: true,
-  //       xfbml: true,
-  //       version: "v20.0",
-  //     });
-  //   };
-
-  //   (function (d, s, id) {
-  //     let js,
-  //       fjs = d.getElementsByTagName(s)[0];
-  //     if (d.getElementById(id)) return;
-  //     js = d.createElement(s);
-  //     js.id = id;
-  //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-  //     fjs.parentNode.insertBefore(js, fjs);
-  //   })(document, "script", "facebook-jssdk");
-  // }, []);
-
-  // const handleFacebookLogin = () => {
-  //   window.FB.login(
-  //     (response) => {
-  //       if (response.authResponse) {
-  //         // console.log("User logged in", response);
-  //         window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
-  //           // console.log("User details", user);
-  //         });
-  //       } else {
-  //         // console.log("User canceled login or did not fully authorize.");
-  //         toast.error("User canceled login or did not fully authorize.")
-  //       }
-  //     },
-  //     { scope: "public_profile,email" },
-  //     {
-  //       config_id: "827520649332611",
-  //       response_type: "code",
-  //       override_default_response_type: true,
-  //       extras: {
-  //         feature: "whatsapp_embedded_signup",
-  //         version: 2,
-  //         setup: {
-  //           solutionID: "597385276367677",
-  //         },
-  //       },
-  //     }
-  //   );
-  // };
-
-  // Arhant
-
   useEffect(() => {
     // Load the Facebook SDK
     const loadFacebookSDK = () => {
@@ -282,13 +228,41 @@ const WhatsappManageWaba = ({ id, name }) => {
     loadFacebookSDK();
   }, []);
 
+  async function onboardUser(accessToken) {
+    const res = await fetch(`/api/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+      }
+    });
+
+    const data = await res.json();
+    if (!data.ok) {
+      toast.error(data.message || "Something went wrong")
+    }
+    toast.success(data.message || "Something went wrong")
+    // return data;
+  }
+
   const handleFacebookLogin = () => {
+
     window.FB.login(
       (response) => {
+        console.log(response)
         if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
+          const accessToken = response.authResponse.code;
           console.log('Access Token:', accessToken);
-          // Use this token to call the debug_token API and get the shared WABA's ID
+          onboardUser(accessToken)
+          // const res = await userOnbording(accessToken);
+          // try {
+          //   const onboardingData = await userOnbording(accessToken); // Ensure we await the result
+          //   console.log("User Onboarding Response:", onboardingData);
+          //   // Now you can use `onboardingData` as needed
+          // } catch (error) {
+          //   console.error("Error in onboarding:", error);
+          //   toast.error(`Error: ${error.message}`);
+          // }
         } else {
           console.log('User cancelled login or did not fully authorize.');
         }
@@ -308,7 +282,16 @@ const WhatsappManageWaba = ({ id, name }) => {
     );
   };
 
-
+  // const userOnboarding = async (accessToken) => {
+  //   try {
+  //     const response = await userOnbording(accessToken);
+  //     return response;
+  //   } catch (error) {
+  //     console.error("Error in onboarding:", error);
+  //     toast.error(`Error: ${error.message || "An unexpected error occurred."}`);
+  //     return { error: true, message: error.message || "An unexpected error occurred." };
+  //   }
+  // };
 
 
 

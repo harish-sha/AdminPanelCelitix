@@ -187,6 +187,45 @@ const WhatsappLaunchCampaign = () => {
       finalTotalRecords = totalRecords || 0;
     }
 
+    const bodyVariables = templateDataNew?.components
+      ?.filter((component) => component.type === "BODY")
+      ?.flatMap((component) => extractVariablesFromText(component.text));
+
+    const headerComponent = templateDataNew.components.find(
+      (comp) =>
+        comp.type === "HEADER" &&
+        ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp?.format)
+    );
+
+    if (
+      ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent?.format) &&
+      !imagePreview
+    ) {
+      toast.error("Please upload a media file.");
+      return;
+    }
+
+    const isCarousal = templateDataNew.components.find(
+      (comp) => comp.type === "CAROUSEL"
+    );
+
+    // console.log("isCarousal", isCarousal);
+    const imgCards = [];
+
+    let isError = false;
+
+    if (isCarousal) {
+      Object.keys(fileData).forEach((key) => {
+        if (!fileData[key].filePath) {
+          toast.error(`Please upload a file for Card ${key + 1}.`);
+          isError = true;
+          return;
+        }
+        const filePath = fileData[key].filePath;
+        imgCards.push(filePath);
+      });
+    }
+
     setTotalRecords(finalTotalRecords);
     setDialogVisible(true);
   };
@@ -253,43 +292,9 @@ const WhatsappLaunchCampaign = () => {
       })
       ?.join(",");
 
-    // const contentValues = bodyVariables
-    //   ?.map((variable) => {
-    //     const key = `body${variable}`;
-    //     const value = formData[key] || "";
+    // const contentValues = `"var1",#name#,"var3"`
 
-    //     const parts = [];
-    //     let lastIndex = 0;
-
-    //     // Match all {{...}} template variables
-    //     const regex = /{{(.*?)}}/g;
-    //     let match;
-
-    //     while ((match = regex.exec(value)) !== null) {
-    //       const textBefore = value.slice(lastIndex, match.index);
-    //       if (textBefore.trim()) {
-    //         parts.push(`${textBefore}`);
-    //       } else if (textBefore) {
-    //         // Preserve spaces
-    //         parts.push(`${textBefore.replace(/"/g, '\\"')}`);
-    //       }
-
-    //       parts.push(`#${match[1]}#`);
-    //       lastIndex = match.index + match[0].length;
-    //     }
-
-    //     const remainingText = value.slice(lastIndex);
-    //     if (remainingText.trim()) {
-    //       parts.push(`${remainingText}`);
-    //     } else if (remainingText) {
-    //       parts.push(`${remainingText.replace(/"/g, '\\"')}`);
-    //     }
-
-    //     return parts.join(" ");
-    //   })
-    //   ?.join(",");
-
-
+    // return // Check the output for debugging
 
     if (isGroup === 1) {
       setXlsxPath("");
@@ -374,6 +379,8 @@ const WhatsappLaunchCampaign = () => {
       cardsVariables: [],
       vendor: "jio",
     };
+
+    console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -469,13 +476,14 @@ const WhatsappLaunchCampaign = () => {
   // Fetch Template Details
   const fetchTemplateDetails = async (wabaNumber) => {
     try {
-      const response = await getWabaTemplateDetails(wabaNumber);
+      const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
         setTemplateOptions(
           response.map((template) => ({
             value: template.templateName,
             label: template.templateName,
+
           }))
         );
       } else {
@@ -566,7 +574,7 @@ const WhatsappLaunchCampaign = () => {
           <div className="container-fluid">
             <div className="flex flex-wrap">
               <div className=" w-full lg:w-2/3 p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6 bg-gray-200 min-h-[80vh]">
-                <div className="w-full p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 ">
+                <div className="w-100 p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 ">
                   <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div className="flex-1">
                       <AnimatedDropdown

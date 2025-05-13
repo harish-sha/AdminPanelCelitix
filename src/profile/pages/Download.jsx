@@ -131,14 +131,35 @@ const Download = ({ id, name }) => {
             <CustomTooltip title="Download" placement="top" arrow>
               <IconButton
                 className="no-xs flex items-center justify-center"
-                onClick={() => {
-                  const baseURL = import.meta.env.VITE_IMAGE_URL;
+                onClick={async () => {
+                  // const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
+                  // const baseURL = "http://95.216.43.170:8080/eventhandlerpro";
+                  const baseURL = "/allDownloadUrl";
                   const fullDownloadUrl = `${baseURL}${params.row.downloadPath}`;
                   console.log("Attempting to download from:", fullDownloadUrl);
-                  const link = document.createElement("a");
-                  link.href = fullDownloadUrl;
-                  link.download = "";
-                  link.click();
+                  // const link = document.createElement("a");
+                  // link.href = fullDownloadUrl;
+                  // link.download = "";
+                  // link.click();
+                  try {
+                    // Check if the file exists before proceeding
+                    const response = await fetch(fullDownloadUrl, {
+                      method: "HEAD",
+                    });
+
+                    if (response.ok) {
+                      const link = document.createElement("a");
+                      link.href = fullDownloadUrl;
+                      link.download = "";
+                      link.click();
+                    } else {
+                      // File does not exist, show error
+                      toast.error("The file could not be found. Please try again later.");
+                    }
+                  } catch (error) {
+                    console.error("Error checking file:", error);
+                    toast.error("An error occurred while fetching the file. Please try again later.");
+                  }
                 }}
               >
                 <DownloadForOfflineOutlinedIcon

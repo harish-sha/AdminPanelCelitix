@@ -118,7 +118,7 @@ export const ChatScreen = ({
 
       <div
         ref={messageRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/whatsapp_bg.jpg)]"
+        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/WB.png)]"
       >
         {chatState.specificConversation?.map((group, groupIndex) => (
           <div key={groupIndex}>

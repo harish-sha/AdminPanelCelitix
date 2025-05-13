@@ -130,6 +130,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/sendsms", label: "Send SMS" },
         { to: "/smsreports", label: "Reports" },
         { to: "/smsdlttemplates", label: "DLT Template" },
+        {
+          to: "/smscampaigndetaillogs",
+          label: "Sms Details Logs",
+          isHide: true,
+        },
+        {
+          to: "/smsAttachmentdetaillog",
+          label: "Sms Details Logs",
+          isHide: true,
+        },
         // { to: "/smswishmanagement", label: "Wish Management" },
       ],
     },
@@ -160,6 +170,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/rcslivechats", label: "Live Chats" },
         { to: "/rcssuggestionreport", label: "Suggestion Report" },
         { to: "/rcsdeliveryreport", label: "Delivery Report" },
+        {
+          to: "/rcsdeliverycampaigndetails",
+          label: "Delivery Campaign Report",
+          isHide: true,
+        },
+        {
+          to: "/rcsaddtemplatercs",
+          label: "RcsAddTemplate",
+          isHide: true,
+        },
         // { to: '/rcsmanagebot', label: 'Manage Bot' },
       ],
     },
@@ -183,6 +203,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
         { to: "/wwhatsappflows", label: "Flows" },
+        { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
+        { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+        { to: "/createtemplate", label: "Create Bot", isHide: true },
+        { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
     },
     {
@@ -208,7 +232,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/authreports", label: "Reports" },
       ],
     },
-    { 
+    {
       id: "",
       name: "E-mail",
       icon: <MdOutlineEmail />,
@@ -292,7 +316,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/callback", label: "Call Back" },
-        { to: "/addcallback", label: "Add Call Back" },
+        { to: "/addcallback", label: "Add Call Back", isHide: true },
+        { to: "/editcallback", label: "Edit Call Back", isHide: true },
       ],
     },
     {
@@ -439,35 +464,37 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               className="overflow-hidden"
               ref={(el) => (dropdownRefs[item.name] = el)}
             >
-              {item.links.map((link) => (
-                <React.Fragment key={link.to}>
-                  <Link
-                    to={link.to}
-                    onClick={handleSingleRouteClick}
-                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${isActiveRoute(link.to)
-                      ? "bg-[#e6f4ff] text-blue-800"
-                      : "text-gray-800"
-                      }`}
-                  >
-                    <FiberManualRecordIcon
-                      sx={{
-                        color: isActiveRoute(link.to) ? "blue" : "black",
-                        fontSize: "10px",
-                        marginRight: "10px",
-                      }}
-                    />
-                    <span
-                      className={`font-[600] ${isActiveRoute(link.to)
-                        ? "text-blue-800"
-                        : "text-gray-800"
-                        }`}
+              {item.links.map((link) => {
+                const isActive = isActiveRoute(link.to);
+                return (
+                  <React.Fragment key={link.to}>
+                    <Link
+                      to={link.to}
+                      onClick={handleSingleRouteClick}
+                      className={`block px-4 py-2.5 text-sm transition-all duration-300
+          ${isActive ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800"}
+          ${link?.isHide ? "hidden" : ""}
+          hover:bg-[#e6f4ff]"
+        `}
                     >
-                      {link.label}
-                    </span>
-                  </Link>
-                  <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
-                </React.Fragment>
-              ))}
+                      <FiberManualRecordIcon
+                        sx={{
+                          color: isActive ? "blue" : "black",
+                          fontSize: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      <span
+                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
+                          }`}
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                    <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+                  </React.Fragment>
+                );
+              })}
             </motion.div>
           </Tooltip>
         ) : (

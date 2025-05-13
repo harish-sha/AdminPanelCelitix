@@ -176,8 +176,6 @@ const FlowCreationPage = () => {
           )}
         </div>
 
-
-
         <div className="flex-1">
           {/* Mobile Panel Preview*/}
           <MobilePanel

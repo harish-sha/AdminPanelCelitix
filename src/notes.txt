@@ -6,33 +6,8 @@ mainlayout > sidebar > sidebar.jsx
 
 tasks merge from may 05 to 08 (arihant) pending
 
-working pages 
+mainlayout > sidebar > Sidebar.jsx 
 
-callback > page > addCallback.jsx - done
-callback > components > Preview.jsx - Done
-
-rcs > SendRcs > components > VariableManager.jsx - Done
-rcs > suggestionReport > SuggestionReportRcs.jsx - Done
-rcs > suggestionReport > component > SuggestionReportTableRcs.jsx -  Done
-rcs > manageTemplate > components > SuggestedActions.jsx - Done
-
-whatsapp > whatsappLaunchCampaign > components > TemplateForm.jsx - Done
-whatsapp > livechat > WhatsappLiveChat.jsx - Done
-whatsapp > livechat > component > InputData.jsx - Done
-whatsapp > livechat > component > chat > Sidebar.jsx - Done
-whatsapp > livechat > component > chat > Template.jsx - Done
-whatsapp > livechat > component > chat > ChatScreen.jsx - Done
-whatsapp > WhatsappManageWaba >WhatsappManageWaba.jsx - Done
-whatsapp > whatsappManageCampaign >whatsappManageCampaign.jsx - Done
-whatsapp > components > exportDialog.jsx - Done
-
-sms > smsReports > SmsReports.jsx - Done
-sms > smsReports > components > PreviousDayDetailsTable.jsx - Done
-sms > smsReports > components > PreviousDaysTableSms.jsx - Done
-sms > smsReports > components > exportDialog.jsx - Done
-
-mainlayout > sidebar > Sidebar.jsx - 
-mainlayout > navbar > Navbar.jsx - Done
 
 ====================================================================================
 

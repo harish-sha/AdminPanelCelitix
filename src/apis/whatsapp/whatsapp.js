@@ -8,9 +8,9 @@ export const getWabaList = async () => {
 };
 
 // Get All Template Details
-export const getWabaTemplateDetails = async (wabaNumber) => {
+export const getWabaTemplateDetails = async (wabaNumber, isHide = "-1") => {
   return await fetchWithAuth(
-    `/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}`,
+    `/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}&isHide=${isHide}`,
     {
       method: "GET",
     }
@@ -524,3 +524,10 @@ export const getFlowList = async () => {
     }
   );
 };
+
+// // waba onboarding
+// export const userOnbording = async (data) => {
+//   return await fetchWithAuth(`/whatsapp/wabaOnboardProcess?code=${data}`, {
+//     method: "POST",
+//   });
+// };

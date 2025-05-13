@@ -61,10 +61,18 @@ export const ExportDialog = ({
             return;
         }
         // console.log(dataToExport);
-        delete dataToExport.type
+        // delete dataToExport.type
+        const payload = {
+            ...dataToExport,
+            fromDate: dataToExport.fromDate
+                ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
+                : "",
+            toDate: dataToExport.toDate ? new Date(dataToExport.toDate).toLocaleDateString("en-GB") : "",
+            type: dataToExport?.type === "campaign" ? "1" : "2",
+        };
 
         try {
-            const res = await downloadCustomSmsReport(dataToExport);
+            const res = await downloadCustomSmsReport(payload);
             if (!res.status) return toast.error(res.msg);
             toast.success(res.msg);
             setVisibledialog(false);
