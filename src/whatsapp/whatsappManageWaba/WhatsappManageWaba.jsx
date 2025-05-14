@@ -201,7 +201,6 @@ const WhatsappManageWaba = ({ id, name }) => {
 
 
   useEffect(() => {
-    // Load the Facebook SDK
     const loadFacebookSDK = () => {
       window.fbAsyncInit = function () {
         window.FB.init({
@@ -228,8 +227,12 @@ const WhatsappManageWaba = ({ id, name }) => {
     loadFacebookSDK();
   }, []);
 
+
+  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = "/api";
+
   async function onboardUser(accessToken) {
-    const res = await fetch(`/api/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
+    const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -238,6 +241,7 @@ const WhatsappManageWaba = ({ id, name }) => {
     });
 
     const data = await res.json();
+    console.log(data)
     if (!data.ok) {
       toast.error(data.message || "Something went wrong")
     }
@@ -246,7 +250,6 @@ const WhatsappManageWaba = ({ id, name }) => {
   }
 
   const handleFacebookLogin = () => {
-
     window.FB.login(
       (response) => {
         console.log(response)
@@ -254,15 +257,6 @@ const WhatsappManageWaba = ({ id, name }) => {
           const accessToken = response.authResponse.code;
           console.log('Access Token:', accessToken);
           onboardUser(accessToken)
-          // const res = await userOnbording(accessToken);
-          // try {
-          //   const onboardingData = await userOnbording(accessToken); // Ensure we await the result
-          //   console.log("User Onboarding Response:", onboardingData);
-          //   // Now you can use `onboardingData` as needed
-          // } catch (error) {
-          //   console.error("Error in onboarding:", error);
-          //   toast.error(`Error: ${error.message}`);
-          // }
         } else {
           console.log('User cancelled login or did not fully authorize.');
         }
@@ -282,19 +276,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     );
   };
 
-  // const userOnboarding = async (accessToken) => {
-  //   try {
-  //     const response = await userOnbording(accessToken);
-  //     return response;
-  //   } catch (error) {
-  //     console.error("Error in onboarding:", error);
-  //     toast.error(`Error: ${error.message || "An unexpected error occurred."}`);
-  //     return { error: true, message: error.message || "An unexpected error occurred." };
-  //   }
-  // };
-
-
-
   const handleSelectFile = () => {
     fileInputRef.current.value = "";
     fileInputRef.current.click();
@@ -308,10 +289,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image removed successfully.");
   };
 
-  // const handleView = (waba) => {
-  //   setSelectedWaba(waba);
-  //   setView(true);
-  // };
 
   const handleView = async (waba) => {
     setSelectedWaba(waba);
@@ -320,15 +297,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     setwabadetails(details.data[0]);
     setView(true);
   };
-
-  // const handleEdit = () => {
-  //   setWabaEdit(true);
-  // };
-
-  // const handleEdit = async (row) => {
-  //   setWabaEdit(true);
-  //   setSelectedWaba(row);
-  // };
 
   const handleEdit = async (row) => {
     setWabaEdit(true);
@@ -359,7 +327,6 @@ const WhatsappManageWaba = ({ id, name }) => {
         toast.error("Error Refreshing Data");
       }
     } catch (e) {
-      // console.log(e);
       toast.error("Error Refreshing Data");
     }
   };
@@ -368,24 +335,10 @@ const WhatsappManageWaba = ({ id, name }) => {
     setSelectedRows(ids);
   };
 
-  // const handleInfo = (row) => {
-  //   const id = row.id;
-  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
-  //   console.log("Info clicked:", row);
-  // };
-
-  // const handleInfo = (row) => {
-  //   const id = row.id;
-  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
-  //   setClicked(row.wabas || []);
-  //   console.log("Info clicked:", row);
-  // };
-
   const handleInfo = (row) => {
     const id = row.id;
     setDropdownOpenId((prevId) => (prevId === id ? null : id));
     setClicked(row.additionalInfo || []);
-    // console.log("Info clicked:", row); 
   };
 
   const closeDropdown = () => setDropdownOpenId(null);

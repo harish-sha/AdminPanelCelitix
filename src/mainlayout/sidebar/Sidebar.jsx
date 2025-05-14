@@ -104,6 +104,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Home",
       type: "single",
       to: "/",
+      roles: ["ADMIN"],
     },
     // {
     //   id: "",
@@ -140,13 +141,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           label: "Sms Details Logs",
           isHide: true,
         },
-        // { to: "/smswishmanagement", label: "Wish Management" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "Two Way SMS",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={twoway} className="w-4 h-4" />,
 
       label: "Two Way SMS",
@@ -156,11 +156,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/twowayreports", label: "Reports" },
         { to: "/twowayintegration", label: "Integration" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "RCS",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={rcsicon} className="w-4 h-4" />,
       label: "RCS",
       type: "dropdown",
@@ -180,8 +180,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           label: "RcsAddTemplate",
           isHide: true,
         },
-        // { to: '/rcsmanagebot', label: 'Manage Bot' },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
@@ -208,11 +208,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/createtemplate", label: "Create Bot", isHide: true },
         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
       name: "Number Lookup",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={numberlookup} className="w-4 h-4" />,
       label: "Number Lookup",
       type: "dropdown",
@@ -220,6 +220,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/hlrlookup", label: "HLR Lookup" },
         { to: "/lookupreports", label: "HLR Lookup Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -231,6 +232,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/authsettings", label: "Settings" },
         { to: "/authreports", label: "Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -242,11 +244,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/emailtemplate", label: "Email Template" },
         { to: "/emailreports", label: "Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "OBD",
-      // icon: <MdOutlineEmail />,
       icon: <img src={obd} className="w-4 h-4" />,
       label: "OBD",
       type: "dropdown",
@@ -256,13 +258,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
         { to: "/obdIntegration", label: "Integration" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "IBD",
-      // icon: <MdOutlineEmail />,
       icon: <img src={ibd} className="w-4 h-4" />,
-
       label: "IBD",
       type: "dropdown",
       links: [
@@ -271,11 +272,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/ibdivrflow", label: "IVR Flow" },
         { to: "/ibdsettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "Missed Call",
-      // icon: <MdOutlineEmail />,
       icon: <img src={missedcall} className="w-4 h-4" />,
       label: "Missed Call",
       type: "dropdown",
@@ -283,11 +284,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/missedcallhistory", label: "Call History" },
         { to: "/missedcallsettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "Click-2-Call",
-      // icon: <MdOutlineEmail />,
       icon: <img src={clicktwocall} className="w-4 h-4" />,
 
       label: "Click-2-Call",
@@ -296,6 +297,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/clicktohistory", label: "Call History" },
         { to: "/clicktosettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     // {
     //     name: 'settings',
@@ -319,6 +321,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/addcallback", label: "Add Call Back", isHide: true },
         { to: "/editcallback", label: "Edit Call Back", isHide: true },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -328,8 +331,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/recharge", label: "Recharge" },
-        // { to: '/transactions', label: 'Transactions' },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
@@ -354,6 +357,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/managenotifications", label: "ManageNotifications" },
         { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -362,6 +366,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Manage Contacts",
       type: "single",
       to: "/managecontacts",
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
@@ -370,6 +375,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Wish Management",
       type: "single",
       to: "/smswishmanagement",
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -378,6 +384,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "API Docs",
       type: "single",
       onClick: () => navigate("/docs"),
+      roles: ["ADMIN"],
     },
     // {
     //     name: 'Logout',
@@ -387,6 +394,50 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     onClick: handleLogout
     // },
   ];
+
+  const getFilteredMenuItems = (menuItems, userState) => {
+    let allowedServices = [];
+
+    if (userState.role === "ADMIN") {
+      return menuItems;
+    }
+
+    if (userState.role === "AGENT") {
+      return [
+        {
+          id: "",
+          name: "WhatsApp LiveChat",
+          icon: <FaWhatsapp />,
+          label: "WhatsApp LiveChat",
+          type: "single",
+          to: "/wlivechat",
+          roles: ["AGENT"],
+        },
+      ];
+    }
+
+    menuItems.forEach((item) => {
+      if (item.roles.includes(userState.role)) allowedServices.push(item);
+      userState.services.forEach((service, index) => {
+        if (item.id == service.service_type_id) {
+          allowedServices.push(item);
+        }
+      });
+      if (item.name === "Home") {
+        allowedServices.push(item);
+      }
+      if (item.name === "apiDocs") {
+        allowedServices.push(item);
+      }
+      if (item.name === "CallBack") {
+        allowedServices.push(item);
+      }
+    });
+
+    return allowedServices;
+  };
+
+  const filteredItems = getFilteredMenuItems(menuItems, user);
 
   return (
     <motion.div
@@ -465,6 +516,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               ref={(el) => (dropdownRefs[item.name] = el)}
             >
               {item.links.map((link) => {
+                if (link.isHide) return null;
                 const isActive = isActiveRoute(link.to);
                 return (
                   <React.Fragment key={link.to}>

@@ -279,7 +279,7 @@ const SmsReports = () => {
       // setCampaignTableData(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "que_time", headerName: "CreatedOn", flex: 0, minWidth: 50 },
+        { field: "que_time", headerName: "Created On", flex: 0, minWidth: 50 },
         {
           field: "campaign_name",
           headerName: "Campaign Name",

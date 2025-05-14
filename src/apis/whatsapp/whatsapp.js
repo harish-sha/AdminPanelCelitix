@@ -525,7 +525,7 @@ export const getFlowList = async () => {
   );
 };
 
-// // waba onboarding
+// // waba onboarding - this api is now in the managewaba direct fetch without
 // export const userOnbording = async (data) => {
 //   return await fetchWithAuth(`/whatsapp/wabaOnboardProcess?code=${data}`, {
 //     method: "POST",

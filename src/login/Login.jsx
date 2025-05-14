@@ -76,9 +76,9 @@ const Login = () => {
   return (
     <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
       <motion.div
-        initial={{ y: -100, opacity: 0 }} 
-        animate={{ y: 0, opacity: 1 }} 
-        transition={{ duration: 0.8, ease: "easeOut" }} 
+        initial={{ y: -100, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
         className="fixed w-full top-0"
       >
         <Header />

@@ -243,18 +243,20 @@ export const VariableManager = ({
   );
 
   return (
-    <div className="bg-white pb-2 rounded-md">
+    <>
       {templateDetails[0] && (
-        <div className="bg-[#128C7E] p-2 rounded-t-md">
-          <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
-            Template Type: {templateDetails[0].templateType}
-          </h1>
+        <div className="bg-white pb-2 rounded-md">
+          <div className="bg-[#128C7E] p-2 rounded-t-md">
+            <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
+              Template Type: {templateDetails[0].templateType}
+            </h1>
+          </div>
         </div>
       )}
       <div className="flex flex-col gap-2">
         {!isCarousal && varLength > 0 && renderSimpleInput()}
         {isCarousal && carVar?.length > 0 && renderCarouselInput()}
       </div>
-    </div>
+    </>
   );
 };
