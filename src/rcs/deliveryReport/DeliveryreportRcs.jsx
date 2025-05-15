@@ -16,10 +16,16 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
-import { fetchCampaignReport, fetchSummaryReport } from "../../apis/rcs/rcs";
+import {
+  fetchCampaignReport,
+  fetchSummaryReport,
+  getAllCampaign,
+} from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import { ExportDialog } from "./components/exportDialog";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -41,6 +47,67 @@ const DeliveryreportRcs = () => {
     isMonthWise: false,
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
+
+  const [allCampaigns, setAllCampaigns] = useState([]);
+  const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
+    campaignName: false,
+    mobileNo: false,
+    callType: false,
+    totalUnits: false,
+    queueTime: false,
+    sentTime: false,
+    deliveryTime: false,
+    callDuration: false,
+    retryCount: false,
+    callStatus: false,
+    deliveryStatus: false,
+    keypress: false,
+    action: false,
+    source: false,
+  });
+
+  const [dataToExport, setDataToExport] = useState({
+    campaignName: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    srno: 0,
+    isCustomField: 0,
+    customColumns: "",
+    campaignType: "",
+    status: "",
+    delStatus: {},
+    type: "campaign",
+  });
+
+  const [customcheckboxStates, setcustomCheckboxStates] = useState({
+    campaignName: false,
+    templateName: false,
+    templateType: false,
+    templateCategory: false,
+    status: false,
+    totalAudience: false,
+  });
+
+  const [deliverycheckbox, setDeliverycheckbox] = useState({
+    answered: false,
+    unanswered: false,
+    dialed: false,
+  });
+
+  const [visibledialog, setVisibledialog] = useState(false);
+
+  useEffect(() => {
+    async function handleFetchAllCampaign() {
+      try {
+        const res = await getAllCampaign();
+        setAllCampaigns(res);
+      } catch (e) {
+        toast.error("Error fetching all campaigns");
+        return;
+      }
+    }
+    handleFetchAllCampaign();
+  }, [visibledialog]);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -110,6 +177,10 @@ const DeliveryreportRcs = () => {
   useEffect(() => {
     handleSummarySearch();
   }, [summaryData.isMonthWise]);
+
+  function handleExportBtn() {
+    setVisibledialog(true);
+  }
 
   return (
     <div>
@@ -258,6 +329,20 @@ const DeliveryreportRcs = () => {
                     disabled={isFetching}
                   />
                 </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
+                    label="Export"
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
+                    onClick={handleExportBtn}
+                    variant="primary"
+                  />
+                </div>
               </div>
             </div>
             <div className="w-full">
@@ -342,22 +427,18 @@ const DeliveryreportRcs = () => {
           </CustomTabPanel>
         </Box>
       </div>
+
+      {visibledialog && (
+        <ExportDialog
+          visibledialog={visibledialog}
+          setVisibledialog={setVisibledialog}
+          allCampaigns={allCampaigns}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
     </div>
   );
 };
 
 export default DeliveryreportRcs;
-
-// {isFetching ? (
-//   <UniversalSkeleton height="35rem" width="100%" />
-
-// ) : (
-//   // Case 3: Show data in the table
-//   // <DataTable
-//   //     id="whatsappManageTemplateTable"
-//   //     name="whatsappManageTemplateTable"
-//   //     wabaNumber={selectedWaba}
-//   //     wabaList={wabaList}
-//   //     data={filteredData}
-//   // />
-// )}

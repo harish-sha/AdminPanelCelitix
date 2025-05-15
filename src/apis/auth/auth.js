@@ -1,5 +1,7 @@
 import axios from "axios";
-const apiUrl = "/api";
+
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+// const apiUrl = "/api";
 
 // Login 
 export const login = async (inputDetails) => {

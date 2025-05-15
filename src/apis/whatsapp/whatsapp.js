@@ -539,3 +539,12 @@ export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
     }
   );
 };
+
+export const fetchReplyData = async (data) => {
+  return await fetchWithAuth(
+    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
+    {
+      method: "GET",
+    }
+  );
+};

@@ -9,6 +9,7 @@ import {
   assignUserToAgent,
   downloadAttachment,
   fetchAllConversations,
+  fetchReplyData,
   fetchSpecificConversations,
   getWabaList,
   getWabaShowGroupsList,
@@ -459,6 +460,18 @@ export default function WhatsappLiveChat() {
       const enrichedMessages = await Promise.all(
         messages.map(async (msg) => {
           let mediaPath = null;
+          let replyMessage = null;
+          let isReply = false;
+
+          if (msg?.contextReceiptNo) {
+            const data = {
+              wabaNumber: msg?.wabaNumber,
+              receiptNo: msg?.contextReceiptNo,
+            };
+            const res = await fetchReplyData(data);
+            replyMessage = res?.messageBody;
+            isReply = true;
+          }
 
           // if (msg.isReceived && msg?.replyType === "image") {
           //   try {
@@ -478,6 +491,8 @@ export default function WhatsappLiveChat() {
             ...msg,
             date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
             mediaPath,
+            replyMessage,
+            isReply,
             // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
           };
         })
@@ -676,10 +691,11 @@ export default function WhatsappLiveChat() {
         msgType: "template",
         variables: allvariables,
         mediaUrl: selectedFile?.fileUrl || "",
-        phoneDisplay: "",
+        // phoneDisplay: "",
         wabaSrNo: wabaState.wabaSrno,
         agentsrno: "",
         imgCard: imgCard,
+        phoneDisplay: chatState?.active.mobileNo,
       };
       func = sendTemplateMessageToUser;
     } else {

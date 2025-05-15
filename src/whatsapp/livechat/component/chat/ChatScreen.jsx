@@ -132,7 +132,8 @@ export const ChatScreen = ({
                 const isVideo = msg.replyType === "video";
                 const isDocument = msg.replyType === "document";
                 const templateType = msg?.templateType;
-                const isText = ["text", "button"].includes(msg.replyType);
+                const isText = ["text", "button", "interactive"].includes(msg.replyType);
+                const isReply = msg?.isReply;
                 const commonMediaClass = "object-contain mb-2 select-none";
                 const mediaUrl = isSent
                   ? msg?.mediaPath
@@ -144,6 +145,7 @@ export const ChatScreen = ({
                     className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
                       }`}
                   >
+                    {isReply && <div className="text-sm border-b-2 border-black">{msg?.replyMessage}</div>}
                     {(isImage || isVideo || isDocument) && (
                       <div
                         className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""

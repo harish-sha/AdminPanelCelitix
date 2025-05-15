@@ -49,11 +49,19 @@ export const EditCallback = () => {
             password,
         } = data;
 
-        if (customHeader.length === 0) {
-            setCustomHeader((prev) => ({
-                ...prev,
-                data: custom_headers,
-            }));
+        if (custom_headers.length > 0) {
+            const headers = [];
+            custom_headers.map((item) => {
+                let header = {};
+                header.key = item.headerValue;
+                header.value = item.headerValue;
+
+                headers.push(header);
+            });
+            setCustomHeader({
+                isSelect: true,
+                data: headers,
+            });
         }
         setDetails((prev) => ({
             ...prev,
@@ -119,7 +127,6 @@ export const EditCallback = () => {
             setAuthorization("");
             navigate("/callback");
         } catch (e) {
-
             toast.error("Something went wrong");
         }
     }
@@ -377,7 +384,7 @@ export const EditCallback = () => {
                                                 />
                                                 <InputField
                                                     id={`value-${index}`}
-                                                    name={`value-${index}`}     
+                                                    name={`value-${index}`}
                                                     label="Value"
                                                     placeholder="Enter Value"
                                                     value={item.value}

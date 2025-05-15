@@ -202,7 +202,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
-        { to: "/wwhatsappflows", label: "Flows" },
+        // { to: "/wwhatsappflows", label: "Flows" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
         { to: "/createtemplate", label: "Create Bot", isHide: true },

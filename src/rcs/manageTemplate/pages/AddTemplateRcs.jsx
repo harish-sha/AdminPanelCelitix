@@ -87,6 +87,8 @@ const AddTemplateRcs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
+  const [isRefresh, setIsRefresh] = useState(false);
+
   const closePanel = () => {
     setIsOpen(false);
     setAi({
@@ -610,6 +612,7 @@ const AddTemplateRcs = () => {
                   setVariables={setVariables}
                   messageContent={messageContent}
                   setMessageContent={setMessageContent}
+                  setIsRefresh={setIsRefresh}
                 />
                 <GenerateAiContent
                   ai={ai}
@@ -660,6 +663,8 @@ const AddTemplateRcs = () => {
                 setInputData={setBtnInputData}
                 selectedAction={selectedAction}
                 setSelectedAction={setSelectedAction}
+                isRefresh={isRefresh}
+                setIsRefresh={setIsRefresh}
               />
             </div>
           )}

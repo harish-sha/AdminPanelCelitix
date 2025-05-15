@@ -7,8 +7,10 @@ import { useState } from "react";
 import toast from "react-hot-toast";
 import { Preview } from "../components/Preview";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const AddCallback = () => {
+  const navigate = useNavigate();
   const [details, setDetails] = useState({
     allowCallBackDlr: "",
     callBackDlrUrl: "",
@@ -55,6 +57,19 @@ export const AddCallback = () => {
         ...details,
         authorizationType: details?.authorizationType || authorization,
       };
+
+      if (customHeader.isSelect && customHeader.data.length === 0) {
+        toast.error("Please add at least one header");
+        return;
+      }
+
+      if (customHeader.isSelect) {
+        const headers = {};
+        customHeader.data.map((item) => {
+          headers[item.key] = item.value;
+        });
+        data.customHeader = headers;
+      }
       const res = await addCallback(data);
       if (!res?.status) {
         toast.error(res?.msg);
@@ -73,8 +88,8 @@ export const AddCallback = () => {
         customHeader: {},
       });
       setAuthorization("");
+      navigate("/callback");
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }

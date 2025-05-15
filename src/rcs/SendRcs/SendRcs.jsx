@@ -1,4 +1,3 @@
-
 import React, { useEffect } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
@@ -44,6 +43,10 @@ const SendRcs = () => {
   const [varList, setVarList] = useState([]);
   const [inputVariables, setInputVariables] = useState([]);
 
+  //btnVar
+  const [btnvarLength, setBtnVarLength] = useState(0);
+  const [btnvarList, setBtnVarList] = useState([]);
+  const [btninputVariables, setBtnInputVariables] = useState([]);
   //preview
   const [templateDetails, setTemplateDetails] = useState([]);
 
@@ -66,6 +69,13 @@ const SendRcs = () => {
 
     if (data.length === 1) {
       const content = data[0]?.content || "";
+      const suggestionVar = data[0]?.suggestions?.map((item) => {
+        if (item?.type === "website") {
+          const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
+          setBtnVarLength(match.length);
+          setBtnVarList(match);
+        }
+      });
       const matches = content.match(/{#(.+?)#}/g) || [];
 
       setVarLength(matches.length);
@@ -204,17 +214,28 @@ const SendRcs = () => {
     const validKeys = Object.keys(inputVariables).filter(
       (key) => inputVariables[key] !== "" && inputVariables[key] !== undefined
     );
+    const validBtnKeys = Object.keys(btninputVariables).filter(
+      (key) =>
+        btninputVariables[key] !== "" && btninputVariables[key] !== undefined
+    );
 
     if (varLength !== validKeys?.length) {
       return toast.error("Please enter all variables.");
+    }
+
+    if (btnvarLength !== validBtnKeys?.length) {
+      return toast.error("Please enter all Button variables.");
     }
 
     // const finalVarList = [];
     const finalVarList = varList?.map((item, index) => {
       return `${item}:${inputVariables[index]}`;
     });
+    const BtnfinalVarList = btnvarList?.map((item, index) => {
+      return `${item}:${btninputVariables[index]}`;
+    });
 
-    setFinalVarList(finalVarList);
+    setFinalVarList([...finalVarList, ...BtnfinalVarList]);
     if (isError) return;
 
     setConfirmDialogVisible(true);
@@ -229,8 +250,15 @@ const SendRcs = () => {
     Object.keys(inputVariables).map((key) => {
       allVar.push(inputVariables[key]);
     });
+    Object.keys(btninputVariables).map((key) => {
+      allVar.push(btninputVariables[key]);
+    });
 
-    const regexx = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+    let variables = [];
+    const content = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+    const btn = btnvarList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+
+    variables = [...content, ...btn];
 
     // let grp = "";
     // if (selectedGrp) {
@@ -241,14 +269,16 @@ const SendRcs = () => {
       agent: campaignDetails?.agent,
       campaignName: campaignDetails?.campaignName,
       templateSrno: campaignDetails?.templateSrno,
-      variables: regexx,
+      variables: variables,
       variableList: allVar,
       totalCount:
         selectedOption === "group" ? totalAudience : contactData?.totalRecords,
       templateType: type,
       mobileNumberIndex: contactData.selectedMobileColumn || "-1",
       isGroup: selectedOption === "group" ? true : false,
-      countryCode: contactData?.addcountryCode ? contactData?.selectedCountryCode : "0",
+      countryCode: contactData?.addcountryCode
+        ? contactData?.selectedCountryCode
+        : "0",
       groupSrNoList: selectedOption === "group" ? selectedGrp : [],
       isSchedule: scheduleData?.isSchedule
         ? contactData?.selectedCountryCode
@@ -350,6 +380,11 @@ const SendRcs = () => {
             headers={headers}
             setHeaders={setHeaders}
             selectedOption={selectedOption}
+            btnvarLength={btnvarLength}
+            setBtnVarList={setBtnVarList}
+            btnvarList={btnvarList}
+            setBtnInputVariables={setBtnInputVariables}
+            btninputVariables={btninputVariables}
           />
         </div>
         <div>
