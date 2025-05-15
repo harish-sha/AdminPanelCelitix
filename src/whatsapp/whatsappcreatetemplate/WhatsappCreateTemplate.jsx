@@ -320,16 +320,16 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-    // if (selectedTemplateType === "text" && templateHeader) {
-    //   data.components.push({
-    //     type: "HEADER",
-    //     format: "TEXT",
-    //     text: templateHeader,
-    //     example: {
-    //       header_text: [],
-    //     },
-    //   });
-    // }
+    if (selectedTemplateType === "text" && templateHeader) {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        // text: templateHeader,
+        example: {
+          header_text: [templateHeader],
+        },
+      });
+    }
 
     // insert data in component dynamicall
     if (varvalue.length > 0) {

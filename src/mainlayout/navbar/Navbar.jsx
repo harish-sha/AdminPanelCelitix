@@ -51,14 +51,14 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
   // later change when route is set properly - may 10 - (start)
 
-  useEffect(() => {
-    handleBalance();
-  }, []);
-
   // useEffect(() => {
-  //   if (user?.role === "AGENT") return;
   //   handleBalance();
   // }, []);
+
+  useEffect(() => {
+    if (user?.role === "AGENT") return;
+    handleBalance();
+  }, []);
 
   // later change when route is set properly - may 10 - (end)
 
@@ -100,7 +100,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
     authLogout();
-    setTimeout(() => (window.location.href = "/login"), 1000);
+    window.location.href = "/login";
+    // setTimeout(() => (window.location.href = "/login"), 1000);
   }, []);
 
   const handleMenu = useCallback(
@@ -150,27 +151,42 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
       {!isMobile ? (
         <div className="flex gap-3 ml-auto">
           {[
-            {
-              title: "Account Info",
-              Icon: InfoIcon,
-              action: () => setShowModal(true),
-            },
             // {
-            //   title: balance,
-            //   Icon: PaymentsIcon,
+            //   title: "Account Info",
+            //   Icon: InfoIcon,
+            //   action: () => setShowModal(true),
             // },
-            {
-              title: `Balance: ₹${balance}`,
-              Icon: isFetchingBalance ? LoopIcon : WalletIcon,
-              action: handleBalance,
-              showBalance: true,
-            },
-            // { title: "Wallet", Icon: WalletIcon },
-            {
-              title: "Downloads",
-              Icon: DownloadIcon,
-              action: handleViewDownload,
-            },
+            // {
+            //   title: `Balance: ₹${balance}`,
+            //   Icon: isFetchingBalance ? LoopIcon : WalletIcon,
+            //   action: handleBalance,
+            //   showBalance: true,
+            // },
+            // {
+            //   title: "Downloads",
+            //   Icon: DownloadIcon,
+            //   action: handleViewDownload,
+            // },
+            ...(user?.role !== "AGENT"
+              ? [
+                {
+                  title: "Account Info",
+                  Icon: InfoIcon,
+                  action: () => setShowModal(true),
+                },
+                {
+                  title: `Balance: ₹${balance}`,
+                  Icon: isFetchingBalance ? LoopIcon : WalletIcon,
+                  action: handleBalance,
+                  showBalance: true,
+                },
+                {
+                  title: "Downloads",
+                  Icon: DownloadIcon,
+                  action: handleViewDownload,
+                },
+              ]
+              : []), // Exclude these items for "AGENT" role
           ].map(({ title, Icon, action }, idx) => (
             <CustomTooltip key={idx} title={title} placement="bottom" arrow>
               {/* <button
@@ -229,20 +245,34 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                 icon: <AccountIcon />,
                 action: handleViewProfile,
               },
-              {
-                text: "Login Details",
-                icon: <IpAddress sx={{ fontSize: 26 }} />,
-                action: handleLoginDetails,
-              },
+              // {
+              //   text: "Login Details",
+              //   icon: <IpAddress sx={{ fontSize: 26 }} />,
+              //   action: handleLoginDetails,
+              // },
+              // {
+              //   text: "Transaction History",
+              //   icon: <HistoryIcon />,
+              //   action: handleTransactionHistory,
+              // },
+              ...(user?.role !== "AGENT"
+                ? [
+                  {
+                    text: "Login Details",
+                    icon: <IpAddress sx={{ fontSize: 26 }} />,
+                    action: handleLoginDetails,
+                  },
+                  {
+                    text: "Transaction History",
+                    icon: <HistoryIcon />,
+                    action: handleTransactionHistory,
+                  },
+                ]
+                : []),
               {
                 text: "Settings",
                 icon: <SettingsIcon />,
                 action: handleViewSetting,
-              },
-              {
-                text: "Transaction History",
-                icon: <HistoryIcon />,
-                action: handleTransactionHistory,
               },
               { text: "Logout", icon: <LogoutIcon />, action: handleLogout },
             ].map(({ text, icon, action }, idx) => (
@@ -258,7 +288,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                   gap: 0.5,
                   borderRadius: "8px",
                   borderBottom: "1px solid #e0e0e0",
-                  marginBottom: "3px",  
+                  marginBottom: "3px",
                   "&:hover": {
                     backgroundColor: "#e6f4ff",
                     color: "#1e3a8a",

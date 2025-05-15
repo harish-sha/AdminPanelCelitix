@@ -171,7 +171,6 @@ export const PermissionRoute = ({ children }) => {
       return [
         {
           name: "WhatsApp LiveChat",
-
           links: "/wlivechat",
           roles: ["AGENT"],
         },

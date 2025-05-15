@@ -380,7 +380,7 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    console.log(requestData)
+    // console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -429,6 +429,7 @@ const WhatsappLaunchCampaign = () => {
         setIsGroup(-1);
         fileRef.current.value = "";
       } else {
+        toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");
       }
     } catch (error) {

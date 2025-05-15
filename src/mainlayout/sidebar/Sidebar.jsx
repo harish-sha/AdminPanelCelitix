@@ -104,7 +104,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Home",
       type: "single",
       to: "/",
-      roles: ["ADMIN"],
+      roles: ["ADMIN", "AGENT"],
     },
     // {
     //   id: "",
@@ -142,7 +142,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           isHide: true,
         },
       ],
-      roles: ["ADMIN"],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
@@ -321,7 +321,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/addcallback", label: "Add Call Back", isHide: true },
         { to: "/editcallback", label: "Edit Call Back", isHide: true },
       ],
-      roles: ["ADMIN"],
+      roles: [],
     },
     {
       id: "",
@@ -332,7 +332,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: "/recharge", label: "Recharge" },
       ],
-      roles: ["ADMIN", "DIRECTUSER"],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -377,15 +377,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/smswishmanagement",
       roles: ["ADMIN"],
     },
-    {
-      id: "",
-      name: "apiDocs",
-      icon: <DescriptionOutlinedIcon fontSize="20" />,
-      label: "API Docs",
-      type: "single",
-      onClick: () => navigate("/docs"),
-      roles: ["ADMIN"],
-    },
+    // {
+    //   id: "",
+    //   name: "apiDocs",
+    //   icon: <DescriptionOutlinedIcon fontSize="20" />,
+    //   label: "API Docs",
+    //   type: "single",
+    //   onClick: () => navigate("/docs"),
+    //   roles: ["ADMIN"],
+    // },
     // {
     //     name: 'Logout',
     //     icon: <FaSignOutAlt />,
@@ -404,6 +404,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
 
     if (userState.role === "AGENT") {
       return [
+        {
+          id: "",
+          name: "Home",
+          icon: <FaHome />,
+          label: "Home",
+          type: "single",
+          to: "/",
+          roles: ["AGENT"],
+        },
         {
           id: "",
           name: "WhatsApp LiveChat",
@@ -458,7 +467,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
-      {menuItems.map((item) =>
+      {filteredItems.map((item) =>
         item.type === "dropdown" ? (
           <Tooltip
             key={item.name}

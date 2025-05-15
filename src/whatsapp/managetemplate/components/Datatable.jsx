@@ -266,10 +266,8 @@ const DataTable = ({
       toast.success("Refreshed Successfully");
       await fetchTemplateData();
     } catch (e) {
-      // console.log(e);
       return toast.error("Failed to refresh template.");
     }
-    toast.success("Refreshed Successfully");
   };
 
   const columns = [

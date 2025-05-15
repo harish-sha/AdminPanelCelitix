@@ -871,7 +871,7 @@ const TemplateTypes = ({
 
   return (
     <div className="w-full">
-      {/* {selectedTemplateType === "text" && (
+      {selectedTemplateType === "text" && (
         <div className="w-full mb-4">
           <div className="flex items-center mb-2">
             <label className="text-sm font-medium text-gray-700">
@@ -902,7 +902,7 @@ const TemplateTypes = ({
             {templateHeader.length}/60
           </p>
         </div>
-      )} */}
+      )}
 
       {selectedTemplateType === "image" && (
         <div className="w-full mb-4">

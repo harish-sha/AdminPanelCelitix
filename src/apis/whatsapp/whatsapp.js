@@ -513,21 +513,29 @@ export const getUserAgent = async (data) => {
   });
 };
 
-// whatapp flows
-
-// get flow list
-export const getFlowList = async () => {
-  return (
-    await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`),
-    {
-      method: "POST",
-    }
-  );
-};
-
 // // waba onboarding - this api is now in the managewaba direct fetch without
 // export const userOnbording = async (data) => {
 //   return await fetchWithAuth(`/whatsapp/wabaOnboardProcess?code=${data}`, {
 //     method: "POST",
 //   });
 // };
+
+// whatapp flows
+
+// Get WhatsappFlow list
+export const getWhatsappFlow = async () => {
+  return await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`, {
+    method: "POST",
+  });
+};
+
+//
+export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
+  return await fetchWithAuth(
+    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
+    {
+      method: "POST",
+      body: JSON.stringify(reqbody),
+    }
+  );
+};
