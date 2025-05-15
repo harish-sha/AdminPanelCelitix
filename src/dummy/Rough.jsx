@@ -1,525 +1,223 @@
-import { IoArrowBack } from "react-icons/io5";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
-import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
-import { FaReply } from "react-icons/fa";
-import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
-import { FiSend } from "react-icons/fi";
-import { SpeedDial } from "primereact/speeddial";
-import {
-  BoltRounded,
-  FormatBoldOutlined,
-  FormatItalicOutlined,
-  FormatStrikethroughOutlined,
-  LocalPhoneOutlined,
-  SearchOutlined,
-} from "@mui/icons-material";
-import { Sidebar } from "primereact/sidebar";
-import LocalPhoneOutlinedIcon from "@mui/icons-material/LocalPhoneOutlined";
-import { ClosedChat } from "./CloseChat";
-import { ChatInput } from "./Input";
-import { useEffect, useRef, useState } from "react";
-import toast from "react-hot-toast";
-import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
-import { TemplateMessagePreview } from "./Template";
-import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
+import { motion, AnimatePresence } from "framer-motion";
 
-export const ChatScreen = ({
-  setVisibleRight,
-  setDialogVisible,
-  // messageRef,
-  formatTime,
-  btnOption,
-  selectedImage,
-  deleteImages,
-  handleAttachmentDownload,
-  insertEmoji,
-  inputRef,
-  sendMessage,
-  items,
-  visibleRight,
-  input,
-  setInput,
-  setSendMessageDialogVisible,
-  specificConversation,
-  chatState,
-  setChatState,
-}) => {
-  const messageRef = useRef(null);
+export default function WhatsappLiveChat() {
+  // ...existing code
 
-  useEffect(() => {
-    if (messageRef.current) {
-      messageRef.current.scrollTop = messageRef.current.scrollHeight;
-    }
-  }, [chatState?.specificConversation]);
-
-  const mediaRender = (isSent) => {
-    return (
-      <div
-        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-          }`}
-      >
-        <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
-      </div>
-    );
+  const chatScreenVariants = {
+    hidden: { opacity: 0, x: "100%" }, // Start off-screen to the right
+    visible: {
+      opacity: 1,
+      x: 0, // Slide into view
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    exit: {
+      opacity: 0,
+      x: "100%", // Slide out to the right
+      transition: {
+        duration: 0.3,
+      },
+    },
   };
 
-  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image";
-
   return (
-    <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-1 flex items-center justify-between w-full bg-white h-15 px-2 border rounded-tr-lg ">
-        <div className="flex items-center gap-2">
-          <IoArrowBack
-            className="text-xl cursor-pointer md:hidden"
-            onClick={() => {
-              // setActiveChat(null);
-              // setSpecificConversation([]);
-              setChatState({
-                active: null,
-                input: "",
-                allConversations: [],
-                specificConversation: [],
-                latestMessage: {
-                  srno: "",
-                  replayTime: "",
-                },
-                replyData: "",
-                isReply: false,
-              });
-            }}
-          />
-          {chatState?.active.image ? (
-            <img
-              src={chatState.active.image || "/default-avatar.jpg"}
-              alt={chatState.active.contectName}
-              className="w-10 h-10 rounded-full"
-            />
-          ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold text-sm">
-              {chatState.active.contectName?.charAt(0)?.toUpperCase() || "?"}
-            </div>
-          )}
-
-          <h3 className="text-lg font-semibold">
-            {chatState.active.contectName || chatState.active.mobileNo}
-          </h3>
-          <InfoOutlinedIcon
-            onClick={() => setVisibleRight(true)}
-            sx={{ fontSize: "1.2rem", color: "green" }}
-          />
-        </div>
-        <SupportAgentOutlinedIcon
-          onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer"
-        />
-      </div>
-
+    <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border">
       <div
-        ref={messageRef}
-        className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/whatsapp_bg.jpg)]"
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
       >
-        {chatState.specificConversation?.map((group, groupIndex) => (
-          <div key={groupIndex}>
-            <div className="my-4 text-xs text-center text-black font-semibold">
-              {group?.date}
-            </div>
-            <div className="flex flex-col items-start space-y-2">
-              {group.messages.map((msg, index) => {
-                const isSent = !msg.isReceived;
-                const isImage = msg.replyType === "image";
-                const isVideo = msg.replyType === "video";
-                const isDocument = msg.replyType === "document";
-                const templateType = msg?.templateType;
-                const isText = ["text", "button", "interactive"].includes(
-                  msg.replyType
-                );
-                const commonMediaClass = "object-contain mb-2 select-none";
-                const isReply = msg?.isReply;
-                const mediaUrl = isSent
-                  ? msg?.mediaPath
-                  : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
+        <InputData
+          setSearch={setSearch}
+          search={search}
+          handleSearch={handleSearch}
+          btnOption={btnOption}
+          setBtnOption={setBtnOption}
+          wabaState={wabaState}
+          setWabaState={setWabaState}
+          setChatState={setChatState}
+          setSelectedWaba={setSelectedWaba}
+        />
 
-                return (
-                  <div
-                    key={index}
-                    className={`p-2 rounded-lg max-w-[90%] my- ${isSent ? "self-end" : "self-start"
-                      }`}
-                  >
-                    {isReply && <div className="text-sm border-b-2 border-black">{msg?.replyMessage}</div>}
-                    {(isImage || isVideo || isDocument) && (
-                      <div
-                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                          } `}
-                      >
-                        <div
-                          className={`w-full ${msg?.caption ? "p-2 rounded-md" : ""
-                            }`}
-                        >
-                          {msg?.mediaPath ? (
-                            <>
-                              {isImage && (
-                                <div
-                                  className={`w-full h-full ${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                      : ""
-                                    }`}
-                                >
-                                  <img
-                                    src={mediaUrl}
-                                    alt="Image"
-                                    className={`mb-2 h-auto max-h-80 max-w-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
-                                      }`}
-                                  />
-                                  {msg?.caption && (
-                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
-                                      {msg?.caption}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                              {isVideo && (
-                                <div
-                                  className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                      : ""
-                                    }`}
-                                >
-                                  <video
-                                    src={mediaUrl}
-                                    controls
-                                    autoPlay={false}
-                                    className={`h-65 w-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
-                                  />
-                                  {msg?.caption && (
-                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
-                                      {msg?.caption}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                              {isDocument && (
-                                <div
-                                  className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
-                                      : ""
-                                    }`}
-                                >
-                                  <iframe
-                                    src={mediaUrl}
-                                    className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
-                                    allow="encrypted-media;"
-                                    allowFullScreen
-                                  />
-                                  {msg?.caption && (
-                                    <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
-                                      {msg?.caption}
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </>
-                          ) : (
-                            <button
-                              className="mb-2 h-48 w-48 flex justify-center items-center 
-                                bg-[url(/blurImage.jpg)] "
-                              onClick={() => handleAttachmentDownload(msg)}
-                            >
-                              <FileDownloadOutlinedIcon />
-                            </button>
-                          )}
-                        </div>
-                        {btnOption === "active" && (
-                          <div className="flex gap-2">
-                            <button
-                              onClick={() => {
-                                setChatState((prev) => ({
-                                  ...prev,
-                                  replyData: msg,
-                                  isReply: true,
-                                }));
-                              }}
-                            >
-                              <FaReply className=" size-3" />
-                            </button>
-                            <a
-                              onClick={() => {
-                                toast.success("Downloading Start");
-                              }}
-                              href={
-                                isSent
-                                  ? msg.mediaPath
-                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`
-                              }
-                              download={msg?.mediaId}
-                            >
-                              <FileDownloadOutlinedIcon className="size-2" />
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    )}
-
-                    {isText && (
-                      <div
-                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                          }`}
-                      >
-                        <div className="max-w-[250px]">
-                          <p
-                            className={`w-full whitespace-pre-wrap break-words  p-2 rounded-md ${isSent
-                                ? "bg-blue-500 text-white"
-                                : "bg-gray-200 text-black"
-                              }`}
-                          >
-                            {msg.messageBody}
-                          </p>
-                        </div>
-                        {btnOption === "active" && (
-                          <button
-                            onClick={() => {
-                              setChatState((prev) => ({
-                                ...prev,
-                                replyData: msg,
-                                isReply: true,
-                              }));
-                            }}
-                          >
-                            <FaReply className=" size-3" />
-                          </button>
-                        )}
-                      </div>
-                    )}
-
-                    {templateType && <TemplateMessagePreview template={msg} />}
-
-                    <p
-                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
-                        }`}
-                    >
-                      {formatTime(msg?.insertTime)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        ))}
+        <ChatSidebar
+          formatDate={formatDate}
+          chatState={chatState}
+          setChatState={setChatState}
+          setSelectedAgentList={setSelectedAgentList}
+          selectedWaba={selectedWaba}
+        />
       </div>
 
-      {/* Reply Preview */}
-      {chatState.isReply && btnOption === "active" && (
-        <div className="relative border border-gray-300 rounded-md">
-          <div className="ml-2 mr-2 p-2">
-            {chatState.replyData?.replyType === "image" && (
-              <img
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                alt={chatState.replyData?.mediaPath}
-                className="mb-2 pointer-events-none select-none h-10 w-20"
-              />
-            )}
-            {chatState.replyData?.replyType === "video" && (
-              <video
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                controls={false}
-                autoPlay={false}
-                className="mb-2 h-30 w-20 pointer-events-none "
-              />
-            )}
-            {chatState.replyData?.replyType === "document" && (
-              <iframe
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                controls={false}
-                autoPlay={false}
-                allow=" encrypted-media"
-                className="object-contain mb-2 h-48 w-48 pointer-events-none"
-              ></iframe>
-            )}
-            {chatState.replyData?.messageBody && (
-              <p>{chatState.replyData?.messageBody}</p>
-            )}
-          </div>
-          <div
-            onClick={() => {
-              // setIsReply(false);
-              // setReplyData(null);
-              setChatState({ ...chatState, isReply: false, replyData: null });
-            }}
-            className="absolute top-0 right-0 cursor-pointer "
+      {/* Animate ChatScreen */}
+      <AnimatePresence>
+        {chatState.active && (
+          <motion.div
+            key="chat-screen"
+            variants={chatScreenVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="relative flex flex-col flex-1 h-screen md:h-full"
           >
-            <CloseOutlinedIcon
-              sx={{
-                fontSize: "18px",
-                color: "gray",
-              }}
+            <ChatScreen
+              setVisibleRight={setVisibleRight}
+              setDialogVisible={setDialogVisible}
+              messageRef={messageRef}
+              formatTime={formatTime}
+              btnOption={btnOption}
+              selectedImage={selectedImage}
+              deleteImages={deleteImages}
+              handleAttachmentDownload={handleAttachmentDownload}
+              insertEmoji={insertEmoji}
+              inputRef={inputRef}
+              sendMessage={sendMessage}
+              items={items}
+              visibleRight={visibleRight}
+              input={input}
+              setInput={setInput}
+              setSendMessageDialogVisible={setSendMessageDialogVisible}
+              setChatState={setChatState}
+              chatState={chatState}
             />
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Image Preview */}
-      {selectedImage && (
-        <div className="flex flex-wrap gap-2 mt-2">
-          <div className="relative">
-            <button className="flex items-center gap-1">
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt=""
-                className="object-cover w-20 h-20"
-              />
-            </button>
-            <span
-              className="absolute text-red-500 cursor-pointer top-1 right-1"
-              onClick={() => deleteImages("4")}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </span>
-          </div>
-        </div>
-      )}
-
-      {/* Input Area */}
-      {btnOption === "active" ? (
-        // <div className="flex items-center w-full p-4 bg-white border-t mb-17 md:mb-0">
-        //   <div className="mr-2">
-        //     <CustomEmojiPicker position="top" onSelect={insertEmoji} />
-        //   </div>
-        //   <div className="relative flex items-center justify-center w-full gap-2 border rounded-lg">
-        //     <input
-        //       type="text"
-        //       className="flex-1 w-full p-2 focus:outline-none"
-        //       placeholder="Type a message..."
-        //       ref={inputRef}
-        //       value={input}
-        //       onChange={(e) => setInput(e.target.value)}
-        //       onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-        //     />
-        //     <button
-        //       onClick={sendMessage}
-        //       disabled={!selectedImage && !input}
-        //       className="flex items-center justify-center w-8 h-8 text-white transition-all bg-blue-600 rounded-full shadow-md hover:bg-blue-700 active:scale-95 md:mr-6"
-        //     >
-        //       <FiSend className="w-4 h-4 mt-1 mr-1" />
-        //     </button>
-        //     <SpeedDial
-        //       model={items}
-        //       direction="up"
-        //       buttonStyle={{ width: "2rem", height: "2rem" }}
-        //       className="right-19 bottom-1 speeddial-bottom-right"
-        //     />
-        //     <div className="items-center justify-center hidden gap-1 mr-2 md:flex">
-        //       <FormatBoldOutlined />
-        //       <FormatItalicOutlined />
-        //       <FormatStrikethroughOutlined />
-        //     </div>
-        //   </div>
-        // </div>
-        <ChatInput
-          inputRef={inputRef}
-          input={input}
-          setInput={setInput}
-          sendMessage={sendMessage}
-          selectedImage={selectedImage}
-          items={items}
-          insertEmoji={insertEmoji}
-          setChatState={setChatState}
-          chatState={chatState}
-        />
-      ) : (
-        <ClosedChat setSendMessageDialogVisible={setSendMessageDialogVisible} />
-      )}
-
-      {/* Sidebar */}
-      <Sidebar
-        visible={visibleRight}
-        position="right"
-        onHide={() => setVisibleRight(false)}
+      {/* Dialogs */}
+      <Dialog
+        header="Transfer Chat to Agent"
+        visible={dialogVisible}
+        style={{ width: "50vw" }}
+        draggable={false}
+        onHide={() => {
+          if (!dialogVisible) return;
+          setDialogVisible(false);
+        }}
       >
-        <div className="flex flex-col justify-center gap-2">
-          <div className="flex items-center gap-2">
-            <img
-              src={chatState?.active.image || "/default-avatar.jpg"}
-              alt=""
-              className="w-10 h-10 rounded-full"
-            />
-            <h1>
-              {chatState?.active.contectName || chatState?.active.mobileNo}
-            </h1>
-          </div>
-          <div className="flex items-center gap-2">
-            <LocalPhoneOutlinedIcon />
-            <p>{chatState?.active.mobileNo}</p>
-          </div>
+        <div className="space-y-3">
+          <AnimatedDropdown
+            options={agentList?.data?.map((agent) => ({
+              value: agent.sr_no,
+              label: agent.name,
+            }))}
+            id="agentList"
+            name="agentList"
+            label="Agent List"
+            tooltipContent="Select Agent"
+            tooltipPlacement="right"
+            value={selectedAgentList}
+            onChange={(value) => setSelectedAgentList(value)}
+            placeholder="Agent List"
+          />
+          <AnimatedDropdown
+            options={groupList?.map((group) => ({
+              value: group.groupCode,
+              label: group.groupName,
+            }))}
+            id="group"
+            name="group"
+            label="Group"
+            tooltipContent="Select Group"
+            tooltipPlacement="right"
+            value={selectedGroupList}
+            onChange={(value) => setSelectedGroupList(value)}
+            placeholder="Group"
+          />
+          <UniversalButton
+            id={"assignAgent"}
+            name={"assignAgent"}
+            label="Assign Agent"
+            onClick={handleAssignAgent}
+          />
         </div>
-        <div className="space-x-1 text-[0.8rem] mt-3 border-1 rounded-md space-y-2">
-          <div className="space-x-1 text-[0.8rem] mt-3 border-1 rounded-md space-y-2">
-            {[
-              ["Agent", chatState?.agentName?.agentName || "-"],
-              ["Group", chatState?.agentName?.groupName || "-"],
-              // ["Status", "-"],
-              // ["Last Active", "-"],
-              // ["Template Messages", "-"],
-              // ["Session Messages", "-"],
-              // ["Unresolved Queries", "-"],
-              // ["Source", "-"],
-              // ["First Message", "-"],
-              // ["WA Conversation", "-"],
-              // ["MAU Status", "-"],
-              // ["Incoming", "-"],
-              // ["Circle", "-"],
-              ["Agent", chatState?.agentName?.agentName || "-"],
-              ["Group", chatState?.agentName?.groupName || "-"],
-              // ["Status", "-"],
-              // ["Last Active", "-"],
-              // ["Template Messages", "-"],
-              // ["Session Messages", "-"],
-              // ["Unresolved Queries", "-"],
-              // ["Source", "-"],
-              // ["First Message", "-"],
-              // ["WA Conversation", "-"],
-              // ["MAU Status", "-"],
-              // ["Incoming", "-"],
-              // ["Circle", "-"],
-            ].map(([label, value]) => (
-              <div
-                key={label}
-                className="grid grid-cols-2 gap-2 p-2 border-gray-300 border-t mb-2"
-              >
-                <p>{label}</p>
-                <p className="text-right">{value}</p>
+      </Dialog>
+
+      <Dialog
+        header="Send Message to User"
+        visible={sendMessageDialogVisible}
+        style={{ width: "60rem", height: "40rem" }}
+        draggable={false}
+        onHide={() => {
+          setSendMessageDialogVisible(false);
+          setTemplateType(templateType);
+          setBtnVarLength(0);
+          setVarLength(0);
+          setVariables({});
+          setBtnVariables("");
+          setTemplateDetails({});
+          setSendMessageData({});
+        }}
+      >
+        <div className="flex flex-col justify-between h-full gap-4 p-2 md:flex-row">
+          <div className="flex flex-col w-100 gap-5">
+            {messageType === "template" ? (
+              <div className="flex flex-col gap-3">
+                <DropdownWithSearch
+                  id="selectTemplate"
+                  name="selectTemplate"
+                  label="Select Template"
+                  placeholder="Select Template"
+                  options={allTemplated?.map((template) => ({
+                    value: template.templateName,
+                    label: template.templateName,
+                  }))}
+                  value={sendmessageData.templateName}
+                  onChange={(e) => {
+                    setSendMessageData((prevData) => ({
+                      ...prevData,
+                      templateName: e,
+                    }));
+                    const templateType = allTemplated?.find(
+                      (template) => template.templateName === e
+                    )?.type;
+                    setTemplateType(templateType);
+                    setBtnVarLength(0);
+                    setVarLength(0);
+                    setVariables({});
+                    setBtnVariables("");
+                    setTemplateDetails("");
+                  }}
+                />
+                <Variables
+                  templateType={templateType}
+                  selectedFile={selectedFile}
+                  setSelectedFile={setSelectedFile}
+                  varLength={varLength}
+                  setVariables={setVariables}
+                  variables={variables}
+                  btnVariables={btnVariables}
+                  btnVarLength={btnVarLength}
+                  setBtnVariables={setBtnVariables}
+                  setCarFile={setCarFile}
+                  carFile={carFile}
+                  cardIndex={cardIndex}
+                  setCardIndex={setCardIndex}
+                  handleNextCard={handleNextCard}
+                  handlePreviousCard={handlePreviousCard}
+                  tempDetails={templateDetails}
+                />
               </div>
-            ))}
+            ) : null}
+            <div>
+              <UniversalButton label="Send" onClick={handlesendMessage} />
+            </div>
+          </div>
+          <div>
+            <TemplatePreview
+              tempDetails={templateDetails}
+              messageType={messageType}
+              sendmessageData={sendmessageData}
+              selectedImage={selectedFile}
+              carFile={carFile}
+              cardIndex={cardIndex}
+              setCardIndex={setCardIndex}
+            />
           </div>
         </div>
-      </Sidebar>
+      </Dialog>
     </div>
   );
-};
+}

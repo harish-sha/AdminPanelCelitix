@@ -24,6 +24,10 @@ import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { TemplateMessagePreview } from "./Template";
 import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
 
+import { motion } from "framer-motion";
+import Skeleton from "react-loading-skeleton";
+import "react-loading-skeleton/dist/skeleton.css";
+
 export const ChatScreen = ({
   setVisibleRight,
   setDialogVisible,
@@ -56,21 +60,74 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-          }`}
+        className={`flex items-center gap-2 w-full ${
+          isSent ? "flex-row-reverse" : ""
+        }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
     );
   };
 
+  const handleDownload = async (url, filename) => {
+    try {
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename || "file");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Download started!");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download the file.");
+    }
+  };
+
+  const [replyingMessageId, setReplyingMessageId] = useState(null); 
+
+  const handleReplyClick = (msg) => {
+    setReplyingMessageId(msg.id); 
+    setTimeout(() => {
+      setReplyingMessageId(null); 
+    }, 500); 
+
+    setChatState((prev) => ({
+      ...prev,
+      replyData: msg,
+      isReply: true,
+    }));
+  };
+
+  const replyPreviewVariants = {
+    open: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+    closed: {
+      y: 50,
+      opacity: 0,
+      transition: {
+        type: "spring",
+        stiffness: 300,
+        damping: 20,
+      },
+    },
+  };
+
   const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image"; 
+  // const BASE_MEDIA_URL = "/image";
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-1 flex items-center justify-between w-full bg-white h-15 px-2 border rounded-tr-lg ">
-        <div className="flex items-center gap-2">
+      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-300 px-2  border rounded-tr-lg">
+        <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
             onClick={() => {
@@ -94,15 +151,15 @@ export const ChatScreen = ({
             <img
               src={chatState.active.image || "/default-avatar.jpg"}
               alt={chatState.active.contectName}
-              className="w-10 h-10 rounded-full"
+              className="w-8 h-8 rounded-full border-2 border-gray-900"
             />
           ) : (
-            <div className="w-10 h-10 rounded-full bg-gray-300 flex items-center justify-center text-white font-semibold text-sm">
+            <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-[#22577E] border-2 border-[#22577E] font-semibold text-sm">
               {chatState.active.contectName?.charAt(0)?.toUpperCase() || "?"}
             </div>
           )}
 
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-md font-semibold text-[#22577E]">
             {chatState.active.contectName || chatState.active.mobileNo}
           </h3>
           <InfoOutlinedIcon
@@ -132,7 +189,9 @@ export const ChatScreen = ({
                 const isVideo = msg.replyType === "video";
                 const isDocument = msg.replyType === "document";
                 const templateType = msg?.templateType;
-                const isText = ["text", "button", "interactive"].includes(msg.replyType);
+                const isText = ["text", "button", "interactive"].includes(
+                  msg.replyType
+                );
                 const isReply = msg?.isReply;
                 const commonMediaClass = "object-contain mb-2 select-none";
                 const mediaUrl = isSent
@@ -140,16 +199,35 @@ export const ChatScreen = ({
                   : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
 
                 return (
-                  <div
+                  <motion.div
                     key={index}
-                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
-                      }`}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      x: replyingMessageId === msg.id ? (isSent ? -20 : 20) : 0,
+                    }}
+                    transition={{
+                      duration: 0.3,
+                      type: "spring",
+                      stiffness: 300,
+                      damping: 20,
+                    }}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${
+                      isSent ? "self-end" : "self-start"
+                    }`}
                   >
-                    {isReply && <div className="text-sm border-b-2 border-black">{msg?.replyMessage}</div>}
+                    {isReply && (
+                      <div className="text-sm border-b-2 border-black">
+                        {msg?.replyMessage}
+                      </div>
+                    )}
+                    {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                     {(isImage || isVideo || isDocument) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                          }`}
+                        className={`flex items-center gap-2 w-full ${
+                          isSent ? "flex-row-reverse" : ""
+                        }`}
                       >
                         <div
                           className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
@@ -158,18 +236,20 @@ export const ChatScreen = ({
                             <>
                               {isImage && (
                                 <div
-                                  className={`w-full h-full ${msg?.caption
-                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                    : ""
-                                    }`}
+                                  className={`w-full h-full ${
+                                    msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
+                                      : ""
+                                  }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
-                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                      ? "rounded-t-lg"
-                                      : "rounded-md"
-                                      }`}
+                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
+                                      msg?.caption
+                                        ? "rounded-t-lg"
+                                        : "rounded-md"
+                                    }`}
                                   />
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
@@ -180,10 +260,11 @@ export const ChatScreen = ({
                               )}
                               {isVideo && (
                                 <div
-                                  className={`${msg?.caption
-                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                    : ""
-                                    }`}
+                                  className={`${
+                                    msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
+                                      : ""
+                                  }`}
                                 >
                                   <video
                                     src={mediaUrl}
@@ -200,10 +281,11 @@ export const ChatScreen = ({
                               )}
                               {isDocument && (
                                 <div
-                                  className={`${msg?.caption
-                                    ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
-                                    : ""
-                                    }`}
+                                  className={`${
+                                    msg?.caption
+                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
+                                      : ""
+                                  }`}
                                 >
                                   <iframe
                                     src={mediaUrl}
@@ -232,6 +314,7 @@ export const ChatScreen = ({
                         {btnOption === "active" && (
                           <div className="flex gap-2">
                             <button
+                              className="hover:bg-gray-300 transition-all duration-200 rounded-full p-1 px-2 cursor-pointer"
                               onClick={() => {
                                 setChatState((prev) => ({
                                   ...prev,
@@ -242,7 +325,7 @@ export const ChatScreen = ({
                             >
                               <FaReply className=" size-3" />
                             </button>
-                            <a
+                            {/* <a
                               onClick={() => {
                                 toast.success("Downloading Start");
                               }}
@@ -254,7 +337,19 @@ export const ChatScreen = ({
                               download={msg?.mediaId}
                             >
                               <FileDownloadOutlinedIcon className="size-2" />
-                            </a>
+                            </a> */}
+                            <button
+                              className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
+                              onClick={() => {
+                                toast.success("Download started");
+                                const url = isSent
+                                  ? msg.mediaPath
+                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`;
+                                handleDownload(url, msg?.mediaId || "file");
+                              }}
+                            >
+                              <FileDownloadOutlinedIcon className="size-2" />
+                            </button>
                           </div>
                         )}
                       </div>
@@ -262,21 +357,24 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
-                          }`}
+                        className={`flex items-center gap-2 w-full ${
+                          isSent ? "flex-row-reverse" : ""
+                        }`}
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={`w-full whitespace-pre-wrap break-words  p-2 rounded-md ${isSent
-                              ? "bg-blue-500 text-white"
-                              : "bg-gray-200 text-black"
-                              }`}
+                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
+                              isSent
+                                ? "bg-[#22577E] text-white rounded-br-none"
+                                : "bg-[#5584AC] text-white rounded-bl-none"
+                            }`}
                           >
                             {msg.messageBody}
                           </p>
                         </div>
                         {btnOption === "active" && (
                           <button
+                            className="hover:bg-gray-300 transition-all duration-200 rounded-full py-2 px-2 cursor-pointer"
                             onClick={() => {
                               setChatState((prev) => ({
                                 ...prev,
@@ -294,12 +392,13 @@ export const ChatScreen = ({
                     {templateType && <TemplateMessagePreview template={msg} />}
 
                     <p
-                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
-                        }`}
+                      className={`mt-1 text-[0.7rem] ${
+                        isSent ? "text-end" : "text-start"
+                      }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>
-                  </div>
+                  </motion.div>
                 );
               })}
             </div>
@@ -309,7 +408,13 @@ export const ChatScreen = ({
 
       {/* Reply Preview */}
       {chatState.isReply && btnOption === "active" && (
-        <div className="relative border border-gray-300 rounded-md">
+        <motion.div
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={replyPreviewVariants}
+          className="relative border border-gray-300 rounded-md"
+        >
           <div className="ml-2 mr-2 p-2">
             {chatState.replyData?.replyType === "image" && (
               <img
@@ -357,7 +462,7 @@ export const ChatScreen = ({
               // setReplyData(null);
               setChatState({ ...chatState, isReply: false, replyData: null });
             }}
-            className="absolute top-0 right-0 cursor-pointer "
+            className="absolute top-1 right-1 cursor-pointer bg-gray-300 rounded-full px-1 hover:bg-gray-400 hover:text-white"
           >
             <CloseOutlinedIcon
               sx={{
@@ -366,7 +471,7 @@ export const ChatScreen = ({
               }}
             />
           </div>
-        </div>
+        </motion.div>
       )}
 
       {/* Image Preview */}

@@ -31,6 +31,8 @@ import {
   SearchOutlined,
 } from "@mui/icons-material";
 import AttachmentOutlinedIcon from "@mui/icons-material/AttachmentOutlined";
+import ImageOutlinedIcon from "@mui/icons-material/ImageOutlined";
+import TableChartOutlinedIcon from "@mui/icons-material/TableChartOutlined";
 import { SpeedDial } from "primereact/speeddial";
 import FilePresentOutlinedIcon from "@mui/icons-material/FilePresentOutlined";
 import CustomEmojiPicker from "../components/CustomEmojiPicker";
@@ -286,7 +288,7 @@ export default function WhatsappLiveChat() {
   const items = [
     {
       label: "Attachment",
-      icon: <AttachmentOutlinedIcon />,
+      icon: <AttachmentOutlinedIcon style={{ color: "#4CAF50" }} />,
       command: () => {
         fileInputRef.current.click();
       },
@@ -299,10 +301,24 @@ export default function WhatsappLiveChat() {
       },
     },
     {
+      label: "Photos & Videos",
+      icon: <ImageOutlinedIcon style={{ color: "#FF9800" }} />, // Orange
+      command: () => {
+        fileInputRef.current.click();
+      },
+    },
+    {
       label: "Template",
-      icon: <BsJournalArrowDown />,
+      icon: <BsJournalArrowDown style={{ color: "#3F51B5" }} />,
       command: () => {
         setSendMessageDialogVisible(true);
+      },
+    },
+    {
+      label: "Excel",
+      icon: <TableChartOutlinedIcon style={{ color: "#009688" }} />, // Teal
+      command: () => {
+        fileInputRef.current.click();
       },
     },
   ];
@@ -370,7 +386,6 @@ export default function WhatsappLiveChat() {
   // }, [wabaState.selectedWaba, btnOption]);
 
   useEffect(() => {
-
     if (!wabaState?.selectedWaba) return;
     // if (!wabaState?.selectedWaba || !isSubscribe) {
     //   handleFetchAllConvo();
@@ -839,11 +854,52 @@ export default function WhatsappLiveChat() {
     }
   }
 
+  // const chatScreenVariants = {
+  //   hidden: { opacity: 0, x: "100%" },
+  //   visible: {
+  //     opacity: 1,
+  //     x: 0, // Slide into view
+  //     transition: {
+  //       type: "spring",
+  //       stiffness: 300,
+  //       damping: 20,
+  //     },
+  //   },
+  //   exit: {
+  //     opacity: 0,
+  //     x: "100%",
+  //     transition: {
+  //       duration: 0.3,
+  //     },
+  //   },
+  // };
+
+  const chatScreenVariants = {
+    hidden: { opacity: 0, filter: "blur(10px)" }, 
+    visible: {
+      opacity: 1,
+      filter: "blur(0px)",
+      transition: {
+        duration: 0.6, 
+        ease: "easeOut",
+      },
+    },
+    exit: {
+      opacity: 0,
+      filter: "blur(10px)", 
+      transition: {
+        duration: 0.3,
+        ease: "easeIn",
+      },
+    },
+  };
+
   return (
-    <div className="flex h-[100%] bg-gray-50 rounded-lg overflow-hidden border ">
+    <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border overflow-hidden border-tl-lg ${chatState?.active ? "hidden md:block" : "block"
-          }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
       >
         <InputData
           setSearch={setSearch}
@@ -854,6 +910,7 @@ export default function WhatsappLiveChat() {
           wabaState={wabaState}
           setWabaState={setWabaState}
           setChatState={setChatState}
+          setSelectedWaba={setSelectedWaba}
         />
 
         <ChatSidebar
@@ -861,6 +918,7 @@ export default function WhatsappLiveChat() {
           chatState={chatState}
           setChatState={setChatState}
           setSelectedAgentList={setSelectedAgentList}
+          selectedWaba={selectedWaba}
         />
       </div>
 
@@ -871,89 +929,116 @@ export default function WhatsappLiveChat() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="flex flex-col items-center justify-center bg-gray-100 border flex-1 border-tr-lg"
+            className="relative flex flex-col items-center justify-center bg-gradient-to-br from-green-50 via-white to-green-100 border flex-1 border-tr-lg"
           >
-            <div className="w-40 h-40 mx-auto">
-              <lottie-player
-                autoplay
-                loop
-                mode="normal"
-                src="/animation/wabalivechatanimation.json"
-                style={{ width: "100%", height: "100%" }}
-              ></lottie-player>
+            {/* Background Animation - Floating Bubbles */}
+            <div className="absolute inset-0 overflow-hidden z-0 pointer-events-none">
+              <motion.div
+                initial={{ y: 200 }}
+                animate={{ y: -100 }}
+                transition={{
+                  duration: 10,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  ease: "easeInOut",
+                }}
+                className="absolute left-10 top-10 w-64 h-64 bg-green-200 opacity-30 rounded-full"
+              />
+              <motion.div
+                initial={{ x: -100 }}
+                animate={{ x: 100 }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  repeatType: "mirror",
+                  ease: "easeInOut",
+                }}
+                className="absolute bottom-10 right-10 w-48 h-48 bg-green-300 opacity-30 rounded-full"
+              />
             </div>
-            <motion.h2
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-3xl font-semibold text-green-900"
-            >
-              Welcome to LiveChat!
-            </motion.h2>
-            <motion.h3
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-xl font-semibold text-green-900"
-            >
-              Select Your Waba Account To Proceed
-            </motion.h3>
 
-            {/* <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => {
-                setWabaState((prev) => ({ ...prev, selectedWaba: "" }));
-              }}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg shadow-lg transition duration-300"
+            {/* main card */}
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              className="relative z-10 px-6 py-10 bg-white/80 backdrop-blur-xl rounded-2xl shadow-lg text-center max-w-xl
+"
             >
-              Select WABA Account
-            </motion.button>
-            <motion.p
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-gray-600 mt-6 max-w-xs text-center"
-            >
-              Please select your WhatsApp Business Account to start managing your live chats and delight your customers.
-            </motion.p> */}
-
-            {/* <div className="text-center space-y-6">
-              <div className="flex justify-center mb-4">
-                <div className="w-24 h-24 rounded-full bg-green-100 shadow-xl flex items-center justify-center animate-bounce">
-                  <QuestionAnswerOutlinedIcon sx={{ fontSize: "3rem" }} className="text-green-700" />
-                </div>
+              <div className="w-50 h-50 mx-auto mb-3">
+                <lottie-player
+                  autoplay
+                  loop
+                  mode="normal"
+                  src="/animation/wabalivechatanimation.json"
+                  s
+                  style={{ width: "100%", height: "100%" }}
+                ></lottie-player>
               </div>
-              <h2 className="text-2xl font-semibold text-gray-800 tracking-wide">Welcome to Celitix LiveChat!</h2>
-              <p className="text-gray-500">Select a conversation from the left panel to start chatting.</p>
-            </div> */}
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-3xl font-semibold text-green-900 mb-2"
+              >
+                Welcome to LiveChat!
+              </motion.h2>
+              {/* <motion.h3
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-xl text-green-900 mb-4"
+              >
+                Select Your WABA Account to Start a Conversation
+              </motion.h3> */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-gray-600"
+              >
+                Engage your customers instantly with real-time WhatsApp
+                messaging. Choose a WABA account to get started.
+              </motion.p>
+            </motion.div>
           </motion.div>
         </AnimatePresence>
       )}
 
-      {chatState.active && (
-        <ChatScreen
-          setVisibleRight={setVisibleRight}
-          setDialogVisible={setDialogVisible}
-          messageRef={messageRef}
-          formatTime={formatTime}
-          btnOption={btnOption}
-          selectedImage={selectedImage}
-          deleteImages={deleteImages}
-          handleAttachmentDownload={handleAttachmentDownload}
-          insertEmoji={insertEmoji}
-          inputRef={inputRef}
-          sendMessage={sendMessage}
-          items={items}
-          visibleRight={visibleRight}
-          input={input}
-          setInput={setInput}
-          setSendMessageDialogVisible={setSendMessageDialogVisible}
-          setChatState={setChatState}
-          chatState={chatState}
-        // specificConversation={specificConversation}
-        />
-      )}
+      <AnimatePresence>
+        {chatState.active && (
+          <motion.div
+            key="chat-screen"
+            variants={chatScreenVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="relative flex flex-col flex-1 h-screen md:h-full"
+          >
+            <ChatScreen
+              setVisibleRight={setVisibleRight}
+              setDialogVisible={setDialogVisible}
+              messageRef={messageRef}
+              formatTime={formatTime}
+              btnOption={btnOption}
+              selectedImage={selectedImage}
+              deleteImages={deleteImages}
+              handleAttachmentDownload={handleAttachmentDownload}
+              insertEmoji={insertEmoji}
+              inputRef={inputRef}
+              sendMessage={sendMessage}
+              items={items}
+              visibleRight={visibleRight}
+              input={input}
+              setInput={setInput}
+              setSendMessageDialogVisible={setSendMessageDialogVisible}
+              setChatState={setChatState}
+              chatState={chatState}
+              // specificConversation={specificConversation}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <Dialog
         header="Transfer Chat to Agent"
@@ -1162,7 +1247,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-      // multiple
+        // multiple
       />
 
       {imagePreviewVisible && (

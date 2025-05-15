@@ -284,11 +284,24 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
+    // const contentValues = bodyVariables
+    //   ?.map((variable) => {
+    //     const key = `body${variable}`;
+    //     const value = formData[key] || "";
+    //     return value.replace(/{{(.*?)}}/g, "#$1#");
+    //   })
+    //   ?.join(",");
+
     const contentValues = bodyVariables
       ?.map((variable) => {
         const key = `body${variable}`;
-        const value = formData[key] || "";
-        return value.replace(/{{(.*?)}}/g, "#$1#");
+        const value = (formData[key] || "").trim();
+
+        if (value.match(/{{(.*?)}}/)) {
+          return `#${value.match(/{{(.*?)}}/)[1]}#`;
+        }
+
+        return `"${value}"`;
       })
       ?.join(",");
 
@@ -384,6 +397,7 @@ const WhatsappLaunchCampaign = () => {
 
     try {
       const response = await sendWhatsappCampaign(requestData);
+      // return
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setIsLoading(false);
@@ -484,7 +498,6 @@ const WhatsappLaunchCampaign = () => {
           response.map((template) => ({
             value: template.templateName,
             label: template.templateName,
-
           }))
         );
       } else {
@@ -682,7 +695,7 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
-                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
