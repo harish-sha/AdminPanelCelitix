@@ -16,6 +16,7 @@ import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheck
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import toast from "react-hot-toast";
+import SendIcon from "@mui/icons-material/Send";
 
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputWithLabel from "@/whatsapp/components/InputWithLabel";
@@ -304,6 +305,7 @@ const WhatsappFlows = () => {
                         handlepublishBtn(flow);
                       }}
                     >
+                      <SendIcon sx={{ fontSize: "1rem" }} />
                       Send Flow
                     </button>
                   )}

@@ -132,9 +132,9 @@ const Download = ({ id, name }) => {
               <IconButton
                 className="no-xs flex items-center justify-center"
                 onClick={async () => {
-                  const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
+                  // const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
                   // const baseURL = "http://95.216.43.170:8080/eventhandlerpro";
-                  // const baseURL = "/allDownloadUrl";
+                  const baseURL = "/allDownloadUrl";
                   const fullDownloadUrl = `${baseURL}${params.row.downloadPath}`;
                   console.log("Attempting to download from:", fullDownloadUrl);
                   // const link = document.createElement("a");
