@@ -392,11 +392,11 @@ export default function WhatsappLiveChat() {
     //   return;
     // }
 
-    // handleFetchAllConvo();
+    handleFetchAllConvo();
     // setIsSubscribe(true);
 
     const intervalId = setInterval(() => {
-      handleFetchAllConvo();
+      // handleFetchAllConvo();
     }, 5000);
 
     return () => {
@@ -831,11 +831,11 @@ export default function WhatsappLiveChat() {
         // console.log(e);
       }
     }
-    // handleLoadNewChat();
-    // handleIsView();
+    handleLoadNewChat();
+    handleIsView();
     const intervalId = setInterval(() => {
-      handleLoadNewChat();
-      handleIsView();
+      // handleLoadNewChat();
+      // handleIsView();
     }, 500);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
