@@ -548,3 +548,13 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
+
+export const updateFlowStatus = async (data) => {
+  return fetchWithAuth(
+    `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
