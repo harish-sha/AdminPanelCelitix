@@ -177,6 +177,11 @@ export const PermissionRoute = ({ children }) => {
     if (userState.role === "AGENT") {
       return [
         {
+          name: "Home",
+          links: "/",
+          roles: ["AGENT"],
+        },
+        {
           name: "WhatsApp LiveChat",
           links: "/wlivechat",
           roles: ["AGENT"],
@@ -203,11 +208,14 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "openRoutes") {
         allowedServices.push(item);
       }
+      if (item.name === "Manage Contacts") {
+        allowedServices.push(item);
+      }
     });
 
     return allowedServices;
   };
-
+  
   const privateRoute = getPrivateRoute(menuItems, user);
 
   if (!privateRoute.some((item) => item?.links?.includes(currentPath)))

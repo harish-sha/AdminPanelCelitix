@@ -441,6 +441,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       if (item.name === "CallBack") {
         allowedServices.push(item);
       }
+      if (item.name === "Managecontacts") {
+        allowedServices.push(item);
+      }
       userState.services.forEach((service, index) => {
         if (item.id == service.service_type_id) {
           allowedServices.push(item);
