@@ -584,12 +584,17 @@ const CreateWhatsAppBot = () => {
 
     const updatedVariables = [...storedVariables, data];
 
-    const uniqueVar = updatedVariables.filter(
-      (item, index) => updatedVariables.indexOf(item) === index
-    );
+    const uniqueVariables = new Set(updatedVariables);
 
-    setAllVariables((prevVars) => [...prevVars, uniqueVar]);
-    localStorage.setItem("botVar", JSON.stringify(uniqueVar));
+    setAllVariables(Array.from(uniqueVariables));
+    localStorage.setItem("botVar", JSON.stringify(Array.from(uniqueVariables)));
+
+    // const uniqueVar = updatedVariables.filter(
+    //   (item, index) => updatedVariables.indexOf(item) === index
+    // );
+
+    // setAllVariables((prevVars) => [...prevVars, uniqueVar]);
+    // localStorage.setItem("botVar", JSON.stringify(uniqueVar));
     //   setVariableInput("");
   }
 
@@ -914,7 +919,7 @@ const CreateWhatsAppBot = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[200px] gap-4">
+        <div className="flex flex-col justify-between w-[250px] gap-4">
           <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
             <Button
               draggable
