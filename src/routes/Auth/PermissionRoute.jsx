@@ -52,7 +52,7 @@ export const PermissionRoute = ({ children }) => {
         "/wcampaigndetailsreport",
         "/createtemplate",
         "/wlcsetting",
-        "/whatsappflow",
+        "/wwhatsappflows",
         "/wflowcreation",
       ],
       roles: ["ADMIN"],

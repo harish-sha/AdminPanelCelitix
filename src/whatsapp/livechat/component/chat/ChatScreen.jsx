@@ -126,7 +126,7 @@ export const ChatScreen = ({
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-300 px-2  border rounded-tr-lg">
+      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2  border rounded-tr-lg">
         <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"

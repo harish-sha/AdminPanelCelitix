@@ -3468,7 +3468,7 @@ const ManageContacts = () => {
 
             <div>
               <UniversalLabel
-                text="Allowishes"
+                text="Allow wishes"
                 id="addwish"
                 name="addwish"
                 className="mt-0 text-sm font-medium text-gray-800"
@@ -3977,7 +3977,7 @@ const ManageContacts = () => {
           setEditGrpVisible(false);
           setGroupName("");
         }}
-        className="w-[40rem] md:-[30rem] sm:w-[20]"
+        className="w-[30rem]"
         draggable={false}
       >
         <div className="flex gap-1.5 flex-col">

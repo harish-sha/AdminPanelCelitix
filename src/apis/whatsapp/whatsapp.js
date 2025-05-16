@@ -500,7 +500,7 @@ export const getAllCampaignWhatsapp = async () => {
 
 // Download Custom Reports
 export const downloadCustomWhatsappReport = async (data) => {
-  return await fetchWithAuth("/whatsapp/getCustomReport", {
+  return await fetchWithAuth("/whatsapp/downloadCustomWhatsAppReport", {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -529,7 +529,7 @@ export const getWhatsappFlow = async () => {
   });
 };
 
-//
+// whatsapp flow update status (Published and draft)
 export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
   return await fetchWithAuth(
     `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
@@ -548,3 +548,4 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
+

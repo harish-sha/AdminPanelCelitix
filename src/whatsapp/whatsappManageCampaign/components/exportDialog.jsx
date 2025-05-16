@@ -7,9 +7,10 @@ import { useEffect, useState } from "react";
 import Checkbox from "@mui/material/Checkbox";
 import toast from "react-hot-toast";
 import { data } from "autoprefixer";
-import { downloadCustomSmsReport } from "@/apis/sms/sms";
+// import { downloadCustomSmsReport } from "@/apis/sms/sms";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import InputField from "@/whatsapp/components/InputField";
+import { downloadCustomWhatsappReport } from "@/apis/whatsapp/whatsapp";
 
 export const ExportDialog = ({
     visibledialog,
@@ -72,7 +73,7 @@ export const ExportDialog = ({
         };
 
         try {
-            const res = await downloadCustomSmsReport(payload);
+            const res = await downloadCustomWhatsappReport(payload);
             if (!res.status) return toast.error(res.msg);
             toast.success(res.msg);
             setVisibledialog(false);

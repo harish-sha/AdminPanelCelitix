@@ -34,8 +34,8 @@ const App = () => {
         />
 
         <Route element={<PrivateRoute />}>
-          {/* <Route path="/*" element={<Approutes />} /> */}
-          {/* <Route path="/docs/*" element={<Apiroutes />} /> */}
+          <Route path="/*" element={<Approutes />} />
+          <Route path="/docs/*" element={<Apiroutes />} />
 
           <Route element={<PermissionRoute />}>
             <Route path="/*" element={<Approutes />} />

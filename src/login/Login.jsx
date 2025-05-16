@@ -641,9 +641,9 @@ import Userlogin from "./components/user";
 
 const Login = () => {
   const domain = window.location.hostname;
-
-  // Toggle login type based on domain
-  const isReseller = domain !== "celitix.alertsnow.in";
+  
+  // const isReseller = domain !== "celitix.alertsnow.in";
+  const isReseller = domain.includes("celitix");
 
   return isReseller ? <ResellerLogin /> : <Userlogin />;
 };

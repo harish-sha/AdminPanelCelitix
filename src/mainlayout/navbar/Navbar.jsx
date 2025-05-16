@@ -145,7 +145,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
         {/* </button> */}
         {/* <span className="text-xl font-medium tracking-wider text-gray-800 lg:block">Celitix</span> */}
-        <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" />
+        {/* <img src={celitixLogo} width={120} height={80} alt="Celitix Logo" /> */}
       </div>
 
       {!isMobile ? (
