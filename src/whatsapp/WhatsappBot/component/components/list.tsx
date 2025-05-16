@@ -27,6 +27,7 @@ export const List = ({
   allVariables: any[];
   addVariable: (data: String) => void;
 }) => {
+  console.log("asd", nodesInputData[id]);
   const fileInputRef = useRef(null);
   const [options, setOptions] = useState([
     {
@@ -68,40 +69,35 @@ export const List = ({
   }
 
   useEffect(() => {
-    const variable = extractVariable({ message: nodesInputData[id]?.message });
+    const nodeData = nodesInputData[id];
 
-    if (!variable && variable == "") {
-      return;
-    }
+    // if (!nodeData) return;
 
-    addVariable(variable);
+    const variable = extractVariable({ message: nodeData.message });
+
+    variable && addVariable(variable);
 
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        variable: variable,
-        text: nodesInputData[id]?.listHeading,
+        variable,
+        text: nodeData.listHeading,
       },
     }));
+    const listItems = [];
+    nodeData?.options?.forEach((item: any) => {
+      const data = {
+        option: "",
+        value: "",
+      };
+      data.option = item.option;
+      data.value = item.value;
+      listItems.push(data);
+    });
+    console.log("nodeData", listItems);
 
-    const listItems = nodesInputData[id]?.listItems.map(
-      ([option, value]: any) => ({
-        option,
-        value,
-      })
-    );
-
-    setOptions(
-      nodesInputData[id]?.listItems
-        ? listItems
-        : [
-            {
-              option: "",
-              value: "",
-            },
-          ]
-    );
+    setOptions(listItems);
   }, []);
 
   useEffect(() => {
