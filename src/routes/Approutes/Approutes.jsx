@@ -137,8 +137,9 @@ const Approutes = () => {
       <Route path="/" element={<Mainlayout />}>
 
         {/* dashboard */}
-        <Route index element={<Dashboard />} />
-        <Route path="resellerdash" element={<ResellerDashboard />} />
+        {/* <Route index element={<Dashboard />} /> */}
+        <Route index element={<ResellerDashboard />} />
+        {/* <Route path="resellerdash" element={<ResellerDashboard />} /> */}
 
         {/* admin */}
         <Route path="manageuser" element={<ManageUser />} />

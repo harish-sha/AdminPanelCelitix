@@ -91,64 +91,112 @@ const ResellerLogin = () => {
     setCaptchaSolution(solution);
   }
 
+  // async function handleLogin() {
+  //   // Check for empty fields
+  //   if (!username || !password) {
+  //     toast.error("All fields are required. Please fill them out.");
+  //     return;
+  //   }
+
+  //   if (!captcha) {
+  //     toast.error("CAPTCHA is required. Please fill it out.");
+  //     return;
+  //   }
+
+  //   // validation for captcha
+  //   if (parseInt(captcha) !== captchaSolution) {
+  //     toast.error("Invalid CAPTCHA");
+  //     return;
+  //   }
+
+  //   try {
+  //     const payload = {
+  //       userId: username,
+  //       password: password,
+  //       // domain: window.location.hostname,
+  //       domain: "",
+  //     };
+  //     const domain = window.location.hostname;
+
+  //     if (domain !== "celitix.alertsnow.in") {
+  //       payload.domain = domain;
+  //     }
+  //     // "userId":"Admin",
+  //     // "password":"12345678",
+  //     // "domain":""
+  //     const res = await login(payload);
+
+  //     if (!res?.data?.token) {
+  //       return toast.error("Invalid credentials");
+  //     }
+
+  //     //   if (inputDetails?.rememberMe) {
+  //     //     localStorage.setItem("token", res?.data?.token);
+  //     //   } else {
+  //     //     sessionStorage.setItem("token", res?.data?.token);
+  //     //   }
+
+  //     let allowedServices = null;
+
+  //     if (res?.data?.role !== "AGENT") {
+  //       allowedServices = await getAllowedServices();
+  //     }
+  //     sessionStorage.setItem("token", res?.data?.token);
+  //     toast.success("Login Successful!");
+  //     authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
+  //     navigate("/");
+  //   } catch (e) {
+  //     toast.error("Error while logging in");
+  //   }
+  //   // setStep("verifyNumber
+  // }
+
+
   async function handleLogin() {
-    // Check for empty fields
+    // Basic validation
     if (!username || !password) {
-      toast.error("All fields are required. Please fill them out.");
-      return;
+      return toast.error("All fields are required. Please fill them out.");
     }
 
     if (!captcha) {
-      toast.error("CAPTCHA is required. Please fill it out.");
-      return;
+      return toast.error("CAPTCHA is required. Please fill it out.");
     }
 
-    // validation for captcha
     if (parseInt(captcha) !== captchaSolution) {
-      toast.error("Invalid CAPTCHA");
-      return;
+      return toast.error("Invalid CAPTCHA");
     }
 
     try {
+      const domain = window.location.hostname;
       const payload = {
         userId: username,
-        password: password,
-        // // domain: window.location.hostname,
-        domain: "",
+        password,
+        domain: domain !== "celitix.alertsnow.in" ? domain : "",
       };
-      const domain = window.location.hostname;
 
-      if (domain != "celitix.alertsnow.in") {
-        payload.domain = domain;
-      }
-      // "userId":"Admin",
-      // "password":"12345678",
-      // "domain":""
       const res = await login(payload);
 
       if (!res?.data?.token) {
         return toast.error("Invalid credentials");
       }
 
-      //   if (inputDetails?.rememberMe) {
-      //     localStorage.setItem("token", res?.data?.token);
-      //   } else {
-      //     sessionStorage.setItem("token", res?.data?.token);
-      //   }
+      const { token, role, ttl } = res.data;
+
+      // Set token (consider using localStorage if rememberMe is implemented)
+      sessionStorage.setItem("token", token);
 
       let allowedServices = null;
-
-      if (res?.data?.role !== "AGENT") {
+      if (role !== "AGENT") {
         allowedServices = await getAllowedServices();
       }
-      sessionStorage.setItem("token", res?.data?.token);
+
       toast.success("Login Successful!");
-      authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
+      authLogin(role, allowedServices, ttl);
       navigate("/");
-    } catch (e) {
+    } catch (error) {
+      console.error("Login error:", error);
       toast.error("Error while logging in");
     }
-    // setStep("verifyNumber
   }
 
   function handleRequestOTP() {
@@ -388,7 +436,7 @@ const ResellerLogin = () => {
                     placeholder="Enter Username"
                     className="w-full p-2 mb-2 border border-gray-200 rounded-md"
                     onChange={(e) => setUsername(e.target.value)}
-                    // maxLength={8}
+                  // maxLength={8}
                   />
                 </div>
 
@@ -647,13 +695,12 @@ const ResellerLogin = () => {
                     <input
                       id="new-password"
                       placeholder="New Password"
-                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${
-                        newPassword === ""
+                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
                           ? "border-gray-400"
                           : passwordsMatch === true
-                          ? "border-green-500"
-                          : "border-red-500"
-                      }`}
+                            ? "border-green-500"
+                            : "border-red-500"
+                        }`}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       type={showNewPassword ? "text" : "password"}
@@ -712,13 +759,12 @@ const ResellerLogin = () => {
                   <div className="relative w-full max-w-xs">
                     <input
                       placeholder="Confirm New Password"
-                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${
-                        confirmPassword === ""
+                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
                           ? "border-gray-400"
                           : passwordsMatch === true
-                          ? "border-green-500"
-                          : "border-red-500"
-                      }`}
+                            ? "border-green-500"
+                            : "border-red-500"
+                        }`}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       type={showConfirmPassword ? "text" : "password"}

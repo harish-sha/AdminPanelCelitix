@@ -169,7 +169,7 @@ export const ChatScreen = ({
         </div>
         <SupportAgentOutlinedIcon
           onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer"
+          className="mr-2 cursor-pointer text-[#22577E]"
         />
       </div>
 

@@ -268,9 +268,16 @@ const ResellerDashboard = () => {
                 })}
             </Grid>
 
+
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Total Revenue */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white p-4 rounded-2xl shadow-sm"
+                >
                     <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
                     <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={revenueData}>
@@ -283,10 +290,15 @@ const ResellerDashboard = () => {
                             <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
                         </BarChart>
                     </ResponsiveContainer>
-                </div>
+                </motion.div>
 
                 {/* Customer Satisfaction */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white p-4 rounded-2xl shadow-sm"
+                >
                     <h2 className="text-lg font-semibold mb-2">Customer Satisfaction</h2>
                     <ResponsiveContainer width="100%" height={220}>
                         <LineChart data={satisfactionData}>
@@ -300,13 +312,18 @@ const ResellerDashboard = () => {
                         </LineChart>
                     </ResponsiveContainer>
                     <div className="flex justify-between text-sm mt-2 text-gray-600">
-                        <div>$1,017</div>
-                        <div>$1,757</div>
+                        <div>₹1,017</div>
+                        <div>₹1,757</div>
                     </div>
-                </div>
+                </motion.div>
 
                 {/* Target vs Reality */}
-                <div className="bg-white p-4 rounded-2xl shadow-sm">
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white p-4 rounded-2xl shadow-sm"
+                >
                     <h2 className="text-lg font-semibold mb-2">Target vs Reality</h2>
                     <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={targetRealityData}>
@@ -320,11 +337,40 @@ const ResellerDashboard = () => {
                         </BarChart>
                     </ResponsiveContainer>
                     <div className="flex justify-between text-sm mt-2">
-                        <span className="text-green-600">8,823</span>
-                        <span className="text-yellow-600">12,122</span>
+                        <span className="text-green-600">₹8,823</span>
+                        <span className="text-yellow-600">₹12,122</span>
                     </div>
-                </div>
+                </motion.div>
             </div>
+            <motion.div
+                className="mt-4 bg-gradient-to-r from-gray-50 to-white border border-gray-200 rounded-2xl shadow-md p-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+            >
+                <div className="flex items-center gap-4 mb-4">
+                    <SmartToy className="text-purple-600 text-3xl" />
+                    <h2 className="text-xl font-semibold">Your Bots</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {bots.map((bot, index) => {
+                        const BotIcon = bot.icon;
+                        return (
+                            <motion.div
+                                key={index}
+                                whileHover={{ scale: 1.03 }}
+                                className="bg-white rounded-xl p-4 shadow-sm hover:shadow-md transition"
+                            >
+                                <div className="flex items-center gap-3 mb-2">
+                                    <BotIcon className="text-xl text-purple-600" />
+                                    <h3 className="font-bold text-base">{bot.name}</h3>
+                                </div>
+                                <p className="text-sm text-gray-600">{bot.desc}</p>
+                            </motion.div>
+                        );
+                    })}
+                </div>
+            </motion.div>
         </div>
     );
 };

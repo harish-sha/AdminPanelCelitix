@@ -875,18 +875,18 @@ export default function WhatsappLiveChat() {
   // };
 
   const chatScreenVariants = {
-    hidden: { opacity: 0, filter: "blur(10px)" }, 
+    hidden: { opacity: 0, filter: "blur(10px)" },
     visible: {
       opacity: 1,
       filter: "blur(0px)",
       transition: {
-        duration: 0.6, 
+        duration: 0.6,
         ease: "easeOut",
       },
     },
     exit: {
       opacity: 0,
-      filter: "blur(10px)", 
+      filter: "blur(10px)",
       transition: {
         duration: 0.3,
         ease: "easeIn",
@@ -897,9 +897,8 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1034,7 +1033,7 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-              // specificConversation={specificConversation}
+            // specificConversation={specificConversation}
             />
           </motion.div>
         )}
@@ -1043,7 +1042,7 @@ export default function WhatsappLiveChat() {
       <Dialog
         header="Transfer Chat to Agent"
         visible={dialogVisible}
-        style={{ width: "50vw" }}
+        style={{ width: "35rem" }}
         draggable={false}
         onHide={() => {
           if (!dialogVisible) return;
@@ -1091,12 +1090,14 @@ export default function WhatsappLiveChat() {
             placeholder="Group"
           />
 
-          <UniversalButton
-            id={"assignAgent"}
-            name={"assignAgent"}
-            label="Assign Agent"
-            onClick={handleAssignAgent}
-          />
+          <div className="flex items-center justify-center" >
+            <UniversalButton
+              id={"assignAgent"}
+              name={"assignAgent"}
+              label="Assign Agent"
+              onClick={handleAssignAgent}
+            />
+          </div>
         </div>
       </Dialog>
 
@@ -1247,7 +1248,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

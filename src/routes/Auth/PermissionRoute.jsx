@@ -32,7 +32,7 @@ export const PermissionRoute = ({ children }) => {
         "/rcssuggestionreport",
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
-        "/rcsdeliveryreport"
+        "/rcsdeliveryreport",
       ],
       roles: ["ADMIN"],
     },
@@ -150,7 +150,13 @@ export const PermissionRoute = ({ children }) => {
     },
     {
       name: "openRoutes",
-      links: ["/download", "/loginIpdetails"],
+      links: [
+        "/download",
+        "/loginIpdetails",
+        "/profile",
+        "/settings",
+        "/transactions",
+      ],
       roles: ["ADMIN"],
     },
     {
@@ -179,7 +185,7 @@ export const PermissionRoute = ({ children }) => {
     }
 
     menuItems.forEach((item) => {
-      if (item.roles.includes(userState.role)) allowedServices.push(item);
+      // if (item.roles.includes(userState.role)) allowedServices.push(item);
       userState.services.forEach((service, index) => {
         if (item.name == service.display_name) {
           allowedServices.push(item);

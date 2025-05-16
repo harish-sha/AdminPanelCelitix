@@ -3057,42 +3057,47 @@ const ManageContacts = () => {
 
   return (
     <div>
-      <div className="flex flex-wrap items-end w-full gap-2 mb-2 justify-end align-middle">
-        {/* Name Input Field */}
-        <div className="w-max-content">
-          <UniversalButton
-            id="addgroupbtn"
-            name="addgroupbtn"
-            label="Add Group"
-            onClick={() => setaddGroupVisible(true)}
-          />
+      <div className="flex flex-wrap items-end w-full gap-2 mb-4 justify-between">
+        <h1 className="text-xl font-semibold text-gray-700">
+          Manage Contacts
+        </h1>
+        <div className="flex items-center gap-2">
+          {/* Name Input Field */}
+          <div className="w-max-content">
+            <UniversalButton
+              id="addgroupbtn"
+              name="addgroupbtn"
+              label="Add Group"
+              onClick={() => setaddGroupVisible(true)}
+            />
+          </div>
+
+          <div className="w-max-content">
+            <UniversalButton
+              id="addcontactbtn"
+              name="addcontactbtn"
+              label="Add Contact"
+              onClick={() => setaddContactVisible(true)}
+            />
+          </div>
+          <div className="w-max-content">
+            <UniversalButton
+              id="importcontactbtn"
+              name="importcontactbtn"
+              label="Import Contact"
+              onClick={() => setimportContactVisible(true)}
+            />
+          </div>
+          <div className="w-max-content">
+            <UniversalButton
+              id="exportbtn"
+              name="exportbtn"
+              label="Export"
+              onClick={handleExport}
+            />
+          </div>
         </div>
 
-        <div className="w-max-content">
-          <UniversalButton
-            id="addcontactbtn"
-            name="addcontactbtn"
-            label="Add Contact"
-            onClick={() => setaddContactVisible(true)}
-          />
-        </div>
-        <div className="w-max-content">
-          <UniversalButton
-            id="importcontactbtn"
-            name="importcontactbtn"
-            label="Import Contact"
-            onClick={() => setimportContactVisible(true)}
-          />
-        </div>
-
-        <div className="w-max-content">
-          <UniversalButton
-            id="exportbtn"
-            name="exportbtn"
-            label="Export"
-            onClick={handleExport}
-          />
-        </div>
       </div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-5">
         <div className="w-full sm:w-48">

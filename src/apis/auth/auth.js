@@ -1,22 +1,15 @@
 import axios from "axios";
 
-// const apiUrl = import.meta.env.VITE_API_BASE_URL;
-const apiUrl = "/api";
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
+// const apiUrl = "/api";
 
-// Login 
+// Login
 export const login = async (inputDetails) => {
-  return await axios.post(
-    `${apiUrl}/auth/login`,
-    {
-      userId: inputDetails.userId,
-      password: inputDetails.password,
+  return await axios.post(`${apiUrl}/auth/login`, inputDetails, {
+    headers: {
+      "Content-Type": "application/json",
     },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  });
 };
 
 // Forgot Password

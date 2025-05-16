@@ -1,25 +1,24 @@
+import axios from "axios";
+import { UAParser } from "ua-parser-js";
 import React, { useEffect, useState } from "react";
-import toast from "react-hot-toast";
-import "../../login.css";
-import InputField from "@/components/layout/InputField";
 import { Link, useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion } from "framer-motion";
-import celitixLogo from "@/assets/images/celitix-logo-white.svg";
+import toast from "react-hot-toast";
 
-
-import { useUser } from "@/context/auth";
-
-import UniversalButton from "@/components/common/UniversalButton";
-import celitix_logo from "@/assets/images/celitix-logo-white.svg";
 import Header from "../Header";
 import Footer from "../Footer";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import axios from "axios";
+import "../../login.css";
+
+import InputField from "@/components/layout/InputField";
+import celitixLogo from "@/assets/images/celitix-logo-white.svg";
+import { useUser } from "@/context/auth";
+import UniversalButton from "@/components/common/UniversalButton";
+import celitix_logo from "@/assets/images/celitix-logo-white.svg";
 import { forgotPassword, login, verifyOtp } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
-import { UAParser } from "ua-parser-js";
 
 const Userlogin = () => {
   const parser = new UAParser();
@@ -193,14 +192,14 @@ const Userlogin = () => {
 
   return (
     <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
-      {/* <motion.div
+      <motion.div
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
         className="fixed w-full top-0"
       >
         <Header />
-      </motion.div> */}
+      </motion.div>
       <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
         <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
           <div className="grid grid-cols-1 md:grid-cols-2 h-full">
@@ -309,7 +308,7 @@ const Userlogin = () => {
           </div>
         </div>
       </div>
-      {/* <Footer /> */}
+      <Footer />
     </div>
   );
 

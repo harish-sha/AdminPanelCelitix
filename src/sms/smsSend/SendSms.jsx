@@ -199,7 +199,7 @@ const SendSms = () => {
       isSchedule: scheduleData?.isSchedule ? 1 : 0,
       mobilenoIndex: contactData?.selectedMobileColumn || "-1",
       scheduleTime: scheduleData?.isSchedule
-        ? moment(scheduleData?.time).format("MM/DD/YYYY h:mm A")
+        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss")
         : "",
 
       unicode: inputDetails?.unicode,

@@ -122,7 +122,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     to: "/dummy",
     // },
     {
-      id: "",
+      id: "1",
       name: "SMS",
       icon: <LuMessageSquareMore />,
       label: "SMS",
@@ -159,7 +159,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       roles: ["ADMIN"],
     },
     {
-      id: "",
+      id: "3",
       name: "RCS",
       icon: <img src={rcsicon} className="w-4 h-4" />,
       label: "RCS",
@@ -184,7 +184,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       roles: ["ADMIN", "DIRECTUSER"],
     },
     {
-      id: "",
+      id: "2",
       name: "WhatsApp",
       icon: <FaWhatsapp />,
       label: "WhatsApp",
@@ -247,7 +247,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       roles: ["ADMIN"],
     },
     {
-      id: "",
+      id: "7",
       name: "OBD",
       icon: <img src={obd} className="w-4 h-4" />,
       label: "OBD",
@@ -426,12 +426,12 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     }
 
     menuItems.forEach((item) => {
-      if (item.roles.includes(userState.role)) allowedServices.push(item);
-      userState.services.forEach((service, index) => {
-        if (item.id == service.service_type_id) {
-          allowedServices.push(item);
-        }
-      });
+      // if (item.roles.includes(userState.role)) allowedServices.push(item);
+      // userState.services.forEach((service, index) => {
+      //   if (item.id == service.service_type_id) {
+      //     allowedServices.push(item);
+      //   }
+      // });
       if (item.name === "Home") {
         allowedServices.push(item);
       }
@@ -441,6 +441,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       if (item.name === "CallBack") {
         allowedServices.push(item);
       }
+      userState.services.forEach((service, index) => {
+        if (item.id == service.service_type_id) {
+          allowedServices.push(item);
+        }
+      });
     });
 
     return allowedServices;
