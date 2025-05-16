@@ -500,7 +500,7 @@ export const getAllCampaignWhatsapp = async () => {
 
 // Download Custom Reports
 export const downloadCustomWhatsappReport = async (data) => {
-  return await fetchWithAuth("/whatsapp/getCustomReport", {
+  return await fetchWithAuth("/whatsapp/downloadCustomWhatsAppReport", {
     method: "POST",
     body: JSON.stringify(data),
   });
