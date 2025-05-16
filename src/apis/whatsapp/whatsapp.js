@@ -540,6 +540,17 @@ export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
   );
 };
 
+// public the flow
+export const updateFlowStatus = async (data) => {
+  return fetchWithAuth(
+    `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
+
 export const fetchReplyData = async (data) => {
   return await fetchWithAuth(
     `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
@@ -548,4 +559,3 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
-
