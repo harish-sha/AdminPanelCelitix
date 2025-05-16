@@ -253,10 +253,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "OBD",
       type: "dropdown",
       links: [
-        { to: "/obdcreatecampaign", label: "Create Campaign" },
-        { to: "/obdmanagecampaign", label: "Reports" },
-        { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
-        { to: "/obdIntegration", label: "Integration" },
+        // { to: "/obdcreatecampaign", label: "Create Campaign" },
+        // { to: "/obdmanagecampaign", label: "Reports" },
+        // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+        // { to: "/obdIntegration", label: "Integration" },
       ],
       roles: ["ADMIN"],
     },
@@ -439,6 +439,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         allowedServices.push(item);
       }
       if (item.name === "CallBack") {
+        allowedServices.push(item);
+      }
+      if (item.name === "Managecontacts") {
         allowedServices.push(item);
       }
       userState.services.forEach((service, index) => {

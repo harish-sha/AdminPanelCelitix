@@ -203,6 +203,9 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "openRoutes") {
         allowedServices.push(item);
       }
+      if (item.name === "Manage Contacts") {
+        allowedServices.push(item);
+      }
     });
 
     return allowedServices;

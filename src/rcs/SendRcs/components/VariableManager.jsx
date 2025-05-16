@@ -117,35 +117,59 @@ export const VariableManager = ({
     [inputVariables, setInputVariables]
   );
 
-  const insertVariable = useCallback(
-    (variable, index) => {
-      const input = textBoxRef.current;
-      if (!input) return;
+  const insertVariable = (variable, index) => {
+    console.log(variable);
+    const input = textBoxRef.current;
+    if (!input) return;
 
-      const tag = `{#${variable}#}`;
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
+    const tag = `{#${variable}#}`;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
 
-      const inputData = inputVariables[index] || "";
+    const inputData = inputVariables[index] || "";
 
-      const newMessageContent =
-        inputData.slice(0, start) + tag + inputData.slice(end);
+    const newMessageContent =
+      inputData.slice(0, start) + tag + inputData.slice(end);
 
-      setInputVariables((prev) => ({
-        ...prev,
-        [index]: newMessageContent,
-      }));
+    setInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
 
-      setTimeout(() => {
-        input.focus();
-        input.setSelectionRange(
-          newMessageContent.length,
-          newMessageContent.length
-        );
-      }, 0);
-    },
-    [inputVariables, setInputVariables]
-  );
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(
+        newMessageContent.length,
+        newMessageContent.length
+      );
+    }, 0);
+  };
+  const insertBtnVariable = (variable, index) => {
+    const input = textBoxRef.current;
+    if (!input) return;
+
+    const tag = `{#${variable}#}`;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const btninputVariables = inputVariables[index] || "";
+
+    const newMessageContent =
+      btninputVariables.slice(0, start) + tag + btninputVariables.slice(end);
+
+    setBtnInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
+
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(
+        newMessageContent.length,
+        newMessageContent.length
+      );
+    }, 0);
+  };
 
   const renderSimpleInput = () =>
     varList?.map((label, index) => (
@@ -274,7 +298,7 @@ export const VariableManager = ({
             <div className="absolute top-[0.1rem] right-0 h-10">
               <InputVariable
                 variables={headers}
-                onSelect={(e) => insertVariable(e, index)}
+                onSelect={(e) => insertBtnVariable(e, index)}
               />
             </div>
             {/* <div className="absolute top-[0.5rem] right-10">
