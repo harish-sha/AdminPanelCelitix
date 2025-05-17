@@ -12,8 +12,10 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { addUser } from "@/apis/admin/admin";
 import toast from "react-hot-toast";
 import moment from "moment";
+import { useNavigate } from "react-router-dom";
 
 const AddUser = () => {
+  const navigate = useNavigate();
   const [userid, setUserId] = useState("");
   const [userPassword, setUserPassword] = useState("");
   const [userName, setUserName] = useState("");
@@ -131,7 +133,7 @@ const AddUser = () => {
         return;
       }
       toast.success("User Added Successfully");
-      // navigate("/manageuser");
+      navigate("/manageuser");
     } catch (e) {
       toast.error("Error in Adding User");
     }
