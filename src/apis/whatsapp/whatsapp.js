@@ -529,7 +529,7 @@ export const getWhatsappFlow = async () => {
   });
 };
 
-//
+// whatsapp flow update status (Published and draft)
 export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
   return await fetchWithAuth(
     `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
@@ -539,6 +539,17 @@ export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
     }
   );
 };
+
+// public the flow
+// export const updateFlowStatus = async (data) => {
+//   return fetchWithAuth(
+//     `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+//     {
+//       method: "POST",
+//       body: JSON.stringify(data),
+//     }
+//   );
+// };
 
 export const fetchReplyData = async (data) => {
   return await fetchWithAuth(

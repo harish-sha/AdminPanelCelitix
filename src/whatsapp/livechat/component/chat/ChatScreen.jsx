@@ -23,10 +23,12 @@ import toast from "react-hot-toast";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { TemplateMessagePreview } from "./Template";
 import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
+import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
+import { getBaseUrl } from "@/apis/common/common";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -85,19 +87,35 @@ export const ChatScreen = ({
     }
   };
 
-  const [replyingMessageId, setReplyingMessageId] = useState(null); 
+  // ===========================================================================
+
+  const [replyingMessageId, setReplyingMessageId] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [previewImage, setPreviewImage] = useState(null);
 
   const handleReplyClick = (msg) => {
-    setReplyingMessageId(msg.id); 
+    setReplyingMessageId(msg.id);
     setTimeout(() => {
-      setReplyingMessageId(null); 
-    }, 500); 
+      setReplyingMessageId(null);
+    }, 500);
 
     setChatState((prev) => ({
       ...prev,
       replyData: msg,
       isReply: true,
     }));
+  };
+
+  const handleDownloadWithPreview = async (msg) => {
+    try {
+      setIsDownloading(true);
+      const downloadedImage = await handleAttachmentDownload(msg);
+      setPreviewImage(downloadedImage);
+    } catch (error) {
+      console.error("Error during download:", error);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const replyPreviewVariants = {
@@ -124,9 +142,23 @@ export const ChatScreen = ({
   const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   // const BASE_MEDIA_URL = "/image";
 
+  // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
+
+  useEffect(() => {
+    const fetchBaseUrl = async () => {
+      try {
+        const url = await getBaseUrl("WhatsappChatBoxApi");
+        setBaseMediaUrl(url);
+      } catch (err) {
+        console.error("Failed to fetch base URL", err);
+      }
+    };
+    fetchBaseUrl();
+  }, []);
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
-      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-300 px-2  border rounded-tr-lg">
+      <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2  border rounded-tr-lg">
         <div className="flex items-center gap-2 h-auto">
           <IoArrowBack
             className="text-xl cursor-pointer md:hidden"
@@ -238,7 +270,7 @@ export const ChatScreen = ({
                                 <div
                                   className={`w-full h-full ${
                                     msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
+                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
                                       : ""
                                   }`}
                                 >
@@ -302,13 +334,38 @@ export const ChatScreen = ({
                               )}
                             </>
                           ) : (
-                            <button
-                              className="mb-2 h-48 w-48 flex justify-center items-center 
-                                bg-[url(/blurImage.jpg)] "
-                              onClick={() => handleAttachmentDownload(msg)}
+                            // <button
+                            //   className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200
+                            //     bg-[url(/blurImage.jpg)]"
+                            //   onClick={() => handleAttachmentDownload(msg)}
+                            // >
+                            //   <FileDownloadOutlinedIcon />
+                            // </button>
+                            <motion.div
+                              className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200 bg-gray-200 relative overflow-hidden"
+                              style={{ backdropFilter: "blur(8px)" }}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              onClick={() => handleDownloadWithPreview(msg)}
                             >
-                              <FileDownloadOutlinedIcon />
-                            </button>
+                              {isDownloading ? (
+                                <CircularProgress
+                                  size={24}
+                                  className="text-[#22577E]"
+                                />
+                              ) : (
+                                <>
+                                  <motion.div
+                                    className="absolute inset-0 flex items-center justify-center bg-gray-100 bg-opacity-50"
+                                    initial={{ opacity: 0.5 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
+                                  >
+                                    <FileDownloadOutlinedIcon className="text-gray-600 cursor-pointer" />
+                                  </motion.div>
+                                </>
+                              )}
+                            </motion.div>
                           )}
                         </div>
                         {btnOption === "active" && (

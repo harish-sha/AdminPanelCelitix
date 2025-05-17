@@ -784,7 +784,7 @@ const WhatsappManageCampaign = () => {
                     id="manageWaBaAccount"
                     name="manageWaBaAccount"
                     label="WaBa Account"
-                    tooltipContent="Select Status"
+                    tooltipContent="Select WABA Account"
                     tooltipPlacement="right"
                     options={WabaList?.map((waba) => ({
                       value: waba.wabaSrno,
@@ -795,7 +795,7 @@ const WhatsappManageCampaign = () => {
                     placeholder="Waba Account"
                   />
                 </div>
-                <div className="flex items-center justify-start w-full sm:w-35">
+                <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
                   <FormGroup>
                     <FormControlLabel
                       control={<Checkbox />}

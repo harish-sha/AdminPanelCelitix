@@ -36,7 +36,14 @@ export const TemplateMessagePreview = ({ template }) => {
 
       const templates = await getWabaTemplate(wabaAccountId, templateName);
 
-      // console.log(templates);
+      // const matchedTemplate = templates.find(
+      //   (temp) => String(temp?.templateSrno) === String(templateSrno)
+      // );
+      // if (!matchedTemplate) {
+      //   // return toast.error("Template not found.");
+      //   return;
+      // }
+      // setTempDetails(matchedTemplate);
       setTempDetails(templates?.data[0]?.components);
     } catch (error) {
       console.error("Error fetching specific template:", error);
@@ -71,13 +78,6 @@ export const TemplateMessagePreview = ({ template }) => {
     //       className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
     //     ></iframe>
     //   )}
-    //   {isText &&
-    //     // (tempDetails?.type === "BODY" ? <p>{tempDetails?.text}</p> : null)
-    //     tempDetails?.map((item, index) => {
-    //       if (item?.type === "BODY") {
-    //         return <p key={index}>{item?.text}</p>;
-    //       }
-    //     })}
     // </div>
     <>
       <p className="text-sm">(TemplateMessage)</p>

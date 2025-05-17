@@ -24,6 +24,8 @@ import UniversalButton from "@/components/common/UniversalButton";
 import InputField from "@/components/layout/InputField";
 import CustomTooltip from "@/components/common/CustomTooltip";
 
+import celifavicon from "../../../assets/icons/CELITIX FAVICON2.png";
+
 import CardHoverEffect from "../components/CardHoverEffect";
 import {
   getWhatsappFlow,
@@ -300,7 +302,7 @@ const WhatsappFlows = () => {
                   )}
                   {flow.status === "PUBLISHED" && (
                     <button
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-1 rounded text-sm flex items-center gap-1"
+                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
                       onClick={() => {
                         handlepublishBtn(flow);
                       }}
@@ -484,12 +486,13 @@ const WhatsappFlows = () => {
                 : selectedFlowDetails && (
                     <div className="flex flex-col gap-4">
                       <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
-                        <div className="flex flex-row items-center gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
-                          <img
-                            src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                            className="w-10 h-10 border border-gray-600 rounded-full"
-                          />
-                          <div className="">
+                        <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
+                          <div className="flex items-center gap-3">
+                            <img
+                              // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
+                              src={celifavicon}
+                              className="w-10 h-10 rounded-full "
+                            />
                             <div className=" text-md text-gray-50">
                               {selectedWaba
                                 ? wabaList.find(
@@ -498,9 +501,12 @@ const WhatsappFlows = () => {
                                 : ""}
                             </div>
                           </div>
+                          <div className="pr-3 cursor-pointer">
+                            <MoreVertIcon sx={{ color: "gray" }} />
+                          </div>
                         </div>
                         <div className="p-5">
-                          <div className="bg-gray-700 rounded-t-xl rounded-br-xl p-3 text-white w-60 shadow ">
+                          <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
                             <div className="mb-2 text-sm break-words text-wrap">
                               {bodyText}
                             </div>

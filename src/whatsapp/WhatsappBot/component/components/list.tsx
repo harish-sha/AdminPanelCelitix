@@ -27,6 +27,7 @@ export const List = ({
   allVariables: any[];
   addVariable: (data: String) => void;
 }) => {
+  console.log("asd", nodesInputData[id]);
   const fileInputRef = useRef(null);
   const [options, setOptions] = useState([
     {
@@ -94,6 +95,7 @@ export const List = ({
       data.value = item.value;
       listItems.push(data);
     });
+    console.log("nodeData", listItems);
 
     setOptions(listItems);
   }, []);

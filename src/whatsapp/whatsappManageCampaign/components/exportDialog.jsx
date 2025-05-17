@@ -10,6 +10,7 @@ import { downloadCustomSmsReport } from "@/apis/sms/sms";
 import { downloadCustomWhatsappReport } from "@/apis/whatsapp/whatsapp";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import InputField from "@/whatsapp/components/InputField";
+import { useDownload } from "@/context/DownloadProvider";
 
 export const ExportDialog = ({
   visibledialog,
@@ -18,6 +19,8 @@ export const ExportDialog = ({
   setDataToExport,
   dataToExport,
 }) => {
+  const { triggerDownloadNotification } = useDownload();
+
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     mobileNo: false,
     callType: false,
@@ -62,8 +65,9 @@ export const ExportDialog = ({
     }
     // console.log(dataToExport);
 
-    const name = allCampaigns.find((c) => c.srno === dataToExport?.srno)?.campaignName;
-
+    const name = allCampaigns.find(
+      (c) => c.srno === dataToExport?.srno
+    )?.campaignName;
 
     const payload = {
       ...dataToExport,
@@ -82,6 +86,7 @@ export const ExportDialog = ({
       if (!res.status) return toast.error(res.msg);
       toast.success(res.msg);
       setVisibledialog(false);
+      triggerDownloadNotification(); 
     } catch (e) {
       toast.error("Something went wrong");
     }

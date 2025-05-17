@@ -627,23 +627,10 @@
 import ResellerLogin from "./components/reseller";
 import Userlogin from "./components/user";
 
-// const Login = () => {
-//   const domains = window.location.hostname;
-
-//   if (domains === "celitix.alertsnow.in") {
-//     return <ResellerLogin />;
-//   } else {
-//     return <Userlogin />;
-//   }
-// };
-
-// export default Login;
-
 const Login = () => {
   const domain = window.location.hostname;
-
-  // Toggle login type based on domain
-  const isReseller = !domain.includes("celitix");
+  
+  const isReseller = domain.includes("celitix");
 
   return isReseller ? <ResellerLogin /> : <Userlogin />;
 };
