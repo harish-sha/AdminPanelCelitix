@@ -261,7 +261,7 @@ const ContentCell = ({ value }) => {
   );
 };
 
-const ManageUserTable = ({ id, name, allUsers = [] }) => {
+const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -312,10 +312,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   // };
 
   const handleEdit = async (srNo) => {
-    // console.log(srNo, "srNo");
     try {
       const response = await fetchUserbySrno(srNo);
-      // console.log(response, "fetch user details response");
       if (response?.userMstPojoList?.length > 0) {
         const userDetails = response.userMstPojoList[0];
         setUpdateDetails({
@@ -335,6 +333,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           state: userDetails.state || "",
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
+          srno: userDetails.srno || "",
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -365,6 +364,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       if (response?.msg === "User Updated Successfully") {
         toast.success("User details updated successfully!");
         setEditDetailsDialogVisible(false);
+        fetchAllUsersDetails()
       } else {
         toast.error(response?.message || "Failed to update user details.");
       }
@@ -405,13 +405,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const fetchWhatsappRateData = async (userSrno) => {
     const res = await getWhatsappRateData(userSrno);
-    // console.log("raw whatsapp rate response:", res);
 
     const list = Array.isArray(res) ? res : res?.data;
 
     if (Array.isArray(list)) {
       const formatted = list.map((item, index) => {
-        // console.log("Mapping item:", item);
         return {
           id: item.sr_no || index + 1,
           sn: index + 1,
@@ -426,16 +424,12 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         };
       });
 
-      // console.log("formatted rows", formatted);
+  
       setWhatsapprows(formatted);
     } else {
       console.warn("No valid data returned from API");
     }
   };
-
-  useEffect(() => {
-    // console.log(" WhatsApp rows updated:", whatsapprows);
-  }, [whatsapprows]);
 
   const handleWhatsappAddCredit = async () => {
     if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
@@ -465,10 +459,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-    // console.log("Editing WhatsApp rate for srno:", srno);
 
     const res = await getWhatsappRateBySrno(srno);
-    // console.log("Edit API response:", res);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -579,8 +571,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       transService: transcheck ? String(trans) : "",
       promoService: promocheck ? String(promo) : "",
     };
-
-    // console.log("Submitting SMS Pricing Payload:", payload);
 
     const res = await addSmsPricing(payload);
     if (res?.statusCode === 200) {
@@ -822,7 +812,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       if (!res?.msg.includes("successfully")) {
         toast.error(res?.msg);
       }
-      toast.success(res?.msg);
+      toast.success("Mobile number updated successfully");
+      setOtpService(false);
     } catch (e) {
       toast.error(e?.message || "Failed to update");
     }
@@ -878,7 +869,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleAssign = async (srNo) => {
     setAssignService(true);
     setCurrentUserSrno(srNo);
-    // console.log("srNo", srNo);
 
     setTimeout(() => {
       fetchWhatsappRateData(srNo);
@@ -1210,7 +1200,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       try {
         const res = await getMobileNumbers(selectedIds);
         const mobile = res?.regMoblienos?.split(",");
-        setMobileNumbers(mobile);
+        setMobileNumbers(mobile || []);
+        // setotp
       } catch (e) {
         return toast.error(e.message);
       }
@@ -1580,6 +1571,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               options={[
                 { value: 1, label: "User" },
                 { value: 2, label: "Reseller" },
+                { value: 3, label: "Reseller USER" },
               ]}
               value={updateDetails.userType}
               onChange={(value) =>
@@ -3565,7 +3557,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             value={newPassword}
             setPassword={setNewPassword}
             onChange={(e) => {
-              console.log("UPD", e);
               setNewPassword(e);
             }}
           />
