@@ -94,6 +94,7 @@ const CampaignDetailsReport = () => {
     const [mobileNumber, setMobileNumber] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
+    const [selectedUser, setSelectedUser] = useState("");
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 10,
@@ -109,13 +110,14 @@ const CampaignDetailsReport = () => {
                 mobno: "",
                 status: "status",
                 page: currentPage,
+                selectedUserId: selectedUser || "0",
             };
             const data = await getWhatsappCampaignDetailsReport(body);
             setCampaignDetails(data.data);
             setTotalPage(data.total);
         };
         fetchData();
-    }, [campaignSrno, currentPage]);
+    }, [campaignSrno, currentPage, selectedUser]);
 
     const handleSearch = async () => {
         setIsFetching(true);

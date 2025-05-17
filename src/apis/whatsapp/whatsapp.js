@@ -116,37 +116,54 @@ export const sendWhatsappCampaign = async (campaignData) => {
 };
 
 // Get Whatsapp Campaign Report
+// export const getWhatsappCampaignReport = async (filters = {}) => {
+//   try {
+//     const formattedFromDate = filters.fromQueDateTime
+//       ? new Date(
+//           filters.fromQueDateTime.split("/").reverse().join("-")
+//         ).toLocaleDateString("en-GB")
+//       : new Date().toLocaleDateString("en-GB");
+
+//     const formattedToDate = filters.toQueDateTime
+//       ? new Date(
+//           filters.toQueDateTime.split("/").reverse().join("-")
+//         ).toLocaleDateString("en-GB")
+//       : new Date().toLocaleDateString("en-GB");
+
+//     const requestBody = {
+//       fromQueDateTime: formattedFromDate,
+//       toQueDateTime: formattedFromDate,
+//       campaignName: filters.campaignName || "",
+//       template_category: filters.template_category || "all",
+//     };
+
+//     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
+//       method: "POST",
+//       body: JSON.stringify(requestBody),
+//     });
+//     if (!response || !response.data) {
+//       console.error("Failed to fetch campaign report.");
+//       return [];
+//     }
+//     return response.data || [];
+//   } catch (error) {
+//     console.error("Error fetching campaign report:", error);
+//     return [];
+//   }
+// };
+
 export const getWhatsappCampaignReport = async (filters = {}) => {
   try {
-    const formattedFromDate = filters.fromQueDateTime
-      ? new Date(
-          filters.fromQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
-
-    const formattedToDate = filters.toQueDateTime
-      ? new Date(
-          filters.toQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
-
-    const requestBody = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
-      campaignName: filters.campaignName || "",
-      template_category: filters.template_category || "all",
-    };
-
-    // console.log("Sending Request:", requestBody);
-
     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(filters),
     });
+
     if (!response || !response.data) {
       console.error("Failed to fetch campaign report.");
       return [];
     }
+
     return response.data || [];
   } catch (error) {
     console.error("Error fetching campaign report:", error);

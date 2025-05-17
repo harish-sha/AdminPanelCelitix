@@ -26,10 +26,41 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { ExportDialog } from "./components/exportDialog";
+import { fetchAllUsers } from "@/apis/admin/admin";
+import { useUser } from "@/context/auth";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+
+  const { user } = useUser();
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userId: "",
+          mobileNo: "",
+          companyName: "",
+          status: "-1",
+        };
+        try {
+          setIsFetching(true);
+          const res = await fetchAllUsers(data);
+          setAllUsers(res.userMstPojoList);
+        } catch (e) {
+          // console.log(e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, [user.role]);
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
@@ -37,7 +68,9 @@ const DeliveryreportRcs = () => {
     templateType: "",
     campaignName: "",
     status: "",
+    selectedUser: "0"
   });
+
   const [campaignTableData, setCampaignTableData] = useState([]);
 
   //summaryState
@@ -45,6 +78,7 @@ const DeliveryreportRcs = () => {
     fromDate: new Date(),
     toDate: new Date(),
     isMonthWise: false,
+    selectedUser: "0"
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
 
@@ -130,6 +164,7 @@ const DeliveryreportRcs = () => {
       templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
+      selectedUserId: campaignData.selectedUser ?? "0"
     };
 
     // console.log(data);
@@ -160,6 +195,7 @@ const DeliveryreportRcs = () => {
       // toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
+      selectedUserId: campaignData.selectedUser ?? "0"
     };
 
     try {
@@ -186,54 +222,87 @@ const DeliveryreportRcs = () => {
     <div>
       <div className="w-full">
         <Box sx={{ width: "100%" }}>
-          <Tabs
-            value={value}
-            onChange={handleChange}
-            aria-label="Deliveryre Report Tabs"
-            textColor="primary"
-            indicatorColor="primary"
-            variant="scrollable"
-            scrollButtons="auto"
-            allowScrollButtonsMobile
-            className="w-full"
-          >
-            <Tab
-              label={
-                <span className="flex items-center gap-1 text-sm md:text-base">
-                  <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
-                </span>
-              }
-              {...a11yProps(0)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-            <Tab
-              label={
-                <span className="flex items-center gap-1 text-sm md:text-base">
-                  <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
-                </span>
-              }
-              {...a11yProps(1)}
-              sx={{
-                textTransform: "none",
-                fontWeight: "bold",
-                color: "text.secondary",
-                "&:hover": {
-                  color: "primary.main",
-                  backgroundColor: "#f0f4ff",
-                  borderRadius: "8px",
-                },
-              }}
-            />
-          </Tabs>
+          <div className="flex items-center justify-between w-full" >
+            <Tabs
+              value={value}
+              onChange={handleChange}
+              aria-label="Deliveryre Report Tabs"
+              textColor="primary"
+              indicatorColor="primary"
+              variant="scrollable"
+              scrollButtons="auto"
+              allowScrollButtonsMobile
+              className="w-full"
+            >
+              <Tab
+                label={
+                  <span className="flex items-center gap-1 text-sm md:text-base">
+                    <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
+                  </span>
+                }
+                {...a11yProps(0)}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    backgroundColor: "#f0f4ff",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+              <Tab
+                label={
+                  <span className="flex items-center gap-1 text-sm md:text-base">
+                    <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
+                  </span>
+                }
+                {...a11yProps(1)}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    backgroundColor: "#f0f4ff",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+            </Tabs>
+            {user.role === "RESELLER" && (
+              <div className="w-full sm:w-54">
+                <AnimatedDropdown
+                  id="manageuser"
+                  name="manageuser"
+                  label="Select User"
+                  tooltipContent="Select user you want to see reports"
+                  tooltipPlacement="right"
+                  options={allUsers.map((user) => ({
+                    label: user.userId,
+                    value: user.srno,
+                  }))}
+                  value={selectedUser}
+                  // onChange={setSelectedUser}
+                  onChange={(e) => {
+                    setSelectedUser(e);
+                    setCampaignData({
+                      ...campaignData,
+                      selectedUser: e, 
+                    });
+                    setSummaryData({
+                      ...summaryData,
+                      selectedUser: e, 
+                    });
+                  }}
+                  placeholder="Select User"
+                />
+              </div>
+            )}
+          </div>
+
+
 
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">

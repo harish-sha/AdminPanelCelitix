@@ -382,7 +382,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
+const ManageCampaignTable = ({ id, name, data = [], fromDate, selectedUser }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -391,6 +391,8 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [campaignInfo, setCampaignInfo] = useState(null);
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
+  // const [selectedUser, setSelectedUser] = useState("");
+
 
   const dropdownButtonRefs = useRef({});
   const navigate = useNavigate();
@@ -419,6 +421,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     const data = {
       campSrno: row?.campaignSrno,
       fromDate: formattedDate,
+      selectedUserId: selectedUser || "0"
     };
 
     try {
@@ -645,18 +648,18 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        // queTime: formatDate(item.queTime) || "N/A",
-        queTime: item.queTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaignSrno,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      // queTime: formatDate(item.queTime) || "N/A",
+      queTime: item.queTime || "N/A",
+      campaignName: item.campaignName || "N/A",
+      templateName: item.templateName || "N/A",
+      templateCategory: item.templateCategory || "N/A",
+      templateType: item.templateType || "N/A",
+      status: item.status || "N/A",
+      totalAudience: item.totalAudience || "0",
+      campaignSrno: item.campaignSrno,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
