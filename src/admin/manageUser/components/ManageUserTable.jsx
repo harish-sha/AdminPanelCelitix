@@ -3523,6 +3523,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             label="New Password"
             placeholder="Enter your new password"
             value={newPassword}
+            setPassword={setNewPassword}
+            onChange={(e) => {
+              console.log("UPD", e);
+              setNewPassword(e);
+            }}
           />
         </div>
         <div className="flex justify-center mt-4">
