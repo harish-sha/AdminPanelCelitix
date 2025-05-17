@@ -119,10 +119,10 @@ const Download = ({ id, name }) => {
         throw new Error("Failed to fetch the base URL.");
       }
 
-      // const baseURL = response.url;
+      const baseURL = response.url;
       
       // const baseURL = import.meta.env.VITE_IMAGE_URL;
-      const baseURL = "/allDownloadUrl";
+      // const baseURL = "/allDownloadUrl";
 
       const fullDownloadUrl = `${baseURL}${downloadPath}`;
 

@@ -75,7 +75,7 @@ export const ExportDialog = ({
       toDate: dataToExport.toDate
         ? new Date(dataToExport.toDate).toLocaleDateString("en-GB")
         : "",
-      type: dataToExport?.type === "campaign" ? "1" : "2",
+      type: dataToExport?.type === "campaign" ? 1 : 2,
       campaignName: campaignName,
     };
 
