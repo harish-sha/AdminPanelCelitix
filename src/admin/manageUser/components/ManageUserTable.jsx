@@ -80,7 +80,6 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -185,7 +184,6 @@ const ContentCell = ({ value }) => {
     setOpen(false);
   };
 
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(value);
   };
@@ -262,7 +260,6 @@ const ContentCell = ({ value }) => {
 };
 
 const ManageUserTable = ({ id, name, allUsers = [] }) => {
-
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -873,7 +870,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       setCountryOptions(
         countryListRes.map((item) => ({
           label: item.countryName,
-          value: String(item.countryCode),
+          value: item.srNo,
         }))
       );
     }
@@ -1113,10 +1110,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1125,7 +1122,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     country: "India",
     rate: "0.30",
   }));
-
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -1835,7 +1831,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-            // onClick={addMobileNumber}
+              // onClick={addMobileNumber}
             />
 
             {/* <IconButton
@@ -2187,8 +2183,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2587,7 +2583,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                       }
                     />
                   </div>
-
 
                   <div className="flex justify-center">
                     <UniversalButton
