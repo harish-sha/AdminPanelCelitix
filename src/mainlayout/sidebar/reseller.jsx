@@ -1,0 +1,85 @@
+import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
+import { IoPersonOutline } from "react-icons/io5";
+import { SiGoogleauthenticator } from "react-icons/si";
+import { LuMessageSquareMore } from "react-icons/lu";
+
+import rcsicon from "../../assets/icons/RCS02.svg";
+import twoway from "../../assets/icons/TWOWAY.svg";
+import callback from "../../assets/icons/Callback02.svg";
+import missedcall from "../../assets/icons/Missedcall2.svg";
+import obd from "../../assets/icons/OBD02.svg";
+import ibd from "../../assets/icons/IBD02.svg";
+import numberlookup from "../../assets/icons/Numberlookup.svg";
+import clicktwocall from "../../assets/icons/Click2Call02.svg";
+import { LuWandSparkles } from "react-icons/lu";
+import { IoWalletOutline } from "react-icons/io5";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+
+import { MdOutlineEmail } from "react-icons/md";
+
+export const resellerItems = [
+  {
+    id: "",
+    name: "Home",
+    icon: <FaHome />,
+    label: "Home",
+    type: "single",
+    to: "/",
+    roles: ["ADMIN", "AGENT"],
+  },
+  {
+    id: "",
+    name: "User Management",
+    icon: <IoWalletOutline />,
+    label: "User Management",
+    type: "dropdown",
+    links: [{ to: "/manageuser", label: "Manage User" }],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "Reports",
+    icon: <img src={numberlookup} className="w-4 h-4" />,
+    label: "Reports",
+    type: "dropdown",
+    links: [
+      { to: "/smsreports", label: "SMS" },
+      { to: "/rcsdeliveryreport", label: "RCS" },
+      { to: "/wmanagecampaign", label: "WHATSAPP" },
+      // { to: "/obdmanagecampaign", label: "OBD" },
+      {
+        to: "/rcsdeliverycampaigndetails",
+        label: "Delivery Campaign Report",
+        isHide: true,
+      },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "managefunds",
+    icon: <IoWalletOutline />,
+    label: "Manage Funds",
+    type: "dropdown",
+    links: [{ to: "/recharge", label: "Recharge" }],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "Managecontacts",
+    icon: <GroupOutlinedIcon fontSize="20" />,
+    label: "Manage Contacts",
+    type: "single",
+    to: "/managecontacts",
+    roles: ["ADMIN", "DIRECTUSER"],
+  },
+  // {
+  //   id: "",
+  //   name: "apiDocs",
+  //   icon: <DescriptionOutlinedIcon fontSize="20" />,
+  //   label: "API Docs",
+  //   type: "single",
+  //   onClick: () => navigate("/docs"),
+  //   roles: ["ADMIN"],
+  // },
+];
