@@ -34,12 +34,9 @@ export const saveAgentRcs = async (data) => {
 
 // fetch all bots list RCS
 export const fetchAllBotsList = async (agent_id = "") => {
-  return await fetchWithAuth(
-    `/rcs/bot/getListOfAgents?agentId=${agent_id}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/rcs/bot/getListOfAgents?agentId=${agent_id}`, {
+    method: "POST",
+  });
 };
 
 // get bot details by srno
@@ -79,4 +76,13 @@ export const getPromoServices = async () => {
   return await fetchWithAuth("/service/getPromoServices", {
     method: "POST",
   });
+};
+
+export const addMobileNumbers = async (data) => {
+  return await fetchWithAuth(
+    `user/saveRegMobiles?userSrno=${data.userSrno}&mobileNumbers=${data.mbno}`,
+    {
+      method: "POST",
+    }
+  );
 };

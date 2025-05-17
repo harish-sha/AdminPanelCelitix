@@ -61,6 +61,7 @@ import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import {
+  addMobileNumbers,
   fetchUserbySrno,
   getPromoServices,
   getTransServices,
@@ -299,6 +300,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     city: "",
     pinCode: "",
   });
+
+  const [selectedIds, setSelectedIds] = useState([]);
 
   // const handleDetailsUpdate = async () => {
   //   const data = {
@@ -801,6 +804,29 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setMobileNumbers([...mobileNumbers, ""]);
   };
 
+  async function saveMobileNumber() {
+    try {
+      const isEmpty = mobileNumbers.some((number) => !number.trim());
+
+      if (isEmpty) {
+        toast.error("Please enter mobile number in all inputs.");
+        return;
+      }
+      const mbNo = mobileNumbers.join(",");
+      const payload = {
+        mbno: mbNo,
+        userSrno: selectedIds,
+      };
+      const res = await addMobileNumbers(payload);
+      if (!res?.msg.includes("successfully")) {
+        toast.error(res?.msg);
+      }
+      toast.success(res?.msg);
+    } catch (e) {
+      toast.error(e?.message || "Failed to update");
+    }
+  }
+
   // Remove input field
   const removeMobileNumber = (index) => {
     const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
@@ -823,12 +849,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setValue(newValue);
   };
 
-  const handleLonins = (id, name) => {
+  const handleLonins = (id) => {
     setLogins(true);
   };
 
-  const handleOtp = (id, name) => {
+  const handleOtp = (id) => {
     setOtpService(true);
+    setSelectedIds(id);
   };
 
   // view user details
@@ -1831,7 +1858,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-              // onClick={addMobileNumber}
+              onClick={saveMobileNumber}
             />
 
             {/* <IconButton
@@ -3501,7 +3528,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
       {/* reset service */}
       <Dialog
-        header="reset service"
+        header="Update Password"
         visible={reset}
         onHide={() => setreset(false)}
         className="w-[30rem]"
