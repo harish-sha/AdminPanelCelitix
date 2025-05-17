@@ -261,7 +261,7 @@ const ContentCell = ({ value }) => {
   );
 };
 
-const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
+const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -364,7 +364,7 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
       if (response?.msg === "User Updated Successfully") {
         toast.success("User details updated successfully!");
         setEditDetailsDialogVisible(false);
-        fetchAllUsersDetails()
+        fetchAllUsersDetails();
       } else {
         toast.error(response?.message || "Failed to update user details.");
       }
@@ -424,7 +424,6 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
         };
       });
 
-  
       setWhatsapprows(formatted);
     } else {
       console.warn("No valid data returned from API");
@@ -459,7 +458,6 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-
     const res = await getWhatsappRateBySrno(srno);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
@@ -932,6 +930,7 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
 
   const handleReset = (id, name) => {
     setreset(true);
+    setSelectedIds(id);
   };
 
   const handleReport = (id, name) => {
@@ -1194,6 +1193,13 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
       </GridFooterContainer>
     );
   };
+
+  async function handleResetPassword() {
+    const data = {
+      srno: selectedIds,
+      password: newPassword,
+    };
+  }
 
   useEffect(() => {
     async function fetchMobileNo() {
@@ -3567,6 +3573,7 @@ const ManageUserTable = ({ id, name, allUsers = [],fetchAllUsersDetails }) => {
             id="apisaveButton"
             name="apisaveButton"
             variant="primary"
+            onClick={handleResetPassword}
           />
         </div>
       </Dialog>

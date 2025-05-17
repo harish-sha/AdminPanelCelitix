@@ -5,10 +5,13 @@ import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
 import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
 import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import { useEffect } from "react";
-import { RadioButton } from 'primereact/radiobutton';
+import { RadioButton } from "primereact/radiobutton";
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import { getPincodeDetails } from "@/apis/common/common";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import { addUser } from "@/apis/admin/admin";
+import toast from "react-hot-toast";
+import moment from "moment";
 
 const AddUser = () => {
   const [userid, setUserId] = useState("");
@@ -24,21 +27,22 @@ const AddUser = () => {
   const [country, setCountry] = useState("");
   const [zipCode, setZipCode] = useState("");
   const [userAccountManager, setUserAccountManager] = useState(null);
-  const [expiryDate, setExpiryDate] = useState("");
-  const [userType, setUserType] = useState("");
+  const [expiryDate, setExpiryDate] = useState(new Date());
+  const [userType, setUserType] = useState("1");
   const [isReadOnly, setIsReadOnly] = useState(true);
   const [accountUrl, setAccountUrl] = useState("");
   const [enablepostpaid, setEnablePostpaid] = useState("disable");
-  const [pincodeOptions, setPincodeOptions] = useState([])
+  const [pincodeOptions, setPincodeOptions] = useState([]);
+  const [postpaidAmount, setPostpaidAmount] = useState(0);
 
   // Dropdown options
   const useroption = [
-    { value: "User", label: "User" },
-    { value: "Reseller", label: "Reseller" },
+    { value: "1", label: "User" },
+    { value: "2", label: "Reseller" },
   ];
 
   useEffect(() => {
-    setIsReadOnly(userType !== "Reseller");
+    setIsReadOnly(userType !== "2");
     setAccountUrl("");
   }, [userType]);
 
@@ -62,14 +66,13 @@ const AddUser = () => {
             console.error("Invalid API response:", data);
           }
         } catch (error) {
-          console.error("Error fetching pincode details:", error.message); // Log any errors
+         toast.error("Error fetching pincode details");
         }
       }
     };
 
     fetchPincodeDetails();
   }, [zipCode]);
-
 
   const handleChangeEnablePostpaid = (event) => {
     setEnablePostpaid(event.target.value);
@@ -81,13 +84,66 @@ const AddUser = () => {
     { value: "RiyaSen", label: "RiyaSen" },
   ];
 
+  async function handleAddUser() {
+    if (!userName) {
+      toast.error("Please Enter First Name");
+      return;
+    }
+    if (!userLastName) {
+      toast.error("Please Enter Last Name");
+      return;
+    }
+    if (!userPhoneNumber) {
+      toast.error("Please Enter Mobile Number");
+      return;
+    }
+    if (!expiryDate) {
+      toast.error("Please Enter Expiry Date");
+      return;
+    }
+   
+    const data = {
+      // srno: 0,
+      userId: userid,
+      domain: accountUrl,
+      status: 1,
+      emailId: userEmail,
+      mobileNo: userPhoneNumber,
+      userType: userType,
+      password: userPassword,
+      firstName: userName,
+      lastName: userLastName,
+      address: userAddress,
+      companyName: companyName,
+      country: country,
+      state: state,
+      city: city,
+      pinCode: zipCode,
+      virtualBalance: postpaidAmount,
+      applicationType: 2,
+      expiryDate: moment(expiryDate).format("DD/MM/YYYY"),
+    };
+
+    try {
+      const res = await addUser(data);
+      if (res?.msg.includes("wrong")) {
+        toast.error(res?.msg);
+        return;
+      }
+      toast.success("User Added Successfully");
+      // navigate("/manageuser");
+    } catch (e) {
+      toast.error("Error in Adding User");
+    }
+  }
+
   return (
     <div className="p-6 bg-white rounded-lg shadow-md">
       <h1 className="mb-4 text-xl font-semibold">Login Info:</h1>
       <div className="flex items-center flex-wrap gap-4 mb-4">
-        <div className="w-100" >
-
-          <InputField label="User ID *"
+        <div className="w-100">
+          <InputField
+            label="User ID *"
             id="userid"
             name="userid"
             placeholder="Enter your User ID"
@@ -97,20 +153,21 @@ const AddUser = () => {
             onChange={(e) => setUserId(e.target.value)}
           />
         </div>
-        <div className="w-150" >
-
+        <div className="w-150">
           <GeneratePassword
             id="generatepassword"
             name="generatepassword"
             label="Password *"
-            onChange={(e) => setUserId(e.target.value0)}
+            value={userPassword}
+            onChange={(e) => setUserPassword(e)}
           />
         </div>
       </div>
 
       <h2 className="mt-6 mb-4 text-lg font-semibold">Personal Details:</h2>
       <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-        <InputField label="First Name *"
+        <InputField
+          label="First Name *"
           id="firstname"
           name="firstname"
           placeholder="Enter your First Name"
@@ -118,7 +175,8 @@ const AddUser = () => {
           onChange={(e) => setUserName(e.target.value)}
           required
         />
-        <InputField label="Last Name *"
+        <InputField
+          label="Last Name *"
           id="lastname"
           name="lastname"
           placeholder="Enter your Last Name"
@@ -126,7 +184,9 @@ const AddUser = () => {
           onChange={(e) => setUserLastName(e.target.value)}
           required
         />
-        <InputField label="Email ID *" type="email"
+        <InputField
+          label="Email ID *"
+          type="email"
           id="email"
           name="email"
           placeholder="Enter your Email ID"
@@ -134,35 +194,40 @@ const AddUser = () => {
           onChange={(e) => setUserEmail(e.target.value)}
           required
         />
-        <InputField label="Mobile No. *"
+        <InputField
+          label="Mobile No. *"
           id="mobile"
           name="mobile"
           placeholder="Enter your Mobile No."
           value={userPhoneNumber}
           onChange={(e) => setUserPhoneNumber(e.target.value)}
         />
-        <InputField label="Company Name"
+        <InputField
+          label="Company Name"
           id="company"
           name="company"
           placeholder="Enter your Company Name"
           value={companyName}
           onChange={(e) => setCompanyName(e.target.value)}
         />
-        <InputField label="Address"
+        <InputField
+          label="Address"
           id="address"
           name="address"
           placeholder="Enter your Address"
           value={userAddress}
           onChange={(e) => setUserAddress(e.target.value)}
         />
-        <InputField label="City"
+        <InputField
+          label="City"
           id="city"
           name="city"
           placeholder="Enter your City"
           value={city}
           onChange={(e) => setCity(e.target.value)}
         />
-        <InputField label="State"
+        <InputField
+          label="State"
           id="state"
           name="state"
           placeholder="Enter your State"
@@ -170,7 +235,8 @@ const AddUser = () => {
           onChange={(e) => setState(e.target.value)}
           required
         />
-        <InputField label="Country"
+        <InputField
+          label="Country"
           id="country"
           name="country"
           placeholder="Enter your Country"
@@ -224,7 +290,12 @@ const AddUser = () => {
           )}
         </div>
         <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
-          <label htmlFor="" className="text-sm font-medium text-gray-800 font-p">Postpaid Amount *</label>
+          <label
+            htmlFor=""
+            className="text-sm font-medium text-gray-800 font-p"
+          >
+            Postpaid Amount *
+          </label>
           {/* <div className="flex items-center gap-2">
               <RadioButton
                 inputId="enablepostpaidOption1"
@@ -260,9 +331,11 @@ const AddUser = () => {
             id="enablepostinput"
             name="enablepostinput"
             placeholder="Enter Limit"
+            value={postpaidAmount}
+            onChange={(e) => setPostpaidAmount(e.target.value)}
           />
         </div>
-        <div className="md:w-80 w-full" >
+        <div className="md:w-80 w-full">
           <AnimatedDropdown
             label="Account Manager *"
             id="accountManager"
@@ -272,7 +345,7 @@ const AddUser = () => {
             onChange={setUserAccountManager}
           />
         </div>
-        <div className="md:w-50 w-full" >
+        <div className="md:w-50 w-full">
           <UniversalDatePicker
             label="Expiry Date *"
             id="expiryDate"
@@ -290,6 +363,7 @@ const AddUser = () => {
           id="submit"
           name="submit"
           className="mt-2"
+          onClick={handleAddUser}
         />
       </div>
     </div>

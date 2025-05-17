@@ -91,3 +91,9 @@ export const getMobileNumbers = async (data) => {
     method: "POST",
   });
 };
+export const addUser = async (data) => {
+  return await fetchWithAuth(`user/createUser`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
