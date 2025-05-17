@@ -16,6 +16,8 @@ import {
 } from 'react-icons/md';
 import { Link, useNavigate } from 'react-router-dom';
 import { MdHome, MdBarChart, MdPieChart } from "react-icons/md";
+import { motion } from "framer-motion";
+
 
 import { AboutUsicon, Authenticationicon, Careersicon, celitixheader, Channels, Click2callicon, Ecommerceicon, Educationicon, Emailicon, Financeicon, FoodProductionicon, Healthcareicon, IBDicon, Industries, MissedCallicon, OBDicon, RCSicon, RealEstateicon, ServiceBasedicon, SMSicon, TechStartupsicon, Tourismicon, twoWaySMSicon, WhatsAppicon } from '../../assets/images.js';
 
@@ -64,10 +66,10 @@ const Header = () => {
     const ResourcesItem = ({ title, desc, to }) => (
         <div
             onClick={() => navigate(to)}
-            className="flex items-start gap-0 p-1 rounded-md transition-all duration-300 cursor-pointer 
+            className="flex items-center gap-2 p-2 rounded-md transition-all duration-300 cursor-pointer 
                    hover:bg-gray-50 hover:shadow-md hover:scale-105 "
         >
-            {/* <div className="text-[#9B44B6] text-2xl">{iconMap[title]}</div> */}
+            <div className="text-[#9B44B6] text-2xl">{iconMap[title]}</div>
             <div>
                 <div className="font-semibold text-sm">{title}</div>
                 {/* <div className="text-sm text-gray-600">{desc}</div> */}
@@ -80,12 +82,11 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            if (typeof window !== "undefined") {
-                setScrolled(window.scrollY > 10);
-            }
+            setScrolled(window.scrollY > 10);
         };
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
 
@@ -113,9 +114,11 @@ const Header = () => {
                     <span>+91 968-000-6460</span>
                 </div>
             </div>
-            {/* <nav className="bg-[#f6edf9] md:py-10 py-5 md:px-6 px-0 fixed top-10 w-full z-50"> */}
-            <nav
-                className={` lg:px-12 md:px-10 px-0 fixed w-full z-50 transition-all duration-500  ease-in-out ${scrolled ? 'top-0' : 'top-10'
+            <motion.div
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.8, ease: "easeOut" }}
+                className={` lg:px-12 md:px-10 px-0 fixed w-full  transition-all duration-500   ease-in-out ${scrolled ? 'top-0' : 'top-10'
                     }`}
             >
                 <div className="flex items-center justify-between px-4 md:px-6 py-4 bg-white md:rounded-2xl shadow-md relative">
@@ -639,7 +642,7 @@ const Header = () => {
                         </div>
                     </div>
                 )}
-            </nav>
+            </motion.div>
         </>
     );
 };
