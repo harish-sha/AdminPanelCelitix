@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import CustomTooltip from "@/components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import CustomTooltip from "../../components/common/CustomTooltip";
+import toast from "react-hot-toast";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 
 const GeneratePasswordSettings = ({
   label,
@@ -10,10 +13,10 @@ const GeneratePasswordSettings = ({
   name,
   tooltipContent = "",
   tooltipPlacement = "top",
-  password,
-  setPassword,
+  value,
+  onChange,
 }) => {
-  // const [password, setPassword] = useState('');
+  const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
 
   const handleTogglePassword = () => {
@@ -22,7 +25,7 @@ const GeneratePasswordSettings = ({
 
   const generateRandomPassword = (length = 8) => {
     const charset =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@*";
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()";
     let generated = "";
     for (let i = 0; i < length; i++) {
       generated += charset.charAt(Math.floor(Math.random() * charset.length));
@@ -30,9 +33,25 @@ const GeneratePasswordSettings = ({
     return generated;
   };
 
+  // const handleGeneratePassword = () => {
+  //   const newPassword = generateRandomPassword();
+  //   onChange(newPassword);
+  // };
+
   const handleGeneratePassword = () => {
     const newPassword = generateRandomPassword();
-    setPassword(newPassword);
+    onChange(newPassword);
+  };
+
+  const handleCopyPassword = () => {
+    navigator.clipboard
+      .writeText(value)
+      .then(() => {
+        toast.success("Password copied to clipboard!");
+      })
+      .catch(() => {
+        toast.error("Failed to copy password.");
+      });
   };
 
   return (
@@ -56,19 +75,19 @@ const GeneratePasswordSettings = ({
         </div>
       )}
 
-      <div className="flex gap-2">
+      <div className="flex flex-wrap gap-2">
         {/* Input with eye icon inside a bordered container */}
-        <div className="flex-1 flex items-center border border-gray-300 rounded-md  shadow-md ">
+        <div className="flex items-center flex-1 bg-gray-200 border border-gray-300 rounded-md shadow-md">
           <input
             id={id}
             name={name}
             type={showPassword ? "text" : "password"}
-            value={password}
+            value={value}
             readOnly
             className="flex-1 p-1.5 h-[2.10rem] bg-gray-200 focus:outline-none text-sm cursor-not-allowed"
             placeholder="Your password"
           />
-          <div onClick={handleTogglePassword} className="px-2 cursor-pointer">
+          <div onClick={handleTogglePassword} className="pr-2 cursor-pointer">
             {showPassword ? (
               <VisibilityOff fontSize="small" />
             ) : (
@@ -76,10 +95,24 @@ const GeneratePasswordSettings = ({
             )}
           </div>
         </div>
+        {/* Copy Password Button */}
+        <CustomTooltip title="Copy password" placement="top" arrow>
+          <button
+            onClick={handleCopyPassword}
+            className="p-1 bg-transparent rounded-full shadow-2xl cursor-pointer hover:bg-gray-200 focus:outline-none"
+          >
+            <ContentCopyOutlinedIcon
+              sx={{
+                fontSize: "1.2rem",
+                color: "#999",
+              }}
+            />
+          </button>
+        </CustomTooltip>
         {/* Generate Password Button */}
         <button
           onClick={handleGeneratePassword}
-          className="bg-blue-400 hover:bg-blue-500 text-white text-sm px-2 rounded-md shadow-md focus:outline-none"
+          className="bg-blue-400 hover:bg-blue-500 text-white text-sm px-2 py-1.5 rounded-md shadow-md focus:outline-none cursor-pointer"
         >
           Generate Password
         </button>
@@ -87,4 +120,5 @@ const GeneratePasswordSettings = ({
     </div>
   );
 };
+
 export default GeneratePasswordSettings;
