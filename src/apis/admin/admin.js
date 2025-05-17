@@ -86,3 +86,8 @@ export const addMobileNumbers = async (data) => {
     }
   );
 };
+export const getMobileNumbers = async (data) => {
+  return await fetchWithAuth(`user/getRegMobileno?userSrno=${data}`, {
+    method: "POST",
+  });
+};

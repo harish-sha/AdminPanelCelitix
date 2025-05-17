@@ -63,6 +63,7 @@ import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverla
 import {
   addMobileNumbers,
   fetchUserbySrno,
+  getMobileNumbers,
   getPromoServices,
   getTransServices,
   updateUserbySrno,
@@ -1204,6 +1205,18 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     );
   };
 
+  useEffect(() => {
+    async function fetchMobileNo() {
+      try {
+        const res = await getMobileNumbers(selectedIds);
+        const mobile = res?.regMoblienos?.split(",");
+        setMobileNumbers(mobile);
+      } catch (e) {
+        return toast.error(e.message);
+      }
+    }
+    fetchMobileNo();
+  }, [otpService]);
   return (
     <>
       <Paper sx={{ height: 558 }} id={id} name={name}>
