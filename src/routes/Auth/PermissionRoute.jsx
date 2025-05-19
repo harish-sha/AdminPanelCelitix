@@ -23,17 +23,19 @@ export const PermissionRoute = ({ children }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
-      "openRoutes"
+      "openRoutes",
     ];
 
-    const allowedServices = menuItems.map((item) => {
+    const allowedServices = [];
+    menuItems.map((item) => {
       if (alwaysIncludeNames.includes(item.name)) {
-        return item;
+        allowedServices.push(item);
+        return;
       }
 
       userState.services.forEach((service, index) => {
         if (item.name == service.display_name) {
-          return item
+          return allowedServices.push(item);
         }
       });
     });
