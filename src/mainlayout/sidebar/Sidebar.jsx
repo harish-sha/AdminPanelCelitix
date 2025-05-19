@@ -334,31 +334,31 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
       roles: ["ADMIN"],
     },
-    {
-      id: "",
-      name: "admin",
-      icon: <IoPersonOutline />,
-      label: "Admin",
-      type: "dropdown",
-      links: [
-        { to: "/manageuser", label: "Manage User" },
-        { to: "/managedlttemplate", label: "Manage DLT Template" },
-        { to: "/rcsmanagebot", label: "Manage Bot" },
-        { to: "/managevoiceclips", label: "Manage Voice Clips" },
-        { to: "/manageplan", label: "Manage Plan" },
-        { to: "/accountmanager", label: "Account Manager" },
-        { to: "/graphmain", label: "Graph Main" },
-        { to: "/graphuserwise", label: "Graph User Wise" },
-        { to: "/manageSMPP", label: "Manage SMPP" },
-        { to: "/managerouting", label: "Manage Routing" },
-        { to: "/SMPPerrorcode", label: "SMPP Error Code" },
-        { to: "/manageprefix", label: "Manage Prefix" },
-        { to: "/blacklist", label: "Blacklist" },
-        { to: "/managenotifications", label: "ManageNotifications" },
-        { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
-      ],
-      roles: ["ADMIN"],
-    },
+    // {
+    //   id: "",
+    //   name: "admin",
+    //   icon: <IoPersonOutline />,
+    //   label: "Admin",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/manageuser", label: "Manage User" },
+    //     { to: "/managedlttemplate", label: "Manage DLT Template" },
+    //     { to: "/rcsmanagebot", label: "Manage Bot" },
+    //     { to: "/managevoiceclips", label: "Manage Voice Clips" },
+    //     { to: "/manageplan", label: "Manage Plan" },
+    //     { to: "/accountmanager", label: "Account Manager" },
+    //     { to: "/graphmain", label: "Graph Main" },
+    //     { to: "/graphuserwise", label: "Graph User Wise" },
+    //     { to: "/manageSMPP", label: "Manage SMPP" },
+    //     { to: "/managerouting", label: "Manage Routing" },
+    //     { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+    //     { to: "/manageprefix", label: "Manage Prefix" },
+    //     { to: "/blacklist", label: "Blacklist" },
+    //     { to: "/managenotifications", label: "ManageNotifications" },
+    //     { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
     {
       id: "",
       name: "Managecontacts",
@@ -396,7 +396,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   ];
 
   const getFilteredMenuItems = (menuItems, userState) => {
-    let allowedServices = [];
+    // let allowedServices = [];
 
     if (userState.role === "ADMIN") {
       return menuItems;
@@ -425,30 +425,51 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ];
     }
 
-    menuItems.forEach((item) => {
-      // if (item.roles.includes(userState.role)) allowedServices.push(item);
-      // userState.services.forEach((service, index) => {
-      //   if (item.id == service.service_type_id) {
-      //     allowedServices.push(item);
-      //   }
-      // });
-      if (item.name === "Home") {
-        allowedServices.push(item);
+    const alwaysIncludeNames = [
+      "Home",
+      "apiDocs",
+      "CallBack",
+      "Managecontacts",
+    ];
+
+    // menuItems.forEach((item) => {
+    //   // if (item.roles.includes(userState.role)) allowedServices.push(item);
+    //   // userState.services.forEach((service, index) => {
+    //   //   if (item.id == service.service_type_id) {
+    //   //     allowedServices.push(item);
+    //   //   }
+    //   // });
+    //   // if (item.name === "Home") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "apiDocs") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "CallBack") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "Managecontacts") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // userState.services.forEach((service, index) => {
+    //   //   if (item.id == service.service_type_id) {
+    //   //     allowedServices.push(item);
+    //   //   }
+    //   // });
+    // });
+
+    const allowedServices = menuItems.map((item) => {
+      if (alwaysIncludeNames.includes(item.name)) {
+        return item;
       }
-      if (item.name === "apiDocs") {
-        allowedServices.push(item);
-      }
-      if (item.name === "CallBack") {
-        allowedServices.push(item);
-      }
-      if (item.name === "Managecontacts") {
-        allowedServices.push(item);
-      }
-      userState.services.forEach((service, index) => {
-        if (item.id == service.service_type_id) {
-          allowedServices.push(item);
-        }
-      });
+      const hasMatch = userState.services.some(
+        (service) => service.service_type_id == item.id
+      );
+
+      return {
+        ...item,
+        links: hasMatch ? item.links : [],
+      };
     });
 
     return allowedServices;
