@@ -37,6 +37,8 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
+import { fetchAllUsers } from "@/apis/admin/admin";
+import { useUser } from "@/context/auth";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -54,6 +56,36 @@ const SmsReports = () => {
   const [selecttemplatetype, setSelectTemplatetype] = useState(null);
   const [selectstatus, setSelectStatus] = useState(null);
   const [selectedCol, setSelectedCol] = useState("");
+
+  const { user } = useUser();
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+
+
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userId: "",
+          mobileNo: "",
+          companyName: "",
+          status: "-1",
+        };
+        try {
+          setIsFetching(true);
+          const res = await fetchAllUsers(data);
+          setAllUsers(res.userMstPojoList);
+        } catch (e) {
+          // console.log(e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, [user.role]);
 
   //common State
   const [rows, setRows] = useState([]);
@@ -803,7 +835,7 @@ const SmsReports = () => {
   return (
     <div>
       <Box sx={{ width: "100%" }}>
-        <div className="flex items-end justify-between pr-2">
+        <div className="flex items-center justify-between pr-2">
           <Tabs
             value={value}
             onChange={handleChange}
@@ -891,6 +923,24 @@ const SmsReports = () => {
             name="exportsmsreport"
             onClick={handleExports}
           /> */}
+          {user.role === "RESELLER" && (
+            <div className="w-full sm:w-54">
+              <AnimatedDropdown
+                id="manageuser"
+                name="manageuser"
+                label="Select User"
+                tooltipContent="Select user you want to see reports"
+                tooltipPlacement="right"
+                options={allUsers.map((user) => ({
+                  label: user.userId,
+                  value: user.srno,
+                }))}
+                value={selectedUser}
+                onChange={setSelectedUser}
+                placeholder="Select User"
+              />
+            </div>
+          )}
         </div>
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">

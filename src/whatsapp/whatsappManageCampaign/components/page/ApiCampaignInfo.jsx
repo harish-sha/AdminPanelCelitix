@@ -97,6 +97,8 @@ export const ApiCampaignInfo = () => {
       // };
       // later update with upper code
 
+      const selectedUser = state.selectedUser || "0"
+
       const formattedFromDate = state.selectedDate
         ? new Date(state.selectedDate).toLocaleDateString("en-GB")
         : new Date().toLocaleDateString("en-GB");
@@ -122,11 +124,23 @@ export const ApiCampaignInfo = () => {
         source: "API",
         deliveryStatus,
         status,
+        selectedUserId: selectedUser
       };
       const res = await getListofSendMsg(payload);
-      setTotalPage(5000); 
-      // console.log(res);
-      setData(res);
+      // setTotalPage(5000);
+      // setData(res);
+      // If res is an object with a data property (array), use that
+      if (res && Array.isArray(res.data)) {
+        setData(res.data);
+        setTotalPage(res.total || 0);
+      } else if (Array.isArray(res)) {
+        // If res itself is an array
+        setData(res);
+        setTotalPage(res.length);
+      } else {
+        setData([]); // fallback to empty array
+        setTotalPage(0);
+      }
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
@@ -180,7 +194,7 @@ export const ApiCampaignInfo = () => {
   //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
   // }));
 
-  const rows = data?.map((item, i) => ({
+  const rows = Array.isArray(data) ? data.map((item, i) => ({
     id: i + 1,
     // sn: i + 1,
     sn: paginationModel.page * paginationModel.pageSize + i + 1,
@@ -195,7 +209,7 @@ export const ApiCampaignInfo = () => {
     // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
     // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
     ...item,
-  }));
+  })) : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
@@ -276,7 +290,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize
