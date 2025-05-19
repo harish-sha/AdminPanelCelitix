@@ -10,6 +10,7 @@ import { DataTable } from "../../../components/layout/DataTable";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../../../whatsapp/components/UniversalSkeleton";
 import { getCampaignDetails } from "../../../apis/sms/sms";
+import { select } from "@material-tailwind/react";
 
 const Smscampaigndetaillogs = () => {
   const navigate = useNavigate();
@@ -30,6 +31,7 @@ const Smscampaigndetaillogs = () => {
       const data = {
         receiptNo: state.id,
         mobileNo,
+        selectedUserId: state.userId,
       };
       const res = await getCampaignDetails(data);
 
@@ -80,11 +82,11 @@ const Smscampaigndetaillogs = () => {
       setRows(
         Array.isArray(res.data)
           ? res.data.map((item, i) => ({
-            sn: i + 1,
-            id: i + 1,
-            ...item,
-            actual_status: item.actual_status === " " ? "-" : "-",
-          }))
+              sn: i + 1,
+              id: i + 1,
+              ...item,
+              actual_status: item.actual_status === " " ? "-" : "-",
+            }))
           : []
       );
     } catch (e) {
