@@ -23,6 +23,7 @@ export const PermissionRoute = ({ children }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "openRoutes"
     ];
 
     const allowedServices = menuItems.map((item) => {

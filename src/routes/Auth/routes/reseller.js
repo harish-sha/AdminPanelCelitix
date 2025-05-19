@@ -25,6 +25,17 @@ export const resellerItems = [
     links: ["/managecontacts"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
+  {
+      name: "openRoutes",
+      links: [
+        "/download",
+        "/loginIpdetails",
+        "/profile",
+        "/settings",
+        "/transactions",
+      ],
+      roles: ["ADMIN"],
+    },
   // {
   //   id: "",
   //   name: "apiDocs",
