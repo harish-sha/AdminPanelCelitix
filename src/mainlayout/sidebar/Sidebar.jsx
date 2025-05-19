@@ -329,9 +329,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       icon: <IoWalletOutline />,
       label: "Manage Funds",
       type: "dropdown",
-      links: [
-        { to: "/recharge", label: "Recharge" },
-      ],
+      links: [{ to: "/recharge", label: "Recharge" }],
       roles: ["ADMIN"],
     },
     {
@@ -396,7 +394,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   ];
 
   const getFilteredMenuItems = (menuItems, userState) => {
-    let allowedServices = [];
+    // let allowedServices = [];
 
     if (userState.role === "ADMIN") {
       return menuItems;
@@ -425,30 +423,24 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ];
     }
 
-    menuItems.forEach((item) => {
-      // if (item.roles.includes(userState.role)) allowedServices.push(item);
-      // userState.services.forEach((service, index) => {
-      //   if (item.id == service.service_type_id) {
-      //     allowedServices.push(item);
-      //   }
-      // });
-      if (item.name === "Home") {
-        allowedServices.push(item);
+    const alwaysIncludeNames = [
+      "Home",
+      "apiDocs",
+      "CallBack",
+      "Managecontacts",
+    ];
+    const allowedServices = menuItems.map((item) => {
+      if (alwaysIncludeNames.includes(item.name)) {
+        return item;
       }
-      if (item.name === "apiDocs") {
-        allowedServices.push(item);
-      }
-      if (item.name === "CallBack") {
-        allowedServices.push(item);
-      }
-      if (item.name === "Managecontacts") {
-        allowedServices.push(item);
-      }
-      userState.services.forEach((service, index) => {
-        if (item.id == service.service_type_id) {
-          allowedServices.push(item);
-        }
-      });
+      const hasMatch = userState.services.some(
+        (service) => service.service_type_id == item.id
+      );
+
+      return {
+        ...item,
+        links: hasMatch ? item.links : [],
+      };
     });
 
     return allowedServices;
@@ -491,23 +483,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           >
             <motion.div
               onClick={() => handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-                }`}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
+                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+              }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
-                  }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
+                  isCollapsed ? "w-0" : "w-auto"
+                }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`ml-auto transition-transform duration-300 ${
+                    openDropdown === item.name ? "rotate-180" : "rotate-0"
+                  }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -554,8 +549,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                         }}
                       />
                       <span
-                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
-                          }`}
+                        className={`font-[600] ${
+                          isActive ? "text-blue-800" : "text-gray-800"
+                        }`}
                       >
                         {link.label}
                       </span>
@@ -585,8 +581,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
-                  }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
+                  isCollapsed ? "justify-center" : ""
+                }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -597,15 +594,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
-                  }`}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
+                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                    }`}
+                  className={`whitespace-nowrap font-semibold ${
+                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                  }`}
                 >
                   {item.label}
                 </motion.span>
