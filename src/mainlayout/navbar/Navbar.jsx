@@ -103,8 +103,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     sessionStorage.removeItem("token");
     toast.success("Logged out successfully!");
     window.location.href = "/login";
-    authLogout();
-    // setTimeout(() => (window.location.href = "/login"), 1000);
+    // authLogout();
+    setTimeout(() => authLogout(), 1000);
   }, []);
 
   const handleMenu = useCallback(
