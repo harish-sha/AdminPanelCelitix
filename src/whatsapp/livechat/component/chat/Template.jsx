@@ -5,6 +5,9 @@ import {
 } from "@/apis/whatsapp/whatsapp";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { FaReply } from "react-icons/fa6";
+import { BsTelephoneFill } from "react-icons/bs";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export const TemplateMessagePreview = ({ template }) => {
   const isImage = template?.templateType === "image";
@@ -21,9 +24,6 @@ export const TemplateMessagePreview = ({ template }) => {
     }
   }, [template]);
 
-  useEffect(() => {
-    console.log(tempDetails);
-  }, [tempDetails]);
 
   async function handleFetchSpecificTemplate() {
     const { wabaNumber, templateSrno, templateName } = template;
@@ -46,39 +46,64 @@ export const TemplateMessagePreview = ({ template }) => {
       // setTempDetails(matchedTemplate);
       setTempDetails(templates?.data[0]?.components);
     } catch (error) {
-      console.error("Error fetching specific template:", error);
       toast.error("Something went wrong.");
     }
   }
 
+  const getBtnIcon = (type) => {
+    switch (type) {
+      case "PHONE_NUMBER":
+        return <BsTelephoneFill className="mr-2" />;
+      case "QUICK_REPLY":
+        return <FaReply className="mr-2" />;
+      default:
+        return <FaExternalLinkAlt className="mr-2" />;
+    }
+  };
+  
+  const getBtnCss = (type) => {
+    switch (type) {
+      case "PHONE_NUMBER":
+        return "bg-blue-500 text-white";
+      case "QUICK_REPLY":
+        return "text-gray-800 bg-gray-200";
+      default:
+        return "bg-green-500 text-white";
+    }
+  };
+  
+  const getBtnTitle = (type, phone, url, text) => {
+    switch (type) {
+      case "PHONE_NUMBER":
+        return `Contact us: ${phone}`;
+      case "QUICK_REPLY":
+        return `View more: ${text}`;
+      default:
+        return `Visit us: ${url}`;
+    }
+  };
+
   function renderMediaTemplate() {}
+  const ButtonsGroup = ({ buttons }) => {
+  return (
+    <div className="flex flex-col gap-2 w-full max-w-[500px] mt-3">
+      {buttons.map(({ url, type, text, phone_number }, btnIndex) => (
+        <button
+          key={btnIndex}
+          title={url || phone_number}
+          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnCss(
+            type
+          )}`}
+        >
+          {getBtnIcon(type)}
+          <p className="ml-2">{text}</p>
+        </button>
+      ))}
+    </div>
+  );
+};
 
   return (
-    // <div>
-    //   <p className="text-sm">(TemplateMessage)</p>
-    //   {isImage && (
-    //     <img
-    //       src={mediaPath}
-    //       alt={mediaPath}
-    //       className={`h-40 w-auto select-none pointer-events-none border border-gray-200 rounded-md`}
-    //     />
-    //   )}
-    //   {isVideo && (
-    //     <video
-    //       src={mediaPath}
-    //       controls={true}
-    //       autoPlay={false}
-    //       className={`h-45 m-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
-    //     />
-    //   )}
-    //   {isDocument && (
-    //     <iframe
-    //       src={mediaPath}
-    //       allow=" encrypted-media"
-    //       className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
-    //     ></iframe>
-    //   )}
-    // </div>
     <>
       <p className="text-sm">(TemplateMessage)</p>
       {tempDetails && (
@@ -115,6 +140,11 @@ export const TemplateMessagePreview = ({ template }) => {
             if (item?.type === "BODY") {
               return <p key={index}>{item?.text}</p>;
             }
+
+            if(item.type === "BUTTONS" && item?.buttons?.length > 0){
+              return <ButtonsGroup buttons={item?.buttons} />
+            }
+            // "BUTTONS" && buttons?.length > 0
           })}
         </div>
       )}
