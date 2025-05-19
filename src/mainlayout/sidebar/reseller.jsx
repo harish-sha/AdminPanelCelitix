@@ -73,6 +73,20 @@ export const resellerItems = [
     to: "/managecontacts",
     roles: ["ADMIN", "DIRECTUSER"],
   },
+  {
+      id: "",
+      name: "CallBack",
+      // icon: <MdOutlineEmail />,
+      icon: <img src={callback} className="w-4.5 h-4.5" />,
+      label: "Callback",
+      type: "dropdown",
+      links: [
+        { to: "/callback", label: "Call Back" },
+        { to: "/addcallback", label: "Add Call Back", isHide: true },
+        { to: "/editcallback", label: "Edit Call Back", isHide: true },
+      ],
+      roles: [],
+    },
   // {
   //   id: "",
   //   name: "apiDocs",

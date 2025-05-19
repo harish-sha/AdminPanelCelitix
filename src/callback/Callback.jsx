@@ -11,7 +11,12 @@ import UniversalButton from "../whatsapp/components/UniversalButton";
 import AnimatedDropdown from "../whatsapp/components/AnimatedDropdown";
 import { PaginationTable } from "@/components/layout/PaginationTable";
 import toast from "react-hot-toast";
-import { getData, deleteData, updateStatus, getEditData } from "@/apis/callback/callback";
+import {
+  getData,
+  deleteData,
+  updateStatus,
+  getEditData,
+} from "@/apis/callback/callback";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import { IconButton, Switch } from "@mui/material";
 import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
@@ -19,6 +24,8 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import TerminalApp from "./components/TerminalApp";
+import { useUser } from "@/context/auth";
+import { fetchAllUsers } from "@/apis/admin/admin";
 
 // Custom Tab Panel
 function CustomTabPanel({ children, value, index, ...other }) {
@@ -47,6 +54,7 @@ const a11yProps = (index) => ({
 });
 
 const Callback = () => {
+  const { user } = useUser();
   const navigate = useNavigate();
   const [value, setValue] = useState(0);
   const [formValues, setFormValues] = useState({
@@ -64,13 +72,40 @@ const Callback = () => {
 
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
 
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userId: "",
+          mobileNo: "",
+          companyName: "",
+          status: "-1",
+        };
+        try {
+          // setIsFetching(true);
+          const res = await fetchAllUsers(data);
+          setAllUsers(res.userMstPojoList);
+        } catch (e) {
+          // console.log(e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          // setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, [user.role]);
 
   async function handleFetchData() {
     try {
       const payload = {
         ...formValues,
         page: "1",
+        selectedUserId: selectedUser,
       };
       const res = await getData(payload);
       const data = res?.data;
@@ -90,6 +125,7 @@ const Callback = () => {
         srno: row?.id,
         // selectedUserId: 0,
         callBackType: row?.callbackType,
+        selectedUserId: selectedUser,
       };
       const res = await deleteData(data);
       if (!res.status) {
@@ -126,6 +162,7 @@ const Callback = () => {
       // selectedUserId: 0,
       callBackType: row?.callbackType,
       callbackStatus: Number(e.target.checked),
+      selectedUserId: selectedUser,
     };
 
     try {
@@ -188,9 +225,9 @@ const Callback = () => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -237,6 +274,7 @@ const Callback = () => {
         srno: row?.id,
         // selectedUserId: 0,
         callBackType: row?.callbackType,
+        selectedUserId: selectedUser,
       };
       const res = await getEditData(data);
       navigate(`/editcallback`, { state: { data: res } });
@@ -247,44 +285,64 @@ const Callback = () => {
 
   return (
     <Box>
-      <Tabs
-        value={value}
-        onChange={(e, newValue) => {
-          setValue(newValue);
-        }}
-        aria-label="Callback Profile Tabs"
-        textColor="primary"
-        indicatorColor="primary"
-      >
-        <Tab
-          label="Callback Profile"
-          {...a11yProps(0)}
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-            color: "text.secondary",
-            "&:hover": {
-              color: "primary.main",
-              backgroundColor: "#f0f4ff",
-              borderRadius: "8px",
-            },
+      <div className="flex items-center justify-between pr-2">
+        <Tabs
+          value={value}
+          onChange={(e, newValue) => {
+            setValue(newValue);
           }}
-        />
-        <Tab
-          label="Callback Logs"
-          {...a11yProps(1)}
-          sx={{
-            textTransform: "none",
-            fontWeight: "bold",
-            color: "text.secondary",
-            "&:hover": {
-              color: "primary.main",
-              backgroundColor: "#f0f4ff",
-              borderRadius: "8px",
-            },
-          }}
-        />
-      </Tabs>
+          aria-label="Callback Profile Tabs"
+          textColor="primary"
+          indicatorColor="primary"
+        >
+          <Tab
+            label="Callback Profile"
+            {...a11yProps(0)}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "text.secondary",
+              "&:hover": {
+                color: "primary.main",
+                backgroundColor: "#f0f4ff",
+                borderRadius: "8px",
+              },
+            }}
+          />
+          <Tab
+            label="Callback Logs"
+            {...a11yProps(1)}
+            sx={{
+              textTransform: "none",
+              fontWeight: "bold",
+              color: "text.secondary",
+              "&:hover": {
+                color: "primary.main",
+                backgroundColor: "#f0f4ff",
+                borderRadius: "8px",
+              },
+            }}
+          />
+        </Tabs>
+        {user.role === "RESELLER" && (
+          <div className="w-full sm:w-54">
+            <AnimatedDropdown
+              id="manageuser"
+              name="manageuser"
+              label="Select User"
+              tooltipContent="Select user you want to see reports"
+              tooltipPlacement="right"
+              options={allUsers.map((user) => ({
+                label: user.userId,
+                value: user.srno,
+              }))}
+              value={selectedUser}
+              onChange={setSelectedUser}
+              placeholder="Select User"
+            />
+          </div>
+        )}
+      </div>
 
       <CustomTabPanel value={value} index={0}>
         <div className="w-full">
@@ -342,7 +400,6 @@ const Callback = () => {
 
       <CustomTabPanel value={value} index={1}>
         <TerminalApp />
-
       </CustomTabPanel>
 
       <Dialog

@@ -25,6 +25,13 @@ export const resellerItems = [
     links: ["/managecontacts"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
+  
+  {
+    name: "Callback",
+    links: ["/callback", "/addcallback", "/editcallback"],
+    roles: ["ADMIN", "DIRECTUSER"],
+  },
+  
   {
       name: "openRoutes",
       links: [
