@@ -628,11 +628,7 @@ import ResellerLogin from "./components/reseller";
 import Userlogin from "./components/user";
 
 const Login = () => {
-  const domain = window.location.hostname;
-  
-  const isReseller = domain.includes("celitix");
-
-  return isReseller ? <ResellerLogin /> : <Userlogin />;
+  return <ResellerLogin />;
 };
 
 export default Login;

@@ -50,11 +50,12 @@ export const getBotDetailsBySrNo = async (botSrNo) => {
 };
 
 // get Allowed services
-export const getAllowedServices = async () => {
-  return await fetchWithAuth("/service/getAllowedServices", {
+export const getAllowedServices = async (data="") => {
+  return await fetchWithAuth(`/service/getAllowedServices${data}`, {
     method: "POST",
   });
 };
+// service/getAllowedServices?userSrno=2949
 
 // save services by user
 export const saveServicesByUser = async (data) => {
