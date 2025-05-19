@@ -63,9 +63,11 @@ import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverla
 import {
   addMobileNumbers,
   fetchUserbySrno,
+  getAllowedServices,
   getMobileNumbers,
   getPromoServices,
   getTransServices,
+  saveServicesByUser,
   updateUserbySrno,
 } from "@/apis/admin/admin";
 import {
@@ -590,6 +592,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [obdrate, setObdRate] = useState("");
   const [obdrateStatus, setObdRateStatus] = useState("disable");
 
+  const [assignService, setAssignService] = useState(false);
+
   const transOptionsobd = [
     { value: "USA", label: "USA" },
     { value: "UK", label: "UK" },
@@ -745,6 +749,78 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [accountUrl, setAccountUrl] = useState("");
   const [enablepostpaid, setEnablePostpaid] = useState("disable");
 
+  const [enableServices, setEnableServices] = useState([
+    {
+      id: 1,
+      name: "SMS",
+      enable: false,
+    },
+    {
+      id: 2,
+      name: "WHATSAPP",
+      enable: false,
+    },
+    {
+      id: 3,
+      name: "RCS",
+      enable: false,
+    },
+    {
+      id: 7,
+      name: "OBD",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Two Way",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Missed Call",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "C2C",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "Email",
+      enable: false,
+    },
+    {
+      id: "",
+      name: "IBD",
+      enable: false,
+    },
+  ]);
+
+  useEffect(() => {
+    async function handleGetAllowedServices() {
+      if (!currentUserSrno) return;
+      try {
+        const res = await getAllowedServices(currentUserSrno);
+        const formattedData = [];
+        res.map((item) => {
+          const data = {};
+          (data.id = item.service_type_id),
+            (data.name = item.display_name),
+            (data.enable = true);
+
+          formattedData.push(data);
+        });
+
+        setEnableServices(formattedData);
+      } catch (e) {
+        console.log(e);
+        toast.error("Something went wrong");
+      }
+    }
+    handleGetAllowedServices();
+  }, [assignService]);
+
   // Dropdown options
   const useroption = [
     { value: 1, label: "User" },
@@ -848,6 +924,54 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setSelectedIds(id);
   };
 
+  const allServices = [
+    {
+      id: 1,
+      name: "SMS",
+      enable: 0,
+    },
+    {
+      id: 2,
+      name: "WHATSAPP",
+      enable: 0,
+    },
+    {
+      id: 3,
+      name: "RCS",
+      enable: 0,
+    },
+    {
+      id: 7,
+      name: "OBD",
+      enable: 0,
+    },
+    {
+      id: "",
+      name: "Two Way",
+      enable: 0,
+    },
+    {
+      id: "",
+      name: "Missed Call",
+      enable: 0,
+    },
+    {
+      id: "",
+      name: "C2C",
+      enable: 0,
+    },
+    {
+      id: "",
+      name: "Email",
+      enable: 0,
+    },
+    {
+      id: "",
+      name: "IBD",
+      enable: 0,
+    },
+  ];
+
   // view user details
   const handleView = async (srNo) => {
     try {
@@ -864,7 +988,31 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   };
 
-  const handleAssign = async (srNo) => {
+  const handleService = async (srno) => {
+    setAssignService(true);
+    setCurrentUserSrno(srno);
+  };
+  const handleAssignService = async () => {
+    // console.log(currentUserSrno);
+
+    // const enabled = enableServices.filter((item) => item.enable === true);
+
+    await Promise.all(
+      enableServices.map((item) => {
+        if (!item.id) return;
+        console.log("szd", item);
+        const payload = {
+          userSrNo: String(currentUserSrno),
+          allowService: item.enable === true ? 1 : 0,
+          serviceTypeSrNo: String(item.id),
+        };
+        return saveServicesByUser(payload);
+      })
+    );
+  setAssignService(false)
+  };
+
+  const handleAssign = async (_, srNo) => {
     setassignRate(true);
     setCurrentUserSrno(srNo);
 
@@ -984,6 +1132,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTooltip arrow title="Edit User Details" placement="top">
             <IconButton onClick={() => handleEdit(params.row.srno)}>
               <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Assign Service" placement="top">
+            <IconButton onClick={() => handleService(params.row.srno)}>
+              <SettingsOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
                   color: "gray",
@@ -1194,6 +1352,17 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     );
   };
 
+  function handleServiceChange(e) {
+    const { id, checked } = e.target;
+
+    console.log("checked", checked);
+
+    const updatedService = enableServices.map((item) =>
+      item.id == id ? { ...item, enable: checked } : item
+    );
+
+    setEnableServices(updatedService);
+  }
   async function handleResetPassword() {
     const data = {
       srno: selectedIds,
@@ -3222,6 +3391,59 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         </div>
       </Dialog>
       {/* User Report */}
+
+      {/* Assign Service */}
+      <Dialog
+        header="Assign Service"
+        visible={assignService}
+        onHide={() => {
+          setAssignService(false);
+          setCurrentUserSrno(null);
+        }}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <>
+          {allServices.map((item, index) => {
+            return (
+              <div
+                className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100"
+                key={index}
+              >
+                {/* Option 1 */}
+                <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+                  <div className="flex items-center gap-2">
+                    <Checkbox
+                      type="checkbox"
+                      id={item.id}
+                      name="assignService"
+                      checked={
+                        enableServices.find((s) => s.name === item.name)
+                          ?.enable || false
+                      }
+                      onChange={handleServiceChange}
+                      // checked={true}
+                    />
+                    <label
+                      htmlFor={item.id}
+                      className="text-sm font-medium text-gray-700 cursor-pointer"
+                    >
+                      {item.name}
+                    </label>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+          <UniversalButton
+            id={"assignService"}
+            label={"Assign Service"}
+            name={"assignService"}
+            onClick={handleAssignService}
+          />
+        </>
+      </Dialog>
+      {/* Assign Service */}
     </>
   );
 };
