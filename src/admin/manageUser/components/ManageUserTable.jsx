@@ -801,9 +801,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     async function handleGetAllowedServices() {
       if (!currentUserSrno) return;
       try {
-        const res = await getAllowedServices(currentUserSrno);
+        const data=`?userSrno=${currentUserSrno}`
+        const res = await getAllowedServices(data);
         const formattedData = [];
-        res.map((item) => {
+        res?.map((item) => {
           const data = {};
           (data.id = item.service_type_id),
             (data.name = item.display_name),
@@ -1000,7 +1001,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     await Promise.all(
       enableServices.map((item) => {
         if (!item.id) return;
-        console.log("szd", item);
         const payload = {
           userSrNo: String(currentUserSrno),
           allowService: item.enable === true ? 1 : 0,
@@ -1375,7 +1375,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       try {
         const res = await getMobileNumbers(selectedIds);
         const mobile = res?.regMoblienos?.split(",");
-        setMobileNumbers(mobile || []);
+        setMobileNumbers(mobile || [""]);
         // setotp
       } catch (e) {
         return toast.error(e.message);
