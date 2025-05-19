@@ -122,6 +122,8 @@ export const TemplateMessagePreview = ({ template }) => {
                 <img
                   src={mediaPath}
                   alt={mediaPath}
+                  loading="lazy"
+                  key={index}
                   className={`h-50 w-auto select-none pointer-events-none border border-gray-200 rounded-md mr-auto ml-auto`}
                 />
               );
@@ -132,6 +134,7 @@ export const TemplateMessagePreview = ({ template }) => {
                   src={mediaPath}
                   controls={true}
                   autoPlay={false}
+                  key={index}
                   className={`h-45 m-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
                 />
               );
@@ -141,6 +144,7 @@ export const TemplateMessagePreview = ({ template }) => {
                 <iframe
                   src={mediaPath}
                   allow=" encrypted-media"
+                  key={index}
                   className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
                 ></iframe>
               );
@@ -150,7 +154,7 @@ export const TemplateMessagePreview = ({ template }) => {
             }
 
             if (item.type === "BUTTONS" && item?.buttons?.length > 0) {
-              return <ButtonsGroup buttons={item?.buttons} />;
+              return <ButtonsGroup buttons={item?.buttons} key={index} />;
             }
             // "BUTTONS" && buttons?.length > 0
           })}

@@ -29,6 +29,7 @@ export const Variables = ({
 }) => {
   const fileRef = useRef(null);
   const fileCarRef = useRef([]);
+  console.log(btnVarLength)
   async function uploadFile(e) {
     if (!selectedFile?.fileTempPath) {
       return toast.error("Please select file first");
