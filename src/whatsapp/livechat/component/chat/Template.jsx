@@ -15,6 +15,8 @@ export const TemplateMessagePreview = ({ template }) => {
   const isDocument = template?.templateType === "document";
   const isText = template?.templateType === "text";
 
+  const [isFetching, setIsFetching] = useState(false);
+
   const mediaPath = template?.mediaPath;
 
   const [tempDetails, setTempDetails] = useState(null);
@@ -24,11 +26,11 @@ export const TemplateMessagePreview = ({ template }) => {
     }
   }, [template]);
 
-
   async function handleFetchSpecificTemplate() {
     const { wabaNumber, templateSrno, templateName } = template;
 
     try {
+      setIsFetching(true);
       const wabaList = await getWabaList();
       const matchedWaba = wabaList?.find((w) => w.mobileNo === wabaNumber);
 
@@ -47,6 +49,8 @@ export const TemplateMessagePreview = ({ template }) => {
       setTempDetails(templates?.data[0]?.components);
     } catch (error) {
       toast.error("Something went wrong.");
+    } finally {
+      setIsFetching(false);
     }
   }
 
@@ -60,7 +64,7 @@ export const TemplateMessagePreview = ({ template }) => {
         return <FaExternalLinkAlt className="mr-2" />;
     }
   };
-  
+
   const getBtnCss = (type) => {
     switch (type) {
       case "PHONE_NUMBER":
@@ -71,7 +75,7 @@ export const TemplateMessagePreview = ({ template }) => {
         return "bg-green-500 text-white";
     }
   };
-  
+
   const getBtnTitle = (type, phone, url, text) => {
     switch (type) {
       case "PHONE_NUMBER":
@@ -85,27 +89,31 @@ export const TemplateMessagePreview = ({ template }) => {
 
   function renderMediaTemplate() {}
   const ButtonsGroup = ({ buttons }) => {
-  return (
-    <div className="flex flex-col gap-2 w-full max-w-[500px] mt-3">
-      {buttons.map(({ url, type, text, phone_number }, btnIndex) => (
-        <button
-          key={btnIndex}
-          title={url || phone_number}
-          className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnCss(
-            type
-          )}`}
-        >
-          {getBtnIcon(type)}
-          <p className="ml-2">{text}</p>
-        </button>
-      ))}
-    </div>
-  );
-};
+    return (
+      <div className="flex flex-col gap-2 w-full max-w-[500px] mt-3">
+        {buttons.map(({ url, type, text, phone_number }, btnIndex) => (
+          <button
+            key={btnIndex}
+            title={url || phone_number}
+            className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnCss(
+              type
+            )}`}
+          >
+            {getBtnIcon(type)}
+            <p className="ml-2">{text}</p>
+          </button>
+        ))}
+      </div>
+    );
+  };
 
-  return (
-    <>
+  return isFetching ? (
+    <div className="border border-gray-200 rounded-md w-90 p-5 ">
       <p className="text-sm">(TemplateMessage)</p>
+      <h1>Loading...</h1>
+    </div>
+  ) : (
+    <>
       {tempDetails && (
         <div className="border border-gray-200 rounded-md w-90 p-5 ">
           {tempDetails?.map((item, index) => {
@@ -141,8 +149,8 @@ export const TemplateMessagePreview = ({ template }) => {
               return <p key={index}>{item?.text}</p>;
             }
 
-            if(item.type === "BUTTONS" && item?.buttons?.length > 0){
-              return <ButtonsGroup buttons={item?.buttons} />
+            if (item.type === "BUTTONS" && item?.buttons?.length > 0) {
+              return <ButtonsGroup buttons={item?.buttons} />;
             }
             // "BUTTONS" && buttons?.length > 0
           })}
