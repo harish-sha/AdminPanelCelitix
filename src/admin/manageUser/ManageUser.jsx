@@ -156,7 +156,7 @@ const ManageUser = () => {
         ) : (
           <ManageUserTable allUsers={allUsers} />
         )} */}
-        <ManageUserTable allUsers={allUsers} />
+        <ManageUserTable allUsers={allUsers} fetchAllUsersDetails={fetchAllUsersDetails} />
       </div>
     </div>
   );

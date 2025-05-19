@@ -18,13 +18,13 @@ createRoot(document.getElementById("root")).render(
       {/* Prime React */}
       <PrimeReactProvider>
         {/* Error Boundary*/}
-        <ErrorBoundary>
+        {/* <ErrorBoundary> */}
           <DownloadProvider>
             <DndProvider backend={HTML5Backend}>
               <App />
             </DndProvider>
           </DownloadProvider>
-        </ErrorBoundary>
+        {/* </ErrorBoundary> */}
       </PrimeReactProvider>
     </UserProvider>
   </StrictMode>

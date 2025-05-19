@@ -61,7 +61,9 @@ import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import {
+  addMobileNumbers,
   fetchUserbySrno,
+  getMobileNumbers,
   getPromoServices,
   getTransServices,
   updateUserbySrno,
@@ -79,7 +81,6 @@ import { DataTable } from "@/components/layout/DataTable";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -185,7 +186,6 @@ const ContentCell = ({ value }) => {
     setOpen(false);
   };
 
-
   const copyToClipboard = () => {
     navigator.clipboard.writeText(value);
   };
@@ -261,8 +261,7 @@ const ContentCell = ({ value }) => {
   );
 };
 
-const ManageUserTable = ({ id, name, allUsers = [] }) => {
-
+const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -303,6 +302,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     pinCode: "",
   });
 
+  const [selectedIds, setSelectedIds] = useState([]);
+
   // const handleDetailsUpdate = async () => {
   //   const data = {
   //     srno: selectedId,
@@ -311,10 +312,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   // };
 
   const handleEdit = async (srNo) => {
-    // console.log(srNo, "srNo");
     try {
       const response = await fetchUserbySrno(srNo);
-      // console.log(response, "fetch user details response");
       if (response?.userMstPojoList?.length > 0) {
         const userDetails = response.userMstPojoList[0];
         setUpdateDetails({
@@ -334,6 +333,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
           state: userDetails.state || "",
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
+          srno: userDetails.srno || "",
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -364,6 +364,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       if (response?.msg === "User Updated Successfully") {
         toast.success("User details updated successfully!");
         setEditDetailsDialogVisible(false);
+        fetchAllUsersDetails();
       } else {
         toast.error(response?.message || "Failed to update user details.");
       }
@@ -404,13 +405,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const fetchWhatsappRateData = async (userSrno) => {
     const res = await getWhatsappRateData(userSrno);
-    // console.log("raw whatsapp rate response:", res);
 
     const list = Array.isArray(res) ? res : res?.data;
 
     if (Array.isArray(list)) {
       const formatted = list.map((item, index) => {
-        // console.log("Mapping item:", item);
         return {
           id: item.sr_no || index + 1,
           sn: index + 1,
@@ -425,16 +424,11 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
         };
       });
 
-      // console.log("formatted rows", formatted);
       setWhatsapprows(formatted);
     } else {
       console.warn("No valid data returned from API");
     }
   };
-
-  useEffect(() => {
-    // console.log(" WhatsApp rows updated:", whatsapprows);
-  }, [whatsapprows]);
 
   const handleWhatsappAddCredit = async () => {
     if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
@@ -464,10 +458,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-    // console.log("Editing WhatsApp rate for srno:", srno);
-
     const res = await getWhatsappRateBySrno(srno);
-    // console.log("Edit API response:", res);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -578,8 +569,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       transService: transcheck ? String(trans) : "",
       promoService: promocheck ? String(promo) : "",
     };
-
-    // console.log("Submitting SMS Pricing Payload:", payload);
 
     const res = await addSmsPricing(payload);
     if (res?.statusCode === 200) {
@@ -804,6 +793,30 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setMobileNumbers([...mobileNumbers, ""]);
   };
 
+  async function saveMobileNumber() {
+    try {
+      const isEmpty = mobileNumbers.some((number) => !number.trim());
+
+      if (isEmpty) {
+        toast.error("Please enter mobile number in all inputs.");
+        return;
+      }
+      const mbNo = mobileNumbers.join(",");
+      const payload = {
+        mbno: mbNo,
+        userSrno: selectedIds,
+      };
+      const res = await addMobileNumbers(payload);
+      if (!res?.msg.includes("successfully")) {
+        toast.error(res?.msg);
+      }
+      toast.success("Mobile number updated successfully");
+      setOtpService(false);
+    } catch (e) {
+      toast.error(e?.message || "Failed to update");
+    }
+  }
+
   // Remove input field
   const removeMobileNumber = (index) => {
     const updatedNumbers = mobileNumbers.filter((_, i) => i !== index);
@@ -826,12 +839,13 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     setValue(newValue);
   };
 
-  const handleLonins = (id, name) => {
+  const handleLonins = (id) => {
     setLogins(true);
   };
 
-  const handleOtp = (id, name) => {
+  const handleOtp = (id) => {
     setOtpService(true);
+    setSelectedIds(id);
   };
 
   // view user details
@@ -853,7 +867,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
   const handleAssign = async (srNo) => {
     setAssignService(true);
     setCurrentUserSrno(srNo);
-    // console.log("srNo", srNo);
 
     setTimeout(() => {
       fetchWhatsappRateData(srNo);
@@ -873,7 +886,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
       setCountryOptions(
         countryListRes.map((item) => ({
           label: item.countryName,
-          value: String(item.countryCode),
+          value: item.srNo,
         }))
       );
     }
@@ -917,6 +930,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const handleReset = (id, name) => {
     setreset(true);
+    setSelectedIds(id);
   };
 
   const handleReport = (id, name) => {
@@ -1113,10 +1127,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1125,7 +1139,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     country: "India",
     rate: "0.30",
   }));
-
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -1181,6 +1194,26 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
     );
   };
 
+  async function handleResetPassword() {
+    const data = {
+      srno: selectedIds,
+      password: newPassword,
+    };
+  }
+
+  useEffect(() => {
+    async function fetchMobileNo() {
+      try {
+        const res = await getMobileNumbers(selectedIds);
+        const mobile = res?.regMoblienos?.split(",");
+        setMobileNumbers(mobile || []);
+        // setotp
+      } catch (e) {
+        return toast.error(e.message);
+      }
+    }
+    fetchMobileNo();
+  }, [otpService]);
   return (
     <>
       <Paper sx={{ height: 558 }} id={id} name={name}>
@@ -1544,6 +1577,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               options={[
                 { value: 1, label: "User" },
                 { value: 2, label: "Reseller" },
+                { value: 3, label: "Reseller USER" },
               ]}
               value={updateDetails.userType}
               onChange={(value) =>
@@ -1835,7 +1869,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
               name="saveButton"
               variant="contained"
               color="primary"
-            // onClick={addMobileNumber}
+              onClick={saveMobileNumber}
             />
 
             {/* <IconButton
@@ -2187,8 +2221,8 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2587,7 +2621,6 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
                       }
                     />
                   </div>
-
 
                   <div className="flex justify-center">
                     <UniversalButton
@@ -3506,7 +3539,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
 
       {/* reset service */}
       <Dialog
-        header="reset service"
+        header="Update Password"
         visible={reset}
         onHide={() => setreset(false)}
         className="w-[30rem]"
@@ -3528,6 +3561,10 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             label="New Password"
             placeholder="Enter your new password"
             value={newPassword}
+            setPassword={setNewPassword}
+            onChange={(e) => {
+              setNewPassword(e);
+            }}
           />
         </div>
         <div className="flex justify-center mt-4">
@@ -3536,6 +3573,7 @@ const ManageUserTable = ({ id, name, allUsers = [] }) => {
             id="apisaveButton"
             name="apisaveButton"
             variant="primary"
+            onClick={handleResetPassword}
           />
         </div>
       </Dialog>
