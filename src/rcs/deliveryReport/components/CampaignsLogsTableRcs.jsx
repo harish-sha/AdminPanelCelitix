@@ -84,7 +84,7 @@ const CustomPagination = ({
   );
 };
 
-const CampaignsLogsTable = ({ id, name, data = [] }) => {
+const CampaignsLogsTable = ({ id, name, data = [], selectedUser }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -107,14 +107,14 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
     setDropdownOpenId(null);
 
     try {
-      const res = await fetchCampaignBySrno(row.campaignSrno);
+      const res = await fetchCampaignBySrno(row.campaignSrno, selectedUser);
 
       setCampaignInfoMap((prev) => ({
         ...prev,
         [id]: res || null,
       }));
 
-      setDropdownOpenId(id); // Open only after data is ready
+      setDropdownOpenId(id);
     } catch (e) {
       console.error("Error fetching campaign details:", e);
     }
@@ -137,6 +137,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
       state: {
         campaignSrno: row.campaignSrno,
         campaignName: row.campaignName,
+        selectedUser: selectedUser || "",
       },
     });
   };

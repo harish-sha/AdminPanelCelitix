@@ -91,7 +91,7 @@ const CustomPagination = ({
 
 const CampaignDeliveryReportDetails = () => {
     const location = useLocation();
-    const { campaignSrno, campaignName } = location.state || {};
+    const { campaignSrno, campaignName, selectedUser } = location.state || {};
 
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState([]);
@@ -111,7 +111,8 @@ const CampaignDeliveryReportDetails = () => {
         const data = await fetchCampaignDetailReport(
             campaignSrno,
             mobileNumber,
-            currentPage
+            currentPage,
+            selectedUser || ""
         );
         setCampaignDetails(data.data);
         setTotalPage(data.total);
@@ -121,7 +122,7 @@ const CampaignDeliveryReportDetails = () => {
         if (!campaignSrno) return;
 
         fetchData();
-    }, [campaignSrno, currentPage, mobileNumber]);
+    }, [campaignSrno, currentPage, mobileNumber, selectedUser]);
 
     const handleSearch = async () => {
         // setIsFetching(true);
