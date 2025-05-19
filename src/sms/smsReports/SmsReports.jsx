@@ -354,7 +354,7 @@ const SmsReports = () => {
                   className="no-xs"
                   onClick={() =>
                     navigate("/smscampaigndetaillogs", {
-                      state: { id: params.row.receipt_no_of_duplicate_message },
+                      state: { id: params.row.receipt_no_of_duplicate_message, userId: selectedUser },
                     })
                   }
                 >
@@ -1043,6 +1043,7 @@ const SmsReports = () => {
               name="CampaignTableSms"
               rows={rows}
               col={columns}
+              selectedUser={selectedUser}
             />
           </div>
         </CustomTabPanel>
@@ -1195,6 +1196,7 @@ const SmsReports = () => {
               name="PreviousDaysTableSms"
               rows={rows}
               col={columns}
+              selectedUser={selectedUser}
             />
           </div>
         </CustomTabPanel>
@@ -1286,6 +1288,7 @@ const SmsReports = () => {
               name="DayWiseSummaryTableSms"
               col={columns}
               rows={rows}
+              selectedUser={selectedUser}
             />
           </div>
         </CustomTabPanel>
@@ -1354,6 +1357,7 @@ const SmsReports = () => {
               name="AttachmentTableSms"
               col={columns}
               rows={rows}
+              selectedUser={selectedUser}
             />
           </div>
         </CustomTabPanel>
@@ -1863,6 +1867,7 @@ const SmsReports = () => {
           setPaginationModel={setPaginationModel}
           setCurrentPage={setCurrentPage}
           totalPage={totalPage}
+          selectedUser={selectedUser}
         />
       </Dialog>
 
