@@ -108,14 +108,14 @@ export const TemplateMessagePreview = ({ template }) => {
   };
 
   return isFetching ? (
-    <div className="border border-gray-200 rounded-md w-90 p-5 ">
+    <div className="border border-gray-200 rounded-md w-90 p-5 bg-white ">
       <p className="text-sm">(TemplateMessage)</p>
       <h1>Loading...</h1>
     </div>
   ) : (
     <>
       {tempDetails && (
-        <div className="border border-gray-200 rounded-md w-90 p-5 ">
+        <div className="border border-gray-200 rounded-md w-90 p-5 bg-white">
           {tempDetails?.map((item, index) => {
             if (item?.type === "HEADER" && item?.format === "IMAGE") {
               return (
