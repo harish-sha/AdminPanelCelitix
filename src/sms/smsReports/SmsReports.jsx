@@ -61,7 +61,6 @@ const SmsReports = () => {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
 
-
   useEffect(() => {
     //fetchAllUsersDetails
     if (user.role === "RESELLER") {
@@ -287,24 +286,25 @@ const SmsReports = () => {
         fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
           "en-GB"
         ),
+        selectedUserId: selectedUser,
       };
       const res = await fetchCampaignData(data);
 
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
-          sn: i + 1,
-          ...item,
-          campaign_type:
-            item.account_usage_type_id === 1
-              ? "Transactional"
-              : item.account_usage_type_id === 2
+            id: item.receipt_no_of_duplicate_message,
+            sn: i + 1,
+            ...item,
+            campaign_type:
+              item.account_usage_type_id === 1
+                ? "Transactional"
+                : item.account_usage_type_id === 2
                 ? "Promotional"
                 : item.account_usage_type_id === 3
-                  ? "International"
-                  : "Unknown",
-        }))
+                ? "International"
+                : "Unknown",
+          }))
         : [];
 
       setCampaignTableData(mappedData);
@@ -393,7 +393,7 @@ const SmsReports = () => {
       // );
       setRows(mappedData);
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -407,6 +407,7 @@ const SmsReports = () => {
         "en-GB"
       ),
       toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      selectedUserId: selectedUser,
     };
 
     try {
@@ -541,10 +542,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -564,6 +565,7 @@ const SmsReports = () => {
       toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
       summaryType: "date,user",
       smsType: daywiseDataToFilter.smsType ?? "",
+      selectedUserId: selectedUser,
     };
 
     try {
@@ -622,10 +624,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -646,6 +648,7 @@ const SmsReports = () => {
         "en-GB"
       ),
       type: "",
+       selectedUserId: selectedUser,
     };
 
     try {
@@ -712,10 +715,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -737,6 +740,7 @@ const SmsReports = () => {
       toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
       page: currentPage,
       source: "api",
+      selectedUserId: selectedUser,
     };
 
     setPreviousDayDetailsDialog(true);
@@ -813,10 +817,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res?.data)
           ? res?.data.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+              sn: index + 1,
+              id: index + 1,
+              ...item,
+            }))
           : []
       );
       setPreviousDayDetailsDialog(true);
