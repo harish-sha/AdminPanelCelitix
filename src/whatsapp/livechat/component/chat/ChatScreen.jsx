@@ -579,13 +579,39 @@ export const ChatScreen = ({
       {selectedImage && (
         <div className="flex flex-wrap gap-2 mt-2">
           <div className="relative">
-            <button className="flex items-center gap-1">
-              <img
-                src={URL.createObjectURL(selectedImage)}
-                alt=""
-                className="object-cover w-20 h-20"
-              />
-            </button>
+            {selectedImage.type === "image" && (
+              <button className="flex items-center gap-1">
+                <img
+                  src={URL.createObjectURL(selectedImage?.files)}
+                  alt=""
+                  className="object-cover w-20 h-20"
+                />
+              </button>
+            )}
+            {selectedImage.type === "video" && (
+              <button className="flex items-center gap-1">
+                <video
+                  src={URL.createObjectURL(selectedImage.files)}
+                  alt=""
+                  className="object-cover w-50 h-20"
+                />
+              </button>
+            )}
+            {selectedImage.type === "application" && (
+              <button className="flex items-center gap-1">
+                <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
+                  <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                    {getFileType(selectedImage.fileType)}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="font-medium truncate break-words">
+                      {selectedImage.fileName || "Untitled Document"}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            )}
+
             <span
               className="absolute text-red-500 cursor-pointer top-1 right-1"
               onClick={() => deleteImages("4")}

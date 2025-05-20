@@ -448,7 +448,10 @@ export default function WhatsappLiveChat() {
     // setSelectedImage((prev) => [...prev, ...files]);
 
     const files = e.target.files[0];
-    setSelectedImage(files);
+    const type = files?.type?.split("/")[0];
+    const fileName = files?.name;
+    const size = `${(files?.size)/1024}MB`
+    setSelectedImage({ files, type,fileName, size });
   };
 
   const formatDate = (dateString) => {
@@ -507,10 +510,10 @@ export default function WhatsappLiveChat() {
           //       console.error("Error fetching file size:", error)
           //     );
           // } else {
-            
+
           // }
-          
-            mediaPath = msg.mediaPath;
+
+          mediaPath = msg.mediaPath;
           return {
             ...msg,
             date: dayjs(msg.replyTime).format("YYYY-MM-DD"),
