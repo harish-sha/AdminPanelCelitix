@@ -17,8 +17,10 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
+import { useUser } from "@/context/auth";
 
 import toast from "react-hot-toast";
+import { fetchAllUsers } from "@/apis/admin/admin";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -43,6 +45,7 @@ function a11yProps(index) {
   };
 }
 const TransactionsUser = () => {
+  const { user } = useUser();
   const [value, setValue] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [isFetching, setIsFetching] = useState(false);
@@ -62,6 +65,9 @@ const TransactionsUser = () => {
   const [selectedOptionTypeSummary, setSelectedOptionTypeSummary] =
     useState("");
 
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
     toDate: new Date().toLocaleDateString("en-GB"),
@@ -69,10 +75,39 @@ const TransactionsUser = () => {
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userId: "",
+          mobileNo: "",
+          companyName: "",
+          status: "-1",
+        };
+        try {
+          setIsFetching(true);
+          const res = await fetchAllUsers(data);
+          setAllUsers(res.userMstPojoList);
+        } catch (e) {
+          // console.log(e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, [user.role]);
+
   const handleSearch = async () => {
     try {
+      const payload = {
+        ...filterData,
+        userSrNo: selectedUser,
+      };
       setIsFetching(true);
-      const res = await fetchTransactions(filterData);
+      const res = await fetchTransactions(payload);
       setTransactionalData(res);
     } catch (e) {
       toast.error("Something went wring!");
@@ -135,10 +170,10 @@ const TransactionsUser = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-    }))
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+      }))
     : [];
 
   const multiHistory = [
@@ -261,34 +296,36 @@ const TransactionsUser = () => {
                 },
               }}
             />
-
-            {/* <Tab
-                            label={
-                                <span className="flex items-center gap-2">
-                                    <BsJournalArrowDown size={18} /> Transaction Summary
-                                </span>
-                            }
-                            {...a11yProps(1)}
-                            sx={{
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                color: 'text.secondary',
-                                '&:hover': {
-                                    color: 'primary.main',
-                                    backgroundColor: '#f0f4ff',
-                                    borderRadius: '8px',
-                                },
-                            }}
-                        /> */}
           </Tabs>
-          <div className="w-max-content">
-            <UniversalButton
-              id="manageCampaignExportBtn"
-              name="manageCampaignExportBtn"
-              label="Export"
-              // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
-              variant="primary"
-            />
+          <div className="w-max-content flex gap-2 items-center justify-center">
+            <div className="mt-7">
+              <UniversalButton
+                id="manageCampaignExportBtn"
+                name="manageCampaignExportBtn"
+                label="Export"
+                // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
+
+                variant="primary"
+              />
+            </div>
+            {user.role === "RESELLER" && (
+              <div className="w-full sm:w-54">
+                <AnimatedDropdown
+                  id="manageuser"
+                  name="manageuser"
+                  label="Select User"
+                  tooltipContent="Select user you want to see reports"
+                  tooltipPlacement="right"
+                  options={allUsers.map((user) => ({
+                    label: user.userId,
+                    value: user.srno,
+                  }))}
+                  value={selectedUser}
+                  onChange={setSelectedUser}
+                  placeholder="Select User"
+                />
+              </div>
+            )}
           </div>
         </div>
         <CustomTabPanel value={value} index={0} className="">
