@@ -35,8 +35,8 @@ export const PermissionRoute = ({ children }) => {
 
       userState.services.forEach((service, index) => {
         if (item.name == service.display_name) {
-          // allowedServices.push(item);
-          return item
+          allowedServices.push(item);
+          // return item
         }
       });
     });
