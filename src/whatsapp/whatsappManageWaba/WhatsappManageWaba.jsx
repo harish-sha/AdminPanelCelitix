@@ -194,8 +194,8 @@ const WhatsappManageWaba = ({ id, name }) => {
 
     const imageUrl = URL.createObjectURL(selectedFile);
     setPreview(imageUrl);
-    const res = await uploadImageFile(selectedFile);
-    setFile(res?.fileUrl);
+    const res = await uploadImageFile(selectedFile, 1);
+    setFile(res?.handlerid || null);
     toast.success("Image uploaded successfully.");
   };
 
@@ -351,7 +351,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       about: about,
       description: description,
       email: email,
-      profilePic: file,
+      profile_picture_handle: file,
       address: address,
       websites: website,
       vertical: vertical,
