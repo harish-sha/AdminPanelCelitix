@@ -163,7 +163,7 @@ export const ChatScreen = ({
   function getFileType(extension) {
     switch (extension) {
       case "xlsx":
-        return <PiMicrosoftExcelLogo size={25}/>;
+        return <PiMicrosoftExcelLogo size={25} />;
       case "csv":
         return <PiMicrosoftExcelLogo size={25} />;
       case "docx":
@@ -346,7 +346,6 @@ export const ChatScreen = ({
                                       : ""
                                   }`}
                                 >
-                                  
                                   <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                     <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
                                       {/* <InsertDriveFileIcon
@@ -413,7 +412,10 @@ export const ChatScreen = ({
                               onClick={() => {
                                 setChatState((prev) => ({
                                   ...prev,
-                                  replyData: msg,
+                                  replyData: {
+                                    ...msg,
+                                    fileType,
+                                  },
                                   isReply: true,
                                 }));
                               }}
@@ -535,17 +537,19 @@ export const ChatScreen = ({
               />
             )}
             {chatState.replyData?.replyType === "document" && (
-              <iframe
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                controls={false}
-                autoPlay={false}
-                allow=" encrypted-media"
-                className="object-contain mb-2 h-48 w-48 pointer-events-none"
-              ></iframe>
+              <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
+                <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                  {getFileType(chatState.replyData.fileType)}
+                </div>
+                <div className="flex flex-col">
+                  <div className="font-medium truncate">
+                    {chatState.replyData.fileName || "Untitled Document"}
+                  </div>
+                  <div className="text-xs text-gray-500 uppercase">
+                    .{chatState.replyData.fileType}
+                  </div>
+                </div>
+              </div>
             )}
             {chatState.replyData?.messageBody && (
               <p>{chatState.replyData?.messageBody}</p>
