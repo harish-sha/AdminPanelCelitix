@@ -206,6 +206,9 @@ export default function WhatsappLiveChat() {
       case "sticker":
         replyType = "sticker";
         break;
+      case "application":
+        replyType = "document";
+        break;
       default:
         replyType = "text";
         break;
@@ -242,7 +245,7 @@ export default function WhatsappLiveChat() {
         },
       };
     } else if (selectedImage) {
-      const imageData = await uploadImageFile(selectedImage);
+      const imageData = await uploadImageFile(selectedImage.files);
       delete data.message;
 
       body = {
@@ -445,7 +448,11 @@ export default function WhatsappLiveChat() {
     // setSelectedImage((prev) => [...prev, ...files]);
 
     const files = e.target.files[0];
-    setSelectedImage(files);
+    const type = files?.type?.split("/")[0];
+    const fileName = files?.name;
+    const size = `${(files?.size) / 1024}MB`
+    setSelectedImage({ files, type, fileName, size });
+    // setSelectedImage(files);
   };
 
   const formatDate = (dateString) => {
@@ -477,6 +484,7 @@ export default function WhatsappLiveChat() {
           let mediaPath = null;
           let replyMessage = null;
           let isReply = false;
+          let mediaSize = null;
 
           if (msg?.contextReceiptNo) {
             const data = {
@@ -783,7 +791,9 @@ export default function WhatsappLiveChat() {
       if (item?.type === "BUTTONS") {
         item?.buttons?.map(({ type, example }) => {
           if (type === "URL") {
-            setBtnVarLength(example);
+            const regex = /{{(\d+)}}/g;
+            const matches = regex.exec(example)
+            setBtnVarLength(matches);
           }
         });
       }

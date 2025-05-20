@@ -595,13 +595,20 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
-      } else if (
+      } else if (!response.msg || response.msg === "") {
+        // Handle blank msg from backend
+        return toast.error("Unable to create template at this time. Please try again later.");
+      }
+      else if (
         response?.includes("language") &&
         response?.includes("not available")
       ) {
         return toast.error(
           "The selected language is not available for message templates. Please try a different language."
         );
+      } else if (!response.msg || response.msg === "") {
+        // Handle blank msg from backend
+        return toast.error("Unable to create template at this time. Please try again later.");
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }

@@ -28,9 +28,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { getBaseUrl } from "@/apis/common/common";
 import { Dialog } from "primereact/dialog";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import { PiMicrosoftExcelLogo } from "react-icons/pi";
+import { PiFilePdf } from "react-icons/pi";
+import { FaFileWord } from "react-icons/fa6";
+import "react-loading-skeleton/dist/skeleton.css";
+
+import { getBaseUrl } from "@/apis/common/common";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -156,13 +161,29 @@ export const ChatScreen = ({
     const fetchBaseUrl = async () => {
       try {
         const url = await getBaseUrl("WhatsappChatBoxApi");
-        setBaseMediaUrl(url);
+        setBaseMediaUrl(url?.url);
       } catch (err) {
         console.error("Failed to fetch base URL", err);
       }
     };
     fetchBaseUrl();
   }, []);
+
+
+  function getFileType(extension) {
+    switch (extension) {
+      case "xlsx":
+        return <PiMicrosoftExcelLogo size={25} />;
+      case "csv":
+        return <PiMicrosoftExcelLogo size={25} />;
+      case "docx":
+        return <FaFileWord size={25} />;
+      case "pdf":
+        return <PiFilePdf size={25} />;
+      default:
+        return <InsertDriveFileIcon size={25} />;
+    }
+  }
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
@@ -237,6 +258,15 @@ export const ChatScreen = ({
                 const mediaUrl = isSent
                   ? msg?.mediaPath
                   : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
+
+
+                let fileType = "";
+                // const extension = url.split('.').pop().split(/\#|\?/)[0];
+                isDocument &&
+                  (fileType = msg?.mediaPath
+                    ?.split(".")
+                    .pop()
+                    .split(/\#|\?/)[0]);
 
                 return (
                   <motion.div
@@ -352,12 +382,25 @@ export const ChatScreen = ({
                                     : "relative group"
                                     }`}
                                 >
-                                  <iframe
+                                  {/* <iframe
                                     src={mediaUrl}
                                     className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
                                     allow="encrypted-media;"
                                     allowFullScreen
-                                  />
+                                  /> */}
+                                  <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
+                                    <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                                      {/* <InsertDriveFileIcon
+                                        sx={{ fontSize: 25 }}
+                                      /> */}
+                                      {getFileType(fileType)}
+                                    </div>
+                                    <div className="flex flex-col">
+                                      <div className="font-medium truncate">
+                                        {msg.fileName || "Untitled Document"}
+                                      </div>
+                                    </div>
+                                  </div>
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
                                       {msg?.caption}
@@ -371,6 +414,7 @@ export const ChatScreen = ({
                                           open: true,
                                           type: "document",
                                           url: mediaUrl,
+                                          fileType,
                                           caption: msg?.caption,
                                         })
                                       }
@@ -396,6 +440,7 @@ export const ChatScreen = ({
                               style={{ backdropFilter: "blur(8px)" }}
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
+                              id="download-button"
                               onClick={() => handleDownloadWithPreview(msg)}
                             >
                               {isDownloading ? (
@@ -425,7 +470,11 @@ export const ChatScreen = ({
                               onClick={() => {
                                 setChatState((prev) => ({
                                   ...prev,
-                                  replyData: msg,
+                                  // replyData: msg,
+                                  replyData: {
+                                    ...msg,
+                                    fileType,
+                                  },
                                   isReply: true,
                                 }));
                               }}
@@ -448,7 +497,7 @@ export const ChatScreen = ({
                             <button
                               className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
                               onClick={() => {
-                                toast.success("Download started");
+                                // toast.success("Download started");
                                 const url = isSent
                                   ? msg.mediaPath
                                   : `${BASE_MEDIA_URL}${msg.mediaPath}`;
@@ -526,7 +575,14 @@ export const ChatScreen = ({
             <video src={previewDialog.url} controls className="h-100 max-w-full rounded-lg" />
           )}
           {previewDialog.type === "document" && (
-            <iframe src={previewDialog.url} className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat" />
+            <iframe
+              src={
+                previewDialog.fileType === "xlsx"
+                  ? `https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url}`
+                  : previewDialog.url
+              }
+              className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+            />
           )}
           {previewDialog.caption && (
             <div className="text-white mt-2">{previewDialog.caption}</div>
@@ -570,17 +626,30 @@ export const ChatScreen = ({
               />
             )}
             {chatState.replyData?.replyType === "document" && (
-              <iframe
-                src={
-                  chatState.replyData?.isReceived
-                    ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
-                    : chatState.replyData?.mediaPath
-                }
-                controls={false}
-                autoPlay={false}
-                allow=" encrypted-media"
-                className="object-contain mb-2 h-48 w-48 pointer-events-none"
-              ></iframe>
+              // <iframe
+              //   src={
+              //     chatState.replyData?.isReceived
+              //       ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
+              //       : chatState.replyData?.mediaPath
+              //   }
+              //   controls={false}
+              //   autoPlay={false}
+              //   allow=" encrypted-media"
+              //   className="object-contain mb-2 h-48 w-48 pointer-events-none"
+              // ></iframe>
+              <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
+                <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                  {getFileType(chatState.replyData.fileType)}
+                </div>
+                <div className="flex flex-col">
+                  <div className="font-medium truncate">
+                    {chatState.replyData.fileName || "Untitled Document"}
+                  </div>
+                  <div className="text-xs text-gray-500 uppercase">
+                    .{chatState.replyData.fileType}
+                  </div>
+                </div>
+              </div>
             )}
             {chatState.replyData?.messageBody && (
               <p>{chatState.replyData?.messageBody}</p>
@@ -608,13 +677,45 @@ export const ChatScreen = ({
       {selectedImage && (
         <div className="flex flex-wrap gap-2 mt-2">
           <div className="relative">
-            <button className="flex items-center gap-1">
+            {/* <button className="flex items-center gap-1">
               <img
                 src={URL.createObjectURL(selectedImage)}
                 alt=""
                 className="object-cover w-20 h-20"
               />
-            </button>
+            </button> */}
+            {selectedImage.type === "image" && (
+              <button className="flex items-center gap-1">
+                <img
+                  src={URL.createObjectURL(selectedImage?.files)}
+                  alt=""
+                  className="object-cover w-20 h-20"
+                />
+              </button>
+            )}
+            {selectedImage.type === "video" && (
+              <button className="flex items-center gap-1">
+                <video
+                  src={URL.createObjectURL(selectedImage.files)}
+                  alt=""
+                  className="object-cover w-50 h-20"
+                />
+              </button>
+            )}
+            {selectedImage.type === "application" && (
+              <button className="flex items-center gap-1">
+                <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md flex items-center gap-3">
+                  <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
+                    {getFileType(selectedImage.fileType)}
+                  </div>
+                  <div className="flex flex-col">
+                    <div className="font-medium truncate break-words">
+                      {selectedImage.fileName || "Untitled Document"}
+                    </div>
+                  </div>
+                </div>
+              </button>
+            )}
             <span
               className="absolute text-red-500 cursor-pointer top-1 right-1"
               onClick={() => deleteImages("4")}
@@ -740,3 +841,4 @@ export const ChatScreen = ({
     </div>
   );
 };
+

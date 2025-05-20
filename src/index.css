@@ -4,7 +4,7 @@
 @custom-variant dark (&:is(.dark *));
 
 * {
-  /* font-family: "Poppins", sans-serif; */
+  font-family: "Poppins", sans-serif;
   /* font-family: "Lora", serif; */
 
   &::-webkit-scrollbar {
