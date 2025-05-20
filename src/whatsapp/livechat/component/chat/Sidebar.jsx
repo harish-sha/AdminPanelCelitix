@@ -114,7 +114,7 @@ export const ChatSidebar = ({
     },
   };
   return (
-    <div className="mt-4 h-[70vh] overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    <div className="mt-4 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!selectedWaba && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}

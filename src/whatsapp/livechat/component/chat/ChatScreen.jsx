@@ -3,6 +3,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { FaReply } from "react-icons/fa";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import { FiSend } from "react-icons/fi";
 import { SpeedDial } from "primereact/speeddial";
@@ -29,6 +30,7 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getBaseUrl } from "@/apis/common/common";
+import { Dialog } from "primereact/dialog";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 export const ChatScreen = ({
@@ -63,9 +65,8 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${
-          isSent ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -93,6 +94,13 @@ export const ChatScreen = ({
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
+  const [previewDialog, setPreviewDialog] = useState({
+    open: false,
+    type: "", // "image" | "video" | "document"
+    url: "",
+    caption: "",
+  });
 
   const handleReplyClick = (msg) => {
     setReplyingMessageId(msg.id);
@@ -246,9 +254,8 @@ export const ChatScreen = ({
                       stiffness: 300,
                       damping: 20,
                     }}
-                    className={`p-2 rounded-lg max-w-[90%] my-1 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {isReply && (
                       <div className="text-sm border-b-2 border-black">
@@ -258,9 +265,8 @@ export const ChatScreen = ({
                     {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                     {(isImage || isVideo || isDocument) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
                           className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
@@ -269,35 +275,48 @@ export const ChatScreen = ({
                             <>
                               {isImage && (
                                 <div
-                                  className={`w-full h-full ${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
-                                      : ""
-                                  }`}
+                                  className={`relative group w-full h-full ${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
+                                    : ""
+                                    }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
-                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
-                                      msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
-                                    }`}
+                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
+                                      ? "rounded-t-lg"
+                                      : "rounded-md"
+                                      }`}
                                   />
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center" >
+                                    <button
+                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() =>
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "image",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                        })
+                                      }
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+                                  </div>
+
                                 </div>
                               )}
                               {isVideo && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                      : ""
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   <video
                                     src={mediaUrl}
@@ -310,15 +329,31 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center" >
+                                    <button
+                                      className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
+                                      onClick={() =>
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "video",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                        })
+                                      }
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+
+                                  </div>
+
                                 </div>
                               )}
                               {isDocument && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
-                                      : ""
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                     <div className="bg-white p-3 rounded-full shadow-inner text-blue-400">
@@ -337,6 +372,23 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center" >
+                                    <button
+                                      className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
+                                      onClick={() =>
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "document",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                        })
+                                      }
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+
+                                  </div>
+
                                 </div>
                               )}
                             </>
@@ -421,17 +473,15 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
-                              isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
-                            }`}
+                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
+                              ? "bg-[#22577E] text-white rounded-br-none"
+                              : "bg-[#5584AC] text-white rounded-bl-none"
+                              }`}
                           >
                             {msg.messageBody}
                           </p>
@@ -456,9 +506,8 @@ export const ChatScreen = ({
                     {templateType && <TemplateMessagePreview template={msg} />}
 
                     <p
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>
@@ -469,6 +518,32 @@ export const ChatScreen = ({
           </div>
         ))}
       </div>
+
+      {/* media full screen preview */}
+      <Dialog
+        header=""
+        visible={previewDialog.open}
+        onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
+        className="w-[50rem]"
+        draggable={false}
+      >
+        <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
+          {previewDialog.type === "image" && (
+            <img src={previewDialog.url} alt="Preview" className="max-h-[80vh] max-w-full rounded-lg" />
+          )}
+          {previewDialog.type === "video" && (
+            <video src={previewDialog.url} controls className="h-100 max-w-full rounded-lg" />
+          )}
+          {previewDialog.type === "document" && (
+            <iframe src={previewDialog.url} className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat" />
+          )}
+          {previewDialog.caption && (
+            <div className="text-white mt-2">{previewDialog.caption}</div>
+          )}
+        </div>
+      </Dialog>
+
+      {/* media full screen preview */}
 
       {/* Reply Preview */}
       {chatState.isReply && btnOption === "active" && (

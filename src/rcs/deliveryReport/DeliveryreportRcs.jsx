@@ -289,11 +289,11 @@ const DeliveryreportRcs = () => {
                     setSelectedUser(e);
                     setCampaignData({
                       ...campaignData,
-                      selectedUser: e, 
+                      selectedUser: e,
                     });
                     setSummaryData({
                       ...summaryData,
-                      selectedUser: e, 
+                      selectedUser: e,
                     });
                   }}
                   placeholder="Select User"
@@ -419,6 +419,7 @@ const DeliveryreportRcs = () => {
                 id="whatsappManageCampaignTable"
                 name="whatsappManageCampaignTable"
                 data={campaignTableData}
+                selectedUser={selectedUser}
               />
             </div>
           </CustomTabPanel>

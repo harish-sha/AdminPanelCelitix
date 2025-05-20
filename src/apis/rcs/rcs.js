@@ -10,9 +10,20 @@ export const fetchCampaignReport = async (data) => {
 };
 
 // fetch campaign by srno
-export const fetchCampaignBySrno = async (campSrno) => {
+// export const fetchCampaignBySrno = async (campSrno, selectedUserId = "") => {
+//   return await fetchWithAuth(
+//     `/rcs/getCampaignReportBySrno?campSrno=${campSrno}?selectedUserId=${selectedUserId}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
+
+export const fetchCampaignBySrno = async (campSrno, selectedUserId = "") => {
   return await fetchWithAuth(
-    `/rcs/getCampaignReportBySrno?campSrno=${campSrno}`,
+    `/rcs/getCampaignReportBySrno?campSrno=${campSrno}${
+      selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
+    }`,
     {
       method: "POST",
     }
@@ -23,10 +34,13 @@ export const fetchCampaignBySrno = async (campSrno) => {
 export const fetchCampaignDetailReport = async (
   campaignSrNo,
   mobileNo,
-  page
+  page,
+  selectedUserId = ""
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}${
+      selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
+    }`,
     {
       method: "POST",
     }
