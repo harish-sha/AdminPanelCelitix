@@ -277,7 +277,7 @@ const AddUser = () => {
               }}
             />
           </div>
-          {userType === "Reseller" && (
+          {userType === "2" && (
             <div className="md:w-50 w-full">
               <InputField
                 label="Account URL"
