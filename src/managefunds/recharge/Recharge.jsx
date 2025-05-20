@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Dialog } from "primereact/dialog";
-
-// import Dialog from "@mui/material/Dialog";
-// import DialogTitle from "@mui/material/DialogTitle";
-// import DialogContent from "@mui/material/DialogContent";
-// import DialogActions from "@mui/material/DialogActions";
 import CircularProgress from "@mui/material/CircularProgress";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import CheckCircleOutlinedIcon from '@mui/icons-material/CheckCircleOutlined';
+import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
+import Lottie from "lottie-react";
+import { motion } from "framer-motion";
+import confirmAnimation from "@/assets/animation/confirmcheck.json";
 
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import InputField from "../../components/layout/InputField";
@@ -26,7 +26,8 @@ const Recharge = () => {
 
   const [showDialog, setShowDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
+
+  const [rechargeSuccess, setRechargeSuccess] = useState(false);
 
   const [remark, setRemark] = useState("")
 
@@ -61,6 +62,8 @@ const Recharge = () => {
     }
   }, []);
 
+  const selectedUserObj = allUsers.find((u) => u.srno === selectedUser);
+
   const [isChecked, setIsChecked] = useState({
     gstCalculation: false,
     reverseCalculation: false,
@@ -93,28 +96,31 @@ const Recharge = () => {
     setIncludingGst("");
     setExcludingGst("");
     setIsChecked({ gstCalculation: false, reverseCalculation: false });
+    setSelectedUser("");
+    setSelectedRechargeType("");
+    setRemark("");
   };
 
   const handleSubmitRecharge = () => {
     // Validation
-    // if (!selectedUser) return toast.error("Please select a user.");
-    // if (!selectedRechargeType) return toast.error("Please select recharge type.");
-    // if (!amount || isNaN(amount) || Number(amount) <= 0) return toast.error("Enter a valid amount.");
+    if (!selectedUser) return toast.error("Please select a user.");
+    if (!selectedRechargeType) return toast.error("Please select recharge type.");
+    if (!amount || isNaN(amount) || Number(amount) <= 0) return toast.error("Enter a valid amount.");
     // if (!gstAmount || isNaN(gstAmount)) return toast.error("GST amount required.");
     // if (!includingGst || isNaN(includingGst)) return toast.error("Amount including GST required.");
     // if (!excludingGst || isNaN(excludingGst)) return toast.error("Amount excluding GST required.");
-    // if (!remark.trim()) return toast.error("Remark is required.");
+    if (!remark.trim()) return toast.error("Remark is required.");
 
     setShowDialog(true);
-    setDialogMessage("");
   };
 
   const handleConfirmRecharge = async () => {
     setIsSubmitting(true);
     const payload = {
       selectedUserId: selectedUser,
-      actualAmount: excludingGst,
-      amount: includingGst,
+      // actualAmount: excludingGst,
+      actualAmount: amount,
+      amount: amount,
       gst: gstAmount,
       rechargeType: selectedRechargeType,
       withGST: isChecked.gstCalculation ? 1 : 0,
@@ -122,16 +128,26 @@ const Recharge = () => {
     };
     try {
       const res = await recharge(payload);
-      setDialogMessage("Recharge successful!");
-      toast.success("Recharge successful!");
-      handleReset();
+      if (res?.status === true) {
+        setRechargeSuccess(true);
+        toast.success(res.msg || "Recharge successful!");
+        handleReset();
+        // return
+        setTimeout(() => {
+          setShowDialog(false);
+          setRechargeSuccess(false);
+        }, 5000);
+      } else {
+        toast.error("Recharge failed.");
+      }
     } catch (error) {
-      setDialogMessage("Recharge failed. Please try again.");
       toast.error("Recharge failed.");
     } finally {
       setIsSubmitting(false);
     }
   };
+
+
 
   return (
     <>
@@ -264,6 +280,8 @@ const Recharge = () => {
           </div>
         </div>
       </div>
+
+
       <Dialog
         header={"Confirm Recharge"}
         visible={showDialog}
@@ -271,24 +289,30 @@ const Recharge = () => {
         onHide={() => setShowDialog(false)}
         draggable={false}
       >
-        <div className="flex items-center justify-center">
-          <CancelOutlinedIcon
+        {/* <div className="flex items-center justify-center">
+          <ErrorOutlineOutlinedIcon
             sx={{
               fontSize: 64,
-              color: "#ff3f3f",
+              color: "red",
             }}
           />
         </div>
-
+        <div className="flex items-center justify-center">
+          <Lottie
+            animationData={confirmAnimation}
+            loop
+            autoplay
+            className="w-60 h-45"
+          />
+        </div>
         <div className="p-4 text-center">
-          <p className="text-[1.1rem] font-semibold text-gray-700">
-            Are you sure you want to recharge <b>{includingGst}</b> for user <b>{selectedUser}</b>?<br />
+          <p className="text-xl font-semibold text-gray-700">
+            Are you sure you want to recharge for <b>{selectedUserObj?.userId || selectedUser}</b> of <b>{includingGst}</b><br />
           </p>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-md text-gray-500">
             This action is irreversible.
           </p>
         </div>
-
         <div className="flex justify-center gap-4 mt-2">
           {!isSubmitting && (
             <UniversalButton
@@ -304,7 +328,68 @@ const Recharge = () => {
             onClick={handleConfirmRecharge}
             disabled={isSubmitting}
           />
-        </div>
+        </div> */}
+        {rechargeSuccess ? (
+          <motion.div
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="flex flex-col items-center justify-center py-10"
+          >
+            <Lottie
+              animationData={confirmAnimation}
+              loop={false}
+              autoplay
+              className="w-60 h-45"
+            />
+            <div className="mt-4 text-xl font-semibold text-green-600">
+              Recharge Successful!
+            </div>
+          </motion.div>
+        ) : (
+          <>
+            <div className="flex items-center justify-center">
+              <ErrorOutlineOutlinedIcon
+                sx={{
+                  fontSize: 64,
+                  color: "red",
+                }}
+              />
+            </div>
+            {/* <div className="flex items-center justify-center">
+              <Lottie
+                animationData={confirmAnimation}
+                loop
+                autoplay
+                className="w-60 h-45"
+              />
+            </div> */}
+            <div className="p-4 text-center">
+              <p className="text-xl font-semibold text-gray-700">
+                Are you sure you want to recharge for <b>{selectedUserObj?.userId || selectedUser}</b> of <b>{amount}</b><br />
+              </p>
+              <p className="mt-2 text-md text-gray-500">
+                This action is irreversible.
+              </p>
+            </div>
+            <div className="flex justify-center gap-4 mt-2">
+              {!isSubmitting && (
+                <UniversalButton
+                  label="Cancel"
+                  style={{
+                    backgroundColor: "#090909",
+                  }}
+                  onClick={() => setShowDialog(false)}
+                />
+              )}
+              <UniversalButton
+                label={isSubmitting ? "Submitting..." : "Submit"}
+                onClick={handleConfirmRecharge}
+                disabled={isSubmitting}
+              />
+            </div>
+          </>
+        )}
       </Dialog>
     </>
   );

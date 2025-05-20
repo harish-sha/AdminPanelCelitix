@@ -171,7 +171,8 @@ const ResellerLogin = () => {
         userId: username,
         password,
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        domain: "reseller.alertsnow.in",
+        // domain: "reseller.alertsnow.in",
+        domain: domain
       };
 
       const res = await login(payload);
@@ -436,7 +437,7 @@ const ResellerLogin = () => {
                     placeholder="Enter Username"
                     className="w-full p-2 mb-2 border border-gray-200 rounded-md"
                     onChange={(e) => setUsername(e.target.value)}
-                    // maxLength={8}
+                  // maxLength={8}
                   />
                 </div>
 
@@ -695,13 +696,12 @@ const ResellerLogin = () => {
                     <input
                       id="new-password"
                       placeholder="New Password"
-                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${
-                        newPassword === ""
-                          ? "border-gray-400"
-                          : passwordsMatch === true
+                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
+                        ? "border-gray-400"
+                        : passwordsMatch === true
                           ? "border-green-500"
                           : "border-red-500"
-                      }`}
+                        }`}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       type={showNewPassword ? "text" : "password"}
@@ -760,13 +760,12 @@ const ResellerLogin = () => {
                   <div className="relative w-full max-w-xs">
                     <input
                       placeholder="Confirm New Password"
-                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${
-                        confirmPassword === ""
-                          ? "border-gray-400"
-                          : passwordsMatch === true
+                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
+                        ? "border-gray-400"
+                        : passwordsMatch === true
                           ? "border-green-500"
                           : "border-red-500"
-                      }`}
+                        }`}
                       value={confirmPassword}
                       onChange={(e) => setConfirmPassword(e.target.value)}
                       type={showConfirmPassword ? "text" : "password"}
