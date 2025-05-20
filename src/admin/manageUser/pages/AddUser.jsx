@@ -68,7 +68,7 @@ const AddUser = () => {
             console.error("Invalid API response:", data);
           }
         } catch (error) {
-         toast.error("Error fetching pincode details");
+          toast.error("Error fetching pincode details");
         }
       }
     };
@@ -103,7 +103,20 @@ const AddUser = () => {
       toast.error("Please Enter Expiry Date");
       return;
     }
-   
+    if (!userEmail) {
+      toast.error("Please Enter Email Id");
+      return;
+    }
+
+    if (!userPassword) {
+      toast.error("Please Enter Password");
+      return;
+    }
+
+    if (!userPassword.length > 6 || !userPassword.length < 10) {
+      toast.error("Password shoule be of 6 to 10 characters");
+      return;
+    }
     const data = {
       // srno: 0,
       userId: userid,
