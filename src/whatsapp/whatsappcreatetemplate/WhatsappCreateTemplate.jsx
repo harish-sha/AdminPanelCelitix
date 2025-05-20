@@ -553,11 +553,12 @@ const WhatsappCreateTemplate = () => {
       setIsFetching(true);
       const response = await sendTemplatetoApi(payload);
 
-      if (response.message === "Template Name is duplicate") {
+      if (response.msg === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
-      } else if (response.message === "Template Save Successfully") {
+        // } else if (response.message === "Template Save Successfully") {
+      } else if (response.msg === "Template added successfully") {
         setIsLoading(true);
         toast.success("Template submitted successfully!");
         setSelectedWaba("");
@@ -605,6 +606,7 @@ const WhatsappCreateTemplate = () => {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
+      console.log(e)
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
