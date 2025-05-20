@@ -17,7 +17,7 @@ export const resellerItems = [
   },
   {
     name: "managefunds",
-    links: ["/recharge"],
+    links: ["/recharge", "/user/transactions"],
     roles: ["ADMIN"],
   },
   {
@@ -25,24 +25,24 @@ export const resellerItems = [
     links: ["/managecontacts"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
-  
+
   {
     name: "Callback",
     links: ["/callback", "/addcallback", "/editcallback"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
-  
+
   {
-      name: "openRoutes",
-      links: [
-        "/download",
-        "/loginIpdetails",
-        "/profile",
-        "/settings",
-        "/transactions",
-      ],
-      roles: ["ADMIN"],
-    },
+    name: "openRoutes",
+    links: [
+      "/download",
+      "/loginIpdetails",
+      "/profile",
+      "/settings",
+      "/transactions",
+    ],
+    roles: ["ADMIN"],
+  },
   // {
   //   id: "",
   //   name: "apiDocs",

@@ -30,6 +30,7 @@ import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
 import Transactions from "@/managefunds/transactions/Transactions";
+import TransactionsUser from "@/managefunds/user-transaction.jsx/Transactions";
 
 // manage contacts
 import ManageContacts from "@/managecontacts/ManageContacts";
@@ -135,7 +136,6 @@ const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
         <Route index element={<ResellerDashboard />} />
@@ -238,6 +238,7 @@ const Approutes = () => {
         {/* manage funds */}
         <Route path="recharge" element={<Recharge />} />
         <Route path="transactions" element={<Transactions />} />
+        <Route path="/user/transactions" element={<TransactionsUser />} />
 
         {/* manage contacts */}
         <Route path="managecontacts" element={<ManageContacts />} />
@@ -270,7 +271,6 @@ const Approutes = () => {
         <Route path="/callback" element={<Callback />} />
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
-
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
