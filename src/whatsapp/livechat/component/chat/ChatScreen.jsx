@@ -76,6 +76,7 @@ export const ChatScreen = ({
   };
 
   const handleDownload = async (url, filename) => {
+    console.log(url, filename);
     try {
       const link = document.createElement("a");
       link.href = url;
@@ -152,7 +153,7 @@ export const ChatScreen = ({
     const fetchBaseUrl = async () => {
       try {
         const url = await getBaseUrl("WhatsappChatBoxApi");
-        setBaseMediaUrl(url);
+        setBaseMediaUrl(url?.url);
       } catch (err) {
         console.error("Failed to fetch base URL", err);
       }
@@ -383,6 +384,7 @@ export const ChatScreen = ({
                               style={{ backdropFilter: "blur(8px)" }}
                               initial={{ opacity: 0 }}
                               animate={{ opacity: 1 }}
+                              id="download-button"
                               onClick={() => handleDownloadWithPreview(msg)}
                             >
                               {isDownloading ? (
