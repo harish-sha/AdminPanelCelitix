@@ -33,6 +33,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -97,6 +98,12 @@ export const ChatScreen = ({
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+  const [previewDialog, setPreviewDialog] = useState({
+    open: false,
+    type: "", // "image" | "video" | "document"
+    url: "",
+    caption: "",
+  });
 
   const handleReplyClick = (msg) => {
     setReplyingMessageId(msg.id);
@@ -316,6 +323,21 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center">
+                                    <button
+                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() =>
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "image",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                        })
+                                      }
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+                                  </div>
                                 </div>
                               )}
                               {isVideo && (
@@ -337,6 +359,21 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center">
+                                    <button
+                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() =>
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "video",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                        })
+                                      }
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+                                  </div>
                                 </div>
                               )}
                               {isDocument && (
@@ -368,17 +405,27 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
+                                  <div className="flex items-center justify-center">
+                                    <button
+                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                      onClick={() => {
+                                        setPreviewDialog({
+                                          open: true,
+                                          type: "document",
+                                          url: mediaUrl,
+                                          caption: msg?.caption,
+                                          fileType,
+                                          fileName: msg.fileName,
+                                        });
+                                      }}
+                                    >
+                                      <FullscreenIcon fontSize="small" />
+                                    </button>
+                                  </div>
                                 </div>
                               )}
                             </>
                           ) : (
-                            // <button
-                            //   className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200
-                            //     bg-[url(/blurImage.jpg)]"
-                            //   onClick={() => handleAttachmentDownload(msg)}
-                            // >
-                            //   <FileDownloadOutlinedIcon />
-                            // </button>
                             <motion.div
                               className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200 bg-gray-200 relative overflow-hidden"
                               style={{ backdropFilter: "blur(8px)" }}
@@ -734,10 +781,45 @@ export const ChatScreen = ({
           ))}
         </div>
       </Sidebar>
+
+      {/* media full screen preview */}
+      <Dialog
+        header=""
+        visible={previewDialog.open}
+        onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
+        className="w-[50rem]"
+        draggable={false}
+      >
+        <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
+          {previewDialog.type === "image" && (
+            <img
+              src={previewDialog.url}
+              alt="Preview"
+              className="max-h-[80vh] max-w-full rounded-lg"
+            />
+          )}
+          {previewDialog.type === "video" && (
+            <video
+              src={previewDialog.url}
+              controls
+              className="h-100 max-w-full rounded-lg"
+            />
+          )}
+          {previewDialog.type === "document" && (
+            <iframe
+              src={
+                previewDialog.fileType === "xlsx"
+                  ? `https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url}`
+                  : previewDialog.url
+              }
+              className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+            />
+          )}
+          {previewDialog.caption && (
+            <div className="text-white mt-2">{previewDialog.caption}</div>
+          )}
+        </div>
+      </Dialog>
     </div>
   );
 };
-
-
-
-
