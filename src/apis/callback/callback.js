@@ -37,7 +37,7 @@ export const getData = async (data) => {
   return await fetchWithAuth(
     `/callBack/getCallBackDataList?callBackName=${
       data.callBackName
-    }&callBackType=${data.callBackType || ""}&page=${data.page}`,
+    }&callBackType=${data.callBackType || ""}&page=${data.page}&selectedUserId=${data.selectedUserId}`,
     {
       method: "GET",
     }
