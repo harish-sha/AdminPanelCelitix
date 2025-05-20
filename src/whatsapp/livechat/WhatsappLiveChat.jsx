@@ -245,7 +245,7 @@ export default function WhatsappLiveChat() {
         },
       };
     } else if (selectedImage) {
-      const imageData = await uploadImageFile(selectedImage);
+      const imageData = await uploadImageFile(selectedImage.files);
       delete data.message;
 
       body = {
