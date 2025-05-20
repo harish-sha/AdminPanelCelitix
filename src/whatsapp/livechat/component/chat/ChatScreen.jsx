@@ -152,8 +152,8 @@ export const ChatScreen = ({
     },
   };
 
-  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  const BASE_MEDIA_URL = "/image";
+  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  // const BASE_MEDIA_URL = "/image";
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 

@@ -1229,10 +1229,6 @@ const Login = () => {
 export default Login;
 
 
-
-
-
-
 // ====================RESELLER & DIRECTUSER & RESELLERUSER========================================
 
 // import ResellerLogin from "./components/reseller";

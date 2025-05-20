@@ -130,6 +130,7 @@ export const PermissionRoute = ({ children }) => {
         "/blacklist",
         "/managenotifications",
         "/CreateWhatsappTemplateAdmin",
+        "/manageadduser",
       ],
       roles: ["ADMIN"],
     },
