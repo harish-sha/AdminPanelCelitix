@@ -32,6 +32,10 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { getBaseUrl } from "@/apis/common/common";
 import { Dialog } from "primereact/dialog";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
+import { PiMicrosoftExcelLogo } from "react-icons/pi";
+import { PiFilePdf } from "react-icons/pi";
+import { FaFileWord } from "react-icons/fa6";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -164,6 +168,21 @@ export const ChatScreen = ({
     };
     fetchBaseUrl();
   }, []);
+
+  function getFileType(extension) {
+    switch (extension) {
+      case "xlsx":
+        return <PiMicrosoftExcelLogo size={25}/>;
+      case "csv":
+        return <PiMicrosoftExcelLogo size={25} />;
+      case "docx":
+        return <FaFileWord size={25} />;
+      case "pdf":
+        return <PiFilePdf size={25} />;
+      default:
+        return <InsertDriveFileIcon size={25} />;
+    }
+  }
 
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
@@ -357,9 +376,7 @@ export const ChatScreen = ({
                                 >
                                   <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                     <div className="bg-white p-3 rounded-full shadow-inner text-blue-400">
-                                      <InsertDriveFileIcon
-                                        sx={{ fontSize: 25 }}
-                                      />
+                                       {getFileType(fileType)}
                                     </div>
                                     <div className="flex-1">
                                       <div className="font-medium truncate">
