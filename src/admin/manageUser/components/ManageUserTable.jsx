@@ -1371,6 +1371,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   useEffect(() => {
+    if(!selectedIds) return
     async function fetchMobileNo() {
       try {
         const res = await getMobileNumbers(selectedIds);
