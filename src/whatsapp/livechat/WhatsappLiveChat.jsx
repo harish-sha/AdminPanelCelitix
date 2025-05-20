@@ -206,6 +206,9 @@ export default function WhatsappLiveChat() {
       case "sticker":
         replyType = "sticker";
         break;
+      case "application":
+        replyType = "document";
+        break;
       default:
         replyType = "text";
         break;
