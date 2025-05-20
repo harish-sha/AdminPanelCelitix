@@ -29,6 +29,7 @@ import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import { getBaseUrl } from "@/apis/common/common";
+import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -319,12 +320,18 @@ export const ChatScreen = ({
                                       : ""
                                   }`}
                                 >
-                                  <iframe
-                                    src={mediaUrl}
-                                    className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
-                                    allow="encrypted-media;"
-                                    allowFullScreen
-                                  />
+                                  <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
+                                    <div className="bg-white p-3 rounded-full shadow-inner text-blue-400">
+                                      <InsertDriveFileIcon
+                                        sx={{ fontSize: 25 }}
+                                      />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="font-medium truncate">
+                                        {msg.fileName || "Untitled Document"}
+                                      </div>
+                                    </div>
+                                  </div>
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
                                       {msg?.caption}
