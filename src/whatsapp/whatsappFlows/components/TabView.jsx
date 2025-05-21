@@ -9,20 +9,36 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import UniversalButton from "../../components/UniversalButton";
 
-export default function CustomTabView() {
-  const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", payload: {} },
-  ]);
-  const [activeIndex, setActiveIndex] = useState(0);
-  const [dialogVisible, setDialogVisible] = useState(false);
-  const menuRefs = tabs.map(() => React.createRef());
-  const [screenName, setScreenName] = useState("");
-  const [screenID, setScreenID] = useState("");
-  const [createTab, setCreateTab] = useState("");
+export default function CustomTabView({
+  tabs,
+  setTabs,
+  activeIndex,
+  setActiveIndex,
+  dialogVisible,
+  setDialogVisible,
+  screenName,
+  setScreenName,
+  screenID,
+  setScreenID,
+  randomNumber,
+  setRandomNumber,
+  createTab,
+  setCreateTab,
+  menuRefs
+}) {
+  // const [tabs, setTabs] = useState([
+  //   { title: "Welcome", content: "Welcome", payload: {} },
+  // ]);
+  // const [activeIndex, setActiveIndex] = useState(0);
+  // const [dialogVisible, setDialogVisible] = useState(false);
+  // const menuRefs = tabs.map(() => React.createRef());
+  // const [screenName, setScreenName] = useState("");
+  // const [screenID, setScreenID] = useState("");
+  // const [createTab, setCreateTab] = useState("");
 
-  const [randomNumber, setRandomNumber] = useState(
-    Math.floor(Math.random() * 1000)
-  );
+  // const [randomNumber, setRandomNumber] = useState(
+  //   Math.floor(Math.random() * 1000)
+  // );
 
   const addTab = () => {
     setTabs([
@@ -164,7 +180,9 @@ export default function CustomTabView() {
                 value={screenID}
                 onChange={(e) => {
                   const inputValue = e.target.value.trim();
-                  const formattedID = inputValue.replace(/\s+/g, "_").toLowerCase();
+                  const formattedID = inputValue
+                    .replace(/\s+/g, "_")
+                    .toLowerCase();
                   setScreenID(formattedID);
                 }}
                 required

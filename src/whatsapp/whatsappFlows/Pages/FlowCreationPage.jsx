@@ -21,6 +21,21 @@ const FlowCreationPage = () => {
   const [error, setError] = useState("")
   const [buildFlows, setBuildFlows] = useState("")
 
+  //create new screen
+  const [tabs, setTabs] = useState([
+      { title: "Welcome", content: "Welcome", payload: {} },
+    ]);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [dialogVisible, setDialogVisible] = useState(false);
+    const menuRefs = tabs.map(() => React.createRef());
+    const [screenName, setScreenName] = useState("");
+    const [screenID, setScreenID] = useState("");
+    const [createTab, setCreateTab] = useState("");
+  
+    const [randomNumber, setRandomNumber] = useState(
+      Math.floor(Math.random() * 1000)
+    );
+
   useEffect(() => {
     if (location.state?.flowName) {
       setFlowName(location.state.flowName);
@@ -166,6 +181,21 @@ const FlowCreationPage = () => {
             items={canvasItems}
             setItems={setCanvasItems}
             onEdit={handleEdit}
+            tabs={tabs}
+            setTabs={setTabs}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+            dialogVisible={dialogVisible}
+            setDialogVisible={setDialogVisible}
+            screenName={screenName}
+            setScreenName={setScreenName}
+            screenID={screenID}
+            setScreenID={setScreenID}
+            randomNumber={randomNumber}
+            setRandomNumber={setRandomNumber}
+            createTab={createTab}
+            setCreateTab={setCreateTab}
+            menuRefs={menuRefs}
           />
           {selectedItem && (
             <EditPanel

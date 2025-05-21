@@ -5,11 +5,30 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import toast from "react-hot-toast";
 import TabView from "./TabView";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import EditPanel from "./EditPanel";
 import InputField from "../../components/InputField";
 
-const Canvas = ({ items, setItems, onEdit }) => {
+const Canvas = ({
+  items,
+  setItems,
+  onEdit,
+  tabs,
+  setTabs,
+  activeIndex,
+  setActiveIndex,
+  dialogVisible,
+  setDialogVisible,
+  screenName,
+  setScreenName,
+  screenID,
+  setScreenID,
+  randomNumber,
+  setRandomNumber,
+  createTab,
+  setCreateTab,
+  menuRefs
+}) => {
   const [, drop] = useDrop(() => ({
     accept: [
       "heading",
@@ -80,13 +99,13 @@ const Canvas = ({ items, setItems, onEdit }) => {
               />
             </IconButton>
             <IconButton onClick={() => handleDelete(index)} size="small">
-              <DeleteForeverOutlinedIcon fontSize="small" className="text-red-400" />
+              <DeleteForeverOutlinedIcon
+                fontSize="small"
+                className="text-red-400"
+              />
             </IconButton>
           </Box>
         </Box>
-
-
-
 
         <InputField
           // label="Enter value"
@@ -156,7 +175,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
       case "photo":
         return "Photo";
       case "document":
-        return "Document"
+        return "Document";
       case "ifelse":
         return "IfElse";
       case "image":
@@ -191,9 +210,25 @@ const Canvas = ({ items, setItems, onEdit }) => {
       className="relative shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
     >
       {/* Tabs for multiple screens */}
-      <TabView />
+      <TabView
+        tabs={tabs}
+        setTabs={setTabs}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
+        dialogVisible={dialogVisible}
+        setDialogVisible={setDialogVisible}
+        screenName={screenName}
+        setScreenName={setScreenName}
+        screenID={screenID}
+        setScreenID={setScreenID}
+        randomNumber={randomNumber}
+        setRandomNumber={setRandomNumber}
+        createTab={createTab}
+        setCreateTab={setCreateTab}
+        menuRefs={menuRefs}
+      />
       {/* Render all items on the canvas */}
-      <div className="w-1/3 ml-5 " >
+      <div className="w-1/3 ml-5 ">
         {items.map((item, index) => (
           <DraggableItem key={item.id} item={item} index={index} />
         ))}
