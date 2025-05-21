@@ -24,7 +24,7 @@ export default function CustomTabView({
   setRandomNumber,
   createTab,
   setCreateTab,
-  menuRefs
+  menuRefs,
 }) {
   // const [tabs, setTabs] = useState([
   //   { title: "Welcome", content: "Welcome", payload: {} },
@@ -43,7 +43,7 @@ export default function CustomTabView({
   const addTab = () => {
     setTabs([
       ...tabs,
-      { title: screenName, content: `Content for ${screenName}` },
+      { title: screenName, content: `Content for ${screenName}`, payload: [] },
     ]);
     setActiveIndex(tabs.length);
   };

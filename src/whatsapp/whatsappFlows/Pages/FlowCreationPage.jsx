@@ -5,36 +5,36 @@ import Canvas from "../components/Canvas";
 import MobilePanel from "../components/MobilePanel";
 import EditPanel from "../components/EditPanel";
 import UniversalButton from "../../components/UniversalButton";
-import { Box, Typography } from "@mui/material"
-import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import SettingsOutlinedIcon from '@mui/icons-material/SettingsOutlined';
-import ErrorOutlineOutlinedIcon from '@mui/icons-material/ErrorOutlineOutlined';
-import ConstructionOutlinedIcon from '@mui/icons-material/ConstructionOutlined';
+import { Box, Typography } from "@mui/material";
+import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
 
 const FlowCreationPage = () => {
   const location = useLocation();
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
-  const [save, setSave] = useState("")
-  const [setting, setSetting] = useState("")
-  const [error, setError] = useState("")
-  const [buildFlows, setBuildFlows] = useState("")
+  const [save, setSave] = useState("");
+  const [setting, setSetting] = useState("");
+  const [error, setError] = useState("");
+  const [buildFlows, setBuildFlows] = useState("");
 
   //create new screen
   const [tabs, setTabs] = useState([
-      { title: "Welcome", content: "Welcome", payload: {} },
-    ]);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const menuRefs = tabs.map(() => React.createRef());
-    const [screenName, setScreenName] = useState("");
-    const [screenID, setScreenID] = useState("");
-    const [createTab, setCreateTab] = useState("");
-  
-    const [randomNumber, setRandomNumber] = useState(
-      Math.floor(Math.random() * 1000)
-    );
+    { title: "Welcome", content: "Welcome", payload: [] },
+  ]);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [dialogVisible, setDialogVisible] = useState(false);
+  const menuRefs = tabs.map(() => React.createRef());
+  const [screenName, setScreenName] = useState("");
+  const [screenID, setScreenID] = useState("");
+  const [createTab, setCreateTab] = useState("");
+
+  const [randomNumber, setRandomNumber] = useState(
+    Math.floor(Math.random() * 1000)
+  );
 
   useEffect(() => {
     if (location.state?.flowName) {
@@ -43,7 +43,17 @@ const FlowCreationPage = () => {
   }, [location.state]);
 
   const handleAddItem = (item) => {
-    setCanvasItems((prev) => [...prev, { type: item.type, value: "" }]);
+
+    // setTabs((prev)=>)
+    const newTabs = [...tabs];
+    newTabs[activeIndex] = {
+      ...newTabs[activeIndex],
+      payload: [
+        ...newTabs[activeIndex].payload,
+        { type: item.type, value: "" },
+      ],
+    };
+    setTabs(newTabs);
   };
 
   const handleEdit = (index) => {
@@ -148,30 +158,40 @@ const FlowCreationPage = () => {
         </span>
         <div className="flex items-center gap-3">
           <UniversalButton
-            icon={<SaveOutlinedIcon
-              sx={{
-                fontSize: "1.3rem",
-              }} />}
+            icon={
+              <SaveOutlinedIcon
+                sx={{
+                  fontSize: "1.3rem",
+                }}
+              />
+            }
             label="save"
           />
           <UniversalButton
-            icon={<SettingsOutlinedIcon
-              sx={{
-                fontSize: "1.3rem",
-              }} />}
-            label="Settings" />
+            icon={
+              <SettingsOutlinedIcon
+                sx={{
+                  fontSize: "1.3rem",
+                }}
+              />
+            }
+            label="Settings"
+          />
           <UniversalButton
-            icon={<ConstructionOutlinedIcon
-              sx={{
-                fontSize: "1.3rem",
-              }} />}
+            icon={
+              <ConstructionOutlinedIcon
+                sx={{
+                  fontSize: "1.3rem",
+                }}
+              />
+            }
             label="Build Flow"
           />
         </div>
       </div>
       <div className="flex gap-3 items-start mt-4">
         {/* Siddebar */}
-        <div className="flex-1" >
+        <div className="flex-1">
           <Sidebar onAdd={handleAddItem} flexGrow={1} />
         </div>
 

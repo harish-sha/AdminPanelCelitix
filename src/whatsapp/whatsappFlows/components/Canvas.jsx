@@ -27,7 +27,7 @@ const Canvas = ({
   setRandomNumber,
   createTab,
   setCreateTab,
-  menuRefs
+  menuRefs,
 }) => {
   const [, drop] = useDrop(() => ({
     accept: [
@@ -229,8 +229,10 @@ const Canvas = ({
       />
       {/* Render all items on the canvas */}
       <div className="w-1/3 ml-5 ">
-        {items.map((item, index) => (
-          <DraggableItem key={item.id} item={item} index={index} />
+        {tabs[activeIndex]?.payload?.map((item, index) => (
+          <div key={index}>
+            <DraggableItem key={item.id} item={item} index={index} />
+          </div>
         ))}
       </div>
       {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
