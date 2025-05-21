@@ -43,7 +43,6 @@ const FlowCreationPage = () => {
   }, [location.state]);
 
   const handleAddItem = (item) => {
-
     // setTabs((prev)=>)
     const newTabs = [...tabs];
     newTabs[activeIndex] = {
@@ -55,40 +54,19 @@ const FlowCreationPage = () => {
     };
     setTabs(newTabs);
   };
-
-  useEffect(()=>{
-    console.log(tabs);
-  },[tabs])
-
+  
   const handleEdit = (index) => {
-    // if (canvasItems[index]) {
-    //   setSelectedItem({ ...canvasItems[index], index });
-    // } else {
-    //   console.error("Invalid index passed to handleEdit:", index);
-    // }
-    tabs[activeIndex].payload[index]
+    tabs[activeIndex].payload[index];
     setSelectedItem({ ...tabs[activeIndex].payload[index], index });
   };
 
   const handleSave = (updatedData) => {
-    // setCanvasItems((prevItems) => {
-    //   const newItems = [...prevItems];
-    //   if (updatedData.index !== undefined && newItems[updatedData.index]) {
-    //     newItems[updatedData.index] = {
-    //       ...newItems[updatedData.index],
-    //       value: updatedData.value || "",
-    //       options: updatedData.options || [],
-    //       checked: updatedData.checked || [],
-    //       selectedOption: updatedData.selectedOption || "",
-    //     };
-    //   } else {
-    //     console.error("Invalid index in updatedData:", updatedData.index);
-    //   }
-    //   return newItems;
-    // });
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
-      if (updatedData.index !== undefined && newTabs[activeIndex].payload[updatedData.index]) {
+      if (
+        updatedData.index !== undefined &&
+        newTabs[activeIndex].payload[updatedData.index]
+      ) {
         newTabs[activeIndex].payload[updatedData.index] = {
           ...newTabs[activeIndex].payload[updatedData.index],
           value: updatedData.value || "",
@@ -100,7 +78,7 @@ const FlowCreationPage = () => {
         console.error("Invalid index in updatedData:", updatedData.index);
       }
       return newTabs;
-    })
+    });
     setSelectedItem(null);
   };
 
@@ -250,14 +228,16 @@ const FlowCreationPage = () => {
         <div className="flex-1">
           {/* Mobile Panel Preview*/}
           <MobilePanel
-            items={canvasItems}
-            onUpdateItem={(index, updater) =>
-              setCanvasItems((prevItems) => {
-                const updatedItems = [...prevItems];
-                updatedItems[index] = updater(updatedItems[index]);
-                return updatedItems;
-              })
-            }
+            items={tabs[activeIndex].payload}
+            onUpdateItem={(index, updater) => {
+              setTabs((prevTabs) => {
+                const newTabs = [...prevTabs];
+                newTabs[activeIndex].payload[index] = updater(
+                  newTabs[activeIndex].payload[index]
+                );
+                return newTabs;
+              });
+            }}
           />
         </div>
       </div>
