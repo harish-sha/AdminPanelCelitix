@@ -17,7 +17,7 @@ import {
 } from "@/apis/whatsapp/whatsapp";
 import toast from "react-hot-toast";
 import { ConfigureDialog } from "./components/configureDialog";
-import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
+// import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
 
 const MotionPaper = motion(Paper);
 
@@ -121,6 +121,7 @@ const WhatsappLiveChatSettings = () => {
         const res = await fetchTemplatesValue(basicDetails.template);
         const variable = extractVariablesFromText(res?.message);
         const btnVar = extractVariablesFromText(res?.url);
+        // setBasicDetails((prev) => ({ ...prev, message: res?.message }));
         setVariablesData({
           length: variable.length,
           data: variable,
@@ -137,6 +138,7 @@ const WhatsappLiveChatSettings = () => {
 
     handleFetchTemplateValues();
   }, [basicDetails]);
+
 
   function extractVariablesFromText(text) {
     const regex = /{{(\d+)}}/g;
@@ -216,7 +218,7 @@ const WhatsappLiveChatSettings = () => {
       );
     }
 
-    specificTemplate.message = variablemessage;
+    let message = specificTemplate.message || variablemessage;
     specificTemplate.urlValue = btnVariable;
 
     const wabaSrno = wabaState.waba.find(
@@ -227,7 +229,7 @@ const WhatsappLiveChatSettings = () => {
       wabaNumber: wabaState.selected,
       wabaSrno,
       ...basicDetails,
-      message: variablemessage || basicDetails?.message,
+      message: variablemessage || message,
       tempJson: JSON.stringify(specificTemplate),
     };
 
