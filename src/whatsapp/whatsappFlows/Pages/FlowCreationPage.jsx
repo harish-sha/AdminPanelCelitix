@@ -56,20 +56,41 @@ const FlowCreationPage = () => {
     setTabs(newTabs);
   };
 
+  useEffect(()=>{
+    console.log(tabs);
+  },[tabs])
+
   const handleEdit = (index) => {
-    if (canvasItems[index]) {
-      setSelectedItem({ ...canvasItems[index], index });
-    } else {
-      console.error("Invalid index passed to handleEdit:", index);
-    }
+    // if (canvasItems[index]) {
+    //   setSelectedItem({ ...canvasItems[index], index });
+    // } else {
+    //   console.error("Invalid index passed to handleEdit:", index);
+    // }
+    tabs[activeIndex].payload[index]
+    setSelectedItem({ ...tabs[activeIndex].payload[index], index });
   };
 
   const handleSave = (updatedData) => {
-    setCanvasItems((prevItems) => {
-      const newItems = [...prevItems];
-      if (updatedData.index !== undefined && newItems[updatedData.index]) {
-        newItems[updatedData.index] = {
-          ...newItems[updatedData.index],
+    // setCanvasItems((prevItems) => {
+    //   const newItems = [...prevItems];
+    //   if (updatedData.index !== undefined && newItems[updatedData.index]) {
+    //     newItems[updatedData.index] = {
+    //       ...newItems[updatedData.index],
+    //       value: updatedData.value || "",
+    //       options: updatedData.options || [],
+    //       checked: updatedData.checked || [],
+    //       selectedOption: updatedData.selectedOption || "",
+    //     };
+    //   } else {
+    //     console.error("Invalid index in updatedData:", updatedData.index);
+    //   }
+    //   return newItems;
+    // });
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      if (updatedData.index !== undefined && newTabs[activeIndex].payload[updatedData.index]) {
+        newTabs[activeIndex].payload[updatedData.index] = {
+          ...newTabs[activeIndex].payload[updatedData.index],
           value: updatedData.value || "",
           options: updatedData.options || [],
           checked: updatedData.checked || [],
@@ -78,8 +99,8 @@ const FlowCreationPage = () => {
       } else {
         console.error("Invalid index in updatedData:", updatedData.index);
       }
-      return newItems;
-    });
+      return newTabs;
+    })
     setSelectedItem(null);
   };
 

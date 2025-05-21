@@ -60,7 +60,15 @@ const Canvas = ({
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      newTabs[activeIndex] = {
+        ...newTabs[activeIndex],
+        payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+      };
+      return newTabs;
+    });
+
     toast.success("Item deleted successfully");
   };
 

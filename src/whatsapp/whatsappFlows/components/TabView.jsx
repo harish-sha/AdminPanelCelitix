@@ -49,6 +49,7 @@ export default function CustomTabView({
   };
 
   const removeTab = (index) => {
+    if(tabs.length === 1) return
     const updatedTabs = tabs.filter((_, i) => i !== index);
     setTabs(updatedTabs);
     if (activeIndex >= updatedTabs.length) {
