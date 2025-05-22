@@ -90,7 +90,7 @@ const FlowCreationPage = () => {
 
       const params = {
         name: state?.flowName,
-        category: state?.selectedCategory,
+        category: state?.selectCategories,
         waba: state?.selectedWaba,
         id: "",
       };
