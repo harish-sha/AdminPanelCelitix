@@ -171,8 +171,8 @@ const ResellerLogin = () => {
         userId: username,
         password,
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        // domain: "reseller.alertsnow.in",
-        domain: domain
+        domain: "reseller.alertsnow.in",
+        // domain: domain
       };
 
       const res = await login(payload);
