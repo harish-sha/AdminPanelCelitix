@@ -77,10 +77,13 @@ import {
   getRCSRateBySrno,
   getRCSRateData,
   getSmsRateByUser,
+  getVoiceRateBySrno,
+  getVoiceRateByUser,
   getWhatsappRateBySrno,
   getWhatsappRateData,
   saveEditRcsRate,
   saveEditWhatsappRate,
+  saveVoiceRate,
 } from "@/apis/admin/userRate";
 import { getCountryList } from "@/apis/common/common";
 import { DataTable } from "@/components/layout/DataTable";
@@ -387,6 +390,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   // whatsapp Start
   const [whatsapprows, setWhatsapprows] = useState([]);
   const [rcsrows, setRcsrows] = useState([]);
+  const [voicerowa, setVoicerows] = useState([]);
   const [whatsappStatus, setWhatsappStatus] = useState("disable");
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
@@ -454,6 +458,26 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       });
 
       setRcsrows(formatted);
+    } else {
+      console.warn("No valid data returned from API");
+    }
+  };
+  const fetchObdRateData = async (userSrno) => {
+    const res = await getVoiceRateBySrno(userSrno);
+
+    const list = Array.isArray(res) ? res : res?.data;
+
+    if (Array.isArray(list)) {
+      const formatted = list.map((item, i) => {
+        return {
+          id: i + 1,
+          sn: i + 1,
+          srno: item.sr_no,
+          ...item,
+        };
+      });
+
+      setVoicerows(formatted);
     } else {
       console.warn("No valid data returned from API");
     }
@@ -1072,6 +1096,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       countryListRes,
       whatsappRateRes,
       rcsRateRes,
+      obdRateRes,
     ] = await Promise.all([
       getTransServices(),
       getPromoServices(),
@@ -1079,6 +1104,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       getCountryList(),
       getWhatsappRateData(srNo),
       getRCSRateData(srNo),
+      getVoiceRateByUser(srNo),
     ]);
 
     // Country List
@@ -1131,6 +1157,17 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
+
+    const voiceRows = Array.isArray(obdRateRes)
+      ? obdRateRes.map((item, index) => ({
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          ...item,
+        }))
+      : [];
+
+    obdRateRes.length > 0 && setVoicerows(voiceRows);
   };
 
   const handleApikey = (id, name) => {
@@ -1320,7 +1357,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   async function handleRcsEdit(srno) {
     const res = await getRCSRateBySrno(srno);
-    console.log("res",res);
+    console.log("res", res);
 
     // const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -1378,6 +1415,32 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     },
   ];
 
+  const voiceCols = [
+    { field: "sn", headerName: "S.No", flex: 0.5 },
+    { field: "country_name", headerName: "Country", flex: 1 },
+    { field: "rate", headerName: "Rate", flex: 1 },
+    { field: "update_time", headerName: "Updated On", flex: 1 },
+    {
+      field: "actions",
+      headerName: "Actions",
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip arrow title="Edit Rate" placement="top">
+            <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
+              <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="Delete Rate" placement="top">
+            <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
+              <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
+    },
+  ];
+
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
         id: i + 1,
@@ -1392,6 +1455,30 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   //   country: "India",
   //   rate: "0.30",
   // }));
+
+  async function handleSaveOBDPricing() {
+    try {
+      const payload = {
+        srNo: "",
+        userSrNo: currentUserSrno,
+        voicePlan: obdrateStatus === "enable" ? "1" : "2",
+        voiceRate: 0,
+        voiceRate2: 0,
+      };
+      obdrateStatus === "enable"
+        ? (payload.voiceRate = obdrate)
+        : (payload.voiceRate2 = obdrate);
+      const res = await saveVoiceRate(payload);
+      console.log(res);
+      if (!res?.message.includes("successfully")) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      // await fetchRcsRateData(currentUserSrno);
+    } catch (e) {
+      toast.error("Error in saving obd pricing");
+    }
+  }
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -3119,7 +3206,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* OBD */}
           <CustomTabPanel value={value} index={3}>
             <>
-              <div className="flex mb-2 lg:w-100 md:w-100">
+              {/* <div className="flex mb-2 lg:w-100 md:w-100">
                 <Checkbox
                   id="obdstatusobd"
                   name="obdstatusobd"
@@ -3154,7 +3241,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   onChange={(value) => setPromoobd(value)}
                   disabled={!promocheckobd}
                 />
-              </div>
+              </div> */}
 
               <div className=" lg:w-100 md:w-100">
                 <div className="flex flex-wrap gap-4 my-2 lg:w-100 md:w-100 ">
@@ -3191,23 +3278,63 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     </label>
                   </div>
                 </div>
-                <InputField
-                  id="transratesobd"
-                  name="transratesobd"
-                  label="Rate"
-                  placeholder="(INR / Credit)"
-                  value={obdrate}
-                  onChange={(e) => validateInput(e.target.value, setObdRate)}
-                  type="number"
-                />
+                <div className="flex  gap-5 items-center justify-center mt-3">
+                  <InputField
+                    id="transratesobd"
+                    name="transratesobd"
+                    label="Rate"
+                    placeholder="(INR / Credit)"
+                    value={obdrate}
+                    onChange={(e) => validateInput(e.target.value, setObdRate)}
+                    type="number"
+                  />
+                 <div className="mt-[1.5rem]">
+                   <UniversalButton
+                    label="Save"
+                    id="obdRateSave"
+                    name="obdRateSave"
+                    onClick={handleSaveOBDPricing}
+                  />
+                 </div>
+                </div>
               </div>
-              <div className="flex justify-center mt-3">
-                <UniversalButton
-                  label="Save"
-                  id="whatsappsave"
-                  name="whatsappsave"
+              <div className="flex justify-center mt-3"></div>
+
+              <Paper sx={{ height: 250 }} id={id} name={name}>
+                <DataGrid
+                  id={id}
+                  name={name}
+                  rows={voicerowa}
+                  columns={voiceCols}
+                  initialState={{ pagination: { paginationModel } }}
+                  pageSizeOptions={[10, 20, 50]}
+                  pagination
+                  paginationModel={paginationModel}
+                  onPaginationModelChange={setPaginationModel}
+                  rowHeight={45}
+                  slots={{
+                    footer: RcsCustomFooter,
+                    noRowsOverlay: CustomNoRowsOverlay,
+                  }}
+                  onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+                  disableRowSelectionOnClick
+                  disableColumnResize
+                  disableColumnMenu
+                  sx={{
+                    border: 0,
+                    "& .MuiDataGrid-cell": { outline: "none !important" },
+                    "& .MuiDataGrid-columnHeaders": {
+                      color: "#193cb8",
+                      fontSize: "14px",
+                      fontWeight: "bold !important",
+                    },
+                    "& .MuiDataGrid-row--borderBottom": {
+                      backgroundColor: "#e6f4ff !important",
+                    },
+                    "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
+                  }}
                 />
-              </div>
+              </Paper>
             </>
           </CustomTabPanel>
 
