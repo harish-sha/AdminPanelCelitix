@@ -464,23 +464,35 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
   const fetchObdRateData = async (userSrno) => {
     const res = await getVoiceRateBySrno(userSrno);
-
-    const list = Array.isArray(res) ? res : res?.data;
-
-    if (Array.isArray(list)) {
-      const formatted = list.map((item, i) => {
-        return {
-          id: i + 1,
-          sn: i + 1,
-          srno: item.sr_no,
-          ...item,
-        };
-      });
-
-      setVoicerows(formatted);
-    } else {
-      console.warn("No valid data returned from API");
+    if(res?.message?.includes("Record not found")){
+      return
     }
+
+    const formatted = [
+      {
+        id: 1,
+        sn: 1,
+        srno: res.srNo,
+        ...res,
+      },
+    ];
+    setVoicerows(formatted);
+
+    // const list = Array.isArray(res) ? res : res?.data;
+
+    // if (Array.isArray(list)) {
+    //   const formatted = list.map((item, i) => {
+    //     return {
+    //       id: i + 1,
+    //       sn: i + 1,
+    //       srno: item.sr_no,
+    //       ...item,
+    //     };
+    //   });
+
+    // } else {
+    //   console.warn("No valid data returned from API");
+    // }
   };
 
   const handleWhatsappAddCredit = async () => {
@@ -1158,16 +1170,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
-    const voiceRows = Array.isArray(obdRateRes)
-      ? obdRateRes.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          srno: item.sr_no,
-          ...item,
-        }))
-      : [];
+    const voiceRows = [
+      {
+        id: 1,
+        sn: 1,
+        srno: obdRateRes.srNo,
+        ...obdRateRes,
+      },
+    ];
 
-    obdRateRes.length > 0 && setVoicerows(voiceRows);
+    obdRateRes && setVoicerows(voiceRows);
   };
 
   const handleApikey = (id, name) => {
@@ -1417,9 +1429,32 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const voiceCols = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "country_name", headerName: "Country", flex: 1 },
-    { field: "rate", headerName: "Rate", flex: 1 },
-    { field: "update_time", headerName: "Updated On", flex: 1 },
+    {
+      field: "type",
+      headerName: "Type",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.voicePlan === 1) {
+          return "15sec";
+        } else {
+          return "30sec";
+        }
+      },
+    },
+
+    {
+      field: "rate",
+      headerName: "Rate",
+      flex: 1,
+      renderCell: (params) => {
+        if (params.row.voicePlan === 2) {
+          return params.row.voiceRate2;
+        } else {
+          return params.row.voiceRate;
+        }
+      },
+    },
+    { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
@@ -1475,6 +1510,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       }
       toast.success(res.message);
       // await fetchRcsRateData(currentUserSrno);
+      await fetchObdRateData(currentUserSrno);
     } catch (e) {
       toast.error("Error in saving obd pricing");
     }
@@ -3288,14 +3324,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     onChange={(e) => validateInput(e.target.value, setObdRate)}
                     type="number"
                   />
-                 <div className="mt-[1.5rem]">
-                   <UniversalButton
-                    label="Save"
-                    id="obdRateSave"
-                    name="obdRateSave"
-                    onClick={handleSaveOBDPricing}
-                  />
-                 </div>
+                  <div className="mt-[1.5rem]">
+                    <UniversalButton
+                      label="Save"
+                      id="obdRateSave"
+                      name="obdRateSave"
+                      onClick={handleSaveOBDPricing}
+                    />
+                  </div>
                 </div>
               </div>
               <div className="flex justify-center mt-3"></div>

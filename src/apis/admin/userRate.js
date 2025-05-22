@@ -76,7 +76,7 @@ export const getVoiceRateBySrno = async (srNo) => {
 // get voice rate data by user
 export const getVoiceRateByUser = async (userSrno) => {
   return await fetchWithAuth(`/voice/getVoiceRateByUser?userSrno=${userSrno}`, {
-    method: "POST",
+    method: "GET",
   });
 };
 
