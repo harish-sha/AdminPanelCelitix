@@ -437,6 +437,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Please fill all the fields.");
       return;
     }
+    console.log("dd",currentUserSrno)
 
     const payload = {
       srno: "",
@@ -1012,7 +1013,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   setAssignService(false)
   };
 
-  const handleAssign = async (_, srNo) => {
+  const handleAssign = async (srNo) => {
     setassignRate(true);
     setCurrentUserSrno(srNo);
 
