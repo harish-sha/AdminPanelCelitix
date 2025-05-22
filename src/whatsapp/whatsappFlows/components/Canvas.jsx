@@ -4,8 +4,31 @@ import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import toast from "react-hot-toast";
+import TabView from "./TabView";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import EditPanel from "./EditPanel";
+import InputField from "../../components/InputField";
 
-const Canvas = ({ items, setItems, onEdit }) => {
+const Canvas = ({
+  items,
+  setItems,
+  onEdit,
+  tabs,
+  setTabs,
+  activeIndex,
+  setActiveIndex,
+  dialogVisible,
+  setDialogVisible,
+  screenName,
+  setScreenName,
+  screenID,
+  setScreenID,
+  randomNumber,
+  setRandomNumber,
+  createTab,
+  setCreateTab,
+  menuRefs,
+}) => {
   const [, drop] = useDrop(() => ({
     accept: [
       "heading",
@@ -37,7 +60,15 @@ const Canvas = ({ items, setItems, onEdit }) => {
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      newTabs[activeIndex] = {
+        ...newTabs[activeIndex],
+        payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+      };
+      return newTabs;
+    });
+
     toast.success("Item deleted successfully");
   };
 
@@ -55,7 +86,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
           backgroundColor: getBackgroundColor(item.type),
         }}
         // className="fields"
-        className="w-[450px] p-2 mb-2 rounded-lg shadow-md"
+        className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
       >
         <Box
           style={{
@@ -65,7 +96,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
             width: "100%",
           }}
         >
-          <Typography variant="subtitle2" style={{ marginLeft: 8 }}>
+          <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
             {getLabel(item.type)}
           </Typography>
           <Box>
@@ -76,21 +107,25 @@ const Canvas = ({ items, setItems, onEdit }) => {
               />
             </IconButton>
             <IconButton onClick={() => handleDelete(index)} size="small">
-              <DeleteOutlineIcon fontSize="small" />
+              <DeleteForeverOutlinedIcon
+                fontSize="small"
+                className="text-red-400"
+              />
             </IconButton>
           </Box>
         </Box>
 
-        <TextField
-          label="Enter value"
-          variant="outlined"
-          fullWidth
+        <InputField
+          // label="Enter value"
+          // variant="outlined"
+          // fullWidth
+          // className="text-field"
           value={item.value}
           onChange={(e) => handleInputChange(index, e.target.value)}
           multiline={item.type === "textArea"}
           rows={item.type === "textArea" ? 4 : undefined}
           // disabled={item.type !== "textInput" && item.type !== "textArea"}
-          disabled
+          readOnly
         />
       </Paper>
     );
@@ -128,35 +163,87 @@ const Canvas = ({ items, setItems, onEdit }) => {
       case "textbody":
         return "Text Body";
       case "textcaption":
-        return "Text Caption";
+        return "Textcaption";
       case "textInput":
-        return "Text Input";
+        return "TextInput";
       case "textArea":
-        return "Text Area";
+        return "TextArea";
       case "radioButton":
-        return "Radio Button";
+        return "RadioButton";
       case "checkBox":
-        return "Check Box";
+        return "CheckBox";
       case "dropDown":
-        return "Drop Down";
+        return "DropDown";
+      case "footerbutton":
+        return "FooterButton";
+      case "embeddedlink":
+        return "EmbeddedLink";
+      case "optin":
+        return "OptIn";
+      case "photo":
+        return "Photo";
+      case "document":
+        return "Document";
+      case "ifelse":
+        return "IfElse";
+      case "image":
+        return "Image";
+      case "date":
+        return "Date";
+      case "userdetail":
+        return "UserDetail";
       default:
         return "";
     }
   };
 
   return (
+    // <Box
+    //   ref={drop}
+    //   className="relative flex-1 p-2 shadow-xl overflow-auto rounded-xl bg-white mt-2 mr-3 h-[900px] w-[500px]"
+    // >
+    //   <div className="text-md tracking-wide font-semibold mb-2 text-center shadow-md rounded-md h-full">
+    //     <div><TabView /></div>
+    //     <div className="w-2/3">
+    //       {items.map((item, index) => (
+    //         <DraggableItem key={item.id} item={item} index={index} />
+    //       ))}
+
+    //     </div>
+    //     <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div>
+    //   </div>
+    // </Box>
     <div
       ref={drop}
       className="relative shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
     >
       {/* Tabs for multiple screens */}
-      <div className="border-b shadow-sm px-2 py-2 w-full bg-blue-50">Screens</div>
+      <TabView
+        tabs={tabs}
+        setTabs={setTabs}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
+        dialogVisible={dialogVisible}
+        setDialogVisible={setDialogVisible}
+        screenName={screenName}
+        setScreenName={setScreenName}
+        screenID={screenID}
+        setScreenID={setScreenID}
+        randomNumber={randomNumber}
+        setRandomNumber={setRandomNumber}
+        createTab={createTab}
+        setCreateTab={setCreateTab}
+        menuRefs={menuRefs}
+      />
       {/* Render all items on the canvas */}
-      <div className="px-2" >
-        {items.map((item, index) => (
-          <DraggableItem key={item.id} item={item} index={index} />
+      <div className="w-1/3 ml-5 ">
+        {tabs[activeIndex]?.payload?.map((item, index) => (
+          <div key={index}>
+            <DraggableItem key={item.id} item={item} index={index} />
+          </div>
         ))}
       </div>
+      {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
     </div>
   );
 };

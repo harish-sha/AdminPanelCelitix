@@ -16,6 +16,7 @@ export const Variables = ({
   messageContent,
   setMessageContent,
   selectedCardIndex,
+  setIsRefresh
 }) => {
   const [variablesData, setVariablesData] = useState([]);
   const MAX_LENGTH = 2500;
@@ -93,7 +94,7 @@ export const Variables = ({
     [messageContent, setMessageContent, MAX_LENGTH]
   );
 
-  const insertEmojiAtIndex = () => {};
+  const insertEmojiAtIndex = () => { };
 
   const handleEmojiClick = useCallback(
     (emoji) => {
@@ -131,6 +132,7 @@ export const Variables = ({
     setUserVariables((prevVars) => [...prevVars, variableInput]);
     localStorage.setItem("variables", JSON.stringify(updatedVariables));
     setVariableInput("");
+    setIsRefresh(true);
   };
 
   useEffect(() => {

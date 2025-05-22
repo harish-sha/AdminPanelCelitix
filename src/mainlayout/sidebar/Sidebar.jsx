@@ -104,7 +104,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Home",
       type: "single",
       to: "/",
+      roles: ["ADMIN", "AGENT"],
     },
+    // {
+    //   id: "",
+    //   name: "ResellerDash",
+    //   icon: <FaHome />,
+    //   label: "ResellerDash",
+    //   type: "single",
+    //   to: "/resellerdash",
+    // },
     // {
     //     name: 'Dummy',
     //     icon: <BlockOutlinedIcon fontSize='20' />,
@@ -113,7 +122,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     to: "/dummy",
     // },
     {
-      id: "",
+      id: "1",
       name: "SMS",
       icon: <LuMessageSquareMore />,
       label: "SMS",
@@ -122,13 +131,22 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/sendsms", label: "Send SMS" },
         { to: "/smsreports", label: "Reports" },
         { to: "/smsdlttemplates", label: "DLT Template" },
-        // { to: "/smswishmanagement", label: "Wish Management" },
+        {
+          to: "/smscampaigndetaillogs",
+          label: "Sms Details Logs",
+          isHide: true,
+        },
+        {
+          to: "/smsAttachmentdetaillog",
+          label: "Sms Details Logs",
+          isHide: true,
+        },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
       name: "Two Way SMS",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={twoway} className="w-4 h-4" />,
 
       label: "Two Way SMS",
@@ -138,11 +156,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/twowayreports", label: "Reports" },
         { to: "/twowayintegration", label: "Integration" },
       ],
+      roles: ["ADMIN"],
     },
     {
-      id: "",
+      id: "3",
       name: "RCS",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={rcsicon} className="w-4 h-4" />,
       label: "RCS",
       type: "dropdown",
@@ -152,11 +170,21 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/rcslivechats", label: "Live Chats" },
         { to: "/rcssuggestionreport", label: "Suggestion Report" },
         { to: "/rcsdeliveryreport", label: "Delivery Report" },
-        // { to: '/rcsmanagebot', label: 'Manage Bot' },
+        {
+          to: "/rcsdeliverycampaigndetails",
+          label: "Delivery Campaign Report",
+          isHide: true,
+        },
+        {
+          to: "/rcsaddtemplatercs",
+          label: "RcsAddTemplate",
+          isHide: true,
+        },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
-      id: "",
+      id: "2",
       name: "WhatsApp",
       icon: <FaWhatsapp />,
       label: "WhatsApp",
@@ -175,12 +203,16 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
         { to: "/wwhatsappflows", label: "Flows" },
+        { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
+        { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+        { to: "/createtemplate", label: "Create Bot", isHide: true },
+        { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
       name: "Number Lookup",
-      // icon: <LuMessageSquareMore />,
       icon: <img src={numberlookup} className="w-4 h-4" />,
       label: "Number Lookup",
       type: "dropdown",
@@ -188,6 +220,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/hlrlookup", label: "HLR Lookup" },
         { to: "/lookupreports", label: "HLR Lookup Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -199,6 +232,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/authsettings", label: "Settings" },
         { to: "/authreports", label: "Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
@@ -210,27 +244,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/emailtemplate", label: "Email Template" },
         { to: "/emailreports", label: "Reports" },
       ],
+      roles: ["ADMIN"],
     },
     {
-      id: "",
+      id: "7",
       name: "OBD",
-      // icon: <MdOutlineEmail />,
       icon: <img src={obd} className="w-4 h-4" />,
       label: "OBD",
       type: "dropdown",
       links: [
-        { to: "/obdcreatecampaign", label: "Create Campaign" },
-        { to: "/obdmanagecampaign", label: "Reports" },
-        { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
-        { to: "/obdIntegration", label: "Integration" },
+        // { to: "/obdcreatecampaign", label: "Create Campaign" },
+        // { to: "/obdmanagecampaign", label: "Reports" },
+        // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+        // { to: "/obdIntegration", label: "Integration" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "IBD",
-      // icon: <MdOutlineEmail />,
       icon: <img src={ibd} className="w-4 h-4" />,
-
       label: "IBD",
       type: "dropdown",
       links: [
@@ -239,11 +272,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/ibdivrflow", label: "IVR Flow" },
         { to: "/ibdsettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "Missed Call",
-      // icon: <MdOutlineEmail />,
       icon: <img src={missedcall} className="w-4 h-4" />,
       label: "Missed Call",
       type: "dropdown",
@@ -251,11 +284,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/missedcallhistory", label: "Call History" },
         { to: "/missedcallsettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     {
       id: "",
       name: "Click-2-Call",
-      // icon: <MdOutlineEmail />,
       icon: <img src={clicktwocall} className="w-4 h-4" />,
 
       label: "Click-2-Call",
@@ -264,6 +297,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/clicktohistory", label: "Call History" },
         { to: "/clicktosettings", label: "Settings" },
       ],
+      roles: ["ADMIN"],
     },
     // {
     //     name: 'settings',
@@ -284,8 +318,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/callback", label: "Call Back" },
-        { to: "/addcallback", label: "Add Call Back" },
+        { to: "/addcallback", label: "Add Call Back", isHide: true },
+        { to: "/editcallback", label: "Edit Call Back", isHide: true },
       ],
+      roles: [],
     },
     {
       id: "",
@@ -295,33 +331,34 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       type: "dropdown",
       links: [
         { to: "/recharge", label: "Recharge" },
-        // { to: '/transactions', label: 'Transactions' },
       ],
+      roles: ["ADMIN"],
     },
-    {
-      id: "",
-      name: "admin",
-      icon: <IoPersonOutline />,
-      label: "Admin",
-      type: "dropdown",
-      links: [
-        { to: "/manageuser", label: "Manage User" },
-        { to: "/managedlttemplate", label: "Manage DLT Template" },
-        { to: "/rcsmanagebot", label: "Manage Bot" },
-        { to: "/managevoiceclips", label: "Manage Voice Clips" },
-        { to: "/manageplan", label: "Manage Plan" },
-        { to: "/accountmanager", label: "Account Manager" },
-        { to: "/graphmain", label: "Graph Main" },
-        { to: "/graphuserwise", label: "Graph User Wise" },
-        { to: "/manageSMPP", label: "Manage SMPP" },
-        { to: "/managerouting", label: "Manage Routing" },
-        { to: "/SMPPerrorcode", label: "SMPP Error Code" },
-        { to: "/manageprefix", label: "Manage Prefix" },
-        { to: "/blacklist", label: "Blacklist" },
-        { to: "/managenotifications", label: "ManageNotifications" },
-        { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
-      ],
-    },
+    // {
+    //   id: "",
+    //   name: "admin",
+    //   icon: <IoPersonOutline />,
+    //   label: "Admin",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/manageuser", label: "Manage User" },
+    //     { to: "/managedlttemplate", label: "Manage DLT Template" },
+    //     { to: "/rcsmanagebot", label: "Manage Bot" },
+    //     { to: "/managevoiceclips", label: "Manage Voice Clips" },
+    //     { to: "/manageplan", label: "Manage Plan" },
+    //     { to: "/accountmanager", label: "Account Manager" },
+    //     { to: "/graphmain", label: "Graph Main" },
+    //     { to: "/graphuserwise", label: "Graph User Wise" },
+    //     { to: "/manageSMPP", label: "Manage SMPP" },
+    //     { to: "/managerouting", label: "Manage Routing" },
+    //     { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+    //     { to: "/manageprefix", label: "Manage Prefix" },
+    //     { to: "/blacklist", label: "Blacklist" },
+    //     { to: "/managenotifications", label: "ManageNotifications" },
+    //     { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
     {
       id: "",
       name: "Managecontacts",
@@ -329,6 +366,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Manage Contacts",
       type: "single",
       to: "/managecontacts",
+      roles: ["ADMIN", "DIRECTUSER"],
     },
     {
       id: "",
@@ -337,15 +375,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Wish Management",
       type: "single",
       to: "/smswishmanagement",
+      roles: ["ADMIN"],
     },
-    {
-      id: "",
-      name: "apiDocs",
-      icon: <DescriptionOutlinedIcon fontSize="20" />,
-      label: "API Docs",
-      type: "single",
-      onClick: () => navigate("/docs"),
-    },
+    // {
+    //   id: "",
+    //   name: "apiDocs",
+    //   icon: <DescriptionOutlinedIcon fontSize="20" />,
+    //   label: "API Docs",
+    //   type: "single",
+    //   onClick: () => navigate("/docs"),
+    //   roles: ["ADMIN"],
+    // },
     // {
     //     name: 'Logout',
     //     icon: <FaSignOutAlt />,
@@ -354,6 +394,88 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     onClick: handleLogout
     // },
   ];
+
+  const getFilteredMenuItems = (menuItems, userState) => {
+    // let allowedServices = [];
+
+    if (userState.role === "ADMIN") {
+      return menuItems;
+    }
+
+    if (userState.role === "AGENT") {
+      return [
+        {
+          id: "",
+          name: "Home",
+          icon: <FaHome />,
+          label: "Home",
+          type: "single",
+          to: "/",
+          roles: ["AGENT"],
+        },
+        {
+          id: "",
+          name: "WhatsApp LiveChat",
+          icon: <FaWhatsapp />,
+          label: "WhatsApp LiveChat",
+          type: "single",
+          to: "/wlivechat",
+          roles: ["AGENT"],
+        },
+      ];
+    }
+
+    const alwaysIncludeNames = [
+      "Home",
+      "apiDocs",
+      "CallBack",
+      "Managecontacts",
+    ];
+
+    // menuItems.forEach((item) => {
+    //   // if (item.roles.includes(userState.role)) allowedServices.push(item);
+    //   // userState.services.forEach((service, index) => {
+    //   //   if (item.id == service.service_type_id) {
+    //   //     allowedServices.push(item);
+    //   //   }
+    //   // });
+    //   // if (item.name === "Home") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "apiDocs") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "CallBack") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // if (item.name === "Managecontacts") {
+    //   //   allowedServices.push(item);
+    //   // }
+    //   // userState.services.forEach((service, index) => {
+    //   //   if (item.id == service.service_type_id) {
+    //   //     allowedServices.push(item);
+    //   //   }
+    //   // });
+    // });
+
+    const allowedServices = menuItems.map((item) => {
+      if (alwaysIncludeNames.includes(item.name)) {
+        return item;
+      }
+      const hasMatch = userState.services.some(
+        (service) => service.service_type_id == item.id
+      );
+
+      return {
+        ...item,
+        links: hasMatch ? item.links : [],
+      };
+    });
+
+    return allowedServices;
+  };
+
+  const filteredItems = getFilteredMenuItems(menuItems, user);
 
   return (
     <motion.div
@@ -374,7 +496,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         ${isCollapsed ? "items-center " : "space-y-0"}`}
       style={{ maxHeight: "calc(100vh - 4rem)" }}
     >
-      {menuItems.map((item) =>
+      {filteredItems.map((item) =>
         item.type === "dropdown" ? (
           <Tooltip
             key={item.name}
@@ -390,26 +512,23 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           >
             <motion.div
               onClick={() => handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
-                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-              }`}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+                }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
-                  isCollapsed ? "w-0" : "w-auto"
-                }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+                  }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${
-                    openDropdown === item.name ? "rotate-180" : "rotate-0"
-                  }`}
+                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                    }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -434,37 +553,38 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               className="overflow-hidden"
               ref={(el) => (dropdownRefs[item.name] = el)}
             >
-              {item.links.map((link) => (
-                <React.Fragment key={link.to}>
-                  <Link
-                    to={link.to}
-                    onClick={handleSingleRouteClick}
-                    className={`block px-4 py-2.5 text-sm hover:bg-[#e6f4ff] transition-all duration-300 ${
-                      isActiveRoute(link.to)
-                        ? "bg-[#e6f4ff] text-blue-800"
-                        : "text-gray-800"
-                    }`}
-                  >
-                    <FiberManualRecordIcon
-                      sx={{
-                        color: isActiveRoute(link.to) ? "blue" : "black",
-                        fontSize: "10px",
-                        marginRight: "10px",
-                      }}
-                    />
-                    <span
-                      className={`font-[600] ${
-                        isActiveRoute(link.to)
-                          ? "text-blue-800"
-                          : "text-gray-800"
-                      }`}
+              {item.links.map((link) => {
+                if (link.isHide) return null;
+                const isActive = isActiveRoute(link.to);
+                return (
+                  <React.Fragment key={link.to}>
+                    <Link
+                      to={link.to}
+                      onClick={handleSingleRouteClick}
+                      className={`block px-4 py-2.5 text-sm transition-all duration-300
+          ${isActive ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800"}
+          ${link?.isHide ? "hidden" : ""}
+          hover:bg-[#e6f4ff]"
+        `}
                     >
-                      {link.label}
-                    </span>
-                  </Link>
-                  <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
-                </React.Fragment>
-              ))}
+                      <FiberManualRecordIcon
+                        sx={{
+                          color: isActive ? "blue" : "black",
+                          fontSize: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      <span
+                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
+                          }`}
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                    <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+                  </React.Fragment>
+                );
+              })}
             </motion.div>
           </Tooltip>
         ) : (
@@ -486,9 +606,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
-                  isCollapsed ? "justify-center" : ""
-                }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+                  }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -499,17 +618,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
-                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
-                }`}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                  }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${
-                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                  }`}
+                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                    }`}
                 >
                   {item.label}
                 </motion.span>

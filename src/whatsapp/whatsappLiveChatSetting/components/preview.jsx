@@ -125,11 +125,11 @@ export const Preview = ({ specificTemplate, variablesData, basicDetails }) => {
                 )}
               </div>
 
-              {specificTemplate?.message && (
-                <pre className="whitespace-pre-wrap">
-                  {specificTemplate.message}
-                </pre>
-              )}
+          {specificTemplate?.message && (
+            <pre className="whitespace-pre-wrap">
+              {specificTemplate.message}
+            </pre>
+          )}
 
               <div className="w-full space-y-2 p-2">
                 {specificTemplate?.urlDisplay && (

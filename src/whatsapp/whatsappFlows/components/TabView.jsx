@@ -1,0 +1,241 @@
+import React, { useState } from "react";
+import { Dialog } from "primereact/dialog";
+import { Menu } from "primereact/menu";
+import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import { TextField } from "@mui/material";
+import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import UniversalButton from "../../components/UniversalButton";
+import toast from "react-hot-toast";
+
+export default function CustomTabView({
+    tabs,
+    setTabs,
+    activeIndex,
+    setActiveIndex,
+    dialogVisible,
+    setDialogVisible,
+    screenName,
+    setScreenName,
+    screenID,
+    setScreenID,
+    randomNumber,
+    setRandomNumber,
+    createTab,
+    setCreateTab,
+    menuRefs,
+}) {
+    // const [tabs, setTabs] = useState([
+    //   { title: "Welcome", content: "Welcome", payload: {} },
+    // ]);
+    // const [activeIndex, setActiveIndex] = useState(0);
+    // const [dialogVisible, setDialogVisible] = useState(false);
+    // const menuRefs = tabs.map(() => React.createRef());
+    // const [screenName, setScreenName] = useState("");
+    // const [screenID, setScreenID] = useState("");
+    // const [createTab, setCreateTab] = useState("");
+
+    // const [randomNumber, setRandomNumber] = useState(
+    //   Math.floor(Math.random() * 1000)
+    // );
+
+    const addTab = () => {
+        setTabs([
+            ...tabs,
+            { id: screenID, title: screenName, content: `Content for ${screenName}`, payload: [] },
+        ]);
+        setActiveIndex(tabs.length);
+    };
+
+    const removeTab = (index) => {
+        if (tabs.length === 1) return;
+        const updatedTabs = tabs.filter((_, i) => i !== index);
+        setTabs(updatedTabs);
+        if (activeIndex >= updatedTabs.length) {
+            setActiveIndex(updatedTabs.length - 1);
+        }
+    };
+
+    const handleTabClick = () => {
+        setDialogVisible(true);
+    };
+
+    const menuItems = (index) => [
+        {
+            label: "Edit",
+            icon: <EditNoteOutlinedIcon />,
+            command: () => alert(`Edit Tab ${index + 1}`),
+        },
+        {
+            label: "Delete",
+            icon: <DeleteForeverOutlinedIcon sx={{ color: "red" }} />,
+            command: () => removeTab(index),
+        },
+        {
+            label: "Export",
+            icon: <IosShareOutlinedIcon />,
+            command: () => alert(`Export Tab ${index + 1}`),
+        },
+    ];
+
+    const handleBtnClick = () => {
+        if (!screenName.trim()) {
+            alert("Please fill in all required fields.");
+            return;
+        }
+        const isTitleExists = tabs.some((tab) => tab.title === screenName);
+        if (isTitleExists) {
+            toast.error("Screen already exists. Please choose a different Screen Name.");
+            return;
+        }
+        addTab();
+
+        setScreenName("");
+        setScreenID("");
+        setDialogVisible(false);
+    };
+
+    const handleCloseClick = () => {
+        setDialogVisible(false);
+        setScreenName("");
+        setScreenID("");
+        setRandomNumber(Math.floor(Math.random() * 1000));
+    };
+
+    return (
+        <div className="card">
+            <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto">
+                {tabs.map((tab, index) => (
+                    <div
+                        key={index}
+                        className="flex items-center justify-between px-2 py-2 cursor-pointer rounded-md"
+                        style={{
+                            backgroundColor: activeIndex === index ? "#e5e7eb" : "#fff",
+                            transition: "background-color 0.3s ease",
+                        }}
+                        onClick={() => setActiveIndex(index)}
+                        onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#f3f4f6")
+                        }
+                        onMouseLeave={(e) =>
+                        (e.currentTarget.style.backgroundColor =
+                            activeIndex === index ? "#e5e7eb" : "#fff")
+                        }
+                    >
+                        <span>{tab.title}</span>
+                        <Menu
+                            model={menuItems(index)}
+                            popup
+                            ref={menuRefs[index]}
+                            className="mt-50"
+                        />
+                        <MoreVertOutlinedIcon
+                            className="p-button-text p-button-sm text-[#4b5563] hover:text-[#2563eb]"
+                            onClick={(e) => menuRefs[index].current.toggle(e)}
+                        />
+                    </div>
+                ))}
+
+                <div
+                    className="flex items-center justify-center cursor-pointer rounded-md px-2 py-2 bg-[#f3f4f6]"
+                    onClick={handleTabClick}
+                >
+                    <AddIcon className="text-blue-600" />
+                </div>
+            </div>
+            {/* Tab Content */}
+            {/* <div style={{ padding: '20px' }}>
+                {tabs.length > 0 && tabs[activeIndex]?.content}
+                {tabs.length > 0 && tabs[activeIndex]?.payload}
+            </div> */}
+
+            <Dialog
+                visible={dialogVisible}
+                onHide={() => {
+                    setDialogVisible(false);
+                }}
+                className=""
+                draggable={false}
+                closable={false}
+            >
+                <p className="shadow-md p-4 rounded-md w-full text-md font-medium">
+                    Create New Screen
+                </p>
+                <div>
+                    <div className="flex flex-row mt-5 w-full gap-5">
+                        <div className="">
+                            <TextField
+                                label="Enter screen name"
+                                value={screenName}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setScreenName(value);
+                                    const id = `${value
+                                        .replace(/\s+/g, "_")
+                                        .toLocaleLowerCase()}_${randomNumber}`;
+                                    setScreenID(id);
+                                    if (!value) setScreenID("");
+                                }}
+                                required
+                            />
+                        </div>
+                        <div className="">
+                            <TextField
+                                label="Enter screen ID (Optional)"
+                                value={screenID}
+                                onChange={(e) => {
+                                    const inputValue = e.target.value.trim();
+                                    const formattedID = inputValue
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase();
+                                    setScreenID(formattedID);
+                                }}
+                                required
+                            />
+                        </div>
+                        {/* <div className='mt-5'>
+                         <TextField
+                             label="Import File"
+                             value={importFile}
+                            onClick={(e) => setImportFile(e.target.value)}
+                             required
+                         />
+                     </div> */}
+                    </div>
+                    <div className="flex flex-col ml-2 mt-5">
+                        <h2 className="text-gray-500 font-medium text-lg">Instructions:</h2>
+                        <ul className="text-gray-500 font-normal text-sm space-y-2 mt-3 list-disc">
+                            <li>
+                                If the screen name meets the Screen ID rules, then the Screen ID
+                                used as its screen name.
+                            </li>
+                            <li>Screen ID must be unique.</li>
+                            <li>Screen ID allows only alphabets and underscores("_").</li>
+                            <li>
+                                Provide a separate Screen ID, if the screen title includes
+                                special characters, or doesn't meet screen ID rules.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div className="border-t-1 border-gray-300 mt-25 w-full">
+                    <div className="flex flex-row gap-4 justify-end items-end mt-2">
+                        <UniversalButton
+                            label="Close"
+                            variant="primary"
+                            onClick={handleCloseClick}
+                        />
+                        <UniversalButton
+                            label="Create"
+                            variant="primary"
+                            value={createTab}
+                            onClick={(e) => handleBtnClick(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </Dialog>
+        </div>
+    );
+}

@@ -22,6 +22,7 @@ import {
   fetchCampaignData,
   fetchPreviousDayReport,
   getAttachmentLogs,
+  getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
 } from "../../apis/sms/sms";
@@ -35,6 +36,7 @@ import { useNavigate } from "react-router-dom";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
+import { ExportDialog } from "./components/exportDialog";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -51,6 +53,7 @@ const SmsReports = () => {
   const [deliverystatus, setDeliveryStatus] = useState([]);
   const [selecttemplatetype, setSelectTemplatetype] = useState(null);
   const [selectstatus, setSelectStatus] = useState(null);
+  const [selectedCol, setSelectedCol] = useState("");
 
   //common State
   const [rows, setRows] = useState([]);
@@ -71,7 +74,7 @@ const SmsReports = () => {
     toDate: new Date(),
     campaingName: "",
     mobilesnodata: "",
-    campaingType: "1",
+    campaingType: "",
     senderId: "",
     message: "",
     source: "",
@@ -110,6 +113,21 @@ const SmsReports = () => {
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+
+  const [isExportDialogOpen, setIsExportDialogOpen] = useState(false);
+  const [allCampaigns, setAllCampaigns] = useState([]);
+  const [dataToExport, setDataToExport] = useState({
+    campaignName: "",
+    fromDate: "",
+    toDate: "",
+    srno: 0,
+    isCustomField: 0,
+    customColumns: "",
+    campaignType: "",
+    status: "",
+    delStatus: {},
+    type: "campaign",
+  });
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -210,6 +228,19 @@ const SmsReports = () => {
     setRows([]);
   };
 
+  useEffect(() => {
+    async function handleFetchAllSms() {
+      try {
+        const res = await getAllCampaignSms();
+        setAllCampaigns(res);
+      } catch (e) {
+        toast.error("Something went wrong");
+        return;
+      }
+    }
+    handleFetchAllSms();
+  }, [isExportDialogOpen]);
+
   const handleCampaignSearch = async () => {
     try {
       setIsFetching(true);
@@ -248,7 +279,7 @@ const SmsReports = () => {
       // setCampaignTableData(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "que_time", headerName: "CreatedOn", flex: 0, minWidth: 50 },
+        { field: "que_time", headerName: "Created On", flex: 0, minWidth: 50 },
         {
           field: "campaign_name",
           headerName: "Campaign Name",
@@ -366,6 +397,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.TOTALSMS} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("TOTALSMS");
                   handlePreviosDayDetailDisplay("TOTALSMS");
                 }}
               >
@@ -383,6 +415,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.Pending} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("Pending");
                   handlePreviosDayDetailDisplay("Pending");
                 }}
               >
@@ -400,6 +433,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.failed} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("failed");
                   handlePreviosDayDetailDisplay("failed");
                 }}
               >
@@ -417,6 +451,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.Sent} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("Sent");
                   handlePreviosDayDetailDisplay("Sent");
                 }}
               >
@@ -434,6 +469,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.delivered} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("delivered");
                   handlePreviosDayDetailDisplay("delivered");
                 }}
               >
@@ -452,6 +488,7 @@ const SmsReports = () => {
             <CustomTooltip title={params.row.undelivered} placement="top" arrow>
               <button
                 onClick={() => {
+                  setSelectedCol("undelivered");
                   handlePreviosDayDetailDisplay("undelivered");
                 }}
               >
@@ -659,9 +696,8 @@ const SmsReports = () => {
 
   const handlePreviosDayDetailDisplay = async (col) => {
     if (!col) return;
-    const page = currentPage;
     const data = {
-      summaryType: col,
+      summaryType: col || selectedCol,
       mobileNo: "",
       fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
         "en-GB"
@@ -676,6 +712,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
+      setTotalPage(res?.pages || 0);
 
       setPreviousDayColumn([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
@@ -697,12 +734,12 @@ const SmsReports = () => {
           flex: 1,
           minWidth: 120,
         },
-        {
-          field: "source",
-          headerName: "Sms Source",
-          flex: 1,
-          minWidth: 120,
-        },
+        // {
+        //   field: "source",
+        //   headerName: "Sms Source",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         {
           field: "message",
           headerName: "Message",
@@ -742,14 +779,15 @@ const SmsReports = () => {
       ]);
 
       setPreviousDayRows(
-        Array.isArray(res)
-          ? res.map((item, index) => ({
+        Array.isArray(res?.data)
+          ? res?.data.map((item, index) => ({
             sn: index + 1,
             id: index + 1,
             ...item,
           }))
           : []
       );
+      setPreviousDayDetailsDialog(true);
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -759,8 +797,8 @@ const SmsReports = () => {
   };
 
   useEffect(() => {
-    handlePreviosDayDetailDisplay();
-  }, [currentPage]);
+    handlePreviosDayDetailDisplay(selectedCol);
+  }, [currentPage, selectedCol]);
 
   return (
     <div>
@@ -858,6 +896,8 @@ const SmsReports = () => {
           <div className="w-full">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-52">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-52">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -875,6 +915,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-52">
+              <div className="w-full sm:w-52">
                 <InputField
                   label="Campaign Name"
                   id="campaignName"
@@ -890,6 +931,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-52">
+              <div className="w-full sm:w-52">
                 <InputField
                   label="Mobile Number"
                   id="campaignnumber"
@@ -904,6 +946,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+              <div className="w-full sm:w-52">
               <div className="w-full sm:w-52">
                 <AnimatedDropdown
                   label="Campaign Type"
@@ -947,6 +990,8 @@ const SmsReports = () => {
           <div className="w-full">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-42">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-42">
                 <UniversalDatePicker
                   label="From Date"
                   id="previousfromDate"
@@ -965,6 +1010,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
+              <div className="w-full sm:w-42">
                 <UniversalDatePicker
                   label="To Date"
                   id="previoustodate"
@@ -982,6 +1028,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
+              <div className="w-full sm:w-42">
                 <InputField
                   label="Mobile Number"
                   id="previousnumber"
@@ -998,6 +1045,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
+              <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Type"
                   id="previousType"
@@ -1013,6 +1061,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+              <div className="w-full sm:w-42">
               <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Source"
@@ -1043,6 +1092,7 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
+              <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1057,6 +1107,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+              <div className="w-full sm:w-42">
               <div className="w-full sm:w-42">
                 <InputField
                   label="Content"
@@ -1094,6 +1145,7 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <div className="w-full">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
@@ -1183,6 +1235,7 @@ const SmsReports = () => {
         <CustomTabPanel value={value} index={3}>
           <div className="w-full">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   label="From Date"
@@ -1249,7 +1302,7 @@ const SmsReports = () => {
         </CustomTabPanel>
       </Box>
 
-      <Dialog
+      {/* <Dialog
         header="Export"
         visible={exports}
         onHide={() => setExports(false)}
@@ -1705,7 +1758,7 @@ const SmsReports = () => {
             </div>
           )}
         </div>
-      </Dialog>
+      </Dialog> */}
 
       <Dialog
         header={selectedColDetails}
@@ -1714,11 +1767,15 @@ const SmsReports = () => {
           setPreviousDayDetailsDialog(false);
           setPreviousDayRows([]);
           setPreviousDayColumn([]);
+          setTotalPage(0);
+          setPaginationModel({ page: 0, pageSize: 10 });
+          setCurrentPage(1);
+          setSelectedCol("");
         }}
         className="w-fit "
         draggable={false}
       >
-        {isFetching ? (
+        {/* {isFetching ? (
           <div className="card flex justify-content-center">
             <ProgressSpinner strokeWidth="2" className="text-blue-500" />
           </div>
@@ -1734,9 +1791,34 @@ const SmsReports = () => {
             name="previousdaydetailstable"
             rows={previousDayRows}
             col={previousDayColumn}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+            setCurrentPage={setCurrentPage}
+            totalPage={totalPage}
           />
-        )}
+        )} */}
+        <PreviousDaysTableSms
+          id="previousdaydetailstable"
+          name="previousdaydetailstable"
+          rows={previousDayRows}
+          col={previousDayColumn}
+          paginationModel={paginationModel}
+          setPaginationModel={setPaginationModel}
+          setCurrentPage={setCurrentPage}
+          totalPage={totalPage}
+        />
       </Dialog>
+
+      {/* exportDialogStart */}
+      {isExportDialogOpen && (
+        <ExportDialog
+          visibledialog={isExportDialogOpen}
+          setVisibledialog={setIsExportDialogOpen}
+          allCampaigns={allCampaigns}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
     </div>
   );
 };

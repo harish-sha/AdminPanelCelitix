@@ -21,6 +21,11 @@ export const VariableManager = ({
   setCarVarInput,
   headers,
   selectedOption,
+  btnvarLength,
+  setBtnVarList,
+  btnvarList,
+  setBtnInputVariables,
+  btninputVariables,
 }) => {
   const [isCarousal, setIsCarousal] = useState(false);
   const textBoxRef = useRef(null);
@@ -31,6 +36,10 @@ export const VariableManager = ({
 
   const handleInputVariable = (value, index) => {
     setInputVariables((prev) => ({ ...prev, [index]: value }));
+  };
+
+  const handleBtnInputVariable = (value, index) => {
+    setBtnInputVariables((prev) => ({ ...prev, [index]: value }));
   };
 
   const handleCarInputVariable = (value, index, nestedIndex) => {
@@ -103,47 +112,75 @@ export const VariableManager = ({
           newMessageContent.length,
           newMessageContent.length
         );
-        pcam;
       }, 0);
     },
     [inputVariables, setInputVariables]
   );
 
-  const insertVariable = useCallback(
-    (variable, index) => {
-      const input = textBoxRef.current;
-      if (!input) return;
+  const insertVariable = (variable, index) => {
+    console.log(variable);
+    const input = textBoxRef.current;
+    if (!input) return;
 
-      const tag = `{#${variable}#}`;
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
+    const tag = `{#${variable}#}`;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
 
-      const inputData = inputVariables[index] || "";
+    const inputData = inputVariables[index] || "";
 
-      const newMessageContent =
-        inputData.slice(0, start) + tag + inputData.slice(end);
+    const newMessageContent =
+      inputData.slice(0, start) + tag + inputData.slice(end);
 
-      setInputVariables((prev) => ({
-        ...prev,
-        [index]: newMessageContent,
-      }));
+    setInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
 
-      setTimeout(() => {
-        input.focus();
-        input.setSelectionRange(
-          newMessageContent.length,
-          newMessageContent.length
-        );
-      }, 0);
-    },
-    [inputVariables, setInputVariables]
-  );
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(
+        newMessageContent.length,
+        newMessageContent.length
+      );
+    }, 0);
+  };
+  const insertBtnVariable = (variable, index) => {
+    const input = textBoxRef.current;
+    if (!input) return;
+
+    const tag = `{#${variable}#}`;
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const btninputVariables = inputVariables[index] || "";
+
+    const newMessageContent =
+      btninputVariables.slice(0, start) + tag + btninputVariables.slice(end);
+
+    setBtnInputVariables((prev) => ({
+      ...prev,
+      [index]: newMessageContent,
+    }));
+
+    setTimeout(() => {
+      input.focus();
+      input.setSelectionRange(
+        newMessageContent.length,
+        newMessageContent.length
+      );
+    }, 0);
+  };
 
   const renderSimpleInput = () =>
     varList?.map((label, index) => (
       <div className="relative w-full p-2" key={index}>
-        <div className="flex gap-2 items-center mb-1">
-          <label htmlFor={`variable${index + 1}`}>{label}</label>
+        <div className="flex gap-2 items-center mb-3">
+          <label
+            htmlFor={`variable${index + 1}`}
+            className="w-[5rem] max-w-[10rem] text-sm text-start"
+          >
+            {label}
+          </label>
           <InputField
             id={`variable${index + 1}`}
             ref={textBoxRef}
@@ -210,20 +247,13 @@ export const VariableManager = ({
               </span>
             </CustomTooltip>
           </div>
-          {carVar.data[item].map((label, nestedIndex) => (
-            <div
-              key={nestedIndex}
-              className={`flex flex-col md:flex-row gap-2 items-start text-left md:items-center mb-1 p-1 rounded-lg transition-all duration-300 ${
-                nestedIndex % 2 === 0
-                  ? "bg-gray-50" // Light row
-                  : "bg-gray-100" // Darker row
-              }`}
-            >
+          {Object.keys(carVar.data[item]).map((_, nestedIndex) => (
+            <div className="flex gap-2 items-center mb-3" key={nestedIndex}>
               <label
                 htmlFor={`${index}-${nestedIndex}`}
-                className="w-full md:w-1/3 text-sm font-semibold text-gray-800"
+                className="w-[5rem] max-w-[10rem] text-sm text-start"
               >
-                {label}
+                {carVar.data[item][nestedIndex]}
               </label>
 
               <InputField
@@ -242,19 +272,60 @@ export const VariableManager = ({
     </Carousel>
   );
 
+  const renderBtnInput = () => (
+    <>
+      <p>Button Variables</p>
+      <div className="relative w-full p-2">
+        {btnvarList?.map((label, index) => (
+          <div className="relative w-full" key={index}>
+            <div className="flex gap-2 items-center mb-3">
+              <label
+                htmlFor={`variable${index + 1}`}
+                className="w-[5rem] max-w-[10rem] text-sm text-start"
+              >
+                {label}
+              </label>
+              <InputField
+                id={`variable${index + 1}`}
+                ref={textBoxRef}
+                name={`variable${index + 1}`}
+                placeholder={`Enter variable ${index + 1}`}
+                value={btninputVariables[index]}
+                onChange={(e) => handleBtnInputVariable(e.target.value, index)}
+                sx={{ width: "100%", marginBottom: "1rem" }}
+              />
+            </div>
+            <div className="absolute top-[0.1rem] right-0 h-10">
+              <InputVariable
+                variables={headers}
+                onSelect={(e) => insertBtnVariable(e, index)}
+              />
+            </div>
+            {/* <div className="absolute top-[0.5rem] right-10">
+              <CustomEmojiPicker onSelect={(e) => handleEmojiAdd(e, index)} />
+            </div> */}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+
   return (
-    <div className="bg-white pb-2 rounded-md">
+    <>
       {templateDetails[0] && (
-        <div className="bg-[#128C7E] p-2 rounded-t-md">
-          <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
-            Template Type: {templateDetails[0].templateType}
-          </h1>
+        <div className="bg-white  rounded-md">
+          <div className="bg-[#128C7E] p-2 rounded-t-md">
+            <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
+              Template Type: {templateDetails[0].templateType}
+            </h1>
+          </div>
         </div>
       )}
       <div className="flex flex-col gap-2">
         {!isCarousal && varLength > 0 && renderSimpleInput()}
+        {!isCarousal && btnvarLength > 0 && renderBtnInput()}
         {isCarousal && carVar?.length > 0 && renderCarouselInput()}
       </div>
-    </div>
+    </>
   );
 };

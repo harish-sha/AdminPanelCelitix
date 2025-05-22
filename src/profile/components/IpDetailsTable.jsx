@@ -7,6 +7,9 @@ import { useState } from "react";
 import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
 import { IPDetailsDrawer } from "./IPDetailsDrawer";
 
+import { UAParser } from "ua-parser-js";
+
+
 const PaginationList = styled("ul")({
   listStyle: "none",
   padding: 0,
@@ -76,173 +79,8 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
     pageSize: 10,
   });
 
-  // const columns = [
-  //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-  //   {
-  //     field: "user_id",
-  //     headerName: "User ID",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   { field: "ip", headerName: "IP", flex: 1, minWidth: 120 },
-  //   {
-  //     field: "insert_time",
-  //     headerName: "Insert Time",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "city",
-  //     headerName: "City",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "postal",
-  //     headerName: "Postal Code",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "region",
-  //     headerName: "Region",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "region_code",
-  //     headerName: "Region Code",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "network",
-  //     headerName: "Network",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "version",
-  //     headerName: "IP Version",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_code",
-  //     headerName: "Country Code",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_tld",
-  //     headerName: "Country TLD",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_capital",
-  //     headerName: "Country Capital",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "continent_code",
-  //     headerName: "Continent Code",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_name",
-  //     headerName: "Country Name",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "in_eu",
-  //     headerName: "In EU",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_code_iso3",
-  //     headerName: "Country Code ISO3",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_calling_code",
-  //     headerName: "Country Calling Code",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "currency",
-  //     headerName: "Currency",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_area",
-  //     headerName: "Currenty Area",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "country_population",
-  //     headerName: "Country Popluation",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "languages",
-  //     headerName: "Languages",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-  //   {
-  //     field: "currency_name",
-  //     headerName: "Currency Name",
-  //     flex: 1,
-  //     minWidth: 120,
-  //   },
-
-  //   {
-  //     field: "latitude",
-  //     headerName: "Latitude",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "longitude",
-  //     headerName: "Longitude",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "timezone",
-  //     headerName: "Timezone",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "asn",
-  //     headerName: "ASN",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "utc_offset",
-  //     headerName: "UTC Offset",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  //   {
-  //     field: "org",
-  //     headerName: "Organization",
-  //     flex: 1,
-  //     minWidth: 150,
-  //   },
-  // ];
+  const parser = new UAParser();
+  const uaResult = parser.getResult();
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -325,6 +163,10 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
         user_id: item.user_id ?? "-",
         insert_time: item.insert_time ?? "-",
         ...moreDetails,
+        browser: uaResult.browser.name || "Unknown",
+        browser_version: uaResult.browser.version || "Unknown",
+        os: uaResult.os.name || "Unknown", 
+        os_version: uaResult.os.version || "Unknown", 
       };
 
       return row;

@@ -106,28 +106,29 @@ const CampaignDeliveryReportDetails = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
+    const fetchData = async () => {
+        setIsFetching(true);
+        const data = await fetchCampaignDetailReport(
+            campaignSrno,
+            mobileNumber,
+            currentPage
+        );
+        setCampaignDetails(data.data);
+        setTotalPage(data.total);
+        setIsFetching(false);
+    };
     useEffect(() => {
         if (!campaignSrno) return;
-        const fetchData = async () => {
-            setIsFetching(true);
-            const data = await fetchCampaignDetailReport(
-                campaignSrno,
-                mobileNumber,
-                currentPage
-            );
-            setCampaignDetails(data.data);
-            setTotalPage(data.total);
-            setIsFetching(false);
-        };
 
         fetchData();
     }, [campaignSrno, currentPage, mobileNumber]);
 
     const handleSearch = async () => {
-        setIsFetching(true);
-        setTimeout(() => {
-            setIsFetching(false);
-        }, 500);
+        // setIsFetching(true);
+        // setTimeout(() => {
+        //     setIsFetching(false);
+        // }, 500);
+        await fetchData()
     };
 
     const columns = [

@@ -10,6 +10,7 @@ const PrivateRoute = () => {
 export default PrivateRoute;
 
 
+// Route code with user role check - later update for all users
 
 // import React, { useEffect, useState } from "react";
 // import { Navigate, Outlet } from "react-router-dom";

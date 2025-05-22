@@ -81,7 +81,7 @@ const TinyText = styled(Typography)({
   letterSpacing: 0.2,
 });
 
-export default function MusicPlayerSlider() {
+export default function MusicPlayerSlider({ data }) {
   const audioRef = useRef(null);
   const [paused, setPaused] = useState(true);
   const [position, setPosition] = useState(0);
@@ -123,7 +123,7 @@ export default function MusicPlayerSlider() {
     <Box sx={{ width: "100%", overflow: "hidden", position: "relative", p: 3 }}>
       <audio
         ref={audioRef}
-        src="/DummyAudio.mp3"
+        src={data?.url}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />

@@ -8,9 +8,9 @@ export const getWabaList = async () => {
 };
 
 // Get All Template Details
-export const getWabaTemplateDetails = async (wabaNumber) => {
+export const getWabaTemplateDetails = async (wabaNumber, isHide = "-1") => {
   return await fetchWithAuth(
-    `/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}`,
+    `/whatsapptemplate/getTemplateList?wabaNumber=${wabaNumber}&isHide=${isHide}`,
     {
       method: "GET",
     }
@@ -500,8 +500,74 @@ export const getAllCampaignWhatsapp = async () => {
 
 // Download Custom Reports
 export const downloadCustomWhatsappReport = async (data) => {
-  return await fetchWithAuth("/whatsapp/getCustomReport", {
+  return await fetchWithAuth("/whatsapp/downloadCustomWhatsAppReport", {
     method: "POST",
     body: JSON.stringify(data),
   });
+};
+
+// Get User Agent
+export const getUserAgent = async (data) => {
+  return await fetchWithAuth(`/agent/getAgentName?mobileNo=${data}`, {
+    method: "POST",
+  });
+};
+
+// // waba onboarding - this api is now in the managewaba direct fetch without
+// export const userOnbording = async (data) => {
+//   return await fetchWithAuth(`/whatsapp/wabaOnboardProcess?code=${data}`, {
+//     method: "POST",
+//   });
+// };
+
+// whatapp flows
+
+// Get WhatsappFlow list
+export const getWhatsappFlow = async () => {
+  return await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`, {
+    method: "POST",
+  });
+};
+
+// whatsapp flow update status (Published and draft)
+export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
+  return await fetchWithAuth(
+    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
+    {
+      method: "POST",
+      body: JSON.stringify(reqbody),
+    }
+  );
+};
+
+// public the flow
+export const updateFlowStatus = async (data) => {
+  return fetchWithAuth(
+    `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
+
+export const fetchReplyData = async (data) => {
+  return await fetchWithAuth(
+    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
+export const saveFlow = async (params, data) => {
+  return await fetchWithAuth(
+    `WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
+      params.category
+    }&wabaNumber=${params.waba}&flowId=${params.id || ""}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
 };

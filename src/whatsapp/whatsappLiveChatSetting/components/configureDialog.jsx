@@ -20,10 +20,12 @@ export const ConfigureDialog = ({
   setVariablesData,
   setSpecificTemplate,
 }) => {
+
   const [fileData, setFileData] = useState({
     url: "",
     file: "",
   });
+
   return (
     <Dialog
       header="Configure"

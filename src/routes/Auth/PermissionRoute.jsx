@@ -10,12 +10,12 @@ export const PermissionRoute = ({ children }) => {
     { name: "Home", links: "/", roles: ["ADMIN"] },
     {
       name: "SMS",
-
       links: [
         "/sendsms",
         "/smsreports",
         "/smsdlttemplates",
         "/smscampaigndetaillogs",
+        "/smsAttachmentdetaillog",
       ],
       roles: ["ADMIN"],
     },
@@ -32,6 +32,7 @@ export const PermissionRoute = ({ children }) => {
         "/rcssuggestionreport",
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
+        "/rcsdeliveryreport",
       ],
       roles: ["ADMIN"],
     },
@@ -51,6 +52,8 @@ export const PermissionRoute = ({ children }) => {
         "/wcampaigndetailsreport",
         "/createtemplate",
         "/wlcsetting",
+        "/wwhatsappflows",
+        "/wflowcreation",
       ],
       roles: ["ADMIN"],
     },
@@ -101,7 +104,7 @@ export const PermissionRoute = ({ children }) => {
     },
     {
       name: "CallBack",
-      links: ["/callback", "/addcallback"],
+      links: ["/callback", "/addcallback", "/editcallback"],
       roles: ["ADMIN"],
     },
     {
@@ -127,6 +130,7 @@ export const PermissionRoute = ({ children }) => {
         "/blacklist",
         "/managenotifications",
         "/CreateWhatsappTemplateAdmin",
+        "/manageadduser",
       ],
       roles: ["ADMIN"],
     },
@@ -145,6 +149,22 @@ export const PermissionRoute = ({ children }) => {
       links: "/docs",
       roles: ["ADMIN"],
     },
+    {
+      name: "openRoutes",
+      links: [
+        "/download",
+        "/loginIpdetails",
+        "/profile",
+        "/settings",
+        "/transactions",
+      ],
+      roles: ["ADMIN"],
+    },
+    {
+      name: "Download",
+      links: "/dummy",
+      roles: ["ADMIN"],
+    },
   ];
 
   const currentPath = location.pathname;
@@ -155,9 +175,18 @@ export const PermissionRoute = ({ children }) => {
     if (userState.role === "ADMIN") {
       return menuItems;
     }
+    if (userState.role === "AGENT") {
+      return [
+        {
+          name: "WhatsApp LiveChat",
+          links: "/wlivechat",
+          roles: ["AGENT"],
+        },
+      ];
+    }
 
     menuItems.forEach((item) => {
-      if (item.roles.includes(userState.role)) allowedServices.push(item);
+      // if (item.roles.includes(userState.role)) allowedServices.push(item);
       userState.services.forEach((service, index) => {
         if (item.name == service.display_name) {
           allowedServices.push(item);
@@ -167,6 +196,15 @@ export const PermissionRoute = ({ children }) => {
         allowedServices.push(item);
       }
       if (item.name === "apiDocs") {
+        allowedServices.push(item);
+      }
+      if (item.name === "CallBack") {
+        allowedServices.push(item);
+      }
+      if (item.name === "openRoutes") {
+        allowedServices.push(item);
+      }
+      if (item.name === "Manage Contacts") {
         allowedServices.push(item);
       }
     });

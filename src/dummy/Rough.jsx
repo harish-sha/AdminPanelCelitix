@@ -1,177 +1,1312 @@
-import React, { useRef, useState } from 'react';
-import UniversalButton from '../../components/UniversalButton';
-import toast from 'react-hot-toast';
-import { useNavigate } from 'react-router-dom';
-import { TurnstileComponent } from '../../utils/TurnstileComponent';
+// import React, { useState, useRef, useEffect } from "react";
+// import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+// import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
+// import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+// import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
+// import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+// import { Link, useLocation, useNavigate } from "react-router-dom";
+// import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
+// import { IoPersonOutline } from "react-icons/io5";
+// import { SiGoogleauthenticator } from "react-icons/si";
+// import { LuMessageSquareMore } from "react-icons/lu";
+// import { IoSettingsOutline } from "react-icons/io5";
+// import { IoWalletOutline } from "react-icons/io5";
+// import Tooltip from "@mui/material/Tooltip";
+// import Divider from "@mui/material/Divider";
+// import toast from "react-hot-toast";
+// import { motion } from "framer-motion";
 
-const Blog = () => {
-    const navigate = useNavigate();
-    const [form, setForm] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        company: '',
-        service: '',
-        message: '',
-        consent: false,
+// import rcsicon from "../../assets/icons/RCS02.svg";
+// import twoway from "../../assets/icons/TWOWAY.svg";
+// import callback from "../../assets/icons/Callback02.svg";
+// import missedcall from "../../assets/icons/Missedcall2.svg";
+// import obd from "../../assets/icons/OBD02.svg";
+// import ibd from "../../assets/icons/IBD02.svg";
+// import numberlookup from "../../assets/icons/Numberlookup.svg";
+// import clicktwocall from "../../assets/icons/Click2Call02.svg";
+// import { LuWandSparkles } from "react-icons/lu";
+
+// import { useUser } from "@/context/auth";
+// import { all } from "axios";
+
+// const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
+//   const { user } = useUser();
+
+//   const [openDropdown, setOpenDropdown] = useState(null);
+//   const [collapseAnimationDone, setCollapseAnimationDone] = useState(
+//     !isCollapsed
+//   );
+
+//   const location = useLocation();
+//   const [openTooltips, setOpenTooltips] = useState({});
+//   const dropdownRefs = useRef({});
+//   const navigate = useNavigate();
+
+//   const handleTooltipOpen = (key) => {
+//     setOpenTooltips((prev) => ({ ...prev, [key]: true }));
+//   };
+
+//   const handleTooltipClose = (key) => {
+//     setOpenTooltips((prev) => ({ ...prev, [key]: false }));
+//   };
+
+//   useEffect(() => {
+//     if (!isCollapsed) {
+//       setOpenTooltips({});
+//     }
+//   }, [isCollapsed]);
+
+//   useEffect(() => {
+//     if (isCollapsed) {
+//       setOpenDropdown(null);
+//     }
+//   }, [isCollapsed]);
+
+//   const handleDropdownClick = (dropdownName) => {
+//     if (isCollapsed) {
+//       setIsCollapsed(false);
+//       return;
+//     }
+//     setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
+//   };
+
+//   const handleSingleRouteClick = () => {
+//     if (isMobile) setIsCollapsed(true);
+//   };
+
+//   const isActiveRoute = (route) => {
+//     if (route === "/") {
+//       return location.pathname === "/";
+//     }
+//     return location.pathname.startsWith(route);
+//   };
+
+//   const collapsedClass = isCollapsed
+//     ? "justify-center px-0 "
+//     : "justify-start px-4 ";
+
+//   useEffect(() => {
+//     const activeMenu = menuItems.find((item) =>
+//       item.links?.some((link) => isActiveRoute(link.to))
+//     );
+//     if (activeMenu) {
+//       setOpenDropdown(activeMenu.name);
+//     } else {
+//       setOpenDropdown(null);
+//     }
+//   }, [location.pathname]);
+
+//   const menuItems = [
+//     {
+//       id: "",
+//       name: "Home",
+//       icon: <FaHome />,
+//       label: "Home",
+//       type: "single",
+//       to: "/",
+//       roles: ["ADMIN", "AGENT"],
+//     },
+//     // {
+//     //   id: "",
+//     //   name: "ResellerDash",
+//     //   icon: <FaHome />,
+//     //   label: "ResellerDash",
+//     //   type: "single",
+//     //   to: "/resellerdash",
+//     // },
+//     // {
+//     //     name: 'Dummy',
+//     //     icon: <BlockOutlinedIcon fontSize='20' />,
+//     //     label: 'Dummy',
+//     //     type: "single",
+//     //     to: "/dummy",
+//     // },
+//     {
+//       id: "1",
+//       name: "SMS",
+//       icon: <LuMessageSquareMore />,
+//       label: "SMS",
+//       type: "dropdown",
+//       links: [
+//         { to: "/sendsms", label: "Send SMS" },
+//         { to: "/smsreports", label: "Reports" },
+//         { to: "/smsdlttemplates", label: "DLT Template" },
+//         {
+//           to: "/smscampaigndetaillogs",
+//           label: "Sms Details Logs",
+//           isHide: true,
+//         },
+//         {
+//           to: "/smsAttachmentdetaillog",
+//           label: "Sms Details Logs",
+//           isHide: true,
+//         },
+//       ],
+//       roles: ["ADMIN", "DIRECTUSER"],
+//     },
+//     {
+//       id: "",
+//       name: "Two Way SMS",
+//       icon: <img src={twoway} className="w-4 h-4" />,
+
+//       label: "Two Way SMS",
+//       type: "dropdown",
+//       links: [
+//         { to: "/managekeywords", label: "Manage Keyword" },
+//         { to: "/twowayreports", label: "Reports" },
+//         { to: "/twowayintegration", label: "Integration" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "3",
+//       name: "RCS",
+//       icon: <img src={rcsicon} className="w-4 h-4" />,
+//       label: "RCS",
+//       type: "dropdown",
+//       links: [
+//         { to: "/sendrcs", label: "Send RCS" },
+//         { to: "/rcsmanagetemplate", label: "Manage Template" },
+//         // { to: "/rcslivechats", label: "Live Chats" },
+//         { to: "/rcssuggestionreport", label: "Suggestion Report" },
+//         { to: "/rcsdeliveryreport", label: "Delivery Report" },
+//         {
+//           to: "/rcsdeliverycampaigndetails",
+//           label: "Delivery Campaign Report",
+//           isHide: true,
+//         },
+//         {
+//           to: "/rcsaddtemplatercs",
+//           label: "RcsAddTemplate",
+//           isHide: true,
+//         },
+//       ],
+//       roles: ["ADMIN", "DIRECTUSER"],
+//     },
+//     {
+//       id: "2",
+//       name: "WhatsApp",
+//       icon: <FaWhatsapp />,
+//       label: "WhatsApp",
+//       type: "dropdown",
+//       links: [
+//         { to: "/wlaunchcampaign", label: "Launch Campaigns" },
+//         { to: "/wlivechat", label: "Live Chats" },
+//         { to: "/wmanagecampaign", label: "Manage Campaigns" },
+//         { to: "/managetemplate", label: "Manage Templates" },
+//         // { to: "/wmanageoptin", label: "Manage Optin" },
+//         // { to: "/wchatwidget", label: "Chat Widget" },
+//         { to: "/wqrcode", label: "QR Code" },
+//         { to: "/wlcsetting", label: "Live Chats Settings" },
+//         { to: "/wmanagewaba", label: "Manage WABA" },
+//         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
+//         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
+//         { to: "/wwhatsappbot", label: "Manage Bot" },
+//         { to: "/wwhatsappflows", label: "Flows" },
+//         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
+//         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+//         { to: "/createtemplate", label: "Create Bot", isHide: true },
+//         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
+//       ],
+//       roles: ["ADMIN", "DIRECTUSER"],
+//     },
+//     {
+//       id: "",
+//       name: "Number Lookup",
+//       icon: <img src={numberlookup} className="w-4 h-4" />,
+//       label: "Number Lookup",
+//       type: "dropdown",
+//       links: [
+//         { to: "/hlrlookup", label: "HLR Lookup" },
+//         { to: "/lookupreports", label: "HLR Lookup Reports" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "App Authenticator",
+//       icon: <SiGoogleauthenticator />,
+//       label: "App Authenticator",
+//       type: "dropdown",
+//       links: [
+//         { to: "/authsettings", label: "Settings" },
+//         { to: "/authreports", label: "Reports" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "E-mail",
+//       icon: <MdOutlineEmail />,
+//       label: "E-mail",
+//       type: "dropdown",
+//       links: [
+//         { to: "/emailtemplate", label: "Email Template" },
+//         { to: "/emailreports", label: "Reports" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "7",
+//       name: "OBD",
+//       icon: <img src={obd} className="w-4 h-4" />,
+//       label: "OBD",
+//       type: "dropdown",
+//       links: [
+//         // { to: "/obdcreatecampaign", label: "Create Campaign" },
+//         // { to: "/obdmanagecampaign", label: "Reports" },
+//         // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+//         // { to: "/obdIntegration", label: "Integration" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "IBD",
+//       icon: <img src={ibd} className="w-4 h-4" />,
+//       label: "IBD",
+//       type: "dropdown",
+//       links: [
+//         { to: "/ibdcallhistory", label: "Call History" },
+//         { to: "/ibdmanageexecutive", label: "Manage Executive" },
+//         { to: "/ibdivrflow", label: "IVR Flow" },
+//         { to: "/ibdsettings", label: "Settings" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "Missed Call",
+//       icon: <img src={missedcall} className="w-4 h-4" />,
+//       label: "Missed Call",
+//       type: "dropdown",
+//       links: [
+//         { to: "/missedcallhistory", label: "Call History" },
+//         { to: "/missedcallsettings", label: "Settings" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "Click-2-Call",
+//       icon: <img src={clicktwocall} className="w-4 h-4" />,
+
+//       label: "Click-2-Call",
+//       type: "dropdown",
+//       links: [
+//         { to: "/clicktohistory", label: "Call History" },
+//         { to: "/clicktosettings", label: "Settings" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     // {
+//     //     name: 'settings',
+//     //     icon: <IoSettingsOutline />,
+//     //     label: 'Settings',
+//     //     type: "dropdown",
+//     //     links: [
+//     //         { to: '/mainsettings', label: 'Profile' },
+//     //         { to: '/mainaccount', label: 'Account' },
+//     //     ],
+//     // },
+//     {
+//       id: "",
+//       name: "CallBack",
+//       // icon: <MdOutlineEmail />,
+//       icon: <img src={callback} className="w-4.5 h-4.5" />,
+//       label: "Callback",
+//       type: "dropdown",
+//       links: [
+//         { to: "/callback", label: "Call Back" },
+//         { to: "/addcallback", label: "Add Call Back", isHide: true },
+//         { to: "/editcallback", label: "Edit Call Back", isHide: true },
+//       ],
+//       roles: [],
+//     },
+//     {
+//       id: "",
+//       name: "managefunds",
+//       icon: <IoWalletOutline />,
+//       label: "Manage Funds",
+//       type: "dropdown",
+//       links: [
+//         { to: "/recharge", label: "Recharge" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "admin",
+//       icon: <IoPersonOutline />,
+//       label: "Admin",
+//       type: "dropdown",
+//       links: [
+//         { to: "/manageuser", label: "Manage User" },
+//         { to: "/managedlttemplate", label: "Manage DLT Template" },
+//         { to: "/rcsmanagebot", label: "Manage Bot" },
+//         { to: "/managevoiceclips", label: "Manage Voice Clips" },
+//         { to: "/manageplan", label: "Manage Plan" },
+//         { to: "/accountmanager", label: "Account Manager" },
+//         { to: "/graphmain", label: "Graph Main" },
+//         { to: "/graphuserwise", label: "Graph User Wise" },
+//         { to: "/manageSMPP", label: "Manage SMPP" },
+//         { to: "/managerouting", label: "Manage Routing" },
+//         { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+//         { to: "/manageprefix", label: "Manage Prefix" },
+//         { to: "/blacklist", label: "Blacklist" },
+//         { to: "/managenotifications", label: "ManageNotifications" },
+//         { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+//       ],
+//       roles: ["ADMIN"],
+//     },
+//     {
+//       id: "",
+//       name: "Managecontacts",
+//       icon: <GroupOutlinedIcon fontSize="20" />,
+//       label: "Manage Contacts",
+//       type: "single",
+//       to: "/managecontacts",
+//       roles: ["ADMIN", "DIRECTUSER"],
+//     },
+//     {
+//       id: "",
+//       name: "Wishmanagement",
+//       icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+//       label: "Wish Management",
+//       type: "single",
+//       to: "/smswishmanagement",
+//       roles: ["ADMIN"],
+//     },
+//     // {
+//     //   id: "",
+//     //   name: "apiDocs",
+//     //   icon: <DescriptionOutlinedIcon fontSize="20" />,
+//     //   label: "API Docs",
+//     //   type: "single",
+//     //   onClick: () => navigate("/docs"),
+//     //   roles: ["ADMIN"],
+//     // },
+//     // {
+//     //     name: 'Logout',
+//     //     icon: <FaSignOutAlt />,
+//     //     label: 'Logout',
+//     //     type: "single",
+//     //     onClick: handleLogout
+//     // },
+//   ];
+
+//   const getFilteredMenuItems = (menuItems, userState) => {
+//     let allowedServices = [];
+
+//     if (userState.role === "ADMIN") {
+//       return menuItems;
+//     }
+
+//     if (userState.role === "AGENT") {
+//       return [
+//         {
+//           id: "",
+//           name: "Home",
+//           icon: <FaHome />,
+//           label: "Home",
+//           type: "single",
+//           to: "/",
+//           roles: ["AGENT"],
+//         },
+//         {
+//           id: "",
+//           name: "WhatsApp LiveChat",
+//           icon: <FaWhatsapp />,
+//           label: "WhatsApp LiveChat",
+//           type: "single",
+//           to: "/wlivechat",
+//           roles: ["AGENT"],
+//         },
+//       ];
+//     }
+
+//     menuItems.forEach((item) => {
+//       // if (item.roles.includes(userState.role)) allowedServices.push(item);
+//       // userState.services.forEach((service, index) => {
+//       //   if (item.id == service.service_type_id) {
+//       //     allowedServices.push(item);
+//       //   }
+//       // });
+//       if (item.name === "Home") {
+//         allowedServices.push(item);
+//       }
+//       if (item.name === "apiDocs") {
+//         allowedServices.push(item);
+//       }
+//       if (item.name === "CallBack") {
+//         allowedServices.push(item);
+//       }
+//       if (item.name === "Managecontacts") {
+//         allowedServices.push(item);
+//       }
+//       userState.services.forEach((service, index) => {
+//         if (item.id == service.service_type_id) {
+//           allowedServices.push(item);
+//         }
+//       });
+//     });
+
+//     return allowedServices;
+//   };
+
+//   const filteredItems = getFilteredMenuItems(menuItems, user);
+
+//   return (
+//     <motion.div
+//       layout
+//       initial={{ x: isMobile ? -240 : 0, width: isCollapsed ? 64 : 240 }}
+//       animate={{
+//         x: isMobile ? (isCollapsed ? -240 : 0) : 0,
+//         width: isCollapsed ? 64 : 240,
+//       }}
+//       transition={{ type: "tween", stiffness: 260, damping: 30 }}
+//       onAnimationStart={() => {
+//         if (isCollapsed) setCollapseAnimationDone(false);
+//       }}
+//       onAnimationComplete={() => {
+//         setCollapseAnimationDone(!isCollapsed);
+//       }}
+//       className={`mainsidebar h-screen bg-white text-white popf px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
+//         ${isCollapsed ? "items-center " : "space-y-0"}`}
+//       style={{ maxHeight: "calc(100vh - 4rem)" }}
+//     >
+//       {filteredItems.map((item) =>
+//         item.type === "dropdown" ? (
+//           <Tooltip
+//             key={item.name}
+//             title={item.label}
+//             placement="right"
+//             arrow
+//             open={isCollapsed ? openTooltips[item.name] : false}
+//             onOpen={() => handleTooltipOpen(item.name)}
+//             onClose={() => handleTooltipClose(item.name)}
+//             disableHoverListener={!isCollapsed}
+//             disableFocusListener={!isCollapsed}
+//             disableTouchListener={!isCollapsed}
+//           >
+//             <motion.div
+//               onClick={() => handleDropdownClick(item.name)}
+//               className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+//                 }`}
+//             >
+//               <span className="text-black flex-shrink-0">{item.icon}</span>
+//               <motion.span
+//                 animate={{ opacity: isCollapsed ? 0 : 1 }}
+//                 transition={{ duration: 0.15 }}
+//                 className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+//                   }`}
+//               >
+//                 {item.label}
+//               </motion.span>
+
+//               {!isCollapsed && (
+//                 <div
+//                   className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+//                     }`}
+//                 >
+//                   {openDropdown === item.name ? (
+//                     <MdExpandLess />
+//                   ) : (
+//                     <MdExpandMore />
+//                   )}
+//                 </div>
+//               )}
+//             </motion.div>
+
+//             {/*Dropdown Content */}
+//             <motion.div
+//               initial={{ height: 0, opacity: 0 }}
+//               animate={{
+//                 height:
+//                   openDropdown === item.name
+//                     ? dropdownRefs[item.name]?.scrollHeight
+//                     : 0,
+//                 opacity: openDropdown === item.name ? 1 : 0,
+//               }}
+//               transition={{ duration: 0.3 }}
+//               className="overflow-hidden"
+//               ref={(el) => (dropdownRefs[item.name] = el)}
+//             >
+//               {item.links.map((link) => {
+//                 if (link.isHide) return null;
+//                 const isActive = isActiveRoute(link.to);
+//                 return (
+//                   <React.Fragment key={link.to}>
+//                     <Link
+//                       to={link.to}
+//                       onClick={handleSingleRouteClick}
+//                       className={`block px-4 py-2.5 text-sm transition-all duration-300
+//           ${isActive ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800"}
+//           ${link?.isHide ? "hidden" : ""}
+//           hover:bg-[#e6f4ff]"
+//         `}
+//                     >
+//                       <FiberManualRecordIcon
+//                         sx={{
+//                           color: isActive ? "blue" : "black",
+//                           fontSize: "10px",
+//                           marginRight: "10px",
+//                         }}
+//                       />
+//                       <span
+//                         className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
+//                           }`}
+//                       >
+//                         {link.label}
+//                       </span>
+//                     </Link>
+//                     <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+//                   </React.Fragment>
+//                 );
+//               })}
+//             </motion.div>
+//           </Tooltip>
+//         ) : (
+//           <Tooltip
+//             key={item.name}
+//             title={isCollapsed ? item.label : ""}
+//             placement="right"
+//             arrow
+//             open={isCollapsed ? openTooltips[item.name] : false}
+//             onOpen={() => handleTooltipOpen(item.name)}
+//             onClose={() => handleTooltipClose(item.name)}
+//             disableHoverListener={!isCollapsed}
+//             disableFocusListener={!isCollapsed}
+//             disableTouchListener={!isCollapsed}
+//           >
+//             {item.onClick ? (
+//               <motion.div
+//                 onClick={() => {
+//                   item.onClick();
+//                   handleSingleRouteClick();
+//                 }}
+//                 className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+//                   }`}
+//               >
+//                 <span className="flex-shrink-0">{item.icon}</span>
+//                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
+//                   {item.label}
+//                 </span>
+//               </motion.div>
+//             ) : (
+//               <Link
+//                 to={item.to}
+//                 onClick={handleSingleRouteClick}
+//                 className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+//                   }`}
+//               >
+//                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
+//                 <motion.span
+//                   animate={{ opacity: isCollapsed ? 0 : 1 }}
+//                   transition={{ duration: 0.15 }}
+//                   className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+//                     }`}
+//                 >
+//                   {item.label}
+//                 </motion.span>
+//               </Link>
+//             )}
+//           </Tooltip>
+//         )
+//       )}
+//     </motion.div>
+//   );
+// };
+
+// export default Sidebar;
+
+
+
+import React, { useState, useRef, useEffect } from "react";
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { MdExpandLess, MdExpandMore, MdOutlineEmail } from "react-icons/md";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
+import BlockOutlinedIcon from "@mui/icons-material/BlockOutlined";
+import GroupOutlinedIcon from "@mui/icons-material/GroupOutlined";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
+import { IoPersonOutline } from "react-icons/io5";
+import { SiGoogleauthenticator } from "react-icons/si";
+import { LuMessageSquareMore } from "react-icons/lu";
+import { IoSettingsOutline } from "react-icons/io5";
+import { IoWalletOutline } from "react-icons/io5";
+import Tooltip from "@mui/material/Tooltip";
+import Divider from "@mui/material/Divider";
+import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+
+import rcsicon from "../../assets/icons/RCS02.svg";
+import twoway from "../../assets/icons/TWOWAY.svg";
+import callback from "../../assets/icons/Callback02.svg";
+import missedcall from "../../assets/icons/Missedcall2.svg";
+import obd from "../../assets/icons/OBD02.svg";
+import ibd from "../../assets/icons/IBD02.svg";
+import numberlookup from "../../assets/icons/Numberlookup.svg";
+import clicktwocall from "../../assets/icons/Click2Call02.svg";
+import { LuWandSparkles } from "react-icons/lu";
+
+import { useUser } from "@/context/auth";
+import { all } from "axios";
+
+const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
+  const { user } = useUser();
+
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [collapseAnimationDone, setCollapseAnimationDone] = useState(
+    !isCollapsed
+  );
+
+  const location = useLocation();
+  const [openTooltips, setOpenTooltips] = useState({});
+  const dropdownRefs = useRef({});
+  const navigate = useNavigate();
+
+  const handleTooltipOpen = (key) => {
+    setOpenTooltips((prev) => ({ ...prev, [key]: true }));
+  };
+
+  const handleTooltipClose = (key) => {
+    setOpenTooltips((prev) => ({ ...prev, [key]: false }));
+  };
+
+  useEffect(() => {
+    if (!isCollapsed) {
+      setOpenTooltips({});
+    }
+  }, [isCollapsed]);
+
+  useEffect(() => {
+    if (isCollapsed) {
+      setOpenDropdown(null);
+    }
+  }, [isCollapsed]);
+
+  const handleDropdownClick = (dropdownName) => {
+    if (isCollapsed) {
+      setIsCollapsed(false);
+      return;
+    }
+    setOpenDropdown((prev) => (prev === dropdownName ? null : dropdownName));
+  };
+
+  const handleSingleRouteClick = () => {
+    if (isMobile) setIsCollapsed(true);
+  };
+
+  const isActiveRoute = (route) => {
+    if (route === "/") {
+      return location.pathname === "/";
+    }
+    return location.pathname.startsWith(route);
+  };
+
+  const collapsedClass = isCollapsed
+    ? "justify-center px-0 "
+    : "justify-start px-4 ";
+
+  useEffect(() => {
+    const activeMenu = menuItems.find((item) =>
+      item.links?.some((link) => isActiveRoute(link.to))
+    );
+    if (activeMenu) {
+      setOpenDropdown(activeMenu.name);
+    } else {
+      setOpenDropdown(null);
+    }
+  }, [location.pathname]);
+
+  const menuItems = [
+    {
+      id: "",
+      name: "Home",
+      icon: <FaHome />,
+      label: "Home",
+      type: "single",
+      to: "/",
+      roles: ["ADMIN", "AGENT"],
+    },
+    // {
+    //   id: "",
+    //   name: "ResellerDash",
+    //   icon: <FaHome />,
+    //   label: "ResellerDash",
+    //   type: "single",
+    //   to: "/resellerdash",
+    // },
+    // {
+    //     name: 'Dummy',
+    //     icon: <BlockOutlinedIcon fontSize='20' />,
+    //     label: 'Dummy',
+    //     type: "single",
+    //     to: "/dummy",
+    // },
+    // {
+    //   id: "1",
+    //   name: "SMS",
+    //   icon: <LuMessageSquareMore />,
+    //   label: "SMS",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/sendsms", label: "Send SMS" },
+    //     { to: "/smsreports", label: "Reports" },
+    //     { to: "/smsdlttemplates", label: "DLT Template" },
+    //     {
+    //       to: "/smscampaigndetaillogs",
+    //       label: "Sms Details Logs",
+    //       isHide: true,
+    //     },
+    //     {
+    //       to: "/smsAttachmentdetaillog",
+    //       label: "Sms Details Logs",
+    //       isHide: true,
+    //     },
+    //   ],
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Two Way SMS",
+    //   icon: <img src={twoway} className="w-4 h-4" />,
+
+    //   label: "Two Way SMS",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/managekeywords", label: "Manage Keyword" },
+    //     { to: "/twowayreports", label: "Reports" },
+    //     { to: "/twowayintegration", label: "Integration" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "3",
+    //   name: "RCS",
+    //   icon: <img src={rcsicon} className="w-4 h-4" />,
+    //   label: "RCS",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/sendrcs", label: "Send RCS" },
+    //     { to: "/rcsmanagetemplate", label: "Manage Template" },
+    //     // { to: "/rcslivechats", label: "Live Chats" },
+    //     { to: "/rcssuggestionreport", label: "Suggestion Report" },
+    //     { to: "/rcsdeliveryreport", label: "Delivery Report" },
+    //     {
+    //       to: "/rcsdeliverycampaigndetails",
+    //       label: "Delivery Campaign Report",
+    //       isHide: true,
+    //     },
+    //     {
+    //       to: "/rcsaddtemplatercs",
+    //       label: "RcsAddTemplate",
+    //       isHide: true,
+    //     },
+    //   ],
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
+    // {
+    //   id: "2",
+    //   name: "WhatsApp",
+    //   icon: <FaWhatsapp />,
+    //   label: "WhatsApp",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/wlaunchcampaign", label: "Launch Campaigns" },
+    //     { to: "/wlivechat", label: "Live Chats" },
+    //     { to: "/wmanagecampaign", label: "Manage Campaigns" },
+    //     { to: "/managetemplate", label: "Manage Templates" },
+    //     // { to: "/wmanageoptin", label: "Manage Optin" },
+    //     // { to: "/wchatwidget", label: "Chat Widget" },
+    //     { to: "/wqrcode", label: "QR Code" },
+    //     { to: "/wlcsetting", label: "Live Chats Settings" },
+    //     { to: "/wmanagewaba", label: "Manage WABA" },
+    //     { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
+    //     { to: "/wwhatsappmanageagent", label: "Manage Agent" },
+    //     { to: "/wwhatsappbot", label: "Manage Bot" },
+    //     { to: "/wwhatsappflows", label: "Flows" },
+    //     { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
+    //     { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+    //     { to: "/createtemplate", label: "Create Bot", isHide: true },
+    //     { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
+    //   ],
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Number Lookup",
+    //   icon: <img src={numberlookup} className="w-4 h-4" />,
+    //   label: "Number Lookup",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/hlrlookup", label: "HLR Lookup" },
+    //     { to: "/lookupreports", label: "HLR Lookup Reports" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "App Authenticator",
+    //   icon: <SiGoogleauthenticator />,
+    //   label: "App Authenticator",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/authsettings", label: "Settings" },
+    //     { to: "/authreports", label: "Reports" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "E-mail",
+    //   icon: <MdOutlineEmail />,
+    //   label: "E-mail",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/emailtemplate", label: "Email Template" },
+    //     { to: "/emailreports", label: "Reports" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "7",
+    //   name: "OBD",
+    //   icon: <img src={obd} className="w-4 h-4" />,
+    //   label: "OBD",
+    //   type: "dropdown",
+    //   links: [
+    //     // { to: "/obdcreatecampaign", label: "Create Campaign" },
+    //     // { to: "/obdmanagecampaign", label: "Reports" },
+    //     // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+    //     // { to: "/obdIntegration", label: "Integration" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "IBD",
+    //   icon: <img src={ibd} className="w-4 h-4" />,
+    //   label: "IBD",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/ibdcallhistory", label: "Call History" },
+    //     { to: "/ibdmanageexecutive", label: "Manage Executive" },
+    //     { to: "/ibdivrflow", label: "IVR Flow" },
+    //     { to: "/ibdsettings", label: "Settings" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Missed Call",
+    //   icon: <img src={missedcall} className="w-4 h-4" />,
+    //   label: "Missed Call",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/missedcallhistory", label: "Call History" },
+    //     { to: "/missedcallsettings", label: "Settings" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Click-2-Call",
+    //   icon: <img src={clicktwocall} className="w-4 h-4" />,
+
+    //   label: "Click-2-Call",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/clicktohistory", label: "Call History" },
+    //     { to: "/clicktosettings", label: "Settings" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // // {
+    // //     name: 'settings',
+    // //     icon: <IoSettingsOutline />,
+    // //     label: 'Settings',
+    // //     type: "dropdown",
+    // //     links: [
+    // //         { to: '/mainsettings', label: 'Profile' },
+    // //         { to: '/mainaccount', label: 'Account' },
+    // //     ],
+    // // },
+    // {
+    //   id: "",
+    //   name: "CallBack",
+    //   // icon: <MdOutlineEmail />,
+    //   icon: <img src={callback} className="w-4.5 h-4.5" />,
+    //   label: "Callback",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/callback", label: "Call Back" },
+    //     { to: "/addcallback", label: "Add Call Back", isHide: true },
+    //     { to: "/editcallback", label: "Edit Call Back", isHide: true },
+    //   ],
+    //   roles: [],
+    // },
+    // {
+    //   id: "",
+    //   name: "managefunds",
+    //   icon: <IoWalletOutline />,
+    //   label: "Manage Funds",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/recharge", label: "Recharge" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "admin",
+    //   icon: <IoPersonOutline />,
+    //   label: "Admin",
+    //   type: "dropdown",
+    //   links: [
+    //     { to: "/manageuser", label: "Manage User" },
+    //     { to: "/managedlttemplate", label: "Manage DLT Template" },
+    //     { to: "/rcsmanagebot", label: "Manage Bot" },
+    //     { to: "/managevoiceclips", label: "Manage Voice Clips" },
+    //     { to: "/manageplan", label: "Manage Plan" },
+    //     { to: "/accountmanager", label: "Account Manager" },
+    //     { to: "/graphmain", label: "Graph Main" },
+    //     { to: "/graphuserwise", label: "Graph User Wise" },
+    //     { to: "/manageSMPP", label: "Manage SMPP" },
+    //     { to: "/managerouting", label: "Manage Routing" },
+    //     { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+    //     { to: "/manageprefix", label: "Manage Prefix" },
+    //     { to: "/blacklist", label: "Blacklist" },
+    //     { to: "/managenotifications", label: "ManageNotifications" },
+    //     { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+    //   ],
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Managecontacts",
+    //   icon: <GroupOutlinedIcon fontSize="20" />,
+    //   label: "Manage Contacts",
+    //   type: "single",
+    //   to: "/managecontacts",
+    //   roles: ["ADMIN", "DIRECTUSER"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Wishmanagement",
+    //   icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Wish Management",
+    //   type: "single",
+    //   to: "/smswishmanagement",
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "apiDocs",
+    //   icon: <DescriptionOutlinedIcon fontSize="20" />,
+    //   label: "API Docs",
+    //   type: "single",
+    //   onClick: () => navigate("/docs"),
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //     name: 'Logout',
+    //     icon: <FaSignOutAlt />,
+    //     label: 'Logout',
+    //     type: "single",
+    //     onClick: handleLogout
+    // },
+
+    {
+      id: "",
+      name: "User Management",
+      icon: <IoPersonOutline />,
+      label: "User Management",
+      type: "dropdown",
+      links: [
+        { to: "/manageuser", label: "Manage User" },
+        // { to: "/managedlttemplate", label: "Manage DLT Template" },
+        // { to: "/rcsmanagebot", label: "Manage Bot" },
+        // { to: "/managevoiceclips", label: "Manage Voice Clips" },
+        // { to: "/manageplan", label: "Manage Plan" },
+        // { to: "/accountmanager", label: "Account Manager" },
+        // { to: "/graphmain", label: "Graph Main" },
+        // { to: "/graphuserwise", label: "Graph User Wise" },
+        // { to: "/manageSMPP", label: "Manage SMPP" },
+        // { to: "/managerouting", label: "Manage Routing" },
+        // { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+        // { to: "/manageprefix", label: "Manage Prefix" },
+        // { to: "/blacklist", label: "Blacklist" },
+        // { to: "/managenotifications", label: "ManageNotifications" },
+        // { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+      ],
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
+      name: "Reports",
+      icon: <IoPersonOutline />,
+      label: "Reports",
+      type: "dropdown",
+      links: [
+        // { to: "/smsreports", label: "Reports" },
+        { to: "/smsreports", label: "SMS" },
+        { to: "/managedlttemplate", label: "RCS" },
+        { to: "/rcsmanagebot", label: "Whatsapp" },
+        { to: "/managevoiceclips", label: "OBD" },
+        // { to: "/managedlttemplate", label: "Manage DLT Template" },
+        // { to: "/rcsmanagebot", label: "Manage Bot" },
+        // { to: "/managevoiceclips", label: "Manage Voice Clips" },
+        // { to: "/manageplan", label: "Manage Plan" },
+        // { to: "/accountmanager", label: "Account Manager" },
+        // { to: "/graphmain", label: "Graph Main" },
+        // { to: "/graphuserwise", label: "Graph User Wise" },
+        // { to: "/manageSMPP", label: "Manage SMPP" },
+        // { to: "/managerouting", label: "Manage Routing" },
+        // { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+        // { to: "/manageprefix", label: "Manage Prefix" },
+        // { to: "/blacklist", label: "Blacklist" },
+        // { to: "/managenotifications", label: "ManageNotifications" },
+        // { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+      ],
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
+      name: "managefunds",
+      icon: <IoWalletOutline />,
+      label: "Manage Funds",
+      type: "dropdown",
+      links: [
+        { to: "/recharge", label: "Recharge" },
+        { to: "/transactions", label: "Transactions" },
+      ],
+      roles: ["ADMIN"],
+    },
+  ];
+
+  const getFilteredMenuItems = (menuItems, userState) => {
+    let allowedServices = [];
+
+    if (userState.role === "ADMIN") {
+      return menuItems;
+    }
+
+    if (userState.role === "AGENT") {
+      return [
+        {
+          id: "",
+          name: "Home",
+          icon: <FaHome />,
+          label: "Home",
+          type: "single",
+          to: "/",
+          roles: ["AGENT"],
+        },
+        {
+          id: "",
+          name: "WhatsApp LiveChat",
+          icon: <FaWhatsapp />,
+          label: "WhatsApp LiveChat",
+          type: "single",
+          to: "/wlivechat",
+          roles: ["AGENT"],
+        },
+      ];
+    }
+
+    menuItems.forEach((item) => {
+      // if (item.roles.includes(userState.role)) allowedServices.push(item);
+      // userState.services.forEach((service, index) => {
+      //   if (item.id == service.service_type_id) {
+      //     allowedServices.push(item);
+      //   }
+      // });
+      if (item.name === "Home") {
+        allowedServices.push(item);
+      }
+      if (item.name === "apiDocs") {
+        allowedServices.push(item);
+      }
+      if (item.name === "CallBack") {
+        allowedServices.push(item);
+      }
+      if (item.name === "Managecontacts") {
+        allowedServices.push(item);
+      }
+      userState.services.forEach((service, index) => {
+        if (item.id == service.service_type_id) {
+          allowedServices.push(item);
+        }
+      });
     });
 
-    const [otp, setOtp] = useState(Array(6).fill(''));
-    const [isOtpSent, setIsOtpSent] = useState(false);
-    const [resendTimer, setResendTimer] = useState(0);
-    const [isOtpVerified, setIsOtpVerified] = useState(false);
-    const otpRefs = useRef([]);
+    return allowedServices;
+  };
 
-    const validatePhoneNumber = (phone) => /^[0-9]{10,13}$/.test(phone);
-    const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const filteredItems = getFilteredMenuItems(menuItems, user);
 
-    const sendOtp = () => {
-        const phone = form.phone.trim();
-        const email = form.email.trim();
+  return (
+    <motion.div
+      layout
+      initial={{ x: isMobile ? -240 : 0, width: isCollapsed ? 64 : 240 }}
+      animate={{
+        x: isMobile ? (isCollapsed ? -240 : 0) : 0,
+        width: isCollapsed ? 64 : 240,
+      }}
+      transition={{ type: "tween", stiffness: 260, damping: 30 }}
+      onAnimationStart={() => {
+        if (isCollapsed) setCollapseAnimationDone(false);
+      }}
+      onAnimationComplete={() => {
+        setCollapseAnimationDone(!isCollapsed);
+      }}
+      className={`mainsidebar h-screen bg-white text-white popf px-0 pt-3 flex flex-col fixed  left-0 overflow-y-auto overflow-x-hidden z-9  
+        ${isCollapsed ? "items-center " : "space-y-0"}`}
+      style={{ maxHeight: "calc(100vh - 4rem)" }}
+    >
+      {menuItems.map((item) =>
+        item.type === "dropdown" ? (
+          <Tooltip
+            key={item.name}
+            title={item.label}
+            placement="right"
+            arrow
+            open={isCollapsed ? openTooltips[item.name] : false}
+            onOpen={() => handleTooltipOpen(item.name)}
+            onClose={() => handleTooltipClose(item.name)}
+            disableHoverListener={!isCollapsed}
+            disableFocusListener={!isCollapsed}
+            disableTouchListener={!isCollapsed}
+          >
+            <motion.div
+              onClick={() => handleDropdownClick(item.name)}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+                }`}
+            >
+              <span className="text-black flex-shrink-0">{item.icon}</span>
+              <motion.span
+                animate={{ opacity: isCollapsed ? 0 : 1 }}
+                transition={{ duration: 0.15 }}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
+                  }`}
+              >
+                {item.label}
+              </motion.span>
 
-        if (!validatePhoneNumber(phone)) {
-            toast.error('Enter a valid phone number.');
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            toast.error('Enter a valid email address.');
-            return;
-        }
-
-        // Set verified if validations pass
-        setIsOtpVerified(true); // ✅ This line added
-
-        if (resendTimer === 0) {
-            console.log('OTP sent to:', phone);
-            toast.success('OTP sent successfully!');
-            setIsOtpSent(true);
-            setResendTimer(30);
-            startResendTimer();
-        }
-    };
-
-    const startResendTimer = () => {
-        const interval = setInterval(() => {
-            setResendTimer((prev) => {
-                if (prev <= 1) {
-                    clearInterval(interval);
-                    return 0;
-                }
-                return prev - 1;
-            });
-        }, 1000);
-    };
-
-    const handleOtpChange = (index, value) => {
-        if (/^\d?$/.test(value)) {
-            const updatedOtp = [...otp];
-            updatedOtp[index] = value;
-            setOtp(updatedOtp);
-
-            if (value !== '' && index < otp.length - 1) {
-                otpRefs.current[index + 1].focus();
-            } else if (value === '' && index > 0) {
-                otpRefs.current[index - 1].focus();
-            }
-        }
-    };
-
-    const verifyOtp = () => {
-        const enteredOtp = otp.join('');
-        const validOtp = '123456';
-
-        if (enteredOtp.length < 6) {
-            toast.error('Please enter the complete 6-digit OTP.');
-            return;
-        }
-
-        if (enteredOtp === validOtp) {
-            toast.success('OTP Verified Successfully!');
-            setIsOtpSent(false);
-            setIsOtpVerified(true);
-            setOtp(Array(6).fill(''));
-        } else {
-            toast.error('Invalid OTP. Please try again.');
-        }
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        const { name, email, phone, service } = form;
-
-        // Validate OTP before form submission
-        const enteredOtp = otp.join('');
-        if (!isOtpVerified || enteredOtp.length < 6) {
-            toast.error('Please verify your phone number with OTP.');
-            return;
-        }
-
-        // Validate other fields
-        if (!name.trim()) return toast.error('Name is required.');
-        if (!email.trim() || !validateEmail(email)) return toast.error('Enter a valid email address.');
-        if (!validatePhoneNumber(phone)) return toast.error('Enter a valid phone number.');
-        if (!service.trim()) return toast.error('Please select a service.');
-
-        toast.success('Form submitted successfully!');
-        console.log('Form submitted:', form);
-        navigate('/thank-you');
-    };
-
-    const [turnstileResponse, setTurnstileResponse] = useState(null); // To store the Turnstile response token
-    // Handle Turnstile success response
-    const handleTurnstileChange = (token) => {
-        setTurnstileResponse(token);
-        console.log("Turnstile Token:", token); // Print the Turnstile token
-    };
-
-    return (
-        <div className="bg-white border border-gray-300 rounded-xl p-1 md:p-6 shadow-sm">
-            <form onSubmit={handleSubmit} className="space-y-4 bg-white border border-gray-300 rounded-xl p-4 md:p-6 shadow-sm">
-                <input type="text" name="name" placeholder="Full Name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-                <input type="text" name="email" placeholder="Email Address" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" disabled={isOtpVerified} />
-
-                <div className="flex gap-2 items-center">
-                    <input type="text" name="phone" placeholder="Phone No." disabled={isOtpVerified} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value.replace(/[^\d]/g, '').slice(0, 13), isOtpVerified: false })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-                    <UniversalButton label="Verify" type="button" variant="brutal" disable={!validatePhoneNumber(form.phone) || resendTimer > 0} onClick={sendOtp} className="bg-[#9B44B6] border-[#9B44B6] text-white px-3 py-1 rounded hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] disabled:bg-gray-300 disabled:text-gray-700 disabled:cursor-not-allowed" />
+              {!isCollapsed && (
+                <div
+                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
+                    }`}
+                >
+                  {openDropdown === item.name ? (
+                    <MdExpandLess />
+                  ) : (
+                    <MdExpandMore />
+                  )}
                 </div>
+              )}
+            </motion.div>
 
-                {isOtpSent && resendTimer > 0 && (
-                    <div className="text-sm text-gray-600 mt-1">Resend in {resendTimer} seconds</div>
-                )}
-
-                {isOtpSent && (
-                    <div className="flex items-center gap-2 flex-wrap mt-2">
-                        {otp.map((digit, index) => (
-                            <input key={index} ref={(el) => (otpRefs.current[index] = el)} type="text" maxLength={1} inputMode="numeric" value={digit} onChange={(e) => handleOtpChange(index, e.target.value)} className="w-10 h-10 text-center border border-gray-300 rounded" />
-                        ))}
-                        <UniversalButton label="Submit" variant="brutal" type="button" onClick={verifyOtp} className="bg-[#9B44B6] border-[#9B44B6] text-white hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] px-3 py-1 rounded-md mx-1" />
-                    </div>
-                )}
-
-                <input type="text" name="company" placeholder="Company Name" value={form.company} onChange={(e) => setForm({ ...form, company: e.target.value })} className="form-input w-full border border-gray-300 rounded-md p-2" />
-
-                <select name="service" value={form.service} onChange={(e) => setForm({ ...form, service: e.target.value })} className="form-select w-full border border-gray-300 rounded-md p-2 text-gray-500">
-                    <option value="" disabled>Select Service</option>
-                    <option value="WhatsApp Business API">WhatsApp Business API</option>
-                    <option value="RCS Business Messaging">RCS Business Messaging</option>
-                    <option value="SMS Solution">SMS Solution</option>
-                    <option value="IVR/Missed Call">Virtual Receptionist (IVR)/Missed Call</option>
-                    <option value="User Verification">Chatbot Services</option>
-                    <option value="API Integration">API Integrations</option>
-                    <option value="2-way SMS">2 Way SMS (Long/Shortcode)</option>
-                    <option value="Missed Call Services">Missed Call Services</option>
-                    <option value="Other CPaaS Solutions">Other CPaaS Solutions</option>
-                </select>
-
-                <textarea name="message" placeholder="How can we help you?" value={form.message} onChange={(e) => setForm({ ...form, message: e.target.value })} className="form-textarea w-full border border-gray-300 rounded-md p-2" />
-
-                <TurnstileComponent onChange={handleTurnstileChange} />
-
-                <UniversalButton label="Submit" type="submit" variant="brutal" className="bg-[#9B44B6] border-[#9B44B6] text-white hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] px-4 py-2 rounded-md" />
-            </form>
-        </div>
-    );
+            {/*Dropdown Content */}
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{
+                height:
+                  openDropdown === item.name
+                    ? dropdownRefs[item.name]?.scrollHeight
+                    : 0,
+                opacity: openDropdown === item.name ? 1 : 0,
+              }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+              ref={(el) => (dropdownRefs[item.name] = el)}
+            >
+              {item.links.map((link) => {
+                if (link.isHide) return null;
+                const isActive = isActiveRoute(link.to);
+                return (
+                  <React.Fragment key={link.to}>
+                    <Link
+                      to={link.to}
+                      onClick={handleSingleRouteClick}
+                      className={`block px-4 py-2.5 text-sm transition-all duration-300
+          ${isActive ? "bg-[#e6f4ff] text-blue-800" : "text-gray-800"}
+          ${link?.isHide ? "hidden" : ""}
+          hover:bg-[#e6f4ff]"
+        `}
+                    >
+                      <FiberManualRecordIcon
+                        sx={{
+                          color: isActive ? "blue" : "black",
+                          fontSize: "10px",
+                          marginRight: "10px",
+                        }}
+                      />
+                      <span
+                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
+                          }`}
+                      >
+                        {link.label}
+                      </span>
+                    </Link>
+                    <Divider variant="middle" sx={{ mx: 0, p: 0 }} />
+                  </React.Fragment>
+                );
+              })}
+            </motion.div>
+          </Tooltip>
+        ) : (
+          <Tooltip
+            key={item.name}
+            title={isCollapsed ? item.label : ""}
+            placement="right"
+            arrow
+            open={isCollapsed ? openTooltips[item.name] : false}
+            onOpen={() => handleTooltipOpen(item.name)}
+            onClose={() => handleTooltipClose(item.name)}
+            disableHoverListener={!isCollapsed}
+            disableFocusListener={!isCollapsed}
+            disableTouchListener={!isCollapsed}
+          >
+            {item.onClick ? (
+              <motion.div
+                onClick={() => {
+                  item.onClick();
+                  handleSingleRouteClick();
+                }}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
+                  }`}
+              >
+                <span className="flex-shrink-0">{item.icon}</span>
+                <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
+                  {item.label}
+                </span>
+              </motion.div>
+            ) : (
+              <Link
+                to={item.to}
+                onClick={handleSingleRouteClick}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                  }`}
+              >
+                <span className="flex-shrink-0 text-lg">{item.icon}</span>
+                <motion.span
+                  animate={{ opacity: isCollapsed ? 0 : 1 }}
+                  transition={{ duration: 0.15 }}
+                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                    }`}
+                >
+                  {item.label}
+                </motion.span>
+              </Link>
+            )}
+          </Tooltip>
+        )
+      )}
+    </motion.div>
+  );
 };
 
-export default Blog;
+export default Sidebar;

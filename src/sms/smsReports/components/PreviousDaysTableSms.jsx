@@ -8,6 +8,7 @@ const CustomPagination = ({
   totalPages,
   paginationModel,
   setPaginationModel,
+  setCurrentPage,
 }) => {
   const { items } = usePagination({
     count: totalPages,
@@ -65,14 +66,18 @@ const CustomPagination = ({
   );
 };
 
-const PreviousDaysTableSms = ({ id, name, rows, col }) => {
+const PreviousDaysTableSms = ({ id, name, rows, col, paginationModel,
+  setPaginationModel,
+  setCurrentPage,
+  totalPage,
+}) => {
   const [selectedRows, setSelectedRows] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
+  // const [paginationModel, setPaginationModel] = useState({
+  //   page: 0,
+  //   pageSize: 10,
+  // });
 
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+  const totalPages = totalPage;
   const CustomFooter = () => {
     return (
       <GridFooterContainer
@@ -119,6 +124,7 @@ const PreviousDaysTableSms = ({ id, name, rows, col }) => {
             totalPages={totalPages}
             paginationModel={paginationModel}
             setPaginationModel={setPaginationModel}
+            setCurrentPage={setCurrentPage}
           />
         </Box>
       </GridFooterContainer>
@@ -132,10 +138,10 @@ const PreviousDaysTableSms = ({ id, name, rows, col }) => {
           name={name}
           rows={rows}
           columns={col}
-          initialState={{ pagination: { paginationModel } }}
+          // initialState={{ pagination: { paginationModel } }} 
           pageSizeOptions={[10, 20, 50]}
           pagination
-          paginationModel={paginationModel}
+          // paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           rowHeight={45}
           slots={{

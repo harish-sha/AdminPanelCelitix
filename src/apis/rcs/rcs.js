@@ -129,3 +129,18 @@ export const syncTemplateRcs = async (srno) => {
     method: "POST",
   });
 };
+
+// get all campaign list
+export const getAllCampaign = async (srno) => {
+  return await fetchWithAuth(`/rcs/getAllRcsCampaignList`, {
+    method: "POST",
+  });
+};
+
+// export data
+export const exportData = async (data) => {
+  return await fetchWithAuth(`/rcs/getDownloadRcsCustomReport`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

@@ -87,6 +87,8 @@ const AddTemplateRcs = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
 
+  const [isRefresh, setIsRefresh] = useState(false);
+
   const closePanel = () => {
     setIsOpen(false);
     setAi({
@@ -304,6 +306,16 @@ const AddTemplateRcs = () => {
         return;
       }
       // console.log(cardData);
+      const key = {
+        HORIZONTAL: "cardAlignment",
+        VERTICAL: "mediaHeight",
+      };
+      const isVertical = cardOrientation.toUpperCase() === "VERTICAL";
+
+      const dynamicKey = key[cardOrientation.toUpperCase()];
+      const value = isVertical
+        ? `${cardData.mediaHeight.toUpperCase()}_HEIGHT`
+        : cardData.mediaHeight.toUpperCase();
       data = {
         ...inputData,
         agentId: inputData.agentId.toString(),
@@ -315,7 +327,8 @@ const AddTemplateRcs = () => {
             title: cardData.title,
             caption: messageContent,
             cardOrientation: cardOrientation.toUpperCase(),
-            mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
+            // mediaHeight: `${cardData.mediaHeight.toUpperCase()}_HEIGHT`,
+            [dynamicKey]: value,
             suggestions: suggestions,
           },
         ],
@@ -599,6 +612,7 @@ const AddTemplateRcs = () => {
                   setVariables={setVariables}
                   messageContent={messageContent}
                   setMessageContent={setMessageContent}
+                  setIsRefresh={setIsRefresh}
                 />
                 <GenerateAiContent
                   ai={ai}
@@ -649,6 +663,8 @@ const AddTemplateRcs = () => {
                 setInputData={setBtnInputData}
                 selectedAction={selectedAction}
                 setSelectedAction={setSelectedAction}
+                isRefresh={isRefresh}
+                setIsRefresh={setIsRefresh}
               />
             </div>
           )}

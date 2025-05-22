@@ -26,7 +26,7 @@ const TwowayReports = () => {
       </>
     ) : ( */}
       <div>
-        <div className="flex flex-wrap items-end w-full gap-2 pb-1">
+        <div className="flex flex-wrap items-end w-full gap-2 mb-4">
           {/* From Date Picker */}
           <div className="w-full sm:w-56">
             <UniversalDatePicker

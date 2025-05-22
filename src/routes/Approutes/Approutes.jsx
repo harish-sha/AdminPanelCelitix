@@ -99,21 +99,21 @@ import SettingIBD from "@/ibd/ibdSettings/SettingIBD";
 
 // OBD
 import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
-import ObdManageVoiceClips from "../../obd/managevoiceclips/ObdManageVoiceClips";
-import ObdIntegration from "../../obd/obdmanageinteration/ObdIntegration";
-import ObdCampaignReports from "../../obd/obdManageCampaign/ObdCampaignReports";
+import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
+import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
+import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
 import MissedCallSettings from "@/missedcall/missedCallSettings/MissedCallSettings";
 
 // App Authenticator
-import AppauthenticatorReports from "../../appauthenticator/authenticatorreports/AppauthenticatorReports";
-import AuthenticatorSetting from "../../appauthenticator/authenticatorsettings/AuthenticatorSetting";
+import AppauthenticatorReports from "@/appauthenticator/authenticatorreports/AppauthenticatorReports";
+import AuthenticatorSetting from "@/appauthenticator/authenticatorsettings/AuthenticatorSetting";
 
 // Email
-import EmailReport from "../../email/emailreport/EmailReport";
-import EmailTemplate from "../../email/emailtemplate/EmailTemplate";
+import EmailReport from "@/email/emailreport/EmailReport";
+import EmailTemplate from "@/email/emailtemplate/EmailTemplate";
 
 // Number Lookup
 import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
@@ -121,7 +121,8 @@ import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
 
 // Callback
 import Callback from "@/callback/Callback";
-// import { AddCallback } from "@/callback/page/addCallback";
+import { AddCallback } from "@/callback/page/addCallback";
+import { EditCallback } from "@/callback/page/editCallback";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
@@ -136,8 +137,11 @@ const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
+
         {/* dashboard */}
-        <Route index element={<Dashboard />} />
+        {/* <Route index element={<Dashboard />} /> */}
+        <Route index element={<ResellerDashboard />} />
+        {/* <Route path="resellerdash" element={<ResellerDashboard />} /> */}
 
         {/* admin */}
         <Route path="manageuser" element={<ManageUser />} />
@@ -267,6 +271,8 @@ const Approutes = () => {
         {/* Callback */}
         <Route path="/callback" element={<Callback />} />
         <Route path="/addcallback" element={<AddCallback />} />
+        <Route path="/editcallback" element={<EditCallback />} />
+
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

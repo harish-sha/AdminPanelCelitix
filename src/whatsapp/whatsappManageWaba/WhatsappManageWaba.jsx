@@ -3,6 +3,7 @@ import { Paper, Typography, Box, Button } from "@mui/material";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
+import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 
 import { motion } from "framer-motion";
 import {
@@ -193,68 +194,13 @@ const WhatsappManageWaba = ({ id, name }) => {
 
     const imageUrl = URL.createObjectURL(selectedFile);
     setPreview(imageUrl);
-    const res = await uploadImageFile(selectedFile);
-    setFile(res?.fileUrl);
+    const res = await uploadImageFile(selectedFile, 1);
+    setFile(res?.handlerid || null);
     toast.success("Image uploaded successfully.");
   };
 
 
-  // Harish 
-
-  // useEffect(() => {
-  //   window.fbAsyncInit = function () {
-  //     window.FB.init({
-  //       appId: "819027950096451",
-  //       cookie: true,
-  //       xfbml: true,
-  //       version: "v20.0",
-  //     });
-  //   };
-
-  //   (function (d, s, id) {
-  //     let js,
-  //       fjs = d.getElementsByTagName(s)[0];
-  //     if (d.getElementById(id)) return;
-  //     js = d.createElement(s);
-  //     js.id = id;
-  //     js.src = "https://connect.facebook.net/en_US/sdk.js";
-  //     fjs.parentNode.insertBefore(js, fjs);
-  //   })(document, "script", "facebook-jssdk");
-  // }, []);
-
-  // const handleFacebookLogin = () => {
-  //   window.FB.login(
-  //     (response) => {
-  //       if (response.authResponse) {
-  //         // console.log("User logged in", response);
-  //         window.FB.api("/me", { fields: "id,name,email,picture" }, (user) => {
-  //           // console.log("User details", user);
-  //         });
-  //       } else {
-  //         // console.log("User canceled login or did not fully authorize.");
-  //         toast.error("User canceled login or did not fully authorize.")
-  //       }
-  //     },
-  //     { scope: "public_profile,email" },
-  //     {
-  //       config_id: "827520649332611",
-  //       response_type: "code",
-  //       override_default_response_type: true,
-  //       extras: {
-  //         feature: "whatsapp_embedded_signup",
-  //         version: 2,
-  //         setup: {
-  //           solutionID: "597385276367677",
-  //         },
-  //       },
-  //     }
-  //   );
-  // };
-
-  // Arhant
-
   useEffect(() => {
-    // Load the Facebook SDK
     const loadFacebookSDK = () => {
       window.fbAsyncInit = function () {
         window.FB.init({
@@ -281,15 +227,38 @@ const WhatsappManageWaba = ({ id, name }) => {
     loadFacebookSDK();
   }, []);
 
+
+  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = "/api";
+
+  async function onboardUser(accessToken) {
+    const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+      }
+    });
+
+    const data = await res.json();
+    console.log(data)
+    if (!data.ok) {
+      toast.error(data.message || "Something went wrong")
+    }
+    toast.success(data.message || "Something went wrong")
+    // return data;
+  }
+
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
+        console.log(response)
         if (response.authResponse) {
-          const accessToken = response.authResponse.accessToken;
-          // console.log('Access Token:', accessToken);
-          // Use this token to call the debug_token API and get the shared WABA's ID
+          const accessToken = response.authResponse.code;
+          console.log('Access Token:', accessToken);
+          onboardUser(accessToken)
         } else {
-          // console.log('User cancelled login or did not fully authorize.');
+          console.log('User cancelled login or did not fully authorize.');
         }
       },
       {
@@ -307,10 +276,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     );
   };
 
-
-
-
-
   const handleSelectFile = () => {
     fileInputRef.current.value = "";
     fileInputRef.current.click();
@@ -324,26 +289,14 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image removed successfully.");
   };
 
-  // const handleView = (waba) => {
-  //   setSelectedWaba(waba);
-  //   setView(true);
-  // };
 
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
+    console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };
-
-  // const handleEdit = () => {
-  //   setWabaEdit(true);
-  // };
-
-  // const handleEdit = async (row) => {
-  //   setWabaEdit(true);
-  //   setSelectedWaba(row);
-  // };
 
   const handleEdit = async (row) => {
     setWabaEdit(true);
@@ -374,7 +327,6 @@ const WhatsappManageWaba = ({ id, name }) => {
         toast.error("Error Refreshing Data");
       }
     } catch (e) {
-      // console.log(e);
       toast.error("Error Refreshing Data");
     }
   };
@@ -383,24 +335,10 @@ const WhatsappManageWaba = ({ id, name }) => {
     setSelectedRows(ids);
   };
 
-  // const handleInfo = (row) => {
-  //   const id = row.id;
-  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
-  //   console.log("Info clicked:", row);
-  // };
-
-  // const handleInfo = (row) => {
-  //   const id = row.id;
-  //   setDropdownOpenId((prevId) => (prevId === id ? null : id));
-  //   setClicked(row.wabas || []);
-  //   console.log("Info clicked:", row);
-  // };
-
   const handleInfo = (row) => {
     const id = row.id;
     setDropdownOpenId((prevId) => (prevId === id ? null : id));
     setClicked(row.additionalInfo || []);
-    // console.log("Info clicked:", row); 
   };
 
   const closeDropdown = () => setDropdownOpenId(null);
@@ -413,7 +351,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       about: about,
       description: description,
       email: email,
-      profilePic: file,
+      profile_picture_handle: file,
       address: address,
       websites: website,
       vertical: vertical,
@@ -761,7 +699,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       ? wabadetails.websites[0].replace("https://www.", "").replace(/\/$/, "")
       : "";
   const phoneNumber = selectedWaba?.wabaNumber || "";
-  const whatsappLinkPreview = `wa.${website}/${phoneNumber}`;
+  const whatsappLinkPreview = `wa.me/${phoneNumber}`;
 
   return (
     <div className="">
@@ -920,14 +858,44 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <FaWhatsapp className="text-[#25D366] text-lg" />
                 {selectedWaba?.wabaNumber || "N/A"}
               </p>
-              <a
+              {/* <a
                 href={`https://wa.me/${selectedWaba?.wabaNumber}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#25D366] text-sm hover:underline"
               >
                 {whatsappLinkPreview}
-              </a>
+              </a> */}
+              <div>
+                <a
+                  href={`https://wa.me/${selectedWaba?.wabaNumber}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[#25D366] text-sm hover:underline"
+                >
+                  {whatsappLinkPreview}
+                </a>
+                <button
+                  onClick={() => {
+                    navigator.clipboard
+                      .writeText(whatsappLinkPreview)
+                      .then(() => {
+                        toast.success("Copied to clipboard!");
+                      })
+                      .catch(() => {
+                        toast.error("Failed to copy password.");
+                      });
+                  }}
+                  className="p-1 bg-transparent rounded-full shadow-2xl cursor-pointer hover:bg-gray-200 focus:outline-none"
+                >
+                  <ContentCopyOutlinedIcon
+                    sx={{
+                      fontSize: "1rem",
+                      color: "#999",
+                    }}
+                  />
+                </button>
+              </div>
             </div>
 
             <motion.div

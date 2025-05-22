@@ -187,6 +187,45 @@ const WhatsappLaunchCampaign = () => {
       finalTotalRecords = totalRecords || 0;
     }
 
+    const bodyVariables = templateDataNew?.components
+      ?.filter((component) => component.type === "BODY")
+      ?.flatMap((component) => extractVariablesFromText(component.text));
+
+    const headerComponent = templateDataNew.components.find(
+      (comp) =>
+        comp.type === "HEADER" &&
+        ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp?.format)
+    );
+
+    if (
+      ["IMAGE", "VIDEO", "DOCUMENT"].includes(headerComponent?.format) &&
+      !imagePreview
+    ) {
+      toast.error("Please upload a media file.");
+      return;
+    }
+
+    const isCarousal = templateDataNew.components.find(
+      (comp) => comp.type === "CAROUSEL"
+    );
+
+    // console.log("isCarousal", isCarousal);
+    const imgCards = [];
+
+    let isError = false;
+
+    if (isCarousal) {
+      Object.keys(fileData).forEach((key) => {
+        if (!fileData[key].filePath) {
+          toast.error(`Please upload a file for Card ${key + 1}.`);
+          isError = true;
+          return;
+        }
+        const filePath = fileData[key].filePath;
+        imgCards.push(filePath);
+      });
+    }
+
     setTotalRecords(finalTotalRecords);
     setDialogVisible(true);
   };
@@ -245,13 +284,30 @@ const WhatsappLaunchCampaign = () => {
       return;
     }
 
+    // const contentValues = bodyVariables
+    //   ?.map((variable) => {
+    //     const key = `body${variable}`;
+    //     const value = formData[key] || "";
+    //     return value.replace(/{{(.*?)}}/g, "#$1#");
+    //   })
+    //   ?.join(",");
+
     const contentValues = bodyVariables
       ?.map((variable) => {
         const key = `body${variable}`;
-        const value = formData[key] || "";
-        return value.replace(/{{(.*?)}}/g, "#$1#");
+        const value = (formData[key] || "").trim();
+
+        if (value.match(/{{(.*?)}}/)) {
+          return `#${value.match(/{{(.*?)}}/)[1]}#`;
+        }
+
+        return `"${value}"`;
       })
       ?.join(",");
+
+    // const contentValues = `"var1",#name#,"var3"`
+
+    // return // Check the output for debugging
 
     if (isGroup === 1) {
       setXlsxPath("");
@@ -337,8 +393,11 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
+    // console.log(requestData)
+
     try {
       const response = await sendWhatsappCampaign(requestData);
+      // return
       if (response?.status === true) {
         toast.success("Campaign launched successfully!");
         setIsLoading(false);
@@ -384,6 +443,7 @@ const WhatsappLaunchCampaign = () => {
         setIsGroup(-1);
         fileRef.current.value = "";
       } else {
+        toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");
       }
     } catch (error) {
@@ -431,7 +491,7 @@ const WhatsappLaunchCampaign = () => {
   // Fetch Template Details
   const fetchTemplateDetails = async (wabaNumber) => {
     try {
-      const response = await getWabaTemplateDetails(wabaNumber);
+      const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
         setTemplateOptions(
@@ -635,7 +695,7 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
-                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>

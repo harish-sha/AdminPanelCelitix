@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import toast from "react-hot-toast";
+import InputVariable from "@/whatsapp/whatsappLaunchCampaign/components/InputVariable";
 
 export const SuggestedActions = ({
   btnOptions,
@@ -11,7 +12,24 @@ export const SuggestedActions = ({
   inputData,
   setInputData,
   selectedCardIndex,
+  isRefresh,
+  setIsRefresh,
 }) => {
+  const [localVariables, setLocalVariables] = useState(
+    JSON.parse(localStorage.getItem("variables") || "[]")
+  );
+
+  // useEffect(() => {
+  //   console.log("localVariables", localStorage.getItem("variables") || "[]");
+  // }, []);
+
+  useEffect(() => {
+    const allVar = JSON.parse(localStorage.getItem("variables") || "[]");
+
+    setLocalVariables(allVar);
+
+  }, [isRefresh]);
+
   const handleDropdownChange = (index, newValue) => {
     setSelectedAction((prev) => ({ ...prev, [index]: newValue }));
     setInputData((prev) => ({
@@ -55,6 +73,19 @@ export const SuggestedActions = ({
 
   const InputBox = ["Url Action", "Dialer Action", "View Location", "Reply"];
 
+  function handleAddVariable(dno, type, e) {
+    const variableTag = `{#${e}#}`;
+    const value = e.target ? e.target.value : variableTag;
+    setInputData((prev) => ({
+      ...prev,
+      [dno]: {
+        ...prev[dno],
+        [type]: prev[dno][type] + `/${value}`,
+      },
+    }));
+    setIsRefresh(false);
+  }
+
   return (
     <>
       {selectedCardIndex + 1 ? (
@@ -94,41 +125,53 @@ export const SuggestedActions = ({
                 {InputBox.includes(selectedAction.dropdown1) && (
                   <>
                     {selectedAction.dropdown1 !== "View Location" && (
-                      <InputField
-                        id="value"
-                        name="value"
-                        // label="value"
-                        placeholder={
-                          selectedAction.dropdown1 === "Url Action"
-                            ? "https://"
-                            : selectedAction.dropdown1 === "Dialer Action"
-                            ? "+91"
-                            : "Enter Value"
-                        }
-                        value={inputData.dropdown1.value}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "dropdown1",
-                            "value",
-                            e.target.value
-                          )
-                        }
-                        className="p-2 border rounded w-56"
-                        maxLength={
-                          selectedAction.dropdown1 === "Url Action"
-                            ? 200
-                            : selectedAction.dropdown1 === "Dialer Action"
-                            ? 13
-                            : 100
-                        }
-                        type={
-                          selectedAction.dropdown1 === "Url Action"
-                            ? "text"
-                            : selectedAction.dropdown1 === "Dialer Action"
-                            ? "number"
-                            : "text"
-                        }
-                      />
+                      <div className="relative w-full">
+                        <InputField
+                          id="value"
+                          name="value"
+                          // label="value"
+                          placeholder={
+                            selectedAction.dropdown1 === "Url Action"
+                              ? "https://"
+                              : selectedAction.dropdown1 === "Dialer Action"
+                                ? "+91"
+                                : "Enter Value"
+                          }
+                          value={inputData.dropdown1.value}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "dropdown1",
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          className="p-2 border rounded w-56"
+                          maxLength={
+                            selectedAction.dropdown1 === "Url Action"
+                              ? 200
+                              : selectedAction.dropdown1 === "Dialer Action"
+                                ? 13
+                                : 100
+                          }
+                          type={
+                            selectedAction.dropdown1 === "Url Action"
+                              ? "text"
+                              : selectedAction.dropdown1 === "Dialer Action"
+                                ? "text"
+                                : "text"
+                          }
+                        />
+                        {selectedAction.dropdown1 === "Url Action" && (
+                          <div className="absolute -bottom-[0.3rem] right-0">
+                            <InputVariable
+                              onSelect={(e) => {
+                                handleAddVariable("dropdown1", "value", e);
+                              }}
+                              variables={localVariables}
+                            />
+                          </div>
+                        )}
+                      </div>
                     )}
                     {selectedAction.dropdown1 === "View Location" && (
                       <>
@@ -200,41 +243,53 @@ export const SuggestedActions = ({
                 {InputBox.includes(selectedAction.dropdown2) && (
                   <>
                     {selectedAction.dropdown2 !== "View Location" && (
-                      <InputField
-                        id="value"
-                        name="value"
-                        // label="value"
-                        placeholder={
-                          selectedAction.dropdown2 === "Url Action"
-                            ? "https://"
-                            : selectedAction.dropdown2 === "Dialer Action"
-                            ? "+91"
-                            : "Enter Value"
-                        }
-                        value={inputData.dropdown2.value}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "dropdown2",
-                            "value",
-                            e.target.value
-                          )
-                        }
-                        className="p-2 border rounded w-56"
-                        maxLength={
-                          selectedAction.dropdown2 === "Url Action"
-                            ? 200
-                            : selectedAction.dropdown2 === "Dialer Action"
-                            ? 13
-                            : 100
-                        }
-                        type={
-                          selectedAction.dropdown2 === "Url Action"
-                            ? "text"
-                            : selectedAction.dropdown2 === "Dialer Action"
-                            ? "number"
-                            : "text"
-                        }
-                      />
+                      <div className="relative w-full">
+                        <InputField
+                          id="value"
+                          name="value"
+                          // label="value"
+                          placeholder={
+                            selectedAction.dropdown2 === "Url Action"
+                              ? "https://"
+                              : selectedAction.dropdown2 === "Dialer Action"
+                                ? "+91"
+                                : "Enter Value"
+                          }
+                          value={inputData.dropdown2.value}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "dropdown2",
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          className="p-2 border rounded w-56"
+                          maxLength={
+                            selectedAction.dropdown2 === "Url Action"
+                              ? 200
+                              : selectedAction.dropdown2 === "Dialer Action"
+                                ? 13
+                                : 100
+                          }
+                          type={
+                            selectedAction.dropdown2 === "Url Action"
+                              ? "text"
+                              : selectedAction.dropdown2 === "Dialer Action"
+                                ? "number"
+                                : "text"
+                          }
+                        />
+                        {selectedAction.dropdown2 === "Url Action" && (
+                          <div className="absolute -bottom-[0.3rem] right-0">
+                            <InputVariable
+                              onSelect={(e) => {
+                                handleAddVariable("dropdown2", "value", e);
+                              }}
+                              variables={localVariables}
+                            />
+                          </div>
+                        )}
+                      </div>
                     )}
                     {selectedAction.dropdown2 === "View Location" && (
                       <>
@@ -305,41 +360,53 @@ export const SuggestedActions = ({
                 {InputBox.includes(selectedAction.dropdown3) && (
                   <>
                     {selectedAction.dropdown3 !== "View Location" && (
-                      <InputField
-                        id="value"
-                        name="value"
-                        // label="value"
-                        placeholder={
-                          selectedAction.dropdown3 === "Url Action"
-                            ? "https://"
-                            : selectedAction.dropdown3 === "Dialer Action"
-                            ? "+91"
-                            : "Enter Value"
-                        }
-                        value={inputData.dropdown3.value}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "dropdown3",
-                            "value",
-                            e.target.value
-                          )
-                        }
-                        className="p-2 border rounded w-56"
-                        maxLength={
-                          selectedAction.dropdown3 === "Url Action"
-                            ? 200
-                            : selectedAction.dropdown3 === "Dialer Action"
-                            ? 13
-                            : 100
-                        }
-                        type={
-                          selectedAction.dropdown3 === "Url Action"
-                            ? "text"
-                            : selectedAction.dropdown3 === "Dialer Action"
-                            ? "number"
-                            : "text"
-                        }
-                      />
+                      <div className="relative w-full">
+                        <InputField
+                          id="value"
+                          name="value"
+                          // label="value"
+                          placeholder={
+                            selectedAction.dropdown3 === "Url Action"
+                              ? "https://"
+                              : selectedAction.dropdown3 === "Dialer Action"
+                                ? "+91"
+                                : "Enter Value"
+                          }
+                          value={inputData.dropdown3.value}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "dropdown3",
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          className="p-2 border rounded w-56"
+                          maxLength={
+                            selectedAction.dropdown3 === "Url Action"
+                              ? 200
+                              : selectedAction.dropdown3 === "Dialer Action"
+                                ? 13
+                                : 100
+                          }
+                          type={
+                            selectedAction.dropdown3 === "Url Action"
+                              ? "text"
+                              : selectedAction.dropdown3 === "Dialer Action"
+                                ? "number"
+                                : "text"
+                          }
+                        />
+                        {selectedAction.dropdown3 === "Url Action" && (
+                          <div className="absolute -bottom-[0.3rem] right-0">
+                            <InputVariable
+                              onSelect={(e) => {
+                                handleAddVariable("dropdown3", "value", e);
+                              }}
+                              variables={localVariables}
+                            />
+                          </div>
+                        )}
+                      </div>
                     )}
                     {selectedAction.dropdown3 === "View Location" && (
                       <>
@@ -411,39 +478,51 @@ export const SuggestedActions = ({
                 {InputBox.includes(selectedAction.dropdown4) && (
                   <>
                     {selectedAction.dropdown4 !== "View Location" && (
-                      <InputField
-                        id="value"
-                        name="value"
-                        // label="value"
-                        placeholder={
-                          selectedAction.dropdown4 === "Url Action"
-                            ? "https://"
-                            : "Enter Number"
-                        }
-                        value={inputData.dropdown4.value}
-                        onChange={(e) =>
-                          handleInputChange(
-                            "dropdown4",
-                            "value",
-                            e.target.value
-                          )
-                        }
-                        className="p-2 border rounded w-56"
-                        maxLength={
-                          selectedAction.dropdown4 === "Url Action"
-                            ? 200
-                            : selectedAction.dropdown4 === "Dialer Action"
-                            ? 13
-                            : 100
-                        }
-                        type={
-                          selectedAction.dropdown4 === "Url Action"
-                            ? "text"
-                            : selectedAction.dropdown4 === "Dialer Action"
-                            ? "number"
-                            : "text"
-                        }
-                      />
+                      <div className="relative w-full">
+                        <InputField
+                          id="value"
+                          name="value"
+                          // label="value"
+                          placeholder={
+                            selectedAction.dropdown4 === "Url Action"
+                              ? "https://"
+                              : "Enter Number"
+                          }
+                          value={inputData.dropdown4.value}
+                          onChange={(e) =>
+                            handleInputChange(
+                              "dropdown4",
+                              "value",
+                              e.target.value
+                            )
+                          }
+                          className="p-2 border rounded w-56"
+                          maxLength={
+                            selectedAction.dropdown4 === "Url Action"
+                              ? 200
+                              : selectedAction.dropdown4 === "Dialer Action"
+                                ? 13
+                                : 100
+                          }
+                          type={
+                            selectedAction.dropdown4 === "Url Action"
+                              ? "text"
+                              : selectedAction.dropdown4 === "Dialer Action"
+                                ? "number"
+                                : "text"
+                          }
+                        />
+                        {selectedAction.dropdown4 === "Url Action" && (
+                          <div className="absolute -bottom-[0.3rem] right-0">
+                            <InputVariable
+                              onSelect={(e) => {
+                                handleAddVariable("dropdown4", "value", e);
+                              }}
+                              variables={localVariables}
+                            />
+                          </div>
+                        )}
+                      </div>
                     )}
                     {selectedAction.dropdown4 === "View Location" && (
                       <>

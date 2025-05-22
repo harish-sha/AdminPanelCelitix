@@ -35,6 +35,7 @@ export const Variables = ({
   }
   return (
     <div className="mt-2 space-y-2 border p-3 rounded-xl">
+    <div className="mt-2 space-y-2 border p-3 rounded-xl">
       {variablesData?.data?.length > 0 &&
         variablesData?.data?.map((input, index) => (
           <div>

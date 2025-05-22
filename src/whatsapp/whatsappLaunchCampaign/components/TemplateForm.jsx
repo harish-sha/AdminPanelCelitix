@@ -100,28 +100,6 @@ const TemplateForm = ({
     setInputValues(defaultValues);
   }, [templateDataNew, selectedOption]);
 
-  // const handleInputChange = (e, variable) => {
-  //     const { value } = e.target;
-  //     setInputValues((prev) => ({
-  //         ...prev,
-  //         [variable]: value,
-  //     }));
-  //     onInputChange(value, variable);
-  // };
-
-  //   const handleInputChange = (e, variable, type = "body") => {
-  //     const { value } = e.target;
-  //     // setInputValues((prev) => ({
-  //     //   ...prev,
-  //     //   [`${type}${variable}`]: value,
-  //     // }));
-
-  //     setInputValues({
-  //       [`${type}${variable}`]: value,
-  //     });
-
-  //     onInputChange(value, `${type}${variable}`);
-  //   };
 
   const handleInputChange = (e, variable, type = "body") => {
     const { value } = e.target;
@@ -304,7 +282,7 @@ const TemplateForm = ({
         </h3>
       </div>
 
-      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl ">
+      <div className="p-2 space-y-2 bg-gray-50 rounded-b-xl">
         {/* BODY Component: Handle Variables */}
         {templateDataNew?.components.map((component, idx) => {
           if (component.type === "BODY") {

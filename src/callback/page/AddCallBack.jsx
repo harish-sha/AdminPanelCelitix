@@ -5,8 +5,12 @@ import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { RadioButton } from "primereact/radiobutton";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { Preview } from "../components/Preview";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const AddCallback = () => {
+  const navigate = useNavigate();
   const [details, setDetails] = useState({
     allowCallBackDlr: "",
     callBackDlrUrl: "",
@@ -26,18 +30,46 @@ export const AddCallback = () => {
   });
 
   function addHeader() {
+    if (customHeader.data.length >= 10) {
+      toast.error("You can add maximum 10 headers");
+      return;
+    }
     setCustomHeader((prev) => ({
       ...prev,
       data: [...prev.data, { key: "", value: "" }],
     }));
   }
-  function deleteHeader() { }
+  function deleteHeader() {
+    if (customHeader.data.length === 1) {
+      setCustomHeader((prev) => ({
+        isSelect: false,
+        data: [],
+      }));
+    }
+    setCustomHeader((prev) => ({
+      ...prev,
+      data: prev.data.slice(0, prev.data.length - 1),
+    }));
+  }
   async function handleAddCallback() {
     try {
       const data = {
         ...details,
         authorizationType: details?.authorizationType || authorization,
       };
+
+      if (customHeader.isSelect && customHeader.data.length === 0) {
+        toast.error("Please add at least one header");
+        return;
+      }
+
+      if (customHeader.isSelect) {
+        const headers = {};
+        customHeader.data.map((item) => {
+          headers[item.key] = item.value;
+        });
+        data.customHeader = headers;
+      }
       const res = await addCallback(data);
       if (!res?.status) {
         toast.error(res?.msg);
@@ -56,15 +88,15 @@ export const AddCallback = () => {
         customHeader: {},
       });
       setAuthorization("");
+      navigate("/callback");
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
 
   return (
-    <div className="flex">
-      <div className="flex flex-col gap-2 w-2/3">
+    <div className="flex gap-2 h-full">
+      <div className="flex flex-col gap-2 w-2/3 p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
           <InputField
             id="callBackName"
@@ -127,6 +159,11 @@ export const AddCallback = () => {
                 ...prev,
                 allowCallBackDlr: e,
               }));
+              setCustomHeader({
+                isSelect: false,
+                data: [],
+              });
+              setAuthorization("");
             }}
           />
         </div>
@@ -210,6 +247,36 @@ export const AddCallback = () => {
                       />
                     </div>
                   )}
+                  {details?.authorizationType === "2" && (
+                    <div className="flex gap-2 mt-2">
+                      <InputField
+                        id="userId"
+                        name="userId"
+                        label={"UserId"}
+                        placeholder="Enter userId"
+                        value={details.userId}
+                        onChange={(e) => {
+                          setDetails((prev) => ({
+                            ...prev,
+                            userId: e.target.value,
+                          }));
+                        }}
+                      />
+                      <InputField
+                        id="password"
+                        name="password"
+                        label={"Password"}
+                        placeholder="Enter Password"
+                        value={details.password}
+                        onChange={(e) => {
+                          setDetails((prev) => ({
+                            ...prev,
+                            password: e.target.value,
+                          }));
+                        }}
+                      />
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -223,7 +290,15 @@ export const AddCallback = () => {
                     value="1"
                     checked={customHeader.isSelect}
                     onChange={(e) => {
-                      setCustomHeader({ isSelect: true, data: [] });
+                      setCustomHeader({
+                        isSelect: true,
+                        data: [
+                          {
+                            key: "",
+                            value: "",
+                          },
+                        ],
+                      });
                     }}
                   />
                   <label className="text-gray-600 font-semibold">Yes</label>
@@ -241,85 +316,98 @@ export const AddCallback = () => {
               </div>
 
               {customHeader?.isSelect && customHeader?.data?.length > 0 && (
-                <div className="flex flex-col gap-2 mt-2">
-                  {customHeader.data.map((item, index) => (
-                    <div className="flex gap-2" key={index}>
-                      <InputField
-                        id={`key-${index}`}
-                        name={`key-${index}`}
-                        label="Key"
-                        placeholder="Enter Key"
-                        value={item.key}
-                        onChange={(e) => {
-                          const updatedData = [...customHeader.data];
-                          updatedData[index] = {
-                            ...updatedData[index],
-                            key: e.target.value,
-                          };
-                          setCustomHeader((prev) => ({
-                            ...prev,
-                            data: updatedData,
-                          }));
-                        }}
-                      />
-                      <InputField
-                        id={`value-${index}`}
-                        name={`value-${index}`}
-                        label="Value"
-                        placeholder="Enter Value"
-                        value={item.value}
-                        onChange={(e) => {
-                          const updatedData = [...customHeader.data];
-                          updatedData[index] = {
-                            ...updatedData[index],
-                            value: e.target.value,
-                          };
-                          setCustomHeader((prev) => ({
-                            ...prev,
-                            data: updatedData,
-                          }));
-                        }}
-                      />
-                    </div>
-                  ))}
+                <div>
+                  <div className="flex justify-end">
+                    <UniversalButton
+                      id="addHeader"
+                      label="Add Header"
+                      onClick={addHeader}
+                    />
+                  </div>
+                  <div className="flex flex-col gap-2 mt-2 max-h-[220px] overflow-y-scroll p-2">
+                    {customHeader.data.map((item, index) => (
+                      <div className="flex gap-2" key={index}>
+                        <InputField
+                          id={`key-${index}`}
+                          name={`key-${index}`}
+                          label="Key"
+                          placeholder="Enter Key"
+                          value={item.key}
+                          onChange={(e) => {
+                            const updatedData = [...customHeader.data];
+                            updatedData[index] = {
+                              ...updatedData[index],
+                              key: e.target.value,
+                            };
+                            setCustomHeader((prev) => ({
+                              ...prev,
+                              data: updatedData,
+                            }));
+                          }}
+                        />
+                        <InputField
+                          id={`value-${index}`}
+                          name={`value-${index}`}
+                          label="Value"
+                          placeholder="Enter Value"
+                          value={item.value}
+                          onChange={(e) => {
+                            const updatedData = [...customHeader.data];
+                            updatedData[index] = {
+                              ...updatedData[index],
+                              value: e.target.value,
+                            };
+                            setCustomHeader((prev) => ({
+                              ...prev,
+                              data: updatedData,
+                            }));
+                          }}
+                        />
+                        <button
+                          className="text-red-600 mt-7 cursor-pointer"
+                          onClick={deleteHeader}
+                        >
+                          <MdOutlineDeleteForever className="size-5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
           </div>
         )}
 
-        {(authorization === "1" ||
-          details.allowCallBackDlr === "2" ||
-          details.authorizationType === "2") && (
-            <div className="flex gap-2">
-              <InputField
-                id="userId"
-                name="userId"
-                label={"UserId"}
-                placeholder="Enter userId"
-                value={details.userId}
-                onChange={(e) => {
-                  setDetails((prev) => ({
-                    ...prev,
-                    userId: e.target.value,
-                  }));
-                }}
-              />
-              <InputField
-                id="password"
-                name="password"
-                label={"Password"}
-                placeholder="Enter Password"
-                value={details.password}
-                onChange={(e) => {
-                  setDetails((prev) => ({
-                    ...prev,
-                    password: e.target.value,
-                  }));
-                }}
-              />
-            </div>
-          )}
+        {details.allowCallBackDlr === "2" && (
+          <div className="flex gap-2">
+            <InputField
+              id="userId"
+              name="userId"
+              label={"UserId"}
+              placeholder="Enter userId"
+              value={details.userId}
+              onChange={(e) => {
+                setDetails((prev) => ({
+                  ...prev,
+                  userId: e.target.value,
+                }));
+              }}
+            />
+            <InputField
+              id="password"
+              name="password"
+              label={"Password"}
+              placeholder="Enter Password"
+              value={details.password}
+              onChange={(e) => {
+                setDetails((prev) => ({
+                  ...prev,
+                  password: e.target.value,
+                }));
+              }}
+            />
+          </div>
+        )}
 
         <div className="flex justify-center mt-5">
           <UniversalButton
@@ -329,7 +417,7 @@ export const AddCallback = () => {
           />
         </div>
       </div>
-      <div>Preview Here...</div>
+      <Preview />
     </div>
   );
 };

@@ -78,8 +78,8 @@ const Smscampaigndetaillogs = () => {
       ]);
 
       setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
+        Array.isArray(res.data)
+          ? res.data.map((item, i) => ({
             sn: i + 1,
             id: i + 1,
             ...item,
