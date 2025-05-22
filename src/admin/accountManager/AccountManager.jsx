@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
+import UniversalButton from "../components/UniversalButton";
 import AccountManagerTable from "./components/AccountManagerTable";
 import { Dialog } from "primereact/dialog";
-import InputField from "../../whatsapp/components/InputField";
-import GeneratePasswordSettings from "../../profile/components/GeneratePasswordSettings";
-import UniversalLabel from "../../whatsapp/components/UniversalLabel";
+import InputField from "../components/InputField";
+import GeneratePasswordSettings from "../components/GeneratePassword";
+import UniversalLabel from "../components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
 
 const AccountManager = () => {
@@ -82,6 +82,8 @@ const AccountManager = () => {
               id="passwordcreate"
               name="passwordcreate"
               className="flex"
+              value={""}
+              onChange={()=>{}}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">

@@ -173,7 +173,31 @@ export const PermissionRoute = ({ children }) => {
     let allowedServices = [];
 
     if (userState.role === "ADMIN") {
-      return menuItems;
+      return [
+        { name: "Home", links: "/", roles: ["ADMIN"] },
+        {
+          name: "Admin",
+          links: [
+            "/manageuser",
+            "/managedlttemplate",
+            "/rcsmanagebot",
+            "/managevoiceclips",
+            "/manageplan",
+            "/accountmanager",
+            "/graphmain",
+            "/graphuserwise",
+            "/manageSMPP",
+            "/managerouting",
+            "/SMPPerrorcode",
+            "/manageprefix",
+            "/blacklist",
+            "/managenotifications",
+            "/CreateWhatsappTemplateAdmin",
+            "/manageadduser",
+          ],
+          roles: ["ADMIN"],
+        },
+      ];
     }
     if (userState.role === "AGENT") {
       return [

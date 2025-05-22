@@ -14,7 +14,7 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton";
 import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
 import GeneratePassword from "../../../whatsapp/components/GeneratePassword";
-import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
+import GeneratePasswordSettings from "../../components/GeneratePassword";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -408,6 +408,8 @@ const AccountManagerTable = ({ id, name }) => {
               id="passwordedit"
               name="passwordedit"
               className="flex"
+               value={""}
+              onChange={()=>{}}
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
