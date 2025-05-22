@@ -77,6 +77,7 @@ import {
   getSmsRateByUser,
   getWhatsappRateBySrno,
   getWhatsappRateData,
+  saveEditRcsRate,
   saveEditWhatsappRate,
 } from "@/apis/admin/userRate";
 import { getCountryList } from "@/apis/common/common";
@@ -84,6 +85,7 @@ import { DataTable } from "@/components/layout/DataTable";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import { getRcsRate } from "@/apis/user/user";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -434,6 +436,26 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
   };
 
+  const fetchRcsRateData = async (userSrno) => {
+    const res = await getRCSRateData(userSrno);
+
+    const list = Array.isArray(res) ? res : res?.data;
+
+    if (Array.isArray(list)) {
+      const formatted = list.map((item, i) => {
+        return {
+          id: i + 1,
+          sn: item.sr_no,
+          ...item,
+        };
+      });
+
+      setRcsrows(formatted);
+    } else {
+      console.warn("No valid data returned from API");
+    }
+  };
+
   const handleWhatsappAddCredit = async () => {
     if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
       toast.error("Please fill all the fields.");
@@ -531,7 +553,25 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   //   { value: "India", label: "India" },
   // ];
 
-  const handleRcsAddCredit = () => {
+  const handleRcsAddCredit = async () => {
+    try {
+      const payload = {
+        srno: "",
+        userSrno: String(currentUserSrno),
+        rate: String(rcsrate),
+        country: String(rcsCountry),
+      };
+      const res = await saveEditRcsRate(payload);
+      if (!res?.message?.includes("Successfully")) {
+        toast.error(res?.message);
+        return;
+      }
+      toast.success(res?.message);
+      await fetchRcsRateData(currentUserSrno);
+    } catch (e) {
+      console.log(editDialogVisible)
+      toast.error("Error in adding rcs credit");
+    }
     // console.log("handleRcsCredit");
   };
 
@@ -1079,7 +1119,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     if (whatsappRateRes?.data) {
       setWhatsapprows(whatsappRateRes.data);
     }
-    rcsRateRes.length > 0 && setRcsrows(rcsRateRes);
+    const rcsRowss = Array.isArray(rcsRateRes)
+      ? rcsRateRes.map((item) => ({
+          id: item + 1,
+          sn: item.sr_no,
+          ...item,
+        }))
+      : [];
+    rcsRateRes.length > 0 && setRcsrows(rcsRowss);
   };
 
   const handleApikey = (id, name) => {
@@ -1268,10 +1315,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   // ];
   const rcscolumns = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
-    { field: "countryName", headerName: "Country", flex: 1 },
-    { field: "utility", headerName: "Utility", flex: 1 },
-    { field: "marketing", headerName: "Marketing", flex: 1 },
-    { field: "updateTime", headerName: "Updated On", flex: 1 },
+    { field: "country_name", headerName: "Country", flex: 1 },
+    { field: "rate", headerName: "Rate", flex: 1 },
+    { field: "update_time", headerName: "Updated On", flex: 1 },
     {
       field: "actions",
       headerName: "Actions",
@@ -1392,7 +1438,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rcsrows.length}</span>
+            Total Records:{" "}
+            <span className="font-semibold">{rcsrows.length}</span>
           </Typography>
         </Box>
 
