@@ -144,7 +144,7 @@ const WhatsappFlows = () => {
   );
 
   const totalPages = Math.ceil(filteredFlows.length / rowsPerPage);
-  const paginatedFlows = filteredFlows.slice(
+  const paginatedFlows = filteredFlows.reverse().slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
