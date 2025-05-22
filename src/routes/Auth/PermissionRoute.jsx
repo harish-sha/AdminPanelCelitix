@@ -54,7 +54,7 @@ export const PermissionRoute = ({ children }) => {
         "/wlcsetting",
         "/wwhatsappflows",
         "/wflowcreation",
-        "/wwhatsappflows"
+        "/wwhatsappflows",
       ],
       roles: ["ADMIN"],
     },
@@ -187,6 +187,11 @@ export const PermissionRoute = ({ children }) => {
           links: "/wlivechat",
           roles: ["AGENT"],
         },
+        {
+          name: "openRoutes",
+          links: [, "/profile", "/settings"],
+          roles: ["ADMIN"],
+        },
       ];
     }
 
@@ -216,7 +221,7 @@ export const PermissionRoute = ({ children }) => {
 
     return allowedServices;
   };
-  
+
   const privateRoute = getPrivateRoute(menuItems, user);
 
   if (!privateRoute.some((item) => item?.links?.includes(currentPath)))
