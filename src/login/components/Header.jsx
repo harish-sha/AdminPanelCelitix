@@ -82,26 +82,20 @@ const Header = () => {
 
     useEffect(() => {
         const handleScroll = () => {
-            setScrolled(window.scrollY > 10);
+            setScrolled(window.scrollY > 2);
         };
 
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-
     const WEBSITE_BASEURL = import.meta.env.VITE_WEBSITE_URL;
-
-
-
-
 
     return (
         <>
 
             {/* <div className="bg-gradient-to-r from-blue-800 to-purple-600 text-white text-sm md:px-3 px-1 py-2 flex justify-between items-center flex-wrap"> */}
             <div className="bg-[#9B44B6] text-white text-sm md:px-3 px-1 pt-1 pb-0 flex justify-between items-center flex-wrap">
-
                 {/* Email Section */}
                 <div className="flex items-center gap-1 md:gap-2 mb-2">
                     <FaEnvelope />
@@ -116,10 +110,12 @@ const Header = () => {
             </div>
             <motion.div
                 initial={{ y: -100, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-                className={` lg:px-12 md:px-10 px-0 fixed w-full  transition-all duration-500   ease-in-out ${scrolled ? 'top-0' : 'top-10'
-                    }`}
+                // animate={{ y: 0, opacity: 1 }}
+                animate={{ y: scrolled ? 0 : 40, opacity: 1 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+                // className={` lg:px-12 md:px-10 px-0 fixed w-full z-50  transition-all duration-500  ease-in-out ${scrolled ? 'top-0' : 'top-10'
+                //     }`}
+                className="lg:px-12 md:px-10 px-0 fixed w-full z-50 top-0 transition-all duration-500 ease-in-out"
             >
                 <div className="flex items-center justify-between px-4 md:px-6 py-4 bg-white md:rounded-2xl shadow-md relative">
                     <div className="flex-shrink-0 cursor-pointer">

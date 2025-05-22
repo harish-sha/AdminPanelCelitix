@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IconButton,
   Menu,
@@ -6,6 +6,14 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
+import EditNoteIcon from "@mui/icons-material/EditNote";
+import { MdOutlineDeleteForever } from "react-icons/md";
+
+// import { Player } from "@lottiefiles/react-lottie-player"; 
+import Lottie from "lottie-react";
+// import nothingAnimation from "@/assets/nothing.json";
+
+import { FaEnvelope, FaGlobe } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import EditIcon from "@mui/icons-material/Edit";
@@ -34,6 +42,7 @@ import {
   updateFlowStatus,
 } from "@/apis/whatsapp/whatsapp";
 import { FaWhatsapp } from "react-icons/fa";
+import DropdownMenuPortal from "@/utils/DropdownMenuPortal";
 
 const WhatsappFlows = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -53,6 +62,9 @@ const WhatsappFlows = () => {
   const [selectedFlowDetails, setSelectedFlowDetails] = useState(null);
   const [selectCategories, setSelectCategories] = useState("");
   const [flowName, setFlowName] = useState("");
+  const dropdownButtonRefs = useRef({});
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [publishingId, setPublishingId] = useState(null);
   const navigate = useNavigate();
   const rowsPerPage = 4;
 
@@ -153,28 +165,45 @@ const WhatsappFlows = () => {
     currentPage * rowsPerPage
   );
 
+
+  const dropdownItems = ["Edit", "Delete", "Export"];
+
+  const iconMap = {
+    Edit: <EditNoteIcon fontSize="small" />,
+    Delete: <MdOutlineDeleteForever
+      className="text-red-500 cursor-pointer hover:text-red-600"
+      size={20}
+    />,
+    Export: <FileDownloadIcon fontSize="small" />,
+  };
+
+  const handleBtnClick = (item, flow) => {
+    setDropdownOpenId(null);
+    if (item === "Edit") handleEdit(flow);
+    else if (item === "Delete") handleDelete(flow);
+    else if (item === "Export") handleExport(flow);
+  };
+
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
-    setMenuAnchor(event.currentTarget);
+    setDropdownOpenId(flow.flowId);
   };
 
   const handleMenuClose = () => {
-    setMenuAnchor(null);
+    setDropdownOpenId(null);
     setSelectedFlow(null);
   };
 
-  const handleEdit = () => {
-    console.log("Edit:", selectedFlow.name);
+  const handleEdit = (flow = selectedFlow) => {
+    console.log("Edit:", flow?.flowName);
     handleMenuClose();
   };
-
-  const handleDelete = () => {
-    console.log("Delete:", selectedFlow.name);
+  const handleDelete = (flow = selectedFlow) => {
+    console.log("Delete:", flow?.flowName);
     handleMenuClose();
   };
-
-  const handleExport = () => {
-    console.log("Export:", selectedFlow.name);
+  const handleExport = (flow = selectedFlow) => {
+    console.log("Export:", flow?.flowName);
     handleMenuClose();
   };
 
@@ -249,107 +278,155 @@ const WhatsappFlows = () => {
 
           {/* Flows */}
           <div className="space-y-4">
-            {paginatedFlows.map((flow, index) => (
-              <div
-                key={index}
-                className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 flex items-center justify-between flex-wrap sm:flex-nowrap"
-              >
-                <div className="flex items-center gap-3 min-w-[180px]">
-                  <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
-                    {/* <div className="w-8 h-8 bg-gray-400 rounded"></div> */}
-                    <RadioButtonCheckedOutlinedIcon
-                      className="text-green-500"
-                      fontSize="small"
-                    />
-                  </div>
-                  <div>
-                    <div className="font-semibold text-sm">{flow.flowName}</div>
-                    <span
-                      className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
-                        ? "bg-orange-500 text-white"
-                        : "bg-blue-500 text-white"
-                        }`}
-                    >
-                      {flow.status}
-                    </span>
-                  </div>
+            {paginatedFlows.length === 100 ? (
+              <div className="flex flex-col items-center justify-center py-12">
+                <div className="w-60 h-60">
+                  <Lottie animationData={nothingAnimation} loop={true} />
                 </div>
-
-                <div className="text-sm text-center min-w-[80px]">
-                  <div className="font-semibold text-sm mb-2">
-                    Flow Category
-                  </div>
-                  <span className="text-xs font-bold px-2 py-1 bg-blue-300 text-blue-900 rounded">
-                    {flow.category || "STATIC"}
+                <div className="text-xl font-semibold text-gray-500 mt-4 text-center">
+                  No flows found.<br />
+                  <span className="text-base font-normal text-gray-400">
+                    Start your professional journey by creating a new flow!
                   </span>
                 </div>
+                <UniversalButton
+                  label="+ Create New Flow"
+                  className="mt-6"
+                  onClick={() => setShowDialog(true)}
+                />
+              </div>
+            ) : (
+              paginatedFlows.map((flow, index) => (
+                <div
+                  key={index}
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 flex items-center justify-between flex-wrap sm:flex-nowrap"
+                >
+                  <div className="flex items-center gap-3 min-w-[180px]">
+                    <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
+                      {/* <div className="w-8 h-8 bg-gray-400 rounded"></div> */}
+                      <RadioButtonCheckedOutlinedIcon
+                        className="text-green-500"
+                        fontSize="small"
+                      />
+                    </div>
+                    <div>
+                      <div className="font-semibold text-sm">{flow.flowName}</div>
+                      <span
+                        className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
+                          ? "bg-orange-500 text-white"
+                          : "bg-blue-500 text-white"
+                          }`}
+                      >
+                        {flow.status}
+                      </span>
+                    </div>
+                  </div>
 
-                <div className="text-sm text-center min-w-[150px]">
-                  <div className="font-semibold">WhatsApp Channel</div>
-                  <div className="text-gray-600">{flow.channel}</div>
-                </div>
+                  <div className="text-sm text-center min-w-[80px]">
+                    <div className="font-semibold text-sm mb-2">
+                      Flow Category
+                    </div>
+                    <span className="text-xs font-bold px-2 py-1 bg-blue-300 text-blue-900 rounded">
+                      {flow.category || "STATIC"}
+                    </span>
+                  </div>
 
-                <div className="text-sm text-center min-w-[150px]">
-                  <div className="font-semibold">Created At</div>
-                  <div className="text-gray-700">{flow.insertTime}</div>
-                </div>
+                  <div className="text-sm text-center min-w-[150px]">
+                    <div className="font-semibold">WhatsApp Channel</div>
+                    <div className="text-gray-600">{flow.channel}</div>
+                  </div>
 
-                <div className="flex items-center gap-3 mt-3 sm:mt-0">
-                  {flow.status === "DRAFT" && (
-                    <button
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-1 rounded text-sm flex items-center gap-1"
-                      onClick={() => {
-                        updateStatus(flow.flowId, flow.mobileno);
-                      }}
-                    >
-                      ▶ Publish
-                    </button>
-                  )}
-                  {flow.status === "PUBLISHED" && (
-                    <button
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
-                      onClick={() => {
-                        handlepublishBtn(flow);
-                      }}
-                    >
-                      <SendIcon sx={{ fontSize: "1rem" }} />
-                      Send Flow
-                    </button>
-                  )}
-                  <CustomTooltip title="Settings" arrow>
+                  <div className="text-sm text-center min-w-[150px]">
+                    <div className="font-semibold">Created At</div>
+                    <div className="text-gray-700">{flow.insertTime}</div>
+                  </div>
+
+                  <div className="flex items-center gap-3 mt-3 sm:mt-0">
+                    {flow.status === "DRAFT" && (
+                      <button
+                        className="bg-orange-400 cursor-pointer hover:bg-orange-500 text-white px-4 py-1.5 rounded-2xl text-sm flex items-center gap-2"
+                        onClick={async () => {
+                          setPublishingId(flow.flowId);
+                          await new Promise((res) => setTimeout(res, 1000));
+                          await updateStatus(flow.flowId, flow.mobileno);
+                          setPublishingId(null);
+                        }}
+                        disabled={publishingId === flow.flowId}
+                      >
+                        {publishingId === flow.flowId ? (
+                          <>
+                            <span className="inline-block align-middle w-4 h-4 border-2 border-solid rounded-full border-white border-t-blue-500 animate-spin"></span>
+                            Publishing...
+                          </>
+                        ) : (
+                          <>▶ Publish</>
+                        )}
+                      </button>
+                    )}
+                    {flow.status === "PUBLISHED" && (
+                      <button
+                        className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
+                        onClick={() => {
+                          handlepublishBtn(flow);
+                        }}
+                      >
+                        <SendIcon sx={{ fontSize: "1rem" }} />
+                        Send Flow
+                      </button>
+                    )}
+                    {/* <CustomTooltip title="Settings" arrow>
                     <IconButton
                       onClick={(e) => handleMenuOpen(e, flow)}
                       size="small"
                     >
-                      {/* <MoreVertIcon /> */}
                       <SettingsOutlinedIcon
                         className="text-gray-600"
                         fontSize="small"
                       />
                     </IconButton>
-                  </CustomTooltip>
+                  </CustomTooltip> */}
+                    <CustomTooltip title="Settings" arrow>
+                      <IconButton
+                        ref={(el) => {
+                          if (el) dropdownButtonRefs.current[flow.flowId] = el;
+                        }}
+                        onClick={(e) => handleMenuOpen(e, flow)}
+                        size="small"
+                      >
+                        <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
+                      </IconButton>
+                    </CustomTooltip>
+                    {dropdownOpenId === flow.flowId && (
+                      <DropdownMenuPortal
+                        targetRef={{ current: dropdownButtonRefs.current[flow.flowId] }}
+                        onClose={handleMenuClose}
+                      >
+                        {dropdownItems.map((item, idx) => (
+                          <button
+                            key={idx}
+                            onClick={() => handleBtnClick(item, flow)}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                          >
+                            {iconMap[item]}
+                            {item}
+                          </button>
+                        ))}
+                      </DropdownMenuPortal>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))
+            )}
           </div>
-
           {/* Dropdown Menu */}
 
-          <Menu
+          {/* <Menu
             anchorEl={menuAnchor}
             open={Boolean(menuAnchor)}
             onClose={handleMenuClose}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
             transformOrigin={{ horizontal: "right", vertical: "top" }}
           >
-            {/* {flow.status === "PUBLISHED" && (
-                    <MenuItem onClick={() => handlepublishBtn(flow)}>
-                      <ListItemIcon>
-                        <FileDownloadIcon fontSize="small" />
-                      </ListItemIcon>
-                      <ListItemText>Send Flow</ListItemText>
-                    </MenuItem>
-                  )} */}
             <MenuItem onClick={handleEdit}>
               <ListItemIcon>
                 <EditIcon fontSize="small" />
@@ -368,7 +445,7 @@ const WhatsappFlows = () => {
               </ListItemIcon>
               <ListItemText>Export Screen</ListItemText>
             </MenuItem>
-          </Menu>
+          </Menu> */}
 
           {/* Pagination */}
           <div className="flex justify-end items-center mt-4 gap-2">

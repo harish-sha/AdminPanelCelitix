@@ -7,11 +7,27 @@ const DropdownMenuPortal = ({ children, targetRef, onClose }) => {
   const menuRef = useRef();
 
   useEffect(() => {
+    // if (targetRef.current) {
+    //   const rect = targetRef.current.getBoundingClientRect();
+    //   setPosition({
+    //     top: rect.bottom + window.scrollY + 4,
+    //     left: rect.left + window.scrollX,
+    //   });
+    // }
+
     if (targetRef.current) {
       const rect = targetRef.current.getBoundingClientRect();
+      const menuWidth = 180; // Set your dropdown width here (px)
+      // If the dropdown would overflow the right edge, shift it left
+      let left = rect.left + window.scrollX;
+      const rightEdge = left + menuWidth;
+      const viewportWidth = window.innerWidth;
+      if (rightEdge > viewportWidth - 8) {
+        left = viewportWidth - menuWidth - 8; // 8px padding from right
+      }
       setPosition({
         top: rect.bottom + window.scrollY + 4,
-        left: rect.left + window.scrollX,
+        left,
       });
     }
 
@@ -37,7 +53,8 @@ const DropdownMenuPortal = ({ children, targetRef, onClose }) => {
       initial={{ opacity: 0, y: -8 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
-      className="absolute bg-white shadow-lg rounded-md border border-slate-200 z-[9999] min-w-[140px]"
+      // className="absolute bg-white shadow-lg rounded-md border border-slate-200 z-[9999] min-w-[140px]"
+      className="absolute bg-white shadow-lg rounded-md border border-slate-200 z-[9999] min-w-[140px] w-[120px]"
       style={{ top: position.top, left: position.left }}
     >
       {children}

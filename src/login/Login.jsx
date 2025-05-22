@@ -818,17 +818,10 @@ const Login = () => {
 
   return (
     <>
-      {/* <Header /> */}
+      <Header />
 
       <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
-        <motion.div
-          initial={{ y: -100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
-          className="fixed w-full top-0"
-        >
-          <Header />
-        </motion.div>
+        {/* main content */}
         <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
           <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
             <div className="grid grid-cols-1 md:grid-cols-2 h-full">
@@ -863,36 +856,38 @@ const Login = () => {
                   className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
                   required
                 />
-                <div className="relative">
+                <div className="">
                   <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
                     Password
                   </div>
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter password"
-                    // value={password}
-                    // onChange={(e) => setPassword(e.target.value)}
-                    value={inputDetails.password}
-                    onChange={(e) => {
-                      setInputDetails({
-                        ...inputDetails,
-                        password: e.target.value,
-                      });
-                    }}
-                    required
-                    id="password"
-                    name="password"
-                    className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
-                  />
-                  <div
-                    className="absolute right-3 top-10 cursor-pointer"
-                    onClick={() => setShowPassword(!showPassword)}
-                  >
-                    {showPassword ? (
-                      <AiOutlineEyeInvisible size={20} />
-                    ) : (
-                      <AiOutlineEye size={20} />
-                    )}
+                  <div className="relative z-0" >
+                    <input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter password"
+                      // value={password}
+                      // onChange={(e) => setPassword(e.target.value)}
+                      value={inputDetails.password}
+                      onChange={(e) => {
+                        setInputDetails({
+                          ...inputDetails,
+                          password: e.target.value,
+                        });
+                      }}
+                      required
+                      id="password"
+                      name="password"
+                      className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                    />
+                    <div
+                      className="absolute right-3 top-3 cursor-pointer"
+                      onClick={() => setShowPassword(!showPassword)}
+                    >
+                      {showPassword ? (
+                        <AiOutlineEyeInvisible size={20} />
+                      ) : (
+                        <AiOutlineEye size={20} />
+                      )}
+                    </div>
                   </div>
                 </div>
                 <div className="flex items-center justify-center ">
@@ -937,6 +932,7 @@ const Login = () => {
             </div>
           </div>
         </div>
+        {/* main content */}
         <Footer />
       </div>
     </>

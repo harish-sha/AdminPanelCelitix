@@ -227,7 +227,7 @@ const WhatsappLiveChatSettings = () => {
       wabaNumber: wabaState.selected,
       wabaSrno,
       ...basicDetails,
-      message: variablemessage || message,
+      message: basicDetails?.message || message,
       tempJson: JSON.stringify(specificTemplate),
     };
 
