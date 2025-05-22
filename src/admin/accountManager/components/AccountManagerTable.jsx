@@ -2,18 +2,18 @@ import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import styled from "styled-components";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination/usePagination";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import CustomTooltip from "../../components/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import { Dialog } from "primereact/dialog";
-import InputField from "../../../whatsapp/components/InputField";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
-import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import InputField from "../../components/InputField";
+import UniversalButton from "../../components/UniversalButton";
+import UniversalLabel from "../../components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
-import GeneratePassword from "../../../whatsapp/components/GeneratePassword";
+import GeneratePassword from "../../components/GeneratePassword";
 import GeneratePasswordSettings from "../../components/GeneratePassword";
 
 const PaginationList = styled("ul")({

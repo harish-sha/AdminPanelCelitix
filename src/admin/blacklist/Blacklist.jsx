@@ -5,7 +5,7 @@ import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
   a11yProps,
   CustomTabPanel,
-} from "../../whatsapp/managetemplate/components/CustomTabPanel";
+} from "../components/CustomTabPanel";
 import UniversalButton from '../components//UniversalButton';
 import UniversalDatePicker from '../components/InputField';
 import InputField from '../components/InputField';

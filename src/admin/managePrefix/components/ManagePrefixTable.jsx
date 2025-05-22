@@ -1,10 +1,10 @@
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid'
 import React, { useState } from 'react'
-import CustomNoRowsOverlay from '../components/CustomNoRowsOverlay';
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay';
 import styled from 'styled-components';
 import usePagination from '@mui/material/usePagination/usePagination';
-import CustomTooltip from '../components/CustomTooltip';
+import CustomTooltip from '../../components/CustomTooltip';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 

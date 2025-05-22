@@ -8,7 +8,7 @@ import { useEffect } from "react";
 import { RadioButton } from 'primereact/radiobutton';
 import UniversalLabel from "../../components/UniversalLabel";
 import { getPincodeDetails } from "@/apis/common/common";
-import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import DropdownWithSearch from "../../components/DropdownWithSearch";
 
 const AddUser = () => {
   const [userid, setUserId] = useState("");

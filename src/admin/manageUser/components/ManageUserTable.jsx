@@ -77,7 +77,7 @@ import {
 import { getCountryList } from "@/apis/common/common";
 import { DataTable } from "@/components/layout/DataTable";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import DropdownWithSearch from "../../components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 
 
