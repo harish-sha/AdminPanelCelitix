@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { IoSearch } from "react-icons/io5";
-import InputField from "../../whatsapp/components/InputField";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
-import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
+import InputField from "../components/InputField";
+import AnimatedDropdown from "../components/AnimatedDropdown";
+import UniversalButton from "../components/UniversalButton";
+import DropdownWithSearch from "../components/DropdownWithSearch";
 import ManageDltTemplateTable from "./components/ManageDltTemplateTable";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";

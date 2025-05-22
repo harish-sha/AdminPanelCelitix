@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import UniversalButton from '../../whatsapp/components/UniversalButton'
+import UniversalButton from '../components/UniversalButton'
 import ManageVoiceClipsTable from './components/ManageVoiceClipsTable'
 import FileUploadOutlinedIcon from '@mui/icons-material/FileUploadOutlined';
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -7,8 +7,8 @@ import { Dialog } from 'primereact/dialog';
 import { toast } from 'react-hot-toast';
 import * as XLSX from 'xlsx';
 import { RadioButton } from 'primereact/radiobutton';
-import InputField from '../../whatsapp/components/InputField';
-import DropdownWithSearch from '../../whatsapp/components/DropdownWithSearch';
+import InputField from '../components/InputField';
+import DropdownWithSearch from '../components/DropdownWithSearch';
 
 const ManageVoiceClips = () => {
   const [isFetching, setIsFetching] = useState(false);

@@ -8,16 +8,16 @@ import {
 } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination/usePagination";
 import styled from "styled-components";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
+import CustomTooltip from "../../components/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Dialog } from "primereact/dialog";
-import InputField from "../../../whatsapp/components/InputField";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import InputField from "../../components/InputField";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
+import UniversalButton from "../../components/UniversalButton";
 
 const PaginationList = styled("ul")({
   listStyle: "none",

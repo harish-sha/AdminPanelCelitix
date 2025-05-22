@@ -3,9 +3,9 @@
 import { Paper, Typography, Box, Button, styled, } from '@mui/material';
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
 import React, { useState } from 'react'
-import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay';
 import usePagination from '@mui/material/usePagination/usePagination';
-import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
+import CustomTooltip from '../../components/CustomTooltip';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditNoteIcon from "@mui/icons-material/EditNote";

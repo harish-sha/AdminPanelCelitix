@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import InputField from "../../../whatsapp/components/InputField";
-import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import InputField from "../../components/InputField";
+import UniversalLabel from "../../components/UniversalLabel";
 import { RadioButton } from "primereact/radiobutton";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
+import UniversalButton from "../../components/UniversalButton";
 
 const AddService = () => {
   const [versionaddStatus, setVersionAddStatus] = useState("disable");

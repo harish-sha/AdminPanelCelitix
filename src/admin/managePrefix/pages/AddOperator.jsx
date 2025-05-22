@@ -1,16 +1,16 @@
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material';
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
 import React, { useState } from 'react'
-import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay';
 import styled from 'styled-components';
 import usePagination from '@mui/material/usePagination/usePagination';
-import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
+import CustomTooltip from '../../components/CustomTooltip';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import EditNoteIcon from "@mui/icons-material/EditNote";
-import DropdownWithSearch from '../../../whatsapp/components/DropdownWithSearch';
-import UniversalButton from '../../../whatsapp/components/UniversalButton';
+import DropdownWithSearch from '../../components/DropdownWithSearch';
+import UniversalButton from '../../components/UniversalButton';
 import { Dialog } from 'primereact/dialog';
-import InputField from '../../../whatsapp/components/InputField';
+import InputField from '../../components/InputField';
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { toast } from "react-hot-toast";
 import * as XLSX from "xlsx";

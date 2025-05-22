@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
+import UniversalButton from "../components/UniversalButton";
 import ManageSMPPTable from "./components/ManageSMPPTable";
 import { useNavigate } from "react-router-dom";
 

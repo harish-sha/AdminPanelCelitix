@@ -194,6 +194,8 @@ export const PermissionRoute = ({ children }) => {
             "/managenotifications",
             "/CreateWhatsappTemplateAdmin",
             "/manageadduser",
+            "/addoperator",
+            "/addservice"
           ],
           roles: ["ADMIN"],
         },

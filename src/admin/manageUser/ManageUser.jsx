@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
-import InputField from "../../whatsapp/components/InputField";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
+import UniversalButton from "../components/UniversalButton";
+import InputField from "../components/InputField";
+import AnimatedDropdown from "../components/AnimatedDropdown";
 import { IoSearch } from "react-icons/io5";
 import ManageUserTable from "./components/ManageUserTable";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { fetchAllUsers } from "../../apis/admin/admin";
-import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
+import UniversalSkeleton from "../components/UniversalSkeleton";
 
 const ManageUser = () => {
   const navigate = useNavigate();

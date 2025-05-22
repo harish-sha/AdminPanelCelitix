@@ -51,15 +51,15 @@ import PublicOutlinedIcon from "@mui/icons-material/PublicOutlined";
 import PinDropOutlinedIcon from "@mui/icons-material/PinDropOutlined";
 import AccountTreeOutlinedIcon from "@mui/icons-material/AccountTreeOutlined";
 import CheckCircleOutlineOutlinedIcon from "@mui/icons-material/CheckCircleOutlineOutlined";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
-import RadioGroupField from "../../../whatsapp/components/RadioGroupField";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import InputField from "../../../whatsapp/components/InputField";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
-import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
-import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import CustomTooltip from "../../components/CustomTooltip";
+import RadioGroupField from "../../components/RadioGroupField";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
+import InputField from "../../components/InputField";
+import UniversalButton from "../../components/UniversalButton";
+import UniversalDatePicker from "../../components/UniversalDatePicker";
+import UniversalLabel from "../../components/UniversalLabel";
 import GeneratePasswordSettings from "../../../profile/components/GeneratePasswordSettings";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay";
 import {
   fetchUserbySrno,
   getPromoServices,

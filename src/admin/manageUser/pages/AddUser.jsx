@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import InputField from "../../../whatsapp/components/InputField";
-import GeneratePassword from "../../../whatsapp/components/GeneratePassword";
-import AnimatedDropdown from "../../../whatsapp/components/AnimatedDropdown";
-import UniversalDatePicker from "../../../whatsapp/components/UniversalDatePicker";
-import UniversalButton from "../../../whatsapp/components/UniversalButton";
+import InputField from "../../components/InputField";
+import GeneratePassword from "../../components/GeneratePassword";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
+import UniversalDatePicker from "../../components/UniversalDatePicker";
+import UniversalButton from "../../components/UniversalButton";
 import { useEffect } from "react";
 import { RadioButton } from 'primereact/radiobutton';
-import UniversalLabel from "../../../whatsapp/components/UniversalLabel";
+import UniversalLabel from "../../components/UniversalLabel";
 import { getPincodeDetails } from "@/apis/common/common";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 

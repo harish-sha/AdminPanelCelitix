@@ -1,18 +1,18 @@
 import { Box, Button, IconButton, Paper, Typography } from '@mui/material'
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid'
 import React, { useState } from 'react'
-import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
+import CustomTooltip from '../../components/CustomTooltip';
 import { MdOutlineDeleteForever } from "react-icons/md";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { useNavigate } from 'react-router-dom';
 import usePagination from '@mui/material/usePagination/usePagination';
 import styled from 'styled-components';
-import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay';
 import { Dialog } from 'primereact/dialog';
-import AnimatedDropdown from '../../../whatsapp/components/AnimatedDropdown';
-import InputField from '../../../whatsapp/components/InputField';
-import UniversalTextArea from '../../../whatsapp/components/UniversalTextArea';
-import UniversalButton from '../../../whatsapp/components/UniversalButton';
+import AnimatedDropdown from '../../components/AnimatedDropdown';
+import InputField from '../../components/InputField';
+import UniversalTextArea from '../../components/UniversalTextArea';
+import UniversalButton from '../../components/UniversalButton';
 
 const PaginationList = styled("ul")({
   listStyle: "none",

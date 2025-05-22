@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import DropdownWithSearch from '../../whatsapp/components/DropdownWithSearch'
-import UniversalButton from '../../whatsapp/components/UniversalButton';
+import DropdownWithSearch from '../components/DropdownWithSearch';
+import UniversalButton from '../components/UniversalButton';
 import ManagePrefixTable from './components/ManagePrefixTable';
 import { Dialog } from 'primereact/dialog';
-import UniversalTextArea from '../../whatsapp/components/UniversalTextArea';
+import UniversalTextArea from '../components/UniversalTextArea';
 import { useNavigate } from 'react-router-dom';
 
 const ManagePrefix = () => {

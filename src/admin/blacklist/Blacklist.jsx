@@ -6,15 +6,15 @@ import {
   a11yProps,
   CustomTabPanel,
 } from "../../whatsapp/managetemplate/components/CustomTabPanel";
-import UniversalButton from '../../whatsapp/components/UniversalButton';
-import UniversalDatePicker from '../../whatsapp/components/UniversalDatePicker';
-import InputField from '../../whatsapp/components/InputField';
-import AnimatedDropdown from '../../whatsapp/components/AnimatedDropdown';
+import UniversalButton from '../components//UniversalButton';
+import UniversalDatePicker from '../components/InputField';
+import InputField from '../components/InputField';
+import AnimatedDropdown from '../components/AnimatedDropdown';
 import { IoSearch } from 'react-icons/io5';
-import UniversalSkeleton from '../../whatsapp/components/UniversalSkeleton';
+import UniversalSkeleton from '../components/UniversalSkeleton';
 import { DataTable } from '../../components/layout/DataTable';
 import { Dialog } from 'primereact/dialog';
-import UniversalTextArea from '../../whatsapp/components/UniversalTextArea';
+import UniversalTextArea from '../components/UniversalTextArea';
 import { Checkbox } from "primereact/checkbox";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -451,7 +451,7 @@ const Blacklist = () => {
                 </div>
                 <div className="w-max-content">
                   <UniversalButton
-                    label="delete"
+                    label="Delete"
                     id="blockmobiledelete"
                     name="blockmobiledelete"
                     variant="primary"

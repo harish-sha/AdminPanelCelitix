@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import InputField from "../../whatsapp/components/InputField";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
+import InputField from "../components/InputField";
+import UniversalButton from "../components/UniversalButton";
+import AnimatedDropdown from "../components/AnimatedDropdown";
 import { IoSearch } from "react-icons/io5";
 import { Dialog } from "primereact/dialog";
-import CustomTooltip from "../../whatsapp/components/CustomTooltip";
+import CustomTooltip from "../components/CustomTooltip";
 import { Switch } from "@mui/material";
 import ManagePlanTable from "./components/ManagePlanTable";
 

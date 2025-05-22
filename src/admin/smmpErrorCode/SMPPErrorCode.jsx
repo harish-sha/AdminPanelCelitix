@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
-import UniversalButton from '../../whatsapp/components/UniversalButton'
-import DropdownWithSearch from '../../whatsapp/components/DropdownWithSearch';
+import UniversalButton from '../components/UniversalButton'
+import DropdownWithSearch from '../components/DropdownWithSearch';
 import SMPPErrorCodeTable from './components/SMPPErrorCodeTable';
-import UniversalSkeleton from '../../whatsapp/components/UniversalSkeleton';
-import AnimatedDropdown from '../../whatsapp/components/AnimatedDropdown';
-import InputField from '../../whatsapp/components/InputField';
-import UniversalTextArea from '../../whatsapp/components/UniversalTextArea';
+import UniversalSkeleton from '../components/UniversalSkeleton';
+import AnimatedDropdown from '../components/AnimatedDropdown';
+import InputField from '../components/InputField';
+import UniversalTextArea from '../components/UniversalTextArea';
 import { Dialog } from 'primereact/dialog';
 
 const SMPPErrorCode = () => {

@@ -1,8 +1,8 @@
 import { Box, Button, IconButton, Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
-import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
-import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
+import CustomTooltip from "../../components/CustomTooltip";
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination/usePagination";
 import styled from "styled-components";
 import EditNoteIcon from "@mui/icons-material/EditNote";

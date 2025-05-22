@@ -3,9 +3,9 @@
 import { Paper, Typography, Box, Button, styled, } from '@mui/material';
 import { DataGrid, GridFooterContainer } from '@mui/x-data-grid';
 import React, { useState } from 'react'
-import CustomNoRowsOverlay from '../../../whatsapp/components/CustomNoRowsOverlay';
+import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay';
 import usePagination from '@mui/material/usePagination/usePagination';
-import CustomTooltip from '../../../whatsapp/components/CustomTooltip';
+import CustomTooltip from '../../components/CustomTooltip';
 import IconButton from '@mui/material/IconButton';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import EditNoteIcon from "@mui/icons-material/EditNote";
@@ -16,9 +16,9 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { MdClose } from 'react-icons/md';
 import { FaReply } from 'react-icons/fa6';
 import whatsappImg from "../../../assets/images/rcs.png"
-import InputField from '../../../whatsapp/components/InputField';
-import UniversalTextArea from '../../../whatsapp/components/UniversalTextArea';
-import UniversalButton from '../../../whatsapp/components/UniversalButton';
+import InputField from '../../components/InputField';
+import UniversalTextArea from '../../components/UniversalTextArea';
+import UniversalButton from '../../components/UniversalButton';
 
 const PaginationList = styled("ul")({
     listStyle: "none",
