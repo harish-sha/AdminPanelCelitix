@@ -559,3 +559,15 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
+
+export const saveFlow = async (params, data) => {
+  return await fetchWithAuth(
+    `WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
+      params.category
+    }&wabaNumber=${params.waba}&flowId=${params.id || ""}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};

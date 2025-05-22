@@ -1,29 +1,56 @@
-import React, { useState } from 'react';
-import { Dialog } from 'primereact/dialog';
-import { Menu } from 'primereact/menu';
-import MoreVertOutlinedIcon from '@mui/icons-material/MoreVertOutlined';
-import AddIcon from '@mui/icons-material/Add';
-import { TextField } from '@mui/material';
-import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import UniversalButton from '../../components/UniversalButton';
+import React, { useState } from "react";
+import { Dialog } from "primereact/dialog";
+import { Menu } from "primereact/menu";
+import MoreVertOutlinedIcon from "@mui/icons-material/MoreVertOutlined";
+import AddIcon from "@mui/icons-material/Add";
+import { TextField } from "@mui/material";
+import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import UniversalButton from "../../components/UniversalButton";
+import toast from "react-hot-toast";
 
-export default function CustomTabView() {
-    const [tabs, setTabs] = useState([{ title: 'Welcome', content: 'Welcome', payload: {} }]);
-    const [activeIndex, setActiveIndex] = useState(0);
-    const [dialogVisible, setDialogVisible] = useState(false);
-    const menuRefs = tabs.map(() => React.createRef());
-    const [screenName, setScreenName] = useState('');
-    const [screenID, setScreenID] = useState('');
-    const [createTab, setCreateTab] = useState('');
+export default function CustomTabView({
+    tabs,
+    setTabs,
+    activeIndex,
+    setActiveIndex,
+    dialogVisible,
+    setDialogVisible,
+    screenName,
+    setScreenName,
+    screenID,
+    setScreenID,
+    randomNumber,
+    setRandomNumber,
+    createTab,
+    setCreateTab,
+    menuRefs,
+}) {
+    // const [tabs, setTabs] = useState([
+    //   { title: "Welcome", content: "Welcome", payload: {} },
+    // ]);
+    // const [activeIndex, setActiveIndex] = useState(0);
+    // const [dialogVisible, setDialogVisible] = useState(false);
+    // const menuRefs = tabs.map(() => React.createRef());
+    // const [screenName, setScreenName] = useState("");
+    // const [screenID, setScreenID] = useState("");
+    // const [createTab, setCreateTab] = useState("");
+
+    // const [randomNumber, setRandomNumber] = useState(
+    //   Math.floor(Math.random() * 1000)
+    // );
 
     const addTab = () => {
-        setTabs([...tabs, { title: screenName, content: `Content for ${screenName}` }]);
+        setTabs([
+            ...tabs,
+            { id: screenID, title: screenName, content: `Content for ${screenName}`, payload: [] },
+        ]);
         setActiveIndex(tabs.length);
     };
 
     const removeTab = (index) => {
+        if (tabs.length === 1) return;
         const updatedTabs = tabs.filter((_, i) => i !== index);
         setTabs(updatedTabs);
         if (activeIndex >= updatedTabs.length) {
@@ -37,17 +64,17 @@ export default function CustomTabView() {
 
     const menuItems = (index) => [
         {
-            label: 'Edit',
+            label: "Edit",
             icon: <EditNoteOutlinedIcon />,
             command: () => alert(`Edit Tab ${index + 1}`),
         },
         {
-            label: 'Delete',
-            icon: <DeleteForeverOutlinedIcon />,
+            label: "Delete",
+            icon: <DeleteForeverOutlinedIcon sx={{ color: "red" }} />,
             command: () => removeTab(index),
         },
         {
-            label: 'Export',
+            label: "Export",
             icon: <IosShareOutlinedIcon />,
             command: () => alert(`Export Tab ${index + 1}`),
         },
@@ -55,18 +82,26 @@ export default function CustomTabView() {
 
     const handleBtnClick = () => {
         if (!screenName.trim()) {
-            alert('Please fill in all required fields.');
+            alert("Please fill in all required fields.");
+            return;
+        }
+        const isTitleExists = tabs.some((tab) => tab.title === screenName);
+        if (isTitleExists) {
+            toast.error("Screen already exists. Please choose a different Screen Name.");
             return;
         }
         addTab();
 
-        setScreenName('');
-        setScreenID('');
+        setScreenName("");
+        setScreenID("");
         setDialogVisible(false);
     };
 
     const handleCloseClick = () => {
         setDialogVisible(false);
+        setScreenName("");
+        setScreenID("");
+        setRandomNumber(Math.floor(Math.random() * 1000));
     };
 
     return (
@@ -75,16 +110,18 @@ export default function CustomTabView() {
                 {tabs.map((tab, index) => (
                     <div
                         key={index}
-                        className='flex items-center justify-between px-2 py-2 cursor-pointer rounded-md'
+                        className="flex items-center justify-between px-2 py-2 cursor-pointer rounded-md"
                         style={{
-                            backgroundColor: activeIndex === index ? '#e5e7eb' : '#fff',
-                            transition: 'background-color 0.3s ease',
+                            backgroundColor: activeIndex === index ? "#e5e7eb" : "#fff",
+                            transition: "background-color 0.3s ease",
                         }}
                         onClick={() => setActiveIndex(index)}
-                        onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = '#f3f4f6')}
+                        onMouseEnter={(e) =>
+                            (e.currentTarget.style.backgroundColor = "#f3f4f6")
+                        }
                         onMouseLeave={(e) =>
                         (e.currentTarget.style.backgroundColor =
-                            activeIndex === index ? '#e5e7eb' : '#fff')
+                            activeIndex === index ? "#e5e7eb" : "#fff")
                         }
                     >
                         <span>{tab.title}</span>
@@ -99,12 +136,10 @@ export default function CustomTabView() {
                             onClick={(e) => menuRefs[index].current.toggle(e)}
                         />
                     </div>
-
-
                 ))}
 
                 <div
-                    className='flex items-center justify-center cursor-pointer rounded-md px-2 py-2 bg-[#f3f4f6]'
+                    className="flex items-center justify-center cursor-pointer rounded-md px-2 py-2 bg-[#f3f4f6]"
                     onClick={handleTabClick}
                 >
                     <AddIcon className="text-blue-600" />
@@ -116,11 +151,12 @@ export default function CustomTabView() {
                 {tabs.length > 0 && tabs[activeIndex]?.payload}
             </div> */}
 
-
             <Dialog
                 visible={dialogVisible}
-                onHide={() => setDialogVisible(false)}
-                className="w-[40%] left-18 h-[60%]"
+                onHide={() => {
+                    setDialogVisible(false);
+                }}
+                className=""
                 draggable={false}
                 closable={false}
             >
@@ -133,7 +169,15 @@ export default function CustomTabView() {
                             <TextField
                                 label="Enter screen name"
                                 value={screenName}
-                                onChange={(e) => setScreenName(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setScreenName(value);
+                                    const id = `${value
+                                        .replace(/\s+/g, "_")
+                                        .toLocaleLowerCase()}_${randomNumber}`;
+                                    setScreenID(id);
+                                    if (!value) setScreenID("");
+                                }}
                                 required
                             />
                         </div>
@@ -141,7 +185,13 @@ export default function CustomTabView() {
                             <TextField
                                 label="Enter screen ID (Optional)"
                                 value={screenID}
-                                onChange={(e) => setScreenID(e.target.value)}
+                                onChange={(e) => {
+                                    const inputValue = e.target.value.trim();
+                                    const formattedID = inputValue
+                                        .replace(/\s+/g, "_")
+                                        .toLowerCase();
+                                    setScreenID(formattedID);
+                                }}
                                 required
                             />
                         </div>
@@ -158,21 +208,25 @@ export default function CustomTabView() {
                         <h2 className="text-gray-500 font-medium text-lg">Instructions:</h2>
                         <ul className="text-gray-500 font-normal text-sm space-y-2 mt-3 list-disc">
                             <li>
-                                If the screen name meets the Screen ID rules, then the Screen ID used
-                                as its screen name.
+                                If the screen name meets the Screen ID rules, then the Screen ID
+                                used as its screen name.
                             </li>
                             <li>Screen ID must be unique.</li>
                             <li>Screen ID allows only alphabets and underscores("_").</li>
                             <li>
-                                Provide a separate Screen ID, if the screen title includes special
-                                characters, or doesn't meet screen ID rules.
+                                Provide a separate Screen ID, if the screen title includes
+                                special characters, or doesn't meet screen ID rules.
                             </li>
                         </ul>
                     </div>
                 </div>
                 <div className="border-t-1 border-gray-300 mt-25 w-full">
                     <div className="flex flex-row gap-4 justify-end items-end mt-2">
-                        <UniversalButton label="Close" variant="primary" onClick={handleCloseClick} />
+                        <UniversalButton
+                            label="Close"
+                            variant="primary"
+                            onClick={handleCloseClick}
+                        />
                         <UniversalButton
                             label="Create"
                             variant="primary"

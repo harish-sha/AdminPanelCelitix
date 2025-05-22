@@ -127,13 +127,13 @@ const WhatsappFlows = () => {
       setIsLoading(true);
       const res = await getWhatsappFlowTemplate(reqbody, selectedWaba);
       if (res?.flag === true) {
-        toast.success("Flow published Succesfully");
+        toast.success("Flow Send  Succesfully");
         setPublicDialog(false);
       } else {
-        toast.error(res?.messages || "Flow published failed");
+        toast.error(res?.messages || "Flow Send  failed");
       }
     } catch (err) {
-      toast.error("An error occurred while publishing the flow.");
+      toast.error("An error occurred while Sending the flow.");
     } finally {
       setIsLoading(false);
     }
@@ -180,7 +180,9 @@ const WhatsappFlows = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate("/wflowcreation", { state: { flowName } });
+    navigate("/wflowcreation", {
+      state: { flowName, selectCategories, selectedWaba },
+    });
   };
 
   async function updateStatus(id, mobile) {
@@ -410,17 +412,17 @@ const WhatsappFlows = () => {
                   tooltipContent="Select flow categories"
                   tooltipPlacement="right"
                   options={[
-                    { value: "signup", label: "Sign Up" },
-                    { value: "signin", label: "Sign In" },
+                    { value: "SIGN_UP", label: "Sign Up" },
+                    { value: "SIGN_IN", label: "Sign In" },
                     {
-                      value: "appointmentBooking",
+                      value: "APPOINTMENT_BOOKING",
                       label: "Appointment Booking",
                     },
-                    { value: "leadGeneration", label: "Lead Generation" },
-                    { value: "contactUs", label: "Contact us" },
-                    { value: "customerSupport", label: "Customer Support" },
-                    { value: "survey", label: "Survey" },
-                    { value: "other", label: "other" },
+                    { value: "LEAD_GENERATION", label: "Lead Generation" },
+                    { value: "CONTACT_US", label: "Contact us" },
+                    { value: "CUSTOMER_SUPPORT", label: "Customer Support" },
+                    { value: "SURVEY", label: "Survey" },
+                    { value: "OTHER", label: "other" },
                   ]}
                   placeholder="Select Flow Categories"
                   value={selectCategories}
