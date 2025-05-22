@@ -73,7 +73,7 @@ export const List = ({
 
     // if (!nodeData) return;
 
-    const variable = extractVariable({ message: nodeData.message });
+    const variable = extractVariable({ message: nodeData?.message });
 
     variable && addVariable(variable);
 
@@ -82,10 +82,10 @@ export const List = ({
       [id]: {
         ...prev[id],
         variable,
-        text: nodeData.listHeading,
+        text: nodeData?.listHeading,
       },
     }));
-    const listItems = [];
+    const listItems = [{ option: "", value: "" }];
     nodeData?.options?.forEach((item: any) => {
       const data = {
         option: "",

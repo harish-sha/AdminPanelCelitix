@@ -139,8 +139,12 @@ const WhatsappFlows = () => {
     }
   };
 
-  const filteredFlows = flowList.filter((flow) =>
-    flow.flowName.toLowerCase().includes(search.toLowerCase())
+  // const filteredFlows = flowList.filter((flow) =>
+  //   flow.flowName.toLowerCase().includes(search.toLowerCase())
+  // );
+
+  const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter((flow) =>
+    (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredFlows.length / rowsPerPage);
@@ -259,11 +263,10 @@ const WhatsappFlows = () => {
                   <div>
                     <div className="font-semibold text-sm">{flow.flowName}</div>
                     <span
-                      className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${
-                        flow.status === "Draft"
-                          ? "bg-orange-500 text-white"
-                          : "bg-blue-500 text-white"
-                      }`}
+                      className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
+                        ? "bg-orange-500 text-white"
+                        : "bg-blue-500 text-white"
+                        }`}
                     >
                       {flow.status}
                     </span>
@@ -370,9 +373,8 @@ const WhatsappFlows = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i + 1}
-                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${
-                  currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                }`}
+                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                  }`}
                 onClick={() => setCurrentPage(i + 1)}
               >
                 {i + 1}
@@ -473,129 +475,129 @@ const WhatsappFlows = () => {
             <form onSubmit={handleSubmitFlowTemp}>
               {Array.isArray(selectedFlowDetails)
                 ? selectedFlowDetails.map((flow, idx, name) => (
-                    <div
-                      className="flex flex-col gap-4"
-                      key={flow.flowId || idx}
-                    >
-                      <span>
-                        <strong>Flow Name:</strong>
-                        {flow.flowName}
-                      </span>
-                    </div>
-                  ))
+                  <div
+                    className="flex flex-col gap-4"
+                    key={flow.flowId || idx}
+                  >
+                    <span>
+                      <strong>Flow Name:</strong>
+                      {flow.flowName}
+                    </span>
+                  </div>
+                ))
                 : selectedFlowDetails && (
-                    <div className="flex flex-col gap-4">
-                      <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
-                        <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
-                          <div className="flex items-center gap-3">
-                            <img
-                              // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                              src={celifavicon}
-                              className="w-10 h-10 rounded-full "
-                            />
-                            <div className=" text-md text-gray-50">
-                              {selectedWaba
-                                ? wabaList.find(
-                                    (waba) => waba.mobileNo === selectedWaba
-                                  )?.name || ""
-                                : ""}
-                            </div>
-                          </div>
-                          <div className="pr-3 cursor-pointer">
-                            <MoreVertIcon sx={{ color: "gray" }} />
+                  <div className="flex flex-col gap-4">
+                    <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
+                      <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
+                        <div className="flex items-center gap-3">
+                          <img
+                            // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
+                            src={celifavicon}
+                            className="w-10 h-10 rounded-full "
+                          />
+                          <div className=" text-md text-gray-50">
+                            {selectedWaba
+                              ? wabaList.find(
+                                (waba) => waba.mobileNo === selectedWaba
+                              )?.name || ""
+                              : ""}
                           </div>
                         </div>
-                        <div className="p-5">
-                          <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
-                            <div className="mb-2 text-sm break-words text-wrap">
-                              {bodyText}
-                            </div>
-                            <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
-                              <button
-                                className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
-                                type="button"
+                        <div className="pr-3 cursor-pointer">
+                          <MoreVertIcon sx={{ color: "gray" }} />
+                        </div>
+                      </div>
+                      <div className="p-5">
+                        <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
+                          <div className="mb-2 text-sm break-words text-wrap">
+                            {bodyText}
+                          </div>
+                          <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
+                            <button
+                              className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
+                              type="button"
+                            >
+                              <svg
+                                width="20"
+                                height="20"
+                                fill="none"
+                                viewBox="0 0 24 24"
                               >
-                                <svg
-                                  width="20"
-                                  height="20"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <rect
-                                    x="4"
-                                    y="4"
-                                    width="16"
-                                    height="16"
-                                    rx="2"
-                                    fill="#bdbdbd"
-                                  />
-                                  <path
-                                    d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
-                                    fill="#757575"
-                                  />
-                                </svg>
-                                <div className="break-words text-wrap">
-                                  <div className="font-medium text-sm break-words text-wrap">
-                                    {btnText}
-                                  </div>
+                                <rect
+                                  x="4"
+                                  y="4"
+                                  width="16"
+                                  height="16"
+                                  rx="2"
+                                  fill="#bdbdbd"
+                                />
+                                <path
+                                  d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
+                                  fill="#757575"
+                                />
+                              </svg>
+                              <div className="break-words text-wrap">
+                                <div className="font-medium text-sm break-words text-wrap">
+                                  {btnText}
                                 </div>
-                              </button>
-                            </div>
+                              </div>
+                            </button>
                           </div>
                         </div>
                       </div>
-                      <span className="flex justify-center items-center">
-                        Flow :&nbsp;
-                        <strong>{selectedFlowDetails.flowName}</strong>
-                      </span>
-                      <AnimatedDropdown
-                        id="whatsappflowWabaTemplate"
-                        name="whatsappflowWabaTemplate"
-                        label="Whatsapp Account"
-                        tooltipContent="Select your whatsapp business account"
-                        tooltipPlacement="right"
-                        options={wabaList.map((waba) => ({
-                          value: waba.mobileNo,
-                          label: waba.name,
-                        }))}
-                        value={selectedWaba}
-                        onChange={setSelectedWaba}
-                        placeholder="Select WABA"
-                      />
-                      <InputField
-                        label="Mobile No"
-                        id="mobileno"
-                        name="mobileno"
-                        type="phoneno"
-                        tooltipContent="Enter Mobile of whom to send the flow"
-                        placeholder="Enter MobileNo"
-                        value={mobileNo}
-                        onChange={(e) => setMobileNo(e.target.value)}
-                      />
-                      <InputField
-                        label="Body Text"
-                        id="bodytext"
-                        name="bodytext"
-                        type="text"
-                        tooltipContent="Enter body text"
-                        placeholder="Enter Body Text"
-                        value={bodyText}
-                        onChange={(e) => setBodyText(e.target.value)}
-                        // maxLength={50}
-                      />
-                      <InputField
-                        label="Button Text"
-                        id="buttontext"
-                        name="buttontext"
-                        type="text"
-                        placeholder="Enter Button Text"
-                        tooltipContent="Enter button text"
-                        value={btnText}
-                        maxLength={25}
-                        onChange={(e) => setBtnText(e.target.value)}
-                      />
                     </div>
-                  )}
+                    <span className="flex justify-center items-center">
+                      Flow :&nbsp;
+                      <strong>{selectedFlowDetails.flowName}</strong>
+                    </span>
+                    <AnimatedDropdown
+                      id="whatsappflowWabaTemplate"
+                      name="whatsappflowWabaTemplate"
+                      label="Whatsapp Account"
+                      tooltipContent="Select your whatsapp business account"
+                      tooltipPlacement="right"
+                      options={wabaList.map((waba) => ({
+                        value: waba.mobileNo,
+                        label: waba.name,
+                      }))}
+                      value={selectedWaba}
+                      onChange={setSelectedWaba}
+                      placeholder="Select WABA"
+                    />
+                    <InputField
+                      label="Mobile No"
+                      id="mobileno"
+                      name="mobileno"
+                      type="phoneno"
+                      tooltipContent="Enter Mobile of whom to send the flow"
+                      placeholder="Enter MobileNo"
+                      value={mobileNo}
+                      onChange={(e) => setMobileNo(e.target.value)}
+                    />
+                    <InputField
+                      label="Body Text"
+                      id="bodytext"
+                      name="bodytext"
+                      type="text"
+                      tooltipContent="Enter body text"
+                      placeholder="Enter Body Text"
+                      value={bodyText}
+                      onChange={(e) => setBodyText(e.target.value)}
+                    // maxLength={50}
+                    />
+                    <InputField
+                      label="Button Text"
+                      id="buttontext"
+                      name="buttontext"
+                      type="text"
+                      placeholder="Enter Button Text"
+                      tooltipContent="Enter button text"
+                      value={btnText}
+                      maxLength={25}
+                      onChange={(e) => setBtnText(e.target.value)}
+                    />
+                  </div>
+                )}
               <div className="flex justify-center items-center mt-5">
                 <UniversalButton
                   onClick={handleSubmitFlowTemp}

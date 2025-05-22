@@ -113,6 +113,7 @@ export const ChatSidebar = ({
       preserveAspectRatio: "xMidYMid slice",
     },
   };
+  
   return (
     <div className="mt-2 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!selectedWaba && (

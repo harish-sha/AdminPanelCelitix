@@ -228,8 +228,8 @@ const WhatsappManageWaba = ({ id, name }) => {
   }, []);
 
 
-  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  // const API_BASE_URL = "/api";
+  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const API_BASE_URL = "/api";
 
   async function onboardUser(accessToken) {
     const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {

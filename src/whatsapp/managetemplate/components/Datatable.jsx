@@ -627,7 +627,7 @@ const DataTable = ({
                 </div>
             </Dialog> */}
 
-      {/* Handle View Dialog */}
+      {/* Handle View Dialog start*/}
       <Dialog
         header={selectedRow?.templateName}
         visible={dialogVisible}
@@ -767,6 +767,7 @@ const DataTable = ({
           </div>
         </div>
       </Dialog>
+      {/* Handle View Dialog end*/}
 
       {/* Handle Delete Popup */}
       {/* <ConfirmPopup
@@ -834,8 +835,7 @@ const DataTable = ({
       </Dialog>
       {/* Delete Template End */}
 
-      {/* Curl Dialog */}
-
+      {/* Curl Dialog start*/}
       <Dialog
         header={"Curl Data"}
         visible={curlDialogVisible}
@@ -865,6 +865,7 @@ const DataTable = ({
           <pre className="text-xs whitespace-pre-wrap text-gray-800  break-words">{JSON.stringify(curlData, null, 2)}</pre>
         </div>
       </Dialog>
+      {/* Curl Dialog end*/}
     </>
   );
 };
