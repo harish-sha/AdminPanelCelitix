@@ -351,7 +351,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         toast.error("No user details found for the selected user.");
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
       toast.error("Failed to fetch user details. Please try again.");
     }
   };
@@ -379,7 +378,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         toast.error(response?.message || "Failed to update user details.");
       }
     } catch (error) {
-      console.error("Error updating user details:", error);
       toast.error("Failed to update user details. Please try again.");
     }
   };
@@ -438,7 +436,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
       setWhatsapprows(formatted);
     } else {
-      console.warn("No valid data returned from API");
+      toast.error("No valid data returned from API");
     }
   };
 
@@ -459,13 +457,13 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
       setRcsrows(formatted);
     } else {
-      console.warn("No valid data returned from API");
+      toast.error("No valid data returned from API");
     }
   };
   const fetchObdRateData = async (userSrno) => {
     const res = await getVoiceRateBySrno(userSrno);
-    if(res?.message?.includes("Record not found")){
-      return
+    if (res?.message?.includes("Record not found")) {
+      return;
     }
 
     const formatted = [
@@ -538,7 +536,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
       setEditWhatsappVisible(true);
     } else {
-      console.warn("No data found for srno:", srno);
+      toast.error("No data found for srno:", srno);
     }
   };
 
@@ -608,7 +606,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.success(res?.message);
       await fetchRcsRateData(currentUserSrno);
     } catch (e) {
-      console.log(editDialogVisible);
       toast.error("Error in adding rcs credit");
     }
     // console.log("handleRcsCredit");
@@ -896,7 +893,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
         setEnableServices(formattedData);
       } catch (e) {
-        console.log(e);
         toast.error("Something went wrong");
       }
     }
@@ -1065,7 +1061,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         toast.error("No user details found for the selected user.");
       }
     } catch (error) {
-      console.error("Error fetching user details:", error);
       toast.error("Failed to fetch user details. Please try again.");
     }
   };
@@ -1170,16 +1165,17 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
-    const voiceRows = [
-      {
-        id: 1,
-        sn: 1,
-        srno: obdRateRes.srNo,
-        ...obdRateRes,
-      },
-    ];
+    obdRateRes &&
+      setVoicerows([
+        {
+          id: 1,
+          sn: 1,
+          srno: obdRateRes?.srNo,
+          ...obdRateRes,
+        },
+      ]);
 
-    obdRateRes && setVoicerows(voiceRows);
+    // obdRateRes && setVoicerows(voiceRows);
   };
 
   const handleApikey = (id, name) => {
@@ -1389,9 +1385,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
   async function handleRcsDelete(srno) {
     try {
-      console.log(srno);
       const res = await deleteRCSRateBySrno(srno);
-      console.log(res);
       if (!res.statusCode) {
         return toast.error(res.message);
       }
@@ -1504,7 +1498,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         ? (payload.voiceRate = obdrate)
         : (payload.voiceRate2 = obdrate);
       const res = await saveVoiceRate(payload);
-      console.log(res);
+
       if (!res?.message.includes("successfully")) {
         return toast.error(res.message);
       }
@@ -1624,8 +1618,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   function handleServiceChange(e) {
     const { id, checked } = e.target;
-
-    console.log("checked", checked);
 
     const updatedService = enableServices.map((item) =>
       item.id == id ? { ...item, enable: checked } : item
