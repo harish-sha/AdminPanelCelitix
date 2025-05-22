@@ -1157,11 +1157,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          srno: item.sr_no,
-          ...item,
-        }))
+        id: index + 1,
+        sn: index + 1,
+        srno: item.sr_no,
+        ...item,
+      }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1197,7 +1197,24 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     { field: "firstName", headerName: "First Name", flex: 1, minWidth: 120 },
     { field: "lastName", headerName: "Last Name", flex: 1, minWidth: 120 },
     { field: "companyName", headerName: "Company", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    // { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        const isActive = params.value === 1;
+        return (
+          <div className="flex items-center gap-2">
+            <span
+              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"}`}
+            ></span>
+            <span>{isActive ? "Active" : "Inactive"}</span>
+          </div>
+        );
+      },
+    },
     {
       field: "action",
       headerName: "Action",
@@ -1472,10 +1489,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-      }))
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1563,6 +1580,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       </GridFooterContainer>
     );
   };
+
   const RcsCustomFooter = () => {
     return (
       <GridFooterContainer
@@ -1625,6 +1643,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
     setEnableServices(updatedService);
   }
+
   async function handleResetPassword() {
     const data = {
       srno: selectedIds,
@@ -1646,6 +1665,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     fetchMobileNo();
   }, [otpService]);
+
   return (
     <>
       <Paper sx={{ height: 558 }} id={id} name={name}>
@@ -2653,8 +2673,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                    ? "Inactive"
-                    : "Not Available"}
+                      ? "Inactive"
+                      : "Not Available"}
                 </p>
               </div>
             </div>
@@ -3725,7 +3745,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                      // checked={true}
+                    // checked={true}
                     />
                     <label
                       htmlFor={item.id}
