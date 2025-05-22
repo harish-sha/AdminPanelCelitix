@@ -189,7 +189,7 @@ export const PermissionRoute = ({ children }) => {
         },
         {
           name: "openRoutes",
-          links: [, "/profile", "/settings"],
+          links: ["/profile", "/settings"],
           roles: ["ADMIN"],
         },
       ];
