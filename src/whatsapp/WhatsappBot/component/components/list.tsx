@@ -73,7 +73,7 @@ export const List = ({
 
     // if (!nodeData) return;
 
-    const variable = extractVariable({ message: nodeData.message });
+    const variable = extractVariable({ message: nodeData?.message });
 
     variable && addVariable(variable);
 
@@ -82,7 +82,7 @@ export const List = ({
       [id]: {
         ...prev[id],
         variable,
-        text: nodeData.listHeading,
+        text: nodeData?.listHeading,
       },
     }));
     const listItems = [];
@@ -95,7 +95,6 @@ export const List = ({
       data.value = item.value;
       listItems.push(data);
     });
-    console.log("nodeData", listItems);
 
     setOptions(listItems);
   }, []);
