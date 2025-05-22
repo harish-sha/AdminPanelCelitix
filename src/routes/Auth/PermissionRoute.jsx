@@ -176,6 +176,17 @@ export const PermissionRoute = ({ children }) => {
       return [
         { name: "Home", links: "/", roles: ["ADMIN"] },
         {
+          name: "openRoutes",
+          links: [
+            "/download",
+            "/loginIpdetails",
+            "/profile",
+            "/settings",
+            "/transactions",
+          ],
+          roles: ["ADMIN"],
+        },
+        {
           name: "Admin",
           links: [
             "/manageuser",
@@ -195,7 +206,7 @@ export const PermissionRoute = ({ children }) => {
             "/CreateWhatsappTemplateAdmin",
             "/manageadduser",
             "/addoperator",
-            "/addservice"
+            "/addservice",
           ],
           roles: ["ADMIN"],
         },

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getUserDetails } from "../../apis/user/user";
 import toast from "react-hot-toast";
 import InputField from "../../components/layout/InputField";
-import Loader from "../../whatsapp/components/Loader";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
+import Loader from "@/components/common/Loader";
+import UniversalButton from "@/components/common/UniversalButton";
 import { useUser } from "@/context/auth";
 
 const Profile = () => {

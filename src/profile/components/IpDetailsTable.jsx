@@ -4,7 +4,7 @@ import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { Paper, Typography, Box, Button, Drawer } from "@mui/material";
 import { useState } from "react";
 
-import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
+import CustomNoRowsOverlay from "../../components/common/CustomNoRowsOverlay";
 import { IPDetailsDrawer } from "./IPDetailsDrawer";
 
 import { UAParser } from "ua-parser-js";

@@ -1,10 +1,15 @@
-import usePagination from "@mui/material/usePagination";
-import { styled } from "@mui/material/styles";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { Paper, Typography, Box, Button } from "@mui/material";
-import { useState } from "react";
-import CustomNoRowsOverlay from "@/components/common/CustomNoRowsOverlay";
-import toast from "react-hot-toast";
+import * as React from 'react';
+import IconButton from '@mui/material/IconButton';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import usePagination from '@mui/material/usePagination';
+import { styled } from '@mui/material/styles';
+import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import { DataGrid, GridFooterContainer, GridPagination } from '@mui/x-data-grid';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { Paper, Typography, Box, Button } from '@mui/material';
+
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -14,19 +19,11 @@ const PaginationList = styled("ul")({
     gap: "8px",
 });
 
-const CustomPagination = ({
-    totalPages,
-    paginationModel,
-    setPaginationModel,
-    setCurrentPage,
-}) => {
+const CustomPagination = ({ totalPages, paginationModel, setPaginationModel }) => {
     const { items } = usePagination({
         count: totalPages,
         page: paginationModel.page + 1,
-        onChange: (_, newPage) => {
-            setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-                setCurrentPage(newPage);
-        },
+        onChange: (_, newPage) => setPaginationModel({ ...paginationModel, page: newPage - 1 }),
     });
 
     return (
@@ -51,13 +48,7 @@ const CustomPagination = ({
                         );
                     } else {
                         children = (
-                            <Button
-                                key={index}
-                                variant="outlined"
-                                size="small"
-                                {...item}
-                                sx={{}}
-                            >
+                            <Button key={index} variant="outlined" size="small" {...item} sx={{}} >
                                 {type === "previous" ? "Previous" : "Next"}
                             </Button>
                         );
@@ -70,26 +61,46 @@ const CustomPagination = ({
     );
 };
 
-export const PaginationTable = ({
-    id,
-    name,
-    col,
-    rows,
-    setSelectedRows,
-    selectedRows,
-    height = 558,
-    paginationModel,
-    setPaginationModel,
-    setCurrentPage,
-    totalPage,
+const TransactionsHistoryTable = ({ id, name, handleView, handleDuplicate, handleDelete }) => {
+    const [selectedRows, setSelectedRows] = React.useState([]);
 
-    checkboxSelection = false,
-}) => {
-    //   const [paginationModel, setPaginationModel] = useState({
-    //     page: 0,
-    //     pageSize: 10,
-    //   });
-    const totalPages = Math.ceil(totalPage / 10);
+    // const paginationModel = { page: 0, pageSize: 10 };
+    const [paginationModel, setPaginationModel] = React.useState({
+        page: 0,
+        pageSize: 10,
+    });
+
+    const columns = [
+        { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
+        { field: 'userName', headerName: 'User name', flex: 1, minWidth: 120 },
+        { field: 'date', headerName: 'Date', flex: 1, minWidth: 120 },
+        { field: 'service', headerName: 'Service', flex: 1, minWidth: 120 },
+        { field: 'amountbeforerecharge', headerName: 'Amount Before Recharge', flex: 1, minWidth: 120 },
+        { field: 'amountrecharged', headerName: 'Amount Recharged', flex: 1, minWidth: 120 },
+        { field: 'amountafterrecharge', headerName: 'Amount After Recharge', flex: 1, minWidth: 120 },
+        { field: 'rechargetype', headerName: 'Recharge Type', flex: 1, minWidth: 120 },
+        { field: 'resource', headerName: 'Resource', flex: 1, minWidth: 120 },
+        { field: 'remarks', headerName: 'Remarks', flex: 1, minWidth: 120 },
+    ];
+
+    // use this when you want to create rows dynamically
+    const rows = Array.from({ length: 500 }, (_, i) => ({
+        id: i + 1,
+        sn: i + 1,
+        userName: 'Admin',
+        date: '27/09/2023',
+        service: 'OBD',
+        amountbeforerecharge: '53.0',
+        amountrecharged: '20000.0',
+        amountafterrecharge: '20053.0',
+        rechargetype: 'Credit',
+        resource: 'Admin',
+        remarks: 'Demo account testing lorem ipsum dolor sit amet..',
+
+    }));
+
+    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
     const CustomFooter = () => {
         return (
             <GridFooterContainer
@@ -97,14 +108,14 @@ export const PaginationTable = ({
                     display: "flex",
                     flexWrap: "wrap",
                     justifyContent: {
-                        xs: "center",
-                        lg: "space-between",
+                        xs: "center", lg: "space-between"
                     },
                     alignItems: "center",
                     padding: 1,
                     gap: 2,
                     overflowX: "auto",
-                }}
+                }
+                }
             >
                 <Box
                     sx={{
@@ -114,7 +125,7 @@ export const PaginationTable = ({
                         gap: 1.5,
                     }}
                 >
-                    {selectedRows?.length > 0 && (
+                    {selectedRows.length > 0 && (
                         <Typography
                             variant="body2"
                             sx={{
@@ -122,12 +133,12 @@ export const PaginationTable = ({
                                 paddingRight: "10px",
                             }}
                         >
-                            {selectedRows?.length} Rows Selected
+                            {selectedRows.length} Rows Selected
                         </Typography>
                     )}
 
                     <Typography variant="body2">
-                        Total Records: <span className="font-semibold">{rows.length}</span>
+                        Total Records: <span className='font-semibold'>{rows.length}</span>
                     </Typography>
                 </Box>
 
@@ -142,29 +153,31 @@ export const PaginationTable = ({
                         totalPages={totalPages}
                         paginationModel={paginationModel}
                         setPaginationModel={setPaginationModel}
-                        setCurrentPage={setCurrentPage}
                     />
                 </Box>
-            </GridFooterContainer>
+            </GridFooterContainer >
         );
     };
 
+
     return (
-        <Paper sx={{ height }} id={id} name={name}>
+        <Paper sx={{ height: 558 }}
+            id={id}
+            name={name}
+        >
             <DataGrid
                 id={id}
                 name={name}
                 rows={rows}
-                columns={col}
-                // initialState={{ pagination: { paginationModel } }}
+                columns={columns}
+                initialState={{ pagination: { paginationModel } }}
                 pageSizeOptions={[10, 20, 50]}
-                T
-                // pagination
-                // paginationModel={paginationModel}
-                // onPaginationModelChange={setPaginationModel}
-                // checkboxSelection={checkboxSelection}
+                pagination
+                paginationModel={paginationModel}
+                onPaginationModelChange={setPaginationModel}
+                // checkboxSelection
                 rowHeight={45}
-                slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
+                slots={{ footer: CustomFooter }}
                 slotProps={{ footer: { totalRecords: rows.length } }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                 disableRowSelectionOnClick
@@ -194,5 +207,8 @@ export const PaginationTable = ({
                 }}
             />
         </Paper>
+
     );
 };
+
+export default TransactionsHistoryTable;

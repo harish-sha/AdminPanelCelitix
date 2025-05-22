@@ -29,15 +29,15 @@ import ResellerDashboard from "@/dashboard/ResellerDashboard";
 
 // manage funds
 // import Recharge from "@/managefunds/recharge/Recharge";
-// import Transactions from "@/managefunds/transactions/Transactions";
+import Transactions from "@/managefunds/transactions/Transactions";
 
 // manage contacts
 // import ManageContacts from "@/managecontacts/ManageContacts";
 
 // profile
-// import Settings from "@/profile/pages/Settings";
-// import ProfilePage from "@/profile/pages/Profile";
-// import LoginIpDetails from "@/profile/pages/LoginIpDetails";
+import Settings from "@/profile/pages/Settings";
+import ProfilePage from "@/profile/pages/Profile";
+import LoginIpDetails from "@/profile/pages/LoginIpDetails";
 // import WhatsappCreateTemplate from "@/whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate";
 
 // Admin
@@ -80,7 +80,7 @@ import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWh
 // import CampaignDeliveryReportDetails from "@/rcs/deliveryReport/components/CampaignDeliveryReportDetails";
 
 // Download
-// import Download from "@/profile/pages/Download";
+import Download from "@/profile/pages/Download";
 
 // // Two-Way-SMS
 // import TwowayMangeKeyword from "@/twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
@@ -227,16 +227,16 @@ const Approutes = () => {
         {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 
         {/* profile */}
-        {/* <Route path="profile" element={<ProfilePage />} />
+        <Route path="profile" element={<ProfilePage />} />
         <Route path="download" element={<Download />} />
-        <Route path="loginIpdetails" element={<LoginIpDetails />} /> */}
+        <Route path="loginIpdetails" element={<LoginIpDetails />} />
 
         {/* Settings */}
-        {/* <Route path="settings" element={<Settings />} /> */}
+        <Route path="settings" element={<Settings />} />
 
         {/* manage funds */}
         {/* <Route path="recharge" element={<Recharge />} /> */}
-        {/* <Route path="transactions" element={<Transactions />} /> */}
+        <Route path="transactions" element={<Transactions />} />
 
         {/* manage contacts */}
         {/* <Route path="managecontacts" element={<ManageContacts />} /> */}

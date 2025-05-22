@@ -2,15 +2,15 @@ import React, { useEffect, useMemo, useState } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
-import Loader from "../../whatsapp/components/Loader";
+import Loader from "@/components/common/Loader";
 import PasswordOutlinedIcon from "@mui/icons-material/PasswordOutlined";
 import KeyOutlinedIcon from "@mui/icons-material/KeyOutlined";
-import InputField from "../../components/layout/InputField";
+import InputField from "@/components/layout/InputField";
 import IconButton from "@mui/material/IconButton";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import GeneratePasswordSettings from "../components/GeneratePasswordSettings";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
+import UniversalButton from "@/components/common/UniversalButton";
 import NotificationsActiveOutlinedIcon from "@mui/icons-material/NotificationsActiveOutlined";
 import outlined from "@material-tailwind/react/theme/components/timeline/timelineIconColors/outlined";
 import {
