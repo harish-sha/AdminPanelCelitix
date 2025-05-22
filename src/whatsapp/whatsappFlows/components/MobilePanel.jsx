@@ -12,7 +12,7 @@ import {
 import InputField from "../../components/InputField";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
-  console.log("Items:", items);
+  // console.log("Items:", items);
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {

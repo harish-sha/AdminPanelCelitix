@@ -10,9 +10,12 @@ import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import toast from "react-hot-toast";
+import { generatePayload } from "../lib/generatePayload";
+import { saveFlow } from "@/apis/whatsapp/whatsapp";
 
 const FlowCreationPage = () => {
-  const location = useLocation();
+  const { state } = useLocation();
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
@@ -23,7 +26,7 @@ const FlowCreationPage = () => {
 
   //create new screen
   const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", payload: [] },
+    { title: "Welcome", content: "Welcome", id: "Welcome_1", payload: [] },
   ]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -35,12 +38,6 @@ const FlowCreationPage = () => {
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
   );
-
-  useEffect(() => {
-    if (location.state?.flowName) {
-      setFlowName(location.state.flowName);
-    }
-  }, [location.state]);
 
   const handleAddItem = (item) => {
     // setTabs((prev)=>)
@@ -54,7 +51,7 @@ const FlowCreationPage = () => {
     };
     setTabs(newTabs);
   };
-  
+
   const handleEdit = (index) => {
     tabs[activeIndex].payload[index];
     setSelectedItem({ ...tabs[activeIndex].payload[index], index });
@@ -87,73 +84,37 @@ const FlowCreationPage = () => {
     setSelectedItem(null);
   };
 
+  async function handleFlowBuild() {
+    try {
+      const payload = generatePayload(tabs);
+
+      const params = {
+        name: state?.flowName,
+        category: state?.selectedCategory,
+        waba: state?.selectedWaba,
+        id: "",
+      };
+
+      const res = await saveFlow(params, payload);
+      console.log(res);
+      if (!res.flag) {
+        return toast.error("Error while building flow");
+      }
+      toast.success("Flow Built Successfully");
+    } catch (e) {
+      return toast.error("Error while building flow");
+    }
+  }
+
+  async function handleFlowSave() {
+    toast.success("Flow Saved Successfully");
+  }
+
   return (
-    // <div className="">
-    //   <span className="text-2xl font-semibold text-gray-700">
-    //     ChatFlow: {flowName || "Untitled Flow"}
-    //   </span>
-    //   <div className="flex flex-row gap-4 justify-end items-end">
-    //     <div className="bg-white text-blue-500 p-2 rounded-xl border-1 border-blue-500 font-medium hover:bg-blue-500 hover:text-white">
-    //       <button
-    //       >
-    //         <SaveOutlinedIcon />
-    //         Save
-    //       </button>
-    //     </div>
-    //     <div className="bg-white text-blue-500 p-2 rounded-xl border-1 border-blue-500 font-medium hover:bg-blue-500 hover:text-white">
-    //       <button>
-    //         <SettingsOutlinedIcon />
-    //         Setting
-    //       </button>
-    //     </div>
-    //     <div className="bg-white text-red-500 p-2 rounded-xl border-1 border-red-500 font-medium hover:bg-red-500 hover:text-white">
-    //       <button>
-    //         <ErrorOutlineOutlinedIcon />
-    //         Errors
-    //       </button>
-    //     </div>
-
-    //     <div className="bg-white text-gray-500 p-2 rounded-xl border-1 border-gray-300 font-medium hover:bg-gray-500 hover:text-white">
-    //       <button>
-    //         <ConstructionOutlinedIcon />
-    //         BuildFlow
-    //       </button>
-    //     </div>
-
-    //   </div>
-    //   <div className="flex">
-    //     <Sidebar onAdd={handleAddItem} flexGrow={1} />
-
-    //     <Canvas
-    //       items={canvasItems}
-    //       setItems={setCanvasItems}
-    //       onEdit={handleEdit}
-    //     />
-
-    //     <MobilePanel
-    //       items={canvasItems}
-    //       onUpdateItem={(index, updater) =>
-    //         setCanvasItems((prevItems) => {
-    //           const updatedItems = [...prevItems];
-    //           updatedItems[index] = updater(updatedItems[index]);
-    //           return updatedItems;
-    //         })
-    //       }
-    //     />
-
-    //     {selectedItem && (
-    //       <EditPanel
-    //         selectedItem={selectedItem}
-    //         onClose={handleCloseEditPanel}
-    //         onSave={handleSave}
-    //       />
-    //     )}
-    //   </div>
-    // </div>
     <div className="">
       <div className="bg-white rounded-md  py-2 flex items-center justify-between px-4 shadow-sm">
         <span className="text-md font-semibold text-gray-700">
-          ChatFlow: {flowName || "Untitled Flow"}
+          ChatFlow: {state?.flowName || "Untitled Flow"}
         </span>
         <div className="flex items-center gap-3">
           <UniversalButton
@@ -165,6 +126,7 @@ const FlowCreationPage = () => {
               />
             }
             label="save"
+            onClick={handleFlowSave}
           />
           <UniversalButton
             icon={
@@ -185,6 +147,7 @@ const FlowCreationPage = () => {
               />
             }
             label="Build Flow"
+            onClick={handleFlowBuild}
           />
         </div>
       </div>

@@ -8,6 +8,7 @@ import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import UniversalButton from "../../components/UniversalButton";
+import toast from "react-hot-toast";
 
 export default function CustomTabView({
   tabs,
@@ -43,13 +44,13 @@ export default function CustomTabView({
   const addTab = () => {
     setTabs([
       ...tabs,
-      { title: screenName, content: `Content for ${screenName}`, payload: [] },
+      { id: screenID, title: screenName, content: `Content for ${screenName}`, payload: [] },
     ]);
     setActiveIndex(tabs.length);
   };
 
   const removeTab = (index) => {
-    if(tabs.length === 1) return
+    if (tabs.length === 1) return;
     const updatedTabs = tabs.filter((_, i) => i !== index);
     setTabs(updatedTabs);
     if (activeIndex >= updatedTabs.length) {
@@ -69,7 +70,7 @@ export default function CustomTabView({
     },
     {
       label: "Delete",
-      icon: <DeleteForeverOutlinedIcon />,
+      icon: <DeleteForeverOutlinedIcon sx={{ color: "red" }} />,
       command: () => removeTab(index),
     },
     {
@@ -82,6 +83,11 @@ export default function CustomTabView({
   const handleBtnClick = () => {
     if (!screenName.trim()) {
       alert("Please fill in all required fields.");
+      return;
+    }
+    const isTitleExists = tabs.some((tab) => tab.title === screenName);
+    if (isTitleExists) {
+      toast.error("Screen already exists. Please choose a different Screen Name.");
       return;
     }
     addTab();
