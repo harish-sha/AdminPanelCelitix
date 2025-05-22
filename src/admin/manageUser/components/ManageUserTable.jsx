@@ -72,7 +72,9 @@ import {
 } from "@/apis/admin/admin";
 import {
   addSmsPricing,
+  deleteRCSRateBySrno,
   deleteWhatsappRateBySrno,
+  getRCSRateBySrno,
   getRCSRateData,
   getSmsRateByUser,
   getWhatsappRateBySrno,
@@ -445,7 +447,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       const formatted = list.map((item, i) => {
         return {
           id: i + 1,
-          sn: item.sr_no,
+          sn: i + 1,
+          srno: item.sr_no,
           ...item,
         };
       });
@@ -569,7 +572,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.success(res?.message);
       await fetchRcsRateData(currentUserSrno);
     } catch (e) {
-      console.log(editDialogVisible)
+      console.log(editDialogVisible);
       toast.error("Error in adding rcs credit");
     }
     // console.log("handleRcsCredit");
@@ -1120,9 +1123,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       setWhatsapprows(whatsappRateRes.data);
     }
     const rcsRowss = Array.isArray(rcsRateRes)
-      ? rcsRateRes.map((item) => ({
-          id: item + 1,
-          sn: item.sr_no,
+      ? rcsRateRes.map((item, index) => ({
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
           ...item,
         }))
       : [];
@@ -1313,6 +1317,41 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   //     ),
   //   },
   // ];
+
+  async function handleRcsEdit(srno) {
+    const res = await getRCSRateBySrno(srno);
+    console.log("res",res);
+
+    // const d = Array.isArray(res) ? res[0] : res?.data?.[0];
+
+    // if (d) {
+    //   setEditWhatsappForm({
+    //     srno: d.srno ?? srno,
+    //     userSrno: String(d.user_srno),
+    //     utility: String(d.transactional),
+    //     marketing: String(d.promotional),
+    //     countryCode: String(d.country_srno),
+    //   });
+
+    //   setEditWhatsappVisible(true);
+    // } else {
+    //   console.warn("No data found for srno:", srno);
+    // }
+  }
+  async function handleRcsDelete(srno) {
+    try {
+      console.log(srno);
+      const res = await deleteRCSRateBySrno(srno);
+      console.log(res);
+      if (!res.statusCode) {
+        return toast.error(res.message);
+      }
+      toast.success(res.message);
+      await fetchRcsRateData(currentUserSrno);
+    } catch (e) {
+      toast.error("Error in deleting rcs credit");
+    }
+  }
   const rcscolumns = [
     { field: "sn", headerName: "S.No", flex: 0.5 },
     { field: "country_name", headerName: "Country", flex: 1 },
@@ -1325,12 +1364,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Edit Rate" placement="top">
-            <IconButton onClick={() => handleRcsEdit(params.row.srno)}>
+            <IconButton onClick={() => handleRcsEdit(params.row.sr_no)}>
               <EditNoteIcon sx={{ fontSize: "1.2rem", color: "gray" }} />
             </IconButton>
           </CustomTooltip>
           <CustomTooltip arrow title="Delete Rate" placement="top">
-            <IconButton onClick={() => handleRcsDelete(params.row.srno)}>
+            <IconButton onClick={() => handleRcsDelete(params.row.sr_no)}>
               <DeleteForeverIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
