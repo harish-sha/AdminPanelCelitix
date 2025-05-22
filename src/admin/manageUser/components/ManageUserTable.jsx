@@ -73,6 +73,7 @@ import {
 import {
   addSmsPricing,
   deleteWhatsappRateBySrno,
+  getRCSRateData,
   getSmsRateByUser,
   getWhatsappRateBySrno,
   getWhatsappRateData,
@@ -381,6 +382,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   // whatsapp Start
   const [whatsapprows, setWhatsapprows] = useState([]);
+  const [rcsrows, setRcsrows] = useState([]);
   const [whatsappStatus, setWhatsappStatus] = useState("disable");
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
@@ -437,7 +439,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       toast.error("Please fill all the fields.");
       return;
     }
-    console.log("dd",currentUserSrno)
 
     const payload = {
       srno: "",
@@ -802,7 +803,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     async function handleGetAllowedServices() {
       if (!currentUserSrno) return;
       try {
-        const data=`?userSrno=${currentUserSrno}`
+        const data = `?userSrno=${currentUserSrno}`;
         const res = await getAllowedServices(data);
         const formattedData = [];
         res?.map((item) => {
@@ -1010,7 +1011,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return saveServicesByUser(payload);
       })
     );
-  setAssignService(false)
+    setAssignService(false);
   };
 
   const handleAssign = async (srNo) => {
@@ -1021,14 +1022,21 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       fetchWhatsappRateData(srNo);
     }, 0);
 
-    const [transRes, promoRes, userSmsData, countryListRes, whatsappRateRes] =
-      await Promise.all([
-        getTransServices(),
-        getPromoServices(),
-        getSmsRateByUser(srNo),
-        getCountryList(),
-        getWhatsappRateData(srNo),
-      ]);
+    const [
+      transRes,
+      promoRes,
+      userSmsData,
+      countryListRes,
+      whatsappRateRes,
+      rcsRateRes,
+    ] = await Promise.all([
+      getTransServices(),
+      getPromoServices(),
+      getSmsRateByUser(srNo),
+      getCountryList(),
+      getWhatsappRateData(srNo),
+      getRCSRateData(srNo),
+    ]);
 
     // Country List
     if (countryListRes) {
@@ -1071,6 +1079,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     if (whatsappRateRes?.data) {
       setWhatsapprows(whatsappRateRes.data);
     }
+    rcsRateRes.length > 0 && setRcsrows(rcsRateRes);
   };
 
   const handleApikey = (id, name) => {
@@ -1292,12 +1301,12 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       }))
     : [];
 
-  const rcsrows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    country: "India",
-    rate: "0.30",
-  }));
+  // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
+  //   id: i + 1,
+  //   sn: i + 1,
+  //   country: "India",
+  //   rate: "0.30",
+  // }));
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -1352,6 +1361,57 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       </GridFooterContainer>
     );
   };
+  const RcsCustomFooter = () => {
+    return (
+      <GridFooterContainer
+        sx={{
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: { xs: "center", lg: "space-between" },
+          alignItems: "center",
+          padding: 1,
+          gap: 2,
+          overflowX: "auto",
+        }}
+      >
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
+        >
+          {selectedRows.length > 0 && (
+            <Typography
+              variant="body2"
+              sx={{ borderRight: "1px solid #ccc", paddingRight: "10px" }}
+            >
+              {selectedRows.length} Rows Selected
+            </Typography>
+          )}
+
+          <Typography variant="body2">
+            Total Records: <span className="font-semibold">{rcsrows.length}</span>
+          </Typography>
+        </Box>
+
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            width: { xs: "100%", sm: "auto" },
+          }}
+        >
+          <CustomPagination
+            totalPages={totalPages}
+            paginationModel={paginationModel}
+            setPaginationModel={setPaginationModel}
+          />
+        </Box>
+      </GridFooterContainer>
+    );
+  };
 
   function handleServiceChange(e) {
     const { id, checked } = e.target;
@@ -1372,7 +1432,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   useEffect(() => {
-    if(!selectedIds) return
+    if (!selectedIds) return;
     async function fetchMobileNo() {
       try {
         const res = await getMobileNumbers(selectedIds);
@@ -2848,7 +2908,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     onPaginationModelChange={setPaginationModel}
                     rowHeight={45}
                     slots={{
-                      footer: CustomFooter,
+                      footer: RcsCustomFooter,
                       noRowsOverlay: CustomNoRowsOverlay,
                     }}
                     onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
@@ -2890,7 +2950,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           {/* SMS */}
           <CustomTabPanel value={value} index={2}>
             <>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <p>Transaction Service</p>
                 <div className="flex mb-2 lg:w-100 md:w-100">
                   <Checkbox
@@ -2932,7 +2992,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     disabled={!promocheck}
                   />
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex gap-5 items-center justify-start mt-3">
                 <div className=" lg:w-100 md:w-100">
