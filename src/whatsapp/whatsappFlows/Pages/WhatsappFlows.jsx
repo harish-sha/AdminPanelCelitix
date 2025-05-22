@@ -11,7 +11,7 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 // import { Player } from "@lottiefiles/react-lottie-player"; 
 import Lottie from "lottie-react";
-// import nothingAnimation from "@/assets/nothing.json";
+import nothinganimation from "@/assets/animation/nothinganimation.json";
 
 import { FaEnvelope, FaGlobe } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -160,11 +160,11 @@ const WhatsappFlows = () => {
   );
 
   const totalPages = Math.ceil(filteredFlows.length / rowsPerPage);
+  // const paginatedFlows = [];
   const paginatedFlows = filteredFlows.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
-
 
   const dropdownItems = ["Edit", "Delete", "Export"];
 
@@ -278,22 +278,23 @@ const WhatsappFlows = () => {
 
           {/* Flows */}
           <div className="space-y-4">
-            {paginatedFlows.length === 100 ? (
-              <div className="flex flex-col items-center justify-center py-12">
+            {paginatedFlows.length === 0 ? (
+              <div className="flex flex-col items-center justify-center py-2">
                 <div className="w-60 h-60">
-                  <Lottie animationData={nothingAnimation} loop={true} />
+                  <Lottie animationData={nothinganimation} loop={true} />
                 </div>
-                <div className="text-xl font-semibold text-gray-500 mt-4 text-center">
+                <div className="text-xl font-semibold text-gray-500 text-center">
                   No flows found.<br />
                   <span className="text-base font-normal text-gray-400">
                     Start your professional journey by creating a new flow!
                   </span>
                 </div>
-                <UniversalButton
-                  label="+ Create New Flow"
-                  className="mt-6"
-                  onClick={() => setShowDialog(true)}
-                />
+                <div className="mt-4" >
+                  <UniversalButton
+                    label="+ Create Flow"
+                    onClick={() => setShowDialog(true)}
+                  />
+                </div>
               </div>
             ) : (
               paginatedFlows.map((flow, index) => (

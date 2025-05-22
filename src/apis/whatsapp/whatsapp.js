@@ -520,8 +520,6 @@ export const getUserAgent = async (data) => {
 //   });
 // };
 
-// whatapp flows
-
 // Get WhatsappFlow list
 export const getWhatsappFlow = async () => {
   return await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`, {
@@ -551,6 +549,7 @@ export const updateFlowStatus = async (data) => {
   );
 };
 
+// fetch reply data (livechat)
 export const fetchReplyData = async (data) => {
   return await fetchWithAuth(
     `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
@@ -560,6 +559,7 @@ export const fetchReplyData = async (data) => {
   );
 };
 
+// save whatsapp flows 
 export const saveFlow = async (params, data) => {
   return await fetchWithAuth(
     `/WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
