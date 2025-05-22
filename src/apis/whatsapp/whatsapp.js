@@ -120,14 +120,14 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
   try {
     const formattedFromDate = filters.fromQueDateTime
       ? new Date(
-          filters.fromQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
+        filters.fromQueDateTime.split("/").reverse().join("-")
+      ).toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB");
 
     const formattedToDate = filters.toQueDateTime
       ? new Date(
-          filters.toQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
+        filters.toQueDateTime.split("/").reverse().join("-")
+      ).toLocaleDateString("en-GB")
       : new Date().toLocaleDateString("en-GB");
 
     const requestBody = {
@@ -334,12 +334,9 @@ export const sendTemplateMessageToUser = async (data) => {
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
   return await fetchWithAuth(
-    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${
-      data.wabaNumber
-    }&srno=${data.srno}&contactName=${data.contactName}&replyType=${
-      data.replyType
-    }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}${
-      data.message ? `&message=${data.message}` : ""
+    `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${data.wabaNumber
+    }&srno=${data.srno}&contactName=${data.contactName}&replyType=${data.replyType
+    }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}${data.message ? `&message=${data.message}` : ""
     }`,
     {
       method: "POST",
@@ -446,8 +443,7 @@ export const getAutoAction = async (data) => {
 // Whatsapp Template Library
 export const getTemplateList = async (data) => {
   return await fetchWithAuth(
-    `/whatsappTemplateLibrary/getTemplateList?category=${
-      data?.category || ""
+    `/whatsappTemplateLibrary/getTemplateList?category=${data?.category || ""
     }&industry=${data?.industry || ""}`,
     {
       method: "POST",
@@ -558,4 +554,12 @@ export const fetchReplyData = async (data) => {
       method: "GET",
     }
   );
+};
+
+
+// delete campaign
+export const cancelCampaign = async ({ srno, selectedUserId }) => {
+  return await fetchWithAuth(`/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`, {
+    method: "POST",
+  });
 };

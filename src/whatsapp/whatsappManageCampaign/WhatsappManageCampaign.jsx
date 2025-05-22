@@ -280,6 +280,7 @@ const WhatsappManageCampaign = () => {
 
     setIsFetching(true);
     const data = await getWhatsappCampaignReport(filters);
+    console.log("data",data)
     setFilteredData(data);
     setIsFetching(false);
   };
@@ -592,6 +593,7 @@ const WhatsappManageCampaign = () => {
                     name="whatsappManageCampaignTable"
                     data={filteredData}
                     fromDate={selectedDate}
+                    fetchInitialData={fetchInitialData}
                   />
                 </div>
               )}

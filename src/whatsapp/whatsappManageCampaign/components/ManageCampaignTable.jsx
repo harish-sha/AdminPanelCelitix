@@ -297,6 +297,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import CloseIcon from '@mui/icons-material/Close';
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -309,6 +310,7 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import {
   campaignSummaryInfo,
+  cancelCampaign,
   getWhatsappCampaignReport,
 } from "../../../apis/whatsapp/whatsapp.js";
 import { useNavigate } from "react-router-dom";
@@ -320,6 +322,7 @@ import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
 import InfoPopover from "../../../components/common/InfoPopover.jsx";
 import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -382,7 +385,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
+const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -444,6 +447,26 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     });
   };
 
+  const handleCancel = async (row) => {
+  const srno = row.campaignSrno;
+  const selectedUserId = 0; 
+
+  try {
+    const result = await cancelCampaign({ srno, selectedUserId });
+    if (result) {
+      console.log("Campaign cancelled successfully:", result);
+      toast.success("Campaign deleted successfully");
+      fetchInitialData()
+    } else {
+      console.warn("Cancel request failed or returned empty response.");
+      toast.error("Cancel request failed")
+    }
+  } catch (error) {
+    console.error("Error cancelling campaign:", error);
+  }
+};
+
+
   // **Format Date Function** (Ensures proper date format)
   const formatDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -497,8 +520,18 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       headerName: "Action",
       flex: 1,
       minWidth: 150,
-      renderCell: (params) => (
+      renderCell: (params) => {
+        const isScheduled = params.row.status === "scheduled";
+        return(
         <>
+        {isScheduled ? ( 
+          <CustomTooltip title="Cancel Campaign" placement="top" arrow>
+            <IconButton onClick={() => handleCancel(params.row)}>
+              <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        ) : (
+          <>
           {/* <CustomTooltip title="View Campaign" placement="top" arrow={true}>
             <IconButton
               className="text-xs"
@@ -625,7 +658,10 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
             </IconButton>
           </CustomTooltip>
         </>
-      ),
+        )}
+        </>
+        )
+      },
     },
   ];
 
