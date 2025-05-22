@@ -935,6 +935,7 @@ export default function WhatsappLiveChat() {
           setChatState={setChatState}
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
+          setSelectedGroupList={setSelectedGroupList}
         />
       </div>
 
