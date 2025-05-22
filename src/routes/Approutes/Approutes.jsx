@@ -9,36 +9,36 @@ import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
 
 // Whatsapp
-import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
-import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
-import WhatsappLiveChat from "@/whatsapp/livechat/WhatsappLiveChat";
-import WhatsappManageCampaign from "@/whatsapp/whatsappManageCampaign/WhatsappManageCampaign";
-import WhatsappManageOptin from "@/whatsapp/whatsappManageOptin/WhatsappManageOptin";
-import WhatsappChatWidget from "@/whatsapp/WhatsappChatWidget/WhatsappChatWidget";
-import WhatsappQrCode from "@/whatsapp/whatsappQrcode/WhatsappQrCode";
-import WhatsappLiveChatSettings from "@/whatsapp/whatsappLiveChatSetting/WhatsappLiveChatSettings";
-import WhatsappManageWaba from "@/whatsapp/whatsappManageWaba/WhatsappManageWaba";
-import WhatsappConversation from "@/whatsapp/whatsappConversation/WhatsappConversation";
-import CampaignDetailsReport from "@/whatsapp/whatsappManageCampaign/CampaignDetailsReport";
-import ManageAgent from "@/whatsapp/manageagent/ManageAgent";
-import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
-import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
-import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
-import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
-import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+// import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
+// import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
+// import WhatsappLiveChat from "@/whatsapp/livechat/WhatsappLiveChat";
+// import WhatsappManageCampaign from "@/whatsapp/whatsappManageCampaign/WhatsappManageCampaign";
+// import WhatsappManageOptin from "@/whatsapp/whatsappManageOptin/WhatsappManageOptin";
+// import WhatsappChatWidget from "@/whatsapp/WhatsappChatWidget/WhatsappChatWidget";
+// import WhatsappQrCode from "@/whatsapp/whatsappQrcode/WhatsappQrCode";
+// import WhatsappLiveChatSettings from "@/whatsapp/whatsappLiveChatSetting/WhatsappLiveChatSettings";
+// import WhatsappManageWaba from "@/whatsapp/whatsappManageWaba/WhatsappManageWaba";
+// import WhatsappConversation from "@/whatsapp/whatsappConversation/WhatsappConversation";
+// import CampaignDetailsReport from "@/whatsapp/whatsappManageCampaign/CampaignDetailsReport";
+// import ManageAgent from "@/whatsapp/manageagent/ManageAgent";
+// import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
+// import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
+// import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
+// import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
+// import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 
 // manage funds
-import Recharge from "@/managefunds/recharge/Recharge";
-import Transactions from "@/managefunds/transactions/Transactions";
+// import Recharge from "@/managefunds/recharge/Recharge";
+// import Transactions from "@/managefunds/transactions/Transactions";
 
 // manage contacts
-import ManageContacts from "@/managecontacts/ManageContacts";
+// import ManageContacts from "@/managecontacts/ManageContacts";
 
 // profile
-import Settings from "@/profile/pages/Settings";
-import ProfilePage from "@/profile/pages/Profile";
-import LoginIpDetails from "@/profile/pages/LoginIpDetails";
-import WhatsappCreateTemplate from "@/whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate";
+// import Settings from "@/profile/pages/Settings";
+// import ProfilePage from "@/profile/pages/Profile";
+// import LoginIpDetails from "@/profile/pages/LoginIpDetails";
+// import WhatsappCreateTemplate from "@/whatsapp/whatsappcreatetemplate/WhatsappCreateTemplate";
 
 // Admin
 import ManageUser from "@/admin/manageUser/ManageUser";
@@ -62,80 +62,79 @@ import AddOperator from "@/admin/managePrefix/pages/AddOperator";
 import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
 
 // sms
-import SmsReports from "@/sms/smsReports/SmsReports";
-import SendSms from "@/sms/smsSend/SendSms";
-import SmsDLTtemplate from "@/sms/smsDlttemplate/SmsDLTtemplate";
-import SmsWishManagement from "@/sms/smsWishManagement/SmsWishManagement";
-import Smscampaigndetaillogs from "@/sms/smsReports/pages/smscampaigndetaillogs";
-import SmsAttachmentdetaillog from "@/sms/smsReports/pages/SmsAttachmentdetaillog";
+// import SmsReports from "@/sms/smsReports/SmsReports";
+// import SendSms from "@/sms/smsSend/SendSms";
+// import SmsDLTtemplate from "@/sms/smsDlttemplate/SmsDLTtemplate";
+// import SmsWishManagement from "@/sms/smsWishManagement/SmsWishManagement";
+// import Smscampaigndetaillogs from "@/sms/smsReports/pages/smscampaigndetaillogs";
+// import SmsAttachmentdetaillog from "@/sms/smsReports/pages/SmsAttachmentdetaillog";
 
 // RCS
-import SendRcs from "@/rcs/SendRcs/SendRcs";
-import ManageTemplateRcs from "@/rcs/manageTemplate/ManageTemplateRcs";
-import SuggestionReportRcs from "@/rcs/suggestionReport/SuggestionReportRcs";
-import DeliveryreportRcs from "@/rcs/deliveryReport/DeliveryreportRcs";
-import ManageBotRcs from "@/rcs/manageBot/ManageBotRcs";
-import AddTemplateRcs from "@/rcs/manageTemplate/pages/AddTemplateRcs";
-import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
-import CampaignDeliveryReportDetails from "@/rcs/deliveryReport/components/CampaignDeliveryReportDetails";
+// import SendRcs from "@/rcs/SendRcs/SendRcs";
+// import ManageTemplateRcs from "@/rcs/manageTemplate/ManageTemplateRcs";
+// import SuggestionReportRcs from "@/rcs/suggestionReport/SuggestionReportRcs";
+// import DeliveryreportRcs from "@/rcs/deliveryReport/DeliveryreportRcs";
+// import ManageBotRcs from "@/rcs/manageBot/ManageBotRcs";
+// import AddTemplateRcs from "@/rcs/manageTemplate/pages/AddTemplateRcs";
+// import RcsLiveChat from "@/rcs/rcslivechat/RcsLiveChat";
+// import CampaignDeliveryReportDetails from "@/rcs/deliveryReport/components/CampaignDeliveryReportDetails";
 
 // Download
-import Download from "@/profile/pages/Download";
+// import Download from "@/profile/pages/Download";
 
-// Two-Way-SMS
-import TwowayMangeKeyword from "@/twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
-import TwowayReports from "@/twowaysms/twowayReports/TwowayReports";
-import TwowayIntegration from "@/twowaysms/twowayIntegration/TwowayIntegration";
+// // Two-Way-SMS
+// import TwowayMangeKeyword from "@/twowaysms/twowayMangeKeyword/TwowayMangeKeyword";
+// import TwowayReports from "@/twowaysms/twowayReports/TwowayReports";
+// import TwowayIntegration from "@/twowaysms/twowayIntegration/TwowayIntegration";
 
-// Cick To Call
-import ClickToSetting from "@/clicktwocall/clickToSetting/ClickToSetting";
-import ClickToHistory from "@/clicktwocall/clickToHistory/ClickToHistory";
+// // Cick To Call
+// import ClickToSetting from "@/clicktwocall/clickToSetting/ClickToSetting";
+// import ClickToHistory from "@/clicktwocall/clickToHistory/ClickToHistory";
 
-// IBD
-import CallHistoryIBD from "@/ibd/ibdCallHistory/CallHIstoryIBD";
-import IVRFlowIBD from "@/ibd/ibdIVRFlow/IVRFlowIBD";
-import ManageExecutiveIBD from "@/ibd/ibdManageExecutive/ManageExecutiveIBD";
-import SettingIBD from "@/ibd/ibdSettings/SettingIBD";
+// // IBD
+// import CallHistoryIBD from "@/ibd/ibdCallHistory/CallHIstoryIBD";
+// import IVRFlowIBD from "@/ibd/ibdIVRFlow/IVRFlowIBD";
+// import ManageExecutiveIBD from "@/ibd/ibdManageExecutive/ManageExecutiveIBD";
+// import SettingIBD from "@/ibd/ibdSettings/SettingIBD";
 
-// OBD
-import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
-import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
-import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
-import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
+// // OBD
+// import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
+// import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
+// import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
+// import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
 
-// missed call
-import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
-import MissedCallSettings from "@/missedcall/missedCallSettings/MissedCallSettings";
+// // missed call
+// import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
+// import MissedCallSettings from "@/missedcall/missedCallSettings/MissedCallSettings";
 
-// App Authenticator
-import AppauthenticatorReports from "@/appauthenticator/authenticatorreports/AppauthenticatorReports";
-import AuthenticatorSetting from "@/appauthenticator/authenticatorsettings/AuthenticatorSetting";
+// // App Authenticator
+// import AppauthenticatorReports from "@/appauthenticator/authenticatorreports/AppauthenticatorReports";
+// import AuthenticatorSetting from "@/appauthenticator/authenticatorsettings/AuthenticatorSetting";
 
-// Email
-import EmailReport from "@/email/emailreport/EmailReport";
-import EmailTemplate from "@/email/emailtemplate/EmailTemplate";
+// // Email
+// import EmailReport from "@/email/emailreport/EmailReport";
+// import EmailTemplate from "@/email/emailtemplate/EmailTemplate";
 
-// Number Lookup
-import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
-import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
+// // Number Lookup
+// import HlrLookup from "@/numberlookup/hlrlookup/HlrLookup";
+// import HlrLookupReports from "@/numberlookup/hlrlookupreports/HlrLookupReports";
 
-// Callback
-import Callback from "@/callback/Callback";
-import { AddCallback } from "@/callback/page/addCallback";
-import { EditCallback } from "@/callback/page/editCallback";
+// // Callback
+// import Callback from "@/callback/Callback";
+// import { AddCallback } from "@/callback/page/addCallback";
+// import { EditCallback } from "@/callback/page/editCallback";
 
-// Not Found Page
+// // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
 
-// dummy
-import Dummy from "../../dummy/Dummy";
-import Arihant from "../../random/arihant";
+// // dummy
+// import Dummy from "../../dummy/Dummy";
+// import Arihant from "../../random/arihant";
 
 const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
         <Route index element={<ResellerDashboard />} />
@@ -166,7 +165,7 @@ const Approutes = () => {
         />
 
         {/* SMS */}
-        <Route path="sendsms" element={<SendSms />} />
+        {/* <Route path="sendsms" element={<SendSms />} />
         <Route path="smsreports" element={<SmsReports />} />
         <Route
           path="smscampaigndetaillogs"
@@ -177,15 +176,15 @@ const Approutes = () => {
           element={<SmsAttachmentdetaillog />}
         />
         <Route path="smsdlttemplates" element={<SmsDLTtemplate />} />
-        <Route path="smswishmanagement" element={<SmsWishManagement />} />
+        <Route path="smswishmanagement" element={<SmsWishManagement />} /> */}
 
         {/* Two-Way-SMS */}
-        <Route path="managekeywords" element={<TwowayMangeKeyword />} />
+        {/* <Route path="managekeywords" element={<TwowayMangeKeyword />} />
         <Route path="twowayreports" element={<TwowayReports />} />
-        <Route path="twowayintegration" element={<TwowayIntegration />} />
+        <Route path="twowayintegration" element={<TwowayIntegration />} /> */}
 
         {/* whatsapp */}
-        <Route path="managetemplate" element={<ManageTemplate />} />
+        {/* <Route path="managetemplate" element={<ManageTemplate />} />
         <Route path="createtemplate" element={<WhatsappCreateTemplate />} />
         <Route path="wlaunchcampaign" element={<WhatsappLaunchCampaign />} />
         <Route path="wlivechat" element={<WhatsappLiveChat />} />
@@ -212,10 +211,10 @@ const Approutes = () => {
         <Route path="createwhatsappbot" element={<CreateWhatsAppBot />} />
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
-        <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wflowcreation" element={<FlowCreationPage />} /> */}
 
         {/* RCS */}
-        <Route path="sendrcs" element={<SendRcs />} />
+        {/* <Route path="sendrcs" element={<SendRcs />} />
         <Route path="rcsmanagetemplate" element={<ManageTemplateRcs />} />
         <Route path="rcsaddtemplatercs" element={<AddTemplateRcs />} />
         <Route path="rcssuggestionreport" element={<SuggestionReportRcs />} />
@@ -224,65 +223,64 @@ const Approutes = () => {
           path="rcsdeliverycampaigndetails"
           element={<CampaignDeliveryReportDetails />}
         />
-        <Route path="rcsmanagebot" element={<ManageBotRcs />} />
+        <Route path="rcsmanagebot" element={<ManageBotRcs />} /> */}
         {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 
         {/* profile */}
-        <Route path="profile" element={<ProfilePage />} />
+        {/* <Route path="profile" element={<ProfilePage />} />
         <Route path="download" element={<Download />} />
-        <Route path="loginIpdetails" element={<LoginIpDetails />} />
+        <Route path="loginIpdetails" element={<LoginIpDetails />} /> */}
 
         {/* Settings */}
-        <Route path="settings" element={<Settings />} />
+        {/* <Route path="settings" element={<Settings />} /> */}
 
         {/* manage funds */}
-        <Route path="recharge" element={<Recharge />} />
-        <Route path="transactions" element={<Transactions />} />
+        {/* <Route path="recharge" element={<Recharge />} /> */}
+        {/* <Route path="transactions" element={<Transactions />} /> */}
 
         {/* manage contacts */}
-        <Route path="managecontacts" element={<ManageContacts />} />
+        {/* <Route path="managecontacts" element={<ManageContacts />} /> */}
 
         {/* Click To Call */}
-        <Route path="clicktosettings" element={<ClickToSetting />} />
-        <Route path="clicktohistory" element={<ClickToHistory />} />
+        {/* <Route path="clicktosettings" element={<ClickToSetting />} />
+        <Route path="clicktohistory" element={<ClickToHistory />} /> */}
 
         {/* IBD */}
-        <Route path="ibdcallhistory" element={<CallHistoryIBD />} />
+        {/* <Route path="ibdcallhistory" element={<CallHistoryIBD />} />
         <Route path="ibdivrflow" element={<IVRFlowIBD />} />
         <Route path="ibdmanageexecutive" element={<ManageExecutiveIBD />} />
-        <Route path="ibdsettings" element={<SettingIBD />} />
+        <Route path="ibdsettings" element={<SettingIBD />} /> */}
 
         {/* OBD */}
-        <Route path="/obdcreatecampaign" element={<ObdCreateCampaign />} />
+        {/* <Route path="/obdcreatecampaign" element={<ObdCreateCampaign />} />
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
-        <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} /> */}
 
         {/* MissedCall */}
-        <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
-        <Route path="/missedcallsettings" element={<MissedCallSettings />} />
+        {/* <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
+        <Route path="/missedcallsettings" element={<MissedCallSettings />} /> */}
 
         {/* Number Lookup */}
-        <Route path="/hlrlookup" element={<HlrLookup />} />
-        <Route path="/lookupreports" element={<HlrLookupReports />} />
+        {/* <Route path="/hlrlookup" element={<HlrLookup />} />
+        <Route path="/lookupreports" element={<HlrLookupReports />} /> */}
 
         {/* Callback */}
-        <Route path="/callback" element={<Callback />} />
+        {/* <Route path="/callback" element={<Callback />} />
         <Route path="/addcallback" element={<AddCallback />} />
-        <Route path="/editcallback" element={<EditCallback />} />
-
+        <Route path="/editcallback" element={<EditCallback />} />  */}
 
         {/* Appauthenticator */}
-        <Route path="/authreports" element={<AppauthenticatorReports />} />
-        <Route path="/authsettings" element={<AuthenticatorSetting />} />
+        {/* <Route path="/authreports" element={<AppauthenticatorReports />} />
+        <Route path="/authsettings" element={<AuthenticatorSetting />} /> */}
 
         {/* Email */}
-        <Route path="/emailtemplate" element={<EmailTemplate />} />
-        <Route path="/emailreports" element={<EmailReport />} />
+        {/* <Route path="/emailtemplate" element={<EmailTemplate />} />
+        <Route path="/emailreports" element={<EmailReport />} /> */}
       </Route>
-
+      {/* 
       <Route path="dummy" element={<Dummy />} />
-      <Route path="arihant" element={<Arihant />} />
+      <Route path="arihant" element={<Arihant />} /> */}
 
       <Route path="*" element={<PageNotFound />} />
     </Routes>

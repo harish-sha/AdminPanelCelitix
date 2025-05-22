@@ -13,7 +13,7 @@ import {
   getaccountInfo,
   getSmsRate,
 } from "../../apis/user/user";
-import Loader from "../../whatsapp/components/Loader";
+import Loader from "../../components/common/Loader";
 
 import { getCountryList } from "../../apis/common/common";
 import { ProgressSpinner } from "primereact/progressspinner";
