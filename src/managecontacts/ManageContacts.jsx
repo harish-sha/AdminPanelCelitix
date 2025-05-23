@@ -2663,23 +2663,27 @@ const ManageContacts = () => {
     const data = {
       srNo: updateContactDetails.srno,
       groupSrNo: grpDetails.groupCode,
-      firstName: updateContactDetails.firstName,
-      middleName: updateContactDetails.middleName,
-      lastName: updateContactDetails.lastName,
-      mobileNo: updateContactDetails.mobileno,
-      emailId: updateContactDetails.email,
-      uniqueId: updateContactDetails.uniqueId,
-      gender: updateContactDetails.gender,
-      activeStatus: updatedContactDetails.status,
+      firstName: updateContactDetails.firstName || "",
+      middleName: updateContactDetails.middleName || "",
+      lastName: updateContactDetails.lastName || "",
+      mobileNo: updateContactDetails.mobileno || "",
+      emailId: updateContactDetails.email || "",
+      uniqueId: updateContactDetails.uniqueId || "",
+      gender: updateContactDetails.gender || "",
+      activeStatus: updatedContactDetails.status || "",
       // key should check
-      birthDate: updatedContactDetails.birthDate,
-      anniversaryDate: updatedContactDetails.mariageDate,
-      allowishes: updatedContactDetails.allowishes,
+      birthDate: updatedContactDetails.birthDate || "",
+      anniversaryDate: updatedContactDetails.mariageDate || "",
+      allowishes: updatedContactDetails.allowishes || "",
     };
 
-    console.log("update contact data", data);
-
     const res = await updateContactsDetails(data);
+     const res = await updateContactsDetails(data);
+    if (!res?.message.includes("successfully")) {
+      return toast.error(res?.message);
+    }
+    toast.success(res?.message);
+    setUpdateContactVisible(false);
   };
 
   // Excel file upload
