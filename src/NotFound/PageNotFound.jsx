@@ -1,4 +1,8 @@
 import React from "react";
+import Lottie from "lottie-react";
+import pagenotfound from "@/assets/animation/pagenotfound.json";
+
+
 
 const PageNotFound = () => {
   return (
@@ -7,9 +11,9 @@ const PageNotFound = () => {
     //     404 Not
     //   </span>
     // </div>
-    <div className="flex items-center justify-center min-h-[100vh]">
+    <div className="flex items-center justify-center min-h-[100vh] bg-[#cac9c9]">
       <div className="">
-        <div className="">
+        {/* <div className="">
           <svg
             version="1.1"
             xmlns="http://www.w3.org/2000/svg"
@@ -648,12 +652,15 @@ const PageNotFound = () => {
               </g>
             </g>
           </svg>
+        </div> */}
+        <div className="w-full h-100 flex items-center justify-center mx-auto">
+          <Lottie animationData={pagenotfound} loop={true} />
         </div>
-        <div className=" text-center ">
+        {/* <div className=" text-center ">
           <h1 className="text-4xl font-semibold">404</h1>
           <h2>UH OH! You're lost.</h2>
           <p>The page you are looking for does not exist.</p>
-        </div>
+        </div> */}
       </div>
     </div>
   );

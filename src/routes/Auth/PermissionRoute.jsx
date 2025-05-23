@@ -178,9 +178,19 @@ export const PermissionRoute = ({ children }) => {
     if (userState.role === "AGENT") {
       return [
         {
+          name: "Home",
+          links: "/",
+          roles: ["AGENT"],
+        },
+        {
           name: "WhatsApp LiveChat",
           links: "/wlivechat",
           roles: ["AGENT"],
+        },
+        {
+          name: "openRoutes",
+          links: ["/profile", "/settings"],
+          roles: ["ADMIN"],
         },
       ];
     }

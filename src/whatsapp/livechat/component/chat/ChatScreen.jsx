@@ -396,7 +396,7 @@ export const ChatScreen = ({
                                       {getFileType(fileType)}
                                     </div>
                                     <div className="flex flex-col">
-                                      <div className="font-medium truncate">
+                                      <div className="font-medium truncate max-w-[10rem">
                                         {msg.fileName || "Untitled Document"}
                                       </div>
                                     </div>
@@ -642,7 +642,7 @@ export const ChatScreen = ({
                   {getFileType(chatState.replyData.fileType)}
                 </div>
                 <div className="flex flex-col">
-                  <div className="font-medium truncate">
+                  <div className="font-medium truncate max-w-[10rem]">
                     {chatState.replyData.fileName || "Untitled Document"}
                   </div>
                   <div className="text-xs text-gray-500 uppercase">
@@ -709,7 +709,7 @@ export const ChatScreen = ({
                     {getFileType(selectedImage.fileType)}
                   </div>
                   <div className="flex flex-col">
-                    <div className="font-medium truncate break-words">
+                    <div className="font-medium truncate break-words max-w-[10rem]">
                       {selectedImage.fileName || "Untitled Document"}
                     </div>
                   </div>

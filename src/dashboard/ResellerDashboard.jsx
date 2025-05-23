@@ -32,6 +32,8 @@ import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
 import Animationobd from "../assets/animation/Animation-obd.json";
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
+import twowaysms from "../assets/animation/twowaysms.json";
+import twowaysmsnew from "../assets/animation/twowaysmsnew.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
 import toast from "react-hot-toast";
@@ -129,6 +131,7 @@ const services = [
     {
         name: "Two-Way SMS",
         icon: SyncAlt,
+        animation: twowaysms,
         desc: "Bi-directional messaging",
         color: "from-red-100 to-red-300",
     },

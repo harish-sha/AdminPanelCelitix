@@ -84,6 +84,8 @@ import Skeleton from "react-loading-skeleton";
 import "react-loading-skeleton/dist/skeleton.css";
 import Lottie from "lottie-react";
 import pointingAnimation from "@/assets/animation/pointing.json";
+import { getAllGroups } from "@/apis/common/common";
+import toast from "react-hot-toast";
 
 export const ChatSidebar = ({
   formatDate,
@@ -91,19 +93,42 @@ export const ChatSidebar = ({
   setChatState,
   setSelectedAgentList,
   selectedWaba,
+  setSelectedGroupList
 }) => {
   const isLoading =
     selectedWaba &&
     (!chatState?.allConversations || chatState.allConversations.length === 0);
+
+  // async function fetchAgentDetails(srno) {
+  //   try {
+  //     const res = await getAgentList();
+  //     return res?.data?.find((agent) => agent.sr_no === srno)?.name;
+  //   } catch (e) {
+  //     console.log(e);
+  //     toast.error("Error fetching agent details");
+  //   }
+  // }
 
   async function fetchAgentDetails(srno) {
     try {
       const res = await getAgentList();
       return res?.data?.find((agent) => agent.sr_no === srno)?.name;
     } catch (e) {
-      console.log(e);
+      toast.error("Error fetching agent details");
     }
   }
+
+  async function fetchGrpList(name) {
+    try {
+      const allGrps = await getAllGroups();
+      const grpSrno = allGrps?.find((grp) => grp.groupName === name)?.groupCode;
+      return grpSrno;
+    } catch (e) {
+      toast.error("Error fetching Group details");
+    }
+  }
+
+
 
   const defaultOptions = {
     loop: true,
@@ -113,7 +138,7 @@ export const ChatSidebar = ({
       preserveAspectRatio: "xMidYMid slice",
     },
   };
-  
+
   return (
     <div className="mt-2 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!selectedWaba && (
@@ -128,7 +153,7 @@ export const ChatSidebar = ({
             animate={{ y: 10 }}
             transition={{
               duration: 1,
-              repeat: Infinity, 
+              repeat: Infinity,
               repeatType: "reverse",
             }}
             className="mb-4"
@@ -191,6 +216,7 @@ export const ChatSidebar = ({
                 }`}
               onClick={async () => {
                 const agentName = await getUserAgent(chat?.mobileNo);
+                const grpSrno = await fetchGrpList(agentName?.groupName);
                 // setActiveChat(chat);
                 setChatState((prev) => ({
                   ...prev,
@@ -200,6 +226,7 @@ export const ChatSidebar = ({
                   agentName: agentName,
                 }));
                 setSelectedAgentList(chat?.agentSrno);
+                setSelectedGroupList(grpSrno);
               }}
             >
               <div className="flex items-center justify-between ">
