@@ -15,9 +15,9 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
-  // isLoading
+  isLoading,
 }) => {
-  const isLoading = selectedWaba && !chatState?.allConversations;
+  // const isLoading = selectedWaba && !chatState?.allConversations;
 
   async function fetchAgentDetails(srno) {
     try {
@@ -107,6 +107,7 @@ export const ChatSidebar = ({
         ))}
 
       {!isLoading &&
+        chatState?.allConversations.length > 0 &&
         chatState?.allConversations
           ?.slice()
           ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))

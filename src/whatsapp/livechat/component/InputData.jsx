@@ -11,7 +11,8 @@ export const InputData = ({
   wabaState,
   setWabaState,
   setChatState,
-  setSelectedWaba
+  setSelectedWaba,
+  setIsSubscribed,
 }) => {
   return (
     <motion.div
@@ -51,7 +52,7 @@ export const InputData = ({
               replyData: "",
               isReply: false,
             });
-            setSelectedWaba(value)
+            setSelectedWaba(value);
           }}
           placeholder="Select WABA"
         />
@@ -162,7 +163,10 @@ export const InputData = ({
           />
           <div className="relative z-10 flex w-full text-sm font-medium">
             <button
-              onClick={() => setBtnOption("active")}
+              onClick={() => {
+                setBtnOption("active");
+                setIsSubscribed(false);
+              }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
                 btnOption === "active"
                   ? "text-white font-semibold"
@@ -172,7 +176,10 @@ export const InputData = ({
               Active
             </button>
             <button
-              onClick={() => setBtnOption("close")}
+              onClick={() => {
+                setBtnOption("close");
+                setIsSubscribed(false);
+              }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
                 btnOption === "close"
                   ? "text-white font-semibold"
