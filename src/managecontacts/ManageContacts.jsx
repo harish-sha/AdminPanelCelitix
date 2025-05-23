@@ -787,7 +787,6 @@
 //   //   }
 //   // }
 
-
 //   async function handleContactDelete() {
 //     const data = `addSrnoList=${idtoDelete.srno}`;
 
@@ -2004,7 +2003,6 @@
 
 // export default ManageContacts;
 
-
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import CustomTooltip from "../whatsapp/components/CustomTooltip";
@@ -2315,7 +2313,8 @@ const ManageContacts = () => {
           status: Number(e),
         };
         const res = await updateContactStatus(data);
-        if (!res.message.includes("successfully")) return toast.error(res.message);
+        if (!res.message.includes("successfully"))
+          return toast.error(res.message);
         toast.success(res.message);
         await handleSearchGroup();
       } catch (e) {
@@ -2406,9 +2405,9 @@ const ManageContacts = () => {
                         color: "#34C759",
                       },
                       "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                      {
-                        backgroundColor: "#34C759",
-                      },
+                        {
+                          backgroundColor: "#34C759",
+                        },
                     }}
                   />
                 </CustomTooltip>
@@ -2663,23 +2662,26 @@ const ManageContacts = () => {
     const data = {
       srNo: updateContactDetails.srno,
       groupSrNo: grpDetails.groupCode,
-      firstName: updateContactDetails.firstName,
-      middleName: updateContactDetails.middleName,
-      lastName: updateContactDetails.lastName,
-      mobileNo: updateContactDetails.mobileno,
-      emailId: updateContactDetails.email,
-      uniqueId: updateContactDetails.uniqueId,
-      gender: updateContactDetails.gender,
-      activeStatus: updatedContactDetails.status,
+      firstName: updateContactDetails.firstName || "",
+      middleName: updateContactDetails.middleName || "",
+      lastName: updateContactDetails.lastName || "",
+      mobileNo: updateContactDetails.mobileno || "",
+      emailId: updateContactDetails.email || "",
+      uniqueId: updateContactDetails.uniqueId || "",
+      gender: updateContactDetails.gender || "",
+      activeStatus: updatedContactDetails.status || "",
       // key should check
-      birthDate: updatedContactDetails.birthDate,
-      anniversaryDate: updatedContactDetails.mariageDate,
-      allowishes: updatedContactDetails.allowishes,
+      birthDate: updatedContactDetails.birthDate || "",
+      anniversaryDate: updatedContactDetails.mariageDate || "",
+      allowishes: updatedContactDetails.allowishes || "",
     };
 
-    console.log("update contact data", data);
-
     const res = await updateContactsDetails(data);
+    if (!res?.message.includes("successfully")) {
+      return toast.error(res?.message);
+    }
+    toast.success(res?.message);
+    setUpdateContactVisible(false);
   };
 
   // Excel file upload
@@ -2920,10 +2922,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-      id: grp.groupCode,
-      sn: index + 1,
-      groupName: grp.groupName,
-    }))
+        id: grp.groupCode,
+        sn: index + 1,
+        groupName: grp.groupName,
+      }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -3058,9 +3060,7 @@ const ManageContacts = () => {
   return (
     <div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-4 justify-between">
-        <h1 className="text-xl font-semibold text-gray-700">
-          Manage Contacts
-        </h1>
+        <h1 className="text-xl font-semibold text-gray-700">Manage Contacts</h1>
         <div className="flex items-center gap-2">
           {/* Name Input Field */}
           <div className="w-max-content">
@@ -3097,7 +3097,6 @@ const ManageContacts = () => {
             />
           </div>
         </div>
-
       </div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-5">
         <div className="w-full sm:w-48">
@@ -3437,7 +3436,7 @@ const ManageContacts = () => {
                   birthDate: e,
                 })
               }
-            // required={true}
+              // required={true}
             />
             <UniversalDatePicker
               label="Anniversary Date"
@@ -3665,8 +3664,9 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                        }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                        isUploading ? "disabled" : ""
+                      }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}
