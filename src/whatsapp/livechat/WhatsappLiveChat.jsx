@@ -339,7 +339,7 @@ export default function WhatsappLiveChat() {
         active: userActive,
         search: search || "",
       };
-      // setIsFetching(true);
+      setIsFetching(true);
       const res = await fetchAllConversations(data);
 
       if (!res.conversationEntityList[0]) {
@@ -370,7 +370,7 @@ export default function WhatsappLiveChat() {
       // console.log(e);
       return toast.error("Error fetching all conversations");
     } finally {
-      // setIsFetching(false);
+      setIsFetching(false);
     }
   }
 
@@ -380,34 +380,24 @@ export default function WhatsappLiveChat() {
     setChatState((prev) => ({ ...prev, active: null }));
   }
 
-  // useEffect(() => {
-  //   // handleFetchAllConvo();
-  //   if (!wabaState?.selectedWaba) return;
-  //   const intervalid = setInterval(() => {
-  //     handleFetchAllConvo();
-  //   }, 500);
-
-  //   return () => clearInterval(intervalid);
-  // }, [wabaState.selectedWaba, btnOption]);
-
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
-    // if (!wabaState?.selectedWaba || !isSubscribe) {
-    //   handleFetchAllConvo();
-    //   return;
-    // }
+    let intervalId = null;
 
-    handleFetchAllConvo();
-    // setIsSubscribe(true);
-
-    const intervalId = setInterval(() => {
-      // handleFetchAllConvo();
-    }, 5000);
+    if (isSubscribe) {
+      handleFetchAllConvo();
+      intervalId = setInterval(() => {
+        // handleFetchAllConvo();
+      }, 5000);
+    } else {
+      handleFetchAllConvo();
+      setIsSubscribe(true);
+    }
 
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [wabaState.selectedWaba, btnOption]);
+  }, [wabaState.selectedWaba, btnOption, isSubscribe]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -936,6 +926,7 @@ export default function WhatsappLiveChat() {
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
+          isLoading={isFetching}
         />
       </div>
 

@@ -15,17 +15,15 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
+  // isLoading
 }) => {
-  const isLoading =
-    selectedWaba &&
-    (!chatState?.allConversations || chatState.allConversations.length === 0);
+  const isLoading = selectedWaba && !chatState?.allConversations;
 
   async function fetchAgentDetails(srno) {
     try {
       const res = await getAgentList();
       return res?.data?.find((agent) => agent.sr_no === srno)?.name;
     } catch (e) {
-      
       toast.error("Error fetching agent details");
     }
   }
@@ -36,7 +34,7 @@ export const ChatSidebar = ({
       const grpSrno = allGrps?.find((grp) => grp.groupName === name)?.groupCode;
       return grpSrno;
     } catch (e) {
-     toast.error("Error fetching Group details");
+      toast.error("Error fetching Group details");
     }
   }
 
