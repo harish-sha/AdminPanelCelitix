@@ -180,7 +180,7 @@ const ResellerDashboard = () => {
             if (response && response.statusCode === 200) {
                 const user = response.data[0];
                 setUserData(user);
-                setFormData({ firstName: user.firstName || "" });
+                setFormData({ firstName: user.firstName || user.name || "" });
             } else {
                 console.error("Failed to load user details.");
                 toast.error("Failed to load user details!");

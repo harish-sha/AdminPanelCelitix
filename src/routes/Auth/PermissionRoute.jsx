@@ -18,6 +18,7 @@ export const PermissionRoute = ({ children }) => {
       return [
         { name: "Home", links: "/", roles: ["ADMIN"] },
         { name: "WhatsApp Live Chat", links: "/wlivechat" },
+        { name: "WhatsApp Live Chat", links: ["/profile", "/settings"] },
       ];
     }
     if (userState.role === "RESELLER") {

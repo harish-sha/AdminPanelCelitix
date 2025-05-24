@@ -102,6 +102,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   // const menuItems = [];
 
   const getFilteredMenuItems = (menuItems = [], userState) => {
+    if (userState.role === "AGENT") {
+      return [
+        {
+          id: "",
+          name: "Home",
+          icon: <FaHome />,
+          label: "Home",
+          type: "single",
+          to: "/",
+        },
+        {
+          id: "",
+          name: "WhatsApp Live Chat",
+          icon: <FaWhatsapp />,
+          label: "Home",
+          type: "single",
+          to: "/wlivechat",
+        },
+      ];
+    }
     if (userState.role === "RESELLER") {
       return menuItems;
     }
