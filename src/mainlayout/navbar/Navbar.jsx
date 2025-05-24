@@ -46,6 +46,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   // };
 
   const handleBalance = async () => {
+    if(user?.role === "AGENT") return;
     setIsFetchingBalance(true);
     const res = await fetchBalance();
     setBalance(res.balance || 0);

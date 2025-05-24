@@ -14,6 +14,12 @@ export const PermissionRoute = ({ children }) => {
   const currentPath = location.pathname;
 
   const getPrivateRoute = (menuItems, userState) => {
+    if (userState.role === "AGENT") {
+      return [
+        { name: "Home", links: "/", roles: ["ADMIN"] },
+        { name: "WhatsApp Live Chat", links: "/wlivechat" },
+      ];
+    }
     if (userState.role === "RESELLER") {
       return menuItems;
     }
