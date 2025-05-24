@@ -2587,7 +2587,6 @@ const ManageContacts = () => {
     };
 
     const res = await updateContactsDetails(data);
-     const res = await updateContactsDetails(data);
     if (!res?.message.includes("successfully")) {
       return toast.error(res?.message);
     }
