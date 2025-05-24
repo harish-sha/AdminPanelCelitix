@@ -6,6 +6,8 @@ import { FaReply } from "react-icons/fa";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import { FiSend } from "react-icons/fi";
 import { SpeedDial } from "primereact/speeddial";
+import { Dialog } from "primereact/dialog";
+
 import {
   BoltRounded,
   FormatBoldOutlined,
