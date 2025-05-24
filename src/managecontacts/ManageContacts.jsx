@@ -2298,7 +2298,7 @@ const ManageContacts = () => {
 
   const options = [
     { value: 1, label: "Active" },
-    { value: 2, label: "Inactive" },
+    { value: 0, label: "Inactive" },
   ];
 
   const handleInputChange = (e) => {
