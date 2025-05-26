@@ -65,8 +65,11 @@ import { ChatSidebar } from "./component/chat/Sidebar";
 import { InputData } from "./component/InputData";
 import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
+import { useUser } from "@/context/auth";
 
 export default function WhatsappLiveChat() {
+  const { user } = useUser();
+
   const fileInputRef = useRef(null);
   const [visibleRight, setVisibleRight] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -450,8 +453,8 @@ export default function WhatsappLiveChat() {
     const files = e.target.files[0];
     const type = files?.type?.split("/")[0];
     const fileName = files?.name;
-    const size = `${(files?.size)/1024}MB`
-    setSelectedImage({ files, type,fileName, size });
+    const size = `${files?.size / 1024}MB`;
+    setSelectedImage({ files, type, fileName, size });
   };
 
   const formatDate = (dateString) => {
@@ -1054,33 +1057,34 @@ export default function WhatsappLiveChat() {
         )}
       </AnimatePresence>
 
-      <Dialog
-        header="Transfer Chat to Agent"
-        visible={dialogVisible}
-        style={{ width: "35rem" }}
-        draggable={false}
-        onHide={() => {
-          if (!dialogVisible) return;
-          setDialogVisible(false);
-        }}
-      >
-        <div className="space-y-3">
-          <AnimatedDropdown
-            options={agentList?.data?.map((agent) => ({
-              value: agent.sr_no,
-              label: agent.name,
-            }))}
-            id="agentList"
-            name="agentList"
-            label="Agent List"
-            tooltipContent="Select Agent"
-            tooltipPlacement="right"
-            value={selectedAgentList}
-            onChange={(value) => setSelectedAgentList(value)}
-            placeholder="Agent List"
-          />
+      {user.role !== "AGENT" && (
+        <Dialog
+          header="Transfer Chat to Agent"
+          visible={dialogVisible}
+          style={{ width: "35rem" }}
+          draggable={false}
+          onHide={() => {
+            if (!dialogVisible) return;
+            setDialogVisible(false);
+          }}
+        >
+          <div className="space-y-3">
+            <AnimatedDropdown
+              options={agentList?.data?.map((agent) => ({
+                value: agent.sr_no,
+                label: agent.name,
+              }))}
+              id="agentList"
+              name="agentList"
+              label="Agent List"
+              tooltipContent="Select Agent"
+              tooltipPlacement="right"
+              value={selectedAgentList}
+              onChange={(value) => setSelectedAgentList(value)}
+              placeholder="Agent List"
+            />
 
-          {/* <InputField
+            {/* <InputField
             label="Agent Display Name"
             tooltipContent="Enter Agent Name"
             id="agentname"
@@ -1090,31 +1094,32 @@ export default function WhatsappLiveChat() {
             onChange={(e) => setAgentname(e.target.value)}
             placeholder="Enter Agent Display Name"
           /> */}
-          <AnimatedDropdown
-            options={groupList?.map((group) => ({
-              value: group.groupCode,
-              label: group.groupName,
-            }))}
-            id="group"
-            name="group"
-            label="Group"
-            tooltipContent="Select Group"
-            tooltipPlacement="right"
-            value={selectedGroupList}
-            onChange={(value) => setSelectedGroupList(value)}
-            placeholder="Group"
-          />
-
-          <div className="flex items-center justify-center">
-            <UniversalButton
-              id={"assignAgent"}
-              name={"assignAgent"}
-              label="Assign Agent"
-              onClick={handleAssignAgent}
+            <AnimatedDropdown
+              options={groupList?.map((group) => ({
+                value: group.groupCode,
+                label: group.groupName,
+              }))}
+              id="group"
+              name="group"
+              label="Group"
+              tooltipContent="Select Group"
+              tooltipPlacement="right"
+              value={selectedGroupList}
+              onChange={(value) => setSelectedGroupList(value)}
+              placeholder="Group"
             />
+
+            <div className="flex items-center justify-center">
+              <UniversalButton
+                id={"assignAgent"}
+                name={"assignAgent"}
+                label="Assign Agent"
+                onClick={handleAssignAgent}
+              />
+            </div>
           </div>
-        </div>
-      </Dialog>
+        </Dialog>
+      )}
 
       <Dialog
         header="Send Message to User"

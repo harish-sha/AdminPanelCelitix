@@ -36,6 +36,7 @@ import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
 import FullscreenIcon from "@mui/icons-material/Fullscreen";
+import { useUser } from "@/context/auth";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -59,6 +60,7 @@ export const ChatScreen = ({
   setChatState,
 }) => {
   const messageRef = useRef(null);
+  const { user } = useUser();
 
   useEffect(() => {
     if (messageRef.current) {
@@ -228,10 +230,12 @@ export const ChatScreen = ({
             sx={{ fontSize: "1.2rem", color: "green" }}
           />
         </div>
-        <SupportAgentOutlinedIcon
-          onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer text-[#22577E]"
-        />
+        {user.role !== "AGENT" && (
+          <SupportAgentOutlinedIcon
+            onClick={() => setDialogVisible(true)}
+            className="mr-2 cursor-pointer text-[#22577E]"
+          />
+        )}
       </div>
 
       <div
