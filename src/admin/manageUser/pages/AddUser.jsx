@@ -47,7 +47,10 @@ const AddUser = () => {
     setIsReadOnly(userType !== "2");
     setAccountUrl("");
   }, [userType]);
-
+  useEffect(() => {
+    const domain = window.location.hostname;
+    setAccountUrl(domain);
+  }, []);
   // Fetch pincode details when the zipCode changes
   useEffect(() => {
     const fetchPincodeDetails = async () => {
@@ -113,14 +116,15 @@ const AddUser = () => {
       return;
     }
 
-    if (!userPassword.length > 6 || !userPassword.length < 10) {
-      toast.error("Password shoule be of 6 to 10 characters");
-      return;
-    }
+    // if (!userPassword.length > 6 || !userPassword.length < 10) {
+    //   toast.error("Password shoule be of 6 to 10 characters");
+    //   return;
+    // }
+    const domain = window.location.hostname;
     const data = {
       // srno: 0,
       userId: userid,
-      domain: accountUrl,
+      domain: domain,
       status: 1,
       emailId: userEmail,
       mobileNo: userPhoneNumber,
@@ -278,7 +282,7 @@ const AddUser = () => {
       <h2 className="mt-6 mb-4 text-lg font-semibold">Account Details:</h2>
       <div className="flex items-start flex-wrap  gap-4 mb-4 w-full">
         <div className="flex  flex-wrap gap-2 mb-2 ">
-          <div className="flex gap-2 w-full md:w-50 ">
+          {/* <div className="flex gap-2 w-full md:w-50 ">
             <AnimatedDropdown
               label="User Type"
               id="userType"
@@ -289,8 +293,19 @@ const AddUser = () => {
                 setUserType(selected);
               }}
             />
+          </div> */}
+
+          <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
+            <InputField
+              label="Account URL"
+              id="accounturl"
+              name="accounturl"
+              placeholder="Enter URL"
+              value={accountUrl}
+              readOnly={true}
+            />
           </div>
-          {userType === "2" && (
+          {/* {userType === "2" && (
             <div className="md:w-50 w-full">
               <InputField
                 label="Account URL"
@@ -302,7 +317,7 @@ const AddUser = () => {
                 onChange={(e) => setAccountUrl(e.target.value)}
               />
             </div>
-          )}
+          )} */}
         </div>
         <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
           <label
