@@ -1,5 +1,0 @@
-whatsapp > whatsappFlows > pages > FlowCreationPage.jsx
-whatsapp > whatsappFlows > components > Canvas.jsx
-whatsapp > whatsappFlows > components > TabView.jsx
-whatsapp > whatsappFlows > components > MobilePanel.jsx
-

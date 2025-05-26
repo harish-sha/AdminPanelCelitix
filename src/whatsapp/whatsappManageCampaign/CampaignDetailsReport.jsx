@@ -246,7 +246,7 @@ const CampaignDetailsReport = () => {
                         type="number"
                     />
                 </div>
-                <div className="w-full sm:w-64">
+                {/* <div className="w-full sm:w-64">
                     <AnimatedDropdown
                         id="campaignDeliveryStatusdropdown"
                         name="campaignDeliveryStatusdropdown"
@@ -262,9 +262,9 @@ const CampaignDetailsReport = () => {
                         ]}
                         value={deliveryStatus}
                         onChange={setDeliveryStatus}
-                        placeholder="Category"
+                        placeholder="delivery status"
                     />
-                </div>
+                </div> */}
                 <div className="w-max-content ">
                     <UniversalButton
                         id="manageCampaignSearchBtn"

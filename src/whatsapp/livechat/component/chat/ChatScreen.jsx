@@ -59,11 +59,27 @@ export const ChatScreen = ({
   setChatState,
 }) => {
   const messageRef = useRef(null);
+  const endOfMessagesRef = useRef(null);
 
   useEffect(() => {
     if (messageRef.current) {
       messageRef.current.scrollTop = messageRef.current.scrollHeight;
     }
+
+    if (endOfMessagesRef.current) {
+      endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+    }
+
+    const timeout = setTimeout(() => {
+      if (messageRef.current) {
+        messageRef.current.scrollTop = messageRef.current.scrollHeight;
+      }
+      if (endOfMessagesRef.current) {
+        endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+      }
+    }, 200);
+
+    return () => clearTimeout(timeout);
   }, [chatState?.specificConversation]);
 
   const mediaRender = (isSent) => {
@@ -157,17 +173,17 @@ export const ChatScreen = ({
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
-  useEffect(() => {
-    const fetchBaseUrl = async () => {
-      try {
-        const url = await getBaseUrl("WhatsappChatBoxApi");
-        setBaseMediaUrl(url?.url);
-      } catch (err) {
-        console.error("Failed to fetch base URL", err);
-      }
-    };
-    fetchBaseUrl();
-  }, []);
+  // useEffect(() => {
+  //   const fetchBaseUrl = async () => {
+  //     try {
+  //       const url = await getBaseUrl("WhatsappChatBoxApi");
+  //       setBaseMediaUrl(url?.url);
+  //     } catch (err) {
+  //       console.error("Failed to fetch base URL", err);
+  //     }
+  //   };
+  //   fetchBaseUrl();
+  // }, []);
 
 
   function getFileType(extension) {
@@ -557,6 +573,8 @@ export const ChatScreen = ({
             </div>
           </div>
         ))}
+
+        <div ref={endOfMessagesRef} />
       </div>
 
       {/* media full screen preview */}

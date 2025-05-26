@@ -5,7 +5,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
 
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   FaWhatsapp,
   FaEnvelope,
@@ -46,6 +46,7 @@ import Loader from "../components/Loader";
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
+import { StatusHoverCard } from "./components/StatusHoverCard.jsx";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -111,6 +112,12 @@ const CustomPagination = ({
     </Box>
   );
 };
+
+
+
+
+
+
 
 const WhatsappManageWaba = ({ id, name }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -228,8 +235,8 @@ const WhatsappManageWaba = ({ id, name }) => {
   }, []);
 
 
-  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const API_BASE_URL = "/api";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // const API_BASE_URL = "/api";
 
   async function onboardUser(accessToken) {
     const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
@@ -370,7 +377,56 @@ const WhatsappManageWaba = ({ id, name }) => {
       minWidth: 120,
     },
     { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    // { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        const status = params.value || "UNKNOWN";
+        const statusMap = {
+          CONNECTED: { color: "bg-green-500", text: "Connected" },
+          FLAGGED: { color: "bg-orange-500", text: "Flagged" },
+          RESTRICTED: { color: "bg-red-500", text: "Restricted" },
+          BANNED: { color: "bg-red-700", text: "Banned" },
+          UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
+        };
+        const { color, text } = statusMap[status] || statusMap.UNKNOWN;
+
+        const [showHover, setShowHover] = useState(false);
+        return (
+          // <span
+          //   className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold ${color}`}
+          //   style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
+          // >
+          //   {text}
+          // </span>
+          <>
+            <div
+              // className="relative"
+              onMouseEnter={() => setShowHover(true)}
+              onMouseLeave={() => setShowHover(false)}
+            >
+              <span
+                className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold ${color}`}
+                style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
+              >
+                {text}
+              </span>
+
+              <AnimatePresence>
+                {showHover && (
+                  <div className="absolute left-1/2 transform -translate-x-1/2 mt-0">
+                    <StatusHoverCard status={status} />
+                  </div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        );
+      },
+    },
     // {
     //   field: "messaging_limit",
     //   headerName: "Messaging Limit",
@@ -386,52 +442,25 @@ const WhatsappManageWaba = ({ id, name }) => {
       renderCell: (params) => {
         const quality = params.value || "UNKNOWN";
         const qualityMap = {
-          GREEN: { color: "green", text: "High Quality" },
-          YELLOW: { color: "yellow", text: "Medium Quality" },
-          RED: { color: "red", text: "Low Quality" },
-          UNKNOWN: { color: "gray", text: "Unknown Quality" },
+          GREEN: { color: "bg-green-500", text: "High" },
+          YELLOW: { color: "bg-yellow-400", text: "Medium" },
+          RED: { color: "bg-red-500", text: "Low" },
+          UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
         };
 
         const { color, text } = qualityMap[quality] || qualityMap.UNKNOWN;
 
         return (
-          <CustomTooltip title={text} placement="top" arrow>
-            <div
-              className="flex items-center h-full justify-center"
-              style={{
-                // display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* Circle */}
-              <span
-                style={{
-                  backgroundColor: color,
-                }}
-                className="h-5 w-10 rounded-full shadow-lg"
-              ></span>
-              {/* Capsule */}
-              {/* <span
-                style={{
-                  // padding: "2px 8px",
-                  // borderRadius: "12px",
-                  backgroundColor: color,
-                  // color: "white",
-                  // fontSize: "0.8rem",
-                  // fontWeight: "bold",
-                  // textTransform: "capitalize",
-                }}
-                className="h-auto w-auto px-3 py-1 rounded-full text-white text-sm tracking-wide font-normal"
-              >
-                {quality.toLowerCase()}
-              </span> */}
-            </div>
-          </CustomTooltip>
+          // <CustomTooltip title={text} placement="top" arrow>
+          <div className="flex items-center gap-2 py-3">
+            <span className={`inline-block w-4 h-4 rounded-full ${color}`} />
+            <span className="text-sm font-semibold text-gray-700">{text}</span>
+          </div>
+          // </CustomTooltip>
         );
       },
     },
-    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
+    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 100 },
     // {
     //   field: "wabaAccountId",
     //   headerName: "WABA Account ID",

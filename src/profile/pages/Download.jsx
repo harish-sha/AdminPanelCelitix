@@ -121,8 +121,8 @@ const Download = ({ id, name }) => {
 
       // const baseURL = response.url;
 
-      const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
-      // const baseURL = "/allDownloadUrl";
+      // const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
+      const baseURL = "/allDownloadUrl";
 
       const fullDownloadUrl = `${baseURL}${downloadPath}`;
 

@@ -1,12 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Box, Grid, Paper, Typography, Button, Tooltip } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import dayjs from "dayjs";
 import TagIcon from "@mui/icons-material/Tag";
 import EmailIcon from "@mui/icons-material/Email";
 import InventoryIcon from "@mui/icons-material/Inventory";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { motion } from "framer-motion";
 import { Switch } from "@mui/material";
-import AnimatedDropdown from "../components/AnimatedDropdown";
+import { Dialog } from 'primereact/dialog';
+import toast from "react-hot-toast";
+
 import {
   deleteAutoAction,
   fetchTemplates,
@@ -15,24 +21,35 @@ import {
   getWabaList,
   saveAutoAction,
 } from "@/apis/whatsapp/whatsapp";
-import toast from "react-hot-toast";
+
+import AnimatedDropdown from "../components/AnimatedDropdown";
 import { ConfigureDialog } from "./components/configureDialog";
+import UniversalButton from "../components/UniversalButton";
+
 // import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
 
 const MotionPaper = motion(Paper);
 
 const WhatsappLiveChatSettings = () => {
-  const [wabaState, setWabaState] = React.useState({
+  const [selectedName, setSelectedName] = useState("")
+  const [selectedAgentName, setSelectedAgentName] = useState("")
+  const [selectedAgentId, setSelectedAgentId] = useState(null)
+  const [workingHoursDialog, setWorkingHoursDialog] = useState(false);
+  const [workingHours, setWorkingHours] = useState({});
+  const [isWorkingHoursEnabled, setIsWorkingHoursEnabled] = useState(true);
+
+  const [wabaState, setWabaState] = useState({
     waba: [],
     selected: "",
   });
-  const [cardDetails, setCardDetails] = React.useState({});
-  const [configureState, setConfigureState] = React.useState({
+
+  const [cardDetails, setCardDetails] = useState({});
+  const [configureState, setConfigureState] = useState({
     type: "",
     open: false,
   });
 
-  const [basicDetails, setBasicDetails] = React.useState({
+  const [basicDetails, setBasicDetails] = useState({
     sendMsgCheckbox: true,
     msgType: "1",
     message: "",
@@ -40,18 +57,20 @@ const WhatsappLiveChatSettings = () => {
     tempJson: "",
     mediaPath: "",
   });
-  const [allTemplates, setAllTemplates] = React.useState([]);
-  const [specificTemplate, setSpecificTemplate] = React.useState({});
-  const [variablesData, setVariablesData] = React.useState({
+
+  const [allTemplates, setAllTemplates] = useState([]);
+  const [specificTemplate, setSpecificTemplate] = useState({});
+  const [variablesData, setVariablesData] = useState({
     length: 0,
     data: [],
     input: [],
     btn: [],
     btnInput: [],
   });
-  const fileRef = React.useRef(null);
 
-  React.useEffect(() => {
+  const fileRef = useRef(null);
+
+  useEffect(() => {
     async function handleFetchWaba() {
       try {
         const res = await getWabaList();
@@ -109,12 +128,13 @@ const WhatsappLiveChatSettings = () => {
       return toast.error("Error fetching all templates");
     }
   }
-  React.useEffect(() => {
+
+  useEffect(() => {
     handleGetAutoAction();
     handleFetchAllTemplates();
   }, [wabaState.selected]);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!basicDetails?.template) return;
     async function handleFetchTemplateValues() {
       try {
@@ -149,6 +169,7 @@ const WhatsappLiveChatSettings = () => {
     }
     return variables;
   }
+
   function handleConfigure(type) {
     if (!wabaState.selected) {
       return toast.error("Please select WABA");
@@ -216,7 +237,7 @@ const WhatsappLiveChatSettings = () => {
       );
     }
 
-    let message = specificTemplate.message || variablemessage;
+    let message = basicDetails.message || variablemessage;
     specificTemplate.urlValue = btnVariable;
     specificTemplate.message = message
 
@@ -229,7 +250,7 @@ const WhatsappLiveChatSettings = () => {
       wabaSrno,
       ...basicDetails,
       // message: basicDetails?.message || message,
-      message: message,
+      message: message || specificTemplate.message,
       tempJson: JSON.stringify(specificTemplate),
     };
 
@@ -271,6 +292,123 @@ const WhatsappLiveChatSettings = () => {
       await handleGetAutoAction();
     } catch (e) {
       toast.error("Error saving data");
+    }
+  }
+
+
+  async function handleWorkingSave() {
+    if (!wabaState.selected) {
+      return toast.error("Please select WABA");
+    }
+    const dayMap = [
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday",
+      "Sunday",
+    ];
+
+    const inactiveTimeArray = [];
+    const noDaysSelected = [];
+
+    dayMap.forEach((day, idx) => {
+      const wh = workingHours[day];
+      if (wh && wh.enabled) {
+        inactiveTimeArray.push({
+          status: 1,
+          fromTime: wh.start ? wh.start.format("HH:mm") : "",
+          toTime: wh.end ? wh.end.format("HH:mm") : "",
+          day: idx + 1,
+        });
+      } else {
+        noDaysSelected.push(idx + 1);
+      }
+    });
+
+    const wabaSrno = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selected
+    )?.wabaSrno;
+
+
+    const tempJson = JSON.stringify(specificTemplate);
+
+    const data = {
+      actionSenario: "inactive_agent_timing",
+      sendMsgCheckbox: true,
+      msgType: basicDetails.msgType || "2",
+      message: basicDetails.message || "Hello dear Mr. rtrt,to resolve your issue please connect with us",
+      filePath: basicDetails.filePath || "",
+      wabaNumber: wabaState.selected,
+      inactiveTimeArray,
+      wabaSrno,
+      tempJson,
+      mediaPath: basicDetails.mediaPath || "",
+      messageEntity: "6",
+      noDaysSelectedArray: noDaysSelected.join(",") + (noDaysSelected.length ? "," : ""),
+
+    };
+
+    try {
+      const res = await saveAutoAction(data);
+      if (!res?.status) {
+        return;
+      }
+      toast.success("Data saved successfully");
+      setWorkingHoursDialog(false);
+      await handleGetAutoAction();
+    } catch (e) {
+      toast.error("Error saving data");
+    }
+  }
+
+  const liveChatCards = [
+    { id: 1, name: "Welcome Message", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours..", message: "", type: "Welcome_message" },
+    { id: 2, name: "Off Hours Message", button: ["Configure Text", "Configure Time"], desc: "Configure automated reply for user's first query during off hours.", message: "", type: "off_hour_msg" },
+    { id: 3, name: "Agent-Change", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_change" },
+    // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
+  ]
+
+  async function handle15MinTime(minutes) {
+    if (!wabaState.selected) return toast.error("Please select WABA");
+
+    const wabaSrno = wabaState.waba.find(
+      (waba) => waba.mobileNo === wabaState.selected
+    )?.wabaSrno;
+
+    const data = {
+      actionSenario: "15_minutes_message",
+      sendMsgCheckbox: true,
+      msgType: "2",
+      message: "",
+      filePath: "",
+      wabaNumber: wabaState.selected,
+      wabaSrno: wabaSrno,
+      tempJson: JSON.stringify({
+        template: {
+          replyButtons: [],
+          name: "test13",
+          language: { code: "en", policy: "deterministic" }
+        },
+        to: "mobileno",
+        type: "template"
+      }),
+      mediaPath: "",
+      messageEntity: "0",
+      timeout: Number(minutes) || 0
+    };
+
+    try {
+      const res = await saveAutoAction(data);
+      if (!res?.status) {
+        // toast.error("Error saving 15 min message");
+        return;
+      }
+      toast.success("15 min message saved successfully");
+      await handleGetAutoAction();
+    } catch (e) {
+      toast.error("Error saving 15 min message");
     }
   }
 
@@ -498,3 +636,4 @@ const WhatsappLiveChatSettings = () => {
 };
 
 export default WhatsappLiveChatSettings;
+
