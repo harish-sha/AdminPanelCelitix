@@ -159,14 +159,14 @@ export const userItems = [
     roles: ["ADMIN"],
   },
   {
-      name: "openRoutes",
-      links: [
-        "/download",
-        "/loginIpdetails",
-        "/profile",
-        "/settings",
-        "/transactions",
-      ],
-      roles: ["ADMIN"],
-    },
+    name: "openRoutes",
+    links: [
+      "/download",
+      "/loginIpdetails",
+      "/profile",
+      "/settings",
+      "/transactions",
+    ],
+    roles: ["ADMIN"],
+  },
 ];
