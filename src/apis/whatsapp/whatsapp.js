@@ -154,6 +154,28 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
   }
 };
 
+// Get Whatsapp Campaign Scheduled Reports
+export const getWhatsappCampaignScheduledReport = async () => {
+  try {
+    const response = await fetchWithAuth("/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=0", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    console.log("response from schedule", response)
+
+    if (!response || !response.data) {
+      console.error("Failed to fetch campaign report.");
+      return [];
+    }
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching campaign report:", error);
+    return [];
+  }
+};
+
 // Get Whatsapp Campaign Details Report
 export const getWhatsappCampaignDetailsReport = async (data) => {
   try {

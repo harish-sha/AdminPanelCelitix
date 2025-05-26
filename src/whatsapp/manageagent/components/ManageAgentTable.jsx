@@ -199,7 +199,7 @@ const ManageAgentTable = ({
     name: "",
     mobileNumber: "",
     status: "",
-    allowAllChats: 1,
+    allowAllChats: 0,
     department: null,
     departmentId: "",
     departmentName: "",
@@ -1359,9 +1359,9 @@ const ManageAgentTable = ({
               name="editassign"
               label="Assign"
               options={[
-                { label: "Auto", value: 1 },
-                { label: "Manual", value: 2 },
-                { label: "All", value: 3 },
+                { label: "Auto", value: 0 },
+                { label: "Manual", value: 1 },
+                { label: "All", value: 2 },
               ]}
               value={updateAgentData.allowAllChats}
               onChange={(e) => {
