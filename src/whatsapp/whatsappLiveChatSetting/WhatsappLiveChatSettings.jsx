@@ -218,9 +218,10 @@ const WhatsappLiveChatSettings = () => {
       );
     }
 
-    let message = specificTemplate.message || variablemessage;
+    let message = basicDetails.message || variablemessage;
     specificTemplate.urlValue = btnVariable;
-    specificTemplate.message = message
+    // specificTemplate.message = message
+
 
     const wabaSrno = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selected
@@ -230,7 +231,7 @@ const WhatsappLiveChatSettings = () => {
       wabaNumber: wabaState.selected,
       wabaSrno,
       ...basicDetails,
-      message: message,
+      message: message || specificTemplate.message,
       tempJson: JSON.stringify(specificTemplate),
     };
 
