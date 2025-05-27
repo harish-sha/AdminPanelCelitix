@@ -93,11 +93,14 @@ export const ChatSidebar = ({
   setChatState,
   setSelectedAgentList,
   selectedWaba,
-  setSelectedGroupList
+  setSelectedGroupList,
+  isLoading
 }) => {
-  const isLoading =
-    selectedWaba &&
-    (!chatState?.allConversations || chatState.allConversations.length === 0);
+  // const isLoading =
+  //   selectedWaba &&
+  //   (!chatState?.allConversations || chatState.allConversations.length === 0);
+
+  // const isLoading = selectedWaba && !chatState?.allConversations;
 
   // async function fetchAgentDetails(srno) {
   //   try {
@@ -200,6 +203,7 @@ export const ChatSidebar = ({
         ))}
 
       {!isLoading &&
+        chatState?.allConversations.length > 0 &&
         chatState?.allConversations
           ?.slice()
           ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))

@@ -10,7 +10,7 @@ import InventoryIcon from "@mui/icons-material/Inventory";
 import WhatsAppIcon from "@mui/icons-material/WhatsApp";
 import { motion } from "framer-motion";
 import { Switch } from "@mui/material";
-import { Dialog } from 'primereact/dialog';
+import { Dialog } from "primereact/dialog";
 import toast from "react-hot-toast";
 
 import {
@@ -31,9 +31,9 @@ import UniversalButton from "../components/UniversalButton";
 const MotionPaper = motion(Paper);
 
 const WhatsappLiveChatSettings = () => {
-  const [selectedName, setSelectedName] = useState("")
-  const [selectedAgentName, setSelectedAgentName] = useState("")
-  const [selectedAgentId, setSelectedAgentId] = useState(null)
+  const [selectedName, setSelectedName] = useState("");
+  const [selectedAgentName, setSelectedAgentName] = useState("");
+  const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [workingHoursDialog, setWorkingHoursDialog] = useState(false);
   const [workingHours, setWorkingHours] = useState({});
   const [isWorkingHoursEnabled, setIsWorkingHoursEnabled] = useState(true);
@@ -239,7 +239,10 @@ const WhatsappLiveChatSettings = () => {
 
     let message = basicDetails.message || variablemessage;
     specificTemplate.urlValue = btnVariable;
-    specificTemplate.message = message
+    // specificTemplate.message = message;
+    variablemessage && (specificTemplate.message = variablemessage)
+
+
 
     const wabaSrno = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selected
@@ -295,7 +298,6 @@ const WhatsappLiveChatSettings = () => {
     }
   }
 
-
   async function handleWorkingSave() {
     if (!wabaState.selected) {
       return toast.error("Please select WABA");
@@ -331,14 +333,15 @@ const WhatsappLiveChatSettings = () => {
       (waba) => waba.mobileNo === wabaState.selected
     )?.wabaSrno;
 
-
     const tempJson = JSON.stringify(specificTemplate);
 
     const data = {
       actionSenario: "inactive_agent_timing",
       sendMsgCheckbox: true,
       msgType: basicDetails.msgType || "2",
-      message: basicDetails.message || "Hello dear Mr. rtrt,to resolve your issue please connect with us",
+      message:
+        basicDetails.message ||
+        "Hello dear Mr. rtrt,to resolve your issue please connect with us",
       filePath: basicDetails.filePath || "",
       wabaNumber: wabaState.selected,
       inactiveTimeArray,
@@ -346,8 +349,8 @@ const WhatsappLiveChatSettings = () => {
       tempJson,
       mediaPath: basicDetails.mediaPath || "",
       messageEntity: "6",
-      noDaysSelectedArray: noDaysSelected.join(",") + (noDaysSelected.length ? "," : ""),
-
+      noDaysSelectedArray:
+        noDaysSelected.join(",") + (noDaysSelected.length ? "," : ""),
     };
 
     try {
@@ -364,11 +367,32 @@ const WhatsappLiveChatSettings = () => {
   }
 
   const liveChatCards = [
-    { id: 1, name: "Welcome Message", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours..", message: "", type: "Welcome_message" },
-    { id: 2, name: "Off Hours Message", button: ["Configure Text", "Configure Time"], desc: "Configure automated reply for user's first query during off hours.", message: "", type: "off_hour_msg" },
-    { id: 3, name: "Agent-Change", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_change" },
+    {
+      id: 1,
+      name: "Welcome Message",
+      button: ["Configure Text"],
+      desc: "Automatically greet customers when they message you during off hours..",
+      message: "",
+      type: "Welcome_message",
+    },
+    {
+      id: 2,
+      name: "Off Hours Message",
+      button: ["Configure Text", "Configure Time"],
+      desc: "Configure automated reply for user's first query during off hours.",
+      message: "",
+      type: "off_hour_msg",
+    },
+    {
+      id: 3,
+      name: "Agent-Change",
+      button: ["Configure Text"],
+      desc: "Automatically greet customers when they message you during off hours.",
+      message: "",
+      type: "agent_change",
+    },
     // { id: 4, name: "Agent-No-Response", button: ["Configure Text"], desc: "Automatically greet customers when they message you during off hours.", message: "", type: "agent_no_response" },
-  ]
+  ];
 
   async function handle15MinTime(minutes) {
     if (!wabaState.selected) return toast.error("Please select WABA");
@@ -389,14 +413,14 @@ const WhatsappLiveChatSettings = () => {
         template: {
           replyButtons: [],
           name: "test13",
-          language: { code: "en", policy: "deterministic" }
+          language: { code: "en", policy: "deterministic" },
         },
         to: "mobileno",
-        type: "template"
+        type: "template",
       }),
       mediaPath: "",
       messageEntity: "0",
-      timeout: Number(minutes) || 0
+      timeout: Number(minutes) || 0,
     };
 
     try {
@@ -419,7 +443,7 @@ const WhatsappLiveChatSettings = () => {
           background: "linear-gradient(to bottom right, #f0f4ff, #ffffff)",
           py: 2,
           px: 2,
-          borderRadius: "20px"
+          borderRadius: "20px",
         }}
       >
         <div className="flex justify-end w-full items-center mb-4 mr-5">
@@ -556,7 +580,7 @@ const WhatsappLiveChatSettings = () => {
           </Grid>
         </Grid> */}
 
-        <div className=" flex flex-wrap justify-center items-center gap-5  space-y-8 mx-auto">
+        <div className=" flex flex-wrap justify-center items-center gap-5 space-y-8 mx-auto">
           {liveChatCards.map((card) => {
             return (
               <>
@@ -565,7 +589,12 @@ const WhatsappLiveChatSettings = () => {
                   className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1"
                 >
                   <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
-                    <Box display="flex" alignItems="center" justifyContent="space-between" marginTop={6}>
+                    <Box
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="space-between"
+                      marginTop={6}
+                    >
                       <Box display="flex" alignItems="center" gap={2}>
                         <Box
                           sx={{
@@ -578,9 +607,15 @@ const WhatsappLiveChatSettings = () => {
                             marginLeft: 1,
                           }}
                         >
-                          <WhatsAppIcon sx={{ color: "#25D366", fontSize: 28 }} />
+                          <WhatsAppIcon
+                            sx={{ color: "#25D366", fontSize: 28 }}
+                          />
                         </Box>
-                        <Typography variant="h6" fontWeight={600} color="#1f2937">
+                        <Typography
+                          variant="h6"
+                          fontWeight={600}
+                          color="#1f2937"
+                        >
                           {card.name}
                         </Typography>
                       </Box>
@@ -601,14 +636,10 @@ const WhatsappLiveChatSettings = () => {
                     <p className="mb-2 block font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
                       {card.desc}
                     </p>
-                    <div
-                      className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap"
-                    >
-                      <span className="text-sm font-semibold text-gray-600" >
-                        {
-                          cardDetails[card.type]?.message ||
-                          "Hi! Thanks for connecting. Our team is unavailable right now. We'll be back at 10am tomorrow."
-                        }
+                    <div className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap">
+                      <span className="text-sm font-semibold text-gray-600">
+                        {cardDetails[card.type]?.message ||
+                          "Hi! Thanks for connecting. Our team is unavailable right now. We'll be back at 10am tomorrow."}
                       </span>
                     </div>
                   </div>
@@ -628,14 +659,13 @@ const WhatsappLiveChatSettings = () => {
                             px: 3,
                             ":hover": { backgroundColor: "#1ebc59" },
                           }}
-
-
                           onClick={() => {
                             if (!wabaState.selected) {
                               toast.error("Please select WABA");
                               return;
                             }
-                            if (btnLabel === "Configure Text") handleConfigure(card.type);
+                            if (btnLabel === "Configure Text")
+                              handleConfigure(card.type);
                             else if (btnLabel === "Configure Time")
                               setWorkingHoursDialog(true);
                           }}
@@ -647,11 +677,9 @@ const WhatsappLiveChatSettings = () => {
                   </div>
                 </div>
               </>
-            )
+            );
           })}
-
         </div>
-
       </Box>
 
       <Dialog
@@ -792,4 +820,3 @@ const WhatsappLiveChatSettings = () => {
 };
 
 export default WhatsappLiveChatSettings;
-

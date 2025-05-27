@@ -941,6 +941,7 @@ export default function WhatsappLiveChat() {
           setWabaState={setWabaState}
           setChatState={setChatState}
           setSelectedWaba={setSelectedWaba}
+          setIsSubscribed={setIsSubscribe}
         />
 
         <ChatSidebar

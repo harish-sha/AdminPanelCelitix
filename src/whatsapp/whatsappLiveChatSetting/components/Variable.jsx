@@ -37,14 +37,11 @@ export const Variables = ({
     <div className="mt-2 space-y-2 border p-3 rounded-xl">
       {variablesData?.data?.length > 0 &&
         variablesData?.data?.map((input, index) => (
-          <div>
-
-
+          <div key={index}>
             <div>
-
               <h1>Variables</h1>
             </div>
-            <div key={index}>
+            <div>
               <div className="flex  gap-2 items-center mt-2">
                 <label htmlFor="templateMessage">
                   {`{{${variablesData?.data[index]}}}`}
@@ -57,14 +54,16 @@ export const Variables = ({
                   onChange={(e) => {
                     const updatedData = [...variablesData.input];
                     updatedData[index] = e.target.value;
-                    setVariablesData((prev) => ({ ...prev, input: updatedData }));
+                    setVariablesData((prev) => ({
+                      ...prev,
+                      input: updatedData,
+                    }));
                   }}
                   className="flex-1 w-full focus:outline-none"
                 />
               </div>
             </div>
           </div>
-
         ))}
 
       {variablesData?.btn?.length > 0 &&

@@ -777,9 +777,9 @@ const ManageAgent = () => {
                 name="assign"
                 label="Assign Type"
                 options={[
-                  { label: "Auto", value: "Auto" },
-                  { label: "Manual", value: "Manual" },
-                  { label: "All", value: "All" },
+                  { label: "Auto", value: 0 },
+                  { label: "Manual", value: 1 },
+                  { label: "All", value: 2 },
                 ]}
               />
               <div className="flex justify-center ">

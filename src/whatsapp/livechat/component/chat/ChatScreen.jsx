@@ -415,6 +415,9 @@ export const ChatScreen = ({
                                       <div className="font-medium truncate max-w-[10rem">
                                         {msg.fileName || "Untitled Document"}
                                       </div>
+                                      <div className="text-xs text-gray-500 uppercase">
+                                        .{fileType}
+                                      </div>
                                     </div>
                                   </div>
                                   {msg?.caption && (

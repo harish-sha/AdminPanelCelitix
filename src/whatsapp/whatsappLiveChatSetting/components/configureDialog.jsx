@@ -9,7 +9,6 @@ import { Preview } from "./preview";
 import { useState } from "react";
 import toast from "react-hot-toast";
 
-
 export const ConfigureDialog = ({
   configureState,
   setconfigureState,
@@ -24,14 +23,12 @@ export const ConfigureDialog = ({
   setSpecificTemplate,
   handle15MinTime,
 }) => {
-
   const [fileData, setFileData] = useState({
     url: "",
     file: "",
   });
 
-
-  const [minuteInput, setMinuteInput] = useState("")
+  const [minuteInput, setMinuteInput] = useState("");
   const [lastSetMinute, setLastSetMinute] = useState("");
 
   const handleSetMinute = async () => {
@@ -42,7 +39,7 @@ export const ConfigureDialog = ({
     await handle15MinTime(minuteInput);
     setLastSetMinute(minuteInput);
     toast.success(`Response time set to ${minuteInput} minutes`);
-    // setMinuteInput(""); 
+    // setMinuteInput("");
   };
 
   return (
@@ -171,8 +168,13 @@ export const ConfigureDialog = ({
             <InputField
               label="Set No Response Time: "
               tooltipContent="Enter only minutes"
-              value={minuteInput}
-              onChange={(e) => setMinuteInput(e.target.value)}
+              value={basicDetails.time}
+              onChange={(e) =>
+                setBasicDetails((prev) => ({
+                  ...prev,
+                  time: e.target.value,
+                }))
+              }
             />
             {lastSetMinute && (
               <div className="text-green-600 text-xs font-semibold mt-1">
@@ -181,10 +183,7 @@ export const ConfigureDialog = ({
             )}
           </div>
           <div className="w-25 mt-6">
-            <UniversalButton
-              label="Set"
-              onClick={handleSetMinute}
-            />
+            <UniversalButton label="Set" onClick={handleSetMinute} />
           </div>
         </div>
 
