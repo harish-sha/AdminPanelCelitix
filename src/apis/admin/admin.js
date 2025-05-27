@@ -81,19 +81,19 @@ export const getPromoServices = async () => {
 
 export const addMobileNumbers = async (data) => {
   return await fetchWithAuth(
-    `user/saveRegMobiles?userSrno=${data.userSrno}&mobileNumbers=${data.mbno}`,
+    `/user/saveRegMobiles?userSrno=${data.userSrno}&mobileNumbers=${data.mbno}`,
     {
       method: "POST",
     }
   );
 };
 export const getMobileNumbers = async (data) => {
-  return await fetchWithAuth(`user/getRegMobileno?userSrno=${data}`, {
+  return await fetchWithAuth(`/user/getRegMobileno?userSrno=${data}`, {
     method: "POST",
   });
 };
 export const addUser = async (data) => {
-  return await fetchWithAuth(`user/createUser`, {
+  return await fetchWithAuth(`/user/createUser`, {
     method: "POST",
     body: JSON.stringify(data),
   });
