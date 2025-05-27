@@ -91,6 +91,7 @@ import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -326,6 +327,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       const response = await fetchUserbySrno(srNo);
       if (response?.userMstPojoList?.length > 0) {
         const userDetails = response.userMstPojoList[0];
+
+        const expDate = new Date(userDetails.expiryDate);
         setUpdateDetails({
           domain: userDetails.domain || "",
           userId: userDetails.userId || "",
@@ -336,7 +339,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           lastName: userDetails.lastName || "",
           address: userDetails.address || "",
           companyName: userDetails.companyName || "",
-          expiryDate: userDetails.expiryDate || new Date(),
+          expiryDate: expDate || new Date(),
           applicationType: userDetails.applicationType || "",
           userType: userDetails.userType || "",
           country: userDetails.country || "",
@@ -1743,288 +1746,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
-        {/* <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="userid"
-              name="userid"
-              placeholder="Enter your User ID"
-              required
-              // value={userid}
-              // onChange={(e) => setUserId(e.target.value)}
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="expiryDate"
-              name="expiryDate"
-              placeholder="Enter Expiry Date"
-              // value={expiryDate}
-              // onChange={(newValue) => setExpiryDate(newValue)}
-            />
-          </div>
-          <div className="flex gap-2">
-            <AnimatedDropdown
-              label="User Type"
-              id="userType"
-              name="userType"
-              options={useroption}
-              // value={userType} // Ensure correct value is set
-              onChange={() => {}}
-            />
-            <InputField
-              label="Account URL"
-              id="accounturl"
-              name="accounturl"
-              placeholder="Enter URL"
-              // value={accountUrl} // Controlled input value
-              readOnly={isReadOnly} // Controlled readOnly property
-              // onChange={(e) => setAccountUrl(e.target.value)} // Handle manual input
-            />
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Enable Postpaid"
-                  id="enablepostpaid"
-                  name="enablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption1"
-                  name="enablepostpaidredio"
-                  // value="enable"
-                  // onChange={handleChangeEnablePostpaid}
-                  checked={enablepostpaid === "enable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Yes
-                </label>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="enablepostpaidOption2"
-                  name="enablepostpaidredio"
-                  value="disable"
-                  // onChange={handleChangeEnablePostpaid}
-                  // checked={enablepostpaid === "disable"}
-                />
-                <label
-                  htmlFor="enablepostpaidOption2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  No
-                </label>
-              </div>
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="enablepostinput"
-                    name="enablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="editstatus"
-                name="editstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="editstatusOption1"
-                name="editstatusredio"
-                // value="enable"
-                // onChange={handleChangeEditStatus}
-                checked={updateDetails.status === "enable"}
-              />
-              <label
-                htmlFor="editstatusOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="editstatusOption2"
-                name="editstatusredio"
-                checked={updateDetails.status === "disable"}
-              />
-              <label
-                htmlFor="editstatusOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="firstname"
-              name="firstname"
-              placeholder="Enter your First Name"
-              value={updateDetails.firstName}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  firstName: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Last Name"
-              id="lastname"
-              name="lastname"
-              placeholder="Enter your Last Name"
-              value={updateDetails.lastName}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  lastName: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="email"
-              name="email"
-              placeholder="Enter your Email ID"
-              value={updateDetails.emailId}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  emailId: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Mobile No."
-              id="mobile"
-              name="mobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              value={updateDetails.mobileNo}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  mobileNo: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Company Name"
-              id="company"
-              name="company"
-              placeholder="Enter your Company Name"
-              value={updateDetails.country}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  country: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Address"
-              id="address"
-              name="address"
-              placeholder="Enter your Address"
-              value={updateDetails.address}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  address: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="City"
-              id="city"
-              name="city"
-              placeholder="Enter your City"
-              value={updateDetails.city}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  city: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="State"
-              id="state"
-              name="state"
-              placeholder="Enter your State"
-              value={updateDetails.state}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  state: e.target.value,
-                });
-              }}
-              required
-            />
-            <InputField
-              label="Country"
-              id="country"
-              name="country"
-              placeholder="Enter your Country"
-              value={updateDetails.country}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  country: e.target.value,
-                });
-              }}
-            />
-            <InputField
-              label="Pincode"
-              id="Pincode"
-              name="Pincode"
-              placeholder="Enter your Pincode"
-              value={updateDetails?.zipCode}
-              onChange={(e) => {
-                setUpdateDetails({
-                  ...updateDetails,
-                  zipCode: e.target.value,
-                });
-              }}
-            />
-          </div>
-
-          <div className="flex justify-center mt-3">
-            <UniversalButton
-              label="Save"
-              id="whatsappsave"
-              name="whatsappsave"
-              onClick={handleDetailsUpdate}
-            />
-          </div>
-        </div> */}
+        
         <div className="space-y-3">
           <div className="grid gap-4 mb-2 lg:grid-cols-2">
             <InputField
@@ -2049,7 +1771,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }
             />
           </div>
-          <div className="flex gap-2">
+          {/* <div className="flex gap-2">
             <AnimatedDropdown
               label="User Type"
               id="userType"
@@ -2075,7 +1797,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 setUpdateDetails({ ...updateDetails, domain: e.target.value })
               }
             />
-          </div>
+          </div> */}
           {/* Row 3 */}
           <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
             <div className="flex items-center justify-center">
@@ -2108,7 +1830,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           </div>
 
           {/* Row 4 */}
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
+          {/* <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
             <div className="flex items-center justify-center">
               <UniversalLabel
                 text="Application Type"
@@ -2157,7 +1879,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 Type 2
               </label>
             </div>
-          </div>
+          </div> */}
 
           <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
