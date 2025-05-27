@@ -144,3 +144,25 @@ export const exportData = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+
+
+//schedule data
+export const  scheduledata = async(data) => {
+  return await fetchWithAuth(`/rcs/getScheduledRcsCampaignReport?selectedUserId=0`, {
+    method: 'POST',
+    body: JSON.stringify(data)
+  });
+}
+
+
+//cancelschedule
+export const cancelschedule = async (data) => {
+  return await fetchWithAuth(
+    `/rcs/cancelCampaign?selectedUserId=0&srNo=${data.srNo}`,
+    {
+      method: "POST",
+     
+    }
+  );
+};

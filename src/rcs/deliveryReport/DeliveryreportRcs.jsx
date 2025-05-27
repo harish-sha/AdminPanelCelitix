@@ -26,6 +26,8 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { ExportDialog } from "./components/exportDialog";
+import CampaignScheduleTable from "./components/CampaignSchedule";
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -47,6 +49,17 @@ const DeliveryreportRcs = () => {
     isMonthWise: false,
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
+
+
+  // scheduleState
+  const [scheduleData, setScheduleData] = useState({
+    startDate: new Date(),
+    templateType: " ",
+    campaignName: " ",
+    status: " ",
+  });
+  const [scheduleTableData, setScheduleTableData] = useState([]);
+  
 
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -182,6 +195,26 @@ const DeliveryreportRcs = () => {
     setVisibledialog(true);
   }
 
+
+  // fetchscheduleData
+  const handleScheduleSearch = async () => {
+    const data = {
+      startDate: new Date(scheduleData.startDate).toDateString(),
+      endDate: new Date(scheduleData.endDate).toDateString(),
+      templateType: scheduleData.templateType ?? "",
+      campaignDataName: scheduleData.campaignName,
+      status: scheduleData.status ?? "",
+    }
+    try{
+      setIsFetching(true);
+      const res = await scheduledata(data)
+      setScheduleTableData(res);
+      console.log(res);
+    }catch(err){
+      toast.error("Not Fetching schedule Data",err)
+    }
+  }
+
   return (
     <div>
       <div className="w-full">
@@ -233,7 +266,29 @@ const DeliveryreportRcs = () => {
                 },
               }}
             />
+
+            <Tab
+              label={
+                <span className="flex items-center gap-1 text-sm md:text-base">
+                  <CalendarMonthOutlinedIcon fontSize="small" />  Schedule
+                </span>
+              }
+              {...a11yProps(2)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
           </Tabs>
+
+
+
 
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
@@ -425,19 +480,120 @@ const DeliveryreportRcs = () => {
               />
             </div>
           </CustomTabPanel>
+
+          <CustomTabPanel value={value} index={2}>
+            <div className="w-full">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-56">
+                  <UniversalDatePicker
+                    label="Created On"
+                    id="created"
+                    name="created"
+                    defaultValue={new Date()}
+                    value={setScheduleData.startDate}
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        startDate: e,
+                      });
+                    }}
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <InputField
+                    label="Campaign Name"
+                    id="campaignName"
+                    name="campaignName"
+                    placeholder="Enter Campaign Name"
+                    value={scheduleData.campaignName}
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        campaignName: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <AnimatedDropdown
+                    label="Template Type"
+                    id="templateType"
+                    name="templateType"
+                    options={[
+                      { label: "Text", value: "text" },
+                      { label: "Image", value: "image" },
+                    ]}
+                    value={scheduleData.templateType}
+                    placeholder="Select Template Type"
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        templateType: e,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                <InputField 
+                label="Status"
+                placeholder="Schedule"
+                />
+                  
+                </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetching ? "Searching..." : "Search"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    onClick={handleScheduleSearch}
+                    icon={<IoSearch />}
+                    disabled={isFetching}
+                  />
+                </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
+                    label="Export"
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
+                    onClick={handleExportBtn}
+                    variant="primary"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="w-full">
+              <CampaignScheduleTable
+                id="RCSScheduleTable"
+                name="RCSScheduleTable"
+               data={scheduleData} />
+
+           
+            </div>
+          </CustomTabPanel>
+
         </Box>
       </div>
 
-      {visibledialog && (
-        <ExportDialog
-          visibledialog={visibledialog}
-          setVisibledialog={setVisibledialog}
-          allCampaigns={allCampaigns}
-          setDataToExport={setDataToExport}
-          dataToExport={dataToExport}
-        />
-      )}
-    </div>
+      {
+        visibledialog && (
+          <ExportDialog
+            visibledialog={visibledialog}
+            setVisibledialog={setVisibledialog}
+            allCampaigns={allCampaigns}
+            setDataToExport={setDataToExport}
+            dataToExport={dataToExport}
+          />
+        )
+      }
+    </div >
   );
 };
 
