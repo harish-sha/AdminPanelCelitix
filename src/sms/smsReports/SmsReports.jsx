@@ -25,6 +25,8 @@ import {
   getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
+  fetchScheduleCampaignData,
+  cancelScheduleCampaignSms
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
 import IconButton from "@mui/material/IconButton";
@@ -43,6 +45,7 @@ const SmsReports = () => {
 
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingScheduleData, setIsFetchingScheduleData] = useState(false);
   const [exports, setExports] = useState(false);
   const [exportStatus, setExportStatus] = useState("disable");
   const [selectexportcampaign, setSelectExportCampaign] = useState(null);
@@ -65,6 +68,11 @@ const SmsReports = () => {
     campaingName: "",
     mobilesnodata: "",
     campaingType: 1,
+  });
+
+  const [campaignScheduleDataToFilter, setCampaignScheduleDataToFilter] = useState({
+    campaignDate: new Date(),
+    campaignName: "",
   });
   const [campaignTableData, setCampaignTableData] = useState([]);
 
@@ -125,7 +133,12 @@ const SmsReports = () => {
     customColumns: "",
     campaignType: "",
     status: "",
-    delStatus: {},
+    delStatus: {
+    delivered: false,
+    undelivered: false,
+    rejected: false,
+    pdr: false,
+    },
     type: "campaign",
   });
 
@@ -257,7 +270,7 @@ const SmsReports = () => {
         ),
       };
       const res = await fetchCampaignData(data);
-
+      
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
@@ -334,7 +347,7 @@ const SmsReports = () => {
                   />
                 </IconButton>
               </CustomTooltip>
-              <CustomTooltip title="Cancel" placement="top" arrow>
+              {/* <CustomTooltip title="Cancel" placement="top" arrow>
                 <IconButton onClick={() => handleCancel(params.row)}>
                   <CancelOutlinedIcon
                     sx={{
@@ -343,7 +356,7 @@ const SmsReports = () => {
                     }}
                   />
                 </IconButton>
-              </CustomTooltip>
+              </CustomTooltip> */}
             </>
           ),
         },
@@ -367,6 +380,126 @@ const SmsReports = () => {
       setIsFetching(false);
     }
   };
+
+
+  const handleScheduleCampaignSearch = async () => {
+  try {
+    setIsFetchingScheduleData(true);
+
+    // Prepare the data for the API call (if needed)
+    
+    const filterCampaignName = campaignScheduleDataToFilter.campaignName;
+    const filterCampaignDate = new Date(campaignScheduleDataToFilter.campaignDate).toLocaleDateString("en-GB");
+      
+    // Make the API call (use data if required)
+    const res = await fetchScheduleCampaignData();
+
+    const handleScheduleSmsCancel = async (row) => {
+    const srno = row.campaignSrno;
+    const selectedUserId = 0;
+
+    try {
+      const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+      if (result) {
+        toast.success("Campaign cancelled successfully");
+
+      // Remove the deleted campaign from the table data
+      setCampaignTableData((prev) => prev.filter((item) => item.campaignSrno !== srno));
+      setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+
+        } else {
+          console.warn("Cancel request failed or returned empty response.");
+          toast.error("Cancel request failed");
+        }
+      } catch (error) {
+        console.error("Error cancelling campaign:", error);
+        toast.error("Error cancelling campaign");
+      }
+    };
+
+
+    // Filter logic
+   let filteredData = Array.isArray(res)
+  ? res.filter((item) => {
+      const itemName = item.campaignName?.toLowerCase().trim() || "";
+      const itemDate = item.campaignDate
+        ? new Date(item.campaignDate).toLocaleDateString("en-GB")
+        : "";
+
+      const nameMatches = filterCampaignName ? itemName.includes(filterCampaignName) : true;
+      const dateMatches = filterCampaignDate ? itemDate === filterCampaignDate : true;
+
+      return nameMatches && dateMatches;
+    })
+  : [];
+ 
+    // Map data to the expected format
+    filteredData = filteredData.map((item, i) => ({
+      id: item.srno || `row-${i}`,
+      sn: i + 1,
+      campaign_date: item.campaignDate || "-",
+      campaign_name: item.campaignName || "-",
+      sent_time: item.sentTime || "-",
+      campaignSrno: item.srno,
+    }));
+
+   // Update state with filtered data
+    setCampaignTableData(filteredData);
+    setRows(filteredData);
+
+    // Define DataGrid columns
+    setColumns([
+      { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      { field: "campaign_date", headerName: "Campaign Date", flex: 1, minWidth: 120 },
+      { field: "campaign_name", headerName: "Campaign Name", flex: 1, minWidth: 150 },
+      { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+      {
+        field: "action",
+        headerName: "Action",
+        flex: 1,
+        minWidth: 100,
+        renderCell: (params) => (
+          <>
+            {/* <CustomTooltip title="Detailed Log" placement="top" arrow>
+              <IconButton
+                className="no-xs"
+                onClick={() =>
+                  navigate("/smscampaigndetaillogs", {
+                    state: { id: params.row.id },
+                  })
+                }
+              >
+                <DescriptionOutlinedIcon
+                  sx={{
+                    fontSize: "1.2rem",
+                    color: "green",
+                  }}
+                />
+              </IconButton>
+            </CustomTooltip> */}
+
+            <CustomTooltip title="Cancel" placement="top" arrow>
+              <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+                <CancelOutlinedIcon
+                  sx={{
+                    fontSize: "1.2rem",
+                    color: "gray",
+                  }}
+                />
+              </IconButton>
+            </CustomTooltip>
+          </>
+        ),
+      },
+    ]);
+  } catch (error) {
+    console.error("Error fetching campaign data:", error);
+    toast.error("Something went wrong.");
+  } finally {
+    setIsFetchingScheduleData(false);
+  }
+};
+
 
   const handlePreviousDaysSearch = async () => {
     const data = {
@@ -883,6 +1016,24 @@ const SmsReports = () => {
                 },
               }}
             />
+            <Tab
+              label={
+                <span>
+                  <LibraryBooksOutlinedIcon size={20} /> Schedule Logs
+                </span>
+              }
+              {...a11yProps(4)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
           </Tabs>
 
           {/* <UniversalButton
@@ -1300,6 +1451,65 @@ const SmsReports = () => {
               name="AttachmentTableSms"
               col={columns}
               rows={rows}
+            />
+          </div>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={4}>
+          <div className="w-full">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-52">
+                <UniversalDatePicker
+                  label="Created On"
+                  id="campaigndate"
+                  name="campaigndate"
+                  value={campaignScheduleDataToFilter.campaignDate}
+                  onChange={(value) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignDate: value,
+                    }));
+                  }}
+                  placeholder="Select Date"
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
+                />
+              </div>
+              <div className="w-full sm:w-52">
+                <InputField
+                  label="Campaign Name"
+                  id="campaignName"
+                  name="campaignName"
+                  placeholder="Enter campaign name"
+                  value={campaignScheduleDataToFilter.campaignName}
+                  onChange={(e) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignName: e.target.value, 
+                    }));
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-52 flex gap-2">
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetchingScheduleData ? "Searching..." : "Search"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    icon={<IoSearch />}
+                    onClick={handleScheduleCampaignSearch}
+                    disabled={isFetchingScheduleData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full">
+            <DataTable
+              id="ScheduleCampaignTableSms"
+              name="ScheduleCampaignTableSms"
+              rows={rows}
+              col={columns}
             />
           </div>
         </CustomTabPanel>

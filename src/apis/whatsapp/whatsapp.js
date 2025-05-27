@@ -163,13 +163,12 @@ export const getWhatsappCampaignScheduledReport = async () => {
         "Content-Type": "application/json",
       },
     });
-    console.log("response from schedule", response)
 
-    if (!response || !response.data) {
+    if (!response) {
       console.error("Failed to fetch campaign report.");
       return [];
     }
-    return response.data || [];
+    return response || [];
   } catch (error) {
     console.error("Error fetching campaign report:", error);
     return [];

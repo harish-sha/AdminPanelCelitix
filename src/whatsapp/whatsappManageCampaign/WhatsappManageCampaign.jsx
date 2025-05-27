@@ -40,6 +40,7 @@ import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
+import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 
 
 function CustomTabPanel(props) {
@@ -75,14 +76,18 @@ const WhatsappManageCampaign = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
+  const [scheduleCampaignName, setScheduleCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
   const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
   const [campaignCategory, setCampaignCategory] = useState("");
   const [campaignType, setCampaignType] = useState("");
   const [campaignStatus, setCampaignStatus] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
+  const [scheduleData, setScheduleData] = useState([]);
+  const [orignalScheduleData, setOrignalScheduleData] = useState([]);
   const [logsData, setLogsData] = useState([]);
   const [WabaList, setWabaList] = useState([]);
   const [isMonthWise, setIsMonthWise] = useState(false);
@@ -92,7 +97,6 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
-
   //Export Download Reports start
 
   const [customOptions, setCustomOptions] = useState("radioOptiondisable");
@@ -124,13 +128,13 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    campaignName: "",
+    // campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
-    campaignType: "",
+    campaignType: 0,
     status: "",
     delStatus: {},
     type: "campaign",
@@ -234,6 +238,11 @@ const WhatsappManageCampaign = () => {
     setCampaignName(newValue);
   };
 
+  const handleScheduleInputChange = (e) => {
+    const newValue = e.target.value.replace(/\s/g, "");
+    setScheduleCampaignName(newValue);
+  };
+
   const handleInputChangeMobileLogs = (e) => {
     setInputValueMobileLogs(e.target.value);
   };
@@ -271,6 +280,7 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
+  
   // Fetch initial data - for to load data on page load
   const fetchInitialData = async () => {
     const filters = {
@@ -282,19 +292,53 @@ const WhatsappManageCampaign = () => {
 
     setIsFetching(true);
     const data = await getWhatsappCampaignReport(filters);
-    console.log("data",data)
     setFilteredData(data);
     setIsFetching(false);
   };
 
-   // Fetch Scheduled Campaign data - for to load data on page load
+const handleScheduleSearch = async() => {
+  const formattedSelectedDate = scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+  ? new Date(scheduleSelectedDate).toISOString().split("T")[0]
+  : null;
+
+  // Check if filters are provided
+  const filtersApplied = scheduleCampaignName || scheduleSelectedDate;
+
+  if (!filtersApplied) {
+    console.log("No filters applied, showing all data.");
+    // await getWhatsappCampaignScheduledReport();
+    setScheduleData(orignalScheduleData); // Reset to full data
+    return;
+  }
+
+  const filteredData = orignalScheduleData.filter((item, index) => {
+    const matchesCampaignName = scheduleCampaignName
+      ? item.campaignName?.toLowerCase().includes(scheduleCampaignName.toLowerCase())
+      : true;
+
+    const itemDate = item.sentTime ? item.sentTime.split(" ")[0] : "";
+    const matchesDate = formattedSelectedDate
+      ? itemDate === formattedSelectedDate
+      : true;
+
+    const finalMatch = matchesCampaignName && matchesDate;
+    return finalMatch;
+  });
+  setScheduleData(filteredData);
+};
+
+
+  // Fetch initial data - for to load data on page load
   const fetchScheduleCampaignData = async () => {
-    // setIsFetching(true);
-    const data = await getWhatsappCampaignScheduledReport(filters);
-    console.log("dataaaaaaaaaaaaaa",data)
-    // setFilteredData(data);
-    // setIsFetching(false);
-  };
+  setIsFetching(true);
+  const data = await getWhatsappCampaignScheduledReport();
+  console.log("scheduleDataaaa", data);
+
+  setOrignalScheduleData(data); // Save the unfiltered data
+  setScheduleData(data); // Also set to display
+  setIsFetching(false);
+};
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -306,12 +350,12 @@ const WhatsappManageCampaign = () => {
   }, []);
 
   useEffect(() => {
-    const fetchScheduledData = async () => {
-      // setIsLoading(true);
+    const fetchScheduleData = async () => {
+      setIsLoading(true);
       await fetchScheduleCampaignData();
-      // setIsLoading(false);
+      setIsLoading(false);
     };
-    fetchScheduledData();
+    fetchScheduleData();
   }, []);
 
   useEffect(() => {
@@ -884,14 +928,14 @@ const WhatsappManageCampaign = () => {
                     id="manageCampaignDate"
                     name="manageCampaignDate"
                     label="Created On"
-                    value={selectedDate}
-                    onChange={(newValue) => setSelectedDate(newValue)}
+                    value={scheduleSelectedDate}
+                    onChange={(newValue) => setScheduleSelectedDate(newValue)}
                     placeholder="Pick a start date"
                     tooltipContent="Select a date within the last 3 months."
                     tooltipPlacement="right"
                     minDate={new Date().setMonth(new Date().getMonth() - 3)}
                     maxDate={new Date()}
-                    error={!selectedDate}
+                    error={!scheduleSelectedDate}
                     errorText="Please select a valid date"
                   />
                 </div>
@@ -900,14 +944,14 @@ const WhatsappManageCampaign = () => {
                     id="manageCampaignName"
                     name="manageCampaignName"
                     label="Campaign Name"
-                    value={campaignName}
-                    onChange={handleInputChange}
+                    value={scheduleCampaignName}
+                    onChange={handleScheduleInputChange}
                     placeholder="Campaign Name"
                     tooltipContent="Your templatename should not contain spaces."
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="w-full sm:w-48">
+                {/* <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignCategory"
                     name="manageCampaignCategory"
@@ -923,8 +967,8 @@ const WhatsappManageCampaign = () => {
                     onChange={(value) => setCampaignCategory(value)}
                     placeholder="Category"
                   />
-                </div>
-                <div className="w-full sm:w-48">
+                </div> */}
+                {/* <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignType"
                     name="manageCampaignType"
@@ -941,8 +985,8 @@ const WhatsappManageCampaign = () => {
                     onChange={(value) => setCampaignType(value)}
                     placeholder="Type"
                   />
-                </div>
-                <div className="w-full sm:w-48">
+                </div> */}
+                {/* <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignStatus"
                     name="manageCampaignStatus"
@@ -960,21 +1004,21 @@ const WhatsappManageCampaign = () => {
                     onChange={(value) => setCampaignStatus(value)}
                     placeholder="Status"
                   />
-                </div>
+                </div> */}
                 <div className="w-max-content">
                   <UniversalButton
                     id="manageCampaignSearchBtn"
                     name="manageCampaignSearchBtn"
                     label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
-                    onClick={handleSearch}
+                    onClick={()=>handleScheduleSearch()}
                     variant="primary"
                   />
                 </div>
-                <div className="w-max-content">
+                {/* <div className="w-max-content">
                   <UniversalButton
-                    id="manageCampaignExportBtn"
-                    name="manageCampaignExportBtn"
+                    id="manageScheduleCampaignExportBtn"
+                    name="manageScheduleCampaignExportBtn"
                     label="Export"
                     icon={
                       <IosShareOutlinedIcon
@@ -984,7 +1028,7 @@ const WhatsappManageCampaign = () => {
                     onClick={handleExportBtn}
                     variant="primary"
                   />
-                </div>
+                </div> */}
               </div>
               {isFetching ? (
                 <div className="">
@@ -992,12 +1036,12 @@ const WhatsappManageCampaign = () => {
                 </div>
               ) : (
                 <div className="w-full">
-                  <ManageCampaignTable
+                  <ManageScheduleCampaignTable
                     id="whatsappManageCampaignScheduleTable"
-                    name="whatsappManageCampaignScheduleTable"
-                    data={filteredData}
+                    name="whatsappManageCampaignTable"
+                    data={scheduleData}
                     fromDate={selectedDate}
-                    fetchInitialData={fetchInitialData}
+                    fetchInitialData={fetchScheduleCampaignData}
                   />
                 </div>
               )}

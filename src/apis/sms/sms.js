@@ -8,6 +8,21 @@ export const fetchCampaignData = async (data) => {
   });
 };
 
+// get schedule campaign report
+export const fetchScheduleCampaignData = async (data) => {
+  return await fetchWithAuth("/getScheduledSMSCampaignReport", {
+    method: "POST"
+  });
+};
+
+// delete campaign
+export const cancelScheduleCampaignSms = async ({ srno, selectedUserId }) => {
+  return await fetchWithAuth(`/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`, {
+    method: "POST",
+  });
+};
+
+
 // campaign details reports
 export const getCampaignDetails = async (data) => {
   return await fetchWithAuth("/getSMSCampaignDetails", {

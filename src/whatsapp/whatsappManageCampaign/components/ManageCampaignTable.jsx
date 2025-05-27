@@ -455,7 +455,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }
     const result = await cancelCampaign({ srno, selectedUserId });
     if (result) {
       console.log("Campaign cancelled successfully:", result);
-      toast.success("Campaign deleted successfully");
+      toast.success("Campaign cancelled successfully");
       fetchInitialData()
     } else {
       console.warn("Cancel request failed or returned empty response.");
@@ -521,17 +521,9 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }
       flex: 1,
       minWidth: 150,
       renderCell: (params) => {
-        const isScheduled = params.row.status === "scheduled";
         return(
         <>
-        {isScheduled ? ( 
-          <CustomTooltip title="Cancel Campaign" placement="top" arrow>
-            <IconButton onClick={() => handleCancel(params.row)}>
-              <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-            </IconButton>
-          </CustomTooltip>
-        ) : (
-          <>
+       
           {/* <CustomTooltip title="View Campaign" placement="top" arrow={true}>
             <IconButton
               className="text-xs"
@@ -657,8 +649,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }
               />
             </IconButton>
           </CustomTooltip>
-        </>
-        )}
         </>
         )
       },

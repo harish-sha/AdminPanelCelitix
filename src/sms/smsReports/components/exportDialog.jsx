@@ -22,20 +22,23 @@ export const ExportDialog = ({
   const { triggerDownloadNotification } = useDownload();
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
-    mobileNo: false,
-    callType: false,
-    totalUnits: false,
-    queueTime: false,
-    sentTime: false,
-    deliveryTime: false,
-    callDuration: false,
-    retryCount: false,
-    callStatus: false,
-    deliveryStatus: false,
-    keypress: false,
-    action: false,
-    source: false,
+    mobile_no: false,
+    smsunit: false,
+    message: false,
+    senderid: false,
+    status: false,
+    que_time: false,
+    sent_time: false,
+    del_time: false,
+    actual_status: false,
+    actual_err_code: false,
+    reason: false,
+    client_sms_no: false,
+    isunicode: false,
+    PE_ID: false,
+    template_id: false,
   });
+
   const handleCheckboxChange = (e, name) => {
     setCampaignCheckboxStates((prevState) => ({
       ...prevState,
@@ -80,6 +83,25 @@ export const ExportDialog = ({
       const res = await downloadCustomSmsReport(payload);
       if (!res.status) return toast.error(res.msg);
       toast.success(res.msg);
+      setDataToExport((prev) => ({
+        ...prev,
+        campaignName: "",
+        fromDate: "",
+        toDate: "",
+        srno: 0,
+        isCustomField: 0,
+        customColumns: "",
+        campaignType: "",
+        status: "",
+        delStatus: {
+          delivered: false,
+          undelivered: false,
+          rejected: false,
+          pdr: false,
+        },
+        type: "campaign",
+      }));
+
       setVisibledialog(false);
       triggerDownloadNotification();
     } catch (e) {
@@ -88,35 +110,34 @@ export const ExportDialog = ({
     // setVisibledialog(false);
   }
 
-  async function handleDeliveryCheckboxChange(e, name) {
-    const selectedField = {
+async function handleDeliveryCheckboxChange(e, name) {
+  setDataToExport((prev) => ({
+
+    ...prev,
+    delStatus: {
+      ...prev.delStatus,
       [name]: e.target.checked,
-    };
-    if (selectedField[name] === false) {
-      delete dataToExport.delStatus[name];
-      delete selectedField[name];
-    }
-    setDataToExport((prev) => ({
-      ...prev,
-      delStatus: { ...prev.delStatus, ...selectedField },
-    }));
-  }
+    },
+  }));
+}
 
   useEffect(() => {
     setCampaignCheckboxStates({
-      mobileNo: false,
-      callType: false,
-      totalUnits: false,
-      queueTime: false,
-      sentTime: false,
-      deliveryTime: false,
-      callDuration: false,
-      retryCount: false,
-      callStatus: false,
-      deliveryStatus: false,
-      keypress: false,
-      action: false,
-      source: false,
+    mobile_no: false,
+    smsunit: false,
+    message: false,
+    senderid: false,
+    status: false,
+    que_time: false,
+    sent_time: false,
+    del_time: false,
+    actual_status: false,
+    actual_err_code: false,
+    reason: false,
+    client_sms_no: false,
+    isunicode: false,
+    PE_ID: false,
+    template_id: false,
     });
   }, [dataToExport?.type, dataToExport?.isCustomField]);
 
@@ -310,9 +331,9 @@ export const ExportDialog = ({
                 <AnimatedDropdown
                   label="Select Type"
                   options={[
-                    { value: "Promotional", label: "Promotional" },
-                    { value: "Transactional", label: "Transactional" },
-                    { value: "Both", label: "Both" },
+                    { value: 0, label: "Transactional" },
+                    { value: 1, label: "Promotional" },
+                    { value: 2, label: "Both" },
                   ]}
                   value={dataToExport.campaignType}
                   onChange={(e) =>
@@ -324,11 +345,12 @@ export const ExportDialog = ({
 
               <div className="flex-1">
                 <AnimatedDropdown
-                  label="Select Request"
+                  label="Select Status"
                   options={[
                     { value: "Sent", label: "Sent" },
                     { value: "Failed", label: "Failed" },
                     { value: "NDNC", label: "NDNC" },
+                    { value: "Blocked", label: "Blocked" },
                   ]}
                   value={dataToExport.status}
                   onChange={(e) =>
@@ -344,59 +366,75 @@ export const ExportDialog = ({
               <div className="flex gap-x-5 lg:gap-x-20">
                 <div className="flex items-center">
                   <Checkbox
-                    id="answered"
-                    name="answered"
+                    id="delivered"
+                    name="delivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "answered")
+                      handleDeliveryCheckboxChange(e, "delivered")
                     }
-                    checked={dataToExport.delStatus["answered"]}
+                    checked={dataToExport.delStatus["delivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="answered"
+                    htmlFor="delivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Answered
+                    Delivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="unanswered"
-                    name="unanswered"
+                    id="undelivered"
+                    name="undelivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "unanswered")
+                      handleDeliveryCheckboxChange(e, "undelivered")
                     }
-                    checked={dataToExport.delStatus["unanswered"]}
+                    checked={dataToExport.delStatus["undelivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="unanswered"
+                    htmlFor="undelivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Unanswered
+                    Undelivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="dialed"
-                    name="dialed"
-                    onChange={(e) => handleDeliveryCheckboxChange(e, "dialed")}
-                    checked={dataToExport.delStatus["dialed"]}
+                    id="rejected"
+                    name="rejected"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "rejected")}
+                    checked={dataToExport.delStatus["rejected"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="dialed"
+                    htmlFor="rejected"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Dialed
+                    Rejected
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <Checkbox
+                    id="pdr"
+                    name="pdr"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "pdr")}
+                    checked={dataToExport.delStatus["pdr"]}
+                    className="m-2"
+                  />
+                  <label
+                    htmlFor="pdr"
+                    className="text-sm font-medium text-gray-800"
+                  >
+                    PDR
                   </label>
                 </div>
               </div>
             </div>
 
-            <div className="flex my-4 gap-4">
+            {/* <div className="flex my-4 gap-4">
               <InputField
                 label="Mobile Number"
                 id="customdialognumber"
@@ -406,7 +444,7 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, mobileNo: e.target.value })
                 }
                 placeholder="Enter mobile number..."
-              />
+              /> */}
               {/* <AnimatedDropdown
                 label="DTMF Count"
                 id="dtmfResponse"
@@ -429,7 +467,7 @@ export const ExportDialog = ({
                 value={dataToExport.dtmfResponse}
                 placeholder="DTMF Response"
               /> */}
-            </div>
+            {/* </div> */}
           </div>
           {/* Custom Columns Radio */}
           <div className="flex items-center lg:gap-x-20 gap-x-10 my-6">
@@ -490,80 +528,119 @@ export const ExportDialog = ({
         <div>
           <>
             <div className="grid grid-cols-2 lg:grid-cols-3 ">
-              <div className="flex items-center">
+              {
+                dataToExport.type === "custom" && 
+                <div className="flex items-center">
                 <Checkbox
-                  id="mobileNo"
-                  name="mobileNo"
-                  onChange={(e) => handleCheckboxChange(e, "mobileNo")}
-                  checked={campaigncheckboxStates.mobileNo}
+                  id="mobile_no"
+                  name="mobile_no"
+                  onChange={(e) => handleCheckboxChange(e, "mobile_no")}
+                  checked={campaigncheckboxStates.mobile_no}
                   className="m-2"
                 />
                 <label
-                  htmlFor="mobileNo"
+                  htmlFor="mobile_no"
                   className="text-sm font-medium text-gray-800"
                 >
                   Mobile Number
                 </label>
               </div>
-
-              <div className="flex items-center">
+              }
+              
+              {
+                dataToExport.type === "custom" &&
+                <div className="flex items-center">
                 <Checkbox
-                  id="callType"
-                  name="callType"
-                  onChange={(e) => handleCheckboxChange(e, "callType")}
-                  checked={campaigncheckboxStates.callType}
+                  id="smsunit"
+                  name="smsunit"
+                  onChange={(e) => handleCheckboxChange(e, "smsunit")}
+                  checked={campaigncheckboxStates.smsunit}
                   className="m-2"
                 />
                 <label
-                  htmlFor="callType"
+                  htmlFor="smsunit"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Call Type
+                  SMS Unit
+                </label>
+              </div>
+              }
+              
+
+              <div className="flex items-center">
+                <Checkbox
+                  id="message"
+                  name="message"
+                  onChange={(e) => handleCheckboxChange(e, "message")}
+                  checked={campaigncheckboxStates.message}
+                  className="m-2"
+                />
+                <label
+                  htmlFor="message"
+                  className="text-sm font-medium text-gray-800"
+                >
+                  Message
                 </label>
               </div>
 
               <div className="flex items-center">
                 <Checkbox
-                  id="totalUnits"
-                  name="totalUnits"
-                  onChange={(e) => handleCheckboxChange(e, "totalUnits")}
-                  checked={campaigncheckboxStates.totalUnits}
+                  id="senderid"
+                  name="senderid"
+                  onChange={(e) => handleCheckboxChange(e, "senderid")}
+                  checked={campaigncheckboxStates.senderid}
                   className="m-2"
                 />
                 <label
-                  htmlFor="totalUnits"
+                  htmlFor="senderid"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Total Units
+                  Sender Id
                 </label>
               </div>
 
               <div className="flex items-center">
                 <Checkbox
-                  id="queueTime"
-                  name="queueTime"
-                  onChange={(e) => handleCheckboxChange(e, "queueTime")}
-                  checked={campaigncheckboxStates.queueTime}
+                  id="status"
+                  name="status"
+                  onChange={(e) => handleCheckboxChange(e, "status")}
+                  checked={campaigncheckboxStates.status}
                   className="m-2"
                 />
                 <label
-                  htmlFor="queueTime"
+                  htmlFor="status"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Queue Time
+                  Status
                 </label>
               </div>
 
               <div className="flex items-center">
                 <Checkbox
-                  id="sentTime"
-                  name="sentTime"
-                  onChange={(e) => handleCheckboxChange(e, "sentTime")}
-                  checked={campaigncheckboxStates.sentTime}
+                  id="que_time"
+                  name="que_time"
+                  onChange={(e) => handleCheckboxChange(e, "que_time")}
+                  checked={campaigncheckboxStates.que_time}
                   className="m-2"
                 />
                 <label
-                  htmlFor="sentTime"
+                  htmlFor="que_time"
+                  className="text-sm font-medium text-gray-800"
+                >
+                  Que Time
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Checkbox
+                  id="sent_time"
+                  name="sent_time"
+                  onChange={(e) => handleCheckboxChange(e, "sent_time")}
+                  checked={campaigncheckboxStates.sent_time}
+                  className="m-2"
+                />
+                <label
+                  htmlFor="sent_time"
                   className="text-sm font-medium text-gray-800"
                 >
                   Sent Time
@@ -572,14 +649,14 @@ export const ExportDialog = ({
 
               <div className="flex items-center">
                 <Checkbox
-                  id="deliveryTime"
-                  name="deliveryTime"
-                  onChange={(e) => handleCheckboxChange(e, "deliveryTime")}
-                  checked={campaigncheckboxStates.deliveryTime}
+                  id="del_time"
+                  name="del_time"
+                  onChange={(e) => handleCheckboxChange(e, "del_time")}
+                  checked={campaigncheckboxStates.del_time}
                   className="m-2"
                 />
                 <label
-                  htmlFor="deliveryTime"
+                  htmlFor="del_time"
                   className="text-sm font-medium text-gray-800"
                 >
                   Delivery Time
@@ -588,62 +665,14 @@ export const ExportDialog = ({
 
               <div className="flex items-center">
                 <Checkbox
-                  id="callDuration"
-                  name="callDuration"
-                  onChange={(e) => handleCheckboxChange(e, "callDuration")}
-                  checked={campaigncheckboxStates.callDuration}
+                  id="actual_status"
+                  name="actual_status"
+                  onChange={(e) => handleCheckboxChange(e, "actual_status")}
+                  checked={campaigncheckboxStates.actual_status}
                   className="m-2"
                 />
                 <label
-                  htmlFor="callDuration"
-                  className="text-sm font-medium text-gray-800"
-                >
-                  Call Duration
-                </label>
-              </div>
-
-              <div className="flex items-center">
-                <Checkbox
-                  id="retryCount"
-                  name="retryCount"
-                  onChange={(e) => handleCheckboxChange(e, "retryCount")}
-                  checked={campaigncheckboxStates.retryCount}
-                  className="m-2"
-                />
-                <label
-                  htmlFor="retryCount"
-                  className="text-sm font-medium text-gray-800"
-                >
-                  Retry Count
-                </label>
-              </div>
-
-              <div className="flex items-center">
-                <Checkbox
-                  id="callStatus"
-                  name="callStatus"
-                  onChange={(e) => handleCheckboxChange(e, "callStatus")}
-                  checked={campaigncheckboxStates.callStatus}
-                  className="m-2"
-                />
-                <label
-                  htmlFor="callStatus"
-                  className="text-sm font-medium text-gray-800"
-                >
-                  Call Status
-                </label>
-              </div>
-
-              <div className="flex items-center">
-                <Checkbox
-                  id="deliveryStatus"
-                  name="deliveryStatus"
-                  onChange={(e) => handleCheckboxChange(e, "deliveryStatus")}
-                  checked={campaigncheckboxStates.deliveryStatus}
-                  className="m-2"
-                />
-                <label
-                  htmlFor="deliveryStatus"
+                  htmlFor="actual_status"
                   className="text-sm font-medium text-gray-800"
                 >
                   Delivery Status
@@ -652,49 +681,97 @@ export const ExportDialog = ({
 
               <div className="flex items-center">
                 <Checkbox
-                  id="keypress"
-                  name="keypress"
-                  onChange={(e) => handleCheckboxChange(e, "keypress")}
-                  checked={campaigncheckboxStates.keypress}
+                  id="actual_err_code"
+                  name="actual_err_code"
+                  onChange={(e) => handleCheckboxChange(e, "actual_err_code")}
+                  checked={campaigncheckboxStates.actual_err_code}
                   className="m-2"
                 />
                 <label
-                  htmlFor="keypress"
+                  htmlFor="actual_err_code"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Key Press
+                  Actual Error Code
                 </label>
               </div>
 
               <div className="flex items-center">
                 <Checkbox
-                  id="action"
-                  name="action"
-                  onChange={(e) => handleCheckboxChange(e, "action")}
-                  checked={campaigncheckboxStates.action}
+                  id="reason"
+                  name="reason"
+                  onChange={(e) => handleCheckboxChange(e, "reason")}
+                  checked={campaigncheckboxStates.reason}
                   className="m-2"
                 />
                 <label
-                  htmlFor="action"
+                  htmlFor="reason"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Action
+                  Reason
                 </label>
               </div>
 
               <div className="flex items-center">
                 <Checkbox
-                  id="source"
-                  name="source"
-                  onChange={(e) => handleCheckboxChange(e, "source")}
-                  checked={campaigncheckboxStates.source}
+                  id="client_sms_no"
+                  name="client_sms_no"
+                  onChange={(e) => handleCheckboxChange(e, "client_sms_no")}
+                  checked={campaigncheckboxStates.client_sms_no}
                   className="m-2"
                 />
                 <label
-                  htmlFor="source"
+                  htmlFor="client_sms_no"
                   className="text-sm font-medium text-gray-800"
                 >
-                  Source
+                  Client Sms Number
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Checkbox
+                  id="isunicode"
+                  name="isunicode"
+                  onChange={(e) => handleCheckboxChange(e, "isunicode")}
+                  checked={campaigncheckboxStates.isunicode}
+                  className="m-2"
+                />
+                <label
+                  htmlFor="isunicode"
+                  className="text-sm font-medium text-gray-800"
+                >
+                  Is Unicode
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Checkbox
+                  id="PE_ID"
+                  name="PE_ID"
+                  onChange={(e) => handleCheckboxChange(e, "PE_ID")}
+                  checked={campaigncheckboxStates.PE_ID}
+                  className="m-2"
+                />
+                <label
+                  htmlFor="PE_ID"
+                  className="text-sm font-medium text-gray-800"
+                >
+                  PE Id
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <Checkbox
+                  id="template_id"
+                  name="template_id"
+                  onChange={(e) => handleCheckboxChange(e, "template_id")}
+                  checked={campaigncheckboxStates.template_id}
+                  className="m-2"
+                />
+                <label
+                  htmlFor="template_id"
+                  className="text-sm font-medium text-gray-800"
+                >
+                  Template Id
                 </label>
               </div>
             </div>
