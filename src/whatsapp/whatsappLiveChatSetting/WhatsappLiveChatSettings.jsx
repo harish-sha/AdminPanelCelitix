@@ -414,36 +414,37 @@ const WhatsappLiveChatSettings = () => {
 
   return (
     <>
-      <div className="flex justify-end w-full items-center mb-4 mr-5">
-        <div className="w-[15%]">
-          <AnimatedDropdown
-            id="waba"
-            name="waba"
-            label="Select WABA"
-            tooltipContent="Select your whatsapp business account"
-            tooltipPlacement="right"
-            options={wabaState?.waba?.map((waba) => ({
-              value: waba.mobileNo,
-              label: waba.name,
-            }))}
-            value={wabaState.selected}
-            onChange={(e) => {
-              setWabaState((prev) => ({
-                ...prev,
-                selected: e,
-              }));
-              setCardDetails({});
-            }}
-          />
-        </div>
-      </div>
       <Box
         sx={{
           background: "linear-gradient(to bottom right, #f0f4ff, #ffffff)",
-          py: 5,
-          px: 4,
+          py: 2,
+          px: 2,
+          borderRadius: "20px"
         }}
       >
+        <div className="flex justify-end w-full items-center mb-4 mr-5">
+          <div className="w-[15%]">
+            <AnimatedDropdown
+              id="waba"
+              name="waba"
+              label="Select WABA"
+              tooltipContent="Select your whatsapp business account"
+              tooltipPlacement="right"
+              options={wabaState?.waba?.map((waba) => ({
+                value: waba.mobileNo,
+                label: waba.name,
+              }))}
+              value={wabaState.selected}
+              onChange={(e) => {
+                setWabaState((prev) => ({
+                  ...prev,
+                  selected: e,
+                }));
+                setCardDetails({});
+              }}
+            />
+          </div>
+        </div>
         {/* Heading */}
         <Box maxWidth="lg" mx="auto" textAlign="center" mb={8}>
           <Typography
@@ -460,9 +461,7 @@ const WhatsappLiveChatSettings = () => {
           </Typography>
         </Box>
 
-        <Grid container spacing={5} justifyContent="center" maxWidth="lg">
-          {/* Card 1: WhatsApp Welcome */}
-
+        {/* <Grid container spacing={5} justifyContent="center" maxWidth="lg">
           <Grid item xs={12} sm={6}>
             <MotionPaper
               whileHover={{ scale: 1.02 }}
@@ -479,7 +478,6 @@ const WhatsappLiveChatSettings = () => {
                 transition: "all 0.3s ease",
               }}
             >
-              {/* Header Row: Icon + Title + Toggle */}
               <Box
                 display="flex"
                 alignItems="center"
@@ -536,8 +534,6 @@ const WhatsappLiveChatSettings = () => {
                     "Click to configure"}
                 </Typography>
               </Box>
-
-              {/* Configure Button */}
               <Tooltip title="Click to configure" arrow>
                 <Button
                   variant="contained"
@@ -558,63 +554,222 @@ const WhatsappLiveChatSettings = () => {
               </Tooltip>
             </MotionPaper>
           </Grid>
+        </Grid> */}
 
-          {/* Card 2: Social Media Caption */}
-          {/* <Grid item xs={12} sm={6}>
-            <MotionPaper
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.99 }}
-              elevation={4}
-              sx={{
-                borderRadius: 4,
-                p: 4,
-                display: "flex",
-                flexDirection: "column",
-                gap: 2,
-                height: "100%",
-              }}
-            >
-              <Box display="flex" alignItems="center" gap={2}>
-                <Box
-                  sx={{ backgroundColor: "#e3f2fd", p: 1.5, borderRadius: 2 }}
+        <div className=" flex flex-wrap justify-center items-center gap-5  space-y-8 mx-auto">
+          {liveChatCards.map((card) => {
+            return (
+              <>
+                <div
+                  key={card.id}
+                  className="relative flex w-90 flex-col rounded-xl bg-white bg-clip-border text-gray-700 shadow-md hover:shadow-xl transition-all duration-400 hover:-translate-y-1"
                 >
-                  <EmailIcon color="primary" />
-                </Box>
-                <Typography variant="h6" fontWeight={600}>
-                  Email Newsletter
-                </Typography>
-              </Box>
-              <Typography variant="body2" color="text.secondary">
-                Need help writing your next email? Let us know your goal and
-                we'll write it for you.
-              </Typography>
-              <Box
-                sx={{
-                  backgroundColor: "#f9fafb",
-                  border: "1px solid #e0e0e0",
-                  borderRadius: 2,
-                  p: 2,
-                }}
-              >
-                <Typography
-                  variant="caption"
-                  color="text.secondary"
-                  fontWeight={500}
-                >
-                  New message
-                </Typography>
-                <Typography variant="body2" fontWeight={600}>
-                  Hey, lexi! write an email to my friend, michonne about [tell
-                  us]
-                </Typography>
-              </Box>
-              <Tooltip title="Click to begin" arrow>
-                <Button variant="outlined">Try now →</Button>
-              </Tooltip>
-            </MotionPaper>
-          </Grid> */}
-        </Grid>
+                  <div className="relative mx-4 -mt-6 h-40 overflow-hidden rounded-xl bg-blue-gray-500 bg-clip-border text-white shadow-lg shadow-blue-gray-500/40 bg-gradient-to-r from-green-100 to-green-50">
+                    <Box display="flex" alignItems="center" justifyContent="space-between" marginTop={6}>
+                      <Box display="flex" alignItems="center" gap={2}>
+                        <Box
+                          sx={{
+                            backgroundColor: "#25D3661A",
+                            p: 1.5,
+                            borderRadius: 2,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            marginLeft: 1,
+                          }}
+                        >
+                          <WhatsAppIcon sx={{ color: "#25D366", fontSize: 28 }} />
+                        </Box>
+                        <Typography variant="h6" fontWeight={600} color="#1f2937">
+                          {card.name}
+                        </Typography>
+                      </Box>
+
+                      <Box display="flex" alignItems="center" gap={1}>
+                        <Switch
+                          color="success"
+                          checked={cardDetails[card.type]?.message || 0}
+                          inputProps={{ "aria-label": `${card.type}-toggle` }}
+                          value={cardDetails[card.type]?.status || false}
+                          onClick={() => deleteAction(card.type)}
+                        />
+                      </Box>
+                    </Box>
+                  </div>
+
+                  <div className="p-4">
+                    <p className="mb-2 block font-sans text-sm  font-normal tracking-normal text-gray-600 antialiased">
+                      {card.desc}
+                    </p>
+                    <div
+                      className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap"
+                    >
+                      <span className="text-sm font-semibold text-gray-600" >
+                        {
+                          cardDetails[card.type]?.message ||
+                          "Hi! Thanks for connecting. Our team is unavailable right now. We'll be back at 10am tomorrow."
+                        }
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0 flex flex-wrap justify-center items-center gap-2">
+                    {card.button.map((btnLabel) => (
+                      <Tooltip key={btnLabel} title="Click to configure" arrow>
+                        <Button
+                          variant="contained"
+                          size="medium"
+                          sx={{
+                            mt: 1,
+                            alignSelf: "flex-start",
+                            backgroundColor: "#25D366",
+                            fontWeight: 600,
+                            textTransform: "none",
+                            px: 3,
+                            ":hover": { backgroundColor: "#1ebc59" },
+                          }}
+
+
+                          onClick={() => {
+                            if (!wabaState.selected) {
+                              toast.error("Please select WABA");
+                              return;
+                            }
+                            if (btnLabel === "Configure Text") handleConfigure(card.type);
+                            else if (btnLabel === "Configure Time")
+                              setWorkingHoursDialog(true);
+                          }}
+                        >
+                          {btnLabel}
+                        </Button>
+                      </Tooltip>
+                    ))}
+                  </div>
+                </div>
+              </>
+            )
+          })}
+
+        </div>
+
       </Box>
+
+      <Dialog
+        header={`Working Hours - ${selectedAgentName}`}
+        visible={workingHoursDialog}
+        onHide={() => setWorkingHoursDialog(false)}
+        className="w-[40rem]"
+        draggable={false}
+        onClick={handleWorkingSave}
+      >
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <div className="space-y-2">
+            {/* If working hours are not assigned, show a message + Assign Now button */}
+            {Object.keys(workingHours).length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-gray-500 text-lg space-y-5 mt-5">
+                <p>{selectedAgentName} has not assigned working hours</p>
+                <button
+                  className="bg-blue-400 text-white px-3 py-2 rounded-md hover:bg-blue-500 cursor-pointer text-[1rem]"
+                  onClick={() =>
+                    setWorkingHours({
+                      Monday: { enabled: false, start: null, end: null },
+                      Tuesday: { enabled: false, start: null, end: null },
+                      Wednesday: { enabled: false, start: null, end: null },
+                      Thursday: { enabled: false, start: null, end: null },
+                      Friday: { enabled: false, start: null, end: null },
+                      Saturday: { enabled: false, start: null, end: null },
+                      Sunday: { enabled: false, start: null, end: null },
+                    })
+                  }
+                >
+                  Assign Now
+                </button>
+              </div>
+            ) : (
+              Object.keys(workingHours).map((day) => (
+                <div
+                  key={day}
+                  className="flex items-center flex-wrap justify-between bg-white shadow-md gap-2 p-2 rounded-lg"
+                >
+                  {/* Toggle Open/Closed */}
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      sx={{
+                        "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+                        {
+                          backgroundColor: "#34C759",
+                        },
+                        "& .MuiSwitch-switchBase.Mui-checked": {
+                          color: "#34C759",
+                        },
+                      }}
+                      checked={workingHours[day].enabled}
+                      onChange={() =>
+                        setWorkingHours((prev) => ({
+                          ...prev,
+                          [day]: {
+                            ...prev[day],
+                            enabled: !prev[day].enabled,
+                          },
+                        }))
+                      }
+                    />
+                    <span className="font-semibold text-blue-600 text-sm">
+                      {day}
+                    </span>
+                  </div>
+
+                  {/* Time Inputs when Enabled */}
+                  {workingHours[day].enabled ? (
+                    <div className="flex gap-2">
+                      <TimePicker
+                        value={workingHours[day].start}
+                        onChange={(newTime) =>
+                          setWorkingHours((prev) => ({
+                            ...prev,
+                            [day]: { ...prev[day], start: newTime },
+                          }))
+                        }
+                        ampm
+                        className="w-35 text-xs"
+                      />
+                      <TimePicker
+                        value={workingHours[day].end}
+                        onChange={(newTime) =>
+                          setWorkingHours((prev) => ({
+                            ...prev,
+                            [day]: { ...prev[day], end: newTime },
+                          }))
+                        }
+                        ampm
+                        className="w-35 text-xs"
+                      />
+                    </div>
+                  ) : (
+                    <div className="w-10 flex p-2 pr-10 justify-center items-center">
+                      <span className="text-gray-400 text-sm font-semibold">
+                        Closed
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ))
+            )}
+
+            {/*  Show Save Button only if there are working hours to update */}
+            {Object.keys(workingHours).length !== 0 && (
+              <div className="flex justify-center mt-4">
+                <UniversalButton
+                  label="Save"
+                  id="workingHoursSave"
+                  name="workingHoursSave"
+                  onClick={handleWorkingSave}
+                />
+              </div>
+            )}
+          </div>
+        </LocalizationProvider>
+      </Dialog>
 
       {configureState?.open && (
         <ConfigureDialog
@@ -629,6 +784,7 @@ const WhatsappLiveChatSettings = () => {
           setVariablesData={setVariablesData}
           fileRef={fileRef}
           setSpecificTemplate={setSpecificTemplate}
+          handle15MinTime={handle15MinTime}
         />
       )}
     </>
