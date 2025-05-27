@@ -39,7 +39,6 @@ import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -221,9 +220,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -795,15 +794,17 @@ const WhatsappManageCampaign = () => {
                     placeholder="Waba Account"
                   />
                 </div>
-                <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
-                  <FormGroup>
-                    <FormControlLabel
-                      control={<Checkbox />}
-                      label="Month Wise"
-                      value={isMonthWise}
-                      onClick={(e) => setIsMonthWise(e.target.checked)}
-                    />
-                  </FormGroup>
+                <div className="flex items-center gap-2 justify-center mb-2 w-full sm:w-35 ">
+                  <Checkbox
+                    checked={isMonthWise}
+                    onChange={(e) => setIsMonthWise(e.target.checked)}
+                  />
+                  <label
+                    className="text-sm font-medium text-gray-800 font-p"
+                    htmlFor="isMonthWise"
+                  >
+                    Month Wise
+                  </label>
                 </div>
                 <div className="w-full sm:w-56">
                   <UniversalButton
