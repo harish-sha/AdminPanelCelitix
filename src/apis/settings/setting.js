@@ -46,7 +46,7 @@ export const fetchBalance = async () => {
 };
 
 // Update Password
-export const updatePassword = async (data,params) => {
+export const updatePassword = async (data,params = "") => {
   return await fetchWithAuth(`/settings/changePassword${params}`, {
     method: "POST",
     body: JSON.stringify(data),
