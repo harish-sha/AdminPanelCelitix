@@ -1188,11 +1188,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        srno: item.sr_no,
-        ...item,
-      }))
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          ...item,
+        }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1239,8 +1239,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                }`}
+              className={`w-3 h-3 rounded-full ${
+                isActive ? "bg-green-500" : "bg-red-500"
+              }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1521,10 +1522,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1746,7 +1747,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         className="lg:w-[50rem] md:w-[40rem] w-[20rem]"
         draggable={false}
       >
-        
         <div className="space-y-3">
           <div className="grid gap-4 mb-2 lg:grid-cols-2">
             <InputField
@@ -1771,36 +1771,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }
             />
           </div>
-          {/* <div className="flex gap-2">
-            <AnimatedDropdown
-              label="User Type"
-              id="userType"
-              name="userType"
-              // options={useroption}
-              options={[
-                { value: 1, label: "User" },
-                { value: 2, label: "Reseller" },
-                { value: 3, label: "Reseller USER" },
-              ]}
-              value={updateDetails.userType}
-              onChange={(value) =>
-                setUpdateDetails({ ...updateDetails, userType: value })
-              }
-            />
-            <InputField
-              label="Domain"
-              id="domain"
-              name="domain"
-              placeholder="Enter Domain"
-              value={updateDetails.domain}
-              onChange={(e) =>
-                setUpdateDetails({ ...updateDetails, domain: e.target.value })
-              }
-            />
-          </div> */}
-          {/* Row 3 */}
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
+          
+          <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 mt-5">
+            <div className="flex justify-center items-center">
               <UniversalLabel
                 text="Status"
                 id="editstatus"
@@ -1808,78 +1781,50 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 className="text-sm font-medium text-gray-700"
               />
             </div>
+            {/* Option 1 */}
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700 cursor-pointer">
-                Active
-              </label>
-              <Checkbox
-                inputId="statusToggle"
-                name="statusToggle"
-                checked={updateDetails.status === 1}
-                onChange={(e) =>
+              <RadioButton
+                inputId="employeeidviewOption1"
+                name="employeeidviewredio"
+                value="enable"
+                onChange={() => {
                   setUpdateDetails({
                     ...updateDetails,
-                    status: e.checked ? 1 : 0,
-                  })
-                }
+                    status: 1,
+                  });
+                }}
+                checked={updateDetails.status == 1 ? true : false}
               />
-              <label className="text-sm font-medium text-gray-700 cursor-pointer">
+              <label
+                htmlFor="employeeidviewOption1"
+                className="text-gray-700 font-medium text-sm cursor-pointer"
+              >
+                Active
+              </label>
+            </div>
+            {/* Option 2 */}
+            <div className="flex items-center gap-2">
+              <RadioButton
+                inputId="employeeidviewOption2"
+                name="employeeidviewredio"
+                value="disable"
+                onChange={() => {
+                  setUpdateDetails({
+                    ...updateDetails,
+                    status: 0,
+                  });
+                }}
+                checked={updateDetails.status == 0 ? true : false}
+              />
+              <label
+                htmlFor="employeeidviewOption2"
+                className="text-gray-700 font-medium text-sm cursor-pointer"
+              >
                 Inactive
               </label>
             </div>
           </div>
-
-          {/* Row 4 */}
-          {/* <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Application Type"
-                id="applicationType"
-                name="applicationType"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="applicationType1"
-                name="applicationType"
-                value={1}
-                onChange={(e) =>
-                  setUpdateDetails({
-                    ...updateDetails,
-                    applicationType: e.value,
-                  })
-                }
-                checked={updateDetails.applicationType === 1}
-              />
-              <label
-                htmlFor="applicationType1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Type 1
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="applicationType2"
-                name="applicationType"
-                value={2}
-                onChange={(e) =>
-                  setUpdateDetails({
-                    ...updateDetails,
-                    applicationType: e.value,
-                  })
-                }
-                checked={updateDetails.applicationType === 2}
-              />
-              <label
-                htmlFor="applicationType2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Type 2
-              </label>
-            </div>
-          </div> */}
+        
 
           <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
@@ -2424,8 +2369,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -3496,7 +3441,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                    // checked={true}
+                      // checked={true}
                     />
                     <label
                       htmlFor={item.id}
