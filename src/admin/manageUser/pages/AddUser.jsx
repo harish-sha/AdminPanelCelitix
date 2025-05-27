@@ -124,11 +124,11 @@ const AddUser = () => {
     const data = {
       // srno: 0,
       userId: userid,
-      domain: domain,
+      domain: "",
       status: 1,
       emailId: userEmail,
       mobileNo: userPhoneNumber,
-      userType: userType,
+      userType: 3,
       password: userPassword,
       firstName: userName,
       lastName: userLastName,
@@ -138,7 +138,7 @@ const AddUser = () => {
       state: state,
       city: city,
       pinCode: zipCode,
-      virtualBalance: postpaidAmount,
+      virtualBalance: 0,
       applicationType: 2,
       expiryDate: moment(expiryDate).format("DD/MM/YYYY"),
     };
@@ -295,16 +295,6 @@ const AddUser = () => {
             />
           </div> */}
 
-          <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
-            <InputField
-              label="Account URL"
-              id="accounturl"
-              name="accounturl"
-              placeholder="Enter URL"
-              value={accountUrl}
-              readOnly={true}
-            />
-          </div>
           {/* {userType === "2" && (
             <div className="md:w-50 w-full">
               <InputField
@@ -319,58 +309,13 @@ const AddUser = () => {
             </div>
           )} */}
         </div>
-        <div className="flex flex-col gap-2 md:w-80 w-full" id="yesnopost">
-          <label
-            htmlFor=""
-            className="text-sm font-medium text-gray-800 font-p"
-          >
-            Postpaid Amount *
-          </label>
-          {/* <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="enablepostpaidOption1"
-                name="enablepostpaidredio"
-                value="enable"
-                onChange={handleChangeEnablePostpaid}
-                checked={enablepostpaid === "enable"}
-              />
-              <label
-                htmlFor="enablepostpaidOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Yes
-              </label>
-            </div>
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="enablepostpaidOption2"
-                name="enablepostpaidredio"
-                value="disable"
-                onChange={handleChangeEnablePostpaid}
-                checked={enablepostpaid === "disable"}
-              />
-              <label
-                htmlFor="enablepostpaidOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                No
-              </label>
-            </div> */}
 
-          <InputField
-            id="enablepostinput"
-            name="enablepostinput"
-            placeholder="Enter Limit"
-            value={postpaidAmount}
-            onChange={(e) => setPostpaidAmount(e.target.value)}
-          />
-        </div>
         <div className="md:w-80 w-full">
           <AnimatedDropdown
             label="Account Manager *"
             id="accountManager"
             name="accountManager"
-            options={usermanager}
+            options={[]}
             value={userAccountManager}
             onChange={setUserAccountManager}
           />
