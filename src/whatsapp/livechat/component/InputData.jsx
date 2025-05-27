@@ -11,7 +11,9 @@ export const InputData = ({
   wabaState,
   setWabaState,
   setChatState,
-  setSelectedWaba
+  setSelectedWaba,
+  setIsSubscribed,
+  // setSelectedWaba
 }) => {
   return (
     <motion.div
@@ -162,22 +164,26 @@ export const InputData = ({
           />
           <div className="relative z-10 flex w-full text-sm font-medium">
             <button
-              onClick={() => setBtnOption("active")}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              onClick={() => {
+                setBtnOption("active");
+                setIsSubscribed(false);
+              }}
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Active
             </button>
             <button
-              onClick={() => setBtnOption("close")}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              onClick={() => {
+                setBtnOption("close");
+                setIsSubscribed(false);
+              }}
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Close
             </button>

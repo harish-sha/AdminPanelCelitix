@@ -3,11 +3,10 @@ import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import FileDownloadOutlinedIcon from "@mui/icons-material/FileDownloadOutlined";
 import { FaReply } from "react-icons/fa";
+import FullscreenIcon from "@mui/icons-material/Fullscreen";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import { FiSend } from "react-icons/fi";
 import { SpeedDial } from "primereact/speeddial";
-import { Dialog } from "primereact/dialog";
-
 import {
   BoltRounded,
   FormatBoldOutlined,
@@ -29,14 +28,14 @@ import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
 import Skeleton from "react-loading-skeleton";
-import "react-loading-skeleton/dist/skeleton.css";
-import { getBaseUrl } from "@/apis/common/common";
+import { Dialog } from "primereact/dialog";
 import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
-import FullscreenIcon from "@mui/icons-material/Fullscreen";
-import { useUser } from "@/context/auth";
+import "react-loading-skeleton/dist/skeleton.css";
+
+import { getBaseUrl } from "@/apis/common/common";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -60,20 +59,34 @@ export const ChatScreen = ({
   setChatState,
 }) => {
   const messageRef = useRef(null);
-  const { user } = useUser();
+  const endOfMessagesRef = useRef(null);
 
   useEffect(() => {
     if (messageRef.current) {
       messageRef.current.scrollTop = messageRef.current.scrollHeight;
     }
+
+    if (endOfMessagesRef.current) {
+      endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+    }
+
+    const timeout = setTimeout(() => {
+      if (messageRef.current) {
+        messageRef.current.scrollTop = messageRef.current.scrollHeight;
+      }
+      if (endOfMessagesRef.current) {
+        endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+      }
+    }, 200);
+
+    return () => clearTimeout(timeout);
   }, [chatState?.specificConversation]);
 
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${
-          isSent ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -81,7 +94,6 @@ export const ChatScreen = ({
   };
 
   const handleDownload = async (url, filename) => {
-    console.log(url, filename);
     try {
       const link = document.createElement("a");
       link.href = url;
@@ -102,6 +114,7 @@ export const ChatScreen = ({
   const [replyingMessageId, setReplyingMessageId] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [previewImage, setPreviewImage] = useState(null);
+
   const [previewDialog, setPreviewDialog] = useState({
     open: false,
     type: "", // "image" | "video" | "document"
@@ -172,6 +185,7 @@ export const ChatScreen = ({
   //   fetchBaseUrl();
   // }, []);
 
+
   function getFileType(extension) {
     switch (extension) {
       case "xlsx":
@@ -230,12 +244,10 @@ export const ChatScreen = ({
             sx={{ fontSize: "1.2rem", color: "green" }}
           />
         </div>
-        {user.role !== "AGENT" && (
-          <SupportAgentOutlinedIcon
-            onClick={() => setDialogVisible(true)}
-            className="mr-2 cursor-pointer text-[#22577E]"
-          />
-        )}
+        <SupportAgentOutlinedIcon
+          onClick={() => setDialogVisible(true)}
+          className="mr-2 cursor-pointer text-[#22577E]"
+        />
       </div>
 
       <div
@@ -263,6 +275,7 @@ export const ChatScreen = ({
                   ? msg?.mediaPath
                   : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
 
+
                 let fileType = "";
                 // const extension = url.split('.').pop().split(/\#|\?/)[0];
                 isDocument &&
@@ -286,9 +299,8 @@ export const ChatScreen = ({
                       stiffness: 300,
                       damping: 20,
                     }}
-                    className={`p-2 rounded-lg max-w-[90%] my-1 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {isReply && (
                       <div className="text-sm border-b-2 border-black">
@@ -298,9 +310,8 @@ export const ChatScreen = ({
                     {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                     {(isImage || isVideo || isDocument) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
                           className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
@@ -309,27 +320,25 @@ export const ChatScreen = ({
                             <>
                               {isImage && (
                                 <div
-                                  className={`w-full h-full ${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
-                                      : ""
-                                  }`}
+                                  className={`relative group w-full h-full ${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
+                                    : ""
+                                    }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
-                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
-                                      msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
-                                    }`}
+                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
+                                      ? "rounded-t-lg"
+                                      : "rounded-md"
+                                      }`}
                                   />
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center">
+                                  <div className="flex items-center justify-center" >
                                     <button
                                       className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
                                       onClick={() =>
@@ -344,15 +353,15 @@ export const ChatScreen = ({
                                       <FullscreenIcon fontSize="small" />
                                     </button>
                                   </div>
+
                                 </div>
                               )}
                               {isVideo && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white "
-                                      : ""
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
+                                    : "relative group"
+                                    }`}
                                 >
                                   <video
                                     src={mediaUrl}
@@ -365,9 +374,9 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center">
+                                  <div className="flex items-center justify-center" >
                                     <button
-                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
+                                      className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
                                       onClick={() =>
                                         setPreviewDialog({
                                           open: true,
@@ -384,12 +393,17 @@ export const ChatScreen = ({
                               )}
                               {isDocument && (
                                 <div
-                                  className={`${
-                                    msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white "
-                                      : ""
-                                  }`}
+                                  className={`${msg?.caption
+                                    ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
+                                    : "relative group"
+                                    }`}
                                 >
+                                  {/* <iframe
+                                    src={mediaUrl}
+                                    className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
+                                    allow="encrypted-media;"
+                                    allowFullScreen
+                                  /> */}
                                   <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                                     <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
                                       {/* <InsertDriveFileIcon
@@ -398,7 +412,7 @@ export const ChatScreen = ({
                                       {getFileType(fileType)}
                                     </div>
                                     <div className="flex flex-col">
-                                      <div className="font-medium truncate">
+                                      <div className="font-medium truncate max-w-[10rem">
                                         {msg.fileName || "Untitled Document"}
                                       </div>
                                       <div className="text-xs text-gray-500 uppercase">
@@ -411,27 +425,35 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center">
+                                  <div className="flex items-center justify-center" >
                                     <button
-                                      className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                                      onClick={() => {
+                                      className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
+                                      onClick={() =>
                                         setPreviewDialog({
                                           open: true,
                                           type: "document",
                                           url: mediaUrl,
-                                          caption: msg?.caption,
                                           fileType,
-                                          fileName: msg.fileName,
-                                        });
-                                      }}
+                                          caption: msg?.caption,
+                                        })
+                                      }
                                     >
                                       <FullscreenIcon fontSize="small" />
                                     </button>
+
                                   </div>
+
                                 </div>
                               )}
                             </>
                           ) : (
+                            // <button
+                            //   className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200
+                            //     bg-[url(/blurImage.jpg)]"
+                            //   onClick={() => handleAttachmentDownload(msg)}
+                            // >
+                            //   <FileDownloadOutlinedIcon />
+                            // </button>
                             <motion.div
                               className="mb-2 h-48 w-72 flex justify-center items-center object-contain rounded-md border border-gray-200 bg-gray-200 relative overflow-hidden"
                               style={{ backdropFilter: "blur(8px)" }}
@@ -467,6 +489,7 @@ export const ChatScreen = ({
                               onClick={() => {
                                 setChatState((prev) => ({
                                   ...prev,
+                                  // replyData: msg,
                                   replyData: {
                                     ...msg,
                                     fileType,
@@ -493,7 +516,7 @@ export const ChatScreen = ({
                             <button
                               className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
                               onClick={() => {
-                                toast.success("Download started");
+                                // toast.success("Download started");
                                 const url = isSent
                                   ? msg.mediaPath
                                   : `${BASE_MEDIA_URL}${msg.mediaPath}`;
@@ -509,17 +532,15 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
-                              isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
-                            }`}
+                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
+                              ? "bg-[#22577E] text-white rounded-br-none"
+                              : "bg-[#5584AC] text-white rounded-bl-none"
+                              }`}
                           >
                             {msg.messageBody}
                           </p>
@@ -544,9 +565,8 @@ export const ChatScreen = ({
                     {templateType && <TemplateMessagePreview template={msg} />}
 
                     <p
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>
@@ -556,7 +576,42 @@ export const ChatScreen = ({
             </div>
           </div>
         ))}
+
+        <div ref={endOfMessagesRef} />
       </div>
+
+      {/* media full screen preview */}
+      <Dialog
+        header=""
+        visible={previewDialog.open}
+        onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
+        className="w-[50rem]"
+        draggable={false}
+      >
+        <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
+          {previewDialog.type === "image" && (
+            <img src={previewDialog.url} alt="Preview" className="max-h-[80vh] max-w-full rounded-lg" />
+          )}
+          {previewDialog.type === "video" && (
+            <video src={previewDialog.url} controls className="h-100 max-w-full rounded-lg" />
+          )}
+          {previewDialog.type === "document" && (
+            <iframe
+              src={
+                previewDialog.fileType === "xlsx"
+                  ? `https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url}`
+                  : previewDialog.url
+              }
+              className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+            />
+          )}
+          {previewDialog.caption && (
+            <div className="text-white mt-2">{previewDialog.caption}</div>
+          )}
+        </div>
+      </Dialog>
+
+      {/* media full screen preview */}
 
       {/* Reply Preview */}
       {chatState.isReply && btnOption === "active" && (
@@ -592,12 +647,23 @@ export const ChatScreen = ({
               />
             )}
             {chatState.replyData?.replyType === "document" && (
+              // <iframe
+              //   src={
+              //     chatState.replyData?.isReceived
+              //       ? `${BASE_MEDIA_URL}${chatState.replyData?.mediaPath}`
+              //       : chatState.replyData?.mediaPath
+              //   }
+              //   controls={false}
+              //   autoPlay={false}
+              //   allow=" encrypted-media"
+              //   className="object-contain mb-2 h-48 w-48 pointer-events-none"
+              // ></iframe>
               <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
                 <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
                   {getFileType(chatState.replyData.fileType)}
                 </div>
                 <div className="flex flex-col">
-                  <div className="font-medium truncate">
+                  <div className="font-medium truncate max-w-[10rem]">
                     {chatState.replyData.fileName || "Untitled Document"}
                   </div>
                   <div className="text-xs text-gray-500 uppercase">
@@ -632,6 +698,13 @@ export const ChatScreen = ({
       {selectedImage && (
         <div className="flex flex-wrap gap-2 mt-2">
           <div className="relative">
+            {/* <button className="flex items-center gap-1">
+              <img
+                src={URL.createObjectURL(selectedImage)}
+                alt=""
+                className="object-cover w-20 h-20"
+              />
+            </button> */}
             {selectedImage.type === "image" && (
               <button className="flex items-center gap-1">
                 <img
@@ -657,14 +730,13 @@ export const ChatScreen = ({
                     {getFileType(selectedImage.fileType)}
                   </div>
                   <div className="flex flex-col">
-                    <div className="font-medium truncate break-words">
+                    <div className="font-medium truncate break-words max-w-[10rem]">
                       {selectedImage.fileName || "Untitled Document"}
                     </div>
                   </div>
                 </div>
               </button>
             )}
-
             <span
               className="absolute text-red-500 cursor-pointer top-1 right-1"
               onClick={() => deleteImages("4")}
@@ -787,45 +859,7 @@ export const ChatScreen = ({
           ))}
         </div>
       </Sidebar>
-
-      {/* media full screen preview */}
-      <Dialog
-        header=""
-        visible={previewDialog.open}
-        onHide={() => setPreviewDialog({ ...previewDialog, open: false })}
-        className="w-[50rem]"
-        draggable={false}
-      >
-        <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
-          {previewDialog.type === "image" && (
-            <img
-              src={previewDialog.url}
-              alt="Preview"
-              className="max-h-[80vh] max-w-full rounded-lg"
-            />
-          )}
-          {previewDialog.type === "video" && (
-            <video
-              src={previewDialog.url}
-              controls
-              className="h-100 max-w-full rounded-lg"
-            />
-          )}
-          {previewDialog.type === "document" && (
-            <iframe
-              src={
-                previewDialog.fileType === "xlsx"
-                  ? `https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url}`
-                  : previewDialog.url
-              }
-              className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
-            />
-          )}
-          {previewDialog.caption && (
-            <div className="text-white mt-2">{previewDialog.caption}</div>
-          )}
-        </div>
-      </Dialog>
     </div>
   );
 };
+

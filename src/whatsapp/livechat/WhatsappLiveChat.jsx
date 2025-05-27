@@ -69,7 +69,6 @@ import { useUser } from "@/context/auth";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
-
   const fileInputRef = useRef(null);
   const [visibleRight, setVisibleRight] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -340,7 +339,7 @@ export default function WhatsappLiveChat() {
         active: userActive,
         search: search || "",
       };
-      // setIsFetching(true);
+      setIsFetching(true);
       const res = await fetchAllConversations(data);
 
       if (!res.conversationEntityList[0]) {
@@ -371,7 +370,7 @@ export default function WhatsappLiveChat() {
       // console.log(e);
       return toast.error("Error fetching all conversations");
     } finally {
-      // setIsFetching(false);
+      setIsFetching(false);
     }
   }
 
@@ -391,24 +390,43 @@ export default function WhatsappLiveChat() {
   //   return () => clearInterval(intervalid);
   // }, [wabaState.selectedWaba, btnOption]);
 
+  // useEffect(() => {
+  //   if (!wabaState?.selectedWaba) return;
+  //   // if (!wabaState?.selectedWaba || !isSubscribe) {
+  //   //   handleFetchAllConvo();
+  //   //   return;
+  //   // }
+
+  //   // handleFetchAllConvo();
+  //   // setIsSubscribe(true);
+
+  //   const intervalId = setInterval(() => {
+  //     handleFetchAllConvo();
+  //   }, 5000);
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [wabaState.selectedWaba, btnOption]);
+
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
-    // if (!wabaState?.selectedWaba || !isSubscribe) {
-    //   handleFetchAllConvo();
-    //   return;
-    // }
+    let intervalId = null;
 
-    handleFetchAllConvo();
-    // setIsSubscribe(true);
-
-    const intervalId = setInterval(() => {
+    if (isSubscribe) {
       // handleFetchAllConvo();
-    }, 5000);
+      intervalId = setInterval(() => {
+        handleFetchAllConvo();
+      }, 5000);
+    } else {
+      handleFetchAllConvo();
+      setIsSubscribe(true);
+    }
 
     return () => {
-      clearInterval(intervalId);
+      if (intervalId) clearInterval(intervalId);
     };
-  }, [wabaState.selectedWaba, btnOption]);
+  }, [wabaState.selectedWaba, btnOption, isSubscribe]);
 
   useEffect(() => {
     setChatState((prev) => ({ ...prev, active: null, allConversations: [] }));
@@ -455,6 +473,7 @@ export default function WhatsappLiveChat() {
     const fileName = files?.name;
     const size = `${files?.size / 1024}MB`;
     setSelectedImage({ files, type, fileName, size });
+    // setSelectedImage(files);
   };
 
   const formatDate = (dateString) => {
@@ -498,22 +517,17 @@ export default function WhatsappLiveChat() {
             isReply = true;
           }
 
-          // if (msg.isReceived && msg.mediaPath) {
-          //   mediaPath = await fetch(
-          //     "https://m.cltx.in/upload/image/9d93ed0f-d288-494f-8cec-714e8b75f984.xlsx",
-          //     {
-          //       method: "HEAD",
-          //     }
-          //   )
-          //     .then((response) => {
-          //       const size = response.headers.get("Content-Length");
-          //       console.log(`File size: ${size} bytes`);
-          //     })
-          //     .catch((error) =>
-          //       console.error("Error fetching file size:", error)
-          //     );
+          // if (msg.isReceived && msg?.replyType === "image") {
+          //   try {
+          //     mediaPath = await downloadAttachment({
+          //       waba: wabaState.selectedWaba,
+          //       id: msg.mediaId,
+          //       conversionSrno: msg.srno,
+          //     });
+          //   } catch (err) {
+          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+          //   }
           // } else {
-
           // }
 
           mediaPath = msg.mediaPath;
@@ -799,7 +813,7 @@ export default function WhatsappLiveChat() {
         item?.buttons?.map(({ type, example }) => {
           if (type === "URL") {
             const regex = /{{(\d+)}}/g;
-            const matches = regex.exec(example);
+            const matches = regex.exec(example)
             setBtnVarLength(matches);
           }
         });
@@ -848,11 +862,11 @@ export default function WhatsappLiveChat() {
         // console.log(e);
       }
     }
-    handleLoadNewChat();
-    handleIsView();
+    // handleLoadNewChat();
+    // handleIsView();
     const intervalId = setInterval(() => {
-      // handleLoadNewChat();
-      // handleIsView();
+      handleLoadNewChat();
+      handleIsView();
     }, 500);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
@@ -914,9 +928,8 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -936,6 +949,7 @@ export default function WhatsappLiveChat() {
           setChatState={setChatState}
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
+          setSelectedGroupList={setSelectedGroupList}
         />
       </div>
 
@@ -1051,12 +1065,11 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-              // specificConversation={specificConversation}
+            // specificConversation={specificConversation}
             />
           </motion.div>
         )}
       </AnimatePresence>
-
       {user.role !== "AGENT" && (
         <Dialog
           header="Transfer Chat to Agent"
@@ -1109,7 +1122,7 @@ export default function WhatsappLiveChat() {
               placeholder="Group"
             />
 
-            <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center" >
               <UniversalButton
                 id={"assignAgent"}
                 name={"assignAgent"}
@@ -1119,6 +1132,7 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
         </Dialog>
+
       )}
 
       <Dialog
@@ -1268,7 +1282,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

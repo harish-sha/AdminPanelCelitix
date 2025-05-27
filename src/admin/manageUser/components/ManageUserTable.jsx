@@ -92,6 +92,7 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
 import moment from "moment";
+import { updatePassword } from "@/apis/settings/setting";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -1678,10 +1679,25 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   async function handleResetPassword() {
+    if (!newPassword) return toast.error("Please enter new password");
     const data = {
-      srno: selectedIds,
-      password: newPassword,
+      userSrno: selectedIds,
+      newpass: newPassword,
     };
+
+    const params = `?userSrno=${selectedIds}`;
+   
+    try {
+      const res = await updatePassword(data,params);
+      console.log(res);
+      if(!res.msg?.includes("successfully")){
+        return toast.error("Error in resetting password");
+      }
+      toast.success("Password reset successfully");
+      setreset(false)
+    } catch (e) {
+      return toast.error("Error in resetting password");
+    }
   }
 
   useEffect(() => {
@@ -2162,7 +2178,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 <AccountTreeOutlinedIcon className="text-gray-600" />
                 <p>
                   <strong>User Type : </strong>{" "}
-                  {selectedUserDetails.userType === 3 && "Reseller User" || "Not Available"}
+                  {(selectedUserDetails.userType === 3 && "Reseller User") ||
+                    "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -3124,14 +3141,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         draggable={false}
       >
         <div className="space-y-4">
-          <div className="relative">
+          {/* <div className="relative">
             <InputField
               id="username"
               name="username"
               label="User Name"
               placeholder="demo"
             />
-          </div>
+          </div> */}
           <GeneratePasswordSettings
             id="newPassword"
             name="newPassword"

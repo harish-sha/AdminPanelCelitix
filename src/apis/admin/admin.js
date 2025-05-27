@@ -50,7 +50,7 @@ export const getBotDetailsBySrNo = async (botSrNo) => {
 };
 
 // get Allowed services
-export const getAllowedServices = async (data="") => {
+export const getAllowedServices = async (data = "") => {
   return await fetchWithAuth(`/service/getAllowedServices${data}`, {
     method: "POST",
   });
@@ -87,11 +87,13 @@ export const addMobileNumbers = async (data) => {
     }
   );
 };
+
 export const getMobileNumbers = async (data) => {
   return await fetchWithAuth(`/user/getRegMobileno?userSrno=${data}`, {
     method: "POST",
   });
 };
+
 export const addUser = async (data) => {
   return await fetchWithAuth(`/user/createUser`, {
     method: "POST",
