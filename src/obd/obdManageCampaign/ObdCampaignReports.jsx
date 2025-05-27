@@ -25,7 +25,7 @@ import ObdDaySummaryTable from "./ObdDaySummaryTable.jsx";
 import { RadioButton } from "primereact/radiobutton";
 import { DataTable } from "@/components/layout/DataTable.jsx";
 import { IconButton } from "@mui/material";
-import { fetchDayWiseSummaryObd, fetchSummaryLogsObd } from "@/apis/obd/obd.js";
+import { fetchDayWiseSummaryObd, fetchSummaryLogsObd, fetchDetailsLogsObd } from "@/apis/obd/obd.js";
 import toast from "react-hot-toast";
 
 const ObdCampaignReports = () => {
@@ -60,6 +60,12 @@ const ObdCampaignReports = () => {
   };
 
 
+  const[campaignLogDateFilter,setCampaignLogDateFilter] = useState({
+    voiceType: "",
+    fromDate: new Date(),
+    toDate: new Date(),
+    page: ""
+  })
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
     fromDate: new Date(),
     toDate: new Date(),
@@ -68,6 +74,46 @@ const ObdCampaignReports = () => {
   const [columns, setColumns] = useState([]);
   const [rows, setRows] = useState([]);
   // const [isFetching, setIsFetching] = useState(false);
+
+
+ 
+  const handleCampaignLog = async () => {
+    const data = {
+      voiceType:campaignLogDateFilter.voiceType || "",
+      queTimeStart: formatDateToDDMMYYYY(campaignLogDateFilter.fromDate),
+      queTimeEnd: formatDateToDDMMYYYY(campaignLogDateFilter.toDate),
+      page:campaignLogDateFilter.page ,
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await fetchDetailsLogsObd(data);
+      console.log(res);
+
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
+        { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
+        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
+        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
+      ]);
+      setRows(
+        Array.isArray(res)
+        ? res.map((item, i) => ({
+          id: i+1,
+          sn:i+1,
+          ...item,
+        }))
+        : []
+      );
+    }catch(err) {
+      console.log("Fetching CampaignLog Data error", err);
+      toast.error("Something went wrong while fetching data.")
+    }finally{
+      setIsFetching(false);
+    }
+  }
+
 
   const handleDayWiseSummary = async () => {
     const data = {
@@ -801,7 +847,7 @@ const ObdCampaignReports = () => {
                       id="obdTemplateSearchBtn"
                       name="obdSearchBtn"
                       label="Search"
-                      onClick={handleSearchBtn}
+                      onClick={handleCampaignLog}
                       icon={<IoSearch />}
                     />
                   </div>
