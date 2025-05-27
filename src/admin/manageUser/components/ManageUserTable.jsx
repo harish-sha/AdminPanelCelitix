@@ -1771,7 +1771,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               }
             />
           </div>
-          
+
           <div className="lg:w-100 md:w-100 flex flex-wrap gap-4 mt-5">
             <div className="flex justify-center items-center">
               <UniversalLabel
@@ -1824,7 +1824,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </label>
             </div>
           </div>
-        
 
           <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
             <InputField
@@ -2047,202 +2046,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         className="w-[48rem] max-w-full"
         draggable={false}
       >
-        {/* <div className="space-y-3">
-          <div className="grid gap-4 mb-2 lg:grid-cols-2">
-            <InputField
-              label="User ID"
-              id="viewuserid"
-              name="viewuserid"
-              placeholder="Enter your User ID"
-              readOnly="true"
-            />
-            <UniversalDatePicker
-              label="Expiry Date"
-              id="viewexpiryDate"
-              name="viewexpiryDate"
-              placeholder="Enter Expiry Date"
-              readOnly="true"
-            />
-          </div>
-          <div className="flex gap-2">
-            <InputField
-              label="User Type"
-              id="viewuserType"
-              name="viewuserType"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-            <InputField
-              label="Account URL"
-              id="viewaccounturl"
-              name="viewaccounturl"
-              placeholder="Enter URL"
-              readOnly="true"
-            />
-          </div>
-          {userType === "Reseller" && (
-            <div className="flex items-center gap-2" id="yesnopost">
-              <div className="flex items-center justify-center">
-                <UniversalLabel
-                  text="Enable Postpaid"
-                  id="viewenablepostpaid"
-                  name="viewenablepostpaid"
-                  className="text-sm font-medium text-gray-700"
-                  readOnly="true"
-                />
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="viewenablepostpaidOption1"
-                  name="viewenablepostpaidredio"
-                  value="enable"
-                />
-                <label
-                  htmlFor="viewenablepostpaidOption1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Yes
-                </label>
-              </div>
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="viewenablepostpaidOption2"
-                  name="viewenablepostpaidredio"
-                />
-                <label
-                  htmlFor="viewenablepostpaidOption2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  No
-                </label>
-              </div>
-
-              {enablepostpaid === "enable" && (
-                <div>
-                  <InputField
-                    id="viewenablepostinput"
-                    name="viewenablepostinput"
-                    placeholder="Enter Limit"
-                  />
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-            <div className="flex items-center justify-center">
-              <UniversalLabel
-                text="Status"
-                id="vieweditstatus"
-                name="vieweditstatus"
-                className="text-sm font-medium text-gray-700"
-              />
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption1"
-                name="viewstatusredio"
-                value="enable"
-              />
-              <label
-                htmlFor="viewstatusOption1"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Enable
-              </label>
-            </div>
-
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="viewstatusOption2"
-                name="viewstatusredio"
-                value="disable"
-              />
-              <label
-                htmlFor="viewstatusOption2"
-                className="text-sm font-medium text-gray-700 cursor-pointer"
-              >
-                Disable
-              </label>
-            </div>
-          </div>
-
-          <div className="grid gap-4 lg:grid-cols-3 md:grid-cols-2">
-            <InputField
-              label="First Name"
-              id="viewfirstname"
-              name="viewfirstname"
-              placeholder="Enter your First Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Last Name"
-              id="viewlastname"
-              name="viewlastname"
-              placeholder="Enter your Last Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Email ID"
-              type="email"
-              id="viewemail"
-              name="viewemail"
-              placeholder="Enter your Email ID"
-              readOnly="true"
-            />
-            <InputField
-              label="Mobile No."
-              id="viewmobile"
-              name="viewmobile"
-              placeholder="Enter your Mobile No."
-              type="number"
-              readOnly="true"
-            />
-            <InputField
-              label="Company Name"
-              id="viewcompany"
-              name="viewcompany"
-              placeholder="Enter your Company Name"
-              readOnly="true"
-            />
-            <InputField
-              label="Address"
-              id="viewaddress"
-              name="viewaddress"
-              placeholder="Enter your Address"
-              readOnly="true"
-            />
-            <InputField
-              label="City"
-              id="viewcity"
-              name="viewcity"
-              placeholder="Enter your City"
-              readOnly="true"
-            />
-            <InputField
-              label="State"
-              id="viewstate"
-              name="viewstate"
-              placeholder="Enter your State"
-              readOnly="true"
-            />
-            <InputField
-              label="Country"
-              id="viewcountry"
-              name="viewcountry"
-              placeholder="Enter your Country"
-              readOnly="true"
-            />
-            <InputField
-              label="Pincode"
-              id="viewPincode"
-              name="viewPincode"
-              placeholder="Enter your Pincode"
-              readOnly="true"
-            />
-          </div>
-        </div> */}
         {selectedUserDetails ? (
           <div className="space-y-6 p-3 border rounded-xl shadow-md">
             {/* Row 1 */}
@@ -2359,7 +2162,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 <AccountTreeOutlinedIcon className="text-gray-600" />
                 <p>
                   <strong>User Type : </strong>{" "}
-                  {selectedUserDetails.userType || "Not Available"}
+                  {selectedUserDetails.userType === 3 && "Reseller User" || "Not Available"}
                 </p>
               </div>
               <div className="flex items-center gap-2">
