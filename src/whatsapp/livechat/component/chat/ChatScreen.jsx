@@ -155,22 +155,22 @@ export const ChatScreen = ({
     },
   };
 
-  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image";
+  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  const BASE_MEDIA_URL = "/image";
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
-  useEffect(() => {
-    const fetchBaseUrl = async () => {
-      try {
-        const url = await getBaseUrl("WhatsappChatBoxApi");
-        setBaseMediaUrl(url?.url);
-      } catch (err) {
-        console.error("Failed to fetch base URL", err);
-      }
-    };
-    fetchBaseUrl();
-  }, []);
+  // useEffect(() => {
+  //   const fetchBaseUrl = async () => {
+  //     try {
+  //       const url = await getBaseUrl("WhatsappChatBoxApi");
+  //       setBaseMediaUrl(url?.url);
+  //     } catch (err) {
+  //       console.error("Failed to fetch base URL", err);
+  //     }
+  //   };
+  //   fetchBaseUrl();
+  // }, []);
 
   function getFileType(extension) {
     switch (extension) {

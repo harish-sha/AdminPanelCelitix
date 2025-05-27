@@ -14,7 +14,7 @@ export const getAllGroups = async () => {
 };
 
 export const getBaseUrl = async (paramName) => {
-  return await fetchWithAuth(`whatsapp/getParamValue?paramName=${paramName}`, {
+  return await fetchWithAuth(`/whatsapp/getParamValue?paramName=${paramName}`, {
     method: "GET",
   });
 };
