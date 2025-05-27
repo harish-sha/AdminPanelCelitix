@@ -478,8 +478,9 @@ const Settings = () => {
               </div>
               <GeneratePasswordSettings
                 label="New Password"
-                password={password?.new}
-                setPassword={(e) => setPassword({ ...password, new: e })}
+                value={password?.new}
+                // setPassword={(e) => setPassword({ ...password, new: e })}
+                onChange={(e) => setPassword({ ...password, new: e })}
               />
             </div>
             <div className="flex justify-start mt-4">
