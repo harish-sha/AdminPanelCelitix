@@ -170,7 +170,7 @@ const ManageAgent = () => {
     const isDuplicate = departmentList.some(
       (dept) =>
         dept.departmentName.toLowerCase() ===
-          editedDepartmentName.toLowerCase() &&
+        editedDepartmentName.toLowerCase() &&
         dept.departmentId !== selectedDepartmentData?.departmentId
     );
 
@@ -432,8 +432,8 @@ const ManageAgent = () => {
   const filteredDepartmentList =
     selectedadddepartment && selectedadddepartment !== "no-selection"
       ? departmentList.filter(
-          (dept) => dept.departmentId === selectedadddepartment
-        )
+        (dept) => dept.departmentId === selectedadddepartment
+      )
       : departmentList;
 
   const rows = filteredDepartmentList.map((item, index) => ({
@@ -763,9 +763,9 @@ const ManageAgent = () => {
                   options={
                     Array.isArray(departmentList)
                       ? departmentList.map((department) => ({
-                          value: department.departmentId,
-                          label: department.departmentName,
-                        }))
+                        value: department.departmentId,
+                        label: department.departmentName,
+                      }))
                       : []
                   }
                   placeholder="Select Department"
@@ -777,9 +777,9 @@ const ManageAgent = () => {
                 name="assign"
                 label="Assign Type"
                 options={[
-                  { label: "Auto", value: "Auto" },
-                  { label: "Manual", value: "Manual" },
-                  { label: "All", value: "All" },
+                  { label: "Auto", value: 0 },
+                  { label: "Manual", value: 1 },
+                  { label: "All", value: 2 },
                 ]}
               />
               <div className="flex justify-center ">
