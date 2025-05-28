@@ -110,6 +110,7 @@ const CampaignDetailsReport = () => {
         campSrno: campaignSrno,
         mobno: "",
         status: "status",
+        delStatus: deliveryStatus,
         page: currentPage,
         selectedUserId: selectedUser || "0",
       };
@@ -259,13 +260,13 @@ const CampaignDetailsReport = () => {
             options={[
               { value: "sent", label: "Sent" },
               { value: "delivered", label: "Delivered" },
-              { value: "clicked", label: "Clicked" },
-              { value: "replied", label: "Replied" },
+              // { value: "clicked", label: "Clicked" },
+              { value: "read", label: "Read" },
               { value: "failed", label: "Failed" },
             ]}
             value={deliveryStatus}
             onChange={setDeliveryStatus}
-            placeholder="Category"
+            placeholder="delivery status"
           />
         </div>
         <div className="w-max-content ">

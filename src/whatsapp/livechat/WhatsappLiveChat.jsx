@@ -226,11 +226,10 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      ...(chatState?.isReply ? {} : { message: input || "" }),
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
-
-    // console.log(data);
 
     let body = {};
 
@@ -930,9 +929,8 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1068,7 +1066,7 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-              // specificConversation={specificConversation}
+            // specificConversation={specificConversation}
             />
           </motion.div>
         )}
@@ -1284,7 +1282,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

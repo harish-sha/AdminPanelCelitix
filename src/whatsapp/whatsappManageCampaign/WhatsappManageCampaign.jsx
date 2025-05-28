@@ -43,6 +43,7 @@ import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
+import moment from "moment";
 
 
 function CustomTabPanel(props) {
@@ -293,8 +294,8 @@ const WhatsappManageCampaign = () => {
     const formattedToDate = new Date().toLocaleDateString("en-GB");
 
     const filters = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
+      fromQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
+      toQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
       selectedUserId: selectedUser || "0"
@@ -316,21 +317,21 @@ const WhatsappManageCampaign = () => {
   };
 
   // Fetch initial data - for to load data on page load
-  const fetchInitialData = async () => {
-    const filters = {
-      fromQueDateTime: new Date().toLocaleDateString("en-GB"),
-      toQueDateTime: new Date().toLocaleDateString("en-GB"),
-      campaignName: "",
-      template_category: "all",
-      selectedUserId: selectedUser || "0"
+  // const fetchInitialData = async () => {
+  //   const filters = {
+  //     fromQueDateTime: new Date().toLocaleDateString("en-GB"),
+  //     toQueDateTime: new Date().toLocaleDateString("en-GB"),
+  //     campaignName: "",
+  //     template_category: "all",
+  //     selectedUserId: selectedUser || "0"
 
-    };
+  //   };
 
-    setIsFetching(true);
-    const data = await getWhatsappCampaignReport(filters);
-    setFilteredData(data);
-    setIsFetching(false);
-  };
+  //   setIsFetching(true);
+  //   const data = await getWhatsappCampaignReport(filters);
+  //   setFilteredData(data);
+  //   setIsFetching(false);
+  // };
 
 
   useEffect(() => {

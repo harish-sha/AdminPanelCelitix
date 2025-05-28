@@ -21,10 +21,10 @@ import {
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
-import { te } from "date-fns/locale";
+// import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import ca from "date-fns/esm/locale/ca/index.js";
+// import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
@@ -311,6 +311,13 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
+    const isValid = /^[a-z0-9_]+$/.test(templateName);
+
+    if (!isValid) {
+      toast.error("Only underscore (_) and alphanumeric are allowed.");
+      return;
+    }
+
     const data = {
       name: templateName,
       category: selectedCategory,
@@ -553,11 +560,14 @@ const WhatsappCreateTemplate = () => {
       setIsFetching(true);
       const response = await sendTemplatetoApi(payload);
 
-      if (response.msg === "Template Name is duplicate") {
+      const message = response?.msg;
+
+      if (message.message === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
-      } else if (response.msg === "Template added successfully") {
+        // } else if (response.message === "Template Save Successfully") {
+      } else if (message.message === "Template Save Successfully") {
         setIsLoading(true);
         toast.success("Template submitted successfully!");
         setSelectedWaba("");
@@ -594,8 +604,7 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
-      }
-      else if (!response.msg || response.msg === "") {
+      } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
         return toast.error("Unable to create template at this time. Please try again later.");
       }
@@ -606,11 +615,15 @@ const WhatsappCreateTemplate = () => {
         return toast.error(
           "The selected language is not available for message templates. Please try a different language."
         );
+      } else if (!response.msg || response.msg === "") {
+        // Handle blank msg from backend
+        return toast.error("Unable to create template at this time. Please try again later.");
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      return toast.error(e.msg || "Something went wrong.");
+      console.log(e)
+      return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
       setIsFetching(false);

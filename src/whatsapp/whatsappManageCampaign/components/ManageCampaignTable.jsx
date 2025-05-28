@@ -421,8 +421,8 @@ const ManageCampaignTable = ({
     // Reset for this row
     setDropdownOpenId(null);
 
-    const fromDateStr = moment(fromDate).format("DD/MM/YYYY");
-
+    const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
+    
     const data = {
       campSrno: row?.campaignSrno,
       fromDate: fromDateStr,
@@ -659,18 +659,18 @@ const ManageCampaignTable = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        // queTime: formatDate(item.queTime) || "N/A",
-        queTime: moment(item.queTime).format("YYYY-MM-DD HH:mm:ss") || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaignSrno,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      // queTime: formatDate(item.queTime) || "N/A",
+      queTime: moment(item.queTime).format("YYYY-MM-DD HH:mm:ss") || "N/A",
+      campaignName: item.campaignName || "N/A",
+      templateName: item.templateName || "N/A",
+      templateCategory: item.templateCategory || "N/A",
+      templateType: item.templateType || "N/A",
+      status: item.status || "N/A",
+      totalAudience: item.totalAudience || "0",
+      campaignSrno: item.campaignSrno,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

@@ -92,7 +92,13 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
 import moment from "moment";
-import { updatePassword } from "@/apis/settings/setting";
+// import { updatePassword } from "@/apis/settings/setting";
+import {
+  getApiKey,
+  getOldApiKey,
+  updateApiKey,
+  updatePassword,
+} from "@/apis/settings/setting";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -285,6 +291,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [editService, setEditDetailsDialogVisible] = useState(false);
   const [assignRate, setassignRate] = useState(false);
   const [manageApiKeys, setManageApiKeys] = useState(false);
+  const [oldKey, setOldKey] = useState("");
   const [reset, setreset] = useState(false);
   const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
@@ -962,10 +969,40 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     return key + "XX";
   };
 
-  const handleGenerateAPIKey = () => {
-    const apiKey = generateAPIKey();
-    setNewAPIKey(apiKey);
+  const handleGenerateAPIKey = async () => {
+    try {
+      const params = `?userSrno=${selectedId}`;
+      const res = await getApiKey(params);
+      setNewAPIKey(res?.Key);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
+
+  async function handleApiKeySave() {
+    if (!newAPIKey) {
+      return toast.error("Please generate API Key");
+    }
+    const data = {
+      oldKey: oldKey,
+      newKey: newAPIKey,
+      userSrno: selectedId,
+    };
+    console.log(data);
+    try {
+      const res = await updateApiKey(data.newKey, data.userSrno);
+      console.log(res);
+      if (!res?.message.includes("succesfully")) {
+        return toast.error(res?.message);
+      }
+      toast.success("API Key updated successfully");
+      setManageApiKeys(false);
+      setNewAPIKey("");
+      setOldKey("");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
 
   const [newPassword, setNewPassword] = useState("");
   const [mobileNumbers, setMobileNumbers] = useState([""]);
@@ -1189,11 +1226,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          srno: item.sr_no,
-          ...item,
-        }))
+        id: index + 1,
+        sn: index + 1,
+        srno: item.sr_no,
+        ...item,
+      }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1210,8 +1247,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     // obdRateRes && setVoicerows(voiceRows);
   };
 
-  const handleApikey = (id, name) => {
-    setManageApiKeys(true);
+  const handleApikey = async (id, name) => {
+    try {
+      const params = `?userSrno=${id}`;
+      const res = await getOldApiKey(params);
+      setOldKey(res?.oldkey);
+      setManageApiKeys(true);
+      setSelectedId(id);
+    } catch (e) {
+      toast.error("Failed to fetch user details. Please try again.");
+    }
   };
 
   const handleReset = (id, name) => {
@@ -1240,9 +1285,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${
-                isActive ? "bg-green-500" : "bg-red-500"
-              }`}
+              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1523,10 +1567,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-      }))
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -1686,11 +1730,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     };
 
     const params = `?userSrno=${selectedIds}`;
-   
+
     try {
-      const res = await updatePassword(data,params);
+      const res = await updatePassword(data, params);
       console.log(res);
-      if(!res.msg?.includes("successfully")){
+      if (!res.msg?.includes("successfully")) {
         return toast.error("Error in resetting password");
       }
       toast.success("Password reset successfully");
@@ -2189,8 +2233,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                    ? "Inactive"
-                    : "Not Available"}
+                      ? "Inactive"
+                      : "Not Available"}
                 </p>
               </div>
             </div>
@@ -3096,6 +3140,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             type="text"
             label="Old key"
             placeholder="Enter Old key"
+            value={oldKey}
             readOnly
           />
           <div className="flex items-end gap-2">
@@ -3127,6 +3172,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             id="apisaveButton"
             name="apisaveButton"
             variant="primary"
+            onClick={handleApiKeySave}
           />
         </div>
       </Dialog>
@@ -3261,7 +3307,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                      // checked={true}
+                    // checked={true}
                     />
                     <label
                       htmlFor={item.id}

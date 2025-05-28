@@ -111,6 +111,42 @@ const Download = ({ id, name }) => {
     }
   };
 
+  // const handleDownload = async (paramName, downloadPath) => {
+  //   try {
+  //     const response = await getBaseUrl(paramName);
+
+  //     if (!response || !response.url) {
+  //       throw new Error("Failed to fetch the base URL.");
+  //     }
+
+  //     // const baseURL = response.url;
+
+  //     // const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
+  //     const baseURL = "/allDownloadUrl";
+
+  //     const fullDownloadUrl = `${baseURL}${downloadPath}`;
+
+  //     const fileCheckResponse = await fetch(fullDownloadUrl, {
+  //       method: "HEAD",
+  //     });
+
+  //     if (fileCheckResponse.ok) {
+  //       const link = document.createElement("a");
+  //       link.href = fullDownloadUrl;
+  //       link.download = "";
+  //       link.click();
+  //       toast.success("The file download has started successfully.");
+  //     } else {
+  //       toast.error("The file could not be found. Please try again later.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error during download:", error);
+  //     toast.error(
+  //       "An error occurred while downloading the file. Please try again later."
+  //     );
+  //   }
+  // };
+
   const handleDownload = async (paramName, downloadPath) => {
     try {
       const response = await getBaseUrl(paramName);
@@ -120,25 +156,32 @@ const Download = ({ id, name }) => {
       }
 
       // const baseURL = response.url;
-      
-      // const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
-      const baseURL = "/allDownloadUrl";
+
+      const baseURL = import.meta.env.VITE_ALLDOWNLOADURL;
+      // const baseURL = "/allDownloadUrl";
 
       const fullDownloadUrl = `${baseURL}${downloadPath}`;
 
-      const fileCheckResponse = await fetch(fullDownloadUrl, {
-        method: "HEAD",
-      });
+      // const fileCheckResponse = await fetch(fullDownloadUrl, {
+      //   method: "HEAD",
+      // });
 
-      if (fileCheckResponse.ok) {
-        const link = document.createElement("a");
-        link.href = fullDownloadUrl;
-        link.download = "";
-        link.click();
-        toast.success("The file download has started successfully.");
-      } else {
-        toast.error("The file could not be found. Please try again later.");
-      }
+      // if (fileCheckResponse.ok) {
+      //   const link = document.createElement("a");
+      //   link.href = fullDownloadUrl;
+      //   link.download = "";
+      //   link.click();
+      //   toast.success("The file download has started successfully.");
+      // } else {
+      //   toast.error("The file could not be found. Please try again later.");
+      // }
+      // Create an <a> tag, set href & download, invoke click
+      const link = document.createElement("a");
+      link.href = fullDownloadUrl;
+      link.download = "";      // Let the server suggest a filename, or set your own: link.download = "myfile.pdf"
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
     } catch (error) {
       console.error("Error during download:", error);
       toast.error(

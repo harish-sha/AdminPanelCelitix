@@ -225,7 +225,7 @@ const SmsDLTtemplate = () => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 55 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "userid", headerName: "UserId", flex: 0, minWidth: 100 },
     {
       field: "templatename",
@@ -244,7 +244,7 @@ const SmsDLTtemplate = () => {
     //   flex: 1,
     //   minWidth: 120,
     // },
-    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 110 },
+    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 200 },
     // { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
     {
       field: "action",
