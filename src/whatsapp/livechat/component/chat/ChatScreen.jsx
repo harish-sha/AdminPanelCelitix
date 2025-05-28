@@ -33,6 +33,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import axios from "axios";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -76,14 +77,15 @@ export const ChatScreen = ({
   };
 
   const handleDownload = async (url, filename) => {
-    console.log(url, filename);
     try {
+      const res = await axios.get(url, { responseType: "blob" });
+      // console.log(res);
+      const blobUrl = window.URL.createObjectURL(res?.data);
+      window.open(blobUrl);
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename || "file");
-      document.body.appendChild(link);
+      link.href = blobUrl;
+      link.download = filename;
       link.click();
-      link.remove();
 
       toast.success("Download started!");
     } catch (error) {
@@ -144,22 +146,23 @@ export const ChatScreen = ({
     },
   };
 
-  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   // const BASE_MEDIA_URL = "/image";
 
-  const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
+  // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
-  useEffect(() => {
-    const fetchBaseUrl = async () => {
-      try {
-        const url = await getBaseUrl("WhatsappChatBoxApi");
-        setBaseMediaUrl(url?.url);
-      } catch (err) {
-        console.error("Failed to fetch base URL", err);
-      }
-    };
-    fetchBaseUrl();
-  }, []);
+  // useEffect(() => {
+  //   const fetchBaseUrl = async () => {
+  //     try {
+  //       const url = await getBaseUrl("WhatsappChatBoxApi");
+  //       const rr = url?.url.remo
+  //       setBaseMediaUrl(url?.url);
+  //     } catch (err) {
+  //       console.error("Failed to fetch base URL", err);
+  //     }
+  //   };
+  //   fetchBaseUrl();
+  // }, []);
 
   function getFileType(extension) {
     switch (extension) {
@@ -442,7 +445,6 @@ export const ChatScreen = ({
                             <button
                               className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
                               onClick={() => {
-                                toast.success("Download started");
                                 const url = isSent
                                   ? msg.mediaPath
                                   : `${BASE_MEDIA_URL}${msg.mediaPath}`;
