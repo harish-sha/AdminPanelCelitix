@@ -278,8 +278,8 @@ const SmsReports = () => {
       setCampaignTableData(mappedData);
       // setCampaignTableData(res);
       setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "que_time", headerName: "Created On", flex: 0, minWidth: 50 },
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 1 },
+        { field: "que_time", headerName: "Created On", flex: 1, minWidth: 160 },
         {
           field: "campaign_name",
           headerName: "Campaign Name",
@@ -540,7 +540,7 @@ const SmsReports = () => {
       // console.log(res);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
+        { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 160 },
         { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
         { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
         { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
