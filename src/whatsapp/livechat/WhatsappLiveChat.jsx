@@ -191,8 +191,6 @@ export default function WhatsappLiveChat() {
   }
 
   const sendMessage = async () => {
-    // console.log(input)
-    // return;
     const fileType = selectedImage?.type?.split("/")[0];
 
     let replyType = "";
@@ -227,7 +225,7 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
     
