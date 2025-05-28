@@ -18,6 +18,7 @@ import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
 import moment from "moment";
+import { exportToExcel } from "@/utils/utills";
 
 import toast from "react-hot-toast";
 
@@ -76,7 +77,7 @@ const Transactions = () => {
       const data = {
         ...filterData,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
-        toDate: formatDate(filterData.toDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       }
       const res = await fetchTransactions(filterData);
       setTransactionalData(res);
@@ -237,6 +238,18 @@ const Transactions = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -294,6 +307,7 @@ const Transactions = () => {
               label="Export"
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
+              onClick={handleExport}
             />
           </div>
         </div>
