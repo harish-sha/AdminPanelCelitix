@@ -230,9 +230,8 @@ export default function WhatsappLiveChat() {
       ...(chatState?.isReply ? {} : { message: input || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
+    
 
-    console.log(data);
-    // return
 
     let body = {};
 
