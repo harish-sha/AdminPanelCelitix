@@ -92,7 +92,12 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
 import moment from "moment";
-import { updatePassword } from "@/apis/settings/setting";
+import {
+  getApiKey,
+  getOldApiKey,
+  updateApiKey,
+  updatePassword,
+} from "@/apis/settings/setting";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -285,6 +290,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [editService, setEditDetailsDialogVisible] = useState(false);
   const [assignRate, setassignRate] = useState(false);
   const [manageApiKeys, setManageApiKeys] = useState(false);
+  const [oldKey, setOldKey] = useState("");
   const [reset, setreset] = useState(false);
   const [userReports, setuserReports] = useState("");
   const [value, setValue] = useState(0);
@@ -962,10 +968,40 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     return key + "XX";
   };
 
-  const handleGenerateAPIKey = () => {
-    const apiKey = generateAPIKey();
-    setNewAPIKey(apiKey);
+  const handleGenerateAPIKey = async () => {
+    try {
+      const params = `?userSrno=${selectedId}`;
+      const res = await getApiKey(params);
+      setNewAPIKey(res?.Key);
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
   };
+
+  async function handleApiKeySave() {
+    if (!newAPIKey) {
+      return toast.error("Please generate API Key");
+    }
+    const data = {
+      oldKey: oldKey,
+      newKey: newAPIKey,
+      userSrno: selectedId,
+    };
+    console.log(data);
+    try {
+      const res = await updateApiKey(data.newKey, data.userSrno);
+      console.log(res);
+      if (!res?.message.includes("succesfully")) {
+        return toast.error(res?.message);
+      }
+      toast.success("API Key updated successfully");
+      setManageApiKeys(false);
+      setNewAPIKey("");
+      setOldKey("");
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
 
   const [newPassword, setNewPassword] = useState("");
   const [mobileNumbers, setMobileNumbers] = useState([""]);
@@ -1210,8 +1246,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     // obdRateRes && setVoicerows(voiceRows);
   };
 
-  const handleApikey = (id, name) => {
-    setManageApiKeys(true);
+  const handleApikey = async (id, name) => {
+    try {
+      const params = `?userSrno=${id}`;
+      const res = await getOldApiKey(params);
+      setOldKey(res?.oldkey);
+      setManageApiKeys(true);
+      setSelectedId(id);
+    } catch (e) {
+      toast.error("Failed to fetch user details. Please try again.");
+    }
   };
 
   const handleReset = (id, name) => {
@@ -1686,15 +1730,15 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     };
 
     const params = `?userSrno=${selectedIds}`;
-   
+
     try {
-      const res = await updatePassword(data,params);
+      const res = await updatePassword(data, params);
       console.log(res);
-      if(!res.msg?.includes("successfully")){
+      if (!res.msg?.includes("successfully")) {
         return toast.error("Error in resetting password");
       }
       toast.success("Password reset successfully");
-      setreset(false)
+      setreset(false);
     } catch (e) {
       return toast.error("Error in resetting password");
     }
@@ -3096,6 +3140,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             type="text"
             label="Old key"
             placeholder="Enter Old key"
+            value={oldKey}
             readOnly
           />
           <div className="flex items-end gap-2">
@@ -3127,6 +3172,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             id="apisaveButton"
             name="apisaveButton"
             variant="primary"
+            onClick={handleApiKeySave}
           />
         </div>
       </Dialog>

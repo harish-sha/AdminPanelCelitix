@@ -1,22 +1,22 @@
 import { fetchWithAuth } from "../apiClient.js";
 
 // Get New API KEY
-export const getApiKey = async () => {
-  return await fetchWithAuth("/settings/generateKey", {
+export const getApiKey = async (params="") => {
+  return await fetchWithAuth(`/settings/generateKey${params}`, {
     method: "POST",
   });
 };
 
 // Old API KEY
-export const getOldApiKey = async () => {
-  return await fetchWithAuth(`/settings/getApikey`, {
+export const getOldApiKey = async (params = "") => {
+  return await fetchWithAuth(`/settings/getApikey${params}`, {
     method: "POST",
   });
 };
 
 // Update API KEY
-export const updateApiKey = async (newAPIKey) => {
-  return await fetchWithAuth(`/settings/changeuniquekey?newkey=${newAPIKey}`, {
+export const updateApiKey = async (newAPIKey,userSrno) => {
+  return await fetchWithAuth(`/settings/changeuniquekey?newkey=${newAPIKey}&userSrno=${userSrno ||""}`, {
     method: "POST",
   });
 };
