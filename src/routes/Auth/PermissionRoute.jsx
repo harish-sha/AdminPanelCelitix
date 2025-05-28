@@ -29,7 +29,7 @@ export const PermissionRoute = ({ children }) => {
       "Home",
       "apiDocs",
       "CallBack",
-      "Managecontacts",
+      "Manage Contacts",
       "openRoutes",
     ];
 

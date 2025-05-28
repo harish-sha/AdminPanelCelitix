@@ -27,7 +27,14 @@ const SmsAttachmentdetaillog = () => {
 
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "insert_time", headerName: "Date", flex: 1, minWidth: 50 },
+        {
+          field: "insert_time",
+          headerName: "Date",
+          flex: 1,
+          minWidth: 50,
+          renderCell: (params) =>
+            moment(params.row.insert_time).format("DD-MM-YYYY HH:mm"),
+        },
         { field: "mobile_no", headerName: "Mobile No.", flex: 1, minWidth: 80 },
         {
           field: "attachment_type",
@@ -40,6 +47,8 @@ const SmsAttachmentdetaillog = () => {
           headerName: "Click Time",
           flex: 1,
           minWidth: 150,
+          renderCell: (params) =>
+            moment(params.row.click_time).format("DD-MM-YYYY HH:mm"),
         },
         { field: "info", headerName: "Info", flex: 1, minWidth: 410 },
       ]);

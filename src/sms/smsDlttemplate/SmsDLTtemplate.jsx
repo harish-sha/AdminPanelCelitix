@@ -112,7 +112,7 @@ const SmsDLTtemplate = () => {
                 : "Unknown",
         // consenttype: "-",
         inserttime: item.insertDate
-          ? new Date(item.insertDate).toLocaleString()
+          ? moment(item.insertDate).format("DD-MM-YYYY HH:mm:ss")
           : "-",
         status:
           item.status === 1

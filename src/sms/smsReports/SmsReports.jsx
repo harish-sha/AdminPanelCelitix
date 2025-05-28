@@ -39,6 +39,7 @@ import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
+import moment from "moment";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -275,17 +276,16 @@ const SmsReports = () => {
   const handleCampaignSearch = async () => {
     try {
       setIsFetching(true);
+      //yyyy/mm/dd
+      //hh:mm:ss
       const data = {
         // ...campaignDataToFilter,
         campaignName: campaignDataToFilter.campaingName,
         campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
-        toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
-        fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
+
+        toDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
+        fromDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
         selectedUserId: selectedUser,
       };
       const res = await fetchCampaignData(data);
@@ -354,7 +354,10 @@ const SmsReports = () => {
                   className="no-xs"
                   onClick={() =>
                     navigate("/smscampaigndetaillogs", {
-                      state: { id: params.row.receipt_no_of_duplicate_message, userId: selectedUser },
+                      state: {
+                        id: params.row.receipt_no_of_duplicate_message,
+                        userId: selectedUser,
+                      },
                     })
                   }
                 >
@@ -403,10 +406,8 @@ const SmsReports = () => {
   const handlePreviousDaysSearch = async () => {
     const data = {
       ...previousDataToFilter,
-      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       selectedUserId: selectedUser,
     };
 
@@ -559,10 +560,8 @@ const SmsReports = () => {
   const handleDayWiseSummary = async () => {
     const data = {
       // ...daywiseDataToFilter,
-      fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(daywiseDataToFilter.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(daywiseDataToFilter.toDate).format("YYYY-MM-DD"),
       summaryType: "date,user",
       smsType: daywiseDataToFilter.smsType ?? "",
       selectedUserId: selectedUser,
@@ -641,14 +640,10 @@ const SmsReports = () => {
   const handleAttachmentSearch = async () => {
     const data = {
       ...attachmentDataToFilter,
-      startDate: new Date(attachmentDataToFilter.startDate).toLocaleDateString(
-        "en-GB"
-      ),
-      endDate: new Date(attachmentDataToFilter.endDate).toLocaleDateString(
-        "en-GB"
-      ),
+      startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
+      endDate: moment(attachmentDataToFilter.endDate).format("YYYY-MM-DD"),
       type: "",
-       selectedUserId: selectedUser,
+      selectedUserId: selectedUser,
     };
 
     try {
@@ -662,7 +657,14 @@ const SmsReports = () => {
           flex: 1,
           minWidth: 120,
         },
-        { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
+        {
+          field: "queTime",
+          headerName: "Date",
+          flex: 1,
+          minWidth: 120,
+          renderCell: (params) =>
+            moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
+        },
         {
           field: "count",
           headerName: "Total clicks",
@@ -734,10 +736,8 @@ const SmsReports = () => {
     const data = {
       summaryType: col || selectedCol,
       mobileNo: "",
-      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(previousDataToFilter.fromDat).format("YYYY-MM-DD"),
+      toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       page: currentPage,
       source: "api",
       selectedUserId: selectedUser,
@@ -757,6 +757,9 @@ const SmsReports = () => {
           headerName: "Created on",
           flex: 1,
           minWidth: 120,
+          renderCell: (params) => (
+            <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
+          ),
         },
         {
           field: "smsunit",
