@@ -266,6 +266,18 @@ const TransactionsUser = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -306,6 +318,7 @@ const TransactionsUser = () => {
                 // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
 
                 variant="primary"
+                onClick={handleExport}
               />
             </div>
             {user.role === "RESELLER" && (
