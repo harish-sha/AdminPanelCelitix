@@ -13,6 +13,8 @@ import {
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Paper, Typography, Box, Button } from "@mui/material";
+import { render } from "timeago.js";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -88,7 +90,15 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     isMonthWise
       ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
-      : { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 120 },
+      : {
+        field: "queDate",
+        headerName: "Que Date",
+        flex: 1,
+        minWidth: 120,
+        renderCell: (params) => (
+          <>{moment(params.row.queDate).format("DD-MM-YYYY")}</>
+        ),
+      },
     {
       field: "chargedUnit",
       headerName: "Charged Unit",
@@ -121,38 +131,38 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
   if (isMonthWise) {
     rows = Array.isArray(data)
       ? data.map((item, i) => ({
-          id: i + 1,
-          sn: i + 1,
-          month: item.month,
-          chargedUnit: item.chargedUnits,
-          count: item.smscount,
-          pending: item.pending,
-          failed: item.failed,
-          blocked: item.blocked,
-          sent: item.sent,
-          delivered: item.delivered,
-          notDelivered: item.not_delivered,
-          drnotAvailable: item.dr_not_available,
-          others: item.others,
-        }))
+        id: i + 1,
+        sn: i + 1,
+        month: item.month,
+        chargedUnit: item.chargedUnits,
+        count: item.smscount,
+        pending: item.pending,
+        failed: item.failed,
+        blocked: item.blocked,
+        sent: item.sent,
+        delivered: item.delivered,
+        notDelivered: item.not_delivered,
+        drnotAvailable: item.dr_not_available,
+        others: item.others,
+      }))
       : [];
   } else {
     rows = Array.isArray(data)
       ? data.map((item, i) => ({
-          id: i + 1,
-          sn: i + 1,
-          queDate: item.queuedate,
-          chargedUnit: item.chargedUnits,
-          count: item.smscount,
-          pending: item.pending,
-          failed: item.failed,
-          blocked: item.blocked,
-          sent: item.sent,
-          delivered: item.delivered,
-          notDelivered: item.not_delivered,
-          drnotAvailable: item.dr_not_available,
-          others: item.others,
-        }))
+        id: i + 1,
+        sn: i + 1,
+        queDate: item.queuedate,
+        chargedUnit: item.chargedUnits,
+        count: item.smscount,
+        pending: item.pending,
+        failed: item.failed,
+        blocked: item.blocked,
+        sent: item.sent,
+        delivered: item.delivered,
+        notDelivered: item.not_delivered,
+        drnotAvailable: item.dr_not_available,
+        others: item.others,
+      }))
       : [];
   }
 

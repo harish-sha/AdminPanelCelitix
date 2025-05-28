@@ -59,7 +59,7 @@ const WhatsappConversation = () => {
   }, []);
 
   // Format Date
-  const formatDate = (date) => date.toISOString().split("T")[0];
+  const formatDate = (date) => moment(date).format("YYYY-MM-DD");
 
   // Handle Search Click
   const handleSearch = async () => {
@@ -113,74 +113,74 @@ const WhatsappConversation = () => {
           <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             {/* Select WABA Dropdown */}
             <div className="w-full sm:w-56">
-            <AnimatedDropdown
-              id="wabadropdown"
-              label="Select WABA"
-              placeholder="Select WABA"
-              options={wabaList.map((waba) => ({
-                value: waba.wabaSrno,
-                label: waba.name,
-              }))}
-              value={filters.wabaSrno}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, wabaSrno: value }))
-              }
-            />
+              <AnimatedDropdown
+                id="wabadropdown"
+                label="Select WABA"
+                placeholder="Select WABA"
+                options={wabaList.map((waba) => ({
+                  value: waba.wabaSrno,
+                  label: waba.name,
+                }))}
+                value={filters.wabaSrno}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, wabaSrno: value }))
+                }
+              />
             </div>
             <div className="w-full sm:w-56">
 
-            {/* From Date Picker */}
-            <UniversalDatePicker
-              id="conversationfrom"
-              label="From Date"
-              value={filters.fromDate}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, fromDate: value }))
-              }
-            />
-               </div>
-               <div className="w-full sm:w-56">
-            {/* To Date Picker */}
-            <UniversalDatePicker
-              id="conversationto"
-              label="To Date"
-              value={filters.toDate}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, toDate: value }))
-              }
-            />
-             </div>
-             <div className="w-full sm:w-56">
-            {/* Mobile Number Input Field */}
-            <InputField
-              id="conversationmobile"
-              label="Mobile Number"
-              type="number"
-              placeholder="Enter Mobile Number"
-              value={filters.mobileNo}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
-              }
-            />
-             </div>
+              {/* From Date Picker */}
+              <UniversalDatePicker
+                id="conversationfrom"
+                label="From Date"
+                value={filters.fromDate}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, fromDate: value }))
+                }
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              {/* To Date Picker */}
+              <UniversalDatePicker
+                id="conversationto"
+                label="To Date"
+                value={filters.toDate}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, toDate: value }))
+                }
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              {/* Mobile Number Input Field */}
+              <InputField
+                id="conversationmobile"
+                label="Mobile Number"
+                type="number"
+                placeholder="Enter Mobile Number"
+                value={filters.mobileNo}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
+                }
+              />
+            </div>
             {/* Search Button */}
             <div className="w-max-content ">
-            <UniversalButton
-              id="conversationsearch"
-              label={isFetching ? "Searching..." : "Search"}
-              icon={<IoSearch />}
-              onClick={handleSearch}
-              disabled={isFetching}
-            />
-             </div>
+              <UniversalButton
+                id="conversationsearch"
+                label={isFetching ? "Searching..." : "Search"}
+                icon={<IoSearch />}
+                onClick={handleSearch}
+                disabled={isFetching}
+              />
+            </div>
             {/* Export Button */}
             <div className="w-max-content ">
-            <UniversalButton
-              id="conversationexport"
-              label="Export"
+              <UniversalButton
+                id="conversationexport"
+                label="Export"
               // onClick={() => console.log("Export Clicked")}
-            />
-             </div>
+              />
+            </div>
           </div>
 
           {/* Show Loader or Table */}

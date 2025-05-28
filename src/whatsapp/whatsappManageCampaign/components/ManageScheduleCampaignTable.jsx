@@ -1,8 +1,10 @@
 import * as React from "react";
+import { useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import CloseIcon from '@mui/icons-material/Close';
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -12,11 +14,22 @@ import {
     GridPagination,
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
-
 import { Paper, Typography, Box, Button } from "@mui/material";
+import {
+    campaignSummaryInfo,
+    cancelCampaign,
+    getWhatsappCampaignReport,
+} from "../../../apis/whatsapp/whatsapp.js";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import moment from "moment";
+import { useEffect } from "react";
+import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
+
+import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
+import InfoPopover from "../../../components/common/InfoPopover.jsx";
+import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -79,92 +92,172 @@ const CustomPagination = ({
     );
 };
 
-const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
+const ManageScheduleCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }) => {
     const [selectedRows, setSelectedRows] = useState([]);
-    const [paginationModel, setPaginationModel] = useState({ page: 0, pageSize: 10 });
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 10,
+    });
+    const [dropdownOpenId, setDropdownOpenId] = useState(null);
+    const [campaignInfo, setCampaignInfo] = useState(null);
+    const [campaignInfoMap, setCampaignInfoMap] = useState({});
 
-    let columns = [];
-    let rows = [];
+    const dropdownButtonRefs = useRef({});
+    const navigate = useNavigate();
 
-    if (isMonthWise) {
-        columns = [
-            { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-            { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
-            { field: "month", headerName: "Month", flex: 1, minWidth: 120 },
-            { field: "year", headerName: "Year", flex: 1, minWidth: 120 },
-            { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-            { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
-            { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
-            {
-                field: "userCharge",
-                headerName: "User Charge",
-                flex: 1,
-                minWidth: 120,
+    const closeDropdown = () => setDropdownOpenId(null);
+
+    useEffect(() => {
+        const handleClickOutside = (e) => {
+            if (!e.target.closest(".bot-settings")) {
+                closeDropdown();
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
+
+    const handleView = async (row) => {
+        const id = row.id;
+
+        // Reset for this row
+        setDropdownOpenId(null);
+
+        const fromDateStr = new Date(fromDate).toLocaleDateString("en-GB");
+        const formattedDate = fromDateStr.replace(/\//g, "-");
+
+        const data = {
+            campSrno: row?.campaignSrno,
+            fromDate: formattedDate,
+        };
+
+        try {
+            const res = await campaignSummaryInfo(data);
+
+            setCampaignInfoMap((prev) => ({
+                ...prev,
+                [id]: res[0] || null,
+            }));
+
+            setDropdownOpenId(id); // Open only after data is ready
+        } catch (e) {
+            console.error("Error fetching campaign summary:", e);
+        }
+    };
+
+    const handleSummaryReport = (row) => {
+        navigate("/wcampaigndetailsreport", {
+            state: {
+                campaignSrno: row.campaignSrno,
+                campaignName: row.campaignName,
             },
-        ];
+        });
+    };
 
-        rows = Array.isArray(data)
-            ? data.map((item, index) => ({
-                id: index + 1,
-                sn: index + 1,
-                displayName: item.displayName,
-                month: item.month,
-                year: item.year,
-                country: item.country,
-                type: item.whatsappType,
-                count: item.count,
-                userCharge: item.userCharge,
-            }))
-            : [];
-    } else {
-        columns = [
-            { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-            { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
-            {
-                field: "sentDate",
-                headerName: "Sent Date",
-                flex: 1,
-                minWidth: 120,
-                renderCell: (params) =>
-                    moment(new Date(params.row.sentDate)).format("DD-MM-YYYY"),
-            },
-            { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
-            { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
-            { field: "count", headerName: "Count", flex: 1, minWidth: 120 },
-            {
-                field: "userCharge",
-                headerName: "User Charge",
-                flex: 1,
-                minWidth: 120,
-            },
-        ];
-        rows = Array.isArray(data)
-            ? data.map((item, index) => ({
-                id: index + 1,
-                sn: index + 1,
-                displayName: item.displayName,
-                sentDate: item.sentDate,
-                country: item.country,
-                type: item.whatsappType,
-                count: item.count,
-                userCharge: item.userCharge,
-            }))
-            : [];
-    }
+    const handleCancel = async (row) => {
 
-    // "marketing": 1.0000,
-    // "whatsappType": "MARKETING",
-    // "utility": 2.0000,
-    // "country": "IN",
-    // "displayName": "Proactive_Celitix",
-    // "userCharge": 26.0,
-    // "month": "January",
-    // "year": 2025,
-    // "categoryCreditUsage": 2,
-    // "countryCode": "IN",
-    // "count": 2,
-    // "sentDate": "2025-01-01",
-    // "offWhatSrno": 1
+        const srno = row.srno;
+        console.log("srno", srno)
+        console.log("row", row)
+        const selectedUserId = 0;
+
+        try {
+            const result = await cancelCampaign({ srno, selectedUserId });
+            if (result) {
+                console.log("Campaign cancelled successfully:", result);
+                toast.success("Campaign Cancelled successfully");
+                fetchInitialData()
+            } else {
+                console.warn("Cancel request failed or returned empty response.");
+                toast.error("Cancel request failed")
+            }
+        } catch (error) {
+            console.error("Error cancelling campaign:", error);
+        }
+    };
+
+
+    // **Format Date Function** (Ensures proper date format)
+    const formatDate = (dateString) => {
+        if (!dateString) return "N/A";
+        const date = new Date(dateString);
+        return date.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            // hour: "2-digit",
+            // minute: "2-digit",
+            // second: "2-digit",
+        });
+    };
+
+    const columns = [
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+        { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
+        {
+            field: "campaignName",
+            headerName: "Campaign Name",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "campaignDate",
+            headerName: "Campaign Date",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "count",
+            headerName: "Count",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
+            field: "action",
+            headerName: "Action",
+            flex: 1,
+            minWidth: 150,
+            renderCell: (params) => {
+                return (
+                    <>
+                        <CustomTooltip title="Cancel Campaign" placement="top" arrow>
+                            <IconButton onClick={() => handleCancel(params.row)}>
+                                <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+                            </IconButton>
+                        </CustomTooltip>
+
+                    </>
+                )
+            },
+        },
+    ];
+
+    // use this when you want to create rows dynamically
+    // const rows = Array.from({ length: 500 }, (_, i) => ({
+    //     id: i + 1,
+    //     sn: i + 1,
+    //     queTime: '11/05/2024 14:58:39',
+    //     campaignName: 'Demo',
+    //     templateName: 'NewTemplate',
+    //     templateCategory: 'Utility',
+    //     templateType: 'Text',
+    //     status: 'Pending',
+    //     totalAudience: '10000',
+    //     action: 'True',
+    // }));
+
+    const rows = Array.isArray(data)
+        ? data.map((item, index) => ({
+            id: index + 1,
+            sn: index + 1,
+            // queTime: formatDate(item.queTime) || "N/A",
+            srno: item.srno,
+            sentTime: item.sentTime || "N/A",
+            campaignName: item.campaignName || "N/A",
+            campaignDate: item.campaignDate || "N/A",
+            count: item.count || "N/A",
+        }))
+        : [];
 
     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -238,9 +331,12 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
                 pagination
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                checkboxSelection
+                // checkboxSelection
                 rowHeight={45}
-                slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
+                slots={{
+                    footer: CustomFooter,
+                    noRowsOverlay: CustomNoRowsOverlay,
+                }}
                 slotProps={{ footer: { totalRecords: rows.length } }}
                 onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                 disableRowSelectionOnClick
@@ -273,4 +369,4 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
     );
 };
 
-export default ManageSummaryTable;
+export default ManageScheduleCampaignTable;

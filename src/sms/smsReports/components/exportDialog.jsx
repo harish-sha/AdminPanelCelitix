@@ -11,6 +11,7 @@ import { downloadCustomSmsReport } from "@/apis/sms/sms";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import InputField from "@/whatsapp/components/InputField";
 import { useDownload } from "@/context/DownloadProvider";
+import moment from "moment";
 
 export const ExportDialog = ({
   visibledialog,
@@ -67,11 +68,17 @@ export const ExportDialog = ({
     // delete dataToExport.type
     const payload = {
       ...dataToExport,
+      // fromDate: dataToExport.fromDate
+      //   ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
+      //   : "",
+      // toDate: dataToExport.toDate
+      //   ? new Date(dataToExport.toDate).toLocaleDateString("en-GB")
+      //   : "",
       fromDate: dataToExport.fromDate
-        ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
+        ? moment(dataToExport.fromDate).format("YYYY-MM-DD")
         : "",
       toDate: dataToExport.toDate
-        ? new Date(dataToExport.toDate).toLocaleDateString("en-GB")
+        ? moment(dataToExport.toDate).format("YYYY-MM-DD")
         : "",
       type: dataToExport?.type === "campaign" ? "1" : "2",
     };

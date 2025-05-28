@@ -280,11 +280,9 @@ const SendRcs = () => {
         ? contactData?.selectedCountryCode
         : "0",
       groupSrNoList: selectedOption === "group" ? selectedGrp : [],
-      isSchedule: scheduleData?.isSchedule
-        ? contactData?.selectedCountryCode
-        : "0",
+      isSchedule: scheduleData?.isSchedule ? "1" : "0",
       scheduleTime: scheduleData?.isSchedule
-        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss")
+        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:ss:mm")
         : "",
       filePath: contactData?.filePath || "",
     };

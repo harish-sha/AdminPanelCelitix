@@ -85,7 +85,7 @@ export const List = ({
         text: nodeData?.listHeading,
       },
     }));
-    const listItems = [{ option: "", value: "" }];
+    const listItems = [];
     nodeData?.options?.forEach((item: any) => {
       const data = {
         option: "",
@@ -97,7 +97,9 @@ export const List = ({
     });
     console.log("nodeData", listItems);
 
-    setOptions(listItems);
+    listItems.length > 0
+      ? setOptions(listItems)
+      : setOptions([{ option: "", value: "" }]);
   }, []);
 
   useEffect(() => {

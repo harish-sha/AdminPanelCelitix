@@ -65,7 +65,7 @@ export const EditCallback = () => {
         }
         setDetails((prev) => ({
             ...prev,
-            callBackName: callbackName || "arihant",
+            callBackName: callbackName,
             callBackType: callbackType,
             callBackDlrUrl: callbackDlrUrl,
             allowCallBackDlr: allowCallbackDlr.toString(),

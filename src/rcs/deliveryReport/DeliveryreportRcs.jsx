@@ -26,6 +26,7 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { ExportDialog } from "./components/exportDialog";
+import moment from "moment";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -119,14 +120,15 @@ const DeliveryreportRcs = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${year}/${month}/${day}`;
+
   };
 
   //fetchCampaignData
   const handleCampaignSearch = async () => {
     const data = {
-      startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
+      startDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
+      endDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
       templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",

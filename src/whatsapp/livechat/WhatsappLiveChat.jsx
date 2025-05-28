@@ -66,6 +66,7 @@ import { InputData } from "./component/InputData";
 import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
+import moment from "moment";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -833,6 +834,7 @@ export default function WhatsappLiveChat() {
         mobile: chatState?.active.mobileNo,
         wabaNumber: wabaState.selectedWaba,
         ...latestMessageData,
+        replayTime: moment(replayTime).format("YYYY-MM-DD HH:mm:ss"),
       };
       const res = await loadNewChat(data);
 

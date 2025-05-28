@@ -17,6 +17,7 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
+import moment from "moment";
 
 import toast from "react-hot-toast";
 
@@ -72,6 +73,11 @@ const Transactions = () => {
   const handleSearch = async () => {
     try {
       setIsFetching(true);
+      const data = {
+        ...filterData,
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: formatDate(filterData.toDate).format("YYYY-MM-DD"),
+      }
       const res = await fetchTransactions(filterData);
       setTransactionalData(res);
     } catch (e) {

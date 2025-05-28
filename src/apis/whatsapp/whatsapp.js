@@ -179,6 +179,31 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
   }
 };
 
+// Get Whatsapp Campaign Scheduled Reports
+export const getWhatsappCampaignScheduledReport = async () => {
+  try {
+    const response = await fetchWithAuth(
+      "/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=0",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("response from schedule", response);
+
+    if (!response || !response.data) {
+      console.error("Failed to fetch campaign report.");
+      return [];
+    }
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching campaign report:", error);
+    return [];
+  }
+};
+
 // waba profile details
 export const getwabadetails = async (wabaNumber) => {
   return await fetchWithAuth(
@@ -559,7 +584,7 @@ export const fetchReplyData = async (data) => {
   );
 };
 
-// save whatsapp flows 
+// save whatsapp flows
 export const saveFlow = async (params, data) => {
   return await fetchWithAuth(
     `/WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
@@ -568,6 +593,16 @@ export const saveFlow = async (params, data) => {
     {
       method: "POST",
       body: JSON.stringify(data),
+    }
+  );
+};
+
+// cancel campaign
+export const cancelCampaign = async ({ srno, selectedUserId }) => {
+  return await fetchWithAuth(
+    `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`,
+    {
+      method: "POST",
     }
   );
 };

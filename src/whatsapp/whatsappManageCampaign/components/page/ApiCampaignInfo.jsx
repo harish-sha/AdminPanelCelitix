@@ -9,6 +9,7 @@ import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay";
 import { Box } from "@mui/material";
 import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -98,7 +99,7 @@ export const ApiCampaignInfo = () => {
       // later update with upper code
 
       const formattedFromDate = state.selectedDate
-        ? new Date(state.selectedDate).toLocaleDateString("en-GB")
+        ? moment(state.selectedDate).format("YYYY-MM-DD")
         : new Date().toLocaleDateString("en-GB");
 
       let status = "";
@@ -124,7 +125,7 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      setTotalPage(5000); 
+      setTotalPage(5000);
       // console.log(res);
       setData(res);
     } catch (e) {
@@ -276,7 +277,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize

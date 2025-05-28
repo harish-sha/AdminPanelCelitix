@@ -57,6 +57,7 @@ import { CustomTabPanel, a11yProps } from "./components/CustomTabPanel";
 import "../style.css";
 import { RadioButton } from "primereact/radiobutton";
 import { Dialog } from "primereact/dialog";
+import moment from "moment";
 
 const ManageTemplate = () => {
   const navigate = useNavigate();
@@ -382,12 +383,10 @@ const ManageTemplate = () => {
       const itemType = item.type?.toLowerCase().trim() || "";
       const itemStatus = item.status?.toLowerCase().trim() || "";
       const itemName = item.templateName?.toLowerCase().trim() || "";
-      const itemDateLocal = new Date(item.createdDate).toLocaleDateString(
-        "en-CA"
-      );
+      const itemDateLocal = item?.createdDate;
       let selectedDateLocal = "";
       if (selectedDate) {
-        selectedDateLocal = new Date(selectedDate).toLocaleDateString("en-CA");
+        selectedDateLocal = moment(selectedDate).format("DD-MM-YYYY");
       }
       return (
         (!selectedCategory ||
@@ -397,7 +396,7 @@ const ManageTemplate = () => {
           itemStatus === selectedStatus.toLowerCase().trim()) &&
         (!templateName ||
           itemName.includes(templateName.toLowerCase().trim())) &&
-        (!selectedDate || itemDateLocal === selectedDateLocal)
+        (!selectedDate || itemDateLocal.includes(selectedDateLocal))
       );
     });
     setFilteredData(filtered);

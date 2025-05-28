@@ -19,6 +19,7 @@ import UniversalButton from "../components/UniversalButton.jsx";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay.jsx";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -153,7 +154,7 @@ const CampaignDetailsReport = () => {
         // wabaNumber: item.wabaNumber || "N/A",
         mobileNo: item.mobileNo || "N/A",
         status: item.status || "N/A",
-        sentTime: item.sentTime || "-",
+        sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
         deliveryStatus: item.deliveryStatus || "-",

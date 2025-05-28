@@ -15,6 +15,7 @@ import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -120,15 +121,22 @@ const WhatsappConversationTable = ({
       flex: 1,
       minWidth: 120,
     },
-    { field: "replyTime", headerName: "Time", flex: 1, minWidth: 120 },
+    {
+      field: "replyTime",
+      headerName: "Time",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) =>
+        moment(params.row.replyTime).format("DD-MM-YYYY HH:mm:ss"),
+    },
   ];
 
   const rows = Array.isArray(data?.data)
     ? data?.data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        ...item,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      ...item,
+    }))
     : [];
 
 

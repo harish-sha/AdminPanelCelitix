@@ -47,6 +47,7 @@ import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
 import { StatusHoverCard } from "./components/StatusHoverCard.jsx";
+import moment from "moment";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -248,7 +249,7 @@ const WhatsappManageWaba = ({ id, name }) => {
     });
 
     const data = await res.json();
-    console.log(data)
+    // console.log(data)
     if (!data.ok) {
       toast.error(data.message || "Something went wrong")
     }
@@ -259,10 +260,10 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
-        console.log(response)
+        // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          console.log('Access Token:', accessToken);
+          // console.log('Access Token:', accessToken);
           onboardUser(accessToken)
         } else {
           console.log('User cancelled login or did not fully authorize.');
@@ -300,7 +301,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
-    console.log(details)
+    // console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };
@@ -648,13 +649,13 @@ const WhatsappManageWaba = ({ id, name }) => {
     sn: index + 1,
     wabaName: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
-    createdOn: waba.insertTime || "N/A",
+    createdOn: moment(waba.insertTime).format("YYYY-MM-DD") || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
     quality: waba.qualityRate || "N/A",
     additionalInfo: {
-      expiryDate: waba.expiryDate || "N/A",
+      expiryDate: moment(waba.expiryDate).format("YYYY-MM-DD") || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
       // quality: waba.qualityRate || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
