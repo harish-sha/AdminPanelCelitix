@@ -113,7 +113,7 @@ const ManageTemplatetableRcs = ({
       flex: 1,
       minWidth: 120,
     },
-    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 120 },
+    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 200 },
     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
     {
       field: "active",

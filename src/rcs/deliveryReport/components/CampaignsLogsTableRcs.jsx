@@ -143,7 +143,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
+    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 200 },
     {
       field: "campaignName",
       headerName: "Campaign Name",

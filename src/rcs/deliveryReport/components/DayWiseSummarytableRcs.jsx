@@ -88,7 +88,7 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     isMonthWise
       ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
-      : { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 120 },
+      : { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 200 },
     {
       field: "chargedUnit",
       headerName: "Charged Unit",
