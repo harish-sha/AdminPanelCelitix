@@ -321,13 +321,14 @@ export const sendTemplateMessageToUser = async (data) => {
 
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
+  const encodeMessage = encodeURIComponent(data?.message);
   return await fetchWithAuth(
     `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${
       data.wabaNumber
     }&srno=${data.srno}&contactName=${data.contactName}&replyType=${
       data.replyType
     }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}${
-      data.message ? `&message=${data.message}` : ""
+      data.message ? `&message=${encodeMessage}` : ""
     }`,
     {
       method: "POST",
