@@ -383,7 +383,7 @@ const ManageTemplate = () => {
       const itemType = item.type?.toLowerCase().trim() || "";
       const itemStatus = item.status?.toLowerCase().trim() || "";
       const itemName = item.templateName?.toLowerCase().trim() || "";
-      const itemDateLocal = item?.createdDate;
+      const itemDateLocal = moment(new Date(item?.createdDate)).format("DD-MM-YYYY");
       let selectedDateLocal = "";
       if (selectedDate) {
         selectedDateLocal = moment(selectedDate).format("DD-MM-YYYY");

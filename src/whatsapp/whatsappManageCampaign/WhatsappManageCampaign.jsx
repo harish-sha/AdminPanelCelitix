@@ -38,6 +38,7 @@ import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -247,8 +248,8 @@ const WhatsappManageCampaign = () => {
     const formattedToDate = new Date().toLocaleDateString("en-GB");
 
     const filters = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
+      fromQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
+      toQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
     };

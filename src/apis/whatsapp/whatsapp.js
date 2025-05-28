@@ -118,21 +118,9 @@ export const sendWhatsappCampaign = async (campaignData) => {
 // Get Whatsapp Campaign Report
 export const getWhatsappCampaignReport = async (filters = {}) => {
   try {
-    const formattedFromDate = filters.fromQueDateTime
-      ? new Date(
-          filters.fromQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
-
-    const formattedToDate = filters.toQueDateTime
-      ? new Date(
-          filters.toQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
-
     const requestBody = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
+      fromQueDateTime: filters.fromQueDateTime,
+      toQueDateTime: filters.toQueDateTime,
       campaignName: filters.campaignName || "",
       template_category: filters.template_category || "all",
     };
