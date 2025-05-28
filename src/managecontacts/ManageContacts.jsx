@@ -2086,8 +2086,8 @@ const ManageContacts = () => {
     lastName: "",
     mobileNo: "",
     emailId: "",
-    birthDate: "",
-    mariageDate: "",
+    birthDate: null,
+    mariageDate: undefined ,
     allowishes: "",
     gender: "",
   });
@@ -2212,7 +2212,7 @@ const ManageContacts = () => {
 
     // Validate required fields
     const requiredFields = [
-      "firstName",
+      // "firstName",
       //"lastName",
       "mobileNo",
       //"emailId",
@@ -2466,7 +2466,6 @@ const ManageContacts = () => {
       }));
 
       contactSetRows(formattedData);
-      
     } catch (err) {
       toast.error("Something went wrong");
     } finally {
@@ -3020,12 +3019,12 @@ const ManageContacts = () => {
             }))}
             value={selectedMultiGroup}
             onChange={(e) => {
-              console.log("e",e)
+              console.log("e", e);
               setSelectedMultiGroup(e);
               setAllContacts([]);
               setFilterContacts([]);
-              
-              contactSetRows([])
+
+              contactSetRows([]);
             }}
             filter
           />
@@ -3343,7 +3342,8 @@ const ManageContacts = () => {
             <UniversalDatePicker
               label="Birth Date"
               className="mb-0"
-              value={addContactDetails.birthDate}
+              value={addContactDetails?.birthDate}
+              // defaultValue={new Date()}
               onChange={(e) =>
                 setAddContactDetails({
                   ...addContactDetails,

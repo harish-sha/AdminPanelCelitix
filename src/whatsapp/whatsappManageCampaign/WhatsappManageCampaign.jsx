@@ -269,30 +269,6 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-  // Fetch initial data - for to load data on page load
-  const fetchInitialData = async () => {
-    const filters = {
-      fromQueDateTime: new Date().toLocaleDateString("en-GB"),
-      toQueDateTime: new Date().toLocaleDateString("en-GB"),
-      campaignName: "",
-      category: "all",
-    };
-
-    setIsFetching(true);
-    const data = await getWhatsappCampaignReport(filters);
-    setFilteredData(data);
-    setIsFetching(false);
-  };
-
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await fetchInitialData();
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
-
   useEffect(() => {
     const fetchWabaList = async () => {
       try {

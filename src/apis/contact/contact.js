@@ -117,7 +117,7 @@ export const deleteContact = async (data) => {
 // update contact status
 export const updateContactStatus = async (data) => {
   return await fetchWithAuth(
-    `contact/updateStatus?addSrno=${data.srno}&activeStatus=${data.status}`,
+    `/contact/updateStatus?addSrno=${data.srno}&activeStatus=${data.status}`,
     { method: "POST" }
   );
 };
