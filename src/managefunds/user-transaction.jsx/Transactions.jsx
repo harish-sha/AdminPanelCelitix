@@ -21,6 +21,7 @@ import { useUser } from "@/context/auth";
 
 import toast from "react-hot-toast";
 import { fetchAllUsers } from "@/apis/admin/admin";
+import { exportToExcel } from "@/utils/utills";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -170,10 +171,10 @@ const TransactionsUser = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-        ...item,
-        sn: index + 1,
-        id: index + 1,
-      }))
+      ...item,
+      sn: index + 1,
+      id: index + 1,
+    }))
     : [];
 
   const multiHistory = [
@@ -266,6 +267,18 @@ const TransactionsUser = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -306,6 +319,7 @@ const TransactionsUser = () => {
                 // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
 
                 variant="primary"
+                onClick={handleExport}
               />
             </div>
             {user.role === "RESELLER" && (

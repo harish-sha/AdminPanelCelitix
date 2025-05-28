@@ -42,6 +42,7 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
+import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 
 
 function CustomTabPanel(props) {
@@ -98,6 +99,10 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
+
+  const { user } = useUser();
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
 
   //Export Download Reports start
 
@@ -256,9 +261,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
 
   //Export Download Reports end
 
