@@ -20,6 +20,7 @@ import { fetchTransactions } from "../../apis/settings/setting";
 
 import toast from "react-hot-toast";
 import moment from "moment";
+import { exportToExcel } from "@/utils/utills";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -77,7 +78,7 @@ const Transactions = () => {
         ...filterData,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
         toDate: formatDate(filterData.toDate).format("YYYY-MM-DD"),
-      }
+      };
       const res = await fetchTransactions(filterData);
       setTransactionalData(res);
     } catch (e) {
@@ -141,10 +142,10 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-    }))
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+      }))
     : [];
 
   const multiHistory = [
@@ -237,6 +238,18 @@ const Transactions = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -267,25 +280,6 @@ const Transactions = () => {
                 },
               }}
             />
-
-            {/* <Tab
-                            label={
-                                <span className="flex items-center gap-2">
-                                    <BsJournalArrowDown size={18} /> Transaction Summary
-                                </span>
-                            }
-                            {...a11yProps(1)}
-                            sx={{
-                                textTransform: 'none',
-                                fontWeight: 'bold',
-                                color: 'text.secondary',
-                                '&:hover': {
-                                    color: 'primary.main',
-                                    backgroundColor: '#f0f4ff',
-                                    borderRadius: '8px',
-                                },
-                            }}
-                        /> */}
           </Tabs>
           <div className="w-max-content">
             <UniversalButton
@@ -294,38 +288,13 @@ const Transactions = () => {
               label="Export"
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
+              onClick={handleExport}
             />
           </div>
         </div>
         <CustomTabPanel value={value} index={0} className="">
           <div className="w-full">
             <div className="flex items-end justify-start w-full gap-4 pb-5 align-middle flex-wrap">
-              {/* <div className="w-full sm:w-56">
-                                <div className="flex items-center gap-2 mb-2">
-                                    <label className="text-sm font-medium text-gray-700">User</label>
-
-                                    <CustomTooltip
-                                        title="Select User"
-                                        placement="right"
-                                        arrow
-                                    >
-                                        <span>
-                                            <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                                        </span>
-                                    </CustomTooltip>
-                                </div>
-                                <MultiSelect
-                                    className="custom-multiselect"
-                                    placeholder="Select Groups"
-                                    maxSelectedLabels={0}
-                                    optionLabel="name"
-                                    options={multiHistory}
-                                    value={selectedMultiHistory}
-                                    onChange={(e) => setSelectedMultiHistory(e.value)}
-                                    filter
-
-                                />
-                            </div> */}
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
                   id="transactionshistoryfrom"
@@ -364,20 +333,6 @@ const Transactions = () => {
                   }}
                 />
               </div>
-
-              {/* <div className="w-full sm:w-56" >
-                                <AnimatedDropdown
-                                    id='transactionshistoryservice'
-                                    name='transactionshistoryservice'
-                                    label="Service"
-                                    tooltipContent="Select service"
-                                    tooltipPlacement="right"
-                                    options={options2}
-                                    value={selectedHistoryService}
-                                    onChange={(value) => setSelectedHistoryService(value)}
-                                    placeholder="Service"
-                                />
-                            </div> */}
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   id="transactionshistorytype"

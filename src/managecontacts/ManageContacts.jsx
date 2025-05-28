@@ -331,7 +331,8 @@ const ManageContacts = () => {
       if (!Array.isArray(res)) {
         setAllContacts([]);
         setFilterContacts([]);
-        toast.error(res?.message);
+        contactSetRows([]);
+        // toast.error("d", res?.message);
         return;
       }
       setAllContacts(res);
@@ -495,7 +496,6 @@ const ManageContacts = () => {
   };
 
   const handleUpdateGrpName = async () => {
-
     const res = await updateGroupName(updateGrpId.id, groupName);
     if (res?.message.includes("updated")) {
       toast.success(res?.message);
