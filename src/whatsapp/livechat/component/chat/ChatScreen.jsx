@@ -93,14 +93,16 @@ export const ChatScreen = ({
     );
   };
 
-  const handleDownload = async (url, filename) => {
+    const handleDownload = async (url, filename) => {
     try {
+      const res = await axios.get(url, { responseType: "blob" });
+      // console.log(res);
+      const blobUrl = window.URL.createObjectURL(res?.data);
+      window.open(blobUrl);
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename || "file");
-      document.body.appendChild(link);
+      link.href = blobUrl;
+      link.download = filename;
       link.click();
-      link.remove();
 
       toast.success("Download started!");
     } catch (error) {
@@ -168,8 +170,8 @@ export const ChatScreen = ({
     },
   };
 
-  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  const BASE_MEDIA_URL = "/image";
+  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  // const BASE_MEDIA_URL = "/image";
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
