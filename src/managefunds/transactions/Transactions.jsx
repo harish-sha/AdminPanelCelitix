@@ -77,12 +77,13 @@ const Transactions = () => {
       const data = {
         ...filterData,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
-        toDate: formatDate(filterData.toDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       };
       const res = await fetchTransactions(filterData);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      console.log(e)
+      toast.error("Something went wrong!");
     } finally {
       setIsFetching(false);
     }

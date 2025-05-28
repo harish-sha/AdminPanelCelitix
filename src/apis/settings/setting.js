@@ -31,7 +31,7 @@ export const fetchIpDetails = async () => {
 // fetch transaction history
 export const fetchTransactions = async (filterData) => {
   return await fetchWithAuth(
-    `/accountInfo/rechargeHistory?startDate=${filterData.startDate}&toDate=${filterData.toDate}&rechargeType=${filterData.rechargeType}&userSrno=${filterData.userSrNo}`,
+    `/accountInfo/rechargeHistory?startDate=${filterData.startDate}&toDate=${filterData.toDate}&rechargeType=${filterData.rechargeType}&userSrno=${filterData.userSrNo||""}`,
     {
       method: "POST",
     }
