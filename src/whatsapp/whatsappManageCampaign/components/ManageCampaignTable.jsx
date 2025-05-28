@@ -385,7 +385,7 @@ const CustomPagination = ({
   );
 };
 
-const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }) => {
+const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -446,25 +446,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate, fetchInitialData }
       },
     });
   };
-
-  const handleCancel = async (row) => {
-  const srno = row.campaignSrno;
-  const selectedUserId = 0; 
-
-  try {
-    const result = await cancelCampaign({ srno, selectedUserId });
-    if (result) {
-      console.log("Campaign cancelled successfully:", result);
-      toast.success("Campaign cancelled successfully");
-      fetchInitialData()
-    } else {
-      console.warn("Cancel request failed or returned empty response.");
-      toast.error("Cancel request failed")
-    }
-  } catch (error) {
-    console.error("Error cancelling campaign:", error);
-  }
-};
 
 
   // **Format Date Function** (Ensures proper date format)

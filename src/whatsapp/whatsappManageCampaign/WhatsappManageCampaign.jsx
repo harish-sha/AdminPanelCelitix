@@ -296,47 +296,44 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-const handleScheduleSearch = async() => {
-  const formattedSelectedDate = scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-  ? new Date(scheduleSelectedDate).toISOString().split("T")[0]
-  : null;
 
-  // Check if filters are provided
-  const filtersApplied = scheduleCampaignName || scheduleSelectedDate;
-
-  if (!filtersApplied) {
-    console.log("No filters applied, showing all data.");
-    // await getWhatsappCampaignScheduledReport();
-    setScheduleData(orignalScheduleData); // Reset to full data
-    return;
-  }
-
-  const filteredData = orignalScheduleData.filter((item, index) => {
-    const matchesCampaignName = scheduleCampaignName
-      ? item.campaignName?.toLowerCase().includes(scheduleCampaignName.toLowerCase())
-      : true;
-
-    const itemDate = item.sentTime ? item.sentTime.split(" ")[0] : "";
-    const matchesDate = formattedSelectedDate
-      ? itemDate === formattedSelectedDate
-      : true;
-
-    const finalMatch = matchesCampaignName && matchesDate;
-    return finalMatch;
-  });
-  setScheduleData(filteredData);
-};
-
-
-  // Fetch initial data - for to load data on page load
-  const fetchScheduleCampaignData = async () => {
+const fetchScheduleCampaignData = async () => {
   setIsFetching(true);
-  const data = await getWhatsappCampaignScheduledReport();
-  console.log("scheduleDataaaa", data);
 
-  setOrignalScheduleData(data); // Save the unfiltered data
-  setScheduleData(data); // Also set to display
-  setIsFetching(false);
+  try {
+    const data = await getWhatsappCampaignScheduledReport();
+
+    // Format the date if provided
+    const formattedSelectedDate =
+      scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+        ? new Date(scheduleSelectedDate).toISOString().split("T")[0]
+        : null;
+
+    const filtersApplied = scheduleCampaignName || scheduleSelectedDate;
+
+    if (!filtersApplied) {
+      setOrignalScheduleData(data);
+      setScheduleData(data);
+    } else {
+      const filteredData = data.filter((item) => {
+        const matchesCampaignName = scheduleCampaignName
+          ? item.campaignName?.toLowerCase().includes(scheduleCampaignName.toLowerCase())
+          : true;
+
+        const itemDate = item.sentTime ? item.sentTime.split(" ")[0] : "";
+        const matchesDate = formattedSelectedDate ? itemDate === formattedSelectedDate : true;
+
+        return matchesCampaignName && matchesDate;
+      });
+
+      setOrignalScheduleData(data); // Keep the original data
+      setScheduleData(filteredData);
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  } finally {
+    setIsFetching(false);
+  }
 };
 
 
@@ -679,7 +676,6 @@ const handleScheduleSearch = async() => {
                     name="whatsappManageCampaignTable"
                     data={filteredData}
                     fromDate={selectedDate}
-                    fetchInitialData={fetchInitialData}
                   />
                 </div>
               )}
@@ -1011,7 +1007,7 @@ const handleScheduleSearch = async() => {
                     name="manageCampaignSearchBtn"
                     label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
-                    onClick={()=>handleScheduleSearch()}
+                    onClick={()=>fetchScheduleCampaignData()}
                     variant="primary"
                   />
                 </div>

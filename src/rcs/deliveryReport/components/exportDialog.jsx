@@ -63,7 +63,7 @@ export const ExportDialog = ({
       toast.error("Please select custom columns");
       return;
     }
-    // console.log(dataToExport);
+    // console.log("dataToExport", dataToExport);
     // delete dataToExport.type
 
     const payload = {
@@ -311,9 +311,9 @@ export const ExportDialog = ({
                 <AnimatedDropdown
                   label="Select Type"
                   options={[
-                    { value: "Promotional", label: "Promotional" },
-                    { value: "Transactional", label: "Transactional" },
-                    { value: "Both", label: "Both" },
+                    { value: "0", label: "Promotional" },
+                    { value: "1", label: "Transactional" },
+                    { value: "2", label: "Both" },
                   ]}
                   value={dataToExport.campaignType}
                   onChange={(e) =>
@@ -329,7 +329,7 @@ export const ExportDialog = ({
                   options={[
                     { value: "Sent", label: "Sent" },
                     { value: "Failed", label: "Failed" },
-                    { value: "NDNC", label: "NDNC" },
+                    { value: "Blocked", label: "Blocked" },
                   ]}
                   value={dataToExport.status}
                   onChange={(e) =>
@@ -345,60 +345,76 @@ export const ExportDialog = ({
               <div className="flex gap-x-5 lg:gap-x-20">
                 <div className="flex items-center">
                   <Checkbox
-                    id="answered"
-                    name="answered"
+                    id="delivered"
+                    name="delivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "answered")
+                      handleDeliveryCheckboxChange(e, "delivered")
                     }
-                    checked={dataToExport.delStatus["answered"]}
+                    checked={dataToExport.delStatus["delivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="answered"
+                    htmlFor="delivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Answered
+                    Delivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="unanswered"
-                    name="unanswered"
+                    id="undelivered"
+                    name="undelivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "unanswered")
+                      handleDeliveryCheckboxChange(e, "undelivered")
                     }
-                    checked={dataToExport.delStatus["unanswered"]}
+                    checked={dataToExport.delStatus["undelivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="unanswered"
+                    htmlFor="undelivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Unanswered
+                    Undelivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="dialed"
-                    name="dialed"
-                    onChange={(e) => handleDeliveryCheckboxChange(e, "dialed")}
-                    checked={dataToExport.delStatus["dialed"]}
+                    id="rejected"
+                    name="rejected"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "rejected")}
+                    checked={dataToExport.delStatus["rejected"]}
                     className="m-2"
                   />
                   <label
                     htmlFor="dialed"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Dialed
+                    Rejected
+                  </label>
+                </div>
+
+                <div className="flex items-center">
+                  <Checkbox
+                    id="pdr"
+                    name="pdr"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "pdr")}
+                    checked={dataToExport.delStatus["pdr"]}
+                    className="m-2"
+                  />
+                  <label
+                    htmlFor="pdr"
+                    className="text-sm font-medium text-gray-800"
+                  >
+                    PDR
                   </label>
                 </div>
               </div>
             </div>
 
             <div className="flex my-4 gap-4">
-              <InputField
+              {/* <InputField
                 label="Mobile Number"
                 id="customdialognumber"
                 name="customdialognumber"
@@ -407,7 +423,7 @@ export const ExportDialog = ({
                   setDataToExport({ ...dataToExport, mobileNo: e.target.value })
                 }
                 placeholder="Enter mobile number..."
-              />
+              /> */}
               {/* <AnimatedDropdown
                 label="DTMF Count"
                 id="dtmfResponse"

@@ -157,8 +157,6 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], fromDate, fetchIniti
   const handleCancel = async (row) => {
   
   const srno = row.srno;
-  console.log("srno", srno)
-  console.log("row", row)
   const selectedUserId = 0; 
 
   try {
