@@ -29,7 +29,7 @@ import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import { exportToExcel } from "@/utils/utills";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InfoPopover from "@/components/common/InfoPopover";
-
+import moment from "moment";
 
 const SmsDLTtemplate = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -63,7 +63,6 @@ const SmsDLTtemplate = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
   const [contactData, setContactData] = useState({});
   const [templateData, setTemplateData] = useState({
     templateName: "",
@@ -81,16 +80,20 @@ const SmsDLTtemplate = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [updateTemplateData, setUpdateTemplateData] = useState({});
 
-
   const fetchTemplates = async () => {
     setIsFetching(true);
     try {
       const rawData = await getAllTemplates("all");
       const reverseData = rawData.reverse();
 
-      const filteredData = reverseData.filter((item) =>
-        item.templateId?.toLowerCase().includes(templateIdFilter.toLowerCase()) &&
-        item.templateName?.toLowerCase().includes(templateNameFilter.toLowerCase())
+      const filteredData = reverseData.filter(
+        (item) =>
+          item.templateId
+            ?.toLowerCase()
+            .includes(templateIdFilter.toLowerCase()) &&
+          item.templateName
+            ?.toLowerCase()
+            .includes(templateNameFilter.toLowerCase())
       );
 
       const mappedData = filteredData.map((item, index) => ({
@@ -106,10 +109,10 @@ const SmsDLTtemplate = () => {
           item.type === 1
             ? "Transactional"
             : item.type === 2
-              ? "Promotional"
-              : item.type === 3
-                ? "International"
-                : "Unknown",
+            ? "Promotional"
+            : item.type === 3
+            ? "International"
+            : "Unknown",
         // consenttype: "-",
         inserttime: item.insertDate
           ? moment(item.insertDate).format("DD-MM-YYYY HH:mm:ss")
@@ -118,10 +121,10 @@ const SmsDLTtemplate = () => {
           item.status === 1
             ? "Approved"
             : item.status === 2
-              ? "Rejected"
-              : item.status === 3
-                ? "Pending"
-                : "Unknown",
+            ? "Rejected"
+            : item.status === 3
+            ? "Pending"
+            : "Unknown",
       }));
 
       setRows(mappedData);
@@ -268,8 +271,7 @@ const SmsDLTtemplate = () => {
             onClose={closeDropdown}
           >
             {clicked && Object.keys(clicked).length > 0 ? (
-              <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden"
-              >
+              <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
                 <tbody>
                   {Object.entries(clicked).map(([key, value], index) => (
                     <tr
@@ -595,8 +597,9 @@ const SmsDLTtemplate = () => {
                   <button
                     onClick={handleFileUpload}
                     disabled={isUploading}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                      }`}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                      isUploading ? "disabled" : ""
+                    }`}
                   >
                     <FileUploadOutlinedIcon
                       sx={{ color: "white", fontSize: "23px" }}
@@ -822,8 +825,9 @@ const SmsDLTtemplate = () => {
               Are you sure ?
             </p>
             <p>
-              {`Do you really want to delete ${isMultipleDelete ? "these" : "this"
-                } record? This process cannot be undo.`}
+              {`Do you really want to delete ${
+                isMultipleDelete ? "these" : "this"
+              } record? This process cannot be undo.`}
             </p>
             <div className="flex justify-center gap-4 mt-2">
               <UniversalButton

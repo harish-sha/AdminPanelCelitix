@@ -35,6 +35,7 @@ import { IoSearch } from "react-icons/io5";
 import { deleteBot, getAllBot } from "@/apis/whatsapp/whatsapp";
 import toast from "react-hot-toast";
 import { Dialog } from "primereact/dialog";
+import moment from "moment";
 
 const WhatsappBot = () => {
   const navigate = useNavigate();
@@ -400,7 +401,7 @@ const WhatsappBot = () => {
                         {bot.integrations}
                       </div> */}
                       <div className="text-sm text-gray-500 flex-1 flex lg:flex-col md:flex-row items-center md:justify-start gap-1">
-                        Created On: <strong>{bot.saveTime}</strong>
+                        Created On: <strong>{moment(bot.saveTime).format("DD-MM-YYYY")}</strong>
                       </div>
                       <div className="flex items-center gap-2 relative bot-settings">
                         <CustomTooltip title="Settings" arrow>

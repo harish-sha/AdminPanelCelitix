@@ -13,6 +13,7 @@ import { fetchAllAgents, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
 import { IconButton } from "@mui/material";
 import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import { exportToExcel } from "@/utils/utills.js";
+import moment from "moment";
 
 const SuggestionReportRcs = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -154,7 +155,7 @@ const SuggestionReportRcs = () => {
     const month = String(date.getMonth() + 1).padStart(2, "0");
     const day = String(date.getDate()).padStart(2, "0");
 
-    return `${year}-${month}-${day}`;
+    return `${year}/${month}/${day}`;
   };
 
   const handleSearch = async () => {
@@ -250,6 +251,9 @@ const SuggestionReportRcs = () => {
       headerName: "Receive Time",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => (
+        <>{moment(params.row.insertTime).format("DD-MM-YYYY HH:mm:ss")}</>
+      ),
     },
   ];
 

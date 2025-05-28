@@ -47,6 +47,7 @@ import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
 import { StatusHoverCard } from "./components/StatusHoverCard.jsx";
+import moment from "moment";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -112,12 +113,6 @@ const CustomPagination = ({
     </Box>
   );
 };
-
-
-
-
-
-
 
 const WhatsappManageWaba = ({ id, name }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -206,7 +201,6 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image uploaded successfully.");
   };
 
-
   useEffect(() => {
     const loadFacebookSDK = () => {
       window.fbAsyncInit = function () {
@@ -214,19 +208,19 @@ const WhatsappManageWaba = ({ id, name }) => {
           appId: "819027950096451",
           autoLogAppEvents: true,
           xfbml: true,
-          version: 'v20.0',
+          version: "v20.0",
         });
       };
 
       // Load the SDK script
-      if (!document.getElementById('facebook-jssdk')) {
-        const script = document.createElement('script');
-        script.id = 'facebook-jssdk';
+      if (!document.getElementById("facebook-jssdk")) {
+        const script = document.createElement("script");
+        script.id = "facebook-jssdk";
         // script.src = 'https://connect.facebook.net/en_US/sdk.js';
         script.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.0";
         script.async = true;
         script.defer = true;
-        script.crossOrigin = 'anonymous';
+        script.crossOrigin = "anonymous";
         document.body.appendChild(script);
       }
     };
@@ -234,46 +228,48 @@ const WhatsappManageWaba = ({ id, name }) => {
     loadFacebookSDK();
   }, []);
 
-
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // const API_BASE_URL = "/api";
 
   async function onboardUser(accessToken) {
-    const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    const res = await fetch(
+      `${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
       }
-    });
+    );
 
     const data = await res.json();
-    console.log(data)
+    console.log(data);
     if (!data.ok) {
-      toast.error(data.message || "Something went wrong")
+      toast.error(data.message || "Something went wrong");
     }
-    toast.success(data.message || "Something went wrong")
+    toast.success(data.message || "Something went wrong");
     // return data;
   }
 
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
-        console.log(response)
+        console.log(response);
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          console.log('Access Token:', accessToken);
-          onboardUser(accessToken)
+          console.log("Access Token:", accessToken);
+          onboardUser(accessToken);
         } else {
-          console.log('User cancelled login or did not fully authorize.');
+          console.log("User cancelled login or did not fully authorize.");
         }
       },
       {
         config_id: "827520649332611",
-        response_type: 'code',
+        response_type: "code",
         override_default_response_type: true,
         extras: {
-          feature: 'whatsapp_embedded_signup',
+          feature: "whatsapp_embedded_signup",
           version: 2,
           setup: {
             solutionID: "597385276367677",
@@ -296,11 +292,9 @@ const WhatsappManageWaba = ({ id, name }) => {
     toast.success("Image removed successfully.");
   };
 
-
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
-    console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };
@@ -410,7 +404,11 @@ const WhatsappManageWaba = ({ id, name }) => {
             >
               <span
                 className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold ${color}`}
-                style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
+                style={{
+                  minWidth: 90,
+                  display: "inline-block",
+                  textAlign: "center",
+                }}
               >
                 {text}
               </span>
@@ -648,13 +646,13 @@ const WhatsappManageWaba = ({ id, name }) => {
     sn: index + 1,
     wabaName: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
-    createdOn: waba.insertTime || "N/A",
+    createdOn: moment(waba.insertTime).format("YYYY-MM-DD") || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
     quality: waba.qualityRate || "N/A",
     additionalInfo: {
-      expiryDate: waba.expiryDate || "N/A",
+      expiryDate: moment(waba.expiryDate).format("YYYY-MM-DD") || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
       // quality: waba.qualityRate || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
