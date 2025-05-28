@@ -13,6 +13,8 @@ import {
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Paper, Typography, Box, Button } from "@mui/material";
+import { render } from "timeago.js";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -88,7 +90,15 @@ const DayWiseSummarytableRcs = ({ id, name, isMonthWise, data = [] }) => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     isMonthWise
       ? { field: "month", headerName: "Month", flex: 1, minWidth: 120 }
-      : { field: "queDate", headerName: "Que Date", flex: 1, minWidth: 120 },
+      : {
+          field: "queDate",
+          headerName: "Que Date",
+          flex: 1,
+          minWidth: 120,
+          renderCell: (params) => (
+            <>{moment(params.row.queDate).format("DD-MM-YYYY")}</>
+          ),
+        },
     {
       field: "chargedUnit",
       headerName: "Charged Unit",

@@ -19,6 +19,7 @@ import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
 
 import toast from "react-hot-toast";
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -72,6 +73,11 @@ const Transactions = () => {
   const handleSearch = async () => {
     try {
       setIsFetching(true);
+      const data = {
+        ...filterData,
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: formatDate(filterData.toDate).format("YYYY-MM-DD"),
+      }
       const res = await fetchTransactions(filterData);
       setTransactionalData(res);
     } catch (e) {
