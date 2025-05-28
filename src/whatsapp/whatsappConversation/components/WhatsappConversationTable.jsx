@@ -15,6 +15,7 @@ import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -28,7 +29,7 @@ const CustomPagination = ({
   totalPages,
   paginationModel,
   setPaginationModel,
-  setCurrentPage
+  setCurrentPage,
 }) => {
   const { items } = usePagination({
     count: totalPages,
@@ -92,7 +93,6 @@ const WhatsappConversationTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
-
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     {
@@ -120,7 +120,14 @@ const WhatsappConversationTable = ({
       flex: 1,
       minWidth: 120,
     },
-    { field: "replyTime", headerName: "Time", flex: 1, minWidth: 120 },
+    {
+      field: "replyTime",
+      headerName: "Time",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) =>
+        moment(params.row.replyTime).format("DD-MM-YYYY HH:mm:ss"),
+    },
   ];
 
   const rows = Array.isArray(data?.data)
@@ -130,7 +137,6 @@ const WhatsappConversationTable = ({
         ...item,
       }))
     : [];
-
 
   const CustomFooter = () => {
     return (
@@ -163,7 +169,8 @@ const WhatsappConversationTable = ({
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{data?.total || 0}</span>
+            Total Records:{" "}
+            <span className="font-semibold">{data?.total || 0}</span>
           </Typography>
         </Box>
 

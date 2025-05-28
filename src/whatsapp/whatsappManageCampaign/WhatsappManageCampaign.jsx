@@ -40,7 +40,7 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
-
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -163,8 +163,6 @@ const WhatsappManageCampaign = () => {
     dialed: false,
   });
 
-
-
   useEffect(() => {
     //fetchAllUsersDetails
     if (user.role === "RESELLER") {
@@ -254,9 +252,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -329,7 +327,7 @@ const WhatsappManageCampaign = () => {
 
   const handleSearch = async () => {
     const formattedFromDate = selectedDate
-      ? new Date(selectedDate).toLocaleDateString("en-GB")
+      ? moment(selectedDate).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     const filters = {
@@ -337,7 +335,7 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: formattedFromDate,
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -361,8 +359,7 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: today,
       campaignName: "",
       template_category: "all",
-      selectedUserId: selectedUser || "0"
-
+      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -370,7 +367,6 @@ const WhatsappManageCampaign = () => {
     setFilteredData(data);
     setIsFetching(false);
   };
-
 
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -397,7 +393,7 @@ const WhatsappManageCampaign = () => {
   const handleShowLogs = async () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
-      ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      ? moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
@@ -406,7 +402,7 @@ const WhatsappManageCampaign = () => {
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     try {
@@ -454,9 +450,9 @@ const WhatsappManageCampaign = () => {
       });
     } else {
       result = await getSummaryReport({
-        fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+        fromDate: moment(fromDate).format("YYYY-MM-DD"),
         summaryType: "waba,date,type,country",
-        toDate: new Date(toDate).toLocaleDateString("en-GB"),
+        toDate: moment(toDate).format("YYYY-MM-DD"),
         whatsappTypes: null,
         wabaNumber: selectedWaBaNumber,
       });
@@ -550,7 +546,6 @@ const WhatsappManageCampaign = () => {
                   },
                 }}
               />
-
             </Tabs>
             {user.role === "RESELLER" && (
               <div className="w-full sm:w-54">
@@ -936,25 +931,22 @@ const WhatsappManageCampaign = () => {
             </div>
           </CustomTabPanel>
         </Box>
-      )
-      }
+      )}
 
       {/* Campaign Export Dialog Start*/}
 
-      {
-        visibledialog && (
-          <ExportDialog
-            visibledialog={visibledialog}
-            setVisibledialog={setVisibledialog}
-            allCampaigns={campaignList}
-            setDataToExport={setDataToExport}
-            dataToExport={dataToExport}
-          />
-        )
-      }
+      {visibledialog && (
+        <ExportDialog
+          visibledialog={visibledialog}
+          setVisibledialog={setVisibledialog}
+          allCampaigns={campaignList}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
 
       {/* Campaign Export Dialog End*/}
-    </div >
+    </div>
   );
 };
 

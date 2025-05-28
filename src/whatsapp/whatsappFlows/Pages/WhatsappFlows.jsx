@@ -34,6 +34,7 @@ import {
   updateFlowStatus,
 } from "@/apis/whatsapp/whatsapp";
 import { FaWhatsapp } from "react-icons/fa";
+import moment from "moment";
 
 const WhatsappFlows = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -148,6 +149,7 @@ const WhatsappFlows = () => {
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
+
 
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
@@ -286,7 +288,7 @@ const WhatsappFlows = () => {
 
                 <div className="text-sm text-center min-w-[150px]">
                   <div className="font-semibold">Created At</div>
-                  <div className="text-gray-700">{flow.insertTime}</div>
+                  <div className="text-gray-700">{moment(flow.insertTime).format("DD-MM-YYYY")}</div>
                 </div>
 
                 <div className="flex items-center gap-3 mt-3 sm:mt-0">

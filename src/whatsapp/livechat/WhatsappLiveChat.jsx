@@ -66,6 +66,7 @@ import { InputData } from "./component/InputData";
 import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
+import moment from "moment";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -813,7 +814,7 @@ export default function WhatsappLiveChat() {
         item?.buttons?.map(({ type, example }) => {
           if (type === "URL") {
             const regex = /{{(\d+)}}/g;
-            const matches = regex.exec(example)
+            const matches = regex.exec(example);
             setBtnVarLength(matches);
           }
         });
@@ -833,6 +834,7 @@ export default function WhatsappLiveChat() {
         mobile: chatState?.active.mobileNo,
         wabaNumber: wabaState.selectedWaba,
         ...latestMessageData,
+        replayTime: moment(replayTime).format("YYYY-MM-DD HH:mm:ss"),
       };
       const res = await loadNewChat(data);
 
@@ -928,8 +930,9 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1065,7 +1068,7 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
             />
           </motion.div>
         )}
@@ -1122,7 +1125,7 @@ export default function WhatsappLiveChat() {
               placeholder="Group"
             />
 
-            <div className="flex items-center justify-center" >
+            <div className="flex items-center justify-center">
               <UniversalButton
                 id={"assignAgent"}
                 name={"assignAgent"}
@@ -1132,7 +1135,6 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
         </Dialog>
-
       )}
 
       <Dialog
@@ -1282,7 +1284,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-      // multiple
+        // multiple
       />
 
       {imagePreviewVisible && (

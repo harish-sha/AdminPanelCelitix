@@ -9,6 +9,7 @@ import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay";
 import { Box } from "@mui/material";
 import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -100,7 +101,7 @@ export const ApiCampaignInfo = () => {
       const selectedUser = state.selectedUser || "0"
 
       const formattedFromDate = state.selectedDate
-        ? new Date(state.selectedDate).toLocaleDateString("en-GB")
+        ? moment(state.selectedDate).format("YYYY-MM-DD")
         : new Date().toLocaleDateString("en-GB");
 
       let status = "";

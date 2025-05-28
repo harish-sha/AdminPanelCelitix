@@ -59,7 +59,7 @@ const WhatsappConversation = () => {
   }, []);
 
   // Format Date
-  const formatDate = (date) => date.toISOString().split("T")[0];
+  const formatDate = (date) => moment(date).format("YYYY-MM-DD");
 
   // Handle Search Click
   const handleSearch = async () => {
