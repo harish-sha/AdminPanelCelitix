@@ -107,10 +107,12 @@ const CampaignDetailsReport = () => {
         const fetchData = async () => {
             const body = {
                 campSrno: campaignSrno,
-                mobno: "",
+                mobno: mobileNumber || "",
                 status: "status",
+                delStatus: deliveryStatus || "",
                 page: currentPage,
             };
+            console.log(body)
             const data = await getWhatsappCampaignDetailsReport(body);
             setCampaignDetails(data.data);
             setTotalPage(data.total);
@@ -161,7 +163,7 @@ const CampaignDetailsReport = () => {
         reason: item.reason || "-",
     }));
 
-    const totalPages = Math.floor(totalPage / paginationModel.pageSize);
+    const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
     const CustomFooter = () => {
         return (
@@ -221,9 +223,9 @@ const CampaignDetailsReport = () => {
             </GridFooterContainer>
         );
     };
-    function handlePag() {
-        setCurrentPage(currentPage + 1);
-    }
+    // function handlePag() {
+    //     setCurrentPage(currentPage + 1);
+    // }
     return (
         <div className="w-full">
             {/* <button onClick={handlePag}>Click</button> */}
@@ -247,7 +249,7 @@ const CampaignDetailsReport = () => {
                         type="number"
                     />
                 </div>
-                {/* <div className="w-full sm:w-64">
+                <div className="w-full sm:w-64">
                     <AnimatedDropdown
                         id="campaignDeliveryStatusdropdown"
                         name="campaignDeliveryStatusdropdown"
@@ -257,15 +259,15 @@ const CampaignDetailsReport = () => {
                         options={[
                             { value: "sent", label: "Sent" },
                             { value: "delivered", label: "Delivered" },
-                            { value: "clicked", label: "Clicked" },
-                            { value: "replied", label: "Replied" },
+                            // { value: "clicked", label: "Clicked" },
+                            { value: "read", label: "Read" },
                             { value: "failed", label: "Failed" },
                         ]}
                         value={deliveryStatus}
                         onChange={setDeliveryStatus}
                         placeholder="delivery status"
                     />
-                </div> */}
+                </div>
                 <div className="w-max-content ">
                     <UniversalButton
                         id="manageCampaignSearchBtn"

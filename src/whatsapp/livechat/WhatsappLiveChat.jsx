@@ -226,11 +226,10 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      ...(chatState?.isReply ? {} : { message: input || "" }),
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
-
-    // console.log(data);
 
     let body = {};
 
@@ -814,7 +813,7 @@ export default function WhatsappLiveChat() {
         item?.buttons?.map(({ type, example }) => {
           if (type === "URL") {
             const regex = /{{(\d+)}}/g;
-            const matches = regex.exec(example)
+            const matches = regex.exec(example);
             setBtnVarLength(matches);
           }
         });
@@ -943,7 +942,6 @@ export default function WhatsappLiveChat() {
           setWabaState={setWabaState}
           setChatState={setChatState}
           setSelectedWaba={setSelectedWaba}
-          setIsSubscribed={setIsSubscribe}
         />
 
         <ChatSidebar
@@ -1125,7 +1123,7 @@ export default function WhatsappLiveChat() {
               placeholder="Group"
             />
 
-            <div className="flex items-center justify-center" >
+            <div className="flex items-center justify-center">
               <UniversalButton
                 id={"assignAgent"}
                 name={"assignAgent"}
@@ -1135,7 +1133,6 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
         </Dialog>
-
       )}
 
       <Dialog

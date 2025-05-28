@@ -41,6 +41,7 @@ import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
+import moment from "moment";
 
 
 function CustomTabPanel(props) {
@@ -260,8 +261,8 @@ const WhatsappManageCampaign = () => {
     const formattedToDate = new Date().toLocaleDateString("en-GB");
 
     const filters = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
+      fromQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
+      toQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
     };
@@ -282,19 +283,19 @@ const WhatsappManageCampaign = () => {
   };
 
   // Fetch initial data - for to load data on page load
-  const fetchInitialData = async () => {
-    const filters = {
-      fromQueDateTime: new Date().toLocaleDateString("en-GB"),
-      toQueDateTime: new Date().toLocaleDateString("en-GB"),
-      campaignName: "",
-      category: "all",
-    };
+  // const fetchInitialData = async () => {
+  //   const filters = {
+  //     fromQueDateTime: new Date().toLocaleDateString("en-GB"),
+  //     toQueDateTime: new Date().toLocaleDateString("en-GB"),
+  //     campaignName: "",
+  //     category: "all",
+  //   };
 
-    setIsFetching(true);
-    const data = await getWhatsappCampaignReport(filters);
-    setFilteredData(data);
-    setIsFetching(false);
-  };
+  //   setIsFetching(true);
+  //   const data = await getWhatsappCampaignReport(filters);
+  //   setFilteredData(data);
+  //   setIsFetching(false);
+  // };
 
   // const handleScheduleSearch = async () => {
   //   const formattedSelectedDate = scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
@@ -366,14 +367,14 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      await fetchInitialData();
-      setIsLoading(false);
-    };
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     setIsLoading(true);
+  //     await fetchInitialData();
+  //     setIsLoading(false);
+  //   };
+  //   fetchData();
+  // }, []);
 
   useEffect(() => {
     const fetchScheduleData = async () => {
@@ -410,11 +411,13 @@ const WhatsappManageCampaign = () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      // ? moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
 
     const logdata = {
+      // fromDate: formattedFromDateLogs,
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",

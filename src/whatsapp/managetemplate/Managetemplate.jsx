@@ -377,16 +377,18 @@ const ManageTemplate = () => {
     setIsFetching(false);
   };
 
+
   const applyFilters = (data) => {
     const filtered = data.filter((item) => {
       const itemCategory = item.category?.toLowerCase().trim() || "";
       const itemType = item.type?.toLowerCase().trim() || "";
       const itemStatus = item.status?.toLowerCase().trim() || "";
       const itemName = item.templateName?.toLowerCase().trim() || "";
-      const itemDateLocal = item?.createdDate;
+      const itemDateLocal = moment(new Date(item?.createdDate)).format("DD-MM-YYYY");
       let selectedDateLocal = "";
       if (selectedDate) {
         selectedDateLocal = moment(selectedDate).format("DD-MM-YYYY");
+        // selectedDateLocal = new Date(selectedDate).toLocaleDateString("en-CA");
       }
       return (
         (!selectedCategory ||
@@ -401,6 +403,7 @@ const ManageTemplate = () => {
     });
     setFilteredData(filtered);
   };
+
 
   const handleSyncTemplate = async () => {
     if (!syncWabaId) {

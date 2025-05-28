@@ -724,7 +724,7 @@ const SmsReports = () => {
       fromDate: moment(previousDataToFilter.fromDat).format("YYYY-MM-DD"),
       toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       page: currentPage,
-      source: "api",
+      source: "",
     };
 
     setPreviousDayDetailsDialog(true);
@@ -861,7 +861,7 @@ const SmsReports = () => {
             <Tab
               label={
                 <span>
-                  <LibraryBooksOutlinedIcon size={20} /> Previous Days Logs
+                  <LibraryBooksOutlinedIcon size={20} /> Detailed Logs
                 </span>
               }
               {...a11yProps(1)}
@@ -1120,7 +1120,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-42">
+              {/* <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1149,7 +1149,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-42">
                 <div className="w-max-content">

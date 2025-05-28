@@ -414,13 +414,12 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     // Reset for this row
     setDropdownOpenId(null);
 
-    const fromDateStr = moment(fromDate).format("DD/MM/YYYY");
+    const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
     const formattedDate = fromDateStr.replace(/\//g, "-");
 
     const data = {
       campSrno: row?.campaignSrno,
       fromDate: fromDateStr,
-      selectedUserId: selectedUser || "0",
     };
 
     try {
@@ -598,6 +597,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
                     "pending",
                     "sent",
                     "delivered",
+                    "undelivered",
                     "read",
                     "source",
                     // "queTime",

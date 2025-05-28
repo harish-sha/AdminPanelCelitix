@@ -66,8 +66,8 @@ const Transactions = () => {
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
-    toDate: new Date().toLocaleDateString("en-GB"),
-    startDate: new Date().toLocaleDateString("en-GB"),
+    toDate: new Date(),
+    startDate: new Date(),
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
@@ -79,7 +79,7 @@ const Transactions = () => {
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
         toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       }
-      const res = await fetchTransactions(filterData);
+      const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
       toast.error("Something went wring!");
@@ -93,11 +93,11 @@ const Transactions = () => {
   }, []);
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
-      headerName: "Recharge Data",
+      headerName: "Recharge Date",
       flex: 1,
       minWidth: 120,
     },
@@ -105,7 +105,7 @@ const Transactions = () => {
       field: "before",
       headerName: "Amount Before Recharge",
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
     },
     {
       field: "amount",
@@ -145,6 +145,7 @@ const Transactions = () => {
       ...item,
       sn: index + 1,
       id: index + 1,
+      balance: Number(item.balance).toFixed(2),
     }))
     : [];
 
@@ -354,7 +355,7 @@ const Transactions = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      startDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      startDate: newValue,
                     });
                   }}
                 />
@@ -373,7 +374,7 @@ const Transactions = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      toDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      toDate: newValue,
                     });
                   }}
                 />

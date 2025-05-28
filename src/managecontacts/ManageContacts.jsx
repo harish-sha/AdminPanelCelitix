@@ -4244,7 +4244,7 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Birth Date"
                 className="mb-0"
-                value={updateContactDetails.birthDate}
+                value={updateContactDetails?.birthDate}
                 onChange={(e) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,
@@ -4256,7 +4256,7 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Anniversary Date"
                 className="mb-0"
-                value={updateContactDetails.mariageDate}
+                value={updateContactDetails?.mariageDate}
                 onChange={(e) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,

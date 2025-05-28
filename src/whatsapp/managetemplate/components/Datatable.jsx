@@ -295,7 +295,7 @@ const DataTable = ({
           title={params.row.is_hide === 1 ? "Hide" : "Show"}
         >
           <Switch
-            checked={params.row.is_hide === 1}
+            checked={params.row.is_hide === 0}
             onChange={() => handleStatusChange(params.row)}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {

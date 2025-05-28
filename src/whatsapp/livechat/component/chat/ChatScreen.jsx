@@ -33,6 +33,7 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import axios from "axios";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { getBaseUrl } from "@/apis/common/common";
@@ -93,15 +94,31 @@ export const ChatScreen = ({
     );
   };
 
+  // const handleDownload = async (url, filename) => {
+  //   try {
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.setAttribute("download", filename || "file");
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     toast.error("Failed to download the file.");
+  //   }
+  // };
+
   const handleDownload = async (url, filename) => {
     try {
+      const res = await axios.get(url, { responseType: "blob" });
+      const blobUrl = window.URL.createObjectURL(res?.data);
+      window.open(blobUrl);
       const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", filename || "file");
-      document.body.appendChild(link);
+      link.href = blobUrl;
+      link.download = filename;
       link.click();
-      link.remove();
-
       toast.success("Download started!");
     } catch (error) {
       console.error("Download error:", error);
@@ -168,8 +185,8 @@ export const ChatScreen = ({
     },
   };
 
-  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  const BASE_MEDIA_URL = "/image";
+  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  // const BASE_MEDIA_URL = "/image";
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
@@ -515,12 +532,19 @@ export const ChatScreen = ({
                             </a> */}
                             <button
                               className="hover:bg-gray-300 transition-all duration-200 rounded-full p-0.5 cursor-pointer"
+                              // onClick={() => {
+                              //   // toast.success("Download started");
+                              //   const url = isSent
+                              //     ? msg.mediaPath
+                              //     : `${BASE_MEDIA_URL}${msg.mediaPath}`;
+                              //   handleDownload(url, msg?.mediaId || "file");
+                              // }}
                               onClick={() => {
-                                // toast.success("Download started");
                                 const url = isSent
                                   ? msg.mediaPath
-                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`;
-                                handleDownload(url, msg?.mediaId || "file");
+                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`
+                                const filename = msg.mediaId || "file"
+                                handleDownload(url, filename)
                               }}
                             >
                               <FileDownloadOutlinedIcon className="size-2" />
