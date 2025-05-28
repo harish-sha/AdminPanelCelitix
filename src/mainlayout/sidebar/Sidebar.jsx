@@ -14,6 +14,7 @@ import { IoWalletOutline } from "react-icons/io5";
 import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
+import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
 
 import rcsicon from "../../assets/icons/RCS02.svg";
@@ -375,6 +376,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Wish Management",
       type: "single",
       to: "/smswishmanagement",
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
+      name: "tagmanager",
+      icon: <LiaTagsSolid fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Tag Manager",
+      type: "single",
+      to: "/tagmanager",
       roles: ["ADMIN"],
     },
     // {

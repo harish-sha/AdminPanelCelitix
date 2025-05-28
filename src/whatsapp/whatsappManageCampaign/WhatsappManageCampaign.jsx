@@ -410,8 +410,8 @@ const WhatsappManageCampaign = () => {
   const handleShowLogs = async () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
-      ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
-      // ? moment(selectedDateLogs).format("YYYY-MM-DD")
+      // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      ? moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin

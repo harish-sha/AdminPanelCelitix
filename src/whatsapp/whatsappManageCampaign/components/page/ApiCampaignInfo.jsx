@@ -100,7 +100,7 @@ export const ApiCampaignInfo = () => {
 
       const formattedFromDate = state.selectedDate
         ? moment(state.selectedDate).format("YYYY-MM-DD")
-        : new Date().toLocaleDateString("en-GB");
+        : moment().format("YYYY-MM-DD");
 
       let status = "";
       let deliveryStatus = "";
@@ -125,9 +125,10 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
+      const responseData = Array.isArray(res) ? res : [];
       setTotalPage(5000);
       // console.log(res);
-      setData(res);
+      setData(responseData);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
@@ -181,22 +182,30 @@ export const ApiCampaignInfo = () => {
   //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
   // }));
 
-  const rows = data?.map((item, i) => ({
-    id: i + 1,
-    // sn: i + 1,
-    sn: paginationModel.page * paginationModel.pageSize + i + 1,
-    // wabaNumber: WABA-${1000 + i},
-    // mobileNo: 98765432${(10 + i).toString().slice(-2)},
-    // source: "API",
-    // status: "Pending",
-    // deliveryStatus: "Sent",
-    // reason: "N/A",
-    // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
-    // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
-    // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
-    // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
-    ...item,
-  }));
+  // const rows = data?.map((item, i) => ({
+  //   id: i + 1,
+  //   // sn: i + 1,
+  //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
+  //   // wabaNumber: WABA-${1000 + i},
+  //   // mobileNo: 98765432${(10 + i).toString().slice(-2)},
+  //   // source: "API",
+  //   // status: "Pending",
+  //   // deliveryStatus: "Sent",
+  //   // reason: "N/A",
+  //   // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
+  //   // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
+  //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
+  //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
+  //   ...item,
+  // }));
+
+  const rows = Array.isArray(data)
+    ? data.map((item, i) => ({
+        id: i + 1,
+        sn: paginationModel.page * paginationModel.pageSize + i + 1,
+        ...item, // Spread the item properties
+      }))
+    : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
@@ -277,7 +286,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => { }}
+          onRowSelectionModelChange={(ids) => {}}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize

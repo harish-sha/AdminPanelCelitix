@@ -124,12 +124,15 @@ import Callback from "@/callback/Callback";
 import { AddCallback } from "@/callback/page/addCallback";
 import { EditCallback } from "@/callback/page/editCallback";
 
+// Tag Manager
+
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import TagManager from "@/tagmanager/TagManager";
 
 const Approutes = () => {
   return (
@@ -271,6 +274,8 @@ const Approutes = () => {
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
 
+        {/* Tag Manager */}
+        <Route path="/tagmanager" element={<TagManager />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

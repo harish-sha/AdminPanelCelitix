@@ -158,6 +158,7 @@ export const PermissionRoute = ({ children }) => {
         "/profile",
         "/settings",
         "/transactions",
+        "/tagmanager",
       ],
       roles: ["ADMIN"],
     },
