@@ -116,54 +116,37 @@ export const sendWhatsappCampaign = async (campaignData) => {
 };
 
 // Get Whatsapp Campaign Report
-// export const getWhatsappCampaignReport = async (filters = {}) => {
-//   try {
-//     const formattedFromDate = filters.fromQueDateTime
-//       ? new Date(
-//           filters.fromQueDateTime.split("/").reverse().join("-")
-//         ).toLocaleDateString("en-GB")
-//       : new Date().toLocaleDateString("en-GB");
-
-//     const formattedToDate = filters.toQueDateTime
-//       ? new Date(
-//           filters.toQueDateTime.split("/").reverse().join("-")
-//         ).toLocaleDateString("en-GB")
-//       : new Date().toLocaleDateString("en-GB");
-
-//     const requestBody = {
-//       fromQueDateTime: formattedFromDate,
-//       toQueDateTime: formattedFromDate,
-//       campaignName: filters.campaignName || "",
-//       template_category: filters.template_category || "all",
-//     };
-
-//     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
-//       method: "POST",
-//       body: JSON.stringify(requestBody),
-//     });
-//     if (!response || !response.data) {
-//       console.error("Failed to fetch campaign report.");
-//       return [];
-//     }
-//     return response.data || [];
-//   } catch (error) {
-//     console.error("Error fetching campaign report:", error);
-//     return [];
-//   }
-// };
-
 export const getWhatsappCampaignReport = async (filters = {}) => {
   try {
+    const formattedFromDate = filters.fromQueDateTime
+      ? new Date(
+          filters.fromQueDateTime.split("/").reverse().join("-")
+        ).toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB");
+
+    const formattedToDate = filters.toQueDateTime
+      ? new Date(
+          filters.toQueDateTime.split("/").reverse().join("-")
+        ).toLocaleDateString("en-GB")
+      : new Date().toLocaleDateString("en-GB");
+
+    const requestBody = {
+      fromQueDateTime: formattedFromDate,
+      toQueDateTime: formattedFromDate,
+      campaignName: filters.campaignName || "",
+      template_category: filters.template_category || "all",
+    };
+
+    // console.log("Sending Request:", requestBody);
+
     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
       method: "POST",
-      body: JSON.stringify(filters),
+      body: JSON.stringify(requestBody),
     });
-
     if (!response || !response.data) {
       console.error("Failed to fetch campaign report.");
       return [];
     }
-
     return response.data || [];
   } catch (error) {
     console.error("Error fetching campaign report:", error);
@@ -192,6 +175,31 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
     return response;
   } catch (error) {
     console.error("Error fetching campaign details report:", error);
+    return [];
+  }
+};
+
+// Get Whatsapp Campaign Scheduled Reports
+export const getWhatsappCampaignScheduledReport = async () => {
+  try {
+    const response = await fetchWithAuth(
+      "/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=0",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    console.log("response from schedule", response);
+
+    if (!response || !response.data) {
+      console.error("Failed to fetch campaign report.");
+      return [];
+    }
+    return response.data || [];
+  } catch (error) {
+    console.error("Error fetching campaign report:", error);
     return [];
   }
 };
@@ -537,8 +545,6 @@ export const getUserAgent = async (data) => {
 //   });
 // };
 
-// whatapp flows
-
 // Get WhatsappFlow list
 export const getWhatsappFlow = async () => {
   return await fetchWithAuth(`/WhatsappFlow/showFlowTemplates`, {
@@ -558,16 +564,17 @@ export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
 };
 
 // public the flow
-// export const updateFlowStatus = async (data) => {
-//   return fetchWithAuth(
-//     `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
-//     {
-//       method: "POST",
-//       body: JSON.stringify(data),
-//     }
-//   );
-// };
+export const updateFlowStatus = async (data) => {
+  return fetchWithAuth(
+    `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
 
+// fetch reply data (livechat)
 export const fetchReplyData = async (data) => {
   return await fetchWithAuth(
     `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
@@ -577,12 +584,25 @@ export const fetchReplyData = async (data) => {
   );
 };
 
-export const updateFlowStatus = async (data) => {
-  return fetchWithAuth(
-    `/WhatsappFlow/publicTemplateData?flowId=${data.id}&wabaNumber=${data.wabaNumber}`,
+// save whatsapp flows
+export const saveFlow = async (params, data) => {
+  return await fetchWithAuth(
+    `/WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
+      params.category
+    }&wabaNumber=${params.waba}&flowId=${params.id || ""}`,
     {
       method: "POST",
       body: JSON.stringify(data),
+    }
+  );
+};
+
+// cancel campaign
+export const cancelCampaign = async ({ srno, selectedUserId }) => {
+  return await fetchWithAuth(
+    `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`,
+    {
+      method: "POST",
     }
   );
 };
