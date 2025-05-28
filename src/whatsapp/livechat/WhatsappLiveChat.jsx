@@ -226,7 +226,7 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
 
