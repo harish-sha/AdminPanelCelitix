@@ -150,6 +150,7 @@ const SmsReports = () => {
     { label: "Undelivered", value: "Undelivered" },
   ];
 
+
   const CampaignColumnsChange = (e) => {
     let _campaigncolumns = [...campaigncolumns];
 
@@ -352,7 +353,8 @@ const SmsReports = () => {
                 <IconButton
                   className="text-xs"
                   ref={(el) => {
-                    if (el) dropdownButtonRefs.current[params.row.campaignSrno] = el;
+                    if (el)
+                      dropdownButtonRefs.current[params.row.campaignSrno] = el;
                   }}
                   onClick={() => handleView(params.row)}
                 >
@@ -661,7 +663,6 @@ const SmsReports = () => {
 
   const closeDropdown = () => setDropdownOpenId(null);
   const handleView = async (row) => {
-    console.log(row);
     const id = row.campaignSrno;
 
     setDropdownOpenId(null);
@@ -677,11 +678,9 @@ const SmsReports = () => {
 
     try {
       const res = await getSMSCampaignDataByCampNo(data);
-      
 
       setCampaignInfoMap((prev) => ({
-        ...prev,
-        [id]: res?.receipt_no_of_duplicate_message || null,
+        [id]: res || null,
       }));
 
       setDropdownOpenId(id);
