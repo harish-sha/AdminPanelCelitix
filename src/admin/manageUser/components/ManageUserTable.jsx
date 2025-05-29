@@ -65,8 +65,10 @@ import {
   fetchUserbySrno,
   getAllowedServices,
   getMobileNumbers,
+  getPETMChain,
   getPromoServices,
   getTransServices,
+  savePETMChain,
   saveServicesByUser,
   updateUserbySrno,
 } from "@/apis/admin/admin";
@@ -320,6 +322,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
+  });
+
+  const [petmDetails, setPetmDetails] = useState({
+    selectedUserId: "",
+    petmChainType: 1,
+    tmd: "",
+    TMA1: "",
+    TMA2: "",
   });
 
   const [selectedIds, setSelectedIds] = useState([]);
@@ -1069,6 +1079,13 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const handlePetmChain = (id) => {
     setPETMDialogVisible(true);
+    setPetmDetails({
+      selectedUserId: id,
+      petmChainType: 1,
+      tmd: "",
+      TMA1: "",
+      TMA2: "",
+    });
     setSelectedId(id);
   };
 
@@ -1760,7 +1777,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     if (!selectedId) return;
     async function fetchMobileNo() {
       try {
-        const res = await getMobileNumbers(selectedIds);
+        const res = await getMobileNumbers(selectedId);
         const mobile = res?.regMoblienos?.split(",");
         setMobileNumbers(mobile || [""]);
         // setotp
@@ -1770,6 +1787,65 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     fetchMobileNo();
   }, [otpService]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    async function fetchPETMChain() {
+      try {
+        const res = await getPETMChain(selectedId);
+
+        setPetmDetails({
+          selectedUserId: selectedId,
+          petmChainType: res?.petmChainType || 1,
+          tmd: res?.tmd || "",
+          TMA1: res?.TMA1 || "",
+          TMA2: res?.TMA2 || "",
+        });
+      } catch (e) {
+        return toast.error(e.message);
+      }
+    }
+    fetchPETMChain();
+  }, [petmDialogVisible]);
+
+  async function handlePETMSave() {
+    // petmDetails.petmChainType === 3
+    if (!petmDetails.petmChainType) {
+      return toast.error("Please select a chain type");
+    }
+    if (!petmDetails.tmd) {
+      return toast.error("Please select a TMD");
+    }
+
+    if (
+      (petmDetails.petmChainType === 2 || petmDetails.petmChainType === 3) &&
+      !petmDetails.TMA1
+    ) {
+      return toast.error("Please select a TMA1");
+    }
+
+    if (petmDetails.petmChainType === 3 && !petmDetails.TMA2) {
+      return toast.error("Please select a TMA2");
+    }
+
+    try {
+      const res = await savePETMChain(petmDetails);
+      if (!res?.msg?.includes("successfully")) {
+        return toast.error("Error in saving petm details");
+      }
+      toast.success("Petm details saved successfully");
+      setPETMDialogVisible(false);
+      setPetmDetails({
+        selectedUserId: "",
+        petmChainType: 1,
+        tmd: "",
+        TMA1: "",
+        TMA2: "",
+      });
+    } catch (e) {
+      return toast.error("Error in saving petm details");
+    }
+  }
 
   return (
     <>
@@ -2037,13 +2113,83 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
       {/* PETM Chain */}
       <Dialog
-        header="Configure PETM Chain"
+        header="Configure PE-TM Chain"
         visible={petmDialogVisible}
         onHide={() => setPETMDialogVisible(false)}
         className="w-[30rem]"
         draggable={false}
       >
-        PETM CHAIN
+        <div className="space-y-4">
+          <AnimatedDropdown
+            id="petmChain"
+            name="petmChain"
+            label="Select PETM Chain"
+            options={[
+              {
+                label: "Entity - TMD",
+                value: 1,
+              },
+              {
+                label: "Entity - TMA1 - TMD",
+                value: 2,
+              },
+              {
+                label: "Entity - TMA1 - TMA2 - TMD",
+                value: 3,
+              },
+            ]}
+            value={petmDetails.petmChainType}
+            onChange={(e) => {
+              setPetmDetails({ ...petmDetails, petmChainType: e });
+            }}
+            placeholder="Select PE-TM Chain"
+          />
+          <InputField
+            label="TMD"
+            id="tmd"
+            name="tmd"
+            placeholder="Enter TMD "
+            type="number"
+            value={petmDetails.tmd}
+            onChange={(e) => {
+              setPetmDetails({ ...petmDetails, tmd: e.target.value });
+            }}
+          />
+          {(petmDetails.petmChainType === 2 ||
+            petmDetails.petmChainType === 3) && (
+            <InputField
+              label="TMA-1"
+              id="tma1"
+              name="tma1"
+              placeholder="Enter TMA-1"
+              type="number"
+              value={petmDetails.TMA1}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+              }}
+            />
+          )}
+          {petmDetails.petmChainType === 3 && (
+            <InputField
+              label="TMA-2"
+              id="tma2"
+              name="tma2"
+              placeholder="Enter TMA-2"
+              type="number"
+              value={petmDetails.TMA2}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA2: e.target.value });
+              }}
+            />
+          )}
+          <UniversalButton
+            id={"saveButton"}
+            name={"saveButton"}
+            label="Save"
+            onClick={handlePETMSave}
+            className="w-full"
+          />
+        </div>
       </Dialog>
       {/* PETM Chain */}
 

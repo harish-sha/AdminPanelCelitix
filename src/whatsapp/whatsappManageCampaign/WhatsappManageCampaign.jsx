@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
-import DateRangeIcon from '@mui/icons-material/DateRange';
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { BsJournalArrowDown } from "react-icons/bs";
@@ -34,7 +34,7 @@ import {
   getSummaryReport,
   getWabaList,
   getAllCampaignWhatsapp,
-  getWhatsappCampaignScheduledReport
+  getWhatsappCampaignScheduledReport,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -42,7 +42,8 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
-
+import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,6 +75,7 @@ function a11yProps(index) {
 }
 
 const WhatsappManageCampaign = () => {
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
@@ -98,6 +100,8 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
 
   //Export Download Reports start
 
@@ -164,8 +168,6 @@ const WhatsappManageCampaign = () => {
     unanswered: false,
     dialed: false,
   });
-
-
 
   useEffect(() => {
     //fetchAllUsersDetails
@@ -292,7 +294,7 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: formattedFromDate,
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -317,8 +319,7 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: new Date().toLocaleDateString("en-GB"),
       campaignName: "",
       template_category: "all",
-      selectedUserId: selectedUser || "0"
-
+      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -326,7 +327,6 @@ const WhatsappManageCampaign = () => {
     setFilteredData(data);
     setIsFetching(false);
   };
-
 
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -362,7 +362,7 @@ const WhatsappManageCampaign = () => {
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     try {
@@ -506,7 +506,6 @@ const WhatsappManageCampaign = () => {
                   },
                 }}
               />
-
             </Tabs>
             {user.role === "RESELLER" && (
               <div className="w-full sm:w-54">
@@ -769,6 +768,7 @@ const WhatsappManageCampaign = () => {
                           key={index}
                           log={log}
                           selectedDate={selectedDateLogs}
+                          selectedUser={selectedUser}
                         />
                       ))
                     )}
@@ -888,7 +888,8 @@ const WhatsappManageCampaign = () => {
                 </div>
               )}
             </div>
-          </CustomTabPanel>.
+          </CustomTabPanel>
+          .
           <CustomTabPanel value={value} index={3} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
@@ -1051,17 +1052,15 @@ const WhatsappManageCampaign = () => {
 
       {/* Campaign Export Dialog Start*/}
 
-      {
-        visibledialog && (
-          <ExportDialog
-            visibledialog={visibledialog}
-            setVisibledialog={setVisibledialog}
-            allCampaigns={campaignList}
-            setDataToExport={setDataToExport}
-            dataToExport={dataToExport}
-          />
-        )
-      }
+      {visibledialog && (
+        <ExportDialog
+          visibledialog={visibledialog}
+          setVisibledialog={setVisibledialog}
+          allCampaigns={campaignList}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
 
       {/* Campaign Export Dialog End*/}
     </div>

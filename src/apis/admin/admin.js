@@ -100,3 +100,14 @@ export const addUser = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const savePETMChain = async (data) => {
+  return await fetchWithAuth(`/user/setPetmData`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+export const getPETMChain = async (data) => {
+  return await fetchWithAuth(`/user/getPetmData?selectedUserId=${data}`, {
+    method: "GET",
+  });
+};
