@@ -67,20 +67,35 @@ export const ExportDialog = ({
     // delete dataToExport.type
 
     const payload = {
-      ...dataToExport,
-      fromDate: dataToExport.fromDate
-        ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
-        : "",
-      toDate: dataToExport
-        ? new Date(dataToExport.toDate).toLocaleDateString("en-GB")
-        : "",
-      type: dataToExport?.type === "campaign" ? "1" : "2",
-    };
+  ...dataToExport,
+  ...(dataToExport?.type === "custom" && {
+    fromDate: dataToExport.fromDate
+      ? new Date(dataToExport.fromDate).toISOString().split('T')[0]
+      : "",
+    toDate: dataToExport.toDate
+      ? new Date(dataToExport.toDate).toISOString().split('T')[0]
+      : "",
+  }),
+  type: dataToExport?.type === "campaign" ? "1" : "2",
+};
+
 
     try {
       const res = await exportData(payload);
       if (!res.status) return toast.error(res.msg);
       toast.success(res.msg);
+      setDataToExport({
+        campaignName: "",
+        fromDate:"",
+        toDate: "",
+        srno: 0,
+        isCustomField: 0,
+        customColumns: "",
+        campaignType: "",
+        status: "",
+        delStatus: {},
+        type: "campaign",
+      })
       setVisibledialog(false);
       triggerDownloadNotification();
     } catch (e) {

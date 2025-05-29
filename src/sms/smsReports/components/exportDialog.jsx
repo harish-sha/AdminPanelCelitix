@@ -66,15 +66,14 @@ export const ExportDialog = ({
       toast.error("Please select custom columns");
       return;
     }
-    // console.log(dataToExport);
     // delete dataToExport.type
     const payload = {
       ...dataToExport,
       fromDate: dataToExport.fromDate
-        ? new Date(dataToExport.fromDate).toLocaleDateString("en-GB")
+        ? new Date(dataToExport.fromDate).toISOString().split('T')[0]
         : "",
       toDate: dataToExport.toDate
-        ? new Date(dataToExport.toDate).toLocaleDateString("en-GB")
+        ? new Date(dataToExport.toDate).toISOString().split('T')[0]
         : "",
       type: dataToExport?.type === "campaign" ? "1" : "2",
     };
