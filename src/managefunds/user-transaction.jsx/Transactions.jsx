@@ -21,6 +21,7 @@ import { useUser } from "@/context/auth";
 
 import toast from "react-hot-toast";
 import { fetchAllUsers } from "@/apis/admin/admin";
+import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -70,8 +71,8 @@ const TransactionsUser = () => {
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
-    toDate: new Date().toLocaleDateString("en-GB"),
-    startDate: new Date().toLocaleDateString("en-GB"),
+    toDate: new Date(),
+    startDate: new Date(),
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
@@ -101,11 +102,16 @@ const TransactionsUser = () => {
   }, [user.role]);
 
   const handleSearch = async () => {
+    if(!selectedUser) return toast.error("Please select a user first.");
     try {
+      // console.log(moment(filterData.toDate).format("YYYY-MM-DD"));
       const payload = {
         ...filterData,
         userSrNo: selectedUser,
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       };
+
       setIsFetching(true);
       const res = await fetchTransactions(payload);
       setTransactionalData(res);
@@ -384,7 +390,7 @@ const TransactionsUser = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      startDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      startDate: newValue,
                     });
                   }}
                 />
@@ -403,7 +409,7 @@ const TransactionsUser = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      toDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      toDate: newValue,
                     });
                   }}
                 />
