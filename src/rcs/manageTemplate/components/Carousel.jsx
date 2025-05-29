@@ -170,124 +170,72 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
+  
   const handleImageChange = useCallback(
     (e) => {
-      const fileName = e.target.files[0];
-      if (!fileName) {
-        toast.error("No file selected.");
-        fileRefs.current = fileRefs.current.map((current) => {
-          if (current) {
-            current.value = "";
-          }
-        });
-        return;
-      }
+      const file = e.target.files?.[0];
 
-      if (!cardheight) {
-        toast.error("Please select card height");
-        fileRefs.current = fileRefs.current.map((current) => {
-          if (current) {
-            current.value = "";
-          }
+      const clearInputsAndShowError = (message) => {
+        toast.error(message);
+        fileRefs.current.forEach((ref) => {
+          if (ref) ref.value = "";
         });
-        return;
-      }
+      };
 
-      const fileType = fileName.type.split("/")[0];
+      if (!file) return clearInputsAndShowError("No file selected.");
+      if (!cardheight)
+        return clearInputsAndShowError("Please select card height.");
+
+      const fileType = file.type.split("/")[0];
+      const isImage = fileType === "image";
+      const isVideo = fileType === "video";
+
+      if (
+        (isImage && file.size > 2 * 1024 * 1024) || // 2MB
+        (isVideo && file.size > 10 * 1024 * 1024) // 10MB
+      ) {
+        return clearInputsAndShowError(
+          isImage
+            ? "File size must be less than 2MB."
+            : "File size must be less than 10MB."
+        );
+      }
 
       const img = new Image();
-      img.src = URL.createObjectURL(fileName);
-
-      if (fileName?.size) {
-        if (fileType === "image" && fileName?.size > 1 * 1024 * 1024) {
-          toast.error("File size must be less than 2MB.");
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        } else if (fileType === "video" && fileName?.size > 5 * 1024 * 1024) {
-          toast.error("File size must be less than 10MB.");
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-      }
+      img.src = URL.createObjectURL(file);
 
       img.onload = () => {
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
+        const { naturalWidth: width, naturalHeight: height } = img;
 
         const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
         const divisor = gcd(width, height);
-        const ratioWidth = width / divisor;
-        const ratioHeight = height / divisor;
-        const ratio = `${ratioWidth}:${ratioHeight}`;
+        const ratio = `${width / divisor}:${height / divisor}`;
 
-        if (cardheight === "short" && cardwidth === "small" && ratio != "5:4") {
-          toast.error(
-            "Please select a 5:4 ratio image for Short Height and Small Width card."
+        const expectedRatios = {
+          short: {
+            small: "5:4",
+            medium: "2:1",
+          },
+          medium: {
+            small: "4:5",
+            medium: "4:3",
+          },
+        };
+
+        const expectedRatio = expectedRatios[cardheight]?.[cardwidth];
+
+        if (expectedRatio && ratio !== expectedRatio) {
+          return clearInputsAndShowError(
+            `Please select a ${expectedRatio} ratio image for ${capitalize(
+              cardheight
+            )} Height and ${capitalize(cardwidth)} Width card.`
           );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
         }
-        if (
-          cardheight === "short" &&
-          cardwidth === "medium" &&
-          ratio != "2:1"
-        ) {
-          toast.error(
-            "Please select a 2:1 ratio image for Short Height and Medium Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-        if (
-          cardheight === "medium" &&
-          cardwidth === "small" &&
-          ratio != "4:5"
-        ) {
-          toast.error(
-            "Please select a 4:5 ratio image for Medium Height and Small Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-        if (
-          cardheight === "medium" &&
-          cardwidth === "medium" &&
-          ratio != "4:3"
-        ) {
-          toast.error(
-            "Please select a 4:3 ratio image for Medium Height and Small Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
+
         setCaraousalData((prev) =>
           prev.map((item, index) =>
             index === selectedCardIndex
-              ? { ...item, fileName: fileName.name, fileTempPath: fileName }
+              ? { ...item, fileName: file.name, fileTempPath: file }
               : item
           )
         );
@@ -297,8 +245,10 @@ export const Carousel = ({
         URL.revokeObjectURL(img.src);
       };
     },
-    [selectedCardIndex, setCaraousalData, cardheight]
+    [selectedCardIndex, setCaraousalData, cardheight, cardwidth]
   );
+
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const handleUploadFile = async () => {
     try {
