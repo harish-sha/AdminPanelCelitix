@@ -116,15 +116,11 @@ const TransactionsUser = () => {
       const res = await fetchTransactions(payload);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     } finally {
       setIsFetching(false);
     }
   };
-
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
