@@ -64,15 +64,15 @@ import {
   addMobileNumbers,
   fetchUserbySrno,
   getAllowedServices,
+  getCharges,
   getMobileNumbers,
+  getPETMChain,
   getPromoServices,
   getTransServices,
-  getCharges,
   saveCharges,
+  savePETMChain,
   saveServicesByUser,
   updateUserbySrno,
-  getPETMChain,
-  savePETMChain,
 } from "@/apis/admin/admin";
 import {
   addSmsPricing,
@@ -96,7 +96,6 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
 import moment from "moment";
-// import { updatePassword } from "@/apis/settings/setting";
 import {
   getApiKey,
   getOldApiKey,
@@ -422,6 +421,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+
   const [charges, setCharges] = useState(0);
 
   const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
@@ -1291,7 +1291,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ]);
 
     // obdRateRes && setVoicerows(voiceRows);
-
+    console.log(chargesRes);
     setCharges(chargesRes?.MonthlyRate || "0");
   };
 
@@ -1791,7 +1791,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return toast.error("Error in resetting password");
       }
       toast.success("Password reset successfully");
-      setreset(false)
+      setreset(false);
     } catch (e) {
       return toast.error("Error in resetting password");
     }
@@ -1811,7 +1811,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     fetchMobileNo();
   }, [otpService]);
-
 
   useEffect(() => {
     if (!selectedId) return;

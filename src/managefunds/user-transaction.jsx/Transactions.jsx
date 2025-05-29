@@ -76,6 +76,8 @@ const TransactionsUser = () => {
     rechargeType: 0,
     toDate: new Date(),
     startDate: new Date(),
+    toDate: new Date(),
+    startDate: new Date(),
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
@@ -108,17 +110,22 @@ const TransactionsUser = () => {
     if (!selectedUser) return toast.error("Please select a user first.");
     try {
       // console.log(moment(filterData.toDate).format("YYYY-MM-DD"));
+      // console.log(moment(filterData.toDate).format("YYYY-MM-DD"));
       const payload = {
         ...filterData,
         userSrNo: selectedUser,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
         toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       };
+
 
       setIsFetching(true);
       const res = await fetchTransactions(payload);
       setTransactionalData(res);
     } catch (e) {
+      toast.error("Something went wrong!");
       toast.error("Something went wrong!");
     } finally {
       setIsFetching(false);
@@ -285,6 +292,18 @@ const TransactionsUser = () => {
     toast.success("File Downloaded Successfully");
   }
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full">
       <Box sx={{ width: "100%" }}>
@@ -325,6 +344,7 @@ const TransactionsUser = () => {
                 // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
 
                 variant="primary"
+                onClick={handleExport}
                 onClick={handleExport}
               />
             </div>
@@ -392,6 +412,7 @@ const TransactionsUser = () => {
                     setFilterData({
                       ...filterData,
                       startDate: newValue,
+                      startDate: newValue,
                     });
                   }}
                 />
@@ -410,6 +431,7 @@ const TransactionsUser = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
+                      toDate: newValue,
                       toDate: newValue,
                     });
                   }}

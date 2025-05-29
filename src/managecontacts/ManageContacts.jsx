@@ -2725,6 +2725,7 @@ const ManageContacts = () => {
 
   const handleUpdateGrpName = async () => {
     const res = await updateGroupName(updateGrpId.id, groupName);
+    // const res = await updateGroupName(updateGrpId.id, groupName);
     if (res?.message.includes("updated")) {
       toast.success(res?.message);
       setEditGrpVisible(false);

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
-import DateRangeIcon from '@mui/icons-material/DateRange';
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { BsJournalArrowDown } from "react-icons/bs";
@@ -34,7 +34,7 @@ import {
   getSummaryReport,
   getWabaList,
   getAllCampaignWhatsapp,
-  getWhatsappCampaignScheduledReport
+  getWhatsappCampaignScheduledReport,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -76,6 +76,7 @@ function a11yProps(index) {
 }
 
 const WhatsappManageCampaign = () => {
+  const { user } = useUser();
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
@@ -101,7 +102,7 @@ const WhatsappManageCampaign = () => {
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
 
-  const { user } = useUser();
+  // const { user } = useUser();
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
 
@@ -170,8 +171,6 @@ const WhatsappManageCampaign = () => {
     unanswered: false,
     dialed: false,
   });
-
-
 
   useEffect(() => {
     //fetchAllUsersDetails
@@ -298,7 +297,7 @@ const WhatsappManageCampaign = () => {
       toQueDateTime: moment(selectedDate).format("YYYY-MM-DD"),
       campaignName: campaignName.trim(),
       template_category: campaignCategory || "all",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     setIsFetching(true);
@@ -368,7 +367,7 @@ const WhatsappManageCampaign = () => {
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",
-      selectedUserId: selectedUser || "0"
+      selectedUserId: selectedUser || "0",
     };
 
     try {
@@ -512,7 +511,6 @@ const WhatsappManageCampaign = () => {
                   },
                 }}
               />
-
             </Tabs>
             {user.role === "RESELLER" && (
               <div className="w-full sm:w-54">
@@ -775,6 +773,7 @@ const WhatsappManageCampaign = () => {
                           key={index}
                           log={log}
                           selectedDate={selectedDateLogs}
+                          selectedUser={selectedUser}
                           selectedUser={selectedUser}
                         />
                       ))
@@ -1058,17 +1057,15 @@ const WhatsappManageCampaign = () => {
 
       {/* Campaign Export Dialog Start*/}
 
-      {
-        visibledialog && (
-          <ExportDialog
-            visibledialog={visibledialog}
-            setVisibledialog={setVisibledialog}
-            allCampaigns={campaignList}
-            setDataToExport={setDataToExport}
-            dataToExport={dataToExport}
-          />
-        )
-      }
+      {visibledialog && (
+        <ExportDialog
+          visibledialog={visibledialog}
+          setVisibledialog={setVisibledialog}
+          allCampaigns={campaignList}
+          setDataToExport={setDataToExport}
+          dataToExport={dataToExport}
+        />
+      )}
 
       {/* Campaign Export Dialog End*/}
     </div>

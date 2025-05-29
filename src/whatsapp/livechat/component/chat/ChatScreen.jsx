@@ -110,12 +110,14 @@ export const ChatScreen = ({
   //   }
   // };
 
-  const handleDownload = async (url, filename) => {
+    const handleDownload = async (url, filename) => {
     try {
       const res = await axios.get(url, { responseType: "blob" });
       const blobUrl = window.URL.createObjectURL(res?.data);
       window.open(blobUrl);
       const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
       link.href = blobUrl;
       link.download = filename;
       link.click();
@@ -187,6 +189,8 @@ export const ChatScreen = ({
 
   const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   // const BASE_MEDIA_URL = "/image";
+  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  // // const BASE_MEDIA_URL = "/image";
 
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
