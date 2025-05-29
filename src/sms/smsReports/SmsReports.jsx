@@ -257,8 +257,8 @@ const SmsReports = () => {
         campaignName: campaignDataToFilter.campaingName,
         campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
-        toDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
-        fromDate: moment(campaignDataToFilter.fromDate).format("YYYY-MM-DD"),
+        toDate: "16/05/2025",
+        fromDate: "16/05/2000",
       };
       const res = await fetchCampaignData(data);
 
@@ -348,6 +348,57 @@ const SmsReports = () => {
                   />
                 </IconButton>
               </CustomTooltip>
+              <CustomTooltip title="View Campaign" placement="top" arrow>
+                <IconButton
+                  className="text-xs"
+                  ref={(el) => {
+                    if (el) dropdownButtonRefs.current[params.row.campaignSrno] = el;
+                  }}
+                  onClick={() => handleView(params.row)}
+                >
+                  <InfoOutlinedIcon
+                    sx={{ fontSize: "1.2rem", color: "green" }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
+                open={dropdownOpenId == params.row.campaignSrno}
+                onClose={closeDropdown}
+              >
+                {campaignInfoMap[params.row.campaignSrno] ? (
+                  <div className="w-[280px] max-w-full">
+                    {/* <div className="text-base font-semibold mb-2 text-gray-800">
+                                Campaign Summary
+                              </div> */}
+                    <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                      {[
+                        "TotalUnit",
+                        "TOTALSMS",
+                        "Pending",
+                        "failed",
+                        "Sent",
+                        "delivered",
+                        "undelivered",
+                        "drNotAvailable",
+                        // "queTime",
+                      ].map((key) => (
+                        <React.Fragment key={key}>
+                          <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                            {key.replace(/([A-Z])/g, " $1")}
+                          </div>
+                          <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                            {campaignInfoMap[params.row.campaignSrno][key] ??
+                              "N/A"}
+                          </div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">No Data Available</div>
+                )}
+              </InfoPopover>
             </>
           ),
         },
@@ -610,11 +661,12 @@ const SmsReports = () => {
 
   const closeDropdown = () => setDropdownOpenId(null);
   const handleView = async (row) => {
+    console.log(row);
     const id = row.campaignSrno;
 
     setDropdownOpenId(null);
 
-    const date = moment(fromDate).format("YYYY-MM-DD");
+    const date = "24/01/2025";
 
     const data = {
       campaignSrno: id,
@@ -625,10 +677,11 @@ const SmsReports = () => {
 
     try {
       const res = await getSMSCampaignDataByCampNo(data);
+      
 
       setCampaignInfoMap((prev) => ({
         ...prev,
-        [id]: res[0] || null,
+        [id]: res?.receipt_no_of_duplicate_message || null,
       }));
 
       setDropdownOpenId(id);
@@ -674,58 +727,6 @@ const SmsReports = () => {
           minWidth: 100,
           renderCell: (params) => (
             <>
-              <CustomTooltip title="View Campaign" placement="top" arrow>
-                <IconButton
-                  className="text-xs"
-                  ref={(el) => {
-                    if (el) dropdownButtonRefs.current[params.row.id] = el;
-                  }}
-                  onClick={() => handleView(params.row)}
-                >
-                  <InfoOutlinedIcon
-                    sx={{ fontSize: "1.2rem", color: "green" }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <InfoPopover
-                anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
-                open={dropdownOpenId == params.row.campaignSrno}
-                onClose={closeDropdown}
-              >
-                {campaignInfoMap[params.row.campaignSrno] ? (
-                  <div className="w-[280px] max-w-full">
-                    {/* <div className="text-base font-semibold mb-2 text-gray-800">
-                                Campaign Summary
-                              </div> */}
-                    <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
-                      {[
-                        "TotalUnit",
-                        "TOTALSMS",
-                        "Pending",
-                        "failed",
-                        "Sent",
-                        "delivered",
-                        "undelivered",
-                        "drNotAvailable",
-                        "drNotAvailable",
-                        // "queTime",
-                      ].map((key) => (
-                        <React.Fragment key={key}>
-                          <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
-                            {key.replace(/([A-Z])/g, " $1")}
-                          </div>
-                          <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
-                            {campaignInfoMap[params.row.campaignSrno][key] ??
-                              "N/A"}
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">No Data Available</div>
-                )}
-              </InfoPopover>
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
