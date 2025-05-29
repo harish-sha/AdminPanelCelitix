@@ -499,43 +499,6 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
       minWidth: 150,
       renderCell: (params) => (
         <>
-          {/* <CustomTooltip title="View Campaign" placement="top" arrow={true}>
-            <IconButton
-              className="text-xs"
-              ref={(el) => {
-                if (el) dropdownButtonRefs.current[params.row.id] = el;
-              }}
-              onClick={() => handleView(params.row)}
-            >
-              <InfoOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "green",
-                }}
-              />
-            </IconButton>
-            {dropdownOpenId === params.row.id && (
-              <DropdownMenuPortalCampaign
-                targetRef={{
-                  current: dropdownButtonRefs.current[params.row.id],
-                }}
-                onClose={closeDropdown}
-              >
-                {campaignInfo && (
-                  <div>
-                    {Object.keys(campaignInfo).map((key) => {
-                      return (
-                        <div key={key} className="flex items-center gap-2">
-                          <span className="font-bold">{key}:</span>
-                          <span>{campaignInfo[key]}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </DropdownMenuPortalCampaign>
-            )}
-          </CustomTooltip> */}
           <CustomTooltip title="View Campaign" placement="top" arrow>
             <IconButton
               className="text-xs"

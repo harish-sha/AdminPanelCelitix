@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
@@ -25,6 +25,7 @@ import {
   getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
+  getSMSCampaignDataByCampNo,
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
 import IconButton from "@mui/material/IconButton";
@@ -37,6 +38,9 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import moment from "moment";
+import InfoPopover from "@/components/common/InfoPopover";
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -128,6 +132,10 @@ const SmsReports = () => {
     delStatus: {},
     type: "campaign",
   });
+
+  const dropdownButtonRefs = useRef([]);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -249,30 +257,26 @@ const SmsReports = () => {
         campaignName: campaignDataToFilter.campaingName,
         campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
-        toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
-        fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
+        toDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
+        fromDate: moment(campaignDataToFilter.fromDate).format("YYYY-MM-DD"),
       };
       const res = await fetchCampaignData(data);
 
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
-          sn: i + 1,
-          ...item,
-          campaign_type:
-            item.account_usage_type_id === 1
-              ? "Transactional"
-              : item.account_usage_type_id === 2
+            id: item.receipt_no_of_duplicate_message,
+            sn: i + 1,
+            ...item,
+            campaign_type:
+              item.account_usage_type_id === 1
+                ? "Transactional"
+                : item.account_usage_type_id === 2
                 ? "Promotional"
                 : item.account_usage_type_id === 3
-                  ? "International"
-                  : "Unknown",
-        }))
+                ? "International"
+                : "Unknown",
+          }))
         : [];
 
       setCampaignTableData(mappedData);
@@ -509,10 +513,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -590,10 +594,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -601,6 +605,35 @@ const SmsReports = () => {
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  const closeDropdown = () => setDropdownOpenId(null);
+  const handleView = async (row) => {
+    const id = row.campaignSrno;
+
+    setDropdownOpenId(null);
+
+    const date = moment(fromDate).format("YYYY-MM-DD");
+
+    const data = {
+      campaignSrno: id,
+      fromDate: date,
+      toDate: date,
+      selectedUserId: 0,
+    };
+
+    try {
+      const res = await getSMSCampaignDataByCampNo(data);
+
+      setCampaignInfoMap((prev) => ({
+        ...prev,
+        [id]: res[0] || null,
+      }));
+
+      setDropdownOpenId(id);
+    } catch (e) {
+      console.error("Error fetching campaign summary:", e);
     }
   };
 
@@ -641,6 +674,58 @@ const SmsReports = () => {
           minWidth: 100,
           renderCell: (params) => (
             <>
+              <CustomTooltip title="View Campaign" placement="top" arrow>
+                <IconButton
+                  className="text-xs"
+                  ref={(el) => {
+                    if (el) dropdownButtonRefs.current[params.row.id] = el;
+                  }}
+                  onClick={() => handleView(params.row)}
+                >
+                  <InfoOutlinedIcon
+                    sx={{ fontSize: "1.2rem", color: "green" }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
+                open={dropdownOpenId == params.row.campaignSrno}
+                onClose={closeDropdown}
+              >
+                {campaignInfoMap[params.row.campaignSrno] ? (
+                  <div className="w-[280px] max-w-full">
+                    {/* <div className="text-base font-semibold mb-2 text-gray-800">
+                                Campaign Summary
+                              </div> */}
+                    <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                      {[
+                        "TotalUnit",
+                        "TOTALSMS",
+                        "Pending",
+                        "failed",
+                        "Sent",
+                        "delivered",
+                        "undelivered",
+                        "drNotAvailable",
+                        "drNotAvailable",
+                        // "queTime",
+                      ].map((key) => (
+                        <React.Fragment key={key}>
+                          <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                            {key.replace(/([A-Z])/g, " $1")}
+                          </div>
+                          <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                            {campaignInfoMap[params.row.campaignSrno][key] ??
+                              "N/A"}
+                          </div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">No Data Available</div>
+                )}
+              </InfoPopover>
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
@@ -680,10 +765,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -781,10 +866,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res?.data)
           ? res?.data.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+              sn: index + 1,
+              id: index + 1,
+              ...item,
+            }))
           : []
       );
       setPreviousDayDetailsDialog(true);

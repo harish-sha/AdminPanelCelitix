@@ -142,3 +142,10 @@ export const downloadCustomSmsReport = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+export const getSMSCampaignDataByCampNo = async (data) => {
+  return await fetchWithAuth("/getSMSCampaignDataByCampNo", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
