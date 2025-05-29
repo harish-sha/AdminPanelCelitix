@@ -98,6 +98,7 @@ import {
   updateApiKey,
   updatePassword,
 } from "@/apis/settings/setting";
+import { HiLink } from "react-icons/hi2";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -285,6 +286,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     pageSize: 10,
   });
   const [logins, setLogins] = useState(false);
+  const [petmDialogVisible, setPETMDialogVisible] = useState(false);
   const [otpService, setOtpService] = useState(false);
   const [viewService, setViewService] = useState(false);
   const [editService, setEditDetailsDialogVisible] = useState(false);
@@ -1065,9 +1067,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setLogins(true);
   };
 
+  const handlePetmChain = (id) => {
+    setPETMDialogVisible(true);
+    setSelectedId(id);
+  };
+
   const handleOtp = (id) => {
     setOtpService(true);
-    setSelectedIds(id);
+    setSelectedId(id);
   };
 
   const allServices = [
@@ -1297,7 +1304,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       field: "action",
       headerName: "Action",
       flex: 1,
-      minWidth: 350,
+      minWidth: 400,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Login" placement="top">
@@ -1388,6 +1395,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   color: "gray",
                 }}
               />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="PETM Link Chain" placement="top">
+            <IconButton onClick={() => handlePetmChain(params.row.srno)}>
+              <HiLink className="size-[1.2rem] text-gray-500" />
             </IconButton>
           </CustomTooltip>
         </>
@@ -1745,7 +1757,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   useEffect(() => {
-    if (!selectedIds) return;
+    if (!selectedId) return;
     async function fetchMobileNo() {
       try {
         const res = await getMobileNumbers(selectedIds);
@@ -2022,6 +2034,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         Login details
       </Dialog>
       {/* Login details */}
+
+      {/* PETM Chain */}
+      <Dialog
+        header="Configure PETM Chain"
+        visible={petmDialogVisible}
+        onHide={() => setPETMDialogVisible(false)}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        PETM CHAIN
+      </Dialog>
+      {/* PETM Chain */}
 
       {/* OTP details */}
       <Dialog
