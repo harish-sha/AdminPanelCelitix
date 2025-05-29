@@ -167,14 +167,15 @@ const ResellerLogin = () => {
     }
 
     try {
-      const domain = window.location.hostname;
+      // const domain = window.location.hostname;
       const payload = {
         userId: username,
         password,
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        // domain: "reseller.alertsnow.in",
+        domain: "reseller.alertsnow.in",
+        // domain: "msg.itbizcon.in",
         // domain: "",
-        domain: domain
+        // domain: domain
       };
 
       const res = await login(payload);

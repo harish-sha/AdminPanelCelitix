@@ -466,7 +466,7 @@ const ManageTemplate = () => {
                             />
                         </div> */}
             {/* Search Templates and Status */}
-            <div className="relative flex items-center h-0 transition-all duration-500 w-120">
+            {/* <div className="relative flex items-center h-0 transition-all duration-500 w-120">
               <div
                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
             ${searchActive ? "w-80 " : "w-0"} 
@@ -495,7 +495,7 @@ const ManageTemplate = () => {
                   Search Templates
                 </span>
               )}
-            </div>
+            </div> */}
             <div className="flex gap-2">
               <div className="w-max-content">
                 <UniversalButton

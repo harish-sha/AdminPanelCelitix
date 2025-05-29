@@ -2,7 +2,7 @@ export const resellerItems = [
   { name: "Home", links: "/", roles: ["ADMIN"] },
   {
     name: "User Management",
-    links: ["/manageuser","/manageadduser"],
+    links: ["/manageuser", "/manageadduser"],
     roles: ["ADMIN"],
   },
   {
@@ -12,6 +12,7 @@ export const resellerItems = [
       "/rcsdeliveryreport",
       "/wmanagecampaign",
       "/rcsdeliverycampaigndetails",
+      "/apicampaigninfo",
     ],
     roles: ["ADMIN"],
   },

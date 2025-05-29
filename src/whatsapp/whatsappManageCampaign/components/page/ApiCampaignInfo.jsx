@@ -96,13 +96,14 @@ export const ApiCampaignInfo = () => {
       //   deliveryStatus: state.log,
       //   status: "",
       // };
+
       // later update with upper code
 
       const selectedUser = state.selectedUser || "0"
 
       const formattedFromDate = state.selectedDate
         ? moment(state.selectedDate).format("YYYY-MM-DD")
-        : new Date().toLocaleDateString("en-GB");
+        : moment().format("YYYY-MM-DD");
 
       let status = "";
       let deliveryStatus = "";
@@ -128,20 +129,20 @@ export const ApiCampaignInfo = () => {
         selectedUserId: selectedUser
       };
       const res = await getListofSendMsg(payload);
-      // setTotalPage(5000);
-      // setData(res);
-      // If res is an object with a data property (array), use that
-      if (res && Array.isArray(res.data)) {
-        setData(res.data);
-        setTotalPage(res.total || 0);
-      } else if (Array.isArray(res)) {
-        // If res itself is an array
-        setData(res);
-        setTotalPage(res.length);
-      } else {
-        setData([]); // fallback to empty array
-        setTotalPage(0);
-      }
+      const responseData = Array.isArray(res) ? res : [];
+      setTotalPage(5000);
+      setData(responseData);
+
+      // if (res && Array.isArray(res.data)) {
+      //   setData(res.data);
+      //   setTotalPage(res.total || 0);
+      // } else if (Array.isArray(res)) {
+      //   setData(res);
+      //   setTotalPage(res.length);
+      // } else {
+      //   setData([]);
+      //   setTotalPage(0);
+      // }
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
@@ -180,37 +181,31 @@ export const ApiCampaignInfo = () => {
     { field: "que", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
-  // const rows = Array.from({ length: 20 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   wabaNumber: `WABA-${1000 + i}`,
-  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
-  //   source: "API",
-  //   status: "Pending",
-  //   deliveryStatus: "Sent",
-  //   reason: "N/A",
-  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
-  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
-  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
-  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
-  // }));
 
-  const rows = Array.isArray(data) ? data.map((item, i) => ({
-    id: i + 1,
-    // sn: i + 1,
-    sn: paginationModel.page * paginationModel.pageSize + i + 1,
-    // wabaNumber: WABA-${1000 + i},
-    // mobileNo: 98765432${(10 + i).toString().slice(-2)},
-    // source: "API",
-    // status: "Pending",
-    // deliveryStatus: "Sent",
-    // reason: "N/A",
-    // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
-    // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
-    // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
-    // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
-    ...item,
-  })) : [];
+  // const rows = Array.isArray(data) ? data.map((item, i) => ({
+  //   id: i + 1,
+  //   // sn: i + 1,
+  //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
+  //   // wabaNumber: WABA-${1000 + i},
+  //   // mobileNo: 98765432${(10 + i).toString().slice(-2)},
+  //   // source: "API",
+  //   // status: "Pending",
+  //   // deliveryStatus: "Sent",
+  //   // reason: "N/A",
+  //   // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
+  //   // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
+  //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
+  //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
+  //   ...item,
+  // })) : [];
+
+  const rows = Array.isArray(data)
+    ? data.map((item, i) => ({
+      id: i + 1,
+      sn: paginationModel.page * paginationModel.pageSize + i + 1,
+      ...item,
+    }))
+    : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);

@@ -79,6 +79,7 @@ export const getPromoServices = async () => {
   });
 };
 
+// add mobile numbers
 export const addMobileNumbers = async (data) => {
   return await fetchWithAuth(
     `/user/saveRegMobiles?userSrno=${data.userSrno}&mobileNumbers=${data.mbno}`,
@@ -88,15 +89,52 @@ export const addMobileNumbers = async (data) => {
   );
 };
 
+// get mobile numbers
 export const getMobileNumbers = async (data) => {
   return await fetchWithAuth(`/user/getRegMobileno?userSrno=${data}`, {
     method: "POST",
   });
 };
 
+// add user
 export const addUser = async (data) => {
   return await fetchWithAuth(`/user/createUser`, {
     method: "POST",
     body: JSON.stringify(data),
   });
+};
+
+// save PETM Chain
+export const savePETMChain = async (data) => {
+  return await fetchWithAuth(`/user/setPetmData`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// get PETM Chain
+export const getPETMChain = async (data) => {
+  return await fetchWithAuth(`/user/getPetmData?selectedUserId=${data}`, {
+    method: "GET",
+  });
+};
+
+// get whatsapp monthly charges 
+export const getCharges = async (userSrno) => {
+  return await fetchWithAuth(
+    `/WhatsappUserMonthlyRent/getWhatsappMontlyRate?userSrno=${userSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// save whatsapp monthly charges
+export const saveCharges = async (data) => {
+  return await fetchWithAuth(
+    `/WhatsappUserMonthlyRent/SaveUpdateRate?selectedUserId=${data.userSrno}&monthlyRate=${data.monthlyRate}`,
+    {
+      method: "POST",
+    }
+  );
 };

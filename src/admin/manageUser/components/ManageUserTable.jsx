@@ -67,8 +67,12 @@ import {
   getMobileNumbers,
   getPromoServices,
   getTransServices,
+  getCharges,
+  saveCharges,
   saveServicesByUser,
   updateUserbySrno,
+  getPETMChain,
+  savePETMChain,
 } from "@/apis/admin/admin";
 import {
   addSmsPricing,
@@ -99,6 +103,7 @@ import {
   updateApiKey,
   updatePassword,
 } from "@/apis/settings/setting";
+import { HiLink } from "react-icons/hi2";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -286,6 +291,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     pageSize: 10,
   });
   const [logins, setLogins] = useState(false);
+  const [petmDialogVisible, setPETMDialogVisible] = useState(false);
   const [otpService, setOtpService] = useState(false);
   const [viewService, setViewService] = useState(false);
   const [editService, setEditDetailsDialogVisible] = useState(false);
@@ -319,6 +325,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
+  });
+
+  const [petmDetails, setPetmDetails] = useState({
+    selectedUserId: "",
+    petmChainType: 1,
+    tmd: "",
+    TMA1: "",
+    TMA2: "",
   });
 
   const [selectedIds, setSelectedIds] = useState([]);
@@ -408,6 +422,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+  const [charges, setCharges] = useState(0);
 
   const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
   const [editWhatsappForm, setEditWhatsappForm] = useState({
@@ -938,6 +953,23 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     handleGetAllowedServices();
   }, [assignService]);
 
+  async function handleChargesSave() {
+    try {
+      const data = {
+        userSrno: currentUserSrno,
+        monthlyRate: charges,
+      };
+      const res = await saveCharges(data);
+      if (!res?.msg?.includes("successfully")) {
+        toast.error("Something went wrong");
+        return;
+      }
+      toast.success("Charges updated successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   // Dropdown options
   const useroption = [
     { value: 1, label: "User" },
@@ -1066,9 +1098,21 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setLogins(true);
   };
 
+  const handlePetmChain = (id) => {
+    setPETMDialogVisible(true);
+    setPetmDetails({
+      selectedUserId: id,
+      petmChainType: 1,
+      tmd: "",
+      TMA1: "",
+      TMA2: "",
+    });
+    setSelectedId(id);
+  };
+
   const handleOtp = (id) => {
     setOtpService(true);
-    setSelectedIds(id);
+    setSelectedId(id);
   };
 
   const allServices = [
@@ -1173,6 +1217,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       whatsappRateRes,
       rcsRateRes,
       obdRateRes,
+      chargesRes,
     ] = await Promise.all([
       getTransServices(),
       getPromoServices(),
@@ -1181,6 +1226,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       getWhatsappRateData(srNo),
       getRCSRateData(srNo),
       getVoiceRateByUser(srNo),
+      getCharges(srNo),
     ]);
 
     // Country List
@@ -1245,6 +1291,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ]);
 
     // obdRateRes && setVoicerows(voiceRows);
+
+    setCharges(chargesRes?.MonthlyRate || "0");
   };
 
   const handleApikey = async (id, name) => {
@@ -1297,7 +1345,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       field: "action",
       headerName: "Action",
       flex: 1,
-      minWidth: 350,
+      minWidth: 400,
       renderCell: (params) => (
         <>
           <CustomTooltip arrow title="Login" placement="top">
@@ -1388,6 +1436,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   color: "gray",
                 }}
               />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip arrow title="PETM Link Chain" placement="top">
+            <IconButton onClick={() => handlePetmChain(params.row.srno)}>
+              <HiLink className="size-[1.2rem] text-gray-500" />
             </IconButton>
           </CustomTooltip>
         </>
@@ -1745,10 +1798,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
 
   useEffect(() => {
-    if (!selectedIds) return;
+    if (!selectedId) return;
     async function fetchMobileNo() {
       try {
-        const res = await getMobileNumbers(selectedIds);
+        const res = await getMobileNumbers(selectedId);
         const mobile = res?.regMoblienos?.split(",");
         setMobileNumbers(mobile || [""]);
         // setotp
@@ -1758,6 +1811,66 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     fetchMobileNo();
   }, [otpService]);
+
+
+  useEffect(() => {
+    if (!selectedId) return;
+    async function fetchPETMChain() {
+      try {
+        const res = await getPETMChain(selectedId);
+
+        setPetmDetails({
+          selectedUserId: selectedId,
+          petmChainType: res?.petmChainType || 1,
+          tmd: res?.tmd || "",
+          TMA1: res?.TMA1 || "",
+          TMA2: res?.TMA2 || "",
+        });
+      } catch (e) {
+        return toast.error(e.message);
+      }
+    }
+    fetchPETMChain();
+  }, [petmDialogVisible]);
+
+  async function handlePETMSave() {
+    // petmDetails.petmChainType === 3
+    if (!petmDetails.petmChainType) {
+      return toast.error("Please select a chain type");
+    }
+    if (!petmDetails.tmd) {
+      return toast.error("Please select a TMD");
+    }
+
+    if (
+      (petmDetails.petmChainType === 2 || petmDetails.petmChainType === 3) &&
+      !petmDetails.TMA1
+    ) {
+      return toast.error("Please select a TMA1");
+    }
+
+    if (petmDetails.petmChainType === 3 && !petmDetails.TMA2) {
+      return toast.error("Please select a TMA2");
+    }
+
+    try {
+      const res = await savePETMChain(petmDetails);
+      if (!res?.msg?.includes("successfully")) {
+        return toast.error("Error in saving petm details");
+      }
+      toast.success("Petm details saved successfully");
+      setPETMDialogVisible(false);
+      setPetmDetails({
+        selectedUserId: "",
+        petmChainType: 1,
+        tmd: "",
+        TMA1: "",
+        TMA2: "",
+      });
+    } catch (e) {
+      return toast.error("Error in saving petm details");
+    }
+  }
 
   return (
     <>
@@ -2023,6 +2136,88 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       </Dialog>
       {/* Login details */}
 
+      {/* PETM Chain */}
+      <Dialog
+        header="Configure PE-TM Chain"
+        visible={petmDialogVisible}
+        onHide={() => setPETMDialogVisible(false)}
+        className="w-[30rem]"
+        draggable={false}
+      >
+        <div className="space-y-4">
+          <AnimatedDropdown
+            id="petmChain"
+            name="petmChain"
+            label="Select PETM Chain"
+            options={[
+              {
+                label: "Entity - TMD",
+                value: 1,
+              },
+              {
+                label: "Entity - TMA1 - TMD",
+                value: 2,
+              },
+              {
+                label: "Entity - TMA1 - TMA2 - TMD",
+                value: 3,
+              },
+            ]}
+            value={petmDetails.petmChainType}
+            onChange={(e) => {
+              setPetmDetails({ ...petmDetails, petmChainType: e });
+            }}
+            placeholder="Select PE-TM Chain"
+          />
+          <InputField
+            label="TMD"
+            id="tmd"
+            name="tmd"
+            placeholder="Enter TMD "
+            type="number"
+            value={petmDetails.tmd}
+            onChange={(e) => {
+              setPetmDetails({ ...petmDetails, tmd: e.target.value });
+            }}
+          />
+          {(petmDetails.petmChainType === 2 ||
+            petmDetails.petmChainType === 3) && (
+              <InputField
+                label="TMA-1"
+                id="tma1"
+                name="tma1"
+                placeholder="Enter TMA-1"
+                type="number"
+                value={petmDetails.TMA1}
+                onChange={(e) => {
+                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+                }}
+              />
+            )}
+          {petmDetails.petmChainType === 3 && (
+            <InputField
+              label="TMA-2"
+              id="tma2"
+              name="tma2"
+              placeholder="Enter TMA-2"
+              type="number"
+              value={petmDetails.TMA2}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA2: e.target.value });
+              }}
+            />
+          )}
+          <UniversalButton
+            id={"saveButton"}
+            name={"saveButton"}
+            label="Save"
+            onClick={handlePETMSave}
+            className="w-full"
+          />
+        </div>
+      </Dialog>
+      {/* PETM Chain */}
+
       {/* OTP details */}
       <Dialog
         header="OTP details"
@@ -2285,7 +2480,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       <Dialog
         header="Assign Rate"
         visible={assignRate}
-        onHide={() => setassignRate(false)}
+        onHide={() => {
+          setassignRate(false);
+          setCharges(0);
+        }}
         className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
         draggable={false}
       >
@@ -2472,6 +2670,25 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <>
+                <div className="mb-2 flex gap-2 items-end justify-start">
+                  <InputField
+                    id="charges"
+                    name="charges"
+                    label="Whatsapp Monthly Rent"
+                    placeholder="INR"
+                    value={charges}
+                    onChange={(e) => {
+                      setCharges(e.target.value);
+                    }}
+                    type="text"
+                  />
+                  <UniversalButton
+                    id="chargesSave"
+                    name="chargesSave"
+                    label="Save"
+                    onClick={handleChargesSave}
+                  />
+                </div>
                 <div id="whatsapptable">
                   <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <DropdownWithSearch

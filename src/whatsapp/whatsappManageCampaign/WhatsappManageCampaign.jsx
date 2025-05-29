@@ -775,6 +775,7 @@ const WhatsappManageCampaign = () => {
                           key={index}
                           log={log}
                           selectedDate={selectedDateLogs}
+                          selectedUser={selectedUser}
                         />
                       ))
                     )}
@@ -894,7 +895,7 @@ const WhatsappManageCampaign = () => {
                 </div>
               )}
             </div>
-          </CustomTabPanel>.
+          </CustomTabPanel>
           <CustomTabPanel value={value} index={3} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">

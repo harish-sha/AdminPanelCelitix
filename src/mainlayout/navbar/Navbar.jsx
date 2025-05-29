@@ -46,7 +46,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   // };
 
   const handleBalance = async () => {
-    if(user?.role === "AGENT") return;
+    if (user?.role === "AGENT") return;
     setIsFetchingBalance(true);
     const res = await fetchBalance();
     setBalance(res.balance || 0);
@@ -105,6 +105,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     toast.success("Logged out successfully!");
     window.location.href = "/login";
     setTimeout(() => authLogout(), 1000);
+    // authLogout();
     // setTimeout(() => (window.location.href = "/login"), 1000);
   }, []);
 

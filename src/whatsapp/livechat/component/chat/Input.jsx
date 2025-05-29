@@ -74,7 +74,7 @@ export const ChatInput = ({
       <div className="relative flex items-center justify-center w-full gap-2 border rounded-3xl">
         <textarea
           type="text"
-          className="max-h-50 w-full p-2 focus:outline-none resize-none"
+          className="max-h-50 w-full p-4 focus:outline-none resize-none"
           placeholder="Type a message..."
           ref={inputRef}
           value={input}

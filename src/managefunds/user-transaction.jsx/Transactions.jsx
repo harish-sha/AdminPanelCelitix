@@ -2,26 +2,29 @@ import React, { useEffect, useState } from "react";
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
+import toast from "react-hot-toast";
+import moment from "moment";
 import { IoSearch } from "react-icons/io5";
+import { MultiSelect } from "primereact/multiselect";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import { BsJournalArrowDown } from "react-icons/bs";
+
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import UniversalDatePicker from "../../whatsapp/components/UniversalDatePicker";
-import InputField from "../../components/layout/InputField";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
-import UniversalButton from "../../whatsapp/components/UniversalButton";
 import TransactionsHistoryTable from "./components/TransactionsHistoryTable";
 import TransactionsSummaryTable from "./components/TransactionsSummaryTable";
-import { MultiSelect } from "primereact/multiselect";
-import CustomTooltip from "../../components/common/CustomTooltip";
-import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
-import { DataTable } from "../../components/layout/DataTable";
+import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
+import UniversalButton from "../../whatsapp/components/UniversalButton";
+import CustomTooltip from "../../components/common/CustomTooltip";
 import { fetchTransactions } from "../../apis/settings/setting";
-import { useUser } from "@/context/auth";
+import { DataTable } from "../../components/layout/DataTable";
+import InputField from "../../components/layout/InputField";
 
-import toast from "react-hot-toast";
+import { useUser } from "@/context/auth";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { exportToExcel } from "@/utils/utills";
+
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -71,8 +74,8 @@ const TransactionsUser = () => {
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
-    toDate: new Date().toLocaleDateString("en-GB"),
-    startDate: new Date().toLocaleDateString("en-GB"),
+    toDate: new Date(),
+    startDate: new Date(),
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
@@ -102,24 +105,25 @@ const TransactionsUser = () => {
   }, [user.role]);
 
   const handleSearch = async () => {
+    if (!selectedUser) return toast.error("Please select a user first.");
     try {
+      // console.log(moment(filterData.toDate).format("YYYY-MM-DD"));
       const payload = {
         ...filterData,
         userSrNo: selectedUser,
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
       };
+
       setIsFetching(true);
       const res = await fetchTransactions(payload);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     } finally {
       setIsFetching(false);
     }
   };
-
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -210,6 +214,7 @@ const TransactionsUser = () => {
     { value: "Credit", label: "Credit" },
     { value: "Debit", label: "Debit" },
   ];
+  
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -233,6 +238,7 @@ const TransactionsUser = () => {
     setIsFetching(false);
     setFilteredData([]); // Reset data
   };
+
   const handleInputChange = (e) => {
     setInputValue(e.target.value);
   };
@@ -280,7 +286,7 @@ const TransactionsUser = () => {
   }
 
   return (
-    <div className="w-full ">
+    <div className="w-full">
       <Box sx={{ width: "100%" }}>
         <div className="flex items-center justify-between px-3">
           <Tabs
@@ -385,7 +391,7 @@ const TransactionsUser = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      startDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      startDate: newValue,
                     });
                   }}
                 />
@@ -404,7 +410,7 @@ const TransactionsUser = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      toDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      toDate: newValue,
                     });
                   }}
                 />
