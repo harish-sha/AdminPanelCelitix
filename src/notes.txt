@@ -1,0 +1,4 @@
+need to pass the selected user id in the reports and exportdialogs 
+
+
+whatsapp - managecampaign,export dialog 

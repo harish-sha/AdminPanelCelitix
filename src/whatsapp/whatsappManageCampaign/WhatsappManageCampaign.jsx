@@ -45,7 +45,6 @@ import { useUser } from "@/context/auth";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 
-
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
 
@@ -137,13 +136,13 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    campaignName: "",
+    // campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
-    campaignType: "",
+    campaignType: 0,
     status: "",
     delStatus: {},
     type: "campaign",
@@ -261,9 +260,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -315,23 +314,94 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-  // Fetch initial data - for to load data on page load
-  // const fetchInitialData = async () => {
-  //   const filters = {
-  //     fromQueDateTime: new Date().toLocaleDateString("en-GB"),
-  //     toQueDateTime: new Date().toLocaleDateString("en-GB"),
-  //     campaignName: "",
-  //     template_category: "all",
-  //     selectedUserId: selectedUser || "0"
+  const fetchScheduleCampaignData = async () => {
+    setIsFetching(true);
 
-  //   };
+    try {
+      const data = await getWhatsappCampaignScheduledReport(
+        selectedUser || "0"
+      );
 
-  //   setIsFetching(true);
-  //   const data = await getWhatsappCampaignReport(filters);
-  //   setFilteredData(data);
-  //   setIsFetching(false);
-  // };
+      console.log("Fetched Schedule Campaign Data:", data);
 
+      const mappedData = Array.isArray(data)
+        ? data.map((item, index) => ({
+            id: item.srno || `row-${index}`,
+            sn: index + 1,
+            campaignName: item.campaignName || "N/A",
+            campaignDate: item.campaignDate || "N/A",
+            sentTime: item.sentTime || "N/A",
+            count: item.count || "N/A",
+            processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+            srno: item.srno,
+          }))
+        : [];
+
+      console.log("Mapped Schedule Campaign Data:", mappedData);
+
+      // Apply filters
+      const formattedSelectedDate =
+        scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+          ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
+          : null;
+
+      const filteredData = mappedData.filter((item) => {
+        const matchesName = scheduleCampaignName
+          ? item.campaignName
+              .toLowerCase()
+              .includes(scheduleCampaignName.toLowerCase())
+          : true;
+
+        const matchesDate = formattedSelectedDate
+          ? item.campaignDate === formattedSelectedDate
+          : true;
+
+        return matchesName && matchesDate;
+      });
+
+      console.log("Filtered Schedule Campaign Data:", filteredData);
+
+      setScheduleData(filteredData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch schedule campaign data.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleCancel = async (srno) => {
+    if (!srno) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+
+    try {
+      console.log("Canceling campaign with SRNO:", srno);
+      const result = await cancelCampaign({
+        srno: srno,
+        selectedUserId: selectedUser || "0",
+      });
+      if (result) {
+        console.log("Campaign cancelled successfully:", result);
+        toast.success("Campaign Cancelled successfully");
+
+        // Refresh the table by fetching the data again
+        fetchScheduleCampaignData();
+      } else {
+        console.warn("Cancel request failed or returned empty response.");
+        toast.error("Cancel request failed");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    }
+  };
+
+  useEffect(() => {
+    fetchScheduleCampaignData();
+  }, []);
 
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -500,6 +570,24 @@ const WhatsappManageCampaign = () => {
                   </span>
                 }
                 {...a11yProps(2)}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    backgroundColor: "#f0f4ff",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+              <Tab
+                label={
+                  <span>
+                    <DateRangeIcon size={20} /> Scheduled
+                  </span>
+                }
+                {...a11yProps(3)}
                 sx={{
                   textTransform: "none",
                   fontWeight: "bold",
@@ -774,7 +862,6 @@ const WhatsappManageCampaign = () => {
                           log={log}
                           selectedDate={selectedDateLogs}
                           selectedUser={selectedUser}
-                          selectedUser={selectedUser}
                         />
                       ))
                     )}
@@ -859,14 +946,24 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
                 <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
-                  <FormGroup>
+                  {/* <FormGroup>
                     <FormControlLabel
                       control={<Checkbox />}
                       label="Month Wise"
                       value={isMonthWise}
                       onClick={(e) => setIsMonthWise(e.target.checked)}
                     />
-                  </FormGroup>
+                  </FormGroup> */}
+                  <Checkbox
+                    checked={isMonthWise}
+                    onChange={(e) => setIsMonthWise(e.target.checked)}
+                  />
+                  <label
+                    className="text-sm font-medium text-gray-800 font-p"
+                    htmlFor="isMonthWise"
+                  >
+                    Month Wise
+                  </label>
                 </div>
                 <div className="w-full sm:w-56">
                   <UniversalButton
@@ -986,11 +1083,11 @@ const WhatsappManageCampaign = () => {
                     name="manageCampaignSearchBtn"
                     label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
-                    onClick={() => fetchScheduleCampaignData()}
+                    onClick={fetchScheduleCampaignData}
                     variant="primary"
                   />
                 </div>
-                <div className="w-max-content">
+                {/* <div className="w-max-content">
                   <UniversalButton
                     id="manageCampaignExportBtn"
                     name="manageCampaignExportBtn"
@@ -1003,7 +1100,7 @@ const WhatsappManageCampaign = () => {
                     onClick={handleExportBtn}
                     variant="primary"
                   />
-                </div>
+                </div> */}
               </div>
               {isFetching ? (
                 <div className="">
@@ -1015,7 +1112,166 @@ const WhatsappManageCampaign = () => {
                     id="whatsappManageCampaignScheduleTable"
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
-                    fromDate={selectedDate}
+                    // fromDate={selectedDate}
+                    // fetchInitialData={fetchScheduleCampaignData}
+                  />
+                </div>
+              )}
+
+              {/* {isFetching ? (
+                <UniversalSkeleton height="35rem" width="100%" />
+              ) : !hasSearched ? (
+                // Case 1: Initial Load - Ask user to select WABA account
+                <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
+                  <div className="p-8 text-center text-blue-500 shadow-2xl shadow-blue-300 rounded-2xl">
+                    <span className="text-2xl font-medium tracking-wide font-m">
+                      Please select a WhatsApp Business Account (WABA) to
+                      proceed.
+                    </span>
+                  </div>
+                </div>
+              ) : filteredData.length === 0 ? (
+                // Case 2: No data found after filtering
+                <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
+                  <div className="p-8 text-center text-red-500 shadow-2xl rounded-2xl shadow-red-300">
+                    <span className="text-2xl font-medium tracking-wide font-m">
+                      No matching records found. <br /> Please adjust your filters
+                      and try again.
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                // Case 3: Show data in the table
+                <ManageCampaignTable
+                  id='whatsappManageCampaignTable'
+                  name='whatsappManageCampaignTable'
+                  data={filteredData}
+                />
+              )} */}
+            </div>
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={3} className="">
+            <div>
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-48">
+                  <UniversalDatePicker
+                    id="manageCampaignDate"
+                    name="manageCampaignDate"
+                    label="Created On"
+                    value={scheduleSelectedDate}
+                    onChange={(newValue) => setScheduleSelectedDate(newValue)}
+                    placeholder="Pick a start date"
+                    tooltipContent="Select a date within the last 3 months."
+                    tooltipPlacement="right"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
+                    error={!scheduleSelectedDate}
+                    errorText="Please select a valid date"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <InputField
+                    id="manageCampaignName"
+                    name="manageCampaignName"
+                    label="Campaign Name"
+                    value={scheduleCampaignName}
+                    onChange={handleScheduleInputChange}
+                    placeholder="Campaign Name"
+                    tooltipContent="Your templatename should not contain spaces."
+                    tooltipPlacement="right"
+                  />
+                </div>
+                {/* <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignCategory"
+                    name="manageCampaignCategory"
+                    label="Category"
+                    tooltipContent="Select category"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "utility", label: "Utility" },
+                      { value: "marketing", label: "Marketing" },
+                      { value: "authentication", label: "Authentication" },
+                    ]}
+                    value={campaignCategory}
+                    onChange={(value) => setCampaignCategory(value)}
+                    placeholder="Category"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignType"
+                    name="manageCampaignType"
+                    label="Type"
+                    tooltipContent="Select Type"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "text", label: "Text" },
+                      { value: "image", label: "Image" },
+                      { value: "document", label: "Document" },
+                      { value: "carousel", label: "Carousel" },
+                    ]}
+                    value={campaignType}
+                    onChange={(value) => setCampaignType(value)}
+                    placeholder="Type"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignStatus"
+                    name="manageCampaignStatus"
+                    label="Status"
+                    tooltipContent="Select Status"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "pending", label: "Pending" },
+                      // { value: "failed", label: "Failed" },
+                      // { value: "sent", label: "Sent" },
+                      { value: "cancelled", label: "Cancelled" },
+                      { value: "completed", label: "Completed" },
+                    ]}
+                    value={campaignStatus}
+                    onChange={(value) => setCampaignStatus(value)}
+                    placeholder="Status"
+                  />
+                </div> */}
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignSearchBtn"
+                    name="manageCampaignSearchBtn"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
+                    onClick={fetchScheduleCampaignData}
+                    variant="primary"
+                  />
+                </div>
+                {/* <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
+                    label="Export"
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
+                    onClick={handleExportBtn}
+                    variant="primary"
+                  />
+                </div> */}
+              </div>
+              {isFetching ? (
+                <div className="">
+                  <UniversalSkeleton height="35rem" width="100%" />
+                </div>
+              ) : (
+                <div className="w-full">
+                  <ManageScheduleCampaignTable
+                    id="whatsappManageCampaignScheduleTable"
+                    name="whatsappManageCampaignTable"
+                    data={scheduleData}
+                    onCancel={handleCancel}
+                    // fromDate={selectedDate}
                   />
                 </div>
               )}
@@ -1064,6 +1320,7 @@ const WhatsappManageCampaign = () => {
           allCampaigns={campaignList}
           setDataToExport={setDataToExport}
           dataToExport={dataToExport}
+          selectedUser={selectedUser}
         />
       )}
 

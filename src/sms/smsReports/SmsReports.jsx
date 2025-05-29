@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
@@ -25,6 +25,9 @@ import {
   getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
+  fetchScheduleCampaignData,
+  cancelScheduleCampaignSms,
+  getSMSCampaignDataByCampNo,
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
 import IconButton from "@mui/material/IconButton";
@@ -41,11 +44,15 @@ import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import moment from "moment";
 
+import InfoPopover from "@/components/common/InfoPopover";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+
 const SmsReports = () => {
   const navigate = useNavigate();
 
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingScheduleData, setIsFetchingScheduleData] = useState(false);
   const [exports, setExports] = useState(false);
   const [exportStatus, setExportStatus] = useState("disable");
   const [selectexportcampaign, setSelectExportCampaign] = useState(null);
@@ -57,6 +64,12 @@ const SmsReports = () => {
   const [selecttemplatetype, setSelectTemplatetype] = useState(null);
   const [selectstatus, setSelectStatus] = useState(null);
   const [selectedCol, setSelectedCol] = useState("");
+
+  const dropdownButtonRefs = useRef([]);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
+
+  const closeDropdown = () => setDropdownOpenId(null);
 
   const { user } = useUser();
   const [allUsers, setAllUsers] = useState([]);
@@ -98,6 +111,40 @@ const SmsReports = () => {
     mobilesnodata: "",
     campaingType: 1,
   });
+
+  const handleView = async (row) => {
+    const id = row.campaignSrno;
+
+    setDropdownOpenId(null);
+
+    const date = moment(campaignDataToFilter.toDate).format("YYYY-MM-DD");
+
+    const data = {
+      campaignSrno: id,
+      fromDate: date,
+      toDate: date,
+      selectedUserId: 0,
+    };
+
+    try {
+      const res = await getSMSCampaignDataByCampNo(data);
+
+      setCampaignInfoMap((prev) => ({
+        [id]: res || null,
+      }));
+
+      setDropdownOpenId(id);
+    } catch (e) {
+      console.error("Error fetching campaign summary:", e);
+    }
+  };
+
+  const [campaignScheduleDataToFilter, setCampaignScheduleDataToFilter] =
+    useState({
+      campaignDate: new Date(),
+      campaignName: "",
+    });
+
   const [campaignTableData, setCampaignTableData] = useState([]);
 
   //previous Day State
@@ -157,7 +204,12 @@ const SmsReports = () => {
     customColumns: "",
     campaignType: "",
     status: "",
-    delStatus: {},
+    delStatus: {
+      delivered: false,
+      undelivered: false,
+      rejected: false,
+      pdr: false,
+    },
     type: "campaign",
   });
 
@@ -293,18 +345,27 @@ const SmsReports = () => {
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
-          sn: i + 1,
-          ...item,
-          campaign_type:
-            item.account_usage_type_id === 1
-              ? "Transactional"
-              : item.account_usage_type_id === 2
+            id: item.receipt_no_of_duplicate_message,
+            sn: i + 1,
+            ...item,
+            campaign_type:
+              item.account_usage_type_id === 1
+                ? "Transactional"
+                : item.account_usage_type_id === 2
                 ? "Promotional"
                 : item.account_usage_type_id === 3
-                  ? "International"
-                  : "Unknown",
-        }))
+                ? "International"
+                : "Unknown",
+
+            insert_flag:
+              item.insert_flag === 1
+                ? "Pending"
+                : item.insert_flag === 2
+                ? "Processing"
+                : item.insert_flag === 3
+                ? "Sent"
+                : "Unknown",
+          }))
         : [];
 
       setCampaignTableData(mappedData);
@@ -349,6 +410,68 @@ const SmsReports = () => {
           minWidth: 100,
           renderCell: (params) => (
             <>
+              {/* <CustomTooltip title="View Campaign" placement="top" arrow>
+                <IconButton
+                  className="text-xs"
+                  ref={(el) => {
+                    if (el)
+                      dropdownButtonRefs.current[params.row.campaignSrno] = el;
+                  }}
+                  onClick={() => handleView(params.row)}
+                >
+                  <InfoOutlinedIcon
+                    sx={{ fontSize: "1.2rem", color: "green" }}
+                  />
+                </IconButton>
+              </CustomTooltip> */}
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
+                open={dropdownOpenId == params.row.campaignSrno}
+                onClose={closeDropdown}
+              >
+                {campaignInfoMap[params.row.campaignSrno] ? (
+                  <div className="w-[280px] max-w-full">
+                    {/* <div className="text-base font-semibold mb-2 text-gray-800">
+                                Campaign Summary
+                              </div> */}
+                    <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                      {[
+                        { label: "Total", key: "TotalUnit" },
+                        { label: "TotalSMS", key: "TOTALSMS" },
+                        { label: "Pending", key: "Pending" },
+                        { label: "Failed", key: "failed" },
+                        { label: "Delivered", key: "delivered" },
+                        { label: "Un Delivered", key: "undelivered" },
+                        { label: "Pending DR", key: "drNotAvailable" },
+                        // { label: "QUE Time", key: "queTime" },
+
+                        // "TotalUnit",
+                        // "TOTALSMS",
+                        // "Pending",
+                        // "failed",
+                        // // "failed",
+                        // "delivered",
+                        // "undelivered",
+                        // "drNotAvailable",
+                        // // "queTime",
+                      ].map(({ label, key }) => (
+                        <React.Fragment key={key}>
+                          <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+                            {/* {key.replace(/([A-Z])/g, " $1")} */}
+                            {label}
+                          </div>
+                          <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+                            {campaignInfoMap[params.row.campaignSrno][key] ??
+                              "N/A"}
+                          </div>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-500">No Data Available</div>
+                )}
+              </InfoPopover>
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
@@ -369,7 +492,7 @@ const SmsReports = () => {
                   />
                 </IconButton>
               </CustomTooltip>
-              <CustomTooltip title="Cancel" placement="top" arrow>
+              {/* <CustomTooltip title="Cancel" placement="top" arrow>
                 <IconButton onClick={() => handleCancel(params.row)}>
                   <CancelOutlinedIcon
                     sx={{
@@ -378,7 +501,7 @@ const SmsReports = () => {
                     }}
                   />
                 </IconButton>
-              </CustomTooltip>
+              </CustomTooltip> */}
             </>
           ),
         },
@@ -402,6 +525,266 @@ const SmsReports = () => {
       setIsFetching(false);
     }
   };
+
+  const handleScheduleSmsCancel = async (row) => {
+    const srno = row.campaignSrno;
+    const selectedUserId = selectedUser || "0";
+
+    try {
+      const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+      if (result) {
+        toast.success("Campaign cancelled successfully");
+
+        // Remove it from the data table
+        setCampaignTableData((prev) =>
+          prev.filter((item) => item.campaignSrno !== srno)
+        );
+        setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+      } else {
+        console.warn("Cancel request failed or returned empty response.");
+        toast.error("Cancel request failed");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    }
+  };
+
+  const handleScheduleCampaignSearch = async () => {
+    try {
+      setIsFetchingScheduleData(true);
+
+      const res = await fetchScheduleCampaignData(selectedUser || "0");
+      console.log("API Response:", res);
+
+      // Step 1: Map API response first
+      let mappedData = Array.isArray(res)
+        ? res.map((item, i) => ({
+            id: item.srno || `row-${i}`,
+            sn: i + 1,
+            campaign_date: item.campaignDate || "-",
+            campaign_name: item.campaignName || "-",
+            sent_time: item.sentTime || "-",
+            campaignSrno: item.srno,
+          }))
+        : [];
+
+      // Step 2: Extract filters if any
+      const filterCampaignName = campaignScheduleDataToFilter?.campaignName
+        ?.toLowerCase()
+        .trim();
+      const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
+        ? new Date(campaignScheduleDataToFilter.campaignDate)
+            .toISOString()
+            .slice(0, 10)
+        : null;
+
+      // Step 3: Filter only if filters are provided
+      // if (filterCampaignName || filterCampaignDate) {
+      //   mappedData = mappedData.filter((item) => {
+      //     const nameMatches = filterCampaignName
+      //       ? item.campaign_name.toLowerCase().includes(filterCampaignName)
+      //       : true;
+
+      //     const itemDate = item.campaign_date
+      //       ? new Date(item.campaign_date).toISOString().slice(0, 10)
+      //       : "";
+
+      //     const dateMatches = filterCampaignDate
+      //       ? itemDate === filterCampaignDate
+      //       : true;
+
+      //     return nameMatches && dateMatches;
+      //   });
+      // }
+
+      // Step 4: Update table state
+      setCampaignTableData(mappedData);
+      setRows(mappedData);
+
+      // Step 5: Setup columns
+      setColumns([
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+        {
+          field: "campaign_date",
+          headerName: "Campaign Date",
+          flex: 1,
+          minWidth: 120,
+        },
+        {
+          field: "campaign_name",
+          headerName: "Campaign Name",
+          flex: 1,
+          minWidth: 150,
+        },
+        { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+        {
+          field: "action",
+          headerName: "Action",
+          flex: 1,
+          minWidth: 100,
+          renderCell: (params) => (
+            <>
+              <CustomTooltip title="Cancel" placement="top" arrow>
+                <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+                  <CancelOutlinedIcon
+                    sx={{
+                      fontSize: "1.2rem",
+                      color: "gray",
+                    }}
+                  />
+                </IconButton>
+              </CustomTooltip>
+            </>
+          ),
+        },
+      ]);
+    } catch (error) {
+      console.error("Error fetching campaign data:", error);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetchingScheduleData(false);
+    }
+  };
+
+  // const handleScheduleCampaignSearch = async () => {
+  //   try {
+  //     setIsFetchingScheduleData(true);
+
+  //     // Prepare the data for the API call (if needed)
+
+  //     const filterCampaignName = campaignScheduleDataToFilter.campaignName;
+  //     const filterCampaignDate = new Date(
+  //       campaignScheduleDataToFilter.campaignDate
+  //     ).toLocaleDateString("en-GB");
+
+  //     // Make the API call (use data if required)
+  //     const res = await fetchScheduleCampaignData();
+
+  //     const handleScheduleSmsCancel = async (row) => {
+  //       const srno = row.campaignSrno;
+  //       const selectedUserId = 0;
+
+  //       try {
+  //         const result = await cancelScheduleCampaignSms({
+  //           srno,
+  //           selectedUserId,
+  //         });
+  //         if (result) {
+  //           toast.success("Campaign cancelled successfully");
+
+  //           // Remove the deleted campaign from the table data
+  //           setCampaignTableData((prev) =>
+  //             prev.filter((item) => item.campaignSrno !== srno)
+  //           );
+  //           setRows((prev) =>
+  //             prev.filter((item) => item.campaignSrno !== srno)
+  //           );
+  //         } else {
+  //           console.warn("Cancel request failed or returned empty response.");
+  //           toast.error("Cancel request failed");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error cancelling campaign:", error);
+  //         toast.error("Error cancelling campaign");
+  //       }
+  //     };
+
+  //     // Filter logic
+  //     let filteredData = Array.isArray(res)
+  //       ? res.filter((item) => {
+  //           const itemName = item.campaignName?.toLowerCase().trim() || "";
+  //           const itemDate = item.campaignDate
+  //             ? new Date(item.campaignDate).toLocaleDateString("en-GB")
+  //             : "";
+
+  //           const nameMatches = filterCampaignName
+  //             ? itemName.includes(filterCampaignName)
+  //             : true;
+  //           const dateMatches = filterCampaignDate
+  //             ? itemDate === filterCampaignDate
+  //             : true;
+
+  //           return nameMatches && dateMatches;
+  //         })
+  //       : [];
+
+  //     // Map data to the expected format
+  //     filteredData = filteredData.map((item, i) => ({
+  //       id: item.srno || `row-${i}`,
+  //       sn: i + 1,
+  //       campaign_date: item.campaignDate || "-",
+  //       campaign_name: item.campaignName || "-",
+  //       sent_time: item.sentTime || "-",
+  //       campaignSrno: item.srno,
+  //     }));
+
+  //     // Update state with filtered data
+  //     setCampaignTableData(filteredData);
+  //     setRows(filteredData);
+
+  //     // Define DataGrid columns
+  //     setColumns([
+  //       { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+  //       {
+  //         field: "campaign_date",
+  //         headerName: "Campaign Date",
+  //         flex: 1,
+  //         minWidth: 120,
+  //       },
+  //       {
+  //         field: "campaign_name",
+  //         headerName: "Campaign Name",
+  //         flex: 1,
+  //         minWidth: 150,
+  //       },
+  //       { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+  //       {
+  //         field: "action",
+  //         headerName: "Action",
+  //         flex: 1,
+  //         minWidth: 100,
+  //         renderCell: (params) => (
+  //           <>
+  //             {/* <CustomTooltip title="Detailed Log" placement="top" arrow>
+  //             <IconButton
+  //               className="no-xs"
+  //               onClick={() =>
+  //                 navigate("/smscampaigndetaillogs", {
+  //                   state: { id: params.row.id },
+  //                 })
+  //               }
+  //             >
+  //               <DescriptionOutlinedIcon
+  //                 sx={{
+  //                   fontSize: "1.2rem",
+  //                   color: "green",
+  //                 }}
+  //               />
+  //             </IconButton>
+  //           </CustomTooltip> */}
+
+  //             <CustomTooltip title="Cancel" placement="top" arrow>
+  //               <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+  //                 <CancelOutlinedIcon
+  //                   sx={{
+  //                     fontSize: "1.2rem",
+  //                     color: "gray",
+  //                   }}
+  //                 />
+  //               </IconButton>
+  //             </CustomTooltip>
+  //           </>
+  //         ),
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error fetching campaign data:", error);
+  //     toast.error("Something went wrong.");
+  //   } finally {
+  //     setIsFetchingScheduleData(false);
+  //   }
+  // };
 
   const handlePreviousDaysSearch = async () => {
     const data = {
@@ -543,10 +926,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -623,10 +1006,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -717,10 +1100,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (e) {
@@ -820,10 +1203,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res?.data)
           ? res?.data.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+              sn: index + 1,
+              id: index + 1,
+              ...item,
+            }))
           : []
       );
       setPreviousDayDetailsDialog(true);
@@ -911,6 +1294,24 @@ const SmsReports = () => {
                 </span>
               }
               {...a11yProps(3)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <LibraryBooksOutlinedIcon size={20} /> Schedule Logs
+                </span>
+              }
+              {...a11yProps(4)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -1361,6 +1762,65 @@ const SmsReports = () => {
               col={columns}
               rows={rows}
               selectedUser={selectedUser}
+            />
+          </div>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={4}>
+          <div className="w-full">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              <div className="w-full sm:w-52">
+                <UniversalDatePicker
+                  label="Created On"
+                  id="campaigndate"
+                  name="campaigndate"
+                  value={campaignScheduleDataToFilter.campaignDate}
+                  onChange={(value) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignDate: value,
+                    }));
+                  }}
+                  placeholder="Select Date"
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
+                />
+              </div>
+              <div className="w-full sm:w-52">
+                <InputField
+                  label="Campaign Name"
+                  id="campaignName"
+                  name="campaignName"
+                  placeholder="Enter campaign name"
+                  value={campaignScheduleDataToFilter.campaignName}
+                  onChange={(e) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignName: e.target.value,
+                    }));
+                  }}
+                />
+              </div>
+              <div className="w-full sm:w-52 flex gap-2">
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetchingScheduleData ? "Searching..." : "Search"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    icon={<IoSearch />}
+                    onClick={handleScheduleCampaignSearch}
+                    disabled={isFetchingScheduleData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full">
+            <DataTable
+              id="ScheduleCampaignTableSms"
+              name="ScheduleCampaignTableSms"
+              rows={rows}
+              col={columns}
             />
           </div>
         </CustomTabPanel>
@@ -1882,6 +2342,7 @@ const SmsReports = () => {
           allCampaigns={allCampaigns}
           setDataToExport={setDataToExport}
           dataToExport={dataToExport}
+          selectedUser={selectedUser}
         />
       )}
     </div>

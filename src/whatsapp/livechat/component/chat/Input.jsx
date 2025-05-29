@@ -85,12 +85,6 @@ export const ChatInput = ({
               sendMessage();
             }
           }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && !e.shiftKey) {
-              e.preventDefault();
-              sendMessage();
-            }
-          }}
         />
         <button
           onClick={sendMessage}

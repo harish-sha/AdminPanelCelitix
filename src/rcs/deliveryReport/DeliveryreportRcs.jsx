@@ -17,15 +17,19 @@ import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
 import {
+  cancelschedule,
   fetchCampaignReport,
   fetchSummaryReport,
   getAllCampaign,
+  scheduledata,
 } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { ExportDialog } from "./components/exportDialog";
+import CampaignScheduleTable from "./components/CampaignSchedule";
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import moment from "moment";
@@ -69,7 +73,7 @@ const DeliveryreportRcs = () => {
     templateType: "",
     campaignName: "",
     status: "",
-    selectedUser: "0"
+    selectedUser: "0",
   });
 
   const [campaignTableData, setCampaignTableData] = useState([]);
@@ -79,9 +83,18 @@ const DeliveryreportRcs = () => {
     fromDate: new Date(),
     toDate: new Date(),
     isMonthWise: false,
-    selectedUser: "0"
+    selectedUser: "0",
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
+
+  // scheduleState
+  const [scheduleData, setScheduleData] = useState({
+    startDate: new Date(),
+    templateType: " ",
+    campaignName: " ",
+    status: " ",
+  });
+  const [scheduleTableData, setScheduleTableData] = useState([]);
 
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -103,8 +116,8 @@ const DeliveryreportRcs = () => {
 
   const [dataToExport, setDataToExport] = useState({
     campaignName: "",
-    fromDate: new Date(),
-    toDate: new Date(),
+    fromDate: "",
+    toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
@@ -165,7 +178,7 @@ const DeliveryreportRcs = () => {
       templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
-      selectedUserId: campaignData.selectedUser ?? "0"
+      selectedUserId: campaignData.selectedUser ?? "0",
     };
 
     // console.log(data);
@@ -190,13 +203,13 @@ const DeliveryreportRcs = () => {
       toast.error("Please select from and to date.");
     }
     const data = {
-      fromDate: formatDate(summaryData.fromDate),
-      toDate: formatDate(summaryData.toDate),
+      fromDate: moment(summaryData.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(summaryData.toDate).format("YYYY-MM-DD"),
       // fromDate: "2022-10-01",
       // toDate: "2025-02-26",
       summaryType: "rcs,date,user",
       isMonthWise: Number(summaryData.isMonthWise),
-      selectedUserId: campaignData.selectedUser ?? "0"
+      selectedUserId: campaignData.selectedUser ?? "0",
     };
 
     try {
@@ -208,6 +221,50 @@ const DeliveryreportRcs = () => {
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
+    }
+  };
+
+  // fetchscheduleData
+  const handleScheduleSearch = async () => {
+    try {
+      setIsFetching(true);
+      const res = await scheduledata(selectedUser || "0");
+
+      if (Array.isArray(res) && res.length > 0) {
+        setScheduleTableData(res);
+        console.log("Fetched Schedule Data:", res);
+      } else {
+        setScheduleTableData([]);
+      }
+    } catch (err) {
+      console.error("Error fetching schedule data:", err);
+      toast.error("Failed to fetch schedule data.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleCancel = async (srno) => {
+    if (!srno) {
+      console.error("SRNO is undefined. Cannot cancel schedule.");
+      toast.error("Failed to cancel schedule. SRNO is missing.");
+      return;
+    }
+
+    try {
+      console.log("Canceling schedule with SRNO:", srno);
+      const res = await cancelschedule({ srno }, selectedUser || "0");
+      if (res) {
+        toast.success("Schedule cancelled successfully");
+
+        // Refresh the table by fetching the data again
+        handleScheduleSearch();
+      } else {
+        toast.error("Failed to cancel schedule.");
+      }
+    } catch (err) {
+      console.error("Cancel error:", err);
+      toast.error("Failed to cancel schedule.");
     }
   };
 
@@ -223,7 +280,7 @@ const DeliveryreportRcs = () => {
     <div>
       <div className="w-full">
         <Box sx={{ width: "100%" }}>
-          <div className="flex items-center justify-between w-full" >
+          <div className="flex items-center justify-between w-full">
             <Tabs
               value={value}
               onChange={handleChange}
@@ -256,10 +313,29 @@ const DeliveryreportRcs = () => {
               <Tab
                 label={
                   <span className="flex items-center gap-1 text-sm md:text-base">
-                    <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
+                    <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise
+                    Summary
                   </span>
                 }
                 {...a11yProps(1)}
+                sx={{
+                  textTransform: "none",
+                  fontWeight: "bold",
+                  color: "text.secondary",
+                  "&:hover": {
+                    color: "primary.main",
+                    backgroundColor: "#f0f4ff",
+                    borderRadius: "8px",
+                  },
+                }}
+              />
+              <Tab
+                label={
+                  <span className="flex items-center gap-1 text-sm md:text-base">
+                    <CalendarMonthOutlinedIcon fontSize="small" /> Schedule
+                  </span>
+                }
+                {...a11yProps(2)}
                 sx={{
                   textTransform: "none",
                   fontWeight: "bold",
@@ -302,8 +378,6 @@ const DeliveryreportRcs = () => {
               </div>
             )}
           </div>
-
-
 
           <CustomTabPanel value={value} index={0}>
             <div className="w-full">
@@ -496,6 +570,98 @@ const DeliveryreportRcs = () => {
               />
             </div>
           </CustomTabPanel>
+          <CustomTabPanel value={value} index={2}>
+            <div className="w-full">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-56">
+                  <UniversalDatePicker
+                    label="Created On"
+                    id="created"
+                    name="created"
+                    defaultValue={new Date()}
+                    value={setScheduleData.startDate}
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        startDate: e,
+                      });
+                    }}
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <InputField
+                    label="Campaign Name"
+                    id="campaignNameSchedule"
+                    name="campaignNameSchedule"
+                    placeholder="Enter campaign name"
+                    value={scheduleData.campaignName}
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        campaignName: e.target.value,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="w-full sm:w-56">
+                  <AnimatedDropdown
+                    label="Template Type"
+                    id="templateType"
+                    name="templateType"
+                    options={[
+                      { label: "Text", value: "text" },
+                      { label: "Image", value: "image" },
+                    ]}
+                    value={scheduleData.templateType}
+                    placeholder="Select Template Type"
+                    onChange={(e) => {
+                      setScheduleData({
+                        ...scheduleData,
+                        templateType: e,
+                      });
+                    }}
+                  />
+                </div>
+                {/* <div className="w-full sm:w-56">
+                  <InputField label="Status" placeholder="Schedule" />
+                </div> */}
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetching ? "Searching..." : "Search"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    onClick={handleScheduleSearch}
+                    icon={<IoSearch />}
+                    disabled={isFetching}
+                  />
+                </div>
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
+                    label="Export"
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
+                    onClick={handleExportBtn}
+                    variant="primary"
+                  />
+                </div>
+              </div>
+            </div>
+            <div className="w-full">
+              <CampaignScheduleTable
+                id="RCSScheduleTable"
+                name="RCSScheduleTable"
+                data={scheduleData}
+              />
+            </div>
+          </CustomTabPanel>
         </Box>
       </div>
 
@@ -506,6 +672,7 @@ const DeliveryreportRcs = () => {
           allCampaigns={allCampaigns}
           setDataToExport={setDataToExport}
           dataToExport={dataToExport}
+          selectedUser={selectedUser}
         />
       )}
     </div>

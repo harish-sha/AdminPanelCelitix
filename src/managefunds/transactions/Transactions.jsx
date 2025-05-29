@@ -248,17 +248,17 @@ const Transactions = () => {
     toast.success("File Downloaded Successfully");
   }
 
-  function handleExport() {
-    // columns
-    if (!rows.length) return toast.error("No data to download");
-    const col = columns.map((col) => col.field);
+  // function handleExport() {
+  //   // columns
+  //   if (!rows.length) return toast.error("No data to download");
+  //   const col = columns.map((col) => col.field);
 
-    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+  //   const row = rows.map((row) => col.map((field) => row[field] ?? ""));
 
-    const name = "Transaction Data";
-    exportToExcel(col, row, name);
-    toast.success("File Downloaded Successfully");
-  }
+  //   const name = "Transaction Data";
+  //   exportToExcel(col, row, name);
+  //   toast.success("File Downloaded Successfully");
+  // }
 
   return (
     <div className="w-full ">
@@ -299,7 +299,7 @@ const Transactions = () => {
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
               onClick={handleExport}
-              onClick={handleExport}
+              // onClick={handleExport}
             />
           </div>
         </div>

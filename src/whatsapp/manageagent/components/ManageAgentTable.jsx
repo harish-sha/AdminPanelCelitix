@@ -62,13 +62,15 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 
 const ToggleSwitch = ({ checked, onChange }) => (
   <button
-    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${checked ? "bg-blue-400" : "bg-gray-300"
-      }`}
+    className={`w-11 h-6 flex items-center  rounded-full p-1 transition duration-300 ${
+      checked ? "bg-blue-400" : "bg-gray-300"
+    }`}
     onClick={() => onChange(!checked)}
   >
     <div
-      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${checked ? "translate-x-5" : ""
-        }`}
+      className={`w-4 h-4 bg-white rounded-full shadow-md transform transition duration-300 ${
+        checked ? "translate-x-5" : ""
+      }`}
     />
   </button>
 );
@@ -197,7 +199,7 @@ const ManageAgentTable = ({
     name: "",
     mobileNumber: "",
     status: "",
-    allowAllChats: 1,
+    allowAllChats: 0,
     department: null,
     departmentId: "",
     departmentName: "",
@@ -636,9 +638,9 @@ const ManageAgentTable = ({
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -1018,9 +1020,9 @@ const ManageAgentTable = ({
                       <Switch
                         sx={{
                           "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                          {
-                            backgroundColor: "#34C759",
-                          },
+                            {
+                              backgroundColor: "#34C759",
+                            },
                           "& .MuiSwitch-switchBase.Mui-checked": {
                             color: "#34C759",
                           },

@@ -180,10 +180,12 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
 };
 
 // Get Whatsapp Campaign Scheduled Reports
-export const getWhatsappCampaignScheduledReport = async () => {
+export const getWhatsappCampaignScheduledReport = async (
+  selectedUserId = "0"
+) => {
   try {
     const response = await fetchWithAuth(
-      "/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=0",
+      `/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=${selectedUserId}`,
       {
         method: "POST",
         headers: {
@@ -599,7 +601,7 @@ export const saveFlow = async (params, data) => {
 };
 
 // cancel campaign
-export const cancelCampaign = async ({ srno, selectedUserId }) => {
+export const cancelCampaign = async ({ srno, selectedUserId = "0" }) => {
   return await fetchWithAuth(
     `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`,
     {
