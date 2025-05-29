@@ -111,3 +111,21 @@ export const getPETMChain = async (data) => {
     method: "GET",
   });
 };
+
+export const getCharges = async (userSrno) => {
+  return await fetchWithAuth(
+    `/WhatsappUserMonthlyRent/getWhatsappMontlyRate?userSrno=${userSrno}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const saveCharges = async (data) => {
+  return await fetchWithAuth(
+    `/WhatsappUserMonthlyRent/SaveUpdateRate?selectedUserId=${data.userSrno}&monthlyRate=${data.monthlyRate}`,
+    {
+      method: "POST",
+    }
+  );
+};

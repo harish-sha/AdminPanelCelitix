@@ -64,10 +64,12 @@ import {
   addMobileNumbers,
   fetchUserbySrno,
   getAllowedServices,
+  getCharges,
   getMobileNumbers,
   getPETMChain,
   getPromoServices,
   getTransServices,
+  saveCharges,
   savePETMChain,
   saveServicesByUser,
   updateUserbySrno,
@@ -419,6 +421,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
+
+  const [charges, setCharges] = useState(0);
 
   const [editWhatsappVisible, setEditWhatsappVisible] = useState(false);
   const [editWhatsappForm, setEditWhatsappForm] = useState({
@@ -949,6 +953,23 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     handleGetAllowedServices();
   }, [assignService]);
 
+  async function handleChargesSave() {
+    try {
+      const data = {
+        userSrno: currentUserSrno,
+        monthlyRate: charges,
+      };
+      const res = await saveCharges(data);
+      if (!res?.msg?.includes("successfully")) {
+        toast.error("Something went wrong");
+        return;
+      }
+      toast.success("Charges updated successfully");
+    } catch (e) {
+      console.log(e);
+    }
+  }
+
   // Dropdown options
   const useroption = [
     { value: 1, label: "User" },
@@ -1196,6 +1217,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       whatsappRateRes,
       rcsRateRes,
       obdRateRes,
+      chargesRes,
     ] = await Promise.all([
       getTransServices(),
       getPromoServices(),
@@ -1204,6 +1226,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       getWhatsappRateData(srNo),
       getRCSRateData(srNo),
       getVoiceRateByUser(srNo),
+      getCharges(srNo),
     ]);
 
     // Country List
@@ -1268,6 +1291,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ]);
 
     // obdRateRes && setVoicerows(voiceRows);
+    console.log(chargesRes);
+    setCharges(chargesRes?.MonthlyRate || "0");
   };
 
   const handleApikey = async (id, name) => {
@@ -2455,7 +2480,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       <Dialog
         header="Assign Rate"
         visible={assignRate}
-        onHide={() => setassignRate(false)}
+        onHide={() => {
+          setassignRate(false);
+          setCharges(0);
+        }}
         className="lg:w-[65rem] md:w-[50rem] w-[20rem]"
         draggable={false}
       >
@@ -2642,6 +2670,25 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTabPanel value={value} index={0} className="">
             <div>
               <>
+                <div className="mb-2 flex gap-2 items-end justify-start">
+                  <InputField
+                    id="charges"
+                    name="charges"
+                    label="Whatsapp Monthly Rent"
+                    placeholder="INR"
+                    value={charges}
+                    onChange={(e) => {
+                      setCharges(e.target.value);
+                    }}
+                    type="text"
+                  />
+                  <UniversalButton
+                    id="chargesSave"
+                    name="chargesSave"
+                    label="Save"
+                    onClick={handleChargesSave}
+                  />
+                </div>
                 <div id="whatsapptable">
                   <div className="flex flex-wrap items-end justify-start w-full gap-4 pb-5 align-middle lg:flex-nowrap">
                     <DropdownWithSearch
