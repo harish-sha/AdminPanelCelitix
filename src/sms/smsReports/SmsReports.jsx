@@ -258,8 +258,8 @@ const SmsReports = () => {
         campaignName: campaignDataToFilter.campaingName,
         campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
-        toDate: "16/05/2025",
-        fromDate: "16/05/2000",
+        toDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
+        fromDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
       };
       const res = await fetchCampaignData(data);
 
@@ -667,7 +667,7 @@ const SmsReports = () => {
 
     setDropdownOpenId(null);
 
-    const date = "24/01/2025";
+    const date = moment(campaignDataToFilter.toDate).format("YYYY-MM-DD");
 
     const data = {
       campaignSrno: id,
