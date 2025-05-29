@@ -1,10 +1,8 @@
 import * as React from "react";
-import { useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import CloseIcon from "@mui/icons-material/Close";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
@@ -15,20 +13,21 @@ import {
 } from "@mui/x-data-grid";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import { Paper, Typography, Box, Button } from "@mui/material";
-import {
-  campaignSummaryInfo,
-  cancelCampaign,
-  getWhatsappCampaignReport,
-} from "../../../apis/whatsapp/whatsapp.js";
+import { getWhatsappCampaignReport } from "../../../apis/whatsapp/whatsapp.js";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useEffect } from "react";
-import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
-
-import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
-import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
-import InfoPopover from "../../../components/common/InfoPopover.jsx";
-import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
+import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay.jsx";
+import CustomTooltip from "../../../whatsapp/components/CustomTooltip.jsx";
+import { useRef } from "react";
+import InfoPopover from "@/components/common/InfoPopover.jsx";
+import {
+  fetchCampaignBySrno,
+  scheduledata,
+  cancelschedule,
+} from "@/apis/rcs/rcs.js";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import EditNoteOutlinedIcon from "@mui/icons-material/EditNoteOutlined";
 import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
@@ -92,57 +91,15 @@ const CustomPagination = ({
   );
 };
 
-const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
+const CampaignScheduleTable = ({ id, name, data = [], onCancel }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
 
-  // const handleCancel = async (row) => {
-  //   const srno = row.srno;
-  //   const selectedUserId = 0;
-
-  //   try {
-  //     const result = await cancelCampaign({ srno, selectedUserId });
-  //     if (result) {
-  //       console.log("Campaign cancelled successfully:", result);
-  //       toast.success("Campaign Cancelled successfully");
-  //       if (onCancel) {
-  //         onCancel(srno);
-  //       }
-  //     } else {
-  //       console.warn("Cancel request failed or returned empty response.");
-  //       toast.error("Cancel request failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error cancelling campaign:", error);
-  //   }
-  // };
-
-  // **Format Date Function** (Ensures proper date format)
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      // hour: "2-digit",
-      // minute: "2-digit",
-      // second: "2-digit",
-    });
-  };
-
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
-    {
-      field: "campaignName",
-      headerName: "Campaign Name",
-      flex: 1,
-      minWidth: 120,
-    },
     {
       field: "campaignDate",
       headerName: "Campaign Date",
@@ -150,8 +107,26 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
       minWidth: 120,
     },
     {
+      field: "campaignName",
+      headerName: "Campaign Name",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "processFlag",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "sentTime",
+      headerName: "Sent Time",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
       field: "count",
-      headerName: "Count",
+      headerName: "Total Audience",
       flex: 1,
       minWidth: 120,
     },
@@ -160,44 +135,28 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
       headerName: "Action",
       flex: 1,
       minWidth: 150,
-      renderCell: (params) => {
-        return (
-          <>
-            <CustomTooltip title="Cancel Campaign" placement="top" arrow>
-              <IconButton onClick={() => onCancel(params.row.srno)}>
-                <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-              </IconButton>
-            </CustomTooltip>
-          </>
-        );
-      },
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Cancel Schedule" placement="top" arrow={true}>
+            <IconButton onClick={() => onCancel(params.row.srno)}>
+              <CancelOutlinedIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+            </IconButton>
+          </CustomTooltip>
+        </>
+      ),
     },
   ];
 
-  // use this when you want to create rows dynamically
-  // const rows = Array.from({ length: 500 }, (_, i) => ({
-  //     id: i + 1,
-  //     sn: i + 1,
-  //     queTime: '11/05/2024 14:58:39',
-  //     campaignName: 'Demo',
-  //     templateName: 'NewTemplate',
-  //     templateCategory: 'Utility',
-  //     templateType: 'Text',
-  //     status: 'Pending',
-  //     totalAudience: '10000',
-  //     action: 'True',
-  // }));
-
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        // queTime: formatDate(item.queTime) || "N/A",
-        srno: item.srno,
-        sentTime: item.sentTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        campaignDate: item.campaignDate || "N/A",
-        count: item.count || "N/A",
+        id: index + 1, // Unique ID for the row
+        sn: index + 1, // Serial number
+        campaignDate: item.campaignDate || "N/A", // Campaign date
+        campaignName: item.campaignName || "N/A", // Campaign name
+        sentTime: item.sentTime || "N/A", // Sent time
+        count: item.count || "0", // Total audience count
+        processFlag: item.processFlag === 1 ? "Pending" : "Completed", // Status
+        srno: item.srno, // Campaign serial number (used for cancel action)
       }))
     : [];
 
@@ -311,4 +270,4 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
   );
 };
 
-export default ManageScheduleCampaignTable;
+export default CampaignScheduleTable;

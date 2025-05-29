@@ -47,6 +47,7 @@ const ManageAgent = () => {
   const [agentPassword, setAgentPassword] = useState("");
 
   const [generatedPassword, setGeneratedPassword] = useState("");
+  const [allowAllChats, setAllowAllChats] = useState(0);
 
   const [selectedadddepartment, setSelectedAddDepartment] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
@@ -299,7 +300,7 @@ const ManageAgent = () => {
       mobileNumber: agentMobile.trim(),
       email: agentEmail.trim(),
       password: generatedPassword,
-      allowAllChats: 1,
+      allowAllChats: allowAllChats,
       departmentId: String(selectedDepartment),
       departmentName: department.departmentName,
       agentCode: "",
@@ -776,11 +777,13 @@ const ManageAgent = () => {
                 id="assign"
                 name="assign"
                 label="Assign Type"
+                value={allowAllChats}
                 options={[
                   { label: "Auto", value: 0 },
                   { label: "Manual", value: 1 },
                   { label: "All", value: 2 },
                 ]}
+                onChange={(e) => setAllowAllChats(e.target.value)}
               />
               <div className="flex justify-center ">
                 <UniversalButton

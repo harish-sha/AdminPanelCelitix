@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
-import DateRangeIcon from '@mui/icons-material/DateRange';
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { BsJournalArrowDown } from "react-icons/bs";
@@ -34,7 +34,8 @@ import {
   getSummaryReport,
   getWabaList,
   getAllCampaignWhatsapp,
-  getWhatsappCampaignScheduledReport
+  getWhatsappCampaignScheduledReport,
+  cancelCampaign,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -42,7 +43,6 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
-
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -81,6 +81,7 @@ const WhatsappManageCampaign = () => {
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
+  const [originalData, setOriginalData] = useState([]); // Store unfiltered data
   const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
   const [campaignCategory, setCampaignCategory] = useState("");
   const [campaignType, setCampaignType] = useState("");
@@ -130,13 +131,13 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    campaignName: "",
+    // campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
-    campaignType: "",
+    campaignType: 0,
     status: "",
     delStatus: {},
     type: "campaign",
@@ -229,9 +230,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {};
 
   //Export Download Reports end
 
@@ -282,107 +283,88 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
-  // Fetch initial data - for to load data on page load
-  // const fetchInitialData = async () => {
-  //   const filters = {
-  //     fromQueDateTime: new Date().toLocaleDateString("en-GB"),
-  //     toQueDateTime: new Date().toLocaleDateString("en-GB"),
-  //     campaignName: "",
-  //     category: "all",
-  //   };
-
-  //   setIsFetching(true);
-  //   const data = await getWhatsappCampaignReport(filters);
-  //   setFilteredData(data);
-  //   setIsFetching(false);
-  // };
-
-  // const handleScheduleSearch = async () => {
-  //   const formattedSelectedDate = scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-  //     ? new Date(scheduleSelectedDate).toISOString().split("T")[0]
-  //     : null;
-
-  //   // Check if filters are provided
-  //   const filtersApplied = scheduleCampaignName || scheduleSelectedDate;
-
-  //   if (!filtersApplied) {
-  //     console.log("No filters applied, showing all data.");
-  //     // await getWhatsappCampaignScheduledReport();
-  //     setScheduleData(orignalScheduleData); // Reset to full data
-  //     return;
-  //   }
-
-  //   const filteredData = orignalScheduleData.filter((item, index) => {
-  //     const matchesCampaignName = scheduleCampaignName
-  //       ? item.campaignName?.toLowerCase().includes(scheduleCampaignName.toLowerCase())
-  //       : true;
-
-  //     const itemDate = item.sentTime ? item.sentTime.split(" ")[0] : "";
-  //     const matchesDate = formattedSelectedDate
-  //       ? itemDate === formattedSelectedDate
-  //       : true;
-
-  //     const finalMatch = matchesCampaignName && matchesDate;
-  //     return finalMatch;
-  //   });
-  //   setScheduleData(filteredData);
-  // };
-
-  // Fetch Scheduled Campaign data - for to load data on page load
   const fetchScheduleCampaignData = async () => {
     setIsFetching(true);
 
     try {
       const data = await getWhatsappCampaignScheduledReport();
-      // Format the date if provided
+
+      console.log("Fetched Schedule Campaign Data:", data);
+
+      const mappedData = Array.isArray(data)
+        ? data.map((item, index) => ({
+            id: item.srno || `row-${index}`,
+            sn: index + 1,
+            campaignName: item.campaignName || "N/A",
+            campaignDate: item.campaignDate || "N/A",
+            sentTime: item.sentTime || "N/A",
+            count: item.count || "N/A",
+            processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+            srno: item.srno,
+          }))
+        : [];
+
+      console.log("Mapped Schedule Campaign Data:", mappedData);
+
+      // Apply filters
       const formattedSelectedDate =
         scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-          ? new Date(scheduleSelectedDate).toISOString().split("T")[0]
+          ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
           : null;
 
-      const filtersApplied = scheduleCampaignName || scheduleSelectedDate;
+      const filteredData = mappedData.filter((item) => {
+        const matchesName = scheduleCampaignName
+          ? item.campaignName
+              .toLowerCase()
+              .includes(scheduleCampaignName.toLowerCase())
+          : true;
 
-      if (!filtersApplied) {
-        setOrignalScheduleData(data);
-        setScheduleData(data);
-      } else {
-        const filteredData = data.filter((item) => {
-          const matchesCampaignName = scheduleCampaignName
-            ? item.campaignName?.toLowerCase().includes(scheduleCampaignName.toLowerCase())
-            : true;
+        const matchesDate = formattedSelectedDate
+          ? item.campaignDate === formattedSelectedDate
+          : true;
 
-          const itemDate = item.sentTime ? item.sentTime.split(" ")[0] : "";
-          const matchesDate = formattedSelectedDate ? itemDate === formattedSelectedDate : true;
+        return matchesName && matchesDate;
+      });
 
-          return matchesCampaignName && matchesDate;
-        });
+      console.log("Filtered Schedule Campaign Data:", filteredData);
 
-        setOrignalScheduleData(data); // Keep the original data
-        setScheduleData(filteredData);
-      }
+      setScheduleData(filteredData);
     } catch (error) {
       console.error("Error fetching data:", error);
+      toast.error("Failed to fetch schedule campaign data.");
     } finally {
       setIsFetching(false);
     }
   };
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     setIsLoading(true);
-  //     await fetchInitialData();
-  //     setIsLoading(false);
-  //   };
-  //   fetchData();
-  // }, []);
+  const handleCancel = async (srno) => {
+    if (!srno) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+
+    try {
+      console.log("Canceling campaign with SRNO:", srno);
+      const result = await cancelCampaign({ srno: srno, selectedUserId: 0 });
+      if (result) {
+        console.log("Campaign cancelled successfully:", result);
+        toast.success("Campaign Cancelled successfully");
+
+        // Refresh the table by fetching the data again
+        fetchScheduleCampaignData();
+      } else {
+        console.warn("Cancel request failed or returned empty response.");
+        toast.error("Cancel request failed");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    }
+  };
 
   useEffect(() => {
-    const fetchScheduleData = async () => {
-      setIsLoading(true);
-      await fetchScheduleCampaignData();
-      setIsLoading(false);
-    };
-    fetchScheduleData();
+    fetchScheduleCampaignData();
   }, []);
 
   useEffect(() => {
@@ -410,8 +392,8 @@ const WhatsappManageCampaign = () => {
   const handleShowLogs = async () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
-      // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
-      ? moment(selectedDateLogs).format("YYYY-MM-DD")
+      ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+        moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
@@ -444,50 +426,103 @@ const WhatsappManageCampaign = () => {
 
     setIsFetching(true);
 
-    let FinalFromDate = new Date(
-      new Date(selectedMonth).getFullYear(),
-      new Date(selectedMonth).getMonth(),
-      1
-    ).toLocaleDateString("en-GB");
+    // let FinalFromDate = new Date(
+    //   new Date(selectedMonth).getFullYear(),
+    //   new Date(selectedMonth).getMonth(),
+    //   1
+    // ).toLocaleDateString("en-GB");
 
-    let FinalToDate = new Date(
-      new Date(
-        new Date(selectedMonth).getFullYear(),
-        new Date(selectedMonth).getMonth() + 1,
-        0
-      )
-    );
+    // let FinalToDate = new Date(
+    //   new Date(
+    //     new Date(selectedMonth).getFullYear(),
+    //     new Date(selectedMonth).getMonth() + 1,
+    //     0
+    //   )
+    // );
 
-    if (isMonthWise) {
-      result = await getSummaryReport({
-        fromDate: FinalFromDate,
-        summaryType: "waba,date,type,country",
-        toDate: FinalToDate.toLocaleDateString("en-GB"),
-        whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-      });
-    } else {
-      result = await getSummaryReport({
-        fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
-        summaryType: "waba,date,type,country",
-        toDate: new Date(toDate).toLocaleDateString("en-GB"),
-        whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-      });
+    // Format dates using moment
+    const FinalFromDate = moment(selectedMonth)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+    const FinalToDate = moment(selectedMonth)
+      .endOf("month")
+      .format("YYYY-MM-DD");
+
+    // if (isMonthWise) {
+    //   result = await getSummaryReport({
+    //     fromDate: FinalFromDate,
+    //     summaryType: "waba,date,type,country",
+    //     toDate: FinalToDate.toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // } else {
+    //   result = await getSummaryReport({
+    //     fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+    //     summaryType: "waba,date,type,country",
+    //     toDate: new Date(toDate).toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // }
+
+    // const formattedResult = result.map((item) => ({
+    //   ...item,
+    //   marketing: item.marketing.toFixed(1),
+    //   utility: item.utility.toFixed(1),
+    //   categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+    //   userCharge: item.userCharge.toFixed(1),
+    // }));
+
+    // setSummaryReport(formattedResult);
+
+    // // setSummaryReport(result);
+    // setIsFetching(false);
+    try {
+      if (isMonthWise) {
+        result = await getSummaryReport({
+          fromDate: FinalFromDate,
+          summaryType: "waba,date,type,country",
+          toDate: FinalToDate,
+          whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+        });
+      } else {
+        const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
+        const formattedToDate = moment(toDate).format("YYYY-MM-DD");
+
+        result = await getSummaryReport({
+          fromDate: formattedFromDate,
+          summaryType: "waba,date,type,country",
+          toDate: formattedToDate,
+          whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+        });
+      }
+
+      // Validate if result is an array
+      if (Array.isArray(result)) {
+        const formattedResult = result.map((item) => ({
+          ...item,
+          marketing: item.marketing.toFixed(1),
+          utility: item.utility.toFixed(1),
+          categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+          userCharge: item.userCharge.toFixed(1),
+        }));
+
+        setSummaryReport(formattedResult);
+      } else {
+        // Handle non-array response
+        console.error("Unexpected API response:", result);
+        toast.error("Failed to fetch summary report. Please try again.");
+        setSummaryReport([]); // Reset summary report
+      }
+    } catch (error) {
+      console.error("Error fetching summary report:", error);
+      toast.error("An error occurred while fetching the summary report.");
+    } finally {
+      setIsFetching(false);
     }
-
-    const formattedResult = result.map((item) => ({
-      ...item,
-      marketing: item.marketing.toFixed(1),
-      utility: item.utility.toFixed(1),
-      categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
-      userCharge: item.userCharge.toFixed(1),
-    }));
-
-    setSummaryReport(formattedResult);
-
-    // setSummaryReport(result);
-    setIsFetching(false);
   };
 
   return (
@@ -908,14 +943,24 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
                 <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
-                  <FormGroup>
+                  {/* <FormGroup>
                     <FormControlLabel
                       control={<Checkbox />}
                       label="Month Wise"
                       value={isMonthWise}
                       onClick={(e) => setIsMonthWise(e.target.checked)}
                     />
-                  </FormGroup>
+                  </FormGroup> */}
+                  <Checkbox
+                    checked={isMonthWise}
+                    onChange={(e) => setIsMonthWise(e.target.checked)}
+                  />
+                  <label
+                    className="text-sm font-medium text-gray-800 font-p"
+                    htmlFor="isMonthWise"
+                  >
+                    Month Wise
+                  </label>
                 </div>
                 <div className="w-full sm:w-56">
                   <UniversalButton
@@ -943,7 +988,7 @@ const WhatsappManageCampaign = () => {
                 </div>
               )}
             </div>
-          </CustomTabPanel>.
+          </CustomTabPanel>
           <CustomTabPanel value={value} index={3} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
@@ -1035,11 +1080,11 @@ const WhatsappManageCampaign = () => {
                     name="manageCampaignSearchBtn"
                     label={isFetching ? "Searching..." : "Search"}
                     icon={<IoSearch />}
-                    onClick={() => fetchScheduleCampaignData()}
+                    onClick={fetchScheduleCampaignData}
                     variant="primary"
                   />
                 </div>
-                <div className="w-max-content">
+                {/* <div className="w-max-content">
                   <UniversalButton
                     id="manageCampaignExportBtn"
                     name="manageCampaignExportBtn"
@@ -1052,7 +1097,7 @@ const WhatsappManageCampaign = () => {
                     onClick={handleExportBtn}
                     variant="primary"
                   />
-                </div>
+                </div> */}
               </div>
               {isFetching ? (
                 <div className="">
@@ -1064,7 +1109,8 @@ const WhatsappManageCampaign = () => {
                     id="whatsappManageCampaignScheduleTable"
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
-                    fromDate={selectedDate}
+                    onCancel={handleCancel}
+                    // fromDate={selectedDate}
                   />
                 </div>
               )}

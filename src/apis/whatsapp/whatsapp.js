@@ -191,7 +191,6 @@ export const getWhatsappCampaignScheduledReport = async () => {
         },
       }
     );
-    console.log("response from schedule", response);
 
     if (!response) {
       console.error("Failed to fetch campaign report.");
