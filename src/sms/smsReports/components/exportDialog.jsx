@@ -23,19 +23,21 @@ export const ExportDialog = ({
   const { triggerDownloadNotification } = useDownload();
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
-    mobileNo: false,
-    callType: false,
-    totalUnits: false,
-    queueTime: false,
-    sentTime: false,
-    deliveryTime: false,
-    callDuration: false,
-    retryCount: false,
-    callStatus: false,
-    deliveryStatus: false,
-    keypress: false,
-    action: false,
-    source: false,
+    mobile_no: false,
+    smsunit: false,
+    message: false,
+    senderid: false,
+    status: false,
+    que_time: false,
+    sent_time: false,
+    del_time: false,
+    actual_status: false,
+    actual_err_code: false,
+    reason: false,
+    client_sms_no: false,
+    isunicode: false,
+    PE_ID: false,
+    template_id: false,
   });
   const handleCheckboxChange = (e, name) => {
     setCampaignCheckboxStates((prevState) => ({
@@ -87,6 +89,24 @@ export const ExportDialog = ({
       const res = await downloadCustomSmsReport(payload);
       if (!res.status) return toast.error(res.msg);
       toast.success(res.msg);
+      setDataToExport((prev) => ({
+        ...prev,
+        campaignName: "",
+        fromDate: "",
+        toDate: "",
+        srno: 0,
+        isCustomField: 0,
+        customColumns: "",
+        campaignType: "",
+        status: "",
+        delStatus: {
+          delivered: false,
+          undelivered: false,
+          rejected: false,
+          pdr: false,
+        },
+        type: "campaign",
+      }));
       setVisibledialog(false);
       triggerDownloadNotification();
     } catch (e) {
@@ -95,35 +115,61 @@ export const ExportDialog = ({
     // setVisibledialog(false);
   }
 
+  // async function handleDeliveryCheckboxChange(e, name) {
+  //   const selectedField = {
+  //     [name]: e.target.checked,
+  //   };
+  //   if (selectedField[name] === false) {
+  //     delete dataToExport.delStatus[name];
+  //     delete selectedField[name];
+  //   }
+  //   setDataToExport((prev) => ({
+  //     ...prev,
+  //     delStatus: { ...prev.delStatus, ...selectedField },
+  //   }));
+  // }
+
   async function handleDeliveryCheckboxChange(e, name) {
-    const selectedField = {
-      [name]: e.target.checked,
-    };
-    if (selectedField[name] === false) {
-      delete dataToExport.delStatus[name];
-      delete selectedField[name];
-    }
     setDataToExport((prev) => ({
+
       ...prev,
-      delStatus: { ...prev.delStatus, ...selectedField },
+      delStatus: {
+        ...prev.delStatus,
+        [name]: e.target.checked,
+      },
     }));
   }
 
   useEffect(() => {
     setCampaignCheckboxStates({
-      mobileNo: false,
-      callType: false,
-      totalUnits: false,
-      queueTime: false,
-      sentTime: false,
-      deliveryTime: false,
-      callDuration: false,
-      retryCount: false,
-      callStatus: false,
-      deliveryStatus: false,
-      keypress: false,
-      action: false,
-      source: false,
+      // mobileNo: false,
+      // callType: false,
+      // totalUnits: false,
+      // queueTime: false,
+      // sentTime: false,
+      // deliveryTime: false,
+      // callDuration: false,
+      // retryCount: false,
+      // callStatus: false,
+      // deliveryStatus: false,
+      // keypress: false,
+      // action: false,
+      // source: false,
+      mobile_no: false,
+      smsunit: false,
+      message: false,
+      senderid: false,
+      status: false,
+      que_time: false,
+      sent_time: false,
+      del_time: false,
+      actual_status: false,
+      actual_err_code: false,
+      reason: false,
+      client_sms_no: false,
+      isunicode: false,
+      PE_ID: false,
+      template_id: false,
     });
   }, [dataToExport?.type, dataToExport?.isCustomField]);
 
@@ -317,9 +363,9 @@ export const ExportDialog = ({
                 <AnimatedDropdown
                   label="Select Type"
                   options={[
-                    { value: "Promotional", label: "Promotional" },
-                    { value: "Transactional", label: "Transactional" },
-                    { value: "Both", label: "Both" },
+                    { value: 0, label: "Promotional" },
+                    { value: 1, label: "Transactional" },
+                    { value: 2, label: "Both" },
                   ]}
                   value={dataToExport.campaignType}
                   onChange={(e) =>
@@ -331,7 +377,7 @@ export const ExportDialog = ({
 
               <div className="flex-1">
                 <AnimatedDropdown
-                  label="Select Request"
+                  label="Select Status"
                   options={[
                     { value: "Sent", label: "Sent" },
                     { value: "Failed", label: "Failed" },
@@ -351,53 +397,68 @@ export const ExportDialog = ({
               <div className="flex gap-x-5 lg:gap-x-20">
                 <div className="flex items-center">
                   <Checkbox
-                    id="answered"
-                    name="answered"
+                    id="delivered"
+                    name="delivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "answered")
+                      handleDeliveryCheckboxChange(e, "delivered")
                     }
-                    checked={dataToExport.delStatus["answered"]}
+                    checked={dataToExport.delStatus["delivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="answered"
+                    htmlFor="delivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Answered
+                    delivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="unanswered"
-                    name="unanswered"
+                    id="undelivered"
+                    name="undelivered"
                     onChange={(e) =>
-                      handleDeliveryCheckboxChange(e, "unanswered")
+                      handleDeliveryCheckboxChange(e, "undelivered")
                     }
-                    checked={dataToExport.delStatus["unanswered"]}
+                    checked={dataToExport.delStatus["undelivered"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="unanswered"
+                    htmlFor="undelivered"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Unanswered
+                    Undelivered
                   </label>
                 </div>
 
                 <div className="flex items-center">
                   <Checkbox
-                    id="dialed"
-                    name="dialed"
-                    onChange={(e) => handleDeliveryCheckboxChange(e, "dialed")}
-                    checked={dataToExport.delStatus["dialed"]}
+                    id="rejected"
+                    name="rejected"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "rejected")}
+                    checked={dataToExport.delStatus["rejected"]}
                     className="m-2"
                   />
                   <label
-                    htmlFor="dialed"
+                    htmlFor="rejected"
                     className="text-sm font-medium text-gray-800"
                   >
-                    Dialed
+                    rejected
+                  </label>
+                </div>
+                <div className="flex items-center">
+                  <Checkbox
+                    id="pdr"
+                    name="pdr"
+                    onChange={(e) => handleDeliveryCheckboxChange(e, "pdr")}
+                    checked={dataToExport.delStatus["pdr"]}
+                    className="m-2"
+                  />
+                  <label
+                    htmlFor="pdr"
+                    className="text-sm font-medium text-gray-800"
+                  >
+                    Pending Delivered
                   </label>
                 </div>
               </div>

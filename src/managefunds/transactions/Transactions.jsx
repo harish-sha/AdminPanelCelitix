@@ -82,15 +82,12 @@ const Transactions = () => {
       const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     } finally {
-      setIsFetching(false);
+      setIsFetching(false);nb     
     }
   };
 
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
@@ -156,6 +153,7 @@ const Transactions = () => {
     { name: "Istanbul", code: "IST" },
     { name: "Paris", code: "PRS" },
   ];
+  
   const multiSummary = [
     { name: "New York", code: "NY" },
     { name: "Rome", code: "RM" },

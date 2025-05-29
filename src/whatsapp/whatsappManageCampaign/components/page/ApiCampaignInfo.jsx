@@ -201,10 +201,10 @@ export const ApiCampaignInfo = () => {
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: i + 1,
-        sn: paginationModel.page * paginationModel.pageSize + i + 1,
-        ...item, // Spread the item properties
-      }))
+      id: i + 1,
+      sn: paginationModel.page * paginationModel.pageSize + i + 1,
+      ...item, // Spread the item properties
+    }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -286,7 +286,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize

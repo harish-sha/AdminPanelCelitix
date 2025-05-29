@@ -102,29 +102,47 @@ const CampaignDetailsReport = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
+    // useEffect(() => {
+    //     if (!campaignSrno) return;
+    //     const fetchData = async () => {
+    //         const body = {
+    //             campSrno: campaignSrno,
+    //             mobno: mobileNumber || "",
+    //             status: "status",
+    //             delStatus: deliveryStatus || "",
+    //             page: currentPage,
+    //         };
+    //         console.log(body)
+    //         const data = await getWhatsappCampaignDetailsReport(body);
+    //         setCampaignDetails(data.data);
+    //         setTotalPage(data.total);
+    //     };
+    //     fetchData();
+    // }, [campaignSrno, currentPage]);
+
+    const fetchData = async () => {
+        const body = {
+            campSrno: campaignSrno,
+            mobno: mobileNumber,
+            status: "status",
+            page: currentPage,
+            delStatus: deliveryStatus,
+        };
+        const data = await getWhatsappCampaignDetailsReport(body);
+        setCampaignDetails(data.data);
+        setTotalPage(data.total);
+    };
+
     useEffect(() => {
         if (!campaignSrno) return;
-        const fetchData = async () => {
-            const body = {
-                campSrno: campaignSrno,
-                mobno: mobileNumber || "",
-                status: "status",
-                delStatus: deliveryStatus || "",
-                page: currentPage,
-            };
-            console.log(body)
-            const data = await getWhatsappCampaignDetailsReport(body);
-            setCampaignDetails(data.data);
-            setTotalPage(data.total);
-        };
+
         fetchData();
     }, [campaignSrno, currentPage]);
 
     const handleSearch = async () => {
         setIsFetching(true);
-        setTimeout(() => {
-            setIsFetching(false);
-        }, 500);
+        await fetchData();
+        setIsFetching(false);
     };
 
     const columns = [

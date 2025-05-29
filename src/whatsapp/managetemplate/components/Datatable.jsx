@@ -523,7 +523,7 @@ const DataTable = ({
       setIsFetching(true);
       const res = await deleteTemplate(data);
       // console.log(res);
-      if (res?.msg?.includes("Succefully")) {
+      if (res?.msg?.includes("Successfully")) {
         toast.success("Template deleted successfully.");
         setVisible(false);
         await fetchTemplateData();
