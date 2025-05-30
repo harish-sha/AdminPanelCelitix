@@ -787,6 +787,7 @@
 //   //   }
 //   // }
 
+
 //   async function handleContactDelete() {
 //     const data = `addSrnoList=${idtoDelete.srno}`;
 
@@ -2003,6 +2004,7 @@
 
 // export default ManageContacts;
 
+
 import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import CustomTooltip from "../whatsapp/components/CustomTooltip";
@@ -2086,8 +2088,8 @@ const ManageContacts = () => {
     lastName: "",
     mobileNo: "",
     emailId: "",
-    birthDate: null,
-    mariageDate: undefined ,
+    birthDate: "",
+    mariageDate: "",
     allowishes: "",
     gender: "",
   });
@@ -2212,7 +2214,7 @@ const ManageContacts = () => {
 
     // Validate required fields
     const requiredFields = [
-      // "firstName",
+      "firstName",
       //"lastName",
       "mobileNo",
       //"emailId",
@@ -2313,8 +2315,7 @@ const ManageContacts = () => {
           status: Number(e),
         };
         const res = await updateContactStatus(data);
-        if (!res.message.includes("successfully"))
-          return toast.error(res.message);
+        if (!res.message.includes("successfully")) return toast.error(res.message);
         toast.success(res.message);
         await handleSearchGroup();
       } catch (e) {
@@ -2335,10 +2336,234 @@ const ManageContacts = () => {
       if (!Array.isArray(res)) {
         setAllContacts([]);
         setFilterContacts([]);
-        toast.error(res?.message);
+        contactSetRows([]);
         return;
       }
       setAllContacts(res);
+
+      // if (res.length > 0) {
+      //   //filter data name and ContactNumber
+      //   const filteredData =
+      //     res.filter(
+      //       (contact) =>
+      //         (contact?.firstName
+      //           ?.toLowerCase()
+      //           .includes(manageContactFirst.toLowerCase()) ||
+      //           contact?.lastName
+      //             ?.toLowerCase()
+      //             .includes(manageContactFirst.toLowerCase())) &&
+      //         contact?.mobileno
+      //           .toLowerCase()
+      //           .includes(manageContactMobile.toLowerCase())
+      //     ) ?? [];
+
+      //   setCols([
+      //     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+      //     {
+      //       field: "firstName",
+      //       headerName: "First Name",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "lastName",
+      //       headerName: "Last Name",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "mobileno",
+      //       headerName: "Mobile No",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "uniqueId",
+      //       headerName: "Unique ID",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "emailstatus",
+      //       headerName: "Email Status",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
+      //     {
+      //       field: "status",
+      //       headerName: "Status",
+      //       flex: 1,
+      //       minWidth: 120,
+      //       renderCell: (params) => {
+      //         return (
+      //           <CustomTooltip arrow placement="top" title="Allow/ Disallow">
+      //             <Switch
+      //               checked={params.row.status === 1}
+      //               onChange={(e) => {
+      //                 handleStatusChange(e.target.checked, params.row.id);
+      //               }}
+      //               sx={{
+      //                 "& .MuiSwitch-switchBase.Mui-checked": {
+      //                   color: "#34C759",
+      //                 },
+      //                 "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
+      //                 {
+      //                   backgroundColor: "#34C759",
+      //                 },
+      //               }}
+      //             />
+      //           </CustomTooltip>
+      //         );
+      //       },
+      //     },
+      //     // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
+      //     {
+      //       field: "action",
+      //       headerName: "Action",
+      //       flex: 1,
+      //       minWidth: 150,
+      //       renderCell: (params) => (
+      //         <>
+      //           <IconButton
+      //             onClick={() => {
+      //               setUpdateContactVisible(true);
+      //               setUpdateContactDetails(params.row);
+      //             }}
+      //           >
+      //             <EditNoteIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() => {
+      //               setDeleteContactDialogVisible(true);
+      //               setIdToDelete(params.row);
+      //             }}
+      //           >
+      //             <MdOutlineDeleteForever
+      //               className="text-red-500 cursor-pointer hover:text-red-600"
+      //               size={20}
+      //             />
+      //           </IconButton>
+      //         </>
+      //       ),
+      //     },
+      //   ]);
+      //   contactSetRows(
+      //     filteredData?.map((contact, index) => ({
+      //       id: contact.addSrno,
+      //       sn: index + 1,
+      //       firstName: contact.firstName ?? "-",
+      //       lastName: contact.lastName ?? "-",
+      //       mobileno: contact.mobileno ?? "-",
+      //       emailstatus: contact.status == 1 ? "Active" : "Inactive",
+      //       group: contact.groupName ?? "-",
+      //       status: contact.status == 1 ? "Active" : "Inactive",
+      //       action: "True",
+      //       srno: contact.addSrno,
+      //       gender: contact.gender,
+      //       ...contact,
+      //     }))
+      //   );
+
+      //   setFilterContacts(filteredData);
+      // } else {
+      //   setCols([
+      //     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+      //     {
+      //       field: "firstName",
+      //       headerName: "First Name",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "lastName",
+      //       headerName: "Last Name",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "mobileno",
+      //       headerName: "Mobile No",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "uniqueId",
+      //       headerName: "Unique ID",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     {
+      //       field: "emailstatus",
+      //       headerName: "Email Status",
+      //       flex: 1,
+      //       minWidth: 120,
+      //     },
+      //     { field: "group", headerName: "Group", flex: 1, minWidth: 120 },
+      //     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+      //     // { field: 'totalAudience', headerName: 'Total Audience', flex: 1, minWidth: 120 },
+      //     {
+      //       field: "action",
+      //       headerName: "Action",
+      //       flex: 1,
+      //       minWidth: 150,
+      //       renderCell: (params) => (
+      //         <>
+      //           <IconButton
+      //             onClick={() => {
+      //               setUpdateContactVisible(true);
+      //               setUpdateContactDetails(params.row);
+      //             }}
+      //           >
+      //             <EditNoteIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() => {
+      //               setDeleteContactDialogVisible(true);
+      //               setIdToDelete(params.row);
+      //             }}
+      //           >
+      //             <MdOutlineDeleteForever
+      //               className="text-red-500 cursor-pointer hover:text-red-600"
+      //               size={20}
+      //             />
+      //           </IconButton>
+      //         </>
+      //       ),
+      //     },
+      //   ]);
+      //   contactSetRows(
+      //     res?.map((contact, index) => ({
+      //       id: contact.addSrno,
+      //       sn: index + 1,
+      //       firstName: contact.firstName ?? "-",
+      //       lastName: contact.lastName ?? "-",
+      //       mobileno: contact.mobileno ?? "-",
+      //       emailstatus: contact.status == 1 ? "Active" : "Inactive",
+      //       group: contact.groupName ?? "-",
+      //       status: contact.status == 1 ? "Active" : "Inactive",
+      //       action: "True",
+      //       srno: contact.addSrno,
+      //       gender: contact.gender,
+      //       ...contact,
+      //     }))
+      //   );
+
+      //   setFilterContacts(res);
+      // }
+
 
       setCols([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -2391,9 +2616,9 @@ const ManageContacts = () => {
                       color: "#34C759",
                     },
                     "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                      {
-                        backgroundColor: "#34C759",
-                      },
+                    {
+                      backgroundColor: "#34C759",
+                    },
                   }}
                 />
               </CustomTooltip>
@@ -2499,7 +2724,7 @@ const ManageContacts = () => {
   };
 
   const handleUpdateGrpName = async () => {
-    const res = await updateGroupName(updateGrpId.groupCode, groupName);
+    const res = await updateGroupName(updateGrpId.id, groupName);
     if (res?.message.includes("updated")) {
       toast.success(res?.message);
       setEditGrpVisible(false);
@@ -2581,6 +2806,8 @@ const ManageContacts = () => {
       anniversaryDate: updatedContactDetails.mariageDate || "",
       allowishes: updatedContactDetails.allowishes || "",
     };
+
+    console.log("update contact data", data);
 
     const res = await updateContactsDetails(data);
     if (!res?.message.includes("successfully")) {
@@ -2828,10 +3055,10 @@ const ManageContacts = () => {
 
   const rows = Array.isArray(grpList)
     ? grpList.map((grp, index) => ({
-        id: grp.groupCode,
-        sn: index + 1,
-        groupName: grp.groupName,
-      }))
+      id: grp.groupCode,
+      sn: index + 1,
+      groupName: grp.groupName,
+    }))
     : [];
 
   const filteredRows = selectedmanageGroups?.value
@@ -2966,7 +3193,9 @@ const ManageContacts = () => {
   return (
     <div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-4 justify-between">
-        <h1 className="text-xl font-semibold text-gray-700">Manage Contacts</h1>
+        <h1 className="text-xl font-semibold text-gray-700">
+          Manage Contacts
+        </h1>
         <div className="flex items-center gap-2">
           {/* Name Input Field */}
           <div className="w-max-content">
@@ -3003,6 +3232,7 @@ const ManageContacts = () => {
             />
           </div>
         </div>
+
       </div>
       <div className="flex flex-wrap items-end w-full gap-2 mb-5">
         <div className="w-full sm:w-48">
@@ -3018,14 +3248,7 @@ const ManageContacts = () => {
               label: `${item.groupName} (${item.totalCount})`,
             }))}
             value={selectedMultiGroup}
-            onChange={(e) => {
-              console.log("e", e);
-              setSelectedMultiGroup(e);
-              setAllContacts([]);
-              setFilterContacts([]);
-
-              contactSetRows([]);
-            }}
+            onChange={(e) => setSelectedMultiGroup(e)}
             filter
           />
         </div>
@@ -3342,15 +3565,14 @@ const ManageContacts = () => {
             <UniversalDatePicker
               label="Birth Date"
               className="mb-0"
-              value={addContactDetails?.birthDate}
-              // defaultValue={new Date()}
+              value={addContactDetails.birthDate}
               onChange={(e) =>
                 setAddContactDetails({
                   ...addContactDetails,
                   birthDate: e,
                 })
               }
-              // required={true}
+            // required={true}
             />
             <UniversalDatePicker
               label="Anniversary Date"
@@ -3578,9 +3800,8 @@ const ManageContacts = () => {
                     <button
                       onClick={handleFileUpload}
                       disabled={isUploading}
-                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                        isUploading ? "disabled" : ""
-                      }`}
+                      className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                        }`}
                     >
                       <FileUploadOutlinedIcon
                         sx={{ color: "white", fontSize: "23px" }}
@@ -4023,7 +4244,7 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Birth Date"
                 className="mb-0"
-                value={updateContactDetails.birthDate}
+                value={updateContactDetails?.birthDate}
                 onChange={(e) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,
@@ -4035,7 +4256,7 @@ const ManageContacts = () => {
               <UniversalDatePicker
                 label="Anniversary Date"
                 className="mb-0"
-                value={updateContactDetails.mariageDate}
+                value={updateContactDetails?.mariageDate}
                 onChange={(e) =>
                   setUpdateContactDetails({
                     ...updateContactDetails,

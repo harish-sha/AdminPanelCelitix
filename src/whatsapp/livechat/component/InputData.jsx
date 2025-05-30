@@ -13,6 +13,7 @@ export const InputData = ({
   setChatState,
   setSelectedWaba,
   setIsSubscribed,
+  // setSelectedWaba
 }) => {
   return (
     <motion.div
@@ -52,7 +53,7 @@ export const InputData = ({
               replyData: "",
               isReply: false,
             });
-            setSelectedWaba(value);
+            setSelectedWaba(value)
           }}
           placeholder="Select WABA"
         />
@@ -167,11 +168,10 @@ export const InputData = ({
                 setBtnOption("active");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "active"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Active
             </button>
@@ -180,11 +180,10 @@ export const InputData = ({
                 setBtnOption("close");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
-                btnOption === "close"
-                  ? "text-white font-semibold"
-                  : "text-gray-700"
-              }`}
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
+                ? "text-white font-semibold"
+                : "text-gray-700"
+                }`}
             >
               Close
             </button>

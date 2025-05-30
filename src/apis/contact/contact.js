@@ -110,7 +110,7 @@ export const deleteMultipleContact = async (data) => {
 // delete single contact
 export const deleteContact = async (data) => {
   return await fetchWithAuth(
-    `contact/deleteAddressBookContact?addSrno=${data}`
+    `/contact/deleteAddressBookContact?addSrno=${data}`
   );
 };
 

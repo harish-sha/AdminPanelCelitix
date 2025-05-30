@@ -17,10 +17,10 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
+import moment from "moment";
+import { exportToExcel } from "@/utils/utills";
 
 import toast from "react-hot-toast";
-import { toDate } from "date-fns";
-import moment from "moment";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,39 +74,35 @@ const Transactions = () => {
   const handleSearch = async () => {
     try {
       setIsFetching(true);
-      console.log(filterData.toDate);
       const data = {
         ...filterData,
-        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
-      };
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
+      }
       const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     } finally {
-      setIsFetching(false);
+      setIsFetching(false);nb     
     }
   };
 
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 1, minWidth: 10 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
       headerName: "Recharge Date",
       flex: 1,
-      minWidth: 150,
+      minWidth: 120,
     },
     {
       field: "before",
       headerName: "Amount Before Recharge",
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
     },
     {
       field: "amount",
@@ -143,11 +139,11 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-        ...item,
-        sn: index + 1,
-        id: index + 1,
-        balance: Number(item.balance).toFixed(2),
-      }))
+      ...item,
+      sn: index + 1,
+      id: index + 1,
+      balance: Number(item.balance).toFixed(2),
+    }))
     : [];
 
   const multiHistory = [
@@ -157,6 +153,7 @@ const Transactions = () => {
     { name: "Istanbul", code: "IST" },
     { name: "Paris", code: "PRS" },
   ];
+  
   const multiSummary = [
     { name: "New York", code: "NY" },
     { name: "Rome", code: "RM" },
@@ -240,6 +237,18 @@ const Transactions = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -297,6 +306,7 @@ const Transactions = () => {
               label="Export"
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
+              onClick={handleExport}
             />
           </div>
         </div>

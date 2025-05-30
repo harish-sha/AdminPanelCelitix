@@ -21,8 +21,10 @@ import {
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
+// import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+// import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
@@ -72,6 +74,7 @@ const WhatsappCreateTemplate = () => {
   const [urlVariables, setUrlVariables] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
+
 
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
@@ -208,11 +211,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-        "((\\d{1,3}\\.){3}\\d{1,3}))" +
-        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-        "(\\?[;&a-z\\d%_.~+=-]*)?" +
-        "(\\#[-a-z\\d_]*)?$",
+      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+      "((\\d{1,3}\\.){3}\\d{1,3}))" +
+      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+      "(\\?[;&a-z\\d%_.~+=-]*)?" +
+      "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -307,7 +310,7 @@ const WhatsappCreateTemplate = () => {
         });
       });
     }
-    
+
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
@@ -558,12 +561,12 @@ const WhatsappCreateTemplate = () => {
       const response = await sendTemplatetoApi(payload);
 
       const message = response?.msg;
-      // return
 
       if (message.message === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
+        // } else if (response.message === "Template Save Successfully") {
       } else if (message.message === "Template Save Successfully") {
         setIsLoading(true);
         toast.success("Template submitted successfully!");
@@ -601,10 +604,25 @@ const WhatsappCreateTemplate = () => {
         setUrl("");
         setUrlTitle("");
         setQuickReplies([]);
+      } else if (!response.msg || response.msg === "") {
+        // Handle blank msg from backend
+        return toast.error("Unable to create template at this time. Please try again later.");
+      }
+      else if (
+        response?.includes("language") &&
+        response?.includes("not available")
+      ) {
+        return toast.error(
+          "The selected language is not available for message templates. Please try a different language."
+        );
+      } else if (!response.msg || response.msg === "") {
+        // Handle blank msg from backend
+        return toast.error("Unable to create template at this time. Please try again later.");
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
+      console.log(e)
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
@@ -666,9 +684,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                            mbno: selectedWaba,
-                            sno: selectedWabaSno,
-                          })
+                          mbno: selectedWaba,
+                          sno: selectedWabaSno,
+                        })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -773,14 +791,9 @@ const WhatsappCreateTemplate = () => {
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
                   <div className="grid lg:grid-cols-2 gap-5 mt-4">
-                    <div className="border-2 border-gray-300 p-4 rounded-lg">
+                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
                       <div className="flex gap-2 items-center">
-                        <span
-                          htmlFor="expiryTime"
-                          className="text-md text-gray-700 font-semibold"
-                        >
-                          Set Expiry Time
-                        </span>
+                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
                         <CustomTooltip
                           title="Expiry Time should be in 1 min to 90 min"
                           placement="top"
@@ -818,11 +831,10 @@ const WhatsappCreateTemplate = () => {
                       disabled={
                         !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba && selectedCategory && templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"
@@ -838,33 +850,33 @@ const WhatsappCreateTemplate = () => {
                       <>
                         {
                           selectedTemplateType === "carousel" &&
-                            carouselMediaType && (
-                              <>
-                                <CarouselTemplateTypes
-                                  templateFormat={templateFormat}
-                                  setTemplateFormat={setTemplateFormat}
-                                  templateFooter={templateFooter}
-                                  setTemplateFooter={setTemplateFooter}
-                                  handleAddVariable={handleAddVariable}
-                                  handleEmojiSelect={handleEmojiSelect}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setSelectedCardIndex={setSelectedCardIndex}
-                                  cards={cards}
-                                  setCards={setCards}
-                                  file={file}
-                                  setFile={setFile}
-                                  onPreviewUpdate={handlePreviewUpdate}
-                                  setFileUploadUrl={setFileUploadUrl}
-                                  uploadImageFile={uploadImageFile}
-                                  setvariables={setVariables}
-                                />
-                                <CarouselInteractiveActions
-                                  cards={cards}
-                                  selectedCardIndex={selectedCardIndex}
-                                  setCards={setCards}
-                                />
-                              </>
-                            )
+                          carouselMediaType && (
+                            <>
+                              <CarouselTemplateTypes
+                                templateFormat={templateFormat}
+                                setTemplateFormat={setTemplateFormat}
+                                templateFooter={templateFooter}
+                                setTemplateFooter={setTemplateFooter}
+                                handleAddVariable={handleAddVariable}
+                                handleEmojiSelect={handleEmojiSelect}
+                                selectedCardIndex={selectedCardIndex}
+                                setSelectedCardIndex={setSelectedCardIndex}
+                                cards={cards}
+                                setCards={setCards}
+                                file={file}
+                                setFile={setFile}
+                                onPreviewUpdate={handlePreviewUpdate}
+                                setFileUploadUrl={setFileUploadUrl}
+                                uploadImageFile={uploadImageFile}
+                                setvariables={setVariables}
+                              />
+                              <CarouselInteractiveActions
+                                cards={cards}
+                                selectedCardIndex={selectedCardIndex}
+                                setCards={setCards}
+                              />
+                            </>
+                          )
 
                           // : (
                           //   <div className="w-full">
@@ -940,7 +952,7 @@ const WhatsappCreateTemplate = () => {
                     </div>
                     <div className="flex items-start justify-center lg:mt-7 ">
                       {selectedTemplateType === "carousel" &&
-                      carouselMediaType ? (
+                        carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
                             // scrollContainerRef={scrollableContainerRef}
@@ -986,14 +998,13 @@ const WhatsappCreateTemplate = () => {
                         !templateName ||
                         isFetching
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
-                        selectedWaba &&
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
                         selectedCategory &&
                         selectedTemplateType &&
                         templateName
-                          ? "bg-[#212529] hover:bg-[#434851]"
-                          : "bg-gray-300 cursor-not-allowed"
-                      }`}
+                        ? "bg-[#212529] hover:bg-[#434851]"
+                        : "bg-gray-300 cursor-not-allowed"
+                        }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"

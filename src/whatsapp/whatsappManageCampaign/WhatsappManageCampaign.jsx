@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
 import SummarizeOutlinedIcon from "@mui/icons-material/SummarizeOutlined";
+import DateRangeIcon from "@mui/icons-material/DateRange";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { BsJournalArrowDown } from "react-icons/bs";
@@ -33,11 +34,14 @@ import {
   getSummaryReport,
   getWabaList,
   getAllCampaignWhatsapp,
+  getWhatsappCampaignScheduledReport,
+  cancelCampaign,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
+import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 
 function CustomTabPanel(props) {
@@ -73,14 +77,19 @@ const WhatsappManageCampaign = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState(0);
   const [campaignName, setCampaignName] = useState("");
+  const [scheduleCampaignName, setScheduleCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
+  const [originalData, setOriginalData] = useState([]); // Store unfiltered data
   const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
   const [campaignCategory, setCampaignCategory] = useState("");
   const [campaignType, setCampaignType] = useState("");
   const [campaignStatus, setCampaignStatus] = useState("");
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
+  const [scheduleData, setScheduleData] = useState([]);
+  const [orignalScheduleData, setOrignalScheduleData] = useState([]);
   const [logsData, setLogsData] = useState([]);
   const [WabaList, setWabaList] = useState([]);
   const [isMonthWise, setIsMonthWise] = useState(false);
@@ -122,13 +131,13 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    campaignName: "",
+    // campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
-    campaignType: "",
+    campaignType: 0,
     status: "",
     delStatus: {},
     type: "campaign",
@@ -232,6 +241,11 @@ const WhatsappManageCampaign = () => {
     setCampaignName(newValue);
   };
 
+  const handleScheduleInputChange = (e) => {
+    const newValue = e.target.value.replace(/\s/g, "");
+    setScheduleCampaignName(newValue);
+  };
+
   const handleInputChangeMobileLogs = (e) => {
     setInputValueMobileLogs(e.target.value);
   };
@@ -269,6 +283,90 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
+  const fetchScheduleCampaignData = async () => {
+    setIsFetching(true);
+
+    try {
+      const data = await getWhatsappCampaignScheduledReport();
+
+      console.log("Fetched Schedule Campaign Data:", data);
+
+      const mappedData = Array.isArray(data)
+        ? data.map((item, index) => ({
+            id: item.srno || `row-${index}`,
+            sn: index + 1,
+            campaignName: item.campaignName || "N/A",
+            campaignDate: item.campaignDate || "N/A",
+            sentTime: item.sentTime || "N/A",
+            count: item.count || "N/A",
+            processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+            srno: item.srno,
+          }))
+        : [];
+
+      console.log("Mapped Schedule Campaign Data:", mappedData);
+
+      // Apply filters
+      const formattedSelectedDate =
+        scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+          ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
+          : null;
+
+      const filteredData = mappedData.filter((item) => {
+        const matchesName = scheduleCampaignName
+          ? item.campaignName
+              .toLowerCase()
+              .includes(scheduleCampaignName.toLowerCase())
+          : true;
+
+        const matchesDate = formattedSelectedDate
+          ? item.campaignDate === formattedSelectedDate
+          : true;
+
+        return matchesName && matchesDate;
+      });
+
+      console.log("Filtered Schedule Campaign Data:", filteredData);
+
+      setScheduleData(filteredData);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      toast.error("Failed to fetch schedule campaign data.");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  const handleCancel = async (srno) => {
+    if (!srno) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+
+    try {
+      console.log("Canceling campaign with SRNO:", srno);
+      const result = await cancelCampaign({ srno: srno, selectedUserId: 0 });
+      if (result) {
+        console.log("Campaign cancelled successfully:", result);
+        toast.success("Campaign Cancelled successfully");
+
+        // Refresh the table by fetching the data again
+        fetchScheduleCampaignData();
+      } else {
+        console.warn("Cancel request failed or returned empty response.");
+        toast.error("Cancel request failed");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    }
+  };
+
+  useEffect(() => {
+    fetchScheduleCampaignData();
+  }, []);
+
   useEffect(() => {
     const fetchWabaList = async () => {
       try {
@@ -294,12 +392,14 @@ const WhatsappManageCampaign = () => {
   const handleShowLogs = async () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
-      ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+      ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
+        moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
 
     const logdata = {
+      // fromDate: formattedFromDateLogs,
       fromDate: formattedFromDateLogs,
       mobileNo: null,
       source: "API",
@@ -326,50 +426,103 @@ const WhatsappManageCampaign = () => {
 
     setIsFetching(true);
 
-    let FinalFromDate = new Date(
-      new Date(selectedMonth).getFullYear(),
-      new Date(selectedMonth).getMonth(),
-      1
-    ).toLocaleDateString("en-GB");
+    // let FinalFromDate = new Date(
+    //   new Date(selectedMonth).getFullYear(),
+    //   new Date(selectedMonth).getMonth(),
+    //   1
+    // ).toLocaleDateString("en-GB");
 
-    let FinalToDate = new Date(
-      new Date(
-        new Date(selectedMonth).getFullYear(),
-        new Date(selectedMonth).getMonth() + 1,
-        0
-      )
-    );
+    // let FinalToDate = new Date(
+    //   new Date(
+    //     new Date(selectedMonth).getFullYear(),
+    //     new Date(selectedMonth).getMonth() + 1,
+    //     0
+    //   )
+    // );
 
-    if (isMonthWise) {
-      result = await getSummaryReport({
-        fromDate: FinalFromDate,
-        summaryType: "waba,date,type,country",
-        toDate: FinalToDate.toLocaleDateString("en-GB"),
-        whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-      });
-    } else {
-      result = await getSummaryReport({
-        fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
-        summaryType: "waba,date,type,country",
-        toDate: new Date(toDate).toLocaleDateString("en-GB"),
-        whatsappTypes: null,
-        wabaNumber: selectedWaBaNumber,
-      });
+    // Format dates using moment
+    const FinalFromDate = moment(selectedMonth)
+      .startOf("month")
+      .format("YYYY-MM-DD");
+    const FinalToDate = moment(selectedMonth)
+      .endOf("month")
+      .format("YYYY-MM-DD");
+
+    // if (isMonthWise) {
+    //   result = await getSummaryReport({
+    //     fromDate: FinalFromDate,
+    //     summaryType: "waba,date,type,country",
+    //     toDate: FinalToDate.toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // } else {
+    //   result = await getSummaryReport({
+    //     fromDate: new Date(fromDate).toLocaleDateString("en-GB"),
+    //     summaryType: "waba,date,type,country",
+    //     toDate: new Date(toDate).toLocaleDateString("en-GB"),
+    //     whatsappTypes: null,
+    //     wabaNumber: selectedWaBaNumber,
+    //   });
+    // }
+
+    // const formattedResult = result.map((item) => ({
+    //   ...item,
+    //   marketing: item.marketing.toFixed(1),
+    //   utility: item.utility.toFixed(1),
+    //   categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+    //   userCharge: item.userCharge.toFixed(1),
+    // }));
+
+    // setSummaryReport(formattedResult);
+
+    // // setSummaryReport(result);
+    // setIsFetching(false);
+    try {
+      if (isMonthWise) {
+        result = await getSummaryReport({
+          fromDate: FinalFromDate,
+          summaryType: "waba,date,type,country",
+          toDate: FinalToDate,
+          whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+        });
+      } else {
+        const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
+        const formattedToDate = moment(toDate).format("YYYY-MM-DD");
+
+        result = await getSummaryReport({
+          fromDate: formattedFromDate,
+          summaryType: "waba,date,type,country",
+          toDate: formattedToDate,
+          whatsappTypes: null,
+          wabaNumber: selectedWaBaNumber,
+        });
+      }
+
+      // Validate if result is an array
+      if (Array.isArray(result)) {
+        const formattedResult = result.map((item) => ({
+          ...item,
+          marketing: item.marketing.toFixed(1),
+          utility: item.utility.toFixed(1),
+          categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+          userCharge: item.userCharge.toFixed(1),
+        }));
+
+        setSummaryReport(formattedResult);
+      } else {
+        // Handle non-array response
+        console.error("Unexpected API response:", result);
+        toast.error("Failed to fetch summary report. Please try again.");
+        setSummaryReport([]); // Reset summary report
+      }
+    } catch (error) {
+      console.error("Error fetching summary report:", error);
+      toast.error("An error occurred while fetching the summary report.");
+    } finally {
+      setIsFetching(false);
     }
-
-    const formattedResult = result.map((item) => ({
-      ...item,
-      marketing: item.marketing.toFixed(1),
-      utility: item.utility.toFixed(1),
-      categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
-      userCharge: item.userCharge.toFixed(1),
-    }));
-
-    setSummaryReport(formattedResult);
-
-    // setSummaryReport(result);
-    setIsFetching(false);
   };
 
   return (
@@ -434,6 +587,24 @@ const WhatsappManageCampaign = () => {
                 </span>
               }
               {...a11yProps(2)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <DateRangeIcon size={20} /> Scheduled
+                </span>
+              }
+              {...a11yProps(3)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -771,7 +942,15 @@ const WhatsappManageCampaign = () => {
                     placeholder="Waba Account"
                   />
                 </div>
-                <div className="flex items-center gap-2 justify-center mb-2 w-full sm:w-35 ">
+                <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
+                  {/* <FormGroup>
+                    <FormControlLabel
+                      control={<Checkbox />}
+                      label="Month Wise"
+                      value={isMonthWise}
+                      onClick={(e) => setIsMonthWise(e.target.checked)}
+                    />
+                  </FormGroup> */}
                   <Checkbox
                     checked={isMonthWise}
                     onChange={(e) => setIsMonthWise(e.target.checked)}
@@ -808,6 +987,164 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               )}
+            </div>
+          </CustomTabPanel>
+          <CustomTabPanel value={value} index={3} className="">
+            <div>
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-full sm:w-48">
+                  <UniversalDatePicker
+                    id="manageCampaignDate"
+                    name="manageCampaignDate"
+                    label="Created On"
+                    value={scheduleSelectedDate}
+                    onChange={(newValue) => setScheduleSelectedDate(newValue)}
+                    placeholder="Pick a start date"
+                    tooltipContent="Select a date within the last 3 months."
+                    tooltipPlacement="right"
+                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    maxDate={new Date()}
+                    error={!scheduleSelectedDate}
+                    errorText="Please select a valid date"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <InputField
+                    id="manageCampaignName"
+                    name="manageCampaignName"
+                    label="Campaign Name"
+                    value={scheduleCampaignName}
+                    onChange={handleScheduleInputChange}
+                    placeholder="Campaign Name"
+                    tooltipContent="Your templatename should not contain spaces."
+                    tooltipPlacement="right"
+                  />
+                </div>
+                {/* <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignCategory"
+                    name="manageCampaignCategory"
+                    label="Category"
+                    tooltipContent="Select category"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "utility", label: "Utility" },
+                      { value: "marketing", label: "Marketing" },
+                      { value: "authentication", label: "Authentication" },
+                    ]}
+                    value={campaignCategory}
+                    onChange={(value) => setCampaignCategory(value)}
+                    placeholder="Category"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignType"
+                    name="manageCampaignType"
+                    label="Type"
+                    tooltipContent="Select Type"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "text", label: "Text" },
+                      { value: "image", label: "Image" },
+                      { value: "document", label: "Document" },
+                      { value: "carousel", label: "Carousel" },
+                    ]}
+                    value={campaignType}
+                    onChange={(value) => setCampaignType(value)}
+                    placeholder="Type"
+                  />
+                </div>
+                <div className="w-full sm:w-48">
+                  <AnimatedDropdown
+                    id="manageCampaignStatus"
+                    name="manageCampaignStatus"
+                    label="Status"
+                    tooltipContent="Select Status"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: "pending", label: "Pending" },
+                      // { value: "failed", label: "Failed" },
+                      // { value: "sent", label: "Sent" },
+                      { value: "cancelled", label: "Cancelled" },
+                      { value: "completed", label: "Completed" },
+                    ]}
+                    value={campaignStatus}
+                    onChange={(value) => setCampaignStatus(value)}
+                    placeholder="Status"
+                  />
+                </div> */}
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignSearchBtn"
+                    name="manageCampaignSearchBtn"
+                    label={isFetching ? "Searching..." : "Search"}
+                    icon={<IoSearch />}
+                    onClick={fetchScheduleCampaignData}
+                    variant="primary"
+                  />
+                </div>
+                {/* <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignExportBtn"
+                    name="manageCampaignExportBtn"
+                    label="Export"
+                    icon={
+                      <IosShareOutlinedIcon
+                        sx={{ marginBottom: "3px", fontSize: "1.1rem" }}
+                      />
+                    }
+                    onClick={handleExportBtn}
+                    variant="primary"
+                  />
+                </div> */}
+              </div>
+              {isFetching ? (
+                <div className="">
+                  <UniversalSkeleton height="35rem" width="100%" />
+                </div>
+              ) : (
+                <div className="w-full">
+                  <ManageScheduleCampaignTable
+                    id="whatsappManageCampaignScheduleTable"
+                    name="whatsappManageCampaignTable"
+                    data={scheduleData}
+                    onCancel={handleCancel}
+                    // fromDate={selectedDate}
+                  />
+                </div>
+              )}
+
+              {/* {isFetching ? (
+                <UniversalSkeleton height="35rem" width="100%" />
+              ) : !hasSearched ? (
+                // Case 1: Initial Load - Ask user to select WABA account
+                <div className="border-2 border-dashed h-[55vh] bg-white border-blue-500  rounded-2xl w-full flex items-center justify-center">
+                  <div className="p-8 text-center text-blue-500 shadow-2xl shadow-blue-300 rounded-2xl">
+                    <span className="text-2xl font-medium tracking-wide font-m">
+                      Please select a WhatsApp Business Account (WABA) to
+                      proceed.
+                    </span>
+                  </div>
+                </div>
+              ) : filteredData.length === 0 ? (
+                // Case 2: No data found after filtering
+                <div className="border-2 border-dashed h-[55vh] bg-white border-red-500  rounded-2xl w-full flex items-center justify-center">
+                  <div className="p-8 text-center text-red-500 shadow-2xl rounded-2xl shadow-red-300">
+                    <span className="text-2xl font-medium tracking-wide font-m">
+                      No matching records found. <br /> Please adjust your filters
+                      and try again.
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                // Case 3: Show data in the table
+                <ManageCampaignTable
+                  id='whatsappManageCampaignTable'
+                  name='whatsappManageCampaignTable'
+                  data={filteredData}
+                />
+              )} */}
             </div>
           </CustomTabPanel>
         </Box>

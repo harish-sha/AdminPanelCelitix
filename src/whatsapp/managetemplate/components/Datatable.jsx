@@ -295,7 +295,7 @@ const DataTable = ({
           title={params.row.is_hide === 1 ? "Hide" : "Show"}
         >
           <Switch
-            checked={params.row.is_hide === 1}
+            checked={params.row.is_hide === 0}
             onChange={() => handleStatusChange(params.row)}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
@@ -523,7 +523,7 @@ const DataTable = ({
       setIsFetching(true);
       const res = await deleteTemplate(data);
       // console.log(res);
-      if (res?.msg?.includes("Succefully")) {
+      if (res?.msg?.includes("Successfully")) {
         toast.success("Template deleted successfully.");
         setVisible(false);
         await fetchTemplateData();
@@ -627,7 +627,7 @@ const DataTable = ({
                 </div>
             </Dialog> */}
 
-      {/* Handle View Dialog */}
+      {/* Handle View Dialog start*/}
       <Dialog
         header={selectedRow?.templateName}
         visible={dialogVisible}
@@ -767,6 +767,7 @@ const DataTable = ({
           </div>
         </div>
       </Dialog>
+      {/* Handle View Dialog end*/}
 
       {/* Handle Delete Popup */}
       {/* <ConfirmPopup
@@ -834,8 +835,7 @@ const DataTable = ({
       </Dialog>
       {/* Delete Template End */}
 
-      {/* Curl Dialog */}
-
+      {/* Curl Dialog start*/}
       <Dialog
         header={"Curl Data"}
         visible={curlDialogVisible}
@@ -865,6 +865,7 @@ const DataTable = ({
           <pre className="text-xs whitespace-pre-wrap text-gray-800  break-words">{JSON.stringify(curlData, null, 2)}</pre>
         </div>
       </Dialog>
+      {/* Curl Dialog end*/}
     </>
   );
 };

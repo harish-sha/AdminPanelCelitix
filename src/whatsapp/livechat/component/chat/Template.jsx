@@ -17,6 +17,7 @@ export const TemplateMessagePreview = ({ template }) => {
 
   const [isFetching, setIsFetching] = useState(false);
 
+
   const mediaPath = template?.mediaPath;
 
   const [tempDetails, setTempDetails] = useState(null);
@@ -25,6 +26,10 @@ export const TemplateMessagePreview = ({ template }) => {
       handleFetchSpecificTemplate();
     }
   }, [template]);
+
+  // useEffect(() => {
+  //   console.log(tempDetails);
+  // }, [tempDetails]);
 
   async function handleFetchSpecificTemplate() {
     const { wabaNumber, templateSrno, templateName } = template;
@@ -48,6 +53,7 @@ export const TemplateMessagePreview = ({ template }) => {
       // setTempDetails(matchedTemplate);
       setTempDetails(templates?.data[0]?.components);
     } catch (error) {
+      console.error("Error fetching specific template:", error);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -87,15 +93,16 @@ export const TemplateMessagePreview = ({ template }) => {
     }
   };
 
-  function renderMediaTemplate() {}
+  function renderMediaTemplate() { }
+
   const ButtonsGroup = ({ buttons }) => {
     return (
-      <div className="flex flex-col gap-2 w-full max-w-[500px] mt-3">
+      <div className="flex flex-col gap-2 w-full max-w-[500px] mt-2">
         {buttons.map(({ url, type, text, phone_number }, btnIndex) => (
           <button
             key={btnIndex}
             title={url || phone_number}
-            className={`flex items-center justify-center px-4 py-2 text-sm rounded-md w-full sm:w-auto ${getBtnCss(
+            className={`flex items-center justify-center px-4 py-2 text-sm cursor-pointer rounded-md w-full sm:w-auto ${getBtnCss(
               type
             )}`}
           >
@@ -108,14 +115,39 @@ export const TemplateMessagePreview = ({ template }) => {
   };
 
   return isFetching ? (
-    <div className="border border-gray-200 rounded-md w-90 p-5 bg-white ">
+    // <div>
+    //   <p className="text-sm">(TemplateMessage)</p>
+    //   {isImage && (
+    //     <img
+    //       src={mediaPath}
+    //       alt={mediaPath}
+    //       className={`h-40 w-auto select-none pointer-events-none border border-gray-200 rounded-md`}
+    //     />
+    //   )}
+    //   {isVideo && (
+    //     <video
+    //       src={mediaPath}
+    //       controls={true}
+    //       autoPlay={false}
+    //       className={`h-45 m-auto border border-gray-200 rounded-md bg-center bg-no-repeat`}
+    //     />
+    //   )}
+    //   {isDocument && (
+    //     <iframe
+    //       src={mediaPath}
+    //       allow=" encrypted-media"
+    //       className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
+    //     ></iframe>
+    //   )}
+    // </div>
+    <div className="border border-gray-200 rounded-md w-90 p-5 bg-[#E1F3FB]">
       <p className="text-sm">(TemplateMessage)</p>
       <h1>Loading...</h1>
     </div>
   ) : (
     <>
       {tempDetails && (
-        <div className="border border-gray-200 rounded-md w-90 p-5 bg-white">
+        <div className="border border-gray-200 rounded-md w-90 p-3 bg-[#E1F3FB]">
           {tempDetails?.map((item, index) => {
             if (item?.type === "HEADER" && item?.format === "IMAGE") {
               return (
@@ -143,20 +175,18 @@ export const TemplateMessagePreview = ({ template }) => {
               return (
                 <iframe
                   src={mediaPath}
-                  allow=" encrypted-media"
                   key={index}
+                  allow=" encrypted-media"
                   className={`h-48 border border-gray-200 rounded-md bg-center bg-no-repeat`}
                 ></iframe>
               );
             }
             if (item?.type === "BODY") {
-              return <p key={index}>{item?.text}</p>;
+              return <pre className="text-sm text-wrap " key={index}>{item?.text}</pre>;
             }
-
             if (item.type === "BUTTONS" && item?.buttons?.length > 0) {
-              return <ButtonsGroup buttons={item?.buttons} key={index} />;
+              return <ButtonsGroup buttons={item?.buttons} key={index} />
             }
-            // "BUTTONS" && buttons?.length > 0
           })}
         </div>
       )}

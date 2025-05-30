@@ -16,6 +16,7 @@ import CustomNoRowsOverlay from '../../components/CustomNoRowsOverlay.jsx';
 
 import { Paper, Typography, Box, Button } from "@mui/material";
 import { useState } from "react";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -119,7 +120,14 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
         columns = [
             { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
             { field: "displayName", headerName: "Name", flex: 1, minWidth: 120 },
-            { field: "sentDate", headerName: "Sent Date", flex: 1, minWidth: 120 },
+            {
+                field: "sentDate",
+                headerName: "Sent Date",
+                flex: 1,
+                minWidth: 120,
+                renderCell: (params) =>
+                    moment(new Date(params.row.sentDate)).format("DD-MM-YYYY"),
+            },
             { field: "country", headerName: "Country", flex: 1, minWidth: 120 },
             { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
             { field: "count", headerName: "Count", flex: 1, minWidth: 120 },

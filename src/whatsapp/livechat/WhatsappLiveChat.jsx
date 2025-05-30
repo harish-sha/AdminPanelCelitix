@@ -66,6 +66,7 @@ import { InputData } from "./component/InputData";
 import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
+import moment from "moment";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -225,11 +226,10 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
       ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
-    
-
 
     let body = {};
 
@@ -380,14 +380,43 @@ export default function WhatsappLiveChat() {
     setChatState((prev) => ({ ...prev, active: null }));
   }
 
+  // useEffect(() => {
+  //   // handleFetchAllConvo();
+  //   if (!wabaState?.selectedWaba) return;
+  //   const intervalid = setInterval(() => {
+  //     handleFetchAllConvo();
+  //   }, 500);
+
+  //   return () => clearInterval(intervalid);
+  // }, [wabaState.selectedWaba, btnOption]);
+
+  // useEffect(() => {
+  //   if (!wabaState?.selectedWaba) return;
+  //   // if (!wabaState?.selectedWaba || !isSubscribe) {
+  //   //   handleFetchAllConvo();
+  //   //   return;
+  //   // }
+
+  //   // handleFetchAllConvo();
+  //   // setIsSubscribe(true);
+
+  //   const intervalId = setInterval(() => {
+  //     handleFetchAllConvo();
+  //   }, 5000);
+
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [wabaState.selectedWaba, btnOption]);
+
   useEffect(() => {
     if (!wabaState?.selectedWaba) return;
     let intervalId = null;
 
     if (isSubscribe) {
-      handleFetchAllConvo();
+      // handleFetchAllConvo();
       intervalId = setInterval(() => {
-        // handleFetchAllConvo();
+        handleFetchAllConvo();
       }, 5000);
     } else {
       handleFetchAllConvo();
@@ -444,6 +473,7 @@ export default function WhatsappLiveChat() {
     const fileName = files?.name;
     const size = `${files?.size / 1024}MB`;
     setSelectedImage({ files, type, fileName, size });
+    // setSelectedImage(files);
   };
 
   const formatDate = (dateString) => {
@@ -487,22 +517,17 @@ export default function WhatsappLiveChat() {
             isReply = true;
           }
 
-          // if (msg.isReceived && msg.mediaPath) {
-          //   mediaPath = await fetch(
-          //     "https://m.cltx.in/upload/image/9d93ed0f-d288-494f-8cec-714e8b75f984.xlsx",
-          //     {
-          //       method: "HEAD",
-          //     }
-          //   )
-          //     .then((response) => {
-          //       const size = response.headers.get("Content-Length");
-          //       console.log(`File size: ${size} bytes`);
-          //     })
-          //     .catch((error) =>
-          //       console.error("Error fetching file size:", error)
-          //     );
+          // if (msg.isReceived && msg?.replyType === "image") {
+          //   try {
+          //     mediaPath = await downloadAttachment({
+          //       waba: wabaState.selectedWaba,
+          //       id: msg.mediaId,
+          //       conversionSrno: msg.srno,
+          //     });
+          //   } catch (err) {
+          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+          //   }
           // } else {
-
           // }
 
           mediaPath = msg.mediaPath;
@@ -808,6 +833,7 @@ export default function WhatsappLiveChat() {
         mobile: chatState?.active.mobileNo,
         wabaNumber: wabaState.selectedWaba,
         ...latestMessageData,
+        replayTime: moment(replayTime).format("YYYY-MM-DD HH:mm:ss"),
       };
       const res = await loadNewChat(data);
 
@@ -837,11 +863,11 @@ export default function WhatsappLiveChat() {
         // console.log(e);
       }
     }
-    handleLoadNewChat();
-    handleIsView();
+    // handleLoadNewChat();
+    // handleIsView();
     const intervalId = setInterval(() => {
-      // handleLoadNewChat();
-      // handleIsView();
+      handleLoadNewChat();
+      handleIsView();
     }, 500);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
@@ -903,9 +929,8 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
-          chatState?.active ? "hidden md:block" : "block"
-        }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
+          }`}
       >
         <InputData
           setSearch={setSearch}
@@ -917,7 +942,6 @@ export default function WhatsappLiveChat() {
           setWabaState={setWabaState}
           setChatState={setChatState}
           setSelectedWaba={setSelectedWaba}
-          setIsSubscribed={setIsSubscribe}
         />
 
         <ChatSidebar
@@ -927,7 +951,6 @@ export default function WhatsappLiveChat() {
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
-          isLoading={isFetching}
         />
       </div>
 
@@ -1043,12 +1066,11 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-              // specificConversation={specificConversation}
+            // specificConversation={specificConversation}
             />
           </motion.div>
         )}
       </AnimatePresence>
-
       {user.role !== "AGENT" && (
         <Dialog
           header="Transfer Chat to Agent"
@@ -1260,7 +1282,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-        // multiple
+      // multiple
       />
 
       {imagePreviewVisible && (

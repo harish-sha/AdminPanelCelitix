@@ -11,6 +11,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import moment from "moment";
 
 import {
   getAllTemplates,
@@ -112,7 +113,7 @@ const SmsDLTtemplate = () => {
                 : "Unknown",
         // consenttype: "-",
         inserttime: item.insertDate
-          ? new Date(item.insertDate).toLocaleString()
+          ? moment(item.insertDate).format("DD-MM-YYYY HH:mm:ss")
           : "-",
         status:
           item.status === 1
@@ -222,7 +223,7 @@ const SmsDLTtemplate = () => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 1, minWidth: 10 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "userid", headerName: "UserId", flex: 0, minWidth: 100 },
     {
       field: "templatename",

@@ -1,0 +1,17 @@
+Changes in reseller and main folder - date of merge - may 29
+
+User: demouser
+Pass: 2qNU!BME
+
+
+7%3uShWk
+
+1. whatsapp > whatsappManageCampaign > WhatsappManageCampaign.jsx - handleSummary changes & show result according to the month wise
+
+changes from ayushi 
+sms.js
+whatsapp.js
+sms > smsreports > smsreports.js
+sms > smsreports > component > exportdialog
+whatsapp > whatsappManageCampaign > whatsappManageCampaign.jsx
+
