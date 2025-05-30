@@ -33,13 +33,6 @@ export const getCampaignDetails = async (data) => {
   });
 };
 
-// Campaign Summary Info
-export const getSMSCampaignDataByCampNo = async (data) => {
-  return await fetchWithAuth("/getSMSCampaignDataByCampNo", {
-    method: "POST",
-    body: JSON.stringify(data),
-  });
-};
 
 // get previous day report
 export const fetchPreviousDayReport = async (data) => {
