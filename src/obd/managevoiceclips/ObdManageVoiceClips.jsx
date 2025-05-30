@@ -306,9 +306,6 @@ const ObdManageVoiceClips = () => {
         return matchesName && matchesStatus && matchesAdminStatus;
       });
 
-      console.log(searchValue?.user);
-      console.log(filteredData);
-
       const formattedData = Array.isArray(filteredData)
         ? filteredData.map((item, index) => ({
             sn: index + 1,
