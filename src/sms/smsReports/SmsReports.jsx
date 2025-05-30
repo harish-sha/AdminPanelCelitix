@@ -591,7 +591,8 @@ const SmsReports = () => {
   //       {
   //         field: "campaign_name",
   //         headerName: "Campaign Name",
-  //         flex: 1,
+  //         flex: 1, 
+  
   //         minWidth: 150,
   //       },
   //       { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },

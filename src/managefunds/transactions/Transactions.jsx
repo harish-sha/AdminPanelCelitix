@@ -84,7 +84,7 @@ const Transactions = () => {
     } catch (e) {
       toast.error("Something went wrong!");
     } finally {
-      setIsFetching(false);nb     
+      setIsFetching(false);
     }
   };
 

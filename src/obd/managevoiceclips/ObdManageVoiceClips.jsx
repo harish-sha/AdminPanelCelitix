@@ -384,17 +384,34 @@ const ObdManageVoiceClips = () => {
     }
   }
 
+  const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
   async function handleAudioPlay(row) {
     try {
       const res = await fetchVoiceClipUrl(row.id);
       if (!res.path) return toast.error("Something went wrong");
-      const url = res.path;
+      const url = `${BASE_AUDIO_URL}/${res.path}`;
+      console.log(url)
       setSelectedRow({ ...row, url });
       setIsOpenPlay(true);
+
     } catch (e) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", e);
     }
+
+
   }
+
+  // async function handleAudioPlay(row) {
+  //   try {
+  //     const res = await fetchVoiceClipUrl(row.id);
+  //     if (!res.path) return toast.error("Something went wrong");
+  //     const url = res.path;
+  //     setSelectedRow({ ...row, url });
+  //     setIsOpenPlay(true);
+  //   } catch (e) {
+  //     toast.error("Something went wrong");
+  //   }
+  // }
 
   return (
     <div className="w-full">
