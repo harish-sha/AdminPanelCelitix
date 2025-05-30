@@ -364,6 +364,20 @@ const ObdManageVoiceClips = () => {
     }
   }
 
+  function hasConsecutiveDuplicates(dynamicList) {
+    for (let i = 1; i < dynamicList.length; i++) {
+      if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
+        toast.error(
+          `Consecutive items at positions ${i} and ${
+            i + 1
+          } have the same type "${dynamicList[i].dynamicType}"`
+        );
+        return true;
+      }
+    }
+    return false;
+  }
+
   async function handleSave() {
     if (selectedOption === "option1" && !staticVoice.file)
       return toast.error("Please select a file");
@@ -384,6 +398,8 @@ const ObdManageVoiceClips = () => {
         }
       });
     }
+
+    hasConsecutiveDuplicates(dynamicVoice.dynamicList);
 
     if (isError) return;
 
@@ -461,12 +477,11 @@ const ObdManageVoiceClips = () => {
     }));
   }
 
-  function deleteDynamicItem(e,index) {
-    const id = `apply${index+1}`;
+  function deleteDynamicItem(e, index) {
+    const id = `apply${index + 1}`;
     const updatedList = dynamicVoice.dynamicList.filter(
       (item) => item.id !== id
     );
-
 
     setDynamicVoice((prev) => ({
       ...prev,
