@@ -50,3 +50,10 @@ export const fetchVoiceClipUrl = async (srno) => {
     }
   );
 };
+
+export const saveStaticVoice = async (data) => {
+  return await fetchWithAuth("obd/manageVoiceClips/staticvoice", {
+    method: "POST",
+    body: data,
+  });
+};
