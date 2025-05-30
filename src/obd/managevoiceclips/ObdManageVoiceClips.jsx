@@ -296,39 +296,28 @@ const ObdManageVoiceClips = () => {
           : true;
 
         const matchesStatus = searchValue?.user
-          ? item.status === searchValue.user
+          ? item.status == searchValue.user
           : true;
 
         const matchesAdminStatus = searchValue?.admin
-          ? item.adminStatus === searchValue.admin
+          ? item.adminStatus == searchValue.admin
           : true;
 
         return matchesName && matchesStatus && matchesAdminStatus;
       });
 
-      let formattedData = [];
-      if (filteredData.length > 0) {
-        formattedData = Array.isArray(filteredData)
-          ? filteredData.map((item, index) => ({
-              sn: index + 1,
-              id: item.srNo,
-              ...item,
-            }))
-          : [];
-      } else {
-        formattedData = Array.isArray(res)
-          ? res.map((item, index) => ({
-              sn: index + 1,
-              id: item.srNo,
-              ...item,
-            }))
-          : [];
-      }
-      setRows(formattedData);
+      console.log(searchValue?.user);
+      console.log(filteredData);
 
-      if (isSearchTriggered && formattedData.length === 0) {
-        toast.error("No data available");
-      }
+      const formattedData = Array.isArray(filteredData)
+        ? filteredData.map((item, index) => ({
+            sn: index + 1,
+            id: item.srNo,
+            ...item,
+          }))
+        : [];
+
+      setRows(formattedData);
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -481,7 +470,7 @@ const ObdManageVoiceClips = () => {
   function deleteDynamicItem(e, index) {
     const id = `apply${index + 1}`;
     console.log(id);
-    console.log(dynamicVoice.dynamicList)
+    console.log(dynamicVoice.dynamicList);
     const updatedList = dynamicVoice.dynamicList.filter(
       (item) => item.id !== id
     );
@@ -531,9 +520,9 @@ const ObdManageVoiceClips = () => {
               tooltipPlacement="right"
               placeholder="Admin Status"
               options={[
-                { value: 1, label: "Approved" },
-                { value: 2, label: "Pending" },
-                { value: 3, label: "Disapproved" },
+                { value: "1", label: "Approved" },
+                { value: "2", label: "Pending" },
+                { value: "3", label: "Disapproved" },
               ]}
               onChange={(value) => {
                 setSearchValue({ ...searchValue, admin: value });
@@ -550,8 +539,8 @@ const ObdManageVoiceClips = () => {
               tooltipPlacement="right"
               placeholder="User Status"
               options={[
-                { value: 1, label: "Active" },
-                { value: 0, label: "Inactive" },
+                { value: "1", label: "Active" },
+                { value: "0", label: "Inactive" },
               ]}
               onChange={(value) => {
                 setSearchValue({ ...searchValue, user: value });
