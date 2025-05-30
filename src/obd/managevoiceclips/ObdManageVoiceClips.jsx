@@ -19,6 +19,7 @@ import {
   deleteVoiceClip,
   fetchVoiceClips,
   fetchVoiceClipUrl,
+  saveDynamicVoice,
   saveStaticVoice,
 } from "@/apis/obd/obd";
 import { DataTable } from "@/components/layout/DataTable";
@@ -151,9 +152,6 @@ const ObdManageVoiceClips = () => {
       dynamicList: dynamicList,
     }));
   }
-  useEffect(() => {
-    console.log(dynamicVoice);
-  }, [dynamicVoice]);
 
   function removeDynamicFile(e, index) {
     if (!dynamicVoiceRef.current[index].value) return;
@@ -372,6 +370,22 @@ const ObdManageVoiceClips = () => {
 
     if (selectedOption === "option1" && !staticVoice.name)
       return toast.error("Please give a file name");
+    if (selectedOption === "option2" && !dynamicVoice.voiceName)
+      return toast.error("Please give a file name");
+    if (selectedOption === "option2" && !dynamicVoice.dynamicList.length)
+      return toast.error("Please select atleast 1 item");
+
+    let isError = false;
+    if (selectedOption === "option2") {
+      dynamicVoice.dynamicList.forEach((item, index) => {
+        if (item.dynamicType === "file" && !item.fileBase64) {
+          toast.error(`Please upload file for item ${index + 1}`);
+          isError = true;
+        }
+      });
+    }
+
+    if (isError) return;
 
     const typeId = {
       transactional: 2,
@@ -399,19 +413,11 @@ const ObdManageVoiceClips = () => {
         setSelecteTransactional("transactional");
       } else if (selectedOption === "option2") {
         const payload = {
-          isdynamic: 1,
-          voiceType: 1,
-          voiceName: "",
-          dynamicList: [
-            {
-              dynamicType: "file",
-              sequence: 1,
-              fileName: "",
-              fileBase64: "",
-              id: "",
-            },
-          ],
+          ...dynamicVoice,
+          voiceType: typeId[selecteTransactional],
         };
+        const res = await saveDynamicVoice(payload);
+        console.log(res);
       }
     } catch (e) {
       console.log(e);
@@ -429,9 +435,10 @@ const ObdManageVoiceClips = () => {
     };
     const lastItem =
       dynamicVoice?.dynamicList?.[dynamicVoice?.dynamicList?.length - 1];
-    if (lastItem.dynamicType === type)
+
+    if (lastItem?.dynamicType === type)
       return toast.error("You can add only one item per type");
-    
+
     setDynamicVoice((prev) => ({
       ...prev,
       dynamicList: [...prev.dynamicList, newItem],
@@ -451,6 +458,19 @@ const ObdManageVoiceClips = () => {
     setDynamicVoice((prev) => ({
       ...prev,
       dynamicList: dynamicList,
+    }));
+  }
+
+  function deleteDynamicItem(e,index) {
+    const id = `apply${index+1}`;
+    const updatedList = dynamicVoice.dynamicList.filter(
+      (item) => item.id !== id
+    );
+
+
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: updatedList,
     }));
   }
 
@@ -682,7 +702,7 @@ const ObdManageVoiceClips = () => {
                     label="Template Name"
                     placeholder="Enter Template Name"
                     required
-                    value=""
+                    value={dynamicVoice.voiceName}
                     onChange={(e) => {
                       setDynamicVoice({
                         ...dynamicVoice,
@@ -724,6 +744,7 @@ const ObdManageVoiceClips = () => {
                           index={index}
                           uploadDynamicFile={uploadDynamicFile}
                           handleFileChange={handleDynamicFileChange}
+                          deleteDynamicItem={deleteDynamicItem}
                         />
                       </div>
                     ))}

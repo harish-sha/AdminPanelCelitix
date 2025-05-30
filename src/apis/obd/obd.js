@@ -52,8 +52,14 @@ export const fetchVoiceClipUrl = async (srno) => {
 };
 
 export const saveStaticVoice = async (data) => {
-  return await fetchWithAuth("obd/manageVoiceClips/staticvoice", {
+  return await fetchWithAuth("/obd/manageVoiceClips/staticvoice", {
     method: "POST",
     body: data,
+  });
+};
+export const saveDynamicVoice = async (data) => {
+  return await fetchWithAuth("/obd/manageVoiceClips/dynamicvoice", {
+    method: "POST",
+    body: JSON.stringify(data),
   });
 };
