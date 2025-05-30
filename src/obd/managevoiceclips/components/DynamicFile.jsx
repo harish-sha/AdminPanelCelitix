@@ -1,5 +1,6 @@
 import { MdOutlineDeleteForever } from "react-icons/md";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import InputField from "@/whatsapp/components/InputField";
 
 export const DynamicFile = ({
   data,
@@ -9,6 +10,8 @@ export const DynamicFile = ({
   uploadDynamicFile,
   handleFileChange,
   deleteDynamicItem,
+  handleDynamicVarChange,
+  dynamicVoice
 }) => {
   function renderFile() {
     return (
@@ -65,8 +68,18 @@ export const DynamicFile = ({
       </div>
     );
   }
+
   function renderVar() {
-    return <>Variable</>;
+    return (
+      <InputField
+        id="dynamicVar"
+        name="dynamicVar"
+        label={"Dynamic Variable"}
+        type="text"
+        value={dynamicVoice.dynamicList[index].variable}
+        onChange={(e) => handleDynamicVarChange(e, index)}
+      />
+    );
   }
   return (
     <div className="">

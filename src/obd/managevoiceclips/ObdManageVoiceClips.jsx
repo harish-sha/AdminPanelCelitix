@@ -399,7 +399,8 @@ const ObdManageVoiceClips = () => {
       });
     }
 
-    hasConsecutiveDuplicates(dynamicVoice.dynamicList);
+    selectedOption === "option2" &&
+      hasConsecutiveDuplicates(dynamicVoice.dynamicList);
 
     if (isError) return;
 
@@ -486,6 +487,18 @@ const ObdManageVoiceClips = () => {
     setDynamicVoice((prev) => ({
       ...prev,
       dynamicList: updatedList,
+    }));
+  }
+
+  function handleDynamicVarChange(e, index) {
+    const dynamicList = [...dynamicVoice.dynamicList];
+    dynamicList[index] = {
+      ...dynamicList[index],
+      variable: e.target.value,
+    };
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: dynamicList,
     }));
   }
 
@@ -760,6 +773,8 @@ const ObdManageVoiceClips = () => {
                           uploadDynamicFile={uploadDynamicFile}
                           handleFileChange={handleDynamicFileChange}
                           deleteDynamicItem={deleteDynamicItem}
+                          handleDynamicVarChange={handleDynamicVarChange}
+                          dynamicVoice={dynamicVoice}
                         />
                       </div>
                     ))}
