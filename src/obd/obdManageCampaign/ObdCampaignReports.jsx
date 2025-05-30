@@ -106,8 +106,6 @@ const ObdCampaignReports = () => {
   };
 
 
-
-
   const voiceType = [
     { label: "Transactional", value: "1" },
     { label: "Promotional", value: "2" },
@@ -170,11 +168,6 @@ const ObdCampaignReports = () => {
       setIsFetching(false);
     }
   };
-
-
-
-
-
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
