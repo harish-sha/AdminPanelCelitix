@@ -119,37 +119,39 @@ export const ChatScreen = ({
   //   fetchBaseUrl();
   // }, []);
 
-  // const handleDownload = async (url, filename) => {
-  //   try {
-  //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", filename || "file");
-  //     document.body.appendChild(link);
-  //     link.click();
-  //     link.remove();
-
-  //     toast.success("Download started!");
-  //   } catch (error) {
-  //     console.error("Download error:", error);
-  //     toast.error("Failed to download the file.");
-  //   }
-  // };
-
   const handleDownload = async (url, filename) => {
     try {
-      const res = await axios.get(url, { responseType: "blob" });
-      const blobUrl = window.URL.createObjectURL(res?.data);
-      window.open(blobUrl);
       const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
+      link.href = url;
+      link.setAttribute("download", filename || "file");
+      // href="example.jpg" download="my-image.jpg"
+          link.setAttribute("target", "_blank"); // Corrected this line
+      document.body.appendChild(link);
       link.click();
+      link.remove();
+
       toast.success("Download started!");
     } catch (error) {
       console.error("Download error:", error);
       toast.error("Failed to download the file.");
     }
   };
+
+  // const handleDownload = async (url, filename) => {
+  //   try {
+  //     const res = await axios.get(url, { responseType: "blob" });
+  //     const blobUrl = window.URL.createObjectURL(res?.data);
+  //     window.open(blobUrl);
+  //     const link = document.createElement("a");
+  //     link.href = blobUrl;
+  //     link.download = filename;
+  //     link.click();
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     toast.error("Failed to download the file.");
+  //   }
+  // };
 
   // const handleDownload = (url, filename = "file") => {
   //   try {

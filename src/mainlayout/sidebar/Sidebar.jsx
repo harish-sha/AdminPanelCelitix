@@ -254,9 +254,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "OBD",
       type: "dropdown",
       links: [
-        // { to: "/obdcreatecampaign", label: "Create Campaign" },
-        // { to: "/obdmanagecampaign", label: "Reports" },
-        // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+        { to: "/obdcreatecampaign", label: "Create Campaign" },
+        { to: "/obdmanagecampaign", label: "Reports" },
+        { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
         // { to: "/obdIntegration", label: "Integration" },
       ],
       roles: ["ADMIN"],

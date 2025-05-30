@@ -50,3 +50,14 @@ export const fetchVoiceClipUrl = async (srno) => {
     }
   );
 };
+
+// fetch getDetailsLog by srNo
+export const fetchDetailsbySrNo = async (data) => {
+  return await fetchWithAuth(
+    `/obd/report/getDetailLogByCampSrno?campaignSrno=${data.campaignSrno}`,
+    {
+      method: "POST",
+      body: JSON.stringify(data),
+    }
+  );
+};
