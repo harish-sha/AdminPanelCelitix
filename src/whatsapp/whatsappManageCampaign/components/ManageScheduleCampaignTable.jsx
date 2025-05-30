@@ -187,8 +187,11 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
   //     totalAudience: '10000',
   //     action: 'True',
   // }));
+  const sortedData = data.sort(
+    (a, b) => new Date(b.queTime) - new Date(a.queTime)
+  );
 
-  const rows = Array.isArray(data)
+  const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
         id: index + 1,
         sn: index + 1,

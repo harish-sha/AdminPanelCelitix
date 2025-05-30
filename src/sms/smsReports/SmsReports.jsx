@@ -1213,8 +1213,12 @@ const SmsReports = () => {
         },
       ]);
 
+      const sortedData = res.sort(
+        (a, b) => new Date(b.queTime) - new Date(a.queTime)
+      );
+
       setRows(
-        Array.isArray(res)
+        Array.isArray(sortedData)
           ? res.map((item, i) => ({
               id: i + 1,
               sn: i + 1,

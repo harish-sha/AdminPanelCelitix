@@ -151,7 +151,8 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
       headerName: "Created On",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => moment(params.row.createdOn).format("DD-MM-YYYY"),
+      renderCell: (params) =>
+        moment(params.row.createdOn).format("DD-MM-YYYY HH:mm"),
     },
     {
       field: "campaignName",
@@ -215,7 +216,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
             onClose={closeDropdown}
           >
             {campaignInfoMap[params.row.id] &&
-              campaignInfoMap[params.row.id][0] ? (
+            campaignInfoMap[params.row.id][0] ? (
               <div className="w-[280px] max-w-full">
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
@@ -279,19 +280,22 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
     },
   ];
 
-  const rows = Array.isArray(data)
+  const sortedData = data.sort(
+    (a, b) => new Date(b.queTime) - new Date(a.queTime)
+  );
+  const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      createdOn: item.queTime || "N/A",
-      campaignName: item.campaignName || "N/A",
-      templateName: item.templateName || "N/A",
-      templateCategory: item.templateCategory || "N/A",
-      templateType: item.templateType || "N/A",
-      status: item.status || "N/A",
-      totalAudience: item.totalAudience || "0",
-      campaignSrno: item.campaign_srno,
-    }))
+        id: index + 1,
+        sn: index + 1,
+        createdOn: item.queTime || "N/A",
+        campaignName: item.campaignName || "N/A",
+        templateName: item.templateName || "N/A",
+        templateCategory: item.templateCategory || "N/A",
+        templateType: item.templateType || "N/A",
+        status: item.status || "N/A",
+        totalAudience: item.totalAudience || "0",
+        campaignSrno: item.campaign_srno,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

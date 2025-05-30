@@ -10,10 +10,10 @@ import { CustomTabPanel } from "../../whatsapp/managetemplate/components/CustomT
 import { IoSearch } from "react-icons/io5";
 import { Dialog } from "primereact/dialog";
 import { Checkbox } from "primereact/checkbox";
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import Loader from "../../whatsapp/components/Loader.jsx";
 import InputField from "../../whatsapp/components/InputField.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
@@ -27,6 +27,7 @@ import { DataTable } from "@/components/layout/DataTable.jsx";
 import { IconButton } from "@mui/material";
 import { fetchDayWiseSummaryObd, fetchSummaryLogsObd } from "@/apis/obd/obd.js";
 import toast from "react-hot-toast";
+import moment from "moment";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,18 +48,13 @@ const ObdCampaignReports = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
-
-
-
-
   const formatDateToDDMMYYYY = (dateStr) => {
     const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
-
 
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
     fromDate: new Date(),
@@ -83,7 +79,12 @@ const ObdCampaignReports = () => {
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
         { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        {
+          field: "totalUnit",
+          headerName: "Total Unit",
+          flex: 1,
+          minWidth: 100,
+        },
         { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
         { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
       ]);
@@ -91,10 +92,10 @@ const ObdCampaignReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (error) {
@@ -105,7 +106,6 @@ const ObdCampaignReports = () => {
     }
   };
 
-
   const voiceType = [
     { label: "Transactional", value: "1" },
     { label: "Promotional", value: "2" },
@@ -113,11 +113,7 @@ const ObdCampaignReports = () => {
 
   // ✅ Date formatting helper
   const formatDateToDDMMYYYY2 = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return moment(date).format("DD-MM-YYYY");
   };
 
   const [summaryDataToFilter, setSummaryDataToFilter] = useState({
@@ -128,8 +124,6 @@ const ObdCampaignReports = () => {
 
   const [summarycolumns, setSummaryColumns] = useState([]);
   const [summaryrows, setSummaryRows] = useState([]);
-
-
 
   const handleSummaryLogs = async () => {
     const data = {
@@ -146,19 +140,25 @@ const ObdCampaignReports = () => {
       setSummaryColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        {
+          field: "totalUnit",
+          headerName: "Total Unit",
+          flex: 1,
+          minWidth: 100,
+        },
         { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
         { field: "sent", headerName: "Sent", flex: 1, minWidth: 100 },
         { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
       ]);
 
+     
       setSummaryRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
+              id: i + 1,
+              sn: i + 1,
+              ...item,
+            }))
           : []
       );
     } catch (error) {
@@ -250,9 +250,9 @@ const ObdCampaignReports = () => {
     setVisibledialog(true);
   };
 
-  const handleSearchBtn = () => { };
+  const handleSearchBtn = () => {};
 
-  const handleSummarySearchBtn = () => { };
+  const handleSummarySearchBtn = () => {};
 
   const handleChangeOption = (event) => {
     const value = event.target.value;
@@ -268,234 +268,242 @@ const ObdCampaignReports = () => {
     setCustomdialognumber(e.target.value);
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = () => {};
 
-  const handleCustomDialogSubmithBtn = () => { };
-
+  const handleCustomDialogSubmithBtn = () => {};
 
   const obdCampColumns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
-    { field: 'type', headerName: 'Type', flex: 1, minWidth: 120 },
-    { field: 'template', headerName: 'Template', flex: 1, minWidth: 120 },
-    { field: 'date', headerName: 'Date', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     {
-      field: 'action',
-      headerName: 'Action',
+      field: "campaignName",
+      headerName: "Campaign Name",
+      flex: 1,
+      minWidth: 120,
+    },
+    { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
+    { field: "template", headerName: "Template", flex: 1, minWidth: 120 },
+    { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
+    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "action",
+      headerName: "Action",
       flex: 1,
       minWidth: 150,
       renderCell: (params) => (
         <>
-          <IconButton className='text-xs' onClick={() => handleView(params.row)}>
+          <IconButton
+            className="text-xs"
+            onClick={() => handleView(params.row)}
+          >
             <VisibilityIcon
               sx={{
-                fontSize: '1.2rem',
-                color: 'green'
+                fontSize: "1.2rem",
+                color: "green",
               }}
             />
           </IconButton>
           <IconButton onClick={() => handleDuplicate(params.row)}>
             <FileCopyIcon
               sx={{
-                fontSize: '1.2rem',
-                color: 'gray',
-              }} />
+                fontSize: "1.2rem",
+                color: "gray",
+              }}
+            />
           </IconButton>
           <IconButton onClick={(event) => handleDelete(event, params.row)}>
             <DeleteForeverIcon
               sx={{
-                fontSize: '1.2rem',
-                color: '#e31a1a',
-              }} />
+                fontSize: "1.2rem",
+                color: "#e31a1a",
+              }}
+            />
           </IconButton>
         </>
       ),
     },
   ];
 
-
   const obdCampRows = [
     {
       id: 1,
       sn: 1,
-      campaignName: 'diwali',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '12/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "diwali",
+      type: "Transactional",
+      template: "Simple Broadcast",
+      date: "12/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 2,
       sn: 2,
-      campaignName: 'holi',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '13/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "holi",
+      type: "Promotional",
+      template: "Text-2-Speech",
+      date: "13/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 3,
       sn: 3,
-      campaignName: 'christmas',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '15/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "christmas",
+      type: "Transactional",
+      template: "Simple Broadcast",
+      date: "15/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 4,
       sn: 4,
-      campaignName: 'easter',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '13/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "easter",
+      type: "Promotional",
+      template: "Multi Broadcast",
+      date: "13/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 5,
       sn: 5,
-      campaignName: 'new year',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '01/01/2025',
-      status: 'Success',
-      action: 'True',
+      campaignName: "new year",
+      type: "Transactional",
+      template: "Simple Broadcast",
+      date: "01/01/2025",
+      status: "Success",
+      action: "True",
     },
     {
       id: 6,
       sn: 6,
-      campaignName: 'thanksgiving',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '25/11/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "thanksgiving",
+      type: "Promotional",
+      template: "Text-2-Speech",
+      date: "25/11/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 7,
       sn: 7,
-      campaignName: 'eid',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '10/04/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "eid",
+      type: "Transactional",
+      template: "Multi Broadcast",
+      date: "10/04/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 8,
       sn: 8,
-      campaignName: 'halloween',
-      type: 'Promotional',
-      template: 'Simple Broadcast',
-      date: '31/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "halloween",
+      type: "Promotional",
+      template: "Simple Broadcast",
+      date: "31/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 9,
       sn: 9,
-      campaignName: 'rakhi',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '19/08/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "rakhi",
+      type: "Transactional",
+      template: "Multi Broadcast",
+      date: "19/08/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 10,
       sn: 10,
-      campaignName: 'pongal',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '14/01/2025',
-      status: 'Success',
-      action: 'True',
+      campaignName: "pongal",
+      type: "Promotional",
+      template: "Text-2-Speech",
+      date: "14/01/2025",
+      status: "Success",
+      action: "True",
     },
     {
       id: 11,
       sn: 11,
-      campaignName: 'lohri',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '13/01/2025',
-      status: 'Success',
-      action: 'True',
+      campaignName: "lohri",
+      type: "Transactional",
+      template: "Simple Broadcast",
+      date: "13/01/2025",
+      status: "Success",
+      action: "True",
     },
     {
       id: 12,
       sn: 12,
-      campaignName: 'navratri',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '03/10/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "navratri",
+      type: "Promotional",
+      template: "Multi Broadcast",
+      date: "03/10/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 13,
       sn: 13,
-      campaignName: 'guru purab',
-      type: 'Transactional',
-      template: 'Text-2-Speech',
-      date: '08/11/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "guru purab",
+      type: "Transactional",
+      template: "Text-2-Speech",
+      date: "08/11/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 14,
       sn: 14,
-      campaignName: 'valentine’s day',
-      type: 'Promotional',
-      template: 'Simple Broadcast',
-      date: '14/02/2025',
-      status: 'Success',
-      action: 'True',
+      campaignName: "valentine’s day",
+      type: "Promotional",
+      template: "Simple Broadcast",
+      date: "14/02/2025",
+      status: "Success",
+      action: "True",
     },
     {
       id: 15,
       sn: 15,
-      campaignName: 'independence day',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '15/08/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "independence day",
+      type: "Transactional",
+      template: "Multi Broadcast",
+      date: "15/08/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 16,
       sn: 16,
-      campaignName: 'republic day',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '26/01/2025',
-      status: 'Success',
-      action: 'True',
+      campaignName: "republic day",
+      type: "Promotional",
+      template: "Text-2-Speech",
+      date: "26/01/2025",
+      status: "Success",
+      action: "True",
     },
     {
       id: 17,
       sn: 17,
-      campaignName: 'ganesh chaturthi',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '07/09/2024',
-      status: 'Success',
-      action: 'True',
+      campaignName: "ganesh chaturthi",
+      type: "Transactional",
+      template: "Simple Broadcast",
+      date: "07/09/2024",
+      status: "Success",
+      action: "True",
     },
     {
       id: 18,
       sn: 18,
-      campaignName: 'baisakhi',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '14/04/2024',
-      status: 'Success',
-      action: 'True',
-    }
+      campaignName: "baisakhi",
+      type: "Promotional",
+      template: "Multi Broadcast",
+      date: "14/04/2024",
+      status: "Success",
+      action: "True",
+    },
   ];
 
   // const ObdSummaryRows = [
@@ -713,7 +721,8 @@ const ObdCampaignReports = () => {
                 <Tab
                   label={
                     <span>
-                      <PollOutlinedIcon size={20} />Summary Logs
+                      <PollOutlinedIcon size={20} />
+                      Summary Logs
                     </span>
                   }
                   sx={{
@@ -884,7 +893,10 @@ const ObdCampaignReports = () => {
                       label="From Date"
                       value={summaryDataToFilter.fromDate}
                       onChange={(e) =>
-                        setSummaryDataToFilter((prev) => ({ ...prev, fromDate: e }))
+                        setSummaryDataToFilter((prev) => ({
+                          ...prev,
+                          fromDate: e,
+                        }))
                       }
                     />
                   </div>
@@ -894,7 +906,10 @@ const ObdCampaignReports = () => {
                       label="To Date"
                       value={summaryDataToFilter.toDate}
                       onChange={(e) =>
-                        setSummaryDataToFilter((prev) => ({ ...prev, toDate: e }))
+                        setSummaryDataToFilter((prev) => ({
+                          ...prev,
+                          toDate: e,
+                        }))
                       }
                     />
                   </div>
