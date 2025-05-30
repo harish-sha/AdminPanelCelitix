@@ -149,16 +149,16 @@ const CampaignDeliveryReportDetails = () => {
       headerName: "Sent Time",
       flex: 1,
       minWidth: 150,
-      renderCell: (params) =>
-        moment(params.row.sentTime).format("DD-MM-YYYY HH:mm:ss"),
+      // renderCell: (params) =>
+      //   moment(params.row.sentTime).format("DD-MM-YYYY HH:mm:ss"),
     },
     {
       field: "deliveryTime",
       headerName: "Delivery Time",
       flex: 1,
       minWidth: 150,
-      renderCell: (params) =>
-        moment(params.row.deliveryTime).format("DD-MM-YYYY HH:mm:ss"),
+      // renderCell: (params) =>
+      //   moment(params.row.deliveryTime).format("DD-MM-YYYY HH:mm:ss"),
     },
     { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 150 },
     { field: "reason", headerName: "Reason", flex: 1, minWidth: 150 },

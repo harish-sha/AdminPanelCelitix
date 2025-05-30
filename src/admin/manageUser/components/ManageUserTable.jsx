@@ -1348,7 +1348,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       minWidth: 400,
       renderCell: (params) => (
         <>
-          <CustomTooltip arrow title="Login" placement="top">
+          {/* <CustomTooltip arrow title="Login" placement="top">
             <IconButton onClick={() => handleLonins(params.row.srno)}>
               <LockOutlinedIcon
                 sx={{
@@ -1357,8 +1357,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 }}
               />
             </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="Otp" placement="top">
+          </CustomTooltip> */}
+          <CustomTooltip arrow title="OTP Validation Numbers" placement="top">
             <IconButton onClick={() => handleOtp(params.row.srno)}>
               <EmergencyOutlinedIcon
                 sx={{
@@ -1408,7 +1408,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip arrow title="Manage Api Key" placement="top">
+          <CustomTooltip arrow title="Manage API Key" placement="top">
             <IconButton onClick={() => handleApikey(params.row.srno)}>
               <KeyOutlinedIcon
                 sx={{
@@ -1428,7 +1428,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               />
             </IconButton>
           </CustomTooltip>
-          <CustomTooltip arrow title="User Reports" placement="top">
+          {/* <CustomTooltip arrow title="User Reports" placement="top">
             <IconButton onClick={() => handleReport(params.row.srno)}>
               <AssignmentOutlinedIcon
                 sx={{
@@ -1437,8 +1437,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 }}
               />
             </IconButton>
-          </CustomTooltip>
-          <CustomTooltip arrow title="PETM Link Chain" placement="top">
+          </CustomTooltip> */}
+          <CustomTooltip arrow title="PE-TM Chain" placement="top">
             <IconButton onClick={() => handlePetmChain(params.row.srno)}>
               <HiLink className="size-[1.2rem] text-gray-500" />
             </IconButton>
