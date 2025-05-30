@@ -278,7 +278,7 @@ const ObdManageVoiceClips = () => {
     // },
   ];
 
-  async function handlefetchAllVoiceClips() {
+   async function handlefetchAllVoiceClips() {
     try {
       const res = await fetchVoiceClips();
 
@@ -296,39 +296,25 @@ const ObdManageVoiceClips = () => {
           : true;
 
         const matchesStatus = searchValue?.user
-          ? item.status === searchValue.user
+          ? item.status == searchValue.user
           : true;
 
         const matchesAdminStatus = searchValue?.admin
-          ? item.adminStatus === searchValue.admin
+          ? item.adminStatus == searchValue.admin
           : true;
 
         return matchesName && matchesStatus && matchesAdminStatus;
       });
 
-      let formattedData = [];
-      if (filteredData.length > 0) {
-        formattedData = Array.isArray(filteredData)
-          ? filteredData.map((item, index) => ({
-              sn: index + 1,
-              id: item.srNo,
-              ...item,
-            }))
-          : [];
-      } else {
-        formattedData = Array.isArray(res)
-          ? res.map((item, index) => ({
-              sn: index + 1,
-              id: item.srNo,
-              ...item,
-            }))
-          : [];
-      }
-      setRows(formattedData);
+      const formattedData = Array.isArray(filteredData)
+        ? filteredData.map((item, index) => ({
+            sn: index + 1,
+            id: item.srNo,
+            ...item,
+          }))
+        : [];
 
-      if (isSearchTriggered && formattedData.length === 0) {
-        toast.error("No data available");
-      }
+      setRows(formattedData);
     } catch (e) {
       toast.error("Something went wrong");
     }
