@@ -3536,12 +3536,14 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               </div>
             );
           })}
-          <UniversalButton
-            id={"assignService"}
-            label={"Assign Service"}
-            name={"assignService"}
-            onClick={handleAssignService}
-          />
+          <div className="flex items-center justify-center">
+            <UniversalButton
+              id={"assignService"}
+              label={"Assign Service"}
+              name={"assignService"}
+              onClick={handleAssignService}
+            />
+          </div>
         </>
       </Dialog>
       {/* Assign Service */}
