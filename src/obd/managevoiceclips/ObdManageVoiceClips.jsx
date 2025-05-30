@@ -76,7 +76,7 @@ const ObdManageVoiceClips = () => {
         sequence: 1,
         fileName: "",
         fileBase64: "",
-        id: "",
+        id: "apply1",
       },
     ],
   });
@@ -480,6 +480,8 @@ const ObdManageVoiceClips = () => {
 
   function deleteDynamicItem(e, index) {
     const id = `apply${index + 1}`;
+    console.log(id);
+    console.log(dynamicVoice.dynamicList)
     const updatedList = dynamicVoice.dynamicList.filter(
       (item) => item.id !== id
     );
