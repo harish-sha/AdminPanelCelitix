@@ -10,6 +10,7 @@ import { Box } from "@mui/material";
 import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
 import moment from "moment";
+import { id } from "date-fns/locale";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -77,6 +78,9 @@ const CustomPaginatior = ({
 
 export const ApiCampaignInfo = () => {
   const { state } = useLocation();
+  if (!state) {
+    return null;
+  }
 
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
@@ -96,10 +100,7 @@ export const ApiCampaignInfo = () => {
       //   deliveryStatus: state.log,
       //   status: "",
       // };
-
       // later update with upper code
-
-      const selectedUser = state.selectedUser || "0"
 
       const formattedFromDate = state.selectedDate
         ? moment(state.selectedDate).format("YYYY-MM-DD")
@@ -119,6 +120,7 @@ export const ApiCampaignInfo = () => {
 
       const payload = {
         fromDate: formattedFromDate,
+
         toDate: formattedFromDate,
         mobile: "",
         page,
@@ -126,41 +128,36 @@ export const ApiCampaignInfo = () => {
         source: "API",
         deliveryStatus,
         status,
-        selectedUserId: selectedUser
       };
       const res = await getListofSendMsg(payload);
-      const responseData = Array.isArray(res) ? res : [];
-      setTotalPage(5000);
-      setData(responseData);
+      setTotalPage(res?.total || 0);
 
-      // if (res && Array.isArray(res.data)) {
-      //   setData(res.data);
-      //   setTotalPage(res.total || 0);
-      // } else if (Array.isArray(res)) {
-      //   setData(res);
-      //   setTotalPage(res.length);
-      // } else {
-      //   setData([]);
-      //   setTotalPage(0);
-      // }
+      const formattedData = Array.isArray(res.data)
+        ? res?.data?.map((item, index) => ({
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
+        : [];
+
+        console.log("formatted data", formattedData);
+      setData(formattedData);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
     }
   }
-  useEffect(() => {
-    if (!state) {
-      window.history.back();
-      return;
-    }
-    handleFetchDetails();
-  }, [state]);
+  // useEffect(() => {
+  //   if (!state) {
+  //     window.history.back();
+  //     return;
+  //   }
+  //   handleFetchDetails();
+  // }, [state]);
 
   useEffect(() => {
-    if (state) {
-      handleFetchDetails(paginationModel.page + 1);
-    }
-  }, [paginationModel.page]);
+    handleFetchDetails(currentPage);
+  }, [currentPage]);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -175,14 +172,28 @@ export const ApiCampaignInfo = () => {
       minWidth: 120,
     },
     { field: "reason", headerName: "Reason", flex: 2, minWidth: 120 },
-    { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
-    { field: "delivery", headerName: "Delivery Time", flex: 1, minWidth: 120 },
-    { field: "read", headerName: "Read Time", flex: 1, minWidth: 120 },
-    { field: "que", headerName: "Que Time", flex: 1, minWidth: 120 },
+    { field: "sentTime", headerName: "Sent", flex: 1, minWidth: 120 },
+    { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 120 },
+    { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
+    { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
+  // const rows = Array.from({ length: 20 }, (_, i) => ({
+  //   id: i + 1,
+  //   sn: i + 1,
+  //   wabaNumber: `WABA-${1000 + i}`,
+  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
+  //   source: "API",
+  //   status: "Pending",
+  //   deliveryStatus: "Sent",
+  //   reason: "N/A",
+  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
+  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
+  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
+  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
+  // }));
 
-  // const rows = Array.isArray(data) ? data.map((item, i) => ({
+  // const rows = data?.map((item, i) => ({
   //   id: i + 1,
   //   // sn: i + 1,
   //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
@@ -197,14 +208,14 @@ export const ApiCampaignInfo = () => {
   //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
   //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
   //   ...item,
-  // })) : [];
+  // }));
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-      id: i + 1,
-      sn: paginationModel.page * paginationModel.pageSize + i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: paginationModel.page * paginationModel.pageSize + i + 1,
+        ...item, // Spread the item properties
+      }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -286,7 +297,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => { }}
+          onRowSelectionModelChange={(ids) => {}}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize
