@@ -429,6 +429,8 @@ const ObdManageVoiceClips = () => {
   }
 
   function addDynamicItem(type) {
+    if (dynamicVoice?.dynamicList?.length >= 5)
+      return toast.error("You can add only 5 items");
     const newItem = {
       dynamicType: type,
       sequence: dynamicVoice?.dynamicList?.length + 1,
