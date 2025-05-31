@@ -97,14 +97,10 @@ const WhatsappConversation = () => {
   };
 
   const handleExport = async () => {
-    console.log("Export Data:", data); // Debugging log
-
     // Check if data exists and has length
     if (!data?.data || !Array.isArray(data.data) || data.data.length === 0) {
       return toast.error("No data to download");
     }
-
-    console.log("Export Data Length:", data?.data?.length);
 
     // Define columns for export
     const col = [

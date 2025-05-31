@@ -191,7 +191,7 @@ const SuggestionReportRcs = () => {
     setInitialLoad(false);
   }, [currentPage]);
 
-  async function fetchNextPageData() { }
+  async function fetchNextPageData() {}
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -342,7 +342,6 @@ const SuggestionReportRcs = () => {
               }}
             />
           </div>
-
 
           {/* Mobile Number Input Field */}
           <div className="w-full sm:w-48">
