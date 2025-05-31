@@ -736,10 +736,14 @@ const Login = () => {
         },
       };
 
+       const ipResponse = await axios.get("https://ipapi.co/json/");
+
       const payloadd = {
         ...inputDetails,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: "127.0.0.4"
-      }
+      };
 
       delete payloadd.rememberMe;
       const res = await login(payloadd);

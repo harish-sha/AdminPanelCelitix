@@ -35,7 +35,6 @@ const Userlogin = () => {
   const [isBtnVisible, setIsBtnVisible] = useState(true);
   const [loading, setLoading] = useState(false);
 
-
   const [inputDetails, setInputDetails] = useState({
     userId: "",
     password: "",
@@ -108,10 +107,14 @@ const Userlogin = () => {
         },
       };
 
+      const ipResponse = await axios.get("https://ipapi.co/json/");
+
       const payloadd = {
         ...inputDetails,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: "127.0.0.4"
-      }
+      };
 
       delete payloadd.rememberMe;
       const res = await login(payloadd);
@@ -194,13 +197,13 @@ const Userlogin = () => {
 
       <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
         <motion.div
-        initial={{ y: -100, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="fixed w-full top-0"
-      >
-        <Header />
-      </motion.div>
+          initial={{ y: -100, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="fixed w-full top-0"
+        >
+          <Header />
+        </motion.div>
         <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
           <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
             <div className="grid grid-cols-1 md:grid-cols-2 h-full">
@@ -596,6 +599,5 @@ const Userlogin = () => {
   //     </div>
   //   </div>
   // );
-
 };
 export default Userlogin;
