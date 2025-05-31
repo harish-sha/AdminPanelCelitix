@@ -18,6 +18,7 @@ import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import moment from "moment";
 import { Dialog } from "primereact/dialog";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -104,10 +105,16 @@ const WhatsappConversationTable = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   function handleView(row) {
-    console.log(row);
 
     if (!row.mediaPath || !row.replyType) return;
     const type = row.replyType.toLowerCase();
+    let url = row.mediaPath;
+
+    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+    
+    if(!parsed){
+     return toast.error("Invalid URL");
+    }
 
     let mimeType = "";
 
@@ -115,7 +122,7 @@ const WhatsappConversationTable = ({
       const pathname = new URL(row.mediaPath).pathname;
       mimeType = pathname.split(".").pop();
     }
-    setFileData({ url: row.mediaPath, type, mimeType });
+    setFileData({ url, type, mimeType });
     setIsDialogOpen(true);
   }
 
