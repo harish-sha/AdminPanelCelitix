@@ -130,7 +130,7 @@ import PageNotFound from "@/NotFound/PageNotFound";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import { AddCallback } from "@/callback/page/addCallback";
+// import { AddCallback } from "@/callback/page/addCallback";
 import ResellerDashboard from "../../ResellerDashboard";
 
 const Approutes = () => {

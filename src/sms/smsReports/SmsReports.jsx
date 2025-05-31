@@ -896,8 +896,6 @@ const SmsReports = () => {
           <div className="w-full">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-52">
-            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-52">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -915,7 +913,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-52">
-              <div className="w-full sm:w-52">
                 <InputField
                   label="Campaign Name"
                   id="campaignName"
@@ -930,7 +927,6 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-52">
               <div className="w-full sm:w-52">
                 <InputField
                   label="Mobile Number"
@@ -947,14 +943,13 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-52">
-              <div className="w-full sm:w-52">
                 <AnimatedDropdown
                   label="Campaign Type"
                   id="campaignType"
                   name="campaignType"
                   options={campaignoptions}
                   value={campaignDataToFilter.campaingType}
-                  placeholder="Select Type"
+                  placeholder="Select Campaign Type"
                   onChange={(value) => {
                     setCampaignDataToFilter((prev) => ({
                       ...prev,
@@ -963,7 +958,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              
+              <div className="w-full sm:w-52 flex gap-2">
                 <div className="w-max-content">
                   <UniversalButton
                     label={isFetching ? "Searching..." : "Search"}
@@ -975,6 +970,17 @@ const SmsReports = () => {
                     disabled={isFetching}
                   />
                 </div>
+                <UniversalButton
+                  label={"Export"}
+                  id="exportCampaign"
+                  name="exportCampaign"
+                  variant="primary"
+                  onClick={() => {
+                    setIsExportDialogOpen(true);
+                  }}
+                  disabled={isFetching}
+                />
+              </div>
             </div>
           </div>
           <div className="w-full">
@@ -988,8 +994,6 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={1}>
           <div className="w-full">
-            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-42">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-42">
                 <UniversalDatePicker
@@ -1010,7 +1014,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
-              <div className="w-full sm:w-42">
                 <UniversalDatePicker
                   label="To Date"
                   id="previoustodate"
@@ -1028,7 +1031,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
-              <div className="w-full sm:w-42">
                 <InputField
                   label="Mobile Number"
                   id="previousnumber"
@@ -1045,7 +1047,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
-              <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Type"
                   id="previousType"
@@ -1061,7 +1062,6 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-42">
               <div className="w-full sm:w-42">
                 <AnimatedDropdown
                   label="Source"
@@ -1092,7 +1092,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
-              <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1108,7 +1107,6 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-full sm:w-42">
-              <div className="w-full sm:w-42">
                 <InputField
                   label="Content"
                   id="previouscontent"
@@ -1123,6 +1121,8 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+
+              <div className="w-full sm:w-42">
                 <div className="w-max-content">
                   <UniversalButton
                     label="Show"
@@ -1132,6 +1132,7 @@ const SmsReports = () => {
                     onClick={handlePreviousDaysSearch}
                   />
                 </div>
+              </div>
             </div>
           </div>
           <div className="w-full">
@@ -1145,7 +1146,6 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={2}>
           <div className="w-full">
-            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
@@ -1175,7 +1175,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-56">
+              <div className="flex flex-wrap w-full gap-4 sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
                   id="SmsTyoe"
@@ -1194,6 +1194,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   label="Type"
@@ -1211,7 +1212,8 @@ const SmsReports = () => {
                   disabled={daywiseDataToFilter.selectOption === 1}
                 />
               </div>
-              <div className="w-max-content">
+              <div className="w-full sm:w-56">
+                <div className="w-max-content">
                   <UniversalButton
                     label="Show"
                     id="summaryshow"
@@ -1219,6 +1221,7 @@ const SmsReports = () => {
                     variant="primary"
                     onClick={handleDayWiseSummary}
                   />
+                </div>
               </div>
             </div>
           </div>
@@ -1234,7 +1237,6 @@ const SmsReports = () => {
         </CustomTabPanel>
         <CustomTabPanel value={value} index={3}>
           <div className="w-full">
-            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
               <div className="w-full sm:w-56">
                 <UniversalDatePicker
@@ -1264,6 +1266,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
+
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
                   label="Type"
@@ -1281,13 +1284,13 @@ const SmsReports = () => {
                 />
               </div>
               <div className="w-max-content">
-                  <UniversalButton
-                    label="Show"
-                    id="attachmentshow"
-                    name="attachmentshow"
-                    variant="primary"
-                    onClick={handleAttachmentSearch}
-                  />
+                <UniversalButton
+                  label="Show"
+                  id="attachmentshow"
+                  name="attachmentshow"
+                  variant="primary"
+                  onClick={handleAttachmentSearch}
+                />
               </div>
             </div>
           </div>

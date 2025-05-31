@@ -24,6 +24,7 @@ const FlowCreationPage = () => {
   const [error, setError] = useState("");
   const [buildFlows, setBuildFlows] = useState("");
 
+  // console.log("canvasItems", canvasItems)
   //create new screen
   const [tabs, setTabs] = useState([
     { title: "Welcome", content: "Welcome", id: "Welcome_1", payload: [] },
@@ -39,18 +40,48 @@ const FlowCreationPage = () => {
     Math.floor(Math.random() * 1000)
   );
 
-  const handleAddItem = (item) => {
-    // setTabs((prev)=>)
-    const newTabs = [...tabs];
-    newTabs[activeIndex] = {
-      ...newTabs[activeIndex],
-      payload: [
-        ...newTabs[activeIndex].payload,
-        { type: item.type, value: "" },
-      ],
-    };
-    setTabs(newTabs);
+const handleAddItem = (item) => {
+  const newTabs = [...tabs];
+  console.log("newTabs", newTabs);
+
+  const nonDuplicateTabs = [
+    "heading",
+    "subheading",
+    "textbody",
+    "textcaption"
+  ];
+
+  // Check for duplicates *only* if item.type is in nonDuplicateTabs
+  const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
+
+  if (shouldCheckDuplicate) {
+    const isDuplicate = newTabs[activeIndex]?.payload?.some(
+      (payloadItem) => payloadItem.type === item.type
+    );
+
+    if (isDuplicate) {
+      toast.error(`Only one "${item.type}" allowed in the canvas.`);
+      return; 
+    }
+  }
+
+  // Add the item
+  newTabs[activeIndex] = {
+    ...newTabs[activeIndex],
+    payload: [
+      ...newTabs[activeIndex].payload,
+      { type: item.type, value: "" },
+    ],
   };
+
+  setTabs(newTabs);
+  // toast.success(`"${item.type}" added successfully`);
+};
+
+
+  useEffect(()=> {
+    console.log(tabs)
+  },[])
 
   const handleEdit = (index) => {
     tabs[activeIndex].payload[index];
@@ -58,6 +89,7 @@ const FlowCreationPage = () => {
   };
 
   const handleSave = (updatedData) => {
+    // console.log("updatedData", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (
@@ -70,6 +102,7 @@ const FlowCreationPage = () => {
           options: updatedData.options || [],
           checked: updatedData.checked || [],
           selectedOption: updatedData.selectedOption || "",
+          ...updatedData
         };
       } else {
         console.error("Invalid index in updatedData:", updatedData.index);
@@ -85,9 +118,10 @@ const FlowCreationPage = () => {
   };
 
   async function handleFlowBuild() {
+
     try {
       const payload = generatePayload(tabs);
-
+      
       const params = {
         name: state?.flowName,
         category: state?.selectCategories,
@@ -96,12 +130,13 @@ const FlowCreationPage = () => {
       };
 
       const res = await saveFlow(params, payload);
-      console.log(res);
-      if (!res.flag) {
-        return toast.error("Error while building flow");
-      }
+      console.log("res", res)
+      // if (!res.flag) {
+      //   return toast.error("Error while building flow");
+      // }
       toast.success("Flow Built Successfully");
     } catch (e) {
+      console.log("error", e)
       return toast.error("Error while building flow");
     }
   }

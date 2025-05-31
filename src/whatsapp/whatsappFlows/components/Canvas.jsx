@@ -50,13 +50,40 @@ const Canvas = ({
   }));
 
   // Handle input change for TextField components
-  const handleInputChange = (index, value) => {
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems];
-      updatedItems[index].value = value;
-      return updatedItems;
-    });
-  };
+  // const handleInputChange = (index, value) => {
+  //   console.log("value", value)
+  //   setItems((prevItems) => {
+  //     const updatedItems = [...prevItems];
+  //     updatedItems[index].value = value;
+  //     return updatedItems;
+  //   });
+  // };
+
+ const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
+  if (!tabs?.[activeIndex]?.payload) return "";
+
+  const targetItem = tabs[activeIndex].payload.find(
+    (payloadItem) => payloadItem.type === item.type && payloadItem.index === item.index
+  );
+
+  if (!targetItem) return "";
+
+  // For textInput and textArea: look under texts
+  if (item.type === "textInput" || item.type === "textArea") {
+    const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
+    return targetItem.texts?.[key]?.[field] || "";
+  }
+
+  // For footerbutton: look under footer
+  if (item.type === "footerbutton") {
+    return targetItem.footer?.footer_1?.center_caption || "";
+  }
+
+  // Fallback: return an empty string
+  return "";
+};
+
+
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
@@ -94,6 +121,7 @@ const Canvas = ({
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
+            position: "relative",
           }}
         >
           <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
@@ -120,8 +148,8 @@ const Canvas = ({
           // variant="outlined"
           // fullWidth
           // className="text-field"
-          value={item.value}
-          onChange={(e) => handleInputChange(index, e.target.value)}
+         value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          // onChange={(e) => handleInputChange(index, e.target.value)}
           multiline={item.type === "textArea"}
           rows={item.type === "textArea" ? 4 : undefined}
           // disabled={item.type !== "textInput" && item.type !== "textArea"}
@@ -215,7 +243,7 @@ const Canvas = ({
     // </Box>
     <div
       ref={drop}
-      className="relative shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
+      className=" shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
     >
       {/* Tabs for multiple screens */}
       <TabView

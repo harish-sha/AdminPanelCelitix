@@ -10,9 +10,13 @@ import {
   TextField,
 } from "@mui/material";
 import InputField from "../../components/InputField";
+import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@mui/icons-material/CheckBox';
+
 
 const MobilePanel = ({ items, onUpdateItem }) => {
-  // console.log("Items:", items);
+  console.log("Items:", items);
+  
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
@@ -61,6 +65,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
+  console.log("itemsssssss", items)
   return (
     <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2 overflow-hidden border-3 border-black">
       <Typography variant="h6" sx={{ textAlign: "center" }}>
@@ -68,6 +73,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
       </Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
         {items.map((item, index) => {
+          console.log("item", item)
           switch (item.type) {
             // Render Heading
             case "heading":
@@ -77,7 +83,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h5"
                   className="text-lg font-semibold mb-1"
                 >
-                  {item.value || "Heading Placeholder"}
+                  {item.heading || "Heading Placeholder"}
                 </Typography>
               );
 
@@ -89,7 +95,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h8"
                   className="text-md font-medium  mb-1"
                 >
-                  {item.value || "Subheading Placeholder"}
+                  {item.subheading || "Subheading Placeholder"}
                 </Typography>
               );
 
@@ -97,7 +103,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             case "textbody":
               return (
                 <Typography key={index} variant="h8" sx={{ whiteSpace: "pre-line" }}>
-                  {item.value || "Text Body "}
+                  {item.textbody || "Text Body "}
                 </Typography>
               );
 
@@ -108,71 +114,129 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="caption"
                 // sx={{ whiteSpace: "pre-line" }}
                 >
-                  {item.value || "Text Caption Placeholder"}
+                  {item.textcaption|| "Text Caption Placeholder"}
                 </Typography>
               );
 
             // Render Text Input
             case "textInput":
               return (
+                <div key={index} className="mb-4">
+                <Typography
+                  variant="caption"
+                // sx={{ whiteSpace: "pre-line" }}
+                >
+                  {item.texts?.textInput_1?.label || "Label"}
+                </Typography>
+
                 <InputField
-                  key={index}
                   fullWidth
-                  value={item.value || ""}
-                  placeholder="Text Input Placeholder"
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
+                  placeholder={item.texts?.textInput_1?.helper_text || "Placeholder"}
+                  // placeholder="Text Input Placeholder"
+                  // onChange={(e) =>
+                  //   onUpdateItem &&
+                  //   onUpdateItem(index, (prevItem) => ({
+                  //     ...prevItem,
+                  //     value: e.target.value,
+                  //   }))
+                  // }
                 />
+                </div>
+                
               );
 
             // Render Text Area
             case "textArea":
               return (
+                <div key={index} className="mb-4">
+                   <Typography variant="caption">
+                      {item.texts?.textArea_1?.label || "Label"}
+                    </Typography>
+
                 <InputField
-                  key={index}
                   fullWidth
                   multiline
                   rows={4}
-                  value={item.value || ""}
-                  placeholder="Text Area Placeholder"
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
+                  placeholder={item.texts?.textArea_1?.helper_text || "Placeholder"}
+                  // placeholder="Text Area Placeholder"
+                  // onChange={(e) =>
+                  //   onUpdateItem &&
+                  //   onUpdateItem(index, (prevItem) => ({
+                  //     ...prevItem,
+                  //     value: e.target.value,
+                  //   }))
+                  // }
                 />
+                </div>
               );
+
 
             // Render Checkboxes
             case "checkBox":
-              return (
-                <Box key={index}>
-                  {(item.options || []).map((option, optionIndex) => (
-                    <FormControlLabel
-                      key={optionIndex}
-                      control={
-                        <Checkbox
-                          checked={item.checked?.[optionIndex] || false}
-                          onChange={(e) =>
-                            handleCheckboxChange(
-                              index,
-                              optionIndex,
-                              e.target.checked
-                            )
-                          }
-                        />
-                      }
-                      label={option || `Option ${optionIndex + 1}`}
-                    />
-                  ))}
-                </Box>
+  return (
+    <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+      {/* Main Label for the Checkbox Group */}
+      <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+        {item?.checkboxGroups?.checkbox_1.label || "Checkbox Group"}
+      </Typography>
+
+      {/* Checkbox List */}
+       {(Array.isArray(item?.checkboxGroups?.checkbox_1.options) && item.checkboxGroups.checkbox_1.options.length > 0
+  ? item.checkboxGroups.checkbox_1.options
+  : [
+      { title: 'Dummy Option 1', description: 'Description 1', image: 'https://via.placeholder.com/40' },
+      { title: 'Dummy Option 2', description: 'Description 2', image: 'https://via.placeholder.com/40' }
+    ]
+).map((option, optionIndex) => (
+  <Box
+    key={optionIndex}
+    sx={{
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      p: 1,
+      mb: 1,
+      // border: '1px solid #eee',
+      borderRadius: 1,
+    }}
+  >
+    {/* Left Side: Image + Text */}
+    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      {option.image && (
+        <Box
+          component="img"
+          src={option.image}
+          alt={option.title || `Option ${optionIndex + 1}`}
+          sx={{ width: 40, height: 40, borderRadius: '10%', mr: 1 }}
+        />
+      )}
+
+      <Box>
+        <Typography variant="body2" fontWeight={600}>
+          {option.title || `Option ${optionIndex + 1}`}
+        </Typography>
+        {option.description && (
+          <Typography variant="caption" color="text.secondary">
+            {option.description}
+          </Typography>
+        )}
+      </Box>
+    </Box>
+
+    {/* Right Side: Checkbox */}
+    <Checkbox
+      checked={item.checked?.[optionIndex] || false}
+      onChange={(e) =>
+        handleCheckboxChange(index, optionIndex, e.target.checked)
+      }
+      icon={<CheckBoxOutlineBlankIcon />}
+      checkedIcon={<CheckBoxIcon />}
+    />
+  </Box>
+))}
+
+    </Box>
+
               );
 
             // Render Radio Buttons
@@ -216,31 +280,23 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             case "footerbutton":
               return (
                 <>
+                <div className="w-full max-w-md  text-center py-2 bottom-0 absolute pr-12">
+                    {/* Left and Right Captions */}
+                    <div className="flex justify-between text-sm text-gray-600 mb-2">
+                      <p>{item.footer ? item.footer.footer_1.left_caption : "Left Caption"}</p>
+                      <p>{item.footer ? item.footer.footer_1.right_caption : "Right Caption"}</p>
+                    </div>
 
-                  <InputField
-                    label=" "
-                    placeholder="Input 1"
-                    value={item.value || ""}
-                    onChange={(e) =>
-                      onUpdateItem &&
-                      onUpdateItem(index, (prevItem) => ({
-                        ...prevItem,
-                        value: e.target.value,
-                      }))
-                    }
-                  />
-                  <InputField
-                    label=" "
-                    placeholder="Input 2"
-                    value={item.value || ""}
-                    onChange={(e) =>
-                      onUpdateItem &&
-                      onUpdateItem(index, (prevItem) => ({
-                        ...prevItem,
-                        value: e.target.value,
-                      }))
-                    }
-                  />
+                    {/* Footer Button */}
+                    <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
+                      {item.footer ? item.footer?.footer_1.center_caption : "Click me"}
+                    </button>
+
+                    {/* Managed by Section */}
+                    <p className="text-xs text-gray-500 mt-2">
+                      Managed by the business. <a href="#" className="text-blue-600 hover:underline">Learn more</a>
+                    </p>
+                  </div>
                 </>
               );
 
