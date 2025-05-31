@@ -748,97 +748,98 @@ const CreateWhatsAppBot = () => {
       return toast.error("Please add at least one edge");
     }
 
-    const dataTemplate = {
-      image: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      audio: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      document: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      video: {
-        fileUrl: "",
-        fileCaption: "",
-      },
-      starting: {
-        startingKeyword: "",
-      },
-      text: {
-        message: "",
-      },
-      agent: {
-        type: "",
-        id: "",
-      },
-      answer: {
-        variableId: "",
-        type: "",
-      },
-      list: {
-        type: "",
-        text: "",
-        message: "",
-        options: [],
-      },
-      button: {
-        type: "",
-        text: "",
-        message: "",
-        buttonTexts: [],
-      },
-    };
+    if (!state) {
+      const dataTemplate = {
+        image: {
+          fileUrl: "",
+          fileCaption: "",
+        },
+        audio: {
+          fileUrl: "",
+          fileCaption: "",
+        },
+        document: {
+          fileUrl: "",
+          fileCaption: "",
+        },
+        video: {
+          fileUrl: "",
+          fileCaption: "",
+        },
+        starting: {
+          startingKeyword: "",
+        },
+        text: {
+          message: "",
+        },
+        agent: {
+          type: "",
+          id: "",
+        },
+        answer: {
+          variableId: "",
+          type: "",
+        },
+        list: {
+          type: "",
+          text: "",
+          message: "",
+          options: [],
+        },
+        button: {
+          type: "",
+          text: "",
+          message: "",
+          buttonTexts: [],
+        },
+      };
 
-    let name = "";
+      let name = "";
 
-    for (const node of nodes) {
-      const { id, type } = node;
-      const nodeData = nodesInputData[id];
-      const requiredFields = dataTemplate[type];
+      for (const node of nodes) {
+        const { id, type } = node;
+        const nodeData = nodesInputData[id];
+        const requiredFields = dataTemplate[type];
 
-      if (!requiredFields) {
-        toast.error(`Unsupported node type "${type}" in node ${id}`);
-        return;
-      }
+        if (!requiredFields) {
+          toast.error(`Unsupported node type "${type}" in node ${id}`);
+          return;
+        }
 
-      if (
-        nodeData?.fileUrl &&
-        !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
-      ) {
-        const res = await uploadImageFile(nodeData?.fileUrl);
+        if (
+          nodeData?.fileUrl &&
+          !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
+        ) {
+          const res = await uploadImageFile(nodeData?.fileUrl);
 
-        nodeData.fileUrl = res?.fileUrl;
-      }
+          nodeData.fileUrl = res?.fileUrl;
+        }
 
-      name = agenstState.dept.find(
-        (item) => item.departmentId === nodeData?.id
-      )?.departmentName;
-      if (!nodeData) {
-        toast.error(`No data found for node ID ${id}`);
-        return;
-      }
+        name = agenstState.dept.find(
+          (item) => item.departmentId === nodeData?.id
+        )?.departmentName;
+        if (!nodeData) {
+          toast.error(`No data found for node ID ${id}`);
+          return;
+        }
 
-      const missingFields = Object.keys(requiredFields).filter(
-        (key) =>
-          nodeData[key] === undefined ||
-          nodeData[key] === null ||
-          nodeData[key] === ""
-      );
-
-      if (missingFields.length > 0) {
-        toast.error(
-          `Missing fields in node ${id} of type "${type}": ${missingFields.join(
-            ", "
-          )}`
+        const missingFields = Object.keys(requiredFields).filter(
+          (key) =>
+            nodeData[key] === undefined ||
+            nodeData[key] === null ||
+            nodeData[key] === ""
         );
-        return;
+
+        if (missingFields.length > 0) {
+          toast.error(
+            `Missing fields in node ${id} of type "${type}": ${missingFields.join(
+              ", "
+            )}`
+          );
+          return;
+        }
       }
     }
-
     const srno = details?.waba.find(
       (item) => item.mobileNo === details?.selected
     )?.wabaSrno;
@@ -859,7 +860,6 @@ const CreateWhatsAppBot = () => {
     if (!payload) {
       return toast.error("Error Generating Payload");
     }
-
     try {
       const res = await saveOrEditBot(payload, state?.botSrno);
       if (!res?.status) {
