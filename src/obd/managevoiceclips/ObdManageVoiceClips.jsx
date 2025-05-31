@@ -70,6 +70,7 @@ const ObdManageVoiceClips = () => {
     isdynamic: 1,
     voiceType: "",
     voiceName: "",
+    variableValue: "",
     dynamicList: [
       {
         dynamicType: "file",
@@ -184,7 +185,12 @@ const ObdManageVoiceClips = () => {
       flex: 1,
       minWidth: 100,
     },
-    { field: "size(kb)", headerName: "Size(kb)", flex: 1, minWidth: 100 },
+    {
+      field: "size(kb)",
+      headerName: "Size(kb)",
+      flex: 1,
+      minWidth: 100,
+    },
     {
       field: "duration(sec)",
       headerName: "Duration(sec)",
@@ -418,6 +424,7 @@ const ObdManageVoiceClips = () => {
         const payload = {
           ...dynamicVoice,
           voiceType: typeId[selecteTransactional],
+          variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
         console.log(res);
@@ -481,7 +488,7 @@ const ObdManageVoiceClips = () => {
     const dynamicList = [...dynamicVoice.dynamicList];
     dynamicList[index] = {
       ...dynamicList[index],
-      variable: e.target.value,
+      variableValue: e.target.value,
     };
     setDynamicVoice((prev) => ({
       ...prev,

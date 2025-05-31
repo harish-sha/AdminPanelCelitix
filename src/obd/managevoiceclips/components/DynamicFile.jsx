@@ -77,7 +77,7 @@ export const DynamicFile = ({
           name="dynamicVar"
           label={"Dynamic Variable"}
           type="text"
-          value={dynamicVoice.dynamicList[index].variable}
+          value={dynamicVoice.dynamicList[index].variableValue}
           onChange={(e) => handleDynamicVarChange(e, index)}
         />
         <button
