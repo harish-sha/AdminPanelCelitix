@@ -9,6 +9,7 @@ import {
   Tooltip,
   Popover,
 } from "@mui/material";
+import { AccountBalanceWalletOutlined as WalletIcon } from "@mui/icons-material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import usePagination from "@mui/material/usePagination";
@@ -97,6 +98,7 @@ import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import { getRcsRate } from "@/apis/user/user";
 import moment from "moment";
 import {
+  fetchBalance,
   getApiKey,
   getOldApiKey,
   updateApiKey,
@@ -302,6 +304,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [value, setValue] = useState(0);
   const [selectedUserDetails, setSelectedUserDetails] = useState(null);
   const [currentUserSrno, setCurrentUserSrno] = useState(null);
+  const [userBalance, setUserBalance] = useState([]);
 
   //userId
   const [selectedId, setSelectedId] = useState("");
@@ -1024,7 +1027,6 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     console.log(data);
     try {
       const res = await updateApiKey(data.newKey, data.userSrno);
-      console.log(res);
       if (!res?.message.includes("succesfully")) {
         return toast.error(res?.message);
       }
@@ -1114,6 +1116,31 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const handleOtp = (id) => {
     setOtpService(true);
     setSelectedId(id);
+  };
+
+  useEffect(() => {
+    console.log(userBalance);
+  }, [userBalance]);
+
+  const handleFetchBalance = async (id) => {
+    try {
+      const res = await fetchBalance(id);
+      const data = {
+        id,
+        balance: res?.balance,
+      };
+      const updatedBalance = [...userBalance];
+      if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
+        updatedBalance[updatedBalance.findIndex((item) => item.id === id)] =
+          data;
+      } else {
+        updatedBalance.push(data);
+      }
+      setUserBalance(updatedBalance);
+    } catch (e) {
+      console.log(e);
+      toast.error("Error in fetching balance");
+    }
   };
 
   const allServices = [
@@ -1350,16 +1377,23 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       minWidth: 400,
       renderCell: (params) => (
         <>
-          {/* <CustomTooltip arrow title="Login" placement="top">
-            <IconButton onClick={() => handleLonins(params.row.srno)}>
-              <LockOutlinedIcon
+          <CustomTooltip
+            arrow
+            title={
+              userBalance.find((balance) => balance.id == params.row.srno)
+                ?.balance || 0
+            }
+            placement="top"
+          >
+            <IconButton onClick={() => handleFetchBalance(params.row.srno)}>
+              <WalletIcon
                 sx={{
                   fontSize: "1.2rem",
                   color: "gray",
                 }}
               />
             </IconButton>
-          </CustomTooltip> */}
+          </CustomTooltip>
           <CustomTooltip arrow title="OTP Validation Numbers" placement="top">
             <IconButton onClick={() => handleOtp(params.row.srno)}>
               <EmergencyOutlinedIcon
@@ -1788,7 +1822,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
     try {
       const res = await updatePassword(data, params);
-      console.log(res);
+
       if (!res.msg?.includes("successfully")) {
         return toast.error("Error in resetting password");
       }
