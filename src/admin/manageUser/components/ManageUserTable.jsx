@@ -418,6 +418,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
   const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
+  const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
   const [editDialogVisible, setEditDialogVisible] = useState(false);
   const [editingRow, setEditingRow] = useState(null);
@@ -1534,8 +1535,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   }
   async function handleRcsDelete(srno) {
     try {
-      const res = await deleteRCSRateBySrno(srno);
-      if (!res.statusCode) {
+      const res = await deleteRCSRateBySrno(srno, currentUserSrno);
+      if (!res?.message?.includes("successfully")) {
         return toast.error(res.message);
       }
       toast.success(res.message);

@@ -75,7 +75,7 @@ export const saveVoiceRate = async (data) => {
 // get voice rate by srno
 export const getVoiceRateBySrno = async (srNo) => {
   return await fetchWithAuth(`/voice/getVoiceRate?srNo=${srNo}`, {
-    method: "POST",
+    method: "GET",
   });
 };
 
