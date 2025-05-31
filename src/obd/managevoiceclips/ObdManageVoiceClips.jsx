@@ -423,7 +423,6 @@ const ObdManageVoiceClips = () => {
         console.log(res);
       }
     } catch (e) {
-      console.log(e);
       toast.error("Something went wrong");
     }
   }
@@ -468,8 +467,6 @@ const ObdManageVoiceClips = () => {
 
   function deleteDynamicItem(e, index) {
     const id = `apply${index + 1}`;
-    console.log(id);
-    console.log(dynamicVoice.dynamicList);
     const updatedList = dynamicVoice.dynamicList.filter(
       (item) => item.id !== id
     );

@@ -11,7 +11,7 @@ export const DynamicFile = ({
   handleFileChange,
   deleteDynamicItem,
   handleDynamicVarChange,
-  dynamicVoice
+  dynamicVoice,
 }) => {
   function renderFile() {
     return (
@@ -57,7 +57,7 @@ export const DynamicFile = ({
         <button
           className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer mb-1"
           onClick={(e) => {
-            deleteDynamicItem(e, index);
+            deleteDynamicItem(e, dynamicVoice.dynamicList[index].sequence - 1);
           }}
         >
           <MdOutlineDeleteForever
@@ -71,14 +71,27 @@ export const DynamicFile = ({
 
   function renderVar() {
     return (
-      <InputField
-        id="dynamicVar"
-        name="dynamicVar"
-        label={"Dynamic Variable"}
-        type="text"
-        value={dynamicVoice.dynamicList[index].variable}
-        onChange={(e) => handleDynamicVarChange(e, index)}
-      />
+      <div className="flex gap-1 items-end justify-center">
+        <InputField
+          id="dynamicVar"
+          name="dynamicVar"
+          label={"Dynamic Variable"}
+          type="text"
+          value={dynamicVoice.dynamicList[index].variable}
+          onChange={(e) => handleDynamicVarChange(e, index)}
+        />
+        <button
+          className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer mb-1"
+          onClick={(e) => {
+            deleteDynamicItem(e, dynamicVoice.dynamicList[index].sequence - 1);
+          }}
+        >
+          <MdOutlineDeleteForever
+            className="text-red-500 cursor-pointer hover:text-red-600"
+            size={20}
+          />
+        </button>
+      </div>
     );
   }
   return (
