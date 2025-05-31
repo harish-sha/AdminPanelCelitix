@@ -23,10 +23,13 @@ export const getRCSRateBySrno = async (srno) => {
 };
 
 // delete rcs rate by srno
-export const deleteRCSRateBySrno = async (srno) => {
-  return await fetchWithAuth(`/rcs/deleteRCSRate?srno=${srno}`, {
-    method: "DELETE",
-  });
+export const deleteRCSRateBySrno = async (srno, userSrno = null) => {
+  return await fetchWithAuth(
+    `/rcs/deleteRCSRate?srno=${srno}&userSrno=${userSrno}`,
+    {
+      method: "DELETE",
+    }
+  );
 };
 
 // get whatsapp rate by srno
@@ -53,9 +56,12 @@ export const getWhatsappRateData = async (userSrno) => {
 
 // delete whatsapp rate by srno
 export const deleteWhatsappRateBySrno = async (srno, userSrno = null) => {
-  return await fetchWithAuth(`/whatsapp/deleteWhatsappRate?srno=${srno}&userSrno=${userSrno}`, {
-    method: "DELETE",
-  });
+  return await fetchWithAuth(
+    `/whatsapp/deleteWhatsappRate?srno=${srno}&userSrno=${userSrno}`,
+    {
+      method: "DELETE",
+    }
+  );
 };
 
 // save voice rate
@@ -81,10 +87,13 @@ export const getVoiceRateByUser = async (userSrno) => {
 };
 
 // delete voice rate by srno
-export const deleteVoiceRateBySrno = async (srNo) => {
-  return await fetchWithAuth(`/voice/deleteVoiceRate?srNo=${srNo}`, {
-    method: "DELETE",
-  });
+export const deleteVoiceRateBySrno = async (srNo, userSrno = null) => {
+  return await fetchWithAuth(
+    `/voice/deleteVoiceRate?srNo=${srNo}&userSrno=${userSrno}`,
+    {
+      method: "DELETE",
+    }
+  );
 };
 
 // add sms pricing
