@@ -1272,11 +1272,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        srno: item.sr_no,
-        ...item,
-      }))
+          id: index + 1,
+          sn: index + 1,
+          srno: item.sr_no,
+          ...item,
+        }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1333,8 +1333,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
-                }`}
+              className={`w-3 h-3 rounded-full ${
+                isActive ? "bg-green-500" : "bg-red-500"
+              }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1620,10 +1621,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      ...item,
-    }))
+        id: i + 1,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -2181,18 +2182,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
           {(petmDetails.petmChainType === 2 ||
             petmDetails.petmChainType === 3) && (
-              <InputField
-                label="TMA-1"
-                id="tma1"
-                name="tma1"
-                placeholder="Enter TMA-1"
-                type="number"
-                value={petmDetails.TMA1}
-                onChange={(e) => {
-                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
-                }}
-              />
-            )}
+            <InputField
+              label="TMA-1"
+              id="tma1"
+              name="tma1"
+              placeholder="Enter TMA-1"
+              type="number"
+              value={petmDetails.TMA1}
+              onChange={(e) => {
+                setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+              }}
+            />
+          )}
           {petmDetails.petmChainType === 3 && (
             <InputField
               label="TMA-2"
@@ -2427,8 +2428,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                      ? "Inactive"
-                      : "Not Available"}
+                    ? "Inactive"
+                    : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2843,7 +2844,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     label="Delete"
                     onClick={async () => {
                       const res = await deleteWhatsappRateBySrno(
-                        editingRow.srno
+                        editingRow.srno,
+                        currentUserSrno
                       );
                       if (res?.message?.toLowerCase().includes("success")) {
                         toast.success("Rate deleted.");
@@ -3523,7 +3525,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                    // checked={true}
+                      // checked={true}
                     />
                     <label
                       htmlFor={item.id}

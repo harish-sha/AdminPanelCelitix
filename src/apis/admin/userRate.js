@@ -52,8 +52,8 @@ export const getWhatsappRateData = async (userSrno) => {
 };
 
 // delete whatsapp rate by srno
-export const deleteWhatsappRateBySrno = async (srno) => {
-  return await fetchWithAuth(`/whatsapp/deleteWhatsappRate?srno=${srno}`, {
+export const deleteWhatsappRateBySrno = async (srno, userSrno = null) => {
+  return await fetchWithAuth(`/whatsapp/deleteWhatsappRate?srno=${srno}&userSrno=${userSrno}`, {
     method: "DELETE",
   });
 };
