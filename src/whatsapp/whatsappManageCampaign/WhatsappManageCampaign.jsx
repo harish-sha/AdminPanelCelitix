@@ -285,7 +285,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSearch = async () => {
-     if(!selectedUser) return toast.error("Please select a user");
+    //  if(!selectedUser) return toast.error("Please select a user");
     const formattedFromDate = selectedDate
       ? moment(selectedDate).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
@@ -316,7 +316,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const fetchScheduleCampaignData = async () => {
-     if(!selectedUser) return toast.error("Please select a user");
+    //  if(!selectedUser) return toast.error("Please select a user");
     setIsFetching(true);
 
     try {
@@ -428,7 +428,7 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
   const handleShowLogs = async () => {
-     if(!selectedUser) return toast.error("Please select a user");
+    //  if(!selectedUser) return toast.error("Please select a user");
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? moment(selectedDateLogs).format("YYYY-MM-DD")
@@ -455,7 +455,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-     if(!selectedUser) return toast.error("Please select a user");
+    //  if(!selectedUser) return toast.error("Please select a user");
     let result;
 
     if (!selectedWaBaNumber) {
