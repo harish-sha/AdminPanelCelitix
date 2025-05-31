@@ -5,6 +5,8 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion } from "framer-motion";
 
 import { useUser } from "@/context/auth";
+import { UAParser } from "ua-parser-js";
+
 
 import UniversalButton from "@/components/common/UniversalButton";
 import celitixLogo from "@/assets/images/celitix-logo-white.svg";
@@ -16,6 +18,7 @@ import loginBanner from "@/assets/images/loginBanner.jpg";
 import "../../login.css";
 import { login } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
+import axios from "axios";
 
 const ResellerLogin = () => {
   const { authLogin } = useUser();
@@ -40,6 +43,9 @@ const ResellerLogin = () => {
 
   const [captchaProblem, setCaptchaProblem] = useState("");
   const [captchaSolution, setCaptchaSolution] = useState(null);
+
+  const parser = new UAParser();
+  const uaResult = parser.getResult();
 
   // Password validation state for border color
   const [passwordsMatch, setPasswordsMatch] = useState(null);
@@ -91,67 +97,6 @@ const ResellerLogin = () => {
     setCaptchaSolution(solution);
   }
 
-  // async function handleLogin() {
-  //   // Check for empty fields
-  //   if (!username || !password) {
-  //     toast.error("All fields are required. Please fill them out.");
-  //     return;
-  //   }
-
-  //   if (!captcha) {
-  //     toast.error("CAPTCHA is required. Please fill it out.");
-  //     return;
-  //   }
-
-  //   // validation for captcha
-  //   if (parseInt(captcha) !== captchaSolution) {
-  //     toast.error("Invalid CAPTCHA");
-  //     return;
-  //   }
-
-  //   try {
-  //     const payload = {
-  //       userId: username,
-  //       password: password,
-  //       // domain: window.location.hostname,
-  //       domain: "",
-  //     };
-  //     const domain = window.location.hostname;
-
-  //     if (domain !== "celitix.alertsnow.in") {
-  //       payload.domain = domain;
-  //     }
-  //     // "userId":"Admin",
-  //     // "password":"12345678",
-  //     // "domain":""
-  //     const res = await login(payload);
-
-  //     if (!res?.data?.token) {
-  //       return toast.error("Invalid credentials");
-  //     }
-
-  //     //   if (inputDetails?.rememberMe) {
-  //     //     localStorage.setItem("token", res?.data?.token);
-  //     //   } else {
-  //     //     sessionStorage.setItem("token", res?.data?.token);
-  //     //   }
-
-  //     let allowedServices = null;
-
-  //     if (res?.data?.role !== "AGENT") {
-  //       allowedServices = await getAllowedServices();
-  //     }
-  //     sessionStorage.setItem("token", res?.data?.token);
-  //     toast.success("Login Successful!");
-  //     authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
-  //     navigate("/");
-  //   } catch (e) {
-  //     toast.error("Error while logging in");
-  //   }
-  //   // setStep("verifyNumber
-  // }
-
-
   async function handleLogin() {
     // Basic validation
     if (!username || !password) {
@@ -167,15 +112,17 @@ const ResellerLogin = () => {
     }
 
     try {
-      // const domain = window.location.hostname;
+      const ipResponse = await axios.get("https://ipapi.co/json/");
+      const domain = window.location.hostname;
       const payload = {
         userId: username,
         password,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        domain: "reseller.alertsnow.in",
-        // domain: "msg.itbizcon.in",
+        // domain: "reseller.alertsnow.in",
         // domain: "",
-        // domain: domain
+        domain: domain
       };
 
       const res = await login(payload);
