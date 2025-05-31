@@ -172,6 +172,7 @@ const DeliveryreportRcs = () => {
 
   //fetchCampaignData
   const handleCampaignSearch = async () => {
+     if(!selectedUser) return toast.error("Please select a user");
     const data = {
       startDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
       endDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
@@ -199,6 +200,7 @@ const DeliveryreportRcs = () => {
 
   //fetchSummaryData
   const handleSummarySearch = async () => {
+     if(!selectedUser) return toast.error("Please select a user");
     if (!summaryData.fromDate || !summaryData.toDate) {
       toast.error("Please select from and to date.");
     }
@@ -226,6 +228,7 @@ const DeliveryreportRcs = () => {
 
   // fetchscheduleData
   const handleScheduleSearch = async () => {
+     if(!selectedUser) return toast.error("Please select a user");
     try {
       setIsFetching(true);
       const res = await scheduledata(selectedUser || "0");

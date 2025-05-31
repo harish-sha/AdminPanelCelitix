@@ -326,6 +326,7 @@ const SmsReports = () => {
   }, [isExportDialogOpen]);
 
   const handleCampaignSearch = async () => {
+    if (!selectedUser) return toast.error("Please select a user");
     try {
       setIsFetching(true);
       //yyyy/mm/dd
@@ -551,6 +552,7 @@ const SmsReports = () => {
   };
 
   const handleScheduleCampaignSearch = async () => {
+    if (!selectedUser) return toast.error("Please select a user");
     try {
       setIsFetchingScheduleData(true);
 
@@ -787,6 +789,7 @@ const SmsReports = () => {
   // };
 
   const handlePreviousDaysSearch = async () => {
+    if (!selectedUser) return toast.error("Please select a user");
     const data = {
       ...previousDataToFilter,
       fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
@@ -941,6 +944,7 @@ const SmsReports = () => {
   };
 
   const handleDayWiseSummary = async () => {
+    if (!selectedUser) return toast.error("Please select a user");
     const data = {
       // ...daywiseDataToFilter,
       fromDate: moment(daywiseDataToFilter.fromDate).format("YYYY-MM-DD"),
@@ -1021,6 +1025,7 @@ const SmsReports = () => {
   };
 
   const handleAttachmentSearch = async () => {
+    if (!selectedUser) return toast.error("Please select a user");
     const data = {
       ...attachmentDataToFilter,
       startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
