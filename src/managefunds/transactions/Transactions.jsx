@@ -78,16 +78,16 @@ const Transactions = () => {
         ...filterData,
         startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
         toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
-      }
+      };
       const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
       toast.error("Something went wrong!");
     } finally {
-      setIsFetching(false);nb     
+      setIsFetching(false);
+      nb;
     }
   };
-
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
@@ -139,11 +139,11 @@ const Transactions = () => {
 
   const rows = Array.isArray(transactionalData)
     ? transactionalData.map((item, index) => ({
-      ...item,
-      sn: index + 1,
-      id: index + 1,
-      balance: Number(item.balance).toFixed(2),
-    }))
+        ...item,
+        sn: index + 1,
+        id: index + 1,
+        balance: Number(item.balance).toFixed(2),
+      }))
     : [];
 
   const multiHistory = [
@@ -153,7 +153,7 @@ const Transactions = () => {
     { name: "Istanbul", code: "IST" },
     { name: "Paris", code: "PRS" },
   ];
-  
+
   const multiSummary = [
     { name: "New York", code: "NY" },
     { name: "Rome", code: "RM" },
