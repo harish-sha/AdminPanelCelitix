@@ -15,7 +15,10 @@ import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 
 import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
+import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
 import moment from "moment";
+import { Dialog } from "primereact/dialog";
+import toast from "react-hot-toast";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -93,6 +96,37 @@ const WhatsappConversationTable = ({
   const [selectedRows, setSelectedRows] = useState([]);
   const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
+  const [fileData, setFileData] = useState({
+    url: "",
+    type: "",
+    mimeType: "",
+  });
+
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  function handleView(row) {
+    console.log(row);
+
+    if (!row.mediaPath || !row.replyType) return;
+    const type = row.replyType.toLowerCase();
+    let url = row.mediaPath;
+
+    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
+
+    if (!parsed) {
+      return toast.error("Invalid URL");
+    }
+
+    let mimeType = "";
+    if (type === "document") {
+      const pathname = new URL(row.mediaPath).pathname;
+      mimeType = pathname.split(".").pop();
+    }
+    setFileData({ url, type, mimeType });
+    setIsDialogOpen(true);
+  }
+
+
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -114,6 +148,23 @@ const WhatsappConversationTable = ({
       headerName: "Message",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => {
+        const type = params.row.replyType.toLowerCase();
+        const mediaOptions = ["image", "document", "video"];
+        const isRender = mediaOptions.includes(type) ?? false;
+        if (isRender) {
+          return (
+            <IconButton onClick={(e) => handleView(params.row)}>
+              <RemoveRedEyeOutlinedIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "green",
+                }}
+              />
+            </IconButton>
+          );
+        }
+      },
     },
     {
       field: "wabaNumber",
@@ -194,37 +245,99 @@ const WhatsappConversationTable = ({
   };
 
   return (
-    <Paper sx={{ height: 558 }} id={id} name={name}>
-      <DataGrid
-        id={id}
-        name={name}
-        rows={rows}
-        columns={columns}
-        rowHeight={45}
-        slots={{
-          footer: CustomFooter,
-          noRowsOverlay: CustomNoRowsOverlay,
+    <>
+      <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+          id={id}
+          name={name}
+          rows={rows}
+          columns={columns}
+          rowHeight={45}
+          slots={{
+            footer: CustomFooter,
+            noRowsOverlay: CustomNoRowsOverlay,
+          }}
+          slotProps={{ footer: { totalRecords: totalPage } }}
+          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+          disableRowSelectionOnClick
+          disableColumnResize
+          disableColumnMenu
+          sx={{
+            border: 0,
+            "& .MuiDataGrid-cell": { outline: "none !important" },
+            "& .MuiDataGrid-columnHeaders": {
+              color: "#193cb8",
+              fontSize: "14px",
+              fontWeight: "bold !important",
+            },
+            "& .MuiDataGrid-row--borderBottom": {
+              backgroundColor: "#e6f4ff !important",
+            },
+            "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
+          }}
+        />
+      </Paper>
+
+      <Dialog
+        header="View Message"
+        visible={isDialogOpen}
+        onHide={() => {
+          setIsDialogOpen(false);
+          setFileData({
+            url: "",
+            type: "",
+          });
         }}
-        slotProps={{ footer: { totalRecords: totalPage } }}
-        onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-        disableRowSelectionOnClick
-        disableColumnResize
-        disableColumnMenu
-        sx={{
-          border: 0,
-          "& .MuiDataGrid-cell": { outline: "none !important" },
-          "& .MuiDataGrid-columnHeaders": {
-            color: "#193cb8",
-            fontSize: "14px",
-            fontWeight: "bold !important",
-          },
-          "& .MuiDataGrid-row--borderBottom": {
-            backgroundColor: "#e6f4ff !important",
-          },
-          "& .MuiDataGrid-columnSeparator": { color: "#ccc" },
-        }}
-      />
-    </Paper>
+        // style={{ width: "50%" }}
+        className="w-[40rem]"
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          {fileData && fileData.type === "image" && (
+            <img
+              src={fileData?.url}
+              alt={fileData?.url}
+              className="rounded-md max-w-full max-h-[30rem]"
+            />
+          )}
+          {fileData && fileData.type === "video" && (
+            <video
+              controls
+              src={fileData?.url}
+              className="rounded-md max-w-full max-h-[30rem]"
+            />
+          )}
+
+          {fileData &&
+            fileData.type === "document" &&
+            fileData.mimeType === "pdf" && (
+              <iframe
+                src={fileData.url}
+                className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+              />
+            )}
+          {fileData &&
+            fileData.type === "document" &&
+            fileData.mimeType === "xlsx" && (
+              <iframe
+                // src={fileData?.url}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.url}`}
+                className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+              />
+            )}
+          {fileData &&
+            fileData.type === "document" &&
+            fileData.mimeType === "docx" && (
+              <iframe
+                // src={fileData?.url}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.url}`}
+                className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
+              />
+            )}
+        </div>
+      </Dialog>
+    </>
+
   );
 };
 

@@ -92,9 +92,8 @@ export const ChatScreen = ({
   const mediaRender = (isSent) => {
     return (
       <div
-        className={`flex items-center gap-2 w-full ${
-          isSent ? "flex-row-reverse" : ""
-        }`}
+        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+          }`}
       >
         <div className={`p-2 ${msg?.caption ? " rounded-md" : ""}`}></div>
       </div>
@@ -125,7 +124,7 @@ export const ChatScreen = ({
       link.href = url;
       link.setAttribute("download", filename || "file");
       // href="example.jpg" download="my-image.jpg"
-          link.setAttribute("target", "_blank"); // Corrected this line
+      link.setAttribute("target", "_blank"); // Corrected this line
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -339,9 +338,8 @@ export const ChatScreen = ({
                       stiffness: 300,
                       damping: 20,
                     }}
-                    className={`p-2 rounded-lg max-w-[90%] my-1 ${
-                      isSent ? "self-end" : "self-start"
-                    }`}
+                    className={`p-2 rounded-lg max-w-[90%] my-1 ${isSent ? "self-end" : "self-start"
+                      }`}
                   >
                     {isReply && (
                       <div className="text-sm border-b-2 border-black">
@@ -351,9 +349,8 @@ export const ChatScreen = ({
                     {/* {isReply && <div className="text-sm border-b-2 bg-blue-300 px-3 py-2 rounded-t-md border-gray-700">{msg?.replyMessage}</div>} */}
                     {(isImage || isVideo || isDocument) && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div
                           className={`${msg?.caption ? "p-2 rounded-md" : ""}`}
@@ -362,20 +359,18 @@ export const ChatScreen = ({
                             <>
                               {isImage && (
                                 <div
-                                  className={`relative group w-full h-full ${
-                                    msg?.caption
+                                  className={`relative group w-full h-full ${msg?.caption
                                       ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
                                       : ""
-                                  }`}
+                                    }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
-                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${
-                                      msg?.caption
+                                    className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
                                         ? "rounded-t-lg"
                                         : "rounded-md"
-                                    }`}
+                                      }`}
                                   />
                                   {msg?.caption && (
                                     <div className="text-sm text-gray-500 mt-2 ml-2 whitespace-pre-wrap break-words">
@@ -402,11 +397,10 @@ export const ChatScreen = ({
                               )}
                               {isVideo && (
                                 <div
-                                  className={`${
-                                    msg?.caption
+                                  className={`${msg?.caption
                                       ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
                                       : "relative group"
-                                  }`}
+                                    }`}
                                 >
                                   <video
                                     src={mediaUrl}
@@ -439,11 +433,10 @@ export const ChatScreen = ({
                               )}
                               {isDocument && (
                                 <div
-                                  className={`${
-                                    msg?.caption
+                                  className={`${msg?.caption
                                       ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
                                       : "relative group"
-                                  }`}
+                                    }`}
                                 >
                                   {/* <iframe
                                     src={mediaUrl}
@@ -585,17 +578,15 @@ export const ChatScreen = ({
 
                     {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
-                          isSent ? "flex-row-reverse" : ""
-                        }`}
+                        className={`flex items-center gap-2 w-full ${isSent ? "flex-row-reverse" : ""
+                          }`}
                       >
                         <div className="max-w-[250px]">
                           <p
-                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
-                              isSent
+                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
                                 ? "bg-[#22577E] text-white rounded-br-none"
                                 : "bg-[#5584AC] text-white rounded-bl-none"
-                            }`}
+                              }`}
                           >
                             {msg.messageBody}
                           </p>
@@ -620,9 +611,8 @@ export const ChatScreen = ({
                     {templateType && <TemplateMessagePreview template={msg} />}
 
                     <p
-                      className={`mt-1 text-[0.7rem] ${
-                        isSent ? "text-end" : "text-start"
-                      }`}
+                      className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
+                        }`}
                     >
                       {formatTime(msg?.insertTime)}
                     </p>

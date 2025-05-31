@@ -220,9 +220,9 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
                     { label: "Total", key: "total" },
+                    { label: "Pending", key: "pending" },
                     { label: "Block", key: "block" },
                     { label: "Failed", key: "failed" },
-                    { label: "Pending", key: "pending" },
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
                     { label: "Delivered", key: "delivered" },

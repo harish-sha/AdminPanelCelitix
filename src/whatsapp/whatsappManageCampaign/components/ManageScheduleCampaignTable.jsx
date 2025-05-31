@@ -188,17 +188,21 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
   //     action: 'True',
   // }));
 
-  const rows = Array.isArray(data)
+  const sortedData = data.sort(
+    (a, b) => new Date(b.queTime) - new Date(a.queTime)
+  );
+
+  const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        // queTime: formatDate(item.queTime) || "N/A",
-        srno: item.srno,
-        sentTime: item.sentTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        campaignDate: item.campaignDate || "N/A",
-        count: item.count || "N/A",
-      }))
+      id: index + 1,
+      sn: index + 1,
+      // queTime: formatDate(item.queTime) || "N/A",
+      srno: item.srno,
+      sentTime: item.sentTime || "N/A",
+      campaignName: item.campaignName || "N/A",
+      campaignDate: item.campaignDate || "N/A",
+      count: item.count || "N/A",
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

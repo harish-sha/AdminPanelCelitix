@@ -313,27 +313,27 @@ const SmsReports = () => {
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-            id: item.receipt_no_of_duplicate_message,
-            sn: i + 1,
-            ...item,
-            campaign_type:
-              item.account_usage_type_id === 1
-                ? "Transactional"
-                : item.account_usage_type_id === 2
+          id: item.receipt_no_of_duplicate_message,
+          sn: i + 1,
+          ...item,
+          campaign_type:
+            item.account_usage_type_id === 1
+              ? "Transactional"
+              : item.account_usage_type_id === 2
                 ? "Promotional"
                 : item.account_usage_type_id === 3
-                ? "International"
-                : "Unknown",
+                  ? "International"
+                  : "Unknown",
 
-            insert_flag:
-              item.insert_flag === 1
-                ? "Pending"
-                : item.insert_flag === 2
+          insert_flag:
+            item.insert_flag === 1
+              ? "Pending"
+              : item.insert_flag === 2
                 ? "Processing"
                 : item.insert_flag === 3
-                ? "Sent"
-                : "Unknown",
-          }))
+                  ? "Sent"
+                  : "Unknown",
+        }))
         : [];
 
       setCampaignTableData(mappedData);
@@ -592,7 +592,7 @@ const SmsReports = () => {
   //         field: "campaign_name",
   //         headerName: "Campaign Name",
   //         flex: 1, 
-  
+
   //         minWidth: 150,
   //       },
   //       { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
@@ -677,13 +677,13 @@ const SmsReports = () => {
       // Step 1: Map API response first
       let mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-            id: item.srno || `row-${i}`,
-            sn: i + 1,
-            campaign_date: item.campaignDate || "-",
-            campaign_name: item.campaignName || "-",
-            sent_time: item.sentTime || "-",
-            campaignSrno: item.srno,
-          }))
+          id: item.srno || `row-${i}`,
+          sn: i + 1,
+          campaign_date: item.campaignDate || "-",
+          campaign_name: item.campaignName || "-",
+          sent_time: item.sentTime || "-",
+          campaignSrno: item.srno,
+        }))
         : [];
 
       // Step 2: Extract filters if any
@@ -692,8 +692,8 @@ const SmsReports = () => {
         .trim();
       const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
         ? new Date(campaignScheduleDataToFilter.campaignDate)
-            .toISOString()
-            .slice(0, 10)
+          .toISOString()
+          .slice(0, 10)
         : null;
 
       // Step 3: Filter only if filters are provided
@@ -1034,10 +1034,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -1117,10 +1117,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -1214,13 +1214,17 @@ const SmsReports = () => {
         },
       ]);
 
+      const sortedData = res.sort(
+        (a, b) => new Date(b.queTime) - new Date(a.queTime)
+      );
+
       setRows(
-        Array.isArray(res)
+        Array.isArray(sortedData)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -1329,10 +1333,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res?.data)
           ? res?.data.map((item, index) => ({
-              sn: index + 1,
-              id: index + 1,
-              ...item,
-            }))
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
           : []
       );
       setPreviousDayDetailsDialog(true);

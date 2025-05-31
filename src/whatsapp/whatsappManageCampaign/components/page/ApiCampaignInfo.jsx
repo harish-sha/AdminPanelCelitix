@@ -78,6 +78,10 @@ const CustomPaginatior = ({
 export const ApiCampaignInfo = () => {
   const { state } = useLocation();
 
+  if (!state) {
+    return null;
+  }
+
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -125,28 +129,38 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      const responseData = Array.isArray(res) ? res : [];
-      setTotalPage(5000);
-      // console.log(res);
-      setData(responseData);
+      // const responseData = Array.isArray(res) ? res : [];
+      // setTotalPage(5000);
+      // // console.log(res);
+      // setData(responseData);
+      setTotalPage(res?.total || 0);
+
+      const formattedData = Array.isArray(res.data)
+        ? res?.data?.map((item, index) => ({
+          sn: index + 1,
+          id: index + 1,
+          ...item,
+        }))
+        : [];
+
+      console.log("formatted data", formattedData);
+      setData(formattedData);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
     }
   }
-  useEffect(() => {
-    if (!state) {
-      window.history.back();
-      return;
-    }
-    handleFetchDetails();
-  }, [state]);
+  // useEffect(() => {
+  //   if (!state) {
+  //     window.history.back();
+  //     return;
+  //   }
+  //   handleFetchDetails();
+  // }, [state]);
 
   useEffect(() => {
-    if (state) {
-      handleFetchDetails(paginationModel.page + 1);
-    }
-  }, [paginationModel.page]);
+    handleFetchDetails(currentPage);
+  }, [currentPage]);
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -161,10 +175,10 @@ export const ApiCampaignInfo = () => {
       minWidth: 120,
     },
     { field: "reason", headerName: "Reason", flex: 2, minWidth: 120 },
-    { field: "sent", headerName: "Sent", flex: 1, minWidth: 120 },
-    { field: "delivery", headerName: "Delivery Time", flex: 1, minWidth: 120 },
-    { field: "read", headerName: "Read Time", flex: 1, minWidth: 120 },
-    { field: "que", headerName: "Que Time", flex: 1, minWidth: 120 },
+    { field: "sentTime", headerName: "Sent", flex: 1, minWidth: 120 },
+    { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 120 },
+    { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
+    { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
   // const rows = Array.from({ length: 20 }, (_, i) => ({

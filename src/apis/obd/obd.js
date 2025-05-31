@@ -61,3 +61,19 @@ export const fetchDetailsbySrNo = async (data) => {
     }
   );
 };
+
+// save static voice
+export const saveStaticVoice = async (data) => {
+  return await fetchWithAuth("/obd/manageVoiceClips/staticvoice", {
+    method: "POST",
+    body: data,
+  });
+};
+
+// save dynamic voice
+export const saveDynamicVoice = async (data) => {
+  return await fetchWithAuth("/obd/manageVoiceClips/dynamicvoice", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

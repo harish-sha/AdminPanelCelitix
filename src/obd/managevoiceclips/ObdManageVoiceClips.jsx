@@ -1,27 +1,32 @@
+import * as XLSX from "xlsx";
+import { useRef, useState } from "react";
 import React, { useEffect } from "react";
-import { useState } from "react";
+import { IoSearch } from "react-icons/io5";
+import { Dialog } from "primereact/dialog";
+import { RadioButton } from "primereact/radiobutton";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
+import { IconButton, Switch } from "@mui/material";
+import { toast } from "react-hot-toast";
+
 import InputField from "../../components/layout/InputField";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import { IoSearch } from "react-icons/io5";
 import Obdmanagecampaign from "./components/Obdmanagecampaign";
-import { Dialog } from "primereact/dialog";
-import { RadioButton } from "primereact/radiobutton";
 import CustomTooltip from "../../components/common/CustomTooltip";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import * as XLSX from "xlsx";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { toast } from "react-hot-toast";
+import { DataTable } from "@/components/layout/DataTable";
+import MusicPlayerSlider from "./components/ObdAudioplayer";
+import { DynamicFile } from "./components/DynamicFile";
 
-import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
-import { IconButton, Switch } from "@mui/material";
 import {
   deleteVoiceClip,
   fetchVoiceClips,
   fetchVoiceClipUrl,
+  saveDynamicVoice,
+  saveStaticVoice,
 } from "@/apis/obd/obd";
-import { DataTable } from "@/components/layout/DataTable";
-import MusicPlayerSlider from "./components/ObdAudioplayer";
+
 
 const ObdManageVoiceClips = () => {
   const [fileName, setFileName] = useState();
@@ -58,6 +63,25 @@ const ObdManageVoiceClips = () => {
     user: "",
   });
 
+  const [dynamicVoice, setDynamicVoice] = useState({
+    isdynamic: 1,
+    voiceType: "",
+    voiceName: "",
+    variableValue: "",
+    dynamicList: [
+      {
+        dynamicType: "file",
+        sequence: 1,
+        fileName: "",
+        fileBase64: "",
+        id: "apply1",
+      },
+    ],
+  });
+
+  const fileRef = useRef(null);
+  const dynamicVoiceRef = useRef([]);
+
   const handleChangeEnablePostpaid = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
@@ -72,24 +96,7 @@ const ObdManageVoiceClips = () => {
     event.preventDefault();
     const file = event.dataTransfer.files[0];
 
-    if (file) {
-      const validExtensions = [".xls", ".xlsx", ".xlsm"];
-      const fileExtension = file.name.split(".").pop();
-
-      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split(".")[0])) {
-          setUploadedFile(file);
-          setIsUploaded(false);
-          parseFile(file);
-        } else {
-          toast.error(
-            "File name can only contain alphanumeric characters, underscores, or hyphens."
-          );
-        }
-      } else {
-        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-      }
-    }
+    setStaticVoice({ ...staticVoice, fileName: file.name, file: file });
   };
 
   const handleDragOver = (event) => {
@@ -99,69 +106,13 @@ const ObdManageVoiceClips = () => {
   // handle file change
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    if (file) {
-      const validExtensions = [".xls", ".xlsx", ".xlsm"];
-      const fileExtension = file.name.split(".").pop();
 
-      if (validExtensions.includes(`.${fileExtension.toLowerCase()}`)) {
-        if (isValidFileName(file.name.split(".")[0])) {
-          setUploadedFile(file);
-          setIsUploaded(false);
-          parseFile(file);
-        } else {
-          toast.error(
-            "File name can only contain alphanumeric characters, underscores, or hyphens."
-          );
-        }
-      } else {
-        toast.error("Only Excel files (.xls, .xlsx, .xlsm) are supported.");
-      }
-    }
-  };
-
-  const handleFileUpload = async () => {
-    if (!uploadedFile) {
-      toast.error("No file selected for upload.");
-      return;
-    }
-    if (isUploaded) {
-      toast.error("File already uploaded. Please select a different one.");
-      return;
-    }
-    setIsUploading(true);
-    try {
-      setIsUploaded(true);
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("File upload failed. Please try again.");
-    } finally {
-      setIsUploading(false);
-    }
+    setStaticVoice({ ...staticVoice, fileName: file.name, file: file });
   };
 
   const isValidFileName = (fileName) => {
     const regex = /^[a-zA-Z0-9_-]+$/;
     return regex.test(fileName);
-  };
-
-  const parseFile = (file) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      const workbook = XLSX.read(reader.result, { type: "binary" });
-      const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-      const jsonData = XLSX.utils.sheet_to_json(firstSheet);
-      // const headers = Object.keys(jsonData[0]);
-      const headers = jsonData.length > 0 ? Object.keys(jsonData[0]) : [];
-      // const headers = Object.keys(jsonData[0] || {}).map(header => header.trim()); // Trim header names
-      // console.log("Extracted headers:", headers);
-
-      setFileData(jsonData);
-      setColumns(headers);
-      // setFileHeaders(headers);
-      setIsUploaded(false); // Reset to "File Selected" if a new file is selected
-      // setTotalRecords(jsonData.length);
-    };
-    reader.readAsBinaryString(file);
   };
 
   // Handle file removal
