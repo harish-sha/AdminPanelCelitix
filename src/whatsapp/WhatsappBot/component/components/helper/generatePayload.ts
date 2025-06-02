@@ -82,7 +82,7 @@ function generateBotPayload(
       };
 
     
-      entry[options[nodeInput?.type]] = nodeInput?.text || nodeInput?.fileUrl;
+      entry["buttonUrl"] = nodeInput?.text || nodeInput?.fileUrl;
       entry["buttonType"] = nodeInput?.type;
 
       entry["buttonBody"] = nodeInput?.message;
@@ -94,7 +94,7 @@ function generateBotPayload(
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.text;
+      entry["listHeading"] = nodeInput?.message;
       entry["listUrl"] = nodeInput?.text;
       entry["listBody"] = nodeInput?.message;
       entry["listType"] = nodeInput?.type;

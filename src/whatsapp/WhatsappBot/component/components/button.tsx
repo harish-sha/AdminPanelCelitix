@@ -97,6 +97,7 @@ export const ButtonNodeContent = ({
           id="type"
           name="type"
           label="Type"
+          tooltipContent="Select Button Type"
           options={[
             { label: "Text", value: "text" },
             { label: "Image", value: "image" },
@@ -121,6 +122,7 @@ export const ButtonNodeContent = ({
             <AnimatedDropdown
               id="selectChoice"
               name="selectChoice"
+              tooltipContent="Select Choice"
               label="Select Choice"
               options={[
                 { value: "url", label: "Enter Url" },
@@ -163,6 +165,7 @@ export const ButtonNodeContent = ({
               <InputField
                 id="text"
                 name="text"
+                tooltipContent="Enter URL of media"
                 label={"URL"}
                 value={nodesInputData[id]?.text}
                 onChange={(e: { target: { value: any } }) => {
@@ -179,43 +182,55 @@ export const ButtonNodeContent = ({
           </>
         )}
         {nodesInputData[id]?.type === "text" && (
-          <InputField
-            id="text"
-            name="text"
-            label={"Text"}
-            value={nodesInputData[id]?.text}
+          <div className="flex items-end gap-2 w-full">
+            <InputField
+              id="text"
+              name="text"
+              tooltipContent="Max 20 characters"
+              
+              label={"Button Header"}
+              value={nodesInputData[id]?.text}
+              onChange={(e: { target: { value: any } }) => {
+                setNodesInputData((prev) => ({
+                  ...prev,
+                  [id]: {
+                    ...prev[id],
+                    text: e.target.value,
+                  },
+                }));
+              }}
+              maxLength="20"
+            />
+            <p className="text-xs">{nodesInputData[id]?.text?.length}/20</p>
+          </div>
+        )}
+      </div>
+
+      <div>
+        <div>
+          <label className="text-sm font-medium text-gray-900 mb-2 ml-2">
+            Body
+          </label>
+          <Textarea
+            id="body"
+            placeholder="Body"
+            value={nodesInputData[id]?.message}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({
                 ...prev,
                 [id]: {
                   ...prev[id],
-                  text: e.target.value,
+                  message: e.target.value,
                 },
               }));
             }}
+            className="resize-none"
+            maxLength={1024}
           />
-        )}
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-gray-900 mb-2 ml-2">
-          Body
-        </label>
-        <Textarea
-          id="body"
-          placeholder="Body"
-          value={nodesInputData[id]?.message}
-          onChange={(e: { target: { value: any } }) => {
-            setNodesInputData((prev) => ({
-              ...prev,
-              [id]: {
-                ...prev[id],
-                message: e.target.value,
-              },
-            }));
-          }}
-          className="resize-none"
-        />
+        </div>
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.message?.length}/1024
+        </p>
       </div>
 
       <div className="w-full mt-2">
@@ -236,6 +251,7 @@ export const ButtonNodeContent = ({
                   handleOptionInput(e.target.value, index);
                 }}
                 placeholder="Enter Button Text"
+                maxLength="20"
               />
 
               {options.length > 1 && (
