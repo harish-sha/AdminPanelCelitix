@@ -27,7 +27,6 @@ export const List = ({
   allVariables: any[];
   addVariable: (data: String) => void;
 }) => {
-  console.log("asd", nodesInputData[id]);
   const fileInputRef = useRef(null);
   const [options, setOptions] = useState([
     {
@@ -96,7 +95,9 @@ export const List = ({
       listItems.push(data);
     });
 
-    setOptions(listItems);
+    listItems.length > 0
+      ? setOptions(listItems)
+      : setOptions([{ option: "", value: "" }]);
   }, []);
 
   useEffect(() => {
@@ -143,7 +144,28 @@ export const List = ({
   return (
     <>
       <div className="flex gap-2">
-        <AnimatedDropdown
+        <div className="w-full">
+          <InputField
+            id="text"
+            name="text"
+            tooltipContent="List Heading"
+            maxLength="20"
+            label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
+            value={nodesInputData[id]?.text}
+            onChange={(e: { target: { value: any } }) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  type: "text",
+                  text: e.target.value,
+                },
+              }));
+            }}
+          />
+          <p className="text-xs mt-2">{nodesInputData[id]?.text?.length}/20</p>
+        </div>
+        {/* <AnimatedDropdown
           id="type"
           name="type"
           label="Type"
@@ -191,7 +213,7 @@ export const List = ({
           <InputField
             id="text"
             name="text"
-            label={nodesInputData[id]?.type === "text" ? "Text" : "URL"}
+            label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
             value={nodesInputData[id]?.text}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({
@@ -223,7 +245,7 @@ export const List = ({
               className="w-[250px]"
             />
           </div>
-        )}
+        )} */}
       </div>
 
       <div>
@@ -243,9 +265,11 @@ export const List = ({
               },
             }));
           }}
+          maxLength={1024}
           className="resize-none"
         />
       </div>
+      <p className="text-xs">{nodesInputData[id]?.message?.length}/1024</p>
 
       <div>
         <AnimatedDropdown

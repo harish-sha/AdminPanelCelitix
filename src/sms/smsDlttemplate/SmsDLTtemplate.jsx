@@ -135,9 +135,9 @@ const SmsDLTtemplate = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTemplates();
-  }, [templateIdFilter, templateNameFilter]);
+  // useEffect(() => {
+  //   fetchTemplates();
+  // }, [templateIdFilter, templateNameFilter]);
 
   // const statusOptions = [
   //   { label: "Active", value: "active" },
@@ -411,7 +411,7 @@ const SmsDLTtemplate = () => {
       filepath: contactData?.filepath,
       hashmap: {
         entityId: entityid,
-        TemplateName: templateData.templatename,
+        TemplateName: templateData.templateName,
         TemplateId: templateData.templateId,
         TemplateType: templateData.type,
         Message: templateData.message,
@@ -651,7 +651,7 @@ const SmsDLTtemplate = () => {
                   label="Template Name"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.templateName}
                   onChange={(e) => {
@@ -669,7 +669,7 @@ const SmsDLTtemplate = () => {
                   label="Template Id"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.templateId}
                   onChange={(e) => {
@@ -687,7 +687,7 @@ const SmsDLTtemplate = () => {
                   label="Template type"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.type}
                   onChange={(e) => {
@@ -705,7 +705,7 @@ const SmsDLTtemplate = () => {
                   label="Message"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.message}
                   onChange={(e) => {
@@ -723,7 +723,7 @@ const SmsDLTtemplate = () => {
                   label="Status"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.status}
                   onChange={(e) => {
@@ -741,7 +741,7 @@ const SmsDLTtemplate = () => {
                   label="senderId"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.senderId}
                   onChange={(e) => {

@@ -85,11 +85,16 @@ export const transformNodesById = (parsedFlowData) => {
     output[id] = {
       // type: node.type === "START" ? "starting" : node.type.toLowerCase(),
       ...node,
-      startingKeyword: node.type === "START" ? node.startKeyword : null,
+      startingKeyword: node.type === "START" && node.startKeyword,
       message: node.textMessage || node.buttonBody || node.listBody,
       type: node.answerRadio || node.listType,
       variableName: node.answerText,
-      options: node.buttonTexts || listItems || null,
+      options: listItems || null,
+      buttonTexts: node.buttonTexts,
+      text: node?.listHeading || node?.text,
+      fileUrl: node?.imageUrl || node?.videoUrl || node?.documentUrl || "",
+      fileCaption:
+        node?.imageCaption || node?.videoCaption || node?.documentCaption || "",
     };
   });
 

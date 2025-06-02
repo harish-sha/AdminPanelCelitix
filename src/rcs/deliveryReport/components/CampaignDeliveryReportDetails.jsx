@@ -174,7 +174,7 @@ const CampaignDeliveryReportDetails = () => {
     deliveryTime: item.deliveryTime || "-",
     readTime: item.readTime || "-",
     deliveryStatus: item.deliveryStatus || "-",
-    reason: item.reason || "-",
+    reason: item.reason.toUpperCase() || "-",
   }));
 
   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
