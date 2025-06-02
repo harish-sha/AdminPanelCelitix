@@ -52,8 +52,6 @@ export const ButtonNodeContent = ({
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
 
-    console.log(nodesInputData[id]);
-
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
