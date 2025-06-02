@@ -8,6 +8,8 @@ import AddIcon from "@mui/icons-material/Add";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { AiOutlineEye } from "react-icons/ai";
+import { Dialog } from "primereact/dialog";
 
 export const ButtonNodeContent = ({
   id,
@@ -20,6 +22,7 @@ export const ButtonNodeContent = ({
 }) => {
   const [options, setOptions] = useState([]);
   const fileRef = useRef<HTMLInputElement>(null);
+  const [fileDialogOpen, setFileDialogOpen] = useState(false);
 
   function handleOptionAdd() {
     if (options.length >= 3) {
@@ -58,11 +61,7 @@ export const ButtonNodeContent = ({
         ...prev[id],
         selectedOption: nodesInputData[id]?.selectedOption,
         type: nodesInputData[id]?.buttonType,
-        text:
-          nodesInputData[id]?.imageUrl ||
-          nodesInputData[id]?.videoUrl ||
-          nodesInputData[id]?.documentUrl ||
-          nodesInputData[id]?.text,
+        text: nodesInputData[id]?.buttonUrl,
       },
     }));
   }, []);
@@ -90,94 +89,112 @@ export const ButtonNodeContent = ({
     }));
   };
 
+  function handleImageView() {
+    setFileDialogOpen(true);
+  }
+
   return (
     <>
       <div className="flex gap-2 items-center">
-        <AnimatedDropdown
-          id="type"
-          name="type"
-          label="Type"
-          tooltipContent="Select Button Type"
-          options={[
-            { label: "Text", value: "text" },
-            { label: "Image", value: "image" },
-            { label: "Video", value: "video" },
-            { label: "Document", value: "document" },
-          ]}
-          value={nodesInputData[id]?.type}
-          onChange={(e: any) => {
-            setNodesInputData((prev) => ({
-              ...prev,
-              [id]: {
-                ...prev[id],
-                type: e,
-              },
-            }));
-          }}
-        />
+        <div className="w-1/3">
+          <AnimatedDropdown
+            id="type"
+            name="type"
+            label="Type"
+            tooltipContent="Select Button Type"
+            options={[
+              { label: "Text", value: "text" },
+              { label: "Image", value: "image" },
+              { label: "Video", value: "video" },
+              { label: "Document", value: "document" },
+            ]}
+            value={nodesInputData[id]?.type}
+            onChange={(e: any) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  type: e,
+                },
+              }));
+            }}
+          />
+        </div>
         {(nodesInputData[id]?.type === "image" ||
           nodesInputData[id]?.type === "document" ||
           nodesInputData[id]?.type === "video") && (
           <>
-            <AnimatedDropdown
-              id="selectChoice"
-              name="selectChoice"
-              tooltipContent="Select Choice"
-              label="Select Choice"
-              options={[
-                { value: "url", label: "Enter Url" },
-                { value: "upload", label: "Upload" },
-              ]}
-              value={nodesInputData[id]?.selectedOption}
-              onChange={(e) => {
-                setNodesInputData(() => ({
-                  ...nodesInputData,
-                  [id]: {
-                    ...nodesInputData[id],
-                    selectedOption: e,
-                    text: "",
-                  },
-                }));
-              }}
-            />
-            {nodesInputData[id]?.selectedOption === "upload" && (
-              <div className="flex flex-col gap-2 mt-0">
-                <Label
-                  htmlFor="uplaodfile"
-                  className="text-sm font-medium text-gray-800 font-"
-                >
-                  Upload File
-                </Label>
-                <Input
-                  type="file"
-                  id="uplaodfile"
-                  name="uplaodfile"
-                  onChange={handleFileUpload}
-                  accept={`${nodesInputData[id]?.type}/*`}
-                  required
-                  ref={fileRef}
-                  className="w-[250px]"
-                />
-              </div>
-            )}
-
-            {nodesInputData[id]?.selectedOption === "url" && (
-              <InputField
-                id="text"
-                name="text"
-                tooltipContent="Enter URL of media"
-                label={"URL"}
-                value={nodesInputData[id]?.text}
-                onChange={(e: { target: { value: any } }) => {
-                  setNodesInputData((prev) => ({
-                    ...prev,
+            <div className="w-1/3">
+              <AnimatedDropdown
+                id="selectChoice"
+                name="selectChoice"
+                tooltipContent="Select Choice"
+                label="Select Choice"
+                options={[
+                  { value: "url", label: "Enter Url" },
+                  { value: "upload", label: "Upload" },
+                ]}
+                value={nodesInputData[id]?.selectedOption}
+                onChange={(e) => {
+                  setNodesInputData(() => ({
+                    ...nodesInputData,
                     [id]: {
-                      ...prev[id],
-                      text: e.target.value,
+                      ...nodesInputData[id],
+                      selectedOption: e,
+                      text: "",
                     },
                   }));
                 }}
               />
+            </div>
+            {nodesInputData[id]?.selectedOption === "upload" && (
+              <div className="flex items-end gap-2">
+                <div className="flex flex-col gap-2 mt-0">
+                  <Label
+                    htmlFor="uplaodfile"
+                    className="text-sm font-medium text-gray-800 font-"
+                  >
+                    Upload File
+                  </Label>
+                  <Input
+                    type="file"
+                    id="uplaodfile"
+                    name="uplaodfile"
+                    onChange={handleFileUpload}
+                    accept={`${nodesInputData[id]?.type}/*`}
+                    required
+                    ref={fileRef}
+                    className="w-[250px]"
+                  />
+                </div>
+                <button onClick={handleImageView} className="cursor-pointer">
+                  <AiOutlineEye size={20} className="text-green-700" />
+                </button>
+              </div>
+            )}
+
+            {nodesInputData[id]?.selectedOption === "url" && (
+              <div className="flex items-end gap-2">
+                <InputField
+                  id="text"
+                  name="text"
+                  tooltipContent="Enter URL of media"
+                  label={"URL"}
+                  value={nodesInputData[id]?.text}
+                  onChange={(e: { target: { value: any } }) => {
+                    setNodesInputData((prev) => ({
+                      ...prev,
+                      [id]: {
+                        ...prev[id],
+                        text: e.target.value,
+                      },
+                    }));
+                  }}
+                />
+                <button onClick={handleImageView} className="cursor-pointer">
+                  <AiOutlineEye size={20} className="text-green-700" />
+                </button>
+              </div>
             )}
           </>
         )}
@@ -187,7 +204,6 @@ export const ButtonNodeContent = ({
               id="text"
               name="text"
               tooltipContent="Max 20 characters"
-              
               label={"Button Header"}
               value={nodesInputData[id]?.text}
               onChange={(e: { target: { value: any } }) => {
@@ -280,6 +296,35 @@ export const ButtonNodeContent = ({
           ))}
         </div>
       </div>
+
+      <Dialog
+        visible={fileDialogOpen}
+        onHide={() => {
+          setFileDialogOpen(false);
+        }}
+        draggable={false}
+        resizable={false}
+      >
+        {nodesInputData[id]?.type === "image" && (
+          <img
+            src={nodesInputData[id]?.text || nodesInputData[id]?.buttonUrl}
+            alt={nodesInputData[id]?.text || nodesInputData[id]?.buttonUrl}
+            className="h-80 w-100"
+          />
+        )}
+        {nodesInputData[id]?.type === "video" && (
+          <video
+            src={nodesInputData[id]?.text || nodesInputData[id]?.buttonUrl}
+            className="h-80 w-100"
+          />
+        )}
+        {nodesInputData[id]?.type === "document" && (
+          <iframe
+            src={nodesInputData[id]?.text || nodesInputData[id]?.buttonUrl}
+            className="h-80 w-100"
+          />
+        )}
+      </Dialog>
     </>
   );
 };
