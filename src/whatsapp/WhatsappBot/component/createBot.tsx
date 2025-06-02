@@ -748,7 +748,7 @@ const CreateWhatsAppBot = () => {
       return toast.error("Please add at least one edge");
     }
 
-    console.log(nodesInputData, "nodeData");
+  
     const dataTemplate = {
       image: {
         fileUrl: "",
