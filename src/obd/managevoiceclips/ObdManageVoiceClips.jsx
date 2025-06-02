@@ -27,7 +27,6 @@ import {
   saveStaticVoice,
 } from "@/apis/obd/obd";
 
-
 const ObdManageVoiceClips = () => {
   const [fileName, setFileName] = useState();
   const [templateName, setTemplateName] = useState();
@@ -61,6 +60,12 @@ const ObdManageVoiceClips = () => {
     name: "",
     admin: "",
     user: "",
+  });
+
+  const [staticVoice, setStaticVoice] = useState({
+    name: "",
+    file: null,
+    fileName: "",
   });
 
   const [dynamicVoice, setDynamicVoice] = useState({
@@ -117,40 +122,56 @@ const ObdManageVoiceClips = () => {
 
   // Handle file removal
   const handleRemoveFile = () => {
-    setUploadedFile(null);
-    setIsUploaded(false);
-    document.getElementById("fileInput").value = "";
+    setStaticVoice({ ...staticVoice, fileName: "", file: null });
+    fileRef.current.value = "";
     toast.success("File removed successfully.");
   };
 
   // dynamic option
 
-  const addVariables = () => {
-    setAddVariable((prev) => [...prev, { id: Date.now(), value: "" }]);
-  };
-  const handleVariableChange = (id, newValue) => {
-    setAddVariable((prev) =>
-      prev.map((variable) =>
-        variable.id === id ? { ...variable, value: newValue } : variable
-      )
-    );
-  };
-  const deleteVariable = (id) => {
-    setAddVariable((prev) => prev.filter((variable) => variable.id !== id));
-  };
-  const addDynamicFiles = () => {
-    setAddaddDynamicFile((prev) => [...prev, { id: Date.now(), value: "" }]);
-  };
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
 
-  const deleteDynamicFile = (id) => { };
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result.split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
 
-  const handleaddDynamicfile = (id, newValue) => {
-    setAddaddDynamicFile((prev) =>
-      prev.map((addFile) =>
-        addFile.id === id ? { ...addFile, value: newValue } : addFile
-      )
-    );
-  };
+  async function uploadDynamicFile(e, index) {
+    const selectedFile = dynamicVoice.dynamicList[index].file;
+    const base64 = await getBase64(selectedFile);
+
+    const dynamicList = [...dynamicVoice.dynamicList];
+    dynamicList[index] = {
+      ...dynamicList[index],
+      fileBase64: base64,
+    };
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: dynamicList,
+    }));
+  }
+
+  function removeDynamicFile(e, index) {
+    if (!dynamicVoiceRef.current[index].value) return;
+    dynamicVoiceRef.current[index].value = "";
+    const dynamicList = [...dynamicVoice.dynamicList];
+
+    dynamicList[index] = {
+      ...dynamicList[index],
+      fileName: "",
+      fileBase64: "",
+    };
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: dynamicList,
+    }));
+  }
 
   const cols = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -167,7 +188,12 @@ const ObdManageVoiceClips = () => {
       flex: 1,
       minWidth: 100,
     },
-    { field: "size(kb)", headerName: "Size(kb)", flex: 1, minWidth: 100 },
+    {
+      field: "size(kb)",
+      headerName: "Size(kb)",
+      flex: 1,
+      minWidth: 100,
+    },
     {
       field: "duration(sec)",
       headerName: "Duration(sec)",
@@ -198,15 +224,15 @@ const ObdManageVoiceClips = () => {
         <CustomTooltip value={"Active"}>
           <Switch
             checked={Number(params.row.status) === 1}
-            onChange={(e) => { }}
+            onChange={(e) => {}}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -279,39 +305,25 @@ const ObdManageVoiceClips = () => {
           : true;
 
         const matchesStatus = searchValue?.user
-          ? item.status === searchValue.user
+          ? item.status == searchValue.user
           : true;
 
         const matchesAdminStatus = searchValue?.admin
-          ? item.adminStatus === searchValue.admin
+          ? item.adminStatus == searchValue.admin
           : true;
 
         return matchesName && matchesStatus && matchesAdminStatus;
       });
 
-      let formattedData = [];
-      if (filteredData.length > 0) {
-        formattedData = Array.isArray(filteredData)
-          ? filteredData.map((item, index) => ({
+      const formattedData = Array.isArray(filteredData)
+        ? filteredData.map((item, index) => ({
             sn: index + 1,
             id: item.srNo,
             ...item,
           }))
-          : [];
-      } else {
-        formattedData = Array.isArray(res)
-          ? res.map((item, index) => ({
-            sn: index + 1,
-            id: item.srNo,
-            ...item,
-          }))
-          : [];
-      }
-      setRows(formattedData);
+        : [];
 
-      if (isSearchTriggered && formattedData.length === 0) {
-        toast.error("No data available");
-      }
+      setRows(formattedData);
     } catch (e) {
       toast.error("Something went wrong");
     }
@@ -341,28 +353,153 @@ const ObdManageVoiceClips = () => {
       const res = await fetchVoiceClipUrl(row.id);
       if (!res.path) return toast.error("Something went wrong");
       const url = `${BASE_AUDIO_URL}/${res.path}`;
-      console.log(url)
+      console.log(url);
       setSelectedRow({ ...row, url });
       setIsOpenPlay(true);
-
     } catch (e) {
       toast.error("Something went wrong", e);
     }
-
-
   }
 
-  // async function handleAudioPlay(row) {
-  //   try {
-  //     const res = await fetchVoiceClipUrl(row.id);
-  //     if (!res.path) return toast.error("Something went wrong");
-  //     const url = res.path;
-  //     setSelectedRow({ ...row, url });
-  //     setIsOpenPlay(true);
-  //   } catch (e) {
-  //     toast.error("Something went wrong");
-  //   }
-  // }
+  function hasConsecutiveDuplicates(dynamicList) {
+    for (let i = 1; i < dynamicList.length; i++) {
+      if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
+        toast.error(
+          `Consecutive items at positions ${i} and ${
+            i + 1
+          } have the same type "${dynamicList[i].dynamicType}"`
+        );
+        return true;
+      }
+    }
+    return false;
+  }
+
+  async function handleSave() {
+    if (selectedOption === "option1" && !staticVoice.file)
+      return toast.error("Please select a file");
+
+    if (selectedOption === "option1" && !staticVoice.name)
+      return toast.error("Please give a file name");
+    if (selectedOption === "option2" && !dynamicVoice.voiceName)
+      return toast.error("Please give a file name");
+    if (selectedOption === "option2" && !dynamicVoice.dynamicList.length)
+      return toast.error("Please select atleast 1 item");
+
+    let isError = false;
+    if (selectedOption === "option2") {
+      dynamicVoice.dynamicList.forEach((item, index) => {
+        if (item.dynamicType === "file" && !item.fileBase64) {
+          toast.error(`Please upload file for item ${index + 1}`);
+          isError = true;
+        }
+      });
+    }
+
+    selectedOption === "option2" &&
+      hasConsecutiveDuplicates(dynamicVoice.dynamicList);
+
+    if (isError) return;
+
+    const typeId = {
+      transactional: 2,
+      promotional: 1,
+    };
+
+    try {
+      if (selectedOption === "option1") {
+        const formData = new FormData();
+        formData.append("mp3File", staticVoice.file);
+        formData.append("type", typeId[selecteTransactional]);
+        formData.append("fileName", staticVoice.name);
+
+        const res = await saveStaticVoice(formData);
+        if (!res?.msg?.includes("successfully"))
+          return toast.error(res?.existmessage);
+        setIsVisible(false);
+        toast.success(res.msg);
+        setStaticVoice({
+          fileName: "",
+          file: null,
+        });
+        setSelectedOption("option2");
+        await handlefetchAllVoiceClips();
+        setSelecteTransactional("transactional");
+      } else if (selectedOption === "option2") {
+        const payload = {
+          ...dynamicVoice,
+          voiceType: typeId[selecteTransactional],
+          variableValue: dynamicVoice?.voiceName,
+        };
+        const res = await saveDynamicVoice(payload);
+        console.log(res);
+      }
+    } catch (e) {
+      toast.error("Something went wrong");
+    }
+  }
+
+  function addDynamicItem(type) {
+    if (dynamicVoice?.dynamicList?.length >= 5)
+      return toast.error("You can add only 5 items");
+    const newItem = {
+      dynamicType: type,
+      sequence: dynamicVoice?.dynamicList?.length + 1,
+      fileName: "",
+      fileBase64: "",
+      id: `apply${dynamicVoice?.dynamicList?.length + 1}`,
+    };
+    const lastItem =
+      dynamicVoice?.dynamicList?.[dynamicVoice?.dynamicList?.length - 1];
+
+    if (lastItem?.dynamicType === type)
+      return toast.error("You can add only one item per type");
+
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: [...prev.dynamicList, newItem],
+    }));
+  }
+
+  function handleDynamicFileChange(e, index) {
+    const files = e.target.files[0];
+    const dynamicList = [...dynamicVoice.dynamicList];
+
+    dynamicList[index] = {
+      ...dynamicList[index],
+      fileName: files.name,
+      fileBase64: "",
+      file: files,
+    };
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: dynamicList,
+    }));
+  }
+
+  function deleteDynamicItem(e, index) {
+    const id = `apply${index + 1}`;
+    const updatedList = dynamicVoice.dynamicList.filter(
+      (item) => item.id !== id
+    );
+
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: updatedList,
+    }));
+  }
+
+  function handleDynamicVarChange(e, index) {
+    const dynamicList = [...dynamicVoice.dynamicList];
+    dynamicList[index] = {
+      ...dynamicList[index],
+      variableValue: e.target.value,
+    };
+    setDynamicVoice((prev) => ({
+      ...prev,
+      dynamicList: dynamicList,
+    }));
+  }
 
   return (
     <div className="w-full">
@@ -472,7 +609,7 @@ const ObdManageVoiceClips = () => {
                   // visible={isVisible}
                   checked={selectedOption === "option1"}
                   onChange={handleChangeEnablePostpaid}
-                // onClick={()=>setIsChecked(false)}
+                  // onClick={()=>setIsChecked(false)}
                 />
                 <label className="text-sky-800 font-semibold ">Static</label>
               </div>
@@ -497,7 +634,7 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
-                  onClick={() => { }}
+                  onClick={() => {}}
                 />
                 <label>Transactional</label>
               </div>
@@ -522,8 +659,13 @@ const ObdManageVoiceClips = () => {
                   label="File Name"
                   placeholder="Enter File Name"
                   required
-                // value={userid}
-                // onChange={(e) => setUserId(e.target.value)}
+                  value={staticVoice.name}
+                  onChange={(e) => {
+                    setStaticVoice({
+                      ...staticVoice,
+                      name: e.target.value,
+                    });
+                  }}
                 />
               </div>
               <div className="file-upload mt-2">
@@ -538,7 +680,8 @@ const ObdManageVoiceClips = () => {
                     className="hidden"
                     id="fileInput"
                     name="fileInput"
-                    accept=".xls,.xlsx,.xlsm"
+                    accept="audio/*"
+                    ref={fileRef}
                   />
                   <div className="flex items-center justify-center gap-2">
                     <label
@@ -547,30 +690,16 @@ const ObdManageVoiceClips = () => {
                     >
                       Choose or Drop File
                     </label>
-                    <div className="upload-button-container ">
-                      <button
-                        onClick={handleFileUpload}
-                        disabled={isUploading}
-                        className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                          }`}
-                      >
-                        <FileUploadOutlinedIcon
-                          sx={{ color: "white", fontSize: "23px" }}
-                        />
-                      </button>
-                    </div>
                   </div>
                   <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                    Max 3 lacs records & mobile number should be with country
-                    code. <br />
-                    Supported File Formats: .xlsx
+                    Upload supported audio files
                   </p>
                   <div className="mt-3">
-                    {uploadedFile ? (
+                    {staticVoice.fileName ? (
                       <div className="file-upload-info flex items-center justify-center  gap-1">
                         <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
                           {isUploaded ? "File Uploaded: " : "File Selected: "}
-                          <strong>{uploadedFile.name}</strong>
+                          <strong>{staticVoice.fileName}</strong>
                         </p>
                         <button
                           className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
@@ -600,8 +729,13 @@ const ObdManageVoiceClips = () => {
                     label="Template Name"
                     placeholder="Enter Template Name"
                     required
-                    value={templateName}
-                    onChange={(e) => setTemplateName(e.target.value)}
+                    value={dynamicVoice.voiceName}
+                    onChange={(e) => {
+                      setDynamicVoice({
+                        ...dynamicVoice,
+                        voiceName: e.target.value,
+                      });
+                    }}
                   />
                 </div>
                 <div className="flex flex-row mt-2 justify-center gap-2">
@@ -610,149 +744,55 @@ const ObdManageVoiceClips = () => {
                     name="obdvoiceaddfilebtn"
                     label="Add file"
                     placeholder="Add file"
-                    onClick={addDynamicFiles}
+                    onClick={(e) => {
+                      addDynamicItem("file");
+                    }}
                   />
                   <UniversalButton
                     id="obdvoiceaddfilebtn"
                     name="obdvoiceaddfilebtn"
                     label="Add Variable"
                     placeholder="Add Variable"
-                    onClick={addVariables}
-                  // value={variableName}
-                  // onClick={(variableName)=>setVariableName(variableName)}
+                    onClick={() => {
+                      addDynamicItem("variable");
+                    }}
                   />
                 </div>
-
-                {/* variable start */}
-
-                <div className="mt-4">
-                  {addVariable.map((entry, index) => (
-                    <div
-                      className="flex gap-2 items-center mt-3"
-                      key={entry.id}
-                    >
-                      <label
-                        htmlFor={`variable-${entry.id}`}
-                        className="text-sm font-medium text-gray-700"
-                      >
-                        {index + 1}.
-                      </label>
-                      <InputField
-                        id={`variable-${entry.id}`}
-                        placeholder={`Enter Variable ${index + 1}`}
-                        value={entry.value}
-                        onChange={(e) =>
-                          handleVariableChange(entry.id, e.target.value)
-                        }
-                      />
-                      <button
-                        className="rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                        onClick={() => deleteVariable(entry.id)}
-                      >
-                        <MdOutlineDeleteForever
-                          className="text-red-500 cursor-pointer hover:text-red-600"
-                          size={20}
-                        />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-                {/* variable end */}
-                {/* choose file start */}
-                {addDynamicFile.map((entry, index) => {
-                  <div className="flex gap-2 items-center mt-3 " key={entry.id}>
-                    <label
-                      htmlFor={`addFile-${entry.id}`}
-                      className="text-sm font-medium text-gray-700 "
-                      value={entry.value}
-                      onChange={(e) =>
-                        handleaddDynamicfile(entry.id, e.target.value)
-                      }
-                    >
-                      {index + 1}
-                    </label>
-                    <div className="file-upload mt-2 w-full">
-                      <div
-                        className="file-upload-container"
-                        onDrop={handleFileDrop}
-                        onDragOver={handleDragOver}
-                      >
-                        <input
-                          type="file"
-                          onChange={handleFileChange}
-                          className="hidden"
-                          id="fileInput"
-                          name="fileInput"
-                          accept=".xls,.xlsx,.xlsm"
-                        />
-                        <div className="flex items-center justify-center gap-2">
-                          <label
-                            htmlFor="fileInput"
-                            className="file-upload-button inline-block bg-blue-400 hover:bg-blue-500 text-white font-medium text-sm px-3 py-2 rounded-lg cursor-pointer text-center tracking-wider"
-                          >
-                            Choose or Drop File
-                          </label>
-                          <div className="upload-button-container ">
-                            <button
-                              onClick={handleFileUpload}
-                              disabled={isUploading}
-                              className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                                }`}
-                            >
-                              <FileUploadOutlinedIcon
-                                sx={{ color: "white", fontSize: "23px" }}
-                              />
-                            </button>
-                          </div>
-                        </div>
-                        {/* <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-                        Max 3 lacs records & mobile number should be with
-                        country code. <br />
-                        Supported File Formats: .xlsx
-                      </p> */}
-                        <div className="mt-3">
-                          {uploadedFile ? (
-                            <div className="file-upload-info flex items-center justify-center  gap-1">
-                              <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                                {isUploaded
-                                  ? "File Uploaded: "
-                                  : "File Selected: "}
-                                <strong>{uploadedFile.name}</strong>
-                              </p>
-                              <button
-                                className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                                onClick={handleRemoveFile}
-                              >
-                                <MdOutlineDeleteForever
-                                  className="text-red-500 cursor-pointer hover:text-red-600"
-                                  size={20}
-                                />
-                              </button>
-                            </div>
-                          ) : (
-                            <p className="file-upload-feedback file-upload-feedback-error text-gray-500 text-sm font-semibold tracking-wide">
-                              No file uploaded yet!
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                    <button
-                      className=" rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                      onClick={() => deleteDynamicFile(entry.id)}
-                    >
-                      <MdOutlineDeleteForever
-                        className="text-red-500 cursor-pointer hover:text-red-600"
-                        size={20}
-                      />
-                    </button>
-                  </div>;
-                })}
-
-                {/* choose file end */}
               </div>
+              {dynamicVoice.dynamicList.length > 0 && (
+                <>
+                  <div className="space-y-2 max-h-60 overflow-y-auto border border-gray-300 p-2 rounded-md mt-2">
+                    {dynamicVoice.dynamicList.map((list, index) => (
+                      <div key={index} className="">
+                        <DynamicFile
+                          data={list}
+                          voiceRef={dynamicVoiceRef}
+                          removeDynamicFile={removeDynamicFile}
+                          index={index}
+                          uploadDynamicFile={uploadDynamicFile}
+                          handleFileChange={handleDynamicFileChange}
+                          deleteDynamicItem={deleteDynamicItem}
+                          handleDynamicVarChange={handleDynamicVarChange}
+                          dynamicVoice={dynamicVoice}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </>
           )}
+
+          <UniversalButton
+            id="submit"
+            label="save"
+            onClick={handleSave}
+            style={{
+              marginTop: "2rem",
+              marginRight: "auto",
+              marginLeft: "auto",
+            }}
+          />
         </Dialog>
       </div>
 

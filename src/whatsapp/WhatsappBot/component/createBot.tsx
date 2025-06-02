@@ -1172,6 +1172,7 @@ import { Details } from "./components/details";
 import generateBotPayload from "./components/helper/generatePayload";
 import { List } from "./components/list";
 import { ButtonNodeContent } from "./components/button";
+import { motion } from "framer-motion";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import {
@@ -2014,7 +2015,7 @@ const CreateWhatsAppBot = () => {
 
   return (
     <>
-      <div className="flex">
+      {/* <div className="flex">
         <div
           style={{ width: "90vw", height: "auto" }}
           onDrop={handleDrop}
@@ -2148,6 +2149,227 @@ const CreateWhatsAppBot = () => {
             handleSubmit={handleSubmit}
             isUpdate={state ?? false}
           />
+        </div>
+      </div> */}
+
+      {/* Header Section */}
+      <div className="flex items-center justify-between p-3 bg-white rounded-t-2xl rounded-bl-2xl">
+        <h1 className="text-xl font-semibold text-gray-800">
+          Create WhatsApp Bot
+        </h1>
+        <div className="flex gap-4">
+          <Button
+            onClick={reset}
+            className="px-4 py-2 text-white bg-red-400 rounded-md hover:bg-red-600"
+          >
+            Reset Canvas
+          </Button>
+          <Button
+            onClick={handleSubmit}
+            className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
+          >
+            Save Bot
+          </Button>
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex bg-white" style={{ height: "calc(100vh - 200px)" }}>
+        {/* Canvas Section */}
+        <div
+          className="flex-1 bg-gray-100 p-4 rounded-tr-2xl rounded-md border-2 border-gray-200 h-auto"
+          // style={{ height: "calc(100vh - 200px)" }}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+        >
+          <ReactFlow
+            nodes={nodes}
+            edges={edges}
+            onNodesChange={onNodesChange}
+            onEdgesChange={onEdgesChange}
+            onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            deleteKeyCode={"Backspace"}
+            nodeTypes={nodeTypes}
+            onConnectStart={(event, { handleType }) => {
+              setIsConnecting(true);
+              setConnectionType(handleType);
+            }}
+            onConnectEnd={() => {
+              setIsConnecting(false);
+              setConnectionType("");
+            }}
+          >
+            <Background />
+            <MiniMap />
+            <Controls />
+          </ReactFlow>
+        </div>
+
+        <div className="flex flex-col justify-between w-[160px] gap-6 bg-white p-4 rounded-b-2xl shadow-lg">
+          <div className="grid grid-cols-1 gap-4">
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "starting")}
+              onClick={() => addNode("starting")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-green-400 to-green-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <OutlinedFlagOutlinedIcon />
+                <span>Start</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "text")}
+              onClick={() => addNode("text")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-purple-100 to-purple-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <TextFieldsOutlinedIcon />
+                <span>Text</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.7, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "image")}
+              onClick={() => addNode("image")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-yellow-100 to-yellow-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <ImageOutlinedIcon />
+                <span>Image</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.8, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "video")}
+              onClick={() => addNode("video")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer  h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <VideocamOutlinedIcon />
+                <span>Video</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.9, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "document")}
+              onClick={() => addNode("document")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-pink-100 to-pink-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <ArticleOutlinedIcon />
+                <span>Document</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "audio")}
+              onClick={() => addNode("audio")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-blue-100 to-blue-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <MicOutlinedIcon />
+                <span>Audio</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.1, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "button")}
+              onClick={() => addNode("button")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-purple-100 to-purple-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <BsMenuButton />
+                <span>Button</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.2, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "list")}
+              onClick={() => addNode("list")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-red-100 to-red-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <FormatListBulletedOutlinedIcon />
+                <span>List</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.3, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "agent")}
+              onClick={() => addNode("agent")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-blue-100 to-blue-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <MicOutlinedIcon />
+                <span>Agent</span>
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 1.4, ease: "easeOut" }}
+              draggable
+              onDragStart={(event) => handleDragStart(event, "answer")}
+              onClick={() => addNode("answer")}
+              // className={commonButtonClass}
+              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-purple-100 to-purple-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <QuestionAnswerOutlinedIcon />
+                <span>Answer</span>
+              </div>
+            </motion.div>
+            {/* <Button onClick={reset} className={commonButtonClass}>
+              <RestartAltOutlinedIcon />
+              Reset
+            </Button> */}
+          </div>
+
+          {/* <Details
+            setDetails={setDetails}
+            details={details}
+            handleSubmit={handleSubmit}
+            isUpdate={state ?? false}
+          /> */}
         </div>
       </div>
 
