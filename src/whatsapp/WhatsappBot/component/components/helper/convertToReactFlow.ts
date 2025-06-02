@@ -91,7 +91,7 @@ export const transformNodesById = (parsedFlowData) => {
       variableName: node.answerText,
       options: listItems || null,
       buttonTexts: node.buttonTexts,
-      text: node?.listHeading,
+      text: node?.listHeading || node?.text,
       fileUrl: node?.imageUrl || node?.videoUrl || node?.documentUrl || "",
       fileCaption:
         node?.imageCaption || node?.videoCaption || node?.documentCaption || "",

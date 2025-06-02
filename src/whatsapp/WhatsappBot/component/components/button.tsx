@@ -51,12 +51,9 @@ export const ButtonNodeContent = ({
     setOptions(
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
-  
-    const nodeType = {
-      imageUrl: "image",
-      videoUrl: "video",
-      documentUrl: "document",
-    };
+
+    console.log(nodesInputData[id]);
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -66,7 +63,8 @@ export const ButtonNodeContent = ({
         text:
           nodesInputData[id]?.imageUrl ||
           nodesInputData[id]?.videoUrl ||
-          nodesInputData[id]?.documentUrl,
+          nodesInputData[id]?.documentUrl ||
+          nodesInputData[id]?.text,
       },
     }));
   }, []);
@@ -102,6 +100,7 @@ export const ButtonNodeContent = ({
           name="type"
           label="Type"
           options={[
+            { label: "Text", value: "text" },
             { label: "Image", value: "image" },
             { label: "Video", value: "video" },
             { label: "Document", value: "document" },
@@ -117,54 +116,75 @@ export const ButtonNodeContent = ({
             }));
           }}
         />
-
-        <AnimatedDropdown
-          id="selectChoice"
-          name="selectChoice"
-          label="Select Choice"
-          options={[
-            { value: "url", label: "Enter Url" },
-            { value: "upload", label: "Upload" },
-          ]}
-          value={nodesInputData[id]?.selectedOption}
-          onChange={(e) => {
-            setNodesInputData(() => ({
-              ...nodesInputData,
-              [id]: {
-                ...nodesInputData[id],
-                selectedOption: e,
-                text: "",
-              },
-            }));
-          }}
-        />
-
-        {nodesInputData[id]?.selectedOption === "upload" && (
-          <div className="flex flex-col gap-2 mt-0">
-            <Label
-              htmlFor="uplaodfile"
-              className="text-sm font-medium text-gray-800 font-"
-            >
-              Upload File
-            </Label>
-            <Input
-              type="file"
-              id="uplaodfile"
-              name="uplaodfile"
-              onChange={handleFileUpload}
-              accept={`${nodesInputData[id]?.type}/*`}
-              required
-              ref={fileRef}
-              className="w-[250px]"
+        {(nodesInputData[id]?.type === "image" ||
+          nodesInputData[id]?.type === "document" ||
+          nodesInputData[id]?.type === "video") && (
+          <>
+            <AnimatedDropdown
+              id="selectChoice"
+              name="selectChoice"
+              label="Select Choice"
+              options={[
+                { value: "url", label: "Enter Url" },
+                { value: "upload", label: "Upload" },
+              ]}
+              value={nodesInputData[id]?.selectedOption}
+              onChange={(e) => {
+                setNodesInputData(() => ({
+                  ...nodesInputData,
+                  [id]: {
+                    ...nodesInputData[id],
+                    selectedOption: e,
+                    text: "",
+                  },
+                }));
+              }}
             />
-          </div>
-        )}
+            {nodesInputData[id]?.selectedOption === "upload" && (
+              <div className="flex flex-col gap-2 mt-0">
+                <Label
+                  htmlFor="uplaodfile"
+                  className="text-sm font-medium text-gray-800 font-"
+                >
+                  Upload File
+                </Label>
+                <Input
+                  type="file"
+                  id="uplaodfile"
+                  name="uplaodfile"
+                  onChange={handleFileUpload}
+                  accept={`${nodesInputData[id]?.type}/*`}
+                  required
+                  ref={fileRef}
+                  className="w-[250px]"
+                />
+              </div>
+            )}
 
-        {nodesInputData[id]?.selectedOption === "url" && (
+            {nodesInputData[id]?.selectedOption === "url" && (
+              <InputField
+                id="text"
+                name="text"
+                label={"URL"}
+                value={nodesInputData[id]?.text}
+                onChange={(e: { target: { value: any } }) => {
+                  setNodesInputData((prev) => ({
+                    ...prev,
+                    [id]: {
+                      ...prev[id],
+                      text: e.target.value,
+                    },
+                  }));
+                }}
+              />
+            )}
+          </>
+        )}
+        {nodesInputData[id]?.type === "text" && (
           <InputField
             id="text"
             name="text"
-            label={"URL"}
+            label={"Text"}
             value={nodesInputData[id]?.text}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({

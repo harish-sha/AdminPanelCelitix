@@ -78,6 +78,7 @@ function generateBotPayload(
         image: "imageUrl",
         video: "videoUrl",
         document: "documentUrl",
+        text: "text",
       };
 
     

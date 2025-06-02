@@ -642,7 +642,7 @@ const CreateWhatsAppBot = () => {
       },
       button: {
         type: "",
-        text: "",
+        // text: "",
         message: "",
         buttonTexts: [],
       },
@@ -714,7 +714,7 @@ const CreateWhatsAppBot = () => {
 
       if (isError) return;
 
-      nodeData.options = optionsToSave;
+      nodeData.buttonTexts = optionsToSave;
     }
 
     setSelectedNodeId("");
@@ -748,6 +748,7 @@ const CreateWhatsAppBot = () => {
       return toast.error("Please add at least one edge");
     }
 
+    console.log(nodesInputData, "nodeData");
     const dataTemplate = {
       image: {
         fileUrl: "",
@@ -787,7 +788,7 @@ const CreateWhatsAppBot = () => {
       },
       button: {
         type: "",
-        text: "",
+        // text: "",
         message: "",
         buttonTexts: [],
       },
@@ -814,6 +815,7 @@ const CreateWhatsAppBot = () => {
 
         nodeData.fileUrl = res?.fileUrl;
       }
+
       if (nodeData?.options && nodeData?.options.length > 0) {
         nodeData.options.map((item: any, index: number) => {
           if (!item.option || !item.value) {
@@ -822,6 +824,16 @@ const CreateWhatsAppBot = () => {
               `Missing "option" or "value" for list item ${
                 index + 1
               } in node "${id}".`
+            );
+          }
+        });
+      }
+      if (nodeData?.buttonTexts && nodeData?.buttonTexts.length > 0) {
+        nodeData.buttonTexts.map((item: any, index: number) => {
+          if (!item) {
+            isError = true;
+            return toast.error(
+              `Missing "buttonValue" for button ${index + 1} in node "${id}".`
             );
           }
         });
@@ -877,11 +889,11 @@ const CreateWhatsAppBot = () => {
     if (!payload) {
       return toast.error("Error Generating Payload");
     }
-   
+    // return;
     try {
       const res = await saveOrEditBot(payload, state?.botSrno);
       if (!res?.status) {
-        return toast.error(res?.msg);
+        return toast.error("Error Saving Bot");
       }
 
       setNodes(initialNodes);
@@ -897,12 +909,9 @@ const CreateWhatsAppBot = () => {
       navigate("/wwhatsappbot");
     } catch (e) {
       // console.log(e);
+      toast.error("Error Saving Bot");
     }
   };
-
-  useEffect(() => {
-    // console.log(details);
-  }, [details]);
 
   return (
     <>
