@@ -410,7 +410,7 @@ const SmsDLTtemplate = () => {
       filepath: contactData?.filepath,
       hashmap: {
         entityId: entityid,
-        TemplateName: templateData.templatename,
+        TemplateName: templateData.templateName,
         TemplateId: templateData.templateId,
         TemplateType: templateData.type,
         Message: templateData.message,
