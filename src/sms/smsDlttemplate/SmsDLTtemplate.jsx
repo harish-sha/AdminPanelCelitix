@@ -31,7 +31,6 @@ import { exportToExcel } from "@/utils/utills";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import InfoPopover from "@/components/common/InfoPopover";
 
-
 const SmsDLTtemplate = () => {
   const [isFetching, setIsFetching] = useState(false);
   // const [statusOption, setStatusOption] = useState(null);
@@ -64,7 +63,6 @@ const SmsDLTtemplate = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-
   const [contactData, setContactData] = useState({});
   const [templateData, setTemplateData] = useState({
     templateName: "",
@@ -82,16 +80,20 @@ const SmsDLTtemplate = () => {
   const [selectedTemplate, setSelectedTemplate] = useState("");
   const [updateTemplateData, setUpdateTemplateData] = useState({});
 
-
   const fetchTemplates = async () => {
     setIsFetching(true);
     try {
       const rawData = await getAllTemplates("all");
       const reverseData = rawData.reverse();
 
-      const filteredData = reverseData.filter((item) =>
-        item.templateId?.toLowerCase().includes(templateIdFilter.toLowerCase()) &&
-        item.templateName?.toLowerCase().includes(templateNameFilter.toLowerCase())
+      const filteredData = reverseData.filter(
+        (item) =>
+          item.templateId
+            ?.toLowerCase()
+            .includes(templateIdFilter.toLowerCase()) &&
+          item.templateName
+            ?.toLowerCase()
+            .includes(templateNameFilter.toLowerCase())
       );
 
       const mappedData = filteredData.map((item, index) => ({
@@ -107,10 +109,10 @@ const SmsDLTtemplate = () => {
           item.type === 1
             ? "Transactional"
             : item.type === 2
-              ? "Promotional"
-              : item.type === 3
-                ? "International"
-                : "Unknown",
+            ? "Promotional"
+            : item.type === 3
+            ? "International"
+            : "Unknown",
         // consenttype: "-",
         inserttime: item.insertDate
           ? moment(item.insertDate).format("DD-MM-YYYY HH:mm:ss")
@@ -119,10 +121,10 @@ const SmsDLTtemplate = () => {
           item.status === 1
             ? "Approved"
             : item.status === 2
-              ? "Rejected"
-              : item.status === 3
-                ? "Pending"
-                : "Unknown",
+            ? "Rejected"
+            : item.status === 3
+            ? "Pending"
+            : "Unknown",
       }));
 
       setRows(mappedData);
@@ -269,8 +271,7 @@ const SmsDLTtemplate = () => {
             onClose={closeDropdown}
           >
             {clicked && Object.keys(clicked).length > 0 ? (
-              <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden"
-              >
+              <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
                 <tbody>
                   {Object.entries(clicked).map(([key, value], index) => (
                     <tr
@@ -405,18 +406,24 @@ const SmsDLTtemplate = () => {
 
     if (isError) return;
 
+    const dd = {
+      entityId: entityid,
+      templatename: templateData.templateName,
+      templateid: templateData.templateId,
+      template_type: templateData.type,
+      msg_format: templateData.message,
+      templatestatus: templateData.status,
+      senderid: templateData.senderId,
+    };
+
+    const inverted = Object.fromEntries(
+      Object.entries(dd).map(([key, value]) => [value, key])
+    );
+
     const data = {
       entityId: entityid,
       filepath: contactData?.filepath,
-      hashmap: {
-        entityId: entityid,
-        TemplateName: templateData.templateName,
-        TemplateId: templateData.templateId,
-        TemplateType: templateData.type,
-        Message: templateData.message,
-        Status: templateData.status,
-        SenderId: templateData.senderId,
-      },
+      hashmap: inverted,
     };
 
     try {
@@ -431,6 +438,7 @@ const SmsDLTtemplate = () => {
       setIsUploaded(false);
       setUploadedFile(null);
       fileInputRef.current.value = "";
+      fetchTemplates()
     } catch (e) {
       return toast.error("Error importing template.");
     }
@@ -596,8 +604,9 @@ const SmsDLTtemplate = () => {
                   <button
                     onClick={handleFileUpload}
                     disabled={isUploading}
-                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                      }`}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                      isUploading ? "disabled" : ""
+                    }`}
                   >
                     <FileUploadOutlinedIcon
                       sx={{ color: "white", fontSize: "23px" }}
@@ -823,8 +832,9 @@ const SmsDLTtemplate = () => {
               Are you sure ?
             </p>
             <p>
-              {`Do you really want to delete ${isMultipleDelete ? "these" : "this"
-                } record? This process cannot be undo.`}
+              {`Do you really want to delete ${
+                isMultipleDelete ? "these" : "this"
+              } record? This process cannot be undo.`}
             </p>
             <div className="flex justify-center gap-4 mt-2">
               <UniversalButton
