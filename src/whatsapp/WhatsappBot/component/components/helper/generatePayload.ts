@@ -78,19 +78,22 @@ function generateBotPayload(
         image: "imageUrl",
         video: "videoUrl",
         document: "documentUrl",
+        text: "text",
       };
-      entry[options[nodeInput?.type]] = nodeInput?.text;
+
+      entry["buttonUrl"] = nodeInput?.text || nodeInput?.fileUrl;
+      entry["buttonType"] = nodeInput?.type;
 
       entry["buttonBody"] = nodeInput?.message;
       entry["type"] = finalType;
-      entry["buttonTexts"] = nodeInput?.options;
-      entry["buttonTexts"] = nodeInput?.options;
+      entry["buttonTexts"] = nodeInput?.buttonTexts;
+      // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
     }
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.text;
+      entry["listHeading"] = nodeInput?.message;
       entry["listUrl"] = nodeInput?.text;
       entry["listBody"] = nodeInput?.message;
       entry["listType"] = nodeInput?.type;
@@ -104,6 +107,7 @@ function generateBotPayload(
         ]);
       }
     }
+    entry["selectedOption"] = nodeInput?.selectedOption || "";
 
     if (prevNode) entry["prevNode"] = prevNode;
 

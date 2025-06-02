@@ -15,11 +15,12 @@ export const Details = ({
   isUpdate: Boolean;
 }) => {
   return (
-    <div className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2 border rounded-md p-3">
       <AnimatedDropdown
         id="selecetWaba"
         name="selectWaba"
         label="Select WABA"
+        placeholder="Select WABA"
         tooltipContent="Select your whatsapp business account"
         tooltipPlacement="right"
         options={details?.waba?.map((waba) => ({

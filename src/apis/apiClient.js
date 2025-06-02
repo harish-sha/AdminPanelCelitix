@@ -17,7 +17,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
   };
 
   if (!(options.body instanceof FormData)) {
-    defaultHeaders["Content-Type"] = "application/json";``
+    defaultHeaders["Content-Type"] = "application/json";
   }
 
   try {

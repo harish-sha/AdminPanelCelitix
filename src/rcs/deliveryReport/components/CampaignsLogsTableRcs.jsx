@@ -151,7 +151,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
       headerName: "Created On",
       flex: 1,
       minWidth: 120,
-      renderCell: (params) => moment(params.row.createdOn).format("DD-MM-YYYY"),
+      // renderCell: (params) => moment(params.row.createdOn).format("DD-MM-YYYY"),
     },
     {
       field: "campaignName",
@@ -226,6 +226,7 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
                     { label: "Delivered", key: "delivered" },
+                    { label: "Undelivered", key: "undelivered" },
                     { label: "Read", key: "read" },
                     { label: "Source", key: "source" },
                     // { label: "Charged Unit", key: "chargedUnit" },

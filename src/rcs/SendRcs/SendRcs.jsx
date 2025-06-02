@@ -282,7 +282,7 @@ const SendRcs = () => {
       groupSrNoList: selectedOption === "group" ? selectedGrp : [],
       isSchedule: scheduleData?.isSchedule ? "1" : "0",
       scheduleTime: scheduleData?.isSchedule
-        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:ss:mm")
+        ? moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss")
         : "",
       filePath: contactData?.filePath || "",
     };

@@ -46,8 +46,11 @@ import Loader from "../components/Loader";
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
-import { StatusHoverCard } from "./components/StatusHoverCard.jsx";
 import moment from "moment";
+import Lottie from "lottie-react";
+import verified from "../../assets/animation/verified.json";
+// import metaAiAnimation from "..//assets/animation/metaai.json";
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -113,11 +116,6 @@ const CustomPagination = ({
     </Box>
   );
 };
-
-
-
-
-
 
 
 const WhatsappManageWaba = ({ id, name }) => {
@@ -368,6 +366,54 @@ const WhatsappManageWaba = ({ id, name }) => {
     const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
   };
 
+  const statusMessages = {
+    CONNECTED: {
+      title: "Connected",
+      description:
+        "A phone number is associated with this account and is working properly.",
+    },
+    RESTRICTED: {
+      title: "Restricted",
+      description:
+        "This phone number has reached its 24-hour messaging limit and can no longer send messages to customers. Please wait until the messaging limit resets.",
+    },
+    FLAGGED: {
+      title: "Flagged",
+      description:
+        "This number has been flagged. Review the quality rating or check the account health.",
+    },
+    BANNED: {
+      title: "Banned",
+      description: "This number has been banned. Contact support for resolution.",
+    },
+    UNKNOWN: {
+      title: "Unknown",
+      description: "The status of this number is unknown or not reported.",
+    },
+  };
+
+  const qualityMessages = {
+    GREEN: {
+      title: "High Quality",
+      description:
+        "This account's quality rating is High. Messages are rarely flagged and deliverability is optimal.",
+    },
+    YELLOW: {
+      title: "Medium Quality",
+      description:
+        "This phone number is at risk of being banned. See our guidelines about how best to send messages to your customers.",
+    },
+    RED: {
+      title: "Low Quality",
+      description:
+        "This account's quality rating is Low. High risk of message failures or blocks—investigate account health immediately.",
+    },
+    UNKNOWN: {
+      title: "Unknown Quality",
+      description: "The quality rating for this account is not available.",
+    },
+  };
+
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "wabaName", headerName: "WABA Name", flex: 1, minWidth: 120 },
@@ -378,10 +424,25 @@ const WhatsappManageWaba = ({ id, name }) => {
       minWidth: 120,
     },
     { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
-    // { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "businessStatus", headerName: "Business Status", flex: 1, minWidth: 120,
+      renderCell: (params) => {
+        return (
+          <div className="flex items-center gap-2">
+            <span>Verified</span>
+            <Lottie
+              animationData={verified}
+              loop
+              autoplay
+              style={{ width: "30px", height: "30px" }}
+            />
+          </div>
+        )
+      },
+    },
     {
       field: "status",
-      headerName: "Status",
+      headerName: "Phone Status",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => {
@@ -394,23 +455,17 @@ const WhatsappManageWaba = ({ id, name }) => {
           UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
         };
         const { color, text } = statusMap[status] || statusMap.UNKNOWN;
+        const content = statusMessages[status] || statusMessages.UNKNOWN;
 
         const [showHover, setShowHover] = useState(false);
         return (
-          // <span
-          //   className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold ${color}`}
-          //   style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
-          // >
-          //   {text}
-          // </span>
           <>
             <div
-              // className="relative"
               onMouseEnter={() => setShowHover(true)}
               onMouseLeave={() => setShowHover(false)}
             >
               <span
-                className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold ${color}`}
+                className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold cursor-pointer ${color}`}
                 style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
               >
                 {text}
@@ -418,9 +473,21 @@ const WhatsappManageWaba = ({ id, name }) => {
 
               <AnimatePresence>
                 {showHover && (
-                  <div className="absolute left-1/2 transform -translate-x-1/2 mt-0">
-                    <StatusHoverCard status={status} />
-                  </div>
+                  <motion.div
+                    key="status-hover"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    className="absolute z-50 bg-white shadow-xl border rounded-lg w-78 p-4 text-sm text-gray-700"
+                    style={{
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <p className="font-bold text-gray-900 mb-1">{content.title}</p>
+                    <p className="text-gray-600 text-wrap">{content.description}</p>
+                  </motion.div>
                 )}
               </AnimatePresence>
             </div>
@@ -428,13 +495,6 @@ const WhatsappManageWaba = ({ id, name }) => {
         );
       },
     },
-    // {
-    //   field: "messaging_limit",
-    //   headerName: "Messaging Limit",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
-    // { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
     {
       field: "quality",
       headerName: "Quality",
@@ -450,31 +510,45 @@ const WhatsappManageWaba = ({ id, name }) => {
         };
 
         const { color, text } = qualityMap[quality] || qualityMap.UNKNOWN;
+        const content = qualityMessages[quality] || qualityMessages.UNKNOWN;
+
+        const [showHover, setShowHover] = useState(false);
 
         return (
-          // <CustomTooltip title={text} placement="top" arrow>
-          <div className="flex items-center gap-2 py-3">
-            <span className={`inline-block w-4 h-4 rounded-full ${color}`} />
-            <span className="text-sm font-semibold text-gray-700">{text}</span>
+          <div
+            onMouseEnter={() => setShowHover(true)}
+            onMouseLeave={() => setShowHover(false)}
+          >
+            <div className="flex items-center gap-2 py-3 cursor-pointer">
+              <span className={`inline-block w-4 h-4 rounded-full ${color}`} />
+              <span className="text-sm font-semibold text-gray-700">{text}</span>
+            </div>
+
+            <AnimatePresence>
+              {showHover && (
+                <motion.div
+                  key="quality-hover"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute z-50 bg-white shadow-xl border rounded-lg w-78 p-4 text-sm text-gray-700"
+                  style={{
+                    left: "65%",
+                    transform: "translateX(-50%)",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  <p className="font-bold text-gray-900 mb-1">{content.title}</p>
+                  <p className="text-gray-600 text-wrap">{content.description}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
-          // </CustomTooltip>
+
         );
       },
     },
     { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 100 },
-    // {
-    //   field: "wabaAccountId",
-    //   headerName: "WABA Account ID",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
-    // { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
-    // {
-    //   field: "phoneNumberId",
-    //   headerName: "Phone Number ID",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
     {
       field: "action",
       headerName: "Action",
@@ -494,43 +568,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               >
                 <ImInfo size={18} className="text-green-500 " />
               </IconButton>
-              {/* {dropdownOpenId === params.row.id && (
-                <DropdownMenuPortal
-                  targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
-                  onClose={closeDropdown}
-                  style={{
-                    position: "absolute",
-                  }}
-                  positionOverrides={{
-                    top: 260, // Set exact top position in pixels
-                    right: 0,
-                  }}
-                >
-                  {clicked && Object.keys(clicked).length > 0 ? (
-                    <table className="w-full text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-                      <tbody>
-                        {Object.entries(clicked).map(([key, value], index) => (
-                          <tr
-                            key={index}
-                            className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                          >
-                            <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-                              {key}
-                            </td>
-                            <td className="px-4 py-2 text-gray-800">
-                              {value || "N/A"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-sm text-gray-400 italic px-2 py-2">
-                      No data
-                    </div>
-                  )}
-                </DropdownMenuPortal>
-              )} */}
               <InfoPopover
                 anchorEl={dropdownButtonRefs.current[params.row.id]}
                 open={dropdownOpenId === params.row.id}
@@ -562,27 +599,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               </InfoPopover>
             </span>
           </CustomTooltip>
-
-          {/* {dropdownOpenId === params.row.id && (
-            <DropdownMenuPortal
-              targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
-              onClose={closeDropdown}
-            >
-              {clicked && clicked.length > 0 ? (
-                clicked.map((waba, index) => (
-                  <div
-                    key={index}
-                    className="text-sm text-slate-700 hover:bg-slate-100 px-2 py-1 rounded"
-                  >
-                    Expiry Date: {waba.expiryDate || "N/A"}
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm text-gray-400 italic px-2">No data</div>
-              )}
-            </DropdownMenuPortal>
-          )} */}
-
           <CustomTooltip title="View Profile" placement="top" arrow>
             <IconButton
               className="no-xs"
@@ -660,6 +676,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       // quality: waba.qualityRate || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
       phoneNumberId: waba.phoneNumberId || "N/A",
+      businessId: waba.businessId || "N/A",
     },
     ...waba,
   }));

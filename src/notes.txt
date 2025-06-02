@@ -10,3 +10,16 @@ whatsapp > whatsappFlows > components > EditPanel.jsx
 whatsapp > whatsappFlows > components > MobilePanel.jsx
 whatsapp > whatsappFlows > components > TabView.jsx
 whatsapp > whatsappFlows > lib > generatePayload.js
+
+whatsapp bot changes 
+
+whatsapp > whatsappBot > component > createBot.tsx - done 
+whatsapp > whatsappBot > component > components > helper > convertToReactFlow.ts - done
+whatsapp > whatsappBot > component > components > helper > generatePayload.ts - done
+whatsapp > whatsappBot > component > components > button.tsx - done
+whatsapp > whatsappBot > component > components > file.tsx - done
+whatsapp > whatsappBot > component > components > list.tsx - done
+
+sms changes
+
+sms > smsDltTemplate > SmsDltTemplate.jsx - done
