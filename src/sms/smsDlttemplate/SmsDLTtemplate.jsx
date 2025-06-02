@@ -133,9 +133,9 @@ const SmsDLTtemplate = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTemplates();
-  }, [templateIdFilter, templateNameFilter]);
+  // useEffect(() => {
+  //   fetchTemplates();
+  // }, [templateIdFilter, templateNameFilter]);
 
   // const statusOptions = [
   //   { label: "Active", value: "active" },
