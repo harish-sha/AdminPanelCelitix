@@ -51,11 +51,18 @@ export const ButtonNodeContent = ({
     setOptions(
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
-
+  
+    const nodeType = {
+      imageUrl: "image",
+      videoUrl: "video",
+      documentUrl: "document",
+    };
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
+        selectedOption: nodesInputData[id]?.selectedOption,
+        type: nodesInputData[id]?.buttonType,
         text:
           nodesInputData[id]?.imageUrl ||
           nodesInputData[id]?.videoUrl ||
@@ -81,7 +88,8 @@ export const ButtonNodeContent = ({
       ...prev,
       [id]: {
         ...prev[id],
-        text: file,
+        fileUrl: file,
+        // text: "d",
       },
     }));
   };

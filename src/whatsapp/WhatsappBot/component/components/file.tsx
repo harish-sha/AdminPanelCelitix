@@ -87,6 +87,7 @@ export const FileNodeContent = ({
       ...prev,
       [id]: {
         ...prev[id],
+        selectedOption: nodesInputData[id]?.selectedOption,
         fileUrl:
           nodesInputData[id]?.imageUrl ||
           nodesInputData[id]?.videoUrl ||
