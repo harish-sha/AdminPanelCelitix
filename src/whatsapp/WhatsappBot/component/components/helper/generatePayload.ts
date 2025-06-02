@@ -79,12 +79,15 @@ function generateBotPayload(
         video: "videoUrl",
         document: "documentUrl",
       };
-      entry[options[nodeInput?.type]] = nodeInput?.text;
+
+    
+      entry[options[nodeInput?.type]] = nodeInput?.text || nodeInput?.fileUrl;
+      entry["buttonType"] = nodeInput?.type;
 
       entry["buttonBody"] = nodeInput?.message;
       entry["type"] = finalType;
-      entry["buttonTexts"] = nodeInput?.options;
-      entry["buttonTexts"] = nodeInput?.options;
+      entry["buttonTexts"] = nodeInput?.buttonTexts;
+      // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
     }
 
@@ -104,6 +107,7 @@ function generateBotPayload(
         ]);
       }
     }
+    entry["selectedOption"] = nodeInput?.selectedOption || "";
 
     if (prevNode) entry["prevNode"] = prevNode;
 
