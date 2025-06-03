@@ -238,7 +238,7 @@ const WhatsappLaunchCampaign = () => {
       (waba) => waba.mobileNo === selectedWaba
     );
     const selectedTemplateData = templateList?.find(
-      (template) => template.templateName === selectedTemplate
+      (template) => template.vendorTemplateId === selectedTemplate
     );
 
     const bodyVariables = templateDataNew?.components
@@ -323,7 +323,6 @@ const WhatsappLaunchCampaign = () => {
         : "-1";
 
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
-      
       toast.error(
         "Error: Group data is missing. Please wait for data to load."
       );
@@ -364,13 +363,15 @@ const WhatsappLaunchCampaign = () => {
       date.getMinutes()
     )}:${padZero(date.getSeconds())}`;
 
+    
+
     const requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplate,
+      templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
@@ -394,7 +395,6 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    // console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -543,7 +543,6 @@ const WhatsappLaunchCampaign = () => {
       setIsFetching(true);
       try {
         const response = await getTemplateDetialsById(selectedTemplate);
-       
 
         if (response) {
           setTemplateDataNew(response);
