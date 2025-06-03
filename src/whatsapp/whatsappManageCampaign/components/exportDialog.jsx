@@ -743,6 +743,7 @@ export const ExportDialog = ({
   allCampaigns,
   setDataToExport,
   dataToExport,
+  selectedUser
 }) => {
   const { triggerDownloadNotification } = useDownload();
 
