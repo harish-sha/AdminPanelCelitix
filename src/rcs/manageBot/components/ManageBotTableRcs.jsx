@@ -1,11 +1,4 @@
-import {
-  Paper,
-  Typography,
-  Box,
-  Button,
-  styled,
-  IconButton,
-} from "@mui/material";
+import { Paper, Typography, Box, Button, styled, IconButton } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import React, { useState } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
@@ -13,6 +6,7 @@ import usePagination from "@mui/material/usePagination/usePagination";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import moment from "moment";
+
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -94,42 +88,42 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
         <>{moment(params.row.insert_time).format("DD-MM-YYYY")}</>
       ),
     },
-    {
-      field: "user_id",
-      headerName: "Assign To User",
-      flex: 1,
-      minWidth: 120,
-    },
+    // {
+    //   field: "user_id",
+    //   headerName: "Assign To User",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 350,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => onEdit(params.row.srno)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 350,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip arrow title="Edit User Details" placement="top">
+    //         <IconButton onClick={() => onEdit(params.row.srno)}>
+    //           <EditNoteIcon
+    //             sx={{
+    //               fontSize: "1.2rem",
+    //               color: "gray",
+    //             }}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        ...item,
-        active: item.active === 1 ? "Active" : "Inactive",
-        sn: index + 1,
-        id: index + 1,
-      }))
+      ...item,
+      active: item.active === 1 ? "Active" : "Inactive",
+      sn: index + 1,
+      id: index + 1,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

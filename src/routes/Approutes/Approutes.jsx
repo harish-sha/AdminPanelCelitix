@@ -131,6 +131,7 @@ import PageNotFound from "@/NotFound/PageNotFound";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+import MmLite from "@/whatsapp/mmlite/MmLite";
 
 const Approutes = () => {
   return (
@@ -213,6 +214,8 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wmmlite" element={<MmLite />} />
+
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
@@ -225,6 +228,7 @@ const Approutes = () => {
           element={<CampaignDeliveryReportDetails />}
         />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
+        
         {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
 
         {/* profile */}

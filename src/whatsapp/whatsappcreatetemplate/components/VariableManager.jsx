@@ -168,6 +168,7 @@ const VariableManager = ({
   const [btnDisabled, setBtnDisabled] = useState(false);
 
   const addVariable = () => {
+    if (variables.length >= 10) return toast.error("You can't add more than 10 variables");
     const newVarTag = `{{${variables.length + 1}}}`;
     const newVariable = { id: `${variables.length + 1}`, value: "" };
     if (templateFormat.length + newVarTag.length >= 1024) return;
@@ -282,6 +283,7 @@ const VariableManager = ({
               }
               placeholder={`Enter value for {{${variable.id}}}`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              maxLength={10}
             />
             <button
               onClick={() => {

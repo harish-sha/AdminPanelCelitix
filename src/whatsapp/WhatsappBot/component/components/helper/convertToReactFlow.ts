@@ -87,11 +87,11 @@ export const transformNodesById = (parsedFlowData) => {
       ...node,
       startingKeyword: node.type === "START" && node.startKeyword,
       message: node.textMessage || node.buttonBody || node.listBody,
-      type: node.answerRadio || node.listType,
+      type: node.answerRadio || node.listType  || node?.buttonType,
       variableName: node.answerText,
       options: listItems || null,
       buttonTexts: node.buttonTexts,
-      text: node?.listHeading || node?.text,
+      text: node?.listHeading || node?.text || node?.buttonUrl,
       fileUrl: node?.imageUrl || node?.videoUrl || node?.documentUrl || "",
       fileCaption:
         node?.imageCaption || node?.videoCaption || node?.documentCaption || "",

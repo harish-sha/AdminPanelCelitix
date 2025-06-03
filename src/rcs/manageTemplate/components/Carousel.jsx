@@ -968,8 +968,8 @@ export const Carousel = ({
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
               className={`text-black ${selectedCardIndex < caraousalData.length - 1
-                  ? "cursor-pointer"
-                  : "cursor-not-allowed"
+                ? "cursor-pointer"
+                : "cursor-not-allowed"
                 }`}
             />
           </IconButton>
@@ -1035,6 +1035,7 @@ export const Carousel = ({
           value={currentCardTitle}
           placeholder={`Sample Card ${selectedCardIndex + 1} Title`}
           onChange={handleCardTitleChange}
+          maxLength="200"
         />
         <div className="flex flex-col gap-2 mb-2">
           <label

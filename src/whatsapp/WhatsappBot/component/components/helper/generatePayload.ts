@@ -73,6 +73,10 @@ function generateBotPayload(
       entry["documentUrl"] = nodeInput?.fileUrl;
       entry["documentCaption"] = nodeInput?.fileCaption;
     }
+    if (finalType === "audio") {
+      entry["audioUrl"] = nodeInput?.fileUrl;
+      entry["audioCaption"] = nodeInput?.fileCaption;
+    }
     if (finalType === "button") {
       const options = {
         image: "imageUrl",

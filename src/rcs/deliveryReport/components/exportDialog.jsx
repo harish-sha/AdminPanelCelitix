@@ -560,6 +560,7 @@ export const ExportDialog = ({
   allCampaigns,
   setDataToExport,
   dataToExport,
+  selectedUser
 }) => {
   const { triggerDownloadNotification } = useDownload();
 
@@ -685,7 +686,7 @@ export const ExportDialog = ({
       onHide={() => setVisibledialog(false)}
       header="Export"
       modal
-      //   draggable={false}
+    //   draggable={false}
     >
       {/* Export Type Selection */}
       <div className="flex gap-4">

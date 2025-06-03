@@ -163,10 +163,10 @@ const ManageIpDetailsTable = ({ id, name, data = [] }) => {
         user_id: item.user_id ?? "-",
         insert_time: item.insert_time ?? "-",
         ...moreDetails,
-        browser: uaResult.browser.name || "Unknown",
-        browser_version: uaResult.browser.version || "Unknown",
-        os: uaResult.os.name || "Unknown", 
-        os_version: uaResult.os.version || "Unknown", 
+        // browser: uaResult.browser.name || "Unknown",
+        // browser_version: uaResult.browser.version || "Unknown",
+        // os: uaResult.os.name || "Unknown", 
+        // os_version: uaResult.os.version || "Unknown", 
       };
 
       return row;

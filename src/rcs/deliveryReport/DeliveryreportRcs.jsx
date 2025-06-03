@@ -57,7 +57,6 @@ const DeliveryreportRcs = () => {
           const res = await fetchAllUsers(data);
           setAllUsers(res.userMstPojoList);
         } catch (e) {
-          // console.log(e);
           toast.error("Something went wrong! Please try again later.");
         } finally {
           setIsFetching(false);
@@ -182,17 +181,14 @@ const DeliveryreportRcs = () => {
       selectedUserId: campaignData.selectedUser ?? "0",
     };
 
-    // console.log(data);
 
     try {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
-      // console.log(res);
       const reversedData = res.reverse();
       setCampaignTableData(reversedData);
     } catch (e) {
       toast.error("Something went wrong.");
-      // console.log(e);
     } finally {
       setIsFetching(false);
     }
@@ -219,7 +215,6 @@ const DeliveryreportRcs = () => {
       const res = await fetchSummaryReport(data);
       setSummaryTableData(res);
     } catch (e) {
-      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -235,7 +230,6 @@ const DeliveryreportRcs = () => {
 
       if (Array.isArray(res) && res.length > 0) {
         setScheduleTableData(res);
-        console.log("Fetched Schedule Data:", res);
       } else {
         setScheduleTableData([]);
       }
