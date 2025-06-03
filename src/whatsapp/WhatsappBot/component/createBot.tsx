@@ -76,6 +76,7 @@ function NodeComponent({
   nodesInputData?: any;
 }) {
   const options = nodesInputData?.[id]?.options || [];
+  const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
 
   return (
     <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
@@ -204,7 +205,7 @@ function NodeComponent({
             }}
           />
           <div className="flex flex-col gap-2 mt-2">
-            {options.map((option: any, index: number) => (
+            {buttonTexts.map((option: any, index: number) => (
               <div
                 key={index}
                 className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
