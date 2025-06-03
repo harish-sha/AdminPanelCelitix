@@ -55,6 +55,8 @@ export const ButtonNodeContent = ({
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
 
+    console.log(nodesInputData[id])
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -217,7 +219,7 @@ export const ButtonNodeContent = ({
               }}
               maxLength="20"
             />
-            <p className="text-xs">{nodesInputData[id]?.text?.length}/20</p>
+            <p className="text-xs">{nodesInputData[id]?.text?.length || 0}/20</p>
           </div>
         )}
       </div>
@@ -245,7 +247,7 @@ export const ButtonNodeContent = ({
           />
         </div>
         <p className="text-xs mt-2">
-          {nodesInputData[id]?.message?.length}/1024
+          {nodesInputData[id]?.message?.length || 0}/1024
         </p>
       </div>
 

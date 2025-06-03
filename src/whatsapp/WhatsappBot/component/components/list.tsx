@@ -163,7 +163,7 @@ export const List = ({
               }));
             }}
           />
-          <p className="text-xs mt-2">{nodesInputData[id]?.text?.length}/20</p>
+          <p className="text-xs mt-2">{nodesInputData[id]?.text?.length || 0}/20</p>
         </div>
         {/* <AnimatedDropdown
           id="type"
@@ -269,7 +269,7 @@ export const List = ({
           className="resize-none"
         />
       </div>
-      <p className="text-xs">{nodesInputData[id]?.message?.length}/1024</p>
+      <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/1024</p>
 
       <div>
         <AnimatedDropdown
