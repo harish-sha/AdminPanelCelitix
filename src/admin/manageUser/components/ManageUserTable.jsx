@@ -1062,7 +1062,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       const mbNo = mobileNumbers.join(",");
       const payload = {
         mbno: mbNo,
-        userSrno: selectedIds,
+        userSrno: selectedId,
       };
       const res = await addMobileNumbers(payload);
       if (!res?.msg.includes("successfully")) {
@@ -1399,7 +1399,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
               <EmergencyOutlinedIcon
                 sx={{
                   fontSize: "1.2rem",
-                  color: "gray",
+                  color: `${params.row.otpLogin == "0" ? "red" : "green"}`,
                 }}
               />
             </IconButton>
