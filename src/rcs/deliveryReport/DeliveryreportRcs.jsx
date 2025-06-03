@@ -224,7 +224,6 @@ const DeliveryreportRcs = () => {
 
       if (Array.isArray(res) && res.length > 0) {
         setScheduleTableData(res);
-        console.log("Fetched Schedule Data:", res);
       } else {
         setScheduleTableData([]);
       }
@@ -244,7 +243,6 @@ const DeliveryreportRcs = () => {
     }
 
     try {
-      console.log("Canceling schedule with SRNO:", srno); 
       const res = await cancelschedule({
         srno: srno,
         selectedUserId: 0,

@@ -339,6 +339,7 @@ const ManageTemplate = () => {
 
   const fetchTemplateData = async () => {
     if (!selectedTemplate || !wabaAccountId) return;
+    console.log("fsad")
     try {
       const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
 

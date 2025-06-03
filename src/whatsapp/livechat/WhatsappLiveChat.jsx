@@ -11,6 +11,7 @@ import {
   fetchAllConversations,
   fetchReplyData,
   fetchSpecificConversations,
+  getTemplateDetialsById,
   getWabaList,
   getWabaShowGroupsList,
   getWabaTemplate,
@@ -414,9 +415,9 @@ export default function WhatsappLiveChat() {
     let intervalId = null;
 
     if (isSubscribe) {
-      // handleFetchAllConvo();
+      handleFetchAllConvo();
       intervalId = setInterval(() => {
-        handleFetchAllConvo();
+        // handleFetchAllConvo();
       }, 5000);
     } else {
       handleFetchAllConvo();
@@ -666,7 +667,7 @@ export default function WhatsappLiveChat() {
       func = sendMessageToUser;
     } else if (messageType === "template") {
       const templateType = allTemplated.find(
-        (temp) => temp.templateName === sendmessageData?.templateName
+        (temp) => temp.vendorTemplateId === sendmessageData?.templateName
       );
 
       if (
@@ -723,11 +724,16 @@ export default function WhatsappLiveChat() {
       if (btnVarLength?.length > 0 && !btnVariables) {
         return toast.error("Please enter Button variables");
       }
+      const templateName = allTemplated.find(
+        (temp) => temp.vendorTemplateId === sendmessageData?.templateName
+      )?.templateName;
+
+      console.log("templateType",templateType)
       data = {
         srno: chatState?.active.srno,
         templateUrlVariable: btnVariables,
         templateType: templateType?.type,
-        templateName: sendmessageData?.templateName,
+        templateName: templateName,
         templateLanguage: "en",
         wabaNumber: wabaState.selectedWaba,
         mobileno: chatState?.active.mobileNo,
@@ -778,8 +784,8 @@ export default function WhatsappLiveChat() {
       (waba) => waba.mobileNo === wabaState.selectedWaba
     )?.wabaAccountId;
     try {
-      const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
-      setTemplateDetails(res.data[0]);
+      const res = await getTemplateDetialsById(sendmessageData?.templateName);
+      setTemplateDetails(res);
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching template details");
@@ -863,11 +869,11 @@ export default function WhatsappLiveChat() {
         // console.log(e);
       }
     }
-    // handleLoadNewChat();
-    // handleIsView();
+    handleLoadNewChat();
+    handleIsView();
     const intervalId = setInterval(() => {
-      handleLoadNewChat();
-      handleIsView();
+      // handleLoadNewChat();
+      // handleIsView();
     }, 500);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
@@ -929,8 +935,9 @@ export default function WhatsappLiveChat() {
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
       <div
-        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${chatState?.active ? "hidden md:block" : "block"
-          }`}
+        className={`w-full md:w-100 p-1 border rounded-tl-2xl overflow-hidden border-tl-lg  ${
+          chatState?.active ? "hidden md:block" : "block"
+        }`}
       >
         <InputData
           setSearch={setSearch}
@@ -1066,7 +1073,7 @@ export default function WhatsappLiveChat() {
               setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}
-            // specificConversation={specificConversation}
+              // specificConversation={specificConversation}
             />
           </motion.div>
         )}
@@ -1202,7 +1209,7 @@ export default function WhatsappLiveChat() {
                     label="Select Template"
                     placeholder="Select Template"
                     options={allTemplated?.map((template) => ({
-                      value: template.templateName,
+                      value: template.vendorTemplateId,
                       label: template.templateName,
                     }))}
                     value={sendmessageData.templateName}
@@ -1212,7 +1219,7 @@ export default function WhatsappLiveChat() {
                         templateName: e,
                       }));
                       const templateType = allTemplated?.find(
-                        (template) => template.templateName === e
+                        (template) => template.vendorTemplateId == e
                       )?.type;
                       setTemplateType(templateType);
                       setBtnVarLength(0);
@@ -1282,7 +1289,7 @@ export default function WhatsappLiveChat() {
         style={{ display: "none" }}
         onChange={handleFileChange}
         accept="image/* video/* audio/*"
-      // multiple
+        // multiple
       />
 
       {imagePreviewVisible && (

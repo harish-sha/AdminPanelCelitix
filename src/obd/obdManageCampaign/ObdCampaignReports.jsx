@@ -74,7 +74,6 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchDayWiseSummaryObd(data);
-      console.log("API Response:", res);
 
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
@@ -134,8 +133,7 @@ const ObdCampaignReports = () => {
 
     try {
       setIsFetching(true);
-      const res = await fetchSummaryLogsObd(data);
-      console.log("API Response:", res);
+      const res = await fetchSummaryLogsObd(data);;
 
       setSummaryColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },

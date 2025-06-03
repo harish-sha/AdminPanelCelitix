@@ -27,6 +27,7 @@ import {
   deleteTemplate,
   fetchCurlData,
   isHideTemplate,
+  getTemplateDetialsById,
 } from "../../../apis/whatsapp/whatsapp.js";
 import whatsappImg from "../../../assets/images/whatsappdummy.webp";
 import CustomTooltip from "../../components/CustomTooltip.jsx";
@@ -160,14 +161,16 @@ const DataTable = ({
       return;
     }
 
+    console.log(row)
+
     const wabaAccountId = selectedWaba.wabaAccountId;
-    const templateName = row.templateName;
+    const templateName = row.vendorTemplateId;
 
     try {
-      const response = await getWabaTemplate(wabaAccountId, templateName);
+      const response = await getTemplateDetialsById(templateName);
 
-      if (response && response.data.length > 0) {
-        setSelectedRow({ ...row, templateData: response.data[0] });
+      if (response) {
+        setSelectedRow({ ...row, templateData: response });
         setDialogVisible(true);
       } else {
         toast.error("No matching template found.");
@@ -302,9 +305,9 @@ const DataTable = ({
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-              {
-                backgroundColor: "#34C759",
-              },
+                {
+                  backgroundColor: "#34C759",
+                },
             }}
           />
         </CustomTooltip>
@@ -643,65 +646,65 @@ const DataTable = ({
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "DOCUMENT"
                 ) && (
-                    <div className="docbox">
-                      <iframe
-                        src={
-                          selectedRow.templateData.components.find(
-                            (comp) => comp.type === "HEADER"
-                          ).example?.header_handle[0]
-                        }
-                        title="Document Preview"
-                        className="w-full h-64 border border-gray-200 rounded-lg"
-                      />
-                      <a
-                        href={
-                          selectedRow.templateData.components.find(
-                            (comp) => comp.type === "HEADER"
-                          ).example?.header_handle[0]
-                        }
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 text-sm hover:underline flex items-center justify-center mt-3"
-                      >
-                        View Document in new tab
-                      </a>
-                    </div>
-                  )}
+                  <div className="docbox">
+                    <iframe
+                      src={
+                        selectedRow.templateData.components.find(
+                          (comp) => comp.type === "HEADER"
+                        ).example?.header_handle[0]
+                      }
+                      title="Document Preview"
+                      className="w-full h-64 border border-gray-200 rounded-lg"
+                    />
+                    <a
+                      href={
+                        selectedRow.templateData.components.find(
+                          (comp) => comp.type === "HEADER"
+                        ).example?.header_handle[0]
+                      }
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-600 text-sm hover:underline flex items-center justify-center mt-3"
+                    >
+                      View Document in new tab
+                    </a>
+                  </div>
+                )}
 
                 {/* Image if exists */}
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "IMAGE"
                 ) && (
-                    <div className="imgbox">
-                      <img
-                        src={
-                          selectedRow.templateData.components.find(
-                            (comp) => comp.type === "HEADER"
-                          ).example?.header_handle[0]
-                        }
-                        alt="Template Preview"
-                        className="h-45 w-full rounded-lg object-contain border border-gray-200"
-                      />
-                    </div>
-                  )}
+                  <div className="imgbox">
+                    <img
+                      src={
+                        selectedRow.templateData.components.find(
+                          (comp) => comp.type === "HEADER"
+                        ).example?.header_handle[0]
+                      }
+                      alt="Template Preview"
+                      className="h-45 w-full rounded-lg object-contain border border-gray-200"
+                    />
+                  </div>
+                )}
 
                 {/* Video if exist */}
                 {selectedRow.templateData.components.some(
                   (comp) => comp.type === "HEADER" && comp.format === "VIDEO"
                 ) && (
-                    <div className="videobox">
-                      <video
-                        controls
-                        src={
-                          selectedRow.templateData.components.find(
-                            (comp) => comp.type === "HEADER"
-                          ).example?.header_handle[0]
-                        }
-                        alt="Template Preview"
-                        className="h-45 w-full rounded-lg object-contain border border-gray-200"
-                      />
-                    </div>
-                  )}
+                  <div className="videobox">
+                    <video
+                      controls
+                      src={
+                        selectedRow.templateData.components.find(
+                          (comp) => comp.type === "HEADER"
+                        ).example?.header_handle[0]
+                      }
+                      alt="Template Preview"
+                      className="h-45 w-full rounded-lg object-contain border border-gray-200"
+                    />
+                  </div>
+                )}
 
                 {/* Text Content */}
                 <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
@@ -718,12 +721,12 @@ const DataTable = ({
                 {selectedRow?.templateData?.components.some(
                   (comp) => comp.type === "CAROUSEL"
                 ) && (
-                    <CarouselPreview
-                      carouselData={selectedRow.templateData.components.find(
-                        (comp) => comp.type === "CAROUSEL"
-                      )}
-                    />
-                  )}
+                  <CarouselPreview
+                    carouselData={selectedRow.templateData.components.find(
+                      (comp) => comp.type === "CAROUSEL"
+                    )}
+                  />
+                )}
 
                 {/* Buttons if exists */}
                 <div className="flex flex-col gap-2">
@@ -846,7 +849,7 @@ const DataTable = ({
         }}
         draggable={false}
       >
-        <div className="border rounded-md p-1 relative" >
+        <div className="border rounded-md p-1 relative">
           <div className="absolute right-0">
             <button
               onClick={() =>
@@ -862,7 +865,9 @@ const DataTable = ({
             </button>
           </div>
 
-          <pre className="text-xs whitespace-pre-wrap text-gray-800  break-words">{JSON.stringify(curlData, null, 2)}</pre>
+          <pre className="text-xs whitespace-pre-wrap text-gray-800  break-words">
+            {JSON.stringify(curlData, null, 2)}
+          </pre>
         </div>
       </Dialog>
       {/* Curl Dialog end*/}
