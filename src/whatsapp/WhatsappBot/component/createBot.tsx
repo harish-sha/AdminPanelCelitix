@@ -749,7 +749,6 @@ const CreateWhatsAppBot = () => {
       return toast.error("Please add at least one edge");
     }
 
-  
     const dataTemplate = {
       image: {
         fileUrl: "",
@@ -813,6 +812,9 @@ const CreateWhatsAppBot = () => {
         !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
       ) {
         const res = await uploadImageFile(nodeData?.fileUrl);
+        if (!res?.status) {
+          return toast.error(res?.msg);
+        }
 
         nodeData.fileUrl = res?.fileUrl;
       }

@@ -33,6 +33,7 @@ export const FileNodeContent = ({
   const [duration, setDuration] = useState(0);
   const handleFileUpload = async (event: any) => {
     const file = event.target.files[0];
+    console.log(file);
 
     const type = file?.type?.split("/")[0];
     // if (type !== "image" && type !== "video" && type !== accept) {
