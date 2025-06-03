@@ -5,6 +5,7 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 
 import {
+  getTemplateDetialsById,
   getWabaList,
   getWabaTemplate,
   getWabaTemplateDetails,
@@ -109,7 +110,7 @@ const WhatsappLaunchCampaign = () => {
     } else if (typeof value === "number") {
       updatedGroups = [value];
     } else {
-      console.error("Unexpected value type in handleGroupChange:", value);
+      toast.error("Unexpected value type in handleGroupChange:", value);
     }
 
     setIsGroup(updatedGroups.length > 0 ? 1 : 0);
@@ -322,7 +323,7 @@ const WhatsappLaunchCampaign = () => {
         : "-1";
 
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
-      console.error("Groups data is not available.");
+      
       toast.error(
         "Error: Group data is missing. Please wait for data to load."
       );
@@ -447,7 +448,6 @@ const WhatsappLaunchCampaign = () => {
         toast.error(response?.message || "Campaign launch failed.");
       }
     } catch (error) {
-      console.error("Error submitting campaign:", error);
       toast.error("Error launching campaign. Please try again.");
     } finally {
       // window.reload();
@@ -475,11 +475,9 @@ const WhatsappLaunchCampaign = () => {
         if (response) {
           setWabaList(response);
         } else {
-          console.error("Failed to fetch WABA details");
           toast.error("Failed to load WABA details!");
         }
       } catch (error) {
-        console.error("Error fetching WABA list:", error);
         toast.error("Error fetching WABA list.");
       } finally {
         setIsLoading(false);
@@ -496,7 +494,7 @@ const WhatsappLaunchCampaign = () => {
         setTemplateList(response);
         setTemplateOptions(
           response.map((template) => ({
-            value: template.templateName,
+            value: template.vendorTemplateId,
             label: template.templateName,
           }))
         );
@@ -544,11 +542,12 @@ const WhatsappLaunchCampaign = () => {
       if (!selectedTemplate || !wabaAccountId) return;
       setIsFetching(true);
       try {
-        const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+        const response = await getTemplateDetialsById(selectedTemplate);
+       
 
-        if (response && response.data && response.data.length > 0) {
-          setTemplateDataNew(response.data[0]);
-          setSelectedLanguage(response.data[0]?.language);
+        if (response) {
+          setTemplateDataNew(response);
+          setSelectedLanguage(response?.language);
         } else {
           toast.error("Failed to load template data!");
         }
