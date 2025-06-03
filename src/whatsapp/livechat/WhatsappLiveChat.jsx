@@ -817,10 +817,8 @@ export default function WhatsappLiveChat() {
       }
       if (item?.type === "BUTTONS") {
         item?.buttons?.map(({ type, example }) => {
-          if (type === "URL") {
-            const regex = /{{(\d+)}}/g;
-            const matches = regex.exec(example);
-            setBtnVarLength(matches);
+          if (type === "URL") {            
+            setBtnVarLength(example);
           }
         });
       }
