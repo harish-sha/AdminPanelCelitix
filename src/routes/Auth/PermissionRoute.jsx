@@ -33,6 +33,7 @@ export const PermissionRoute = ({ children }) => {
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
         "/rcsdeliveryreport",
+        "/rcsmanagebot"
       ],
       roles: ["ADMIN"],
     },
@@ -55,6 +56,7 @@ export const PermissionRoute = ({ children }) => {
         "/wwhatsappflows",
         "/wflowcreation",
         "/apicampaigninfo",
+        "/wmmlite"
       ],
       roles: ["ADMIN"],
     },

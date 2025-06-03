@@ -609,8 +609,8 @@ const WhatsappCreateTemplate = () => {
         return toast.error("Unable to create template at this time. Please try again later.");
       }
       else if (
-        response?.includes("language") &&
-        response?.includes("not available")
+        message?.includes("language") &&
+        message?.includes("not available")
       ) {
         return toast.error(
           "The selected language is not available for message templates. Please try a different language."

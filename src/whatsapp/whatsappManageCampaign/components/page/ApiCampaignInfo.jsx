@@ -293,7 +293,7 @@ export const ApiCampaignInfo = () => {
           rows={rows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
-          checkboxSelection
+          // checkboxSelection
           rowHeight={45}
           slots={{
             footer: CustomFooter,

@@ -133,6 +133,7 @@ import PageNotFound from "@/NotFound/PageNotFound";
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import TagManager from "@/tagmanager/TagManager";
+import MmLite from "@/whatsapp/mmlite/MmLite";
 
 const Approutes = () => {
   return (
@@ -216,6 +217,7 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wmmlite" element={<MmLite />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />

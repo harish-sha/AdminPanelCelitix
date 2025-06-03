@@ -27,6 +27,16 @@ export const getWabaTemplate = async (wabaAccountId, templateName) => {
   );
 };
 
+// get template by id (vendor id)
+export const getTemplateDetialsById = async (id) => {
+  return await fetchWithAuth(
+    `/whatsapptemplate/getTemplateById?vendorTemplateId=${id}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
 // delete template
 export const deleteTemplate = async (data) => {
   return await fetchWithAuth(

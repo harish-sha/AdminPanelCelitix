@@ -27,6 +27,7 @@ import {
   deleteTemplate,
   fetchCurlData,
   isHideTemplate,
+  getTemplateDetialsById
 } from "../../../apis/whatsapp/whatsapp.js";
 import whatsappImg from "../../../assets/images/whatsappdummy.webp";
 import CustomTooltip from "../../components/CustomTooltip.jsx";
@@ -161,13 +162,16 @@ const DataTable = ({
     }
 
     const wabaAccountId = selectedWaba.wabaAccountId;
-    const templateName = row.templateName;
+    const templateName = row.vendorTemplateId;
 
     try {
-      const response = await getWabaTemplate(wabaAccountId, templateName);
+      // const response = await getWabaTemplate(wabaAccountId, templateName);
+      const response = await getTemplateDetialsById(templateName);
 
-      if (response && response.data.length > 0) {
-        setSelectedRow({ ...row, templateData: response.data[0] });
+      // if (response && response.data.length > 0) {
+      //   setSelectedRow({ ...row, templateData: response.data[0] });
+      if (response) {
+        setSelectedRow({ ...row, templateData: response });
         setDialogVisible(true);
       } else {
         toast.error("No matching template found.");
@@ -393,7 +397,7 @@ const DataTable = ({
   //     action: 'True',
   // }));
 
-  const rows = data.map((item, index) => ({
+  const rows = data?.map((item, index) => ({
     id: item.templateSrno,
     sn: index + 1,
     templateName: item.templateName || "N/A",
@@ -640,13 +644,13 @@ const DataTable = ({
             {selectedRow?.templateData ? (
               <>
                 {/* Document if exists */}
-                {selectedRow.templateData.components.some(
+                {selectedRow?.templateData?.components?.some(
                   (comp) => comp.type === "HEADER" && comp.format === "DOCUMENT"
                 ) && (
                     <div className="docbox">
                       <iframe
                         src={
-                          selectedRow.templateData.components.find(
+                          selectedRow?.templateData?.components?.find(
                             (comp) => comp.type === "HEADER"
                           ).example?.header_handle[0]
                         }
@@ -655,7 +659,7 @@ const DataTable = ({
                       />
                       <a
                         href={
-                          selectedRow.templateData.components.find(
+                          selectedRow?.templateData?.components?.find(
                             (comp) => comp.type === "HEADER"
                           ).example?.header_handle[0]
                         }
@@ -669,13 +673,13 @@ const DataTable = ({
                   )}
 
                 {/* Image if exists */}
-                {selectedRow.templateData.components.some(
+                {selectedRow?.templateData?.components?.some(
                   (comp) => comp.type === "HEADER" && comp.format === "IMAGE"
                 ) && (
                     <div className="imgbox">
                       <img
                         src={
-                          selectedRow.templateData.components.find(
+                          selectedRow?.templateData?.components?.find(
                             (comp) => comp.type === "HEADER"
                           ).example?.header_handle[0]
                         }
@@ -686,14 +690,14 @@ const DataTable = ({
                   )}
 
                 {/* Video if exist */}
-                {selectedRow.templateData.components.some(
+                {selectedRow?.templateData?.components?.some(
                   (comp) => comp.type === "HEADER" && comp.format === "VIDEO"
                 ) && (
                     <div className="videobox">
                       <video
                         controls
                         src={
-                          selectedRow.templateData.components.find(
+                          selectedRow?.templateData?.components?.find(
                             (comp) => comp.type === "HEADER"
                           ).example?.header_handle[0]
                         }
@@ -705,7 +709,7 @@ const DataTable = ({
 
                 {/* Text Content */}
                 <div className="contentbox text-sm flex flex-col gap-2 py-2 max-h-80 overflow-scroll">
-                  {selectedRow.templateData.components.map(
+                  {selectedRow?.templateData?.components?.map(
                     (component, index) => (
                       <pre className="text-wrap" key={index}>
                         {component.text}
@@ -715,11 +719,11 @@ const DataTable = ({
                 </div>
 
                 {/* Carousel if exists */}
-                {selectedRow?.templateData?.components.some(
+                {selectedRow?.templateData?.components?.some(
                   (comp) => comp.type === "CAROUSEL"
                 ) && (
                     <CarouselPreview
-                      carouselData={selectedRow.templateData.components.find(
+                      carouselData={selectedRow?.templateData?.components?.find(
                         (comp) => comp.type === "CAROUSEL"
                       )}
                     />
@@ -727,12 +731,12 @@ const DataTable = ({
 
                 {/* Buttons if exists */}
                 <div className="flex flex-col gap-2">
-                  {selectedRow.templateData.components.some(
+                  {selectedRow?.templateData?.components?.some(
                     (comp) => comp.type === "BUTTONS"
                   ) &&
-                    selectedRow.templateData.components
-                      .find((comp) => comp.type === "BUTTONS")
-                      .buttons.map((btn, index) => (
+                    selectedRow?.templateData?.components
+                      ?.find((comp) => comp.type === "BUTTONS")
+                      .buttons?.map((btn, index) => (
                         <button
                           key={index}
                           //   title={

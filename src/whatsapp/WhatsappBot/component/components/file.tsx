@@ -141,7 +141,8 @@ export const FileNodeContent = ({
           src={
             /^(http|https):/.test(nodesInputData[id].fileUrl)
               ? nodesInputData[id].fileUrl
-              : URL.createObjectURL(nodesInputData[id].fileUrl)
+              : nodesInputData[id]?.selectedOption === "upload" &&
+                URL.createObjectURL(nodesInputData[id].fileUrl)
           }
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}

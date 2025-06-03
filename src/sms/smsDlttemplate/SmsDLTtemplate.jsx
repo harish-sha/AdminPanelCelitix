@@ -405,18 +405,33 @@ const SmsDLTtemplate = () => {
 
     if (isError) return;
 
+    const dd = {
+      entityId: entityid,
+      templatename: templateData.templateName,
+      templateid: templateData.templateId,
+      template_type: templateData.type,
+      msg_format: templateData.message,
+      templatestatus: templateData.status,
+      senderid: templateData.senderId,
+    };
+
+    const inverted = Object.fromEntries(
+      Object.entries(dd).map(([key, value]) => [value, key])
+    );
+
     const data = {
       entityId: entityid,
       filepath: contactData?.filepath,
-      hashmap: {
-        entityId: entityid,
-        TemplateName: templateData.templateName,
-        TemplateId: templateData.templateId,
-        TemplateType: templateData.type,
-        Message: templateData.message,
-        Status: templateData.status,
-        SenderId: templateData.senderId,
-      },
+      hashmap: inverted,
+      // hashmap: {
+      //   entityId: entityid,
+      //   TemplateName: templateData.templateName,
+      //   TemplateId: templateData.templateId,
+      //   TemplateType: templateData.type,
+      //   Message: templateData.message,
+      //   Status: templateData.status,
+      //   SenderId: templateData.senderId,
+      // },
     };
 
     try {
@@ -431,6 +446,7 @@ const SmsDLTtemplate = () => {
       setIsUploaded(false);
       setUploadedFile(null);
       fileInputRef.current.value = "";
+      fetchTemplates()
     } catch (e) {
       return toast.error("Error importing template.");
     }

@@ -83,7 +83,6 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchDetailsLogsObd(data);
-      console.log(res);
 
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
@@ -102,7 +101,6 @@ const ObdCampaignReports = () => {
           : []
       );
     } catch (err) {
-      console.log("Fetching CampaignLog Data error", err);
       toast.error("Something went wrong while fetching data.")
     } finally {
       setIsFetching(false);
@@ -118,7 +116,6 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchDayWiseSummaryObd(data);
-      console.log("API Response:", res);
 
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
@@ -138,7 +135,6 @@ const ObdCampaignReports = () => {
           : []
       );
     } catch (error) {
-      console.error("Fetch error:", error);
       toast.error("Something went wrong while fetching data.");
     } finally {
       setIsFetching(false);
@@ -181,7 +177,6 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchSummaryLogsObd(data);
-      console.log("API Response:", res);
 
       setSummaryColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
@@ -202,7 +197,6 @@ const ObdCampaignReports = () => {
           : []
       );
     } catch (error) {
-      console.error("Fetch error:", error);
       toast.error("Something went wrong while fetching data.");
     } finally {
       setIsFetching(false);

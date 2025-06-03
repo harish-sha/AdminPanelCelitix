@@ -146,17 +146,14 @@ const DeliveryreportRcs = () => {
       status: campaignData.status ?? "",
     };
 
-    // console.log(data);
 
     try {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
-      // console.log(res);
       const reversedData = res.reverse();
       setCampaignTableData(reversedData);
     } catch (e) {
       toast.error("Something went wrong.");
-      // console.log(e);
     } finally {
       setIsFetching(false);
     }
@@ -181,7 +178,6 @@ const DeliveryreportRcs = () => {
       const res = await fetchSummaryReport(data);
       setSummaryTableData(res);
     } catch (e) {
-      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -204,13 +200,11 @@ const DeliveryreportRcs = () => {
 
   //     if (Array.isArray(res) && res.length > 0) {
   //       setScheduleTableData(res);
-  //       console.log("Fetched Schedule Data:", res);
   //     } else {
   //       setScheduleTableData([]); // Clear table data if no results
   //       toast.error("No matching records found.");
   //     }
   //   } catch (err) {
-  //     console.error("Error fetching schedule data:", err);
   //     toast.error("Failed to fetch schedule data.");
   //   } finally {
   //     setIsFetching(false); // Ensure loading state is reset
@@ -224,7 +218,6 @@ const DeliveryreportRcs = () => {
 
       if (Array.isArray(res) && res.length > 0) {
         setScheduleTableData(res);
-        console.log("Fetched Schedule Data:", res);
       } else {
         setScheduleTableData([]);
       }
@@ -244,7 +237,6 @@ const DeliveryreportRcs = () => {
     }
 
     try {
-      console.log("Canceling schedule with SRNO:", srno); 
       const res = await cancelschedule({
         srno: srno,
         selectedUserId: 0,

@@ -637,10 +637,10 @@ const WhatsappLiveChatSettings = () => {
                       {card.desc}
                     </p>
                     <div className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap">
-                      <span className="text-sm font-semibold text-gray-600">
+                      <pre className="text-sm font-normal text-gray-600 text-wrap">
                         {cardDetails[card.type]?.message ||
                           "Hi! Thanks for connecting. Our team is unavailable right now. We'll be back at 10am tomorrow."}
-                      </span>
+                      </pre>
                     </div>
                   </div>
 

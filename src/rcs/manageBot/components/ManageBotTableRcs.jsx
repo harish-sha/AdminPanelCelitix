@@ -88,33 +88,33 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
         <>{moment(params.row.insert_time).format("DD-MM-YYYY")}</>
       ),
     },
-    {
-      field: "user_id",
-      headerName: "Assign To User",
-      flex: 1,
-      minWidth: 120,
-    },
+    // {
+    //   field: "user_id",
+    //   headerName: "Assign To User",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 350,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => onEdit(params.row.srno)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 350,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip arrow title="Edit User Details" placement="top">
+    //         <IconButton onClick={() => onEdit(params.row.srno)}>
+    //           <EditNoteIcon
+    //             sx={{
+    //               fontSize: "1.2rem",
+    //               color: "gray",
+    //             }}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   const rows = Array.isArray(data)

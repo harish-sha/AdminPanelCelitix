@@ -11,15 +11,13 @@ whatsapp > whatsappFlows > components > MobilePanel.jsx
 whatsapp > whatsappFlows > components > TabView.jsx
 whatsapp > whatsappFlows > lib > generatePayload.js
 
-whatsapp bot changes 
+==================== june 03 ===================== working files and merge in reseller also =============
 
-whatsapp > whatsappBot > component > createBot.tsx - done 
-whatsapp > whatsappBot > component > components > helper > convertToReactFlow.ts - done
-whatsapp > whatsappBot > component > components > helper > generatePayload.ts - done
-whatsapp > whatsappBot > component > components > button.tsx - done
-whatsapp > whatsappBot > component > components > file.tsx - done
-whatsapp > whatsappBot > component > components > list.tsx - done
-
-sms changes
-
-sms > smsDltTemplate > SmsDltTemplate.jsx - done
+1. export dialog for the wahtsapp conversation with the api - urgent 
+2. add api for the gettemplateid in whatsapp to fetch templates  - urgent
+3. make export dialog working in the reseller & reseller user - urgent
+4. convert celitix website in to next.js
+5. work flow and whatsapp flow
+6. Admin section 
+7. Template Library for the whatsapp 
+8. OBD 

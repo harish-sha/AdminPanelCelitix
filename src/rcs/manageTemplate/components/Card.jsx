@@ -400,6 +400,7 @@ export const Card = ({
           label={"Title"}
           value={cardData.title}
           onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
+          maxLength="200"
         />
         <AnimatedDropdown
           id={"selectCardOrientation"}

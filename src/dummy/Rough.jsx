@@ -1,314 +1,165 @@
-// const CreateWhatsAppBot = () => {
-//   return (
-//     <>
-//       {/* Header Section */}
-//       <div className="flex items-center justify-between p-4 bg-white shadow-md">
-//         <h1 className="text-xl font-semibold text-gray-800">Create WhatsApp Bot</h1>
-//         <div className="flex gap-4">
-//           <Button
-//             onClick={reset}
-//             className="px-4 py-2 text-white bg-red-500 rounded-md hover:bg-red-600"
-//           >
-//             Reset Canvas
-//           </Button>
-//           <Button
-//             onClick={handleSubmit}
-//             className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-//           >
-//             Save Bot
-//           </Button>
-//         </div>
-//       </div>
+import React from 'react';
+import { motion } from 'framer-motion';
+import { PieChart, Pie, Cell, ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
+import { CheckCircleIcon, XCircleIcon, EyeIcon, UserXIcon, UploadIcon, TableIcon, SendIcon, UserIcon } from 'lucide-react';
 
-//       {/* Main Content */}
-//       <div className="flex">
-//         {/* Canvas Section */}
-//         <div
-//           className="flex-1 bg-gray-100 p-4"
-//           style={{ height: "calc(100vh - 64px)" }}
-//           onDrop={handleDrop}
-//           onDragOver={handleDragOver}
-//         >
-//           <ReactFlow
-//             nodes={nodes}
-//             edges={edges}
-//             onNodesChange={onNodesChange}
-//             onEdgesChange={onEdgesChange}
-//             onConnect={onConnect}
-//             onNodeClick={onNodeClick}
-//             deleteKeyCode={"Backspace"}
-//             nodeTypes={nodeTypes}
-//             onConnectStart={(event, { handleType }) => {
-//               setIsConnecting(true);
-//               setConnectionType(handleType);
-//             }}
-//             onConnectEnd={() => {
-//               setIsConnecting(false);
-//               setConnectionType("");
-//             }}
-//           >
-//             <Background />
-//             <MiniMap />
-//             <Controls />
-//           </ReactFlow>
-//         </div>
+const Card = ({ children, className = '' }) => (
+  <div className={`bg-white rounded-2xl shadow-lg border-l-8 ${className}`}>
+    {children}
+  </div>
+);
 
-//         {/* Sidebar Section */}
-//         <div className="w-[300px] bg-white p-4 shadow-md">
-//           {/* Node Buttons */}
-//           <div className="grid grid-cols-2 gap-4">
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "starting")}
-//               onClick={() => addNode("starting")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <OutlinedFlagOutlinedIcon />
-//               <span>Start</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "text")}
-//               onClick={() => addNode("text")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <TextFieldsOutlinedIcon />
-//               <span>Text Node</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "image")}
-//               onClick={() => addNode("image")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <ImageOutlinedIcon />
-//               <span>Image</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "video")}
-//               onClick={() => addNode("video")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <VideocamOutlinedIcon />
-//               <span>Video</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "document")}
-//               onClick={() => addNode("document")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <ArticleOutlinedIcon />
-//               <span>Document</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "audio")}
-//               onClick={() => addNode("audio")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <MicOutlinedIcon />
-//               <span>Audio</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "button")}
-//               onClick={() => addNode("button")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <BsMenuButton />
-//               <span>Button</span>
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "list")}
-//               onClick={() => addNode("list")}
-//               className="flex items-center justify-center gap-2 px-4 py-2 text-gray-800 bg-gray-200 rounded-md hover:bg-gray-300"
-//             >
-//               <FormatListBulletedOutlinedIcon />
-//               <span>List</span>
-//             </Button>
-//           </div>
+const CardContent = ({ children, className = '' }) => (
+  <div className={`p-6 ${className}`}>
+    {children}
+  </div>
+);
 
-//           {/* Details Section */}
-//           <div className="mt-6">
-//             <h2 className="text-lg font-semibold text-gray-800">Bot Details</h2>
-//             <AnimatedDropdown
-//               id="wabadropdown"
-//               label="Select WABA"
-//               placeholder="Select WABA"
-//               options={details.waba.map((waba) => ({
-//                 value: waba.mobileNo,
-//                 label: waba.name,
-//               }))}
-//               value={details.selected}
-//               onChange={(value) =>
-//                 setDetails((prev) => ({ ...prev, selected: value }))
-//               }
-//               className="w-full mt-2"
-//             />
-//             <InputField
-//               id="botname"
-//               label="Bot Name"
-//               placeholder="Enter Bot Name"
-//               value={details.name}
-//               onChange={(e) =>
-//                 setDetails((prev) => ({ ...prev, name: e.target.value }))
-//               }
-//               className="w-full mt-4"
-//             />
-//             <Button
-//               onClick={handleSubmit}
-//               className="w-full px-4 py-2 mt-4 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-//             >
-//               Save Bot
-//             </Button>
-//           </div>
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
+const pieData = [
+  { name: 'Delivered', value: 400 },
+  { name: 'Undelivered', value: 100 },
+  { name: 'Read', value: 300 },
+  { name: 'Blocked', value: 200 }
+];
 
+const lineData = [
+  { name: 'Mon', delivered: 300, read: 200 },
+  { name: 'Tue', delivered: 200, read: 100 },
+  { name: 'Wed', delivered: 278, read: 250 },
+  { name: 'Thu', delivered: 189, read: 180 },
+  { name: 'Fri', delivered: 239, read: 230 },
+  { name: 'Sat', delivered: 349, read: 320 },
+  { name: 'Sun', delivered: 200, read: 190 }
+];
 
-//       {/* <div className="flex">
-//         <div
-//           style={{ width: "90vw", height: "auto" }}
-//           onDrop={handleDrop}
-//           onDragOver={handleDragOver}
-//         >
-//           <ReactFlow
-//             nodes={nodes}
-//             edges={edges}
-//             onNodesChange={onNodesChange}
-//             onEdgesChange={onEdgesChange}
-//             onConnect={onConnect}
-//             onNodeClick={onNodeClick}
-//             deleteKeyCode={"Backspace"}
-//             nodeTypes={nodeTypes}
-//             onConnectStart={(event, { handleType }) => {
-//               setIsConnecting(true);
-//               setConnectionType(handleType);
-//             }}
-//             onConnectEnd={() => {
-//               setIsConnecting(false);
-//               setConnectionType("");
-//             }}
-//             // fitView
-//           >
-//             <Background />
-//             <MiniMap />
-//             <Controls />
-//           </ReactFlow>
-//         </div>
+const COLORS = ['#4ade80', '#facc15', '#60a5fa', '#f87171'];
 
-//         <div className="flex flex-col justify-between w-[250px] gap-4">
-//           <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "starting")}
-//               onClick={() => addNode("starting")}
-//               className={commonButtonClass}
-//             >
-//               <OutlinedFlagOutlinedIcon /> Start
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "text")}
-//               onClick={() => addNode("text")}
-//               className={commonButtonClass}
-//             >
-//               <TextFieldsOutlinedIcon />
-//               Text Node
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "image")}
-//               onClick={() => addNode("image")}
-//               className={commonButtonClass}
-//             >
-//               <ImageOutlinedIcon />
-//               Image
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "video")}
-//               onClick={() => addNode("video")}
-//               className={commonButtonClass}
-//             >
-//               <VideocamOutlinedIcon />
-//               Video
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "document")}
-//               onClick={() => addNode("document")}
-//               className={commonButtonClass}
-//             >
-//               <ArticleOutlinedIcon />
-//               Document
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "audio")}
-//               onClick={() => addNode("audio")}
-//               className={commonButtonClass}
-//             >
-//               <MicOutlinedIcon />
-//               Audio
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "button")}
-//               onClick={() => addNode("button")}
-//               className={commonButtonClass}
-//             >
-//               <BsMenuButton />
-//               Button
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "list")}
-//               onClick={() => addNode("list")}
-//               className={commonButtonClass}
-//             >
-//               <FormatListBulletedOutlinedIcon />
-//               List
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "agent")}
-//               onClick={() => addNode("agent")}
-//               className={commonButtonClass}
-//             >
-//               <MicOutlinedIcon />
-//               Agent
-//             </Button>
-//             <Button
-//               draggable
-//               onDragStart={(event) => handleDragStart(event, "answer")}
-//               onClick={() => addNode("answer")}
-//               className={commonButtonClass}
-//             >
-//               <QuestionAnswerOutlinedIcon />
-//               Answer
-//             </Button>
-//             <Button onClick={reset} className={commonButtonClass}>
-//               <RestartAltOutlinedIcon />
-//               Reset
-//             </Button>
-//           </div>
+const Dashboard = () => {
+  const stats = [
+    { label: 'Delivered', value: 1200, color: 'border-green-500', icon: <CheckCircleIcon className="w-6 h-6" /> },
+    { label: 'Undelivered', value: 300, color: 'border-yellow-400', icon: <XCircleIcon className="w-6 h-6" /> },
+    { label: 'Read', value: 900, color: 'border-blue-400', icon: <EyeIcon className="w-6 h-6" /> },
+    { label: 'Blocked', value: 150, color: 'border-red-400', icon: <UserXIcon className="w-6 h-6" /> },
+    { label: 'Submitted', value: 2000, color: 'border-purple-400', icon: <UploadIcon className="w-6 h-6" /> },
+  ];
 
-//           <Details
-//             setDetails={setDetails}
-//             details={details}
-//             handleSubmit={handleSubmit}
-//             isUpdate={state ?? false}
-//           />
-//         </div>
-//       </div> */}
+  const tableData = [
+    { schedule: '10 AM', template: 'Offer Promo', senderId: 'CELTIX01' },
+    { schedule: '1 PM', template: 'Reminder', senderId: 'DOCWEALTH' },
+    { schedule: '4 PM', template: 'Follow Up', senderId: 'HEALTHSQ' }
+  ];
 
+  return (
+    <div className="min-h-screen bg-gray-100 p-6 space-y-6">
+      <h1 className="text-3xl font-bold text-center">WhatsApp MM Lite Dashboard</h1>
 
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        {stats.map((stat, index) => (
+          <motion.div
+            key={index}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+            className={`p-4 text-gray-800 shadow-xl bg-white ${stat.color} border-l-8 rounded-xl flex items-center justify-between`}
+          >
+            <div>
+              <div className="text-lg font-semibold">{stat.label}</div>
+              <div className="text-2xl font-bold">{stat.value}</div>
+            </div>
+            <div className="text-gray-600">{stat.icon}</div>
+          </motion.div>
+        ))}
+      </div>
 
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card className="border-blue-400">
+          <CardContent>
+            <h2 className="text-xl font-semibold mb-4">Delivery Breakdown</h2>
+            <div className="mb-4">
+              <label className="inline-flex items-center">
+                <input type="checkbox" className="form-checkbox text-blue-600 mr-2" defaultChecked /> Include Read Data
+              </label>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+              <PieChart>
+                <Pie data={pieData} dataKey="value" outerRadius={100} label>
+                  {pieData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  ))}
+                </Pie>
+              </PieChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
 
+        <Card className="border-green-400">
+          <CardContent>
+            <h2 className="text-xl font-semibold mb-4">Weekly Trends</h2>
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={lineData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="delivered" stroke="#4ade80" strokeWidth={2} />
+                <Line type="monotone" dataKey="read" stroke="#60a5fa" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          </CardContent>
+        </Card>
+      </div>
+
+      <Card className="border-indigo-400">
+        <CardContent>
+          <h2 className="text-2xl font-semibold mb-4">WABA Schedule Overview</h2>
+          <table className="w-full table-auto border text-left">
+            <thead>
+              <tr className="bg-gray-100">
+                <th className="px-4 py-2">Scheduled Time</th>
+                <th className="px-4 py-2">Template</th>
+                <th className="px-4 py-2">Sender ID</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((row, idx) => (
+                <tr key={idx} className="border-t">
+                  <td className="px-4 py-2">{row.schedule}</td>
+                  <td className="px-4 py-2">{row.template}</td>
+                  <td className="px-4 py-2">{row.senderId}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardContent>
+      </Card>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="border-yellow-400">
+          <CardContent>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-semibold">Templates Used</h2>
+                <p className="text-2xl font-bold">15</p>
+              </div>
+              <TableIcon className="w-6 h-6 text-gray-600" />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="border-pink-400">
+          <CardContent>
+            <div className="flex justify-between items-center">
+              <div>
+                <h2 className="text-lg font-semibold">Sender IDs</h2>
+                <p className="text-2xl font-bold">5</p>
+              </div>
+              <SendIcon className="w-6 h-6 text-gray-600" />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;

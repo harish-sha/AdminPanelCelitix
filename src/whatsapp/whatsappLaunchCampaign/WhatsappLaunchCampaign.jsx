@@ -5,6 +5,7 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 
 import {
+  getTemplateDetialsById,
   getWabaList,
   getWabaTemplate,
   getWabaTemplateDetails,
@@ -109,7 +110,7 @@ const WhatsappLaunchCampaign = () => {
     } else if (typeof value === "number") {
       updatedGroups = [value];
     } else {
-      console.error("Unexpected value type in handleGroupChange:", value);
+      toast.error("Unexpected value type in handleGroupChange:", value);
     }
 
     setIsGroup(updatedGroups.length > 0 ? 1 : 0);
@@ -322,7 +323,6 @@ const WhatsappLaunchCampaign = () => {
         : "-1";
 
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
-      console.error("Groups data is not available.");
       toast.error(
         "Error: Group data is missing. Please wait for data to load."
       );
@@ -369,7 +369,7 @@ const WhatsappLaunchCampaign = () => {
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplate,
+      templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
@@ -496,7 +496,7 @@ const WhatsappLaunchCampaign = () => {
         setTemplateList(response);
         setTemplateOptions(
           response.map((template) => ({
-            value: template.templateName,
+            value: template.vendorTemplateId,
             label: template.templateName,
           }))
         );
@@ -536,7 +536,7 @@ const WhatsappLaunchCampaign = () => {
 
   // Find the selected template data
   const selectedTemplateData = templateList.find(
-    (template) => template.templateName === selectedTemplate
+    (template) => template.vendorTemplateId  === selectedTemplate
   );
 
   useEffect(() => {
@@ -544,11 +544,15 @@ const WhatsappLaunchCampaign = () => {
       if (!selectedTemplate || !wabaAccountId) return;
       setIsFetching(true);
       try {
-        const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+        // const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+        const response = await getTemplateDetialsById(selectedTemplate);
 
-        if (response && response.data && response.data.length > 0) {
-          setTemplateDataNew(response.data[0]);
-          setSelectedLanguage(response.data[0]?.language);
+        // if (response && response.data && response.data.length > 0) {
+        //   setTemplateDataNew(response.data[0]);
+        //   setSelectedLanguage(response.data[0]?.language);
+        if (response) {
+          setTemplateDataNew(response);
+          setSelectedLanguage(response?.language);
         } else {
           toast.error("Failed to load template data!");
         }
@@ -695,7 +699,7 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
-                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
