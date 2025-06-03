@@ -606,3 +606,12 @@ export const cancelCampaign = async ({ srno, selectedUserId }) => {
     }
   );
 };
+
+export const getTemplateDetialsById = async (id) => {
+  return await fetchWithAuth(
+    `/whatsapptemplate/getTemplateById?vendorTemplateId=${id}`,
+    {
+      method: "GET",
+    }
+  );
+};
