@@ -150,7 +150,7 @@ export const List = ({
             name="text"
             tooltipContent="List Heading"
             maxLength="20"
-            label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
+            label={"List Heading"}
             value={nodesInputData[id]?.text}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({
