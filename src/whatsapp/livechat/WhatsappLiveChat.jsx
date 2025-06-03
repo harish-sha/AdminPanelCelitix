@@ -728,7 +728,7 @@ export default function WhatsappLiveChat() {
         (temp) => temp.vendorTemplateId === sendmessageData?.templateName
       )?.templateName;
 
-      console.log("templateType",templateType)
+     
       data = {
         srno: chatState?.active.srno,
         templateUrlVariable: btnVariables,
