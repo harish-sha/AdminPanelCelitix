@@ -7,7 +7,12 @@ import toast from "react-hot-toast";
 import Loader from "@/whatsapp/components/Loader";
 import { Dialog } from "primereact/dialog";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
-import { fetchAllBotsList, fetchAllUsers, saveAgentRcs, getBotDetailsBySrNo } from "@/apis/admin/admin";
+import {
+  fetchAllBotsList,
+  fetchAllUsers,
+  saveAgentRcs,
+  getBotDetailsBySrNo,
+} from "@/apis/admin/admin";
 import InputField from "@/components/layout/InputField";
 
 const ManageBotRcs = () => {
@@ -147,6 +152,7 @@ const ManageBotRcs = () => {
       try {
         setIsFetching(true);
         const res = await fetchAllUsers(data);
+        console.log(res);
         setAllUsers(res.userMstPojoList);
         // console.log("res user list in manage bot", res)
       } catch (e) {
@@ -203,43 +209,10 @@ const ManageBotRcs = () => {
     <>
       <div className="w-full">
         <div className="flex flex-wrap items-end justify-between w-full gap-2 mb-2">
-          <div className="flex items-end gap-3" >
-            <div className="w-full sm:w-56">
-              <DropdownWithSearch
-                label="Bot Name"
-                id="botName"
-                name="botName"
-                tooltipContent="Select your Bot"
-                options={allBots.map((bot) => ({
-                  label: bot.agent_name,
-                  value: bot.agent_id,
-                }))}
-                value={selectedBotId}
-                onChange={(e) => {
-                  setselectedBotId(e);
-                  handleBotSearch();
-                }}
-                placeholder="select bot name"
-                filter
-              />
-            </div>
-
-            <div className="w-max-content">
-              <UniversalButton
-                label="Show"
-                disabled={isFetching}
-                onClick={handleBotSearch}
-              />
-            </div>
+          <div className="flex items-end gap-3">
+            <h1 className="text-lg font-medium mt-2">Manage RCS Bot</h1>
           </div>
 
-          <div className="w-max-content">
-            <UniversalButton
-              label="Add Bot"
-              disabled={isFetching}
-              onClick={() => setAddBotDialog(true)}
-            />
-          </div>
         </div>
 
         <div className="w-full">
@@ -262,7 +235,7 @@ const ManageBotRcs = () => {
         <div className="space-y-4">
           <AnimatedDropdown
             label="Users"
-            options={allUsers.map((user) => ({
+            options={allUsers?.map((user) => ({
               label: user.userId,
               value: user.srno,
             }))}
@@ -310,7 +283,6 @@ const ManageBotRcs = () => {
             <UniversalButton label="Save Bot" onClick={handleAddBot} />
           </div>
         </div>
-
       </Dialog>
       {/* Add Bot end */}
 
@@ -325,7 +297,7 @@ const ManageBotRcs = () => {
         <div className="space-y-4">
           <AnimatedDropdown
             label="Users"
-            options={allUsers.map((user) => ({
+            options={allUsers?.map((user) => ({
               label: user.userId,
               value: user.srno,
             }))}
@@ -342,7 +314,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Agent Name"
             value={editBotDetails?.agentName || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, agentName: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                agentName: e.target.value,
+              }))
             }
           />
 
@@ -353,7 +328,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Agent ID"
             value={editBotDetails?.agentId || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, agentId: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                agentId: e.target.value,
+              }))
             }
           />
 
@@ -364,7 +342,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Client ID"
             value={editBotDetails?.clientId || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, clientId: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                clientId: e.target.value,
+              }))
             }
           />
 
@@ -375,7 +356,10 @@ const ManageBotRcs = () => {
             placeholder="Enter Client Key"
             value={editBotDetails?.clientKey || ""}
             onChange={(e) =>
-              setEditBotDetails((prev) => ({ ...prev, clientKey: e.target.value }))
+              setEditBotDetails((prev) => ({
+                ...prev,
+                clientKey: e.target.value,
+              }))
             }
           />
 

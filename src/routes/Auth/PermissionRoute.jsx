@@ -33,6 +33,7 @@ export const PermissionRoute = ({ children }) => {
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
         "/rcsdeliveryreport",
+        "/rcsmanagebot"
       ],
       roles: ["ADMIN"],
     },
