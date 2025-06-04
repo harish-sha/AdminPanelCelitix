@@ -478,14 +478,24 @@ const WhatsappManageCampaign = () => {
 
     // // setSummaryReport(result);
     // setIsFetching(false);
+
+    //     {
+    //     "wabaNumber":"105",
+    //     "monthwise":1,
+    //     "year":"2025",
+    //     "month":"5"
+    // }
     try {
       if (isMonthWise) {
         result = await getSummaryReport({
-          fromDate: FinalFromDate,
-          summaryType: "waba,date,type,country",
-          toDate: FinalToDate,
-          whatsappTypes: null,
+          // fromDate: FinalFromDate,
+          // summaryType: "waba,date,type,country",
+          // toDate: FinalToDate,
+          // whatsappTypes: null,
           wabaNumber: selectedWaBaNumber,
+          monthwise: 1,
+          year: moment(FinalFromDate).format("YYYY"),
+          month: moment(FinalFromDate).format("MM"),
         });
       } else {
         const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
