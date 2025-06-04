@@ -158,94 +158,14 @@ export const List = ({
                 [id]: {
                   ...prev[id],
                   type: "text",
-                  text: e.target.value,
+                  text: e.target.value.trim(),
                 },
               }));
             }}
           />
           <p className="text-xs mt-2">{nodesInputData[id]?.text?.length || 0}/20</p>
         </div>
-        {/* <AnimatedDropdown
-          id="type"
-          name="type"
-          label="Type"
-          options={[
-            { label: "Text", value: "text" },
-            { label: "Image", value: "image" },
-            { label: "Video", value: "video" },
-            { label: "Document", value: "document" },
-          ]}
-          value={nodesInputData[id]?.type}
-          onChange={(e: any) => {
-            setNodesInputData((prev) => ({
-              ...prev,
-              [id]: {
-                ...prev[id],
-                type: e,
-              },
-            }));
-          }}
-        />
-
-        {nodesInputData[id]?.type !== "text" && (
-          <AnimatedDropdown
-            id="selectChoice"
-            name="selectChoice"
-            label="Select Choice"
-            options={[
-              { value: "url", label: "Enter Url" },
-              { value: "upload", label: "Upload" },
-            ]}
-            value={nodesInputData[id]?.selectedOption}
-            onChange={(e) => {
-              setNodesInputData(() => ({
-                ...nodesInputData,
-                [id]: {
-                  ...nodesInputData[id],
-                  selectedOption: e,
-                  text: "",
-                },
-              }));
-            }}
-          />
-        )}
-        {nodesInputData[id]?.selectedOption !== "upload" && (
-          <InputField
-            id="text"
-            name="text"
-            label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
-            value={nodesInputData[id]?.text}
-            onChange={(e: { target: { value: any } }) => {
-              setNodesInputData((prev) => ({
-                ...prev,
-                [id]: {
-                  ...prev[id],
-                  text: e.target.value,
-                },
-              }));
-            }}
-          />
-        )}
-        {nodesInputData[id]?.selectedOption === "upload" && (
-          <div className="flex flex-col gap-2 mt-0">
-            <Label
-              htmlFor="uplaodfile"
-              className="text-sm font-medium text-gray-800 font-"
-            >
-              Upload File
-            </Label>
-            <Input
-              type="file"
-              id="uplaodfile"
-              name="uplaodfile"
-              onChange={handleFileUpload}
-              accept={`${nodesInputData[id]?.type}/*`}
-              required
-              ref={fileInputRef}
-              className="w-[250px]"
-            />
-          </div>
-        )} */}
+       
       </div>
 
       <div>
@@ -261,7 +181,7 @@ export const List = ({
               ...prev,
               [id]: {
                 ...prev[id],
-                message: e.target.value,
+                message: e.target.value.trim(),
               },
             }));
           }}
@@ -302,7 +222,7 @@ export const List = ({
                 label={`Option-${index + 1}`}
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, "option", index);
+                  handleOptionInput(e.target.value.trim(), "option", index);
                 }}
               />
               <InputField
@@ -311,7 +231,7 @@ export const List = ({
                 label={`Value-${index + 1}`}
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, "value", index);
+                  handleOptionInput(e.target.value.trim(), "value", index);
                 }}
               />
 

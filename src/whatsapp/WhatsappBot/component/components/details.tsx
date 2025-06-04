@@ -45,7 +45,7 @@ export const Details = ({
         onChange={(e) => {
           setDetails((prev) => ({
             ...prev,
-            name: e.target.value,
+            name: e.target.value.trim(),
           }));
         }}
       />

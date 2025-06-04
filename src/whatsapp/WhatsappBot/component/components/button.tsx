@@ -187,7 +187,7 @@ export const ButtonNodeContent = ({
                       ...prev,
                       [id]: {
                         ...prev[id],
-                        text: e.target.value,
+                        text: e.target.value.trim(),
                       },
                     }));
                   }}
@@ -212,7 +212,7 @@ export const ButtonNodeContent = ({
                   ...prev,
                   [id]: {
                     ...prev[id],
-                    text: e.target.value,
+                    text: e.target.value.trim(),
                   },
                 }));
               }}
@@ -237,7 +237,7 @@ export const ButtonNodeContent = ({
                 ...prev,
                 [id]: {
                   ...prev[id],
-                  message: e.target.value,
+                  message: e.target.value.trim(),
                 },
               }));
             }}
@@ -265,7 +265,7 @@ export const ButtonNodeContent = ({
                 label={`Button-${index + 1}`}
                 value={options[index]}
                 onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value, index);
+                  handleOptionInput(e.target.value.trim(), index);
                 }}
                 placeholder="Enter Button Text"
                 maxLength="20"

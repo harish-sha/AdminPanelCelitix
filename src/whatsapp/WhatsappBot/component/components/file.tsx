@@ -230,7 +230,7 @@ export const FileNodeContent = ({
             id="uplaodfile"
             name="uplaodfile"
             onChange={handleFileUpload}
-            accept={`${accept}/*`}
+            accept={accept !== "video" ? `${accept}/*` : ".3gp,.mp4"}
             required
             ref={fileRef}
           />
@@ -248,7 +248,7 @@ export const FileNodeContent = ({
               ...nodesInputData,
               [id]: {
                 ...nodesInputData[id],
-                fileUrl: e.target.value,
+                fileUrl: e.target.value.trim(),
               },
             }));
           }}
@@ -263,7 +263,8 @@ export const FileNodeContent = ({
             src={
               /^(http|https):/.test(nodesInputData[id].fileUrl)
                 ? nodesInputData[id].fileUrl
-                : URL.createObjectURL(nodesInputData[id].fileUrl)
+                : nodesInputData[id]?.selectedOption === "upload" &&
+                  URL.createObjectURL(nodesInputData[id].fileUrl)
             }
             alt={"Image"}
             height={200}
@@ -274,21 +275,28 @@ export const FileNodeContent = ({
             src={
               /^(http|https):/.test(nodesInputData[id].fileUrl)
                 ? nodesInputData[id].fileUrl
-                : URL.createObjectURL(nodesInputData[id].fileUrl)
+                : nodesInputData[id]?.selectedOption === "upload" &&
+                  URL.createObjectURL(nodesInputData[id].fileUrl)
             }
             controls={true}
             height={200}
           ></video>
-        ) : accept === "document" ? (
-          <iframe
-            src={
-              /^(http|https):/.test(nodesInputData[id].fileUrl)
-                ? nodesInputData[id].fileUrl
-                : URL.createObjectURL(nodesInputData[id].fileUrl)
-            }
-            height={200}
-          ></iframe>
-        ) : accept === "audio" ? (
+        ) : // : accept === "document" ? (
+        //   // https://view.officeapps.live.com/op/embed.aspx?src=${previewDialog.url} add for excel
+        //   <iframe
+        //     src={
+        //       /^(http|https):/.test(nodesInputData[id].fileUrl)
+        //         ? `https://view.officeapps.live.com/op/embed.aspx?src=${nodesInputData[id].fileUrl}`
+        //         : nodesInputData[id]?.selectedOption === "upload" &&
+        //           // URL.createObjectURL(nodesInputData[id].fileUrl)
+        //           `https://view.officeapps.live.com/op/embed.aspx?src=${URL.createObjectURL(
+        //             nodesInputData[id].fileUrl
+        //           )}`
+        //     }
+        //     height={200}
+        //   ></iframe>
+        // )
+        accept === "audio" ? (
           <RenderAudio />
         ) : null)}
 
@@ -303,7 +311,7 @@ export const FileNodeContent = ({
             ...prev,
             [id]: {
               ...prev[id],
-              fileCaption: e.target.value,
+              fileCaption: e.target.value.trim(),
             },
           }));
         }}
