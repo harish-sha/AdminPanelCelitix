@@ -645,8 +645,9 @@ import celitixLogo from "@/assets/images/celitix-logo-white.svg";
 import { useUser } from "@/context/auth";
 import UniversalButton from "@/components/common/UniversalButton";
 import celitix_logo from "@/assets/images/celitix-logo-white.svg";
-import { forgotPassword, login, verifyOtp } from "@/apis/auth/auth";
+import { forgotPassword, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
+import { input } from "@material-tailwind/react";
 
 const Login = () => {
   const parser = new UAParser();
@@ -663,11 +664,12 @@ const Login = () => {
   const [isBtnVisible, setIsBtnVisible] = useState(true);
   const [loading, setLoading] = useState(false);
 
-
   const [inputDetails, setInputDetails] = useState({
     userId: "",
     password: "",
     rememberMe: false,
+    mobileNo: "",
+    otp: "",
   });
 
   const [forgotPassState, setForgotPassState] = useState({
@@ -736,7 +738,12 @@ const Login = () => {
         },
       };
 
-       const ipResponse = await axios.get("https://ipapi.co/json/");
+      const ipResponse = await axios.get("https://ipapi.co/json/");
+      setInputDetails((prev) => ({
+        ...prev,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.ip || "0.0.0.0",
+      }));
 
       const payloadd = {
         ...inputDetails,
@@ -747,6 +754,11 @@ const Login = () => {
 
       delete payloadd.rememberMe;
       const res = await login(payloadd);
+
+      if (res?.data?.validateOtp) {
+        setStep(2);
+        return;
+      }
 
       if (!res?.data?.token) {
         return toast.error("Invalid credentials");
@@ -766,6 +778,7 @@ const Login = () => {
       toast.success("Login Successful!");
       authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
       navigate("/");
+       setStep(2);
     } catch (e) {
       return toast.error("Login failed");
     } finally {
@@ -797,18 +810,15 @@ const Login = () => {
       return toast.error("Enter OTP");
     }
 
-    const data = {
-      userId: forgotPassState.userId,
-      mobileNo: forgotPassState.mobileNo,
-      otp: otp?.mobileNo,
-    };
+    delete inputDetails.rememberMe;
+
     try {
-      const res = await verifyOtp(data);
+      const res = await verifyOtp(inputDetails);
       if (!res?.data?.status) {
         return toast.error(res?.data?.msg);
       }
       toast.success("OTP verified successfully");
-      setStep(1);
+      // setStep(2);
     } catch (e) {
       console.log(e);
       return toast.error("Unable to verify OTP");
@@ -820,6 +830,22 @@ const Login = () => {
     setIsBtnVisible(false);
   }
 
+  async function sendOtp() {
+    delete inputDetails.rememberMe;
+    try {
+      const res = await requestOtp(inputDetails);
+      if (!res?.data?.status) {
+        toast.error(res?.data?.msg);
+        // return;
+      }
+      toast.success(res?.data?.msg);
+      setStep(3);
+    } catch (e) {
+      console.log(e);
+      toast.error("Unable to send OTP");
+    }
+  }
+
   return (
     <>
       <Header />
@@ -827,114 +853,211 @@ const Login = () => {
       <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
         {/* main content */}
         <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
-          <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
-            <div className="grid grid-cols-1 md:grid-cols-2 h-full">
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleLogin();
-                }}
-                className="h-full flex flex-col md:p-6 mt-12 space-y-4 p-2"
-              >
-                <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
-                  Sign In
-                </h1>
-                <label className="text-[0.95rem] font-medium text-gray-700 mb-2">
-                  User ID
-                </label>
-                <input
-                  type="text"
-                  id="userId"
-                  name="userId"
-                  label="User ID"
-                  // value={userId}
-                  // onChange={(e) => setUserId(e.target.value)}
-                  value={inputDetails.userId}
-                  onChange={(e) => {
-                    setInputDetails({
-                      ...inputDetails,
-                      userId: e.target.value,
-                    });
+          {step === 1 && (
+            <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
+              <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleLogin();
                   }}
-                  placeholder="Enter User ID"
-                  className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
-                  required
-                />
-                <div className="">
-                  <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
-                    Password
-                  </div>
-                  <div className="relative z-0" >
-                    <input
-                      type={showPassword ? "text" : "password"}
-                      placeholder="Enter password"
-                      // value={password}
-                      // onChange={(e) => setPassword(e.target.value)}
-                      value={inputDetails.password}
-                      onChange={(e) => {
-                        setInputDetails({
-                          ...inputDetails,
-                          password: e.target.value,
-                        });
-                      }}
-                      required
-                      id="password"
-                      name="password"
-                      className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
-                    />
-                    <div
-                      className="absolute right-3 top-3 cursor-pointer"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      {showPassword ? (
-                        <AiOutlineEyeInvisible size={20} />
-                      ) : (
-                        <AiOutlineEye size={20} />
-                      )}
+                  className="h-full flex flex-col md:p-6 mt-12 space-y-4 p-2"
+                >
+                  <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
+                    Sign In
+                  </h1>
+                  <label className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                    User ID
+                  </label>
+                  <input
+                    type="text"
+                    id="userId"
+                    name="userId"
+                    label="User ID"
+                    // value={userId}
+                    // onChange={(e) => setUserId(e.target.value)}
+                    value={inputDetails.userId}
+                    onChange={(e) => {
+                      setInputDetails({
+                        ...inputDetails,
+                        userId: e.target.value,
+                      });
+                    }}
+                    placeholder="Enter User ID"
+                    className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                    required
+                  />
+                  <div className="">
+                    <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                      Password
+                    </div>
+                    <div className="relative z-0">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter password"
+                        // value={password}
+                        // onChange={(e) => setPassword(e.target.value)}
+                        value={inputDetails.password}
+                        onChange={(e) => {
+                          setInputDetails({
+                            ...inputDetails,
+                            password: e.target.value,
+                          });
+                        }}
+                        required
+                        id="password"
+                        name="password"
+                        className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                      />
+                      <div
+                        className="absolute right-3 top-3 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <AiOutlineEyeInvisible size={20} />
+                        ) : (
+                          <AiOutlineEye size={20} />
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-center ">
-                  <button
-                    className={`custom-signin-btn ${loading ? "loading" : ""}`}
-                    disabled={loading}
-                  >
-                    <div className="back"></div>
-                    {!loading ? (
-                      <span className="text">Sign In</span>
-                    ) : (
-                      <div className="circle-spinner" />
-                    )}
-                  </button>
-                </div>
-              </form>
-              <div
-                className="hidden md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6"
-                style={{
-                  borderRadius: "150px 10px 10px 100px",
-                }}
-              >
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.8, ease: "easeOut" }}
-                  className="mb-5"
+                  <div className="flex items-center justify-center ">
+                    <button
+                      className={`custom-signin-btn ${
+                        loading ? "loading" : ""
+                      }`}
+                      disabled={loading}
+                    >
+                      <div className="back"></div>
+                      {!loading ? (
+                        <span className="text">Sign In</span>
+                      ) : (
+                        <div className="circle-spinner" />
+                      )}
+                    </button>
+                  </div>
+                </form>
+                <div
+                  className="hidden md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6"
+                  style={{
+                    borderRadius: "150px 10px 10px 100px",
+                  }}
                 >
-                  <Link to="https://celitix.com">
-                    <img
-                      src={celitixLogo}
-                      alt="Celitix"
-                      style={{ width: "220px" }}
-                    />
-                  </Link>
-                </motion.div>
-                <p className="text-center text-md">
-                  Welcome to the Future of Customer Communication - Your
-                  Engagement Journey Begins Here.
-                </p>
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-5"
+                  >
+                    <Link to="https://celitix.com">
+                      <img
+                        src={celitixLogo}
+                        alt="Celitix"
+                        style={{ width: "220px" }}
+                      />
+                    </Link>
+                  </motion.div>
+                  <p className="text-center text-md">
+                    Welcome to the Future of Customer Communication - Your
+                    Engagement Journey Begins Here.
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+          {step === 2 && (
+            <>
+              <div className="flex flex-col space-y-3  justify-center">
+                <InputField
+                  id="mobileNo"
+                  name="mobileNo"
+                  label={"Enter Registered Mobile No"}
+                  value={inputDetails.mobileNo}
+                  placeholder="Enter Mobile Number"
+                  onChange={(e) => {
+                    setInputDetails((prev) => ({
+                      ...prev,
+                      mobileNo: e.target.value,
+                    }));
+                  }}
+                  type="number"
+                />
+                <UniversalButton
+                  id="Send Otp"
+                  name="Send Otp"
+                  label={"Send Otp"}
+                  onClick={sendOtp}
+                />
+              </div>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <div className="flex flex-col space-y-3  justify-center">
+                {/* <label className="text-md font-medium text-gray-500">
+                    Enter Email Otp
+                  </label>
+                  <input
+                    placeholder="Enter Email OTP"
+                    className="w-full p-2  rounded-lg mb-3 bg-gray-100 text-center tracking-wide text-md "
+                    value={otp.email}
+                    otpEmail={123456}
+                    maxLength={6}
+                    onChange={(e) => {
+                      setOtp((prevOtp) => ({
+                        ...prevOtp,
+                        email: e.target.value,
+                      }));
+                    }}
+                  /> */}
+
+                <label className="text-md font-medium text-gray-500">
+                  Enter Otp
+                </label>
+                <input
+                  placeholder="Enter OTP"
+                  className="w-full p-2  rounded-lg  bg-gray-100 text-center tracking-wide text-md border-gray-500 border-2"
+                  value={otp.mobileNo}
+                  // otpPhone={987654}
+                  maxLength={6}
+                  onChange={(e) => {
+                    setOtp((prevOtp) => ({
+                      ...prevOtp,
+                      mobileNo: e.target.value,
+                    }));
+                  }}
+                />
+
+                {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+                <div className="flex justify-center">
+                  <button
+                    className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                    onClick={handleVerifyOtp}
+                  >
+                    Verify OTP
+                  </button>
+                </div>
+
+                {countdown > 0 && (
+                  <p className="text-md text-gray-800 mt-2 flex justify-center">
+                    Resend OTP in {countdown}s
+                  </p>
+                )}
+                {isBtnVisible && (
+                  // <div className="mt-4">
+                  <div className="flex justify-center">
+                    <button
+                      className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                      onClick={handleResendOTP}
+                    >
+                      Resend OTP
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </div>
         {/* main content */}
         <Footer />
@@ -1224,10 +1347,8 @@ const Login = () => {
   //     </div>
   //   </div>
   // );
-
 };
 export default Login;
-
 
 // ====================RESELLER & DIRECTUSER & RESELLERUSER========================================
 
