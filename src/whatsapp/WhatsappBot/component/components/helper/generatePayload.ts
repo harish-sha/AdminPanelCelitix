@@ -97,10 +97,11 @@ function generateBotPayload(
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.message.trim();
+      entry["listHeading"] = nodeInput?.text.trim();
       entry["listUrl"] = nodeInput?.text.trim();
       entry["listBody"] = nodeInput?.message.trim();
       entry["listType"] = nodeInput?.type.trim();
+      entry["listFooter"] = "Sample Section";
 
       entry["type"] = finalType;
 
@@ -110,6 +111,12 @@ function generateBotPayload(
           item.value.trim() || "",
         ]);
       }
+    }
+    if (finalType === "answer") {
+      (entry["answerOption"] = nodeInput?.type),
+        (entry["answerRadio"] = "text"),
+        (entry["answerText"] = nodeInput?.variableId),
+        (entry["answerVariable"] = "-1");
     }
     entry["selectedOption"] = nodeInput?.selectedOption || "";
 

@@ -680,17 +680,17 @@ const CreateWhatsAppBot = () => {
       let isError = false;
       nodeData?.options.map(
         (option: { option: string; value: string }, index: number) => {
-          if (option.option === "" && option.value === "") return;
-          if (option.option && !option.value) {
-            isError = true;
-            toast.error(`Value is required for option ${index + 1}`);
-            return;
-          }
-          if (!option.option && option.value) {
-            isError = true;
-            toast.error(`Option Name is required for option ${index + 1}`);
-            return;
-          }
+          // if (option.option === "" && option.value === "") return;
+          // if (option.option && !option.value) {
+          //   isError = true;
+          //   toast.error(`Value is required for option ${index + 1}`);
+          //   return;
+          // }
+          // if (!option.option && option.value) {
+          //   isError = true;
+          //   toast.error(`Option Name is required for option ${index + 1}`);
+          //   return;
+          // }
           optionsToSave.push(option);
         }
       );
@@ -821,14 +821,14 @@ const CreateWhatsAppBot = () => {
 
       if (nodeData?.options && nodeData?.options.length > 0) {
         nodeData.options.map((item: any, index: number) => {
-          if (!item.option || !item.value) {
-            isError = true;
-            return toast.error(
-              `Missing "option" or "value" for list item ${
-                index + 1
-              } in node "${id}".`
-            );
-          }
+          // if (!item.option || !item.value) {
+          //   isError = true;
+          //   return toast.error(
+          //     `Missing "option" or "value" for list item ${
+          //       index + 1
+          //     } in node "${id}".`
+          //   );
+          // }
         });
       }
       if (nodeData?.buttonTexts && nodeData?.buttonTexts.length > 0) {
