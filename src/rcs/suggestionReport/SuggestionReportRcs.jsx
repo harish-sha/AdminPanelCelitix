@@ -8,7 +8,11 @@ import Loader from "../../whatsapp/components/Loader.jsx";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
 import SuggestionReportTableRcs from "./components/SuggestionReportTableRcs.jsx";
 import toast from "react-hot-toast";
-import { fetchAllAgents, fetchsuggestionReport } from "../../apis/rcs/rcs.js";
+import {
+  exportSuggestion,
+  fetchAllAgents,
+  fetchsuggestionReport,
+} from "../../apis/rcs/rcs.js";
 import moment from "moment";
 
 import { IconButton } from "@mui/material";
@@ -258,29 +262,50 @@ const SuggestionReportRcs = () => {
   ];
 
   async function handleExport() {
-    if (!suggestionTableData?.data?.length) {
-      return toast.error("No data to download");
+    // if (!suggestionTableData?.data?.length) {
+    //   return toast.error("No data to download");
+    // }
+
+    // const col = columns.map((col) => col.field);
+
+    // const row = suggestionTableData.data.map((rowData, index) =>
+    //   col.map((field) => {
+    //     if (field === "sn") return index + 1;
+    //     if (field === "message" && rowData.messageType === "USER_FILE") {
+    //       return rowData.fileUri;
+    //     }
+    //     if (field === "message" && rowData.messageType === "LOCATION") {
+    //       return `${rowData.latitude} , ${rowData.longitude}`;
+    //     }
+    //     return rowData[field];
+    //   })
+    // );
+
+    // const name = `${suggestionData?.fromDate}_${suggestionData?.toDate}_suggestionReport`;
+    // exportToExcel(col, row, name);
+    // // console.log(row);
+    // toast.success("File Downloaded Successfully");
+    if (!suggestionData.botId) return toast.error("Please select bot.");
+    if (!suggestionData.fromDate) return toast.error("Please select fromData.");
+    if (!suggestionData.toDate) return toast.error("Please select toDate.");
+
+    try {
+      const data = {
+        botId: suggestionData.botId,
+        fromDate: moment(suggestionData.fromDate).format("YYYY-MM-DD"),
+        toDate: moment(suggestionData.toDate).format("YYYY-MM-DD"),
+      };
+
+      const res = await exportSuggestion(data);
+      if (!res?.status) {
+        toast.error(res?.msg || "Something went wrong.");
+        return;
+      }
+      toast.success(res?.msg || "File Downloaded Successfully.");
+    } catch (e) {
+      toast.error("Something went wrong.");
+      return;
     }
-
-    const col = columns.map((col) => col.field);
-
-    const row = suggestionTableData.data.map((rowData, index) =>
-      col.map((field) => {
-        if (field === "sn") return index + 1;
-        if (field === "message" && rowData.messageType === "USER_FILE") {
-          return rowData.fileUri;
-        }
-        if (field === "message" && rowData.messageType === "LOCATION") {
-          return `${rowData.latitude} , ${rowData.longitude}`;
-        }
-        return rowData[field];
-      })
-    );
-
-    const name = `${suggestionData?.fromDate}_${suggestionData?.toDate}_suggestionReport`;
-    exportToExcel(col, row, name);
-    // console.log(row);
-    toast.success("File Downloaded Successfully");
   }
 
   return (

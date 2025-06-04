@@ -164,3 +164,10 @@ export const cancelschedule = async (data) => {
     }
   );
 };
+
+export const exportSuggestion = async (data) => {
+  return await fetchWithAuth("/rcs/getSuggestionExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
