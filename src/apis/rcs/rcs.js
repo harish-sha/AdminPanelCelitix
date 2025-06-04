@@ -31,6 +31,23 @@ export const fetchCampaignBySrno = async (campSrno, selectedUserId = "") => {
 };
 
 // fetch campaign by srno
+// export const fetchCampaignDetailReport = async (
+//   campaignSrNo,
+//   mobileNo,
+//   page,
+//   deliveryStatus,
+//   selectedUserId = ""
+// ) => {
+//   return await fetchWithAuth(
+//     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}${
+//       selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
+//     }`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
+
 export const fetchCampaignDetailReport = async (
   campaignSrNo,
   mobileNo,
@@ -38,7 +55,7 @@ export const fetchCampaignDetailReport = async (
   selectedUserId = ""
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}${
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&${
       selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
     }`,
     {
@@ -179,3 +196,10 @@ export const cancelschedule = async (data, selectedUserId = "0") => {
   );
 };
 
+// export suggestion data
+export const exportSuggestion = async (data) => {
+  return await fetchWithAuth("/rcs/getSuggestionExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

@@ -237,6 +237,7 @@ const WhatsappLaunchCampaign = () => {
     const selectedWabaData = wabaList?.find(
       (waba) => waba.mobileNo === selectedWaba
     );
+    
     const selectedTemplateData = templateList?.find(
       (template) => template.vendorTemplateId  === selectedTemplate
     );

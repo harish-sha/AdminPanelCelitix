@@ -260,9 +260,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
 
   //Export Download Reports end
 
@@ -285,7 +285,10 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSearch = async () => {
-    //  if(!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     const formattedFromDate = selectedDate
       ? moment(selectedDate).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
@@ -316,7 +319,10 @@ const WhatsappManageCampaign = () => {
   };
 
   const fetchScheduleCampaignData = async () => {
-    //  if(!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     setIsFetching(true);
 
     try {
@@ -328,15 +334,15 @@ const WhatsappManageCampaign = () => {
 
       const mappedData = Array.isArray(data)
         ? data.map((item, index) => ({
-            id: item.srno || `row-${index}`,
-            sn: index + 1,
-            campaignName: item.campaignName || "N/A",
-            campaignDate: item.campaignDate || "N/A",
-            sentTime: item.sentTime || "N/A",
-            count: item.count || "N/A",
-            processFlag: item.processFlag === 1 ? "Pending" : "Completed",
-            srno: item.srno,
-          }))
+          id: item.srno || `row-${index}`,
+          sn: index + 1,
+          campaignName: item.campaignName || "N/A",
+          campaignDate: item.campaignDate || "N/A",
+          sentTime: item.sentTime || "N/A",
+          count: item.count || "N/A",
+          processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+          srno: item.srno,
+        }))
         : [];
 
       console.log("Mapped Schedule Campaign Data:", mappedData);
@@ -350,8 +356,8 @@ const WhatsappManageCampaign = () => {
       const filteredData = mappedData.filter((item) => {
         const matchesName = scheduleCampaignName
           ? item.campaignName
-              .toLowerCase()
-              .includes(scheduleCampaignName.toLowerCase())
+            .toLowerCase()
+            .includes(scheduleCampaignName.toLowerCase())
           : true;
 
         const matchesDate = formattedSelectedDate
@@ -428,7 +434,10 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
   const handleShowLogs = async () => {
-    //  if(!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? moment(selectedDateLogs).format("YYYY-MM-DD")
@@ -455,7 +464,10 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-    //  if(!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     let result;
 
     if (!selectedWaBaNumber) {
@@ -481,11 +493,14 @@ const WhatsappManageCampaign = () => {
 
     if (isMonthWise) {
       result = await getSummaryReport({
-        fromDate: FinalFromDate,
-        summaryType: "waba,date,type,country",
-        toDate: FinalToDate.toLocaleDateString("en-GB"),
-        whatsappTypes: null,
+        // fromDate: FinalFromDate,
+        // summaryType: "waba,date,type,country",
+        // toDate: FinalToDate.toLocaleDateString("en-GB"),
+        // whatsappTypes: null,
         wabaNumber: selectedWaBaNumber,
+        monthwise: 1,
+        year: moment(FinalFromDate).format("YYYY"),
+        month: moment(FinalFromDate).format("MM"),
       });
     } else {
       result = await getSummaryReport({
@@ -999,7 +1014,7 @@ const WhatsappManageCampaign = () => {
           <CustomTabPanel value={value} index={3} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                <div className="w-full sm:w-48">
+                {/* <div className="w-full sm:w-48">
                   <UniversalDatePicker
                     id="manageCampaignDate"
                     name="manageCampaignDate"
@@ -1026,7 +1041,7 @@ const WhatsappManageCampaign = () => {
                     tooltipContent="Your templatename should not contain spaces."
                     tooltipPlacement="right"
                   />
-                </div>
+                </div> */}
                 {/* <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignCategory"
@@ -1085,7 +1100,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalButton
                     id="manageCampaignSearchBtn"
                     name="manageCampaignSearchBtn"
-                    label={isFetching ? "Searching..." : "Search"}
+                    label={isFetching ? "Refreshing..." : "Refresh"}
                     icon={<IoSearch />}
                     onClick={fetchScheduleCampaignData}
                     variant="primary"
@@ -1116,8 +1131,9 @@ const WhatsappManageCampaign = () => {
                     id="whatsappManageCampaignScheduleTable"
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
-                    // fromDate={selectedDate}
-                    // fetchInitialData={fetchScheduleCampaignData}
+                    onCancel={handleCancel}
+                  // fromDate={selectedDate}
+                  // fetchInitialData={fetchScheduleCampaignData}
                   />
                 </div>
               )}

@@ -120,9 +120,9 @@ const ResellerLogin = () => {
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        domain: "reseller.alertsnow.in",
+        // domain: "reseller.alertsnow.in",
         // domain: "",
-        // domain: domain
+        domain: domain
       };
 
       const res = await login(payload);

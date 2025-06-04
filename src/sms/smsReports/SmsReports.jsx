@@ -326,7 +326,10 @@ const SmsReports = () => {
   }, [isExportDialogOpen]);
 
   const handleCampaignSearch = async () => {
-    // if (!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     try {
       setIsFetching(true);
       //yyyy/mm/dd
@@ -346,27 +349,27 @@ const SmsReports = () => {
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-            id: item.receipt_no_of_duplicate_message,
-            sn: i + 1,
-            ...item,
-            campaign_type:
-              item.account_usage_type_id === 1
-                ? "Transactional"
-                : item.account_usage_type_id === 2
+          id: item.receipt_no_of_duplicate_message,
+          sn: i + 1,
+          ...item,
+          campaign_type:
+            item.account_usage_type_id === 1
+              ? "Transactional"
+              : item.account_usage_type_id === 2
                 ? "Promotional"
                 : item.account_usage_type_id === 3
-                ? "International"
-                : "Unknown",
+                  ? "International"
+                  : "Unknown",
 
-            insert_flag:
-              item.insert_flag === 1
-                ? "Pending"
-                : item.insert_flag === 2
+          insert_flag:
+            item.insert_flag === 1
+              ? "Pending"
+              : item.insert_flag === 2
                 ? "Processing"
                 : item.insert_flag === 3
-                ? "Sent"
-                : "Unknown",
-          }))
+                  ? "Sent"
+                  : "Unknown",
+        }))
         : [];
 
       setCampaignTableData(mappedData);
@@ -552,7 +555,10 @@ const SmsReports = () => {
   };
 
   const handleScheduleCampaignSearch = async () => {
-    // if (!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     try {
       setIsFetchingScheduleData(true);
 
@@ -562,13 +568,13 @@ const SmsReports = () => {
       // Step 1: Map API response first
       let mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-            id: item.srno || `row-${i}`,
-            sn: i + 1,
-            campaign_date: item.campaignDate || "-",
-            campaign_name: item.campaignName || "-",
-            sent_time: item.sentTime || "-",
-            campaignSrno: item.srno,
-          }))
+          id: item.srno || `row-${i}`,
+          sn: i + 1,
+          campaign_date: item.campaignDate || "-",
+          campaign_name: item.campaignName || "-",
+          sent_time: item.sentTime || "-",
+          campaignSrno: item.srno,
+        }))
         : [];
 
       // Step 2: Extract filters if any
@@ -577,8 +583,8 @@ const SmsReports = () => {
         .trim();
       const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
         ? new Date(campaignScheduleDataToFilter.campaignDate)
-            .toISOString()
-            .slice(0, 10)
+          .toISOString()
+          .slice(0, 10)
         : null;
 
       // Step 3: Filter only if filters are provided
@@ -789,7 +795,10 @@ const SmsReports = () => {
   // };
 
   const handlePreviousDaysSearch = async () => {
-    // if (!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     const data = {
       ...previousDataToFilter,
       fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
@@ -929,10 +938,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -944,7 +953,10 @@ const SmsReports = () => {
   };
 
   const handleDayWiseSummary = async () => {
-    // if (!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     const data = {
       // ...daywiseDataToFilter,
       fromDate: moment(daywiseDataToFilter.fromDate).format("YYYY-MM-DD"),
@@ -1010,10 +1022,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -1025,7 +1037,10 @@ const SmsReports = () => {
   };
 
   const handleAttachmentSearch = async () => {
-    // if (!selectedUser) return toast.error("Please select a user");
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     const data = {
       ...attachmentDataToFilter,
       startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
@@ -1105,10 +1120,10 @@ const SmsReports = () => {
       setRows(
         Array.isArray(res)
           ? res.map((item, i) => ({
-              id: i + 1,
-              sn: i + 1,
-              ...item,
-            }))
+            id: i + 1,
+            sn: i + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -1208,10 +1223,10 @@ const SmsReports = () => {
       setPreviousDayRows(
         Array.isArray(res?.data)
           ? res?.data.map((item, index) => ({
-              sn: index + 1,
-              id: index + 1,
-              ...item,
-            }))
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
           : []
       );
       setPreviousDayDetailsDialog(true);
@@ -1230,6 +1245,31 @@ const SmsReports = () => {
   return (
     <div>
       <Box sx={{ width: "100%" }}>
+        <div className="flex items-center justify-end pr-2">
+          {user.role === "RESELLER" && (
+            <>
+              {/* <div className="text-gray-700 font-medium">
+                View reports for a specific user (select user from dropdown first) :
+              </div> */}
+              <div className="w-full sm:w-54">
+                <AnimatedDropdown
+                  id="manageuser"
+                  name="manageuser"
+                  label="Select User"
+                  tooltipContent="Select user you want to see reports"
+                  tooltipPlacement="right"
+                  options={allUsers.map((user) => ({
+                    label: user.userId,
+                    value: user.srno,
+                  }))}
+                  value={selectedUser}
+                  onChange={setSelectedUser}
+                  placeholder="Select User"
+                />
+              </div>
+            </>
+          )}
+        </div>
         <div className="flex items-center justify-between pr-2">
           <Tabs
             value={value}
@@ -1336,7 +1376,7 @@ const SmsReports = () => {
             name="exportsmsreport"
             onClick={handleExports}
           /> */}
-          {user.role === "RESELLER" && (
+          {/* {user.role === "RESELLER" && (
             <div className="w-full sm:w-54">
               <AnimatedDropdown
                 id="manageuser"
@@ -1353,7 +1393,7 @@ const SmsReports = () => {
                 placeholder="Select User"
               />
             </div>
-          )}
+          )} */}
         </div>
         <CustomTabPanel value={value} index={0}>
           <div className="w-full">
@@ -1773,7 +1813,7 @@ const SmsReports = () => {
         <CustomTabPanel value={value} index={4}>
           <div className="w-full">
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-52">
+              {/* <div className="w-full sm:w-52">
                 <UniversalDatePicker
                   label="Created On"
                   id="campaigndate"
@@ -1804,11 +1844,11 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
               <div className="w-full sm:w-52 flex gap-2">
                 <div className="w-max-content">
                   <UniversalButton
-                    label={isFetchingScheduleData ? "Searching..." : "Search"}
+                    label={isFetchingScheduleData ? "Refreshing..." : "Refresh"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
@@ -1830,464 +1870,6 @@ const SmsReports = () => {
           </div>
         </CustomTabPanel>
       </Box>
-
-      {/* <Dialog
-        header="Export"
-        visible={exports}
-        onHide={() => setExports(false)}
-        className="w-[40rem]"
-        draggable={false}
-      >
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-            <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="Option1"
-                  name="redio"
-                  value="enable"
-                  onChange={handleChangeexport}
-                  checked={exportStatus === "enable"}
-                />
-                <label
-                  htmlFor="Option1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Campaign-wise
-                </label>
-              </div>
-            </div>
-
-            <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="Option2"
-                  name="redio"
-                  value="disable"
-                  onChange={handleChangeexport}
-                  checked={exportStatus === "disable"}
-                />
-                <label
-                  htmlFor="Option2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Custom
-                </label>
-              </div>
-            </div>
-          </div>
-          {exportStatus === "enable" && (
-            <div className="space-y-4">
-              <div>
-                <DropdownWithSearch
-                  label="Campaign"
-                  id="exportdropdownCampaign"
-                  name="exportdropdownCampaign"
-                  options={exportcampaignOptions}
-                  value={selectexportcampaign}
-                  placeholder="Select Campaign"
-                  onChange={(value) => setSelectExportCampaign(value)}
-                />
-              </div>
-              <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-                <div className="flex items-center justify-center">
-                  <UniversalLabel
-                    text="Custom Columns"
-                    id="customcolumn"
-                    name="customcolumn"
-                    className="text-sm font-medium text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <RadioButton
-                    inputId="customcolumnOption1"
-                    name="customcolumnredio"
-                    value="enable"
-                    onChange={handleChangeCustomColumn}
-                    checked={customcolumnStatus === "enable"}
-                  />
-                  <label
-                    htmlFor="customcolumnOption1"
-                    className="text-sm font-medium text-gray-700 cursor-pointer"
-                  >
-                    Enable
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <RadioButton
-                    inputId="editstatusOption2"
-                    name="customcolumnredio"
-                    value="disable"
-                    onChange={handleChangeCustomColumn}
-                    checked={customcolumnStatus === "disable"}
-                  />
-                  <label
-                    htmlFor="customcolumnOption2"
-                    className="text-sm font-medium text-gray-700 cursor-pointer"
-                  >
-                    Disable
-                  </label>
-                </div>
-              </div>
-              {customcolumnStatus === "enable" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      {
-                        id: "campaigncolumns1",
-                        name: "mobileno",
-                        value: "Mobile No.",
-                      },
-                      {
-                        id: "campaigncolumns2",
-                        name: "totalunit",
-                        value: "Total Unit",
-                      },
-                      {
-                        id: "campaigncolumns3",
-                        name: "message",
-                        value: "Message",
-                      },
-                      {
-                        id: "campaigncolumns4",
-                        name: "Senderid",
-                        value: "Sender id",
-                      },
-                      {
-                        id: "campaigncolumns5",
-                        name: "queuetime",
-                        value: "Queue Time",
-                      },
-                      {
-                        id: "campaigncolumns6",
-                        name: "status",
-                        value: "Status",
-                      },
-                      {
-                        id: "campaigncolumns7",
-                        name: "senttime",
-                        value: "Sent Time",
-                      },
-                      {
-                        id: "campaigncolumns8",
-                        name: "deliverytime",
-                        value: "Delivery Time",
-                      },
-                      {
-                        id: "campaigncolumns9",
-                        name: "deliverystatus",
-                        value: "Delivery Status",
-                      },
-                      {
-                        id: "campaigncolumns10",
-                        name: "errorcode",
-                        value: "ErrorCode",
-                      },
-                      {
-                        id: "campaigncolumns11",
-                        name: "reason",
-                        value: "Reason",
-                      },
-                      {
-                        id: "campaigncolumns12",
-                        name: "clientid",
-                        value: "Client id",
-                      },
-                      {
-                        id: "campaigncolumns13",
-                        name: "isunicode",
-                        value: "Is Unicode",
-                      },
-                      {
-                        id: "campaigncolumns14",
-                        name: "entityid",
-                        value: "Entity id",
-                      },
-                      {
-                        id: "campaigncolumns15",
-                        name: "templateid",
-                        value: "Template id",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          name={item.name}
-                          value={item.value}
-                          onChange={CampaignColumnsChange}
-                          checked={campaigncolumns.includes(item.value)}
-                        />
-                        <label htmlFor={item.id} className="text-sm">
-                          {item.value}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-center">
-                    <UniversalButton
-                      label="Submit"
-                      id="campaigncolumnssubmitbtn"
-                      name="campaigncolumnssubmitbtn"
-                      variant="primary"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {exportStatus === "disable" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-1">
-                <div>
-                  <UniversalDatePicker
-                    label="From Date"
-                    id="customfromdatepicker"
-                    name="customfromdatepicker"
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                  />
-                </div>
-                <div>
-                  <UniversalDatePicker
-                    label="To Date"
-                    id="customtodatepicker"
-                    name="customtodatepicker"
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                  />
-                </div>
-                <div>
-                  <AnimatedDropdown
-                    label="Templats Type"
-                    id="customtemplatetype"
-                    name="customtemplatetype"
-                    options={templatetypeOptions}
-                    value={selecttemplatetype}
-                    placeholder="Select Template Type"
-                    onChange={(value) => setSelectTemplatetype(value)}
-                  />
-                </div>
-                <div>
-                  <AnimatedDropdown
-                    label="Status"
-                    id="customstatus"
-                    name="customstatus"
-                    options={statusOptions}
-                    value={selectstatus}
-                    placeholder="Select Template Type"
-                    onChange={(value) => setSelectStatus(value)}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <UniversalLabel
-                  text="Delivery Status"
-                  id="customsdeliverystatus"
-                  name="customsdeliverystatus"
-                />
-
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    {
-                      id: "deliverystatus1",
-                      name: "delivered",
-                      value: "Delivered",
-                    },
-                    {
-                      id: "deliverystatus2",
-                      name: "undelivered",
-                      value: "Undelivered",
-                    },
-                    {
-                      id: "deliverystatus3",
-                      name: "pendingdr",
-                      value: "Pending DR",
-                    },
-                  ].map((item) => (
-                    <div key={item.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={item.id}
-                        name={item.name}
-                        value={item.value}
-                        onChange={DeliveryStatusChange}
-                        checked={deliverystatus.includes(item.value)}
-                      />
-                      <label htmlFor={item.id} className="text-sm">
-                        {item.value}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <InputField
-                  label="Mobile Number"
-                  id="custommobile"
-                  name="custommobile"
-                  type="number"
-                  placeholder="Enter Mobile Number"
-                />
-                <div className="flex flex-col">
-                  <div className="">
-                    <UniversalLabel
-                      text="Custom Columns"
-                      id="customcolumncustom"
-                      name="customcolumncustom"
-                      className="text-sm font-medium text-gray-700"
-                    />
-                  </div>
-                  <div className="flex gap-4 mt-3">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="customcolumncustomOption1"
-                        name="customcolumncustomredio"
-                        value="enable"
-                        onChange={handleCustomColumn}
-                        checked={customcolumnCustom === "enable"}
-                      />
-                      <label
-                        htmlFor="customcolumncustomOption1"
-                        className="text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        Enable
-                      </label>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="editstatusOption2"
-                        name="customcolumncustomredio"
-                        value="disable"
-                        onChange={handleCustomColumn}
-                        checked={customcolumnCustom === "disable"}
-                      />
-                      <label
-                        htmlFor="customcolumncustomOption2"
-                        className="text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        Disable
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {customcolumnCustom === "enable" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      {
-                        id: "campaigncolumnscustom1",
-                        name: "mobileno",
-                        value: "Mobile No.",
-                      },
-                      {
-                        id: "campaigncolumnscustom2",
-                        name: "totalunit",
-                        value: "Total Unit",
-                      },
-                      {
-                        id: "campaigncolumnscustom3",
-                        name: "message",
-                        value: "Message",
-                      },
-                      {
-                        id: "campaigncolumnscustom4",
-                        name: "Senderid",
-                        value: "Sender id",
-                      },
-                      {
-                        id: "campaigncolumnscustom5",
-                        name: "queuetime",
-                        value: "Queue Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom6",
-                        name: "status",
-                        value: "Status",
-                      },
-                      {
-                        id: "campaigncolumnscustom7",
-                        name: "senttime",
-                        value: "Sent Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom8",
-                        name: "deliverytime",
-                        value: "Delivery Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom9",
-                        name: "deliverystatus",
-                        value: "Delivery Status",
-                      },
-                      {
-                        id: "campaigncolumnscustom10",
-                        name: "errorcode",
-                        value: "ErrorCode",
-                      },
-                      {
-                        id: "campaigncolumnscustom11",
-                        name: "reason",
-                        value: "Reason",
-                      },
-                      {
-                        id: "campaigncolumnscustom12",
-                        name: "clientid",
-                        value: "Client id",
-                      },
-                      {
-                        id: "campaigncolumnscustom13",
-                        name: "isunicode",
-                        value: "Is Unicode",
-                      },
-                      {
-                        id: "campaigncolumnscustom14",
-                        name: "entityid",
-                        value: "Entity id",
-                      },
-                      {
-                        id: "campaigncolumnscustom15",
-                        name: "templateid",
-                        value: "Template id",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          name={item.name}
-                          value={item.value}
-                          onChange={CampaignColumnsCustomChange}
-                          checked={campaigncolumnscustom.includes(item.value)}
-                        />
-                        <label htmlFor={item.id} className="text-sm">
-                          {item.value}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-center">
-                    <UniversalButton
-                      label="Submit"
-                      id="campaigncolumnscustomsubmitbtn"
-                      name="campaigncolumnscustomsubmitbtn"
-                      variant="primary"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-        </div>
-      </Dialog> */}
 
       <Dialog
         header={selectedColDetails}

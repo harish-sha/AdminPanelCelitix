@@ -87,7 +87,7 @@ export const transformNodesById = (parsedFlowData) => {
       ...node,
       startingKeyword: node.type === "START" && node.startKeyword,
       message: node.textMessage || node.buttonBody || node.listBody,
-      type: node.answerRadio || node.listType  || node?.buttonType,
+      type: node.answerRadio || node.listType || node?.buttonType || node?.type,
       variableName: node.answerText,
       options: listItems || null,
       buttonTexts: node.buttonTexts,
@@ -95,6 +95,7 @@ export const transformNodesById = (parsedFlowData) => {
       fileUrl: node?.imageUrl || node?.videoUrl || node?.documentUrl || "",
       fileCaption:
         node?.imageCaption || node?.videoCaption || node?.documentCaption || "",
+      variableId: node.variableName,
     };
   });
 

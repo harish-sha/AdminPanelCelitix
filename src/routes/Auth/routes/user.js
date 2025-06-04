@@ -47,7 +47,6 @@ export const userItems = [
       "/wlcsetting",
       "/wwhatsappflows",
       "/wflowcreation",
-      "/wwhatsappflows",
       "/apicampaigninfo",
       "/wmmlite",
     ],

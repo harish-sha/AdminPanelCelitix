@@ -44,13 +44,13 @@ function generateBotPayload(
     };
 
     if (finalType === "START") {
-      entry["botName"] = botDetails?.botName;
+      entry["botName"] = botDetails?.botName.trim();
       entry["wabaNumber"] = botDetails?.wabaNumber;
       entry["wabaSrno"] = botDetails?.wabaSrno;
       entry["startKeyword"] = nodeInput?.startingKeyword;
     }
     if (finalType === "text") {
-      entry["textMessage"] = nodeInput?.message;
+      entry["textMessage"] = nodeInput?.message.trim();
     }
     if (finalType === "agent") {
       const data = {
@@ -63,19 +63,19 @@ function generateBotPayload(
     }
     if (finalType === "image") {
       entry["imageUrl"] = nodeInput?.fileUrl;
-      entry["imageCaption"] = nodeInput?.fileCaption;
+      entry["imageCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "video") {
       entry["videoUrl"] = nodeInput?.fileUrl;
-      entry["videoCaption"] = nodeInput?.fileCaption;
+      entry["videoCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "document") {
       entry["documentUrl"] = nodeInput?.fileUrl;
-      entry["documentCaption"] = nodeInput?.fileCaption;
+      entry["documentCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "audio") {
       entry["audioUrl"] = nodeInput?.fileUrl;
-      entry["audioCaption"] = nodeInput?.fileCaption;
+      entry["audioCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "button") {
       const options = {
@@ -85,10 +85,10 @@ function generateBotPayload(
         text: "text",
       };
 
-      entry["buttonUrl"] = nodeInput?.text || nodeInput?.fileUrl;
+      entry["buttonUrl"] = nodeInput?.text.trim() || nodeInput?.fileUrl;
       entry["buttonType"] = nodeInput?.type;
 
-      entry["buttonBody"] = nodeInput?.message;
+      entry["buttonBody"] = nodeInput?.message.trim();
       entry["type"] = finalType;
       entry["buttonTexts"] = nodeInput?.buttonTexts;
       // entry["buttonTexts"] = nodeInput?.options;
@@ -97,19 +97,26 @@ function generateBotPayload(
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.message;
-      entry["listUrl"] = nodeInput?.text;
-      entry["listBody"] = nodeInput?.message;
-      entry["listType"] = nodeInput?.type;
+      entry["listHeading"] = nodeInput?.text.trim();
+      entry["listUrl"] = nodeInput?.text.trim();
+      entry["listBody"] = nodeInput?.message.trim();
+      entry["listType"] = nodeInput?.type.trim();
+      entry["listFooter"] = "Sample Section";
 
       entry["type"] = finalType;
 
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
-          item.option || "",
-          item.value || "",
+          item.option.trim() || "",
+          item.value.trim() || "",
         ]);
       }
+    }
+    if (finalType === "answer") {
+      (entry["answerOption"] = nodeInput?.type),
+        (entry["answerRadio"] = "text"),
+        (entry["answerText"] = nodeInput?.variableId),
+        (entry["answerVariable"] = "-1");
     }
     entry["selectedOption"] = nodeInput?.selectedOption || "";
 
