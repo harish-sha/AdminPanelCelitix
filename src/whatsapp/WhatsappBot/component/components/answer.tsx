@@ -79,7 +79,7 @@ export const Answer = ({
                   ...prev,
                   [id]: {
                     ...prev[id],
-                    variableName: e.target.value.trim(),
+                    variableName: e.target.value,
                   },
                 }));
               }}

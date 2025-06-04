@@ -30,7 +30,7 @@ export const StartingNodeContent = ({
 
   function handleInputChange(index: number, value: string) {
     const newInputFields = [...inputFields];
-    newInputFields[index] = value.trim();
+    newInputFields[index] = value;
 
     // const hasDuplicate = new Set(newInputFields).size !== newInputFields.length;
     // if (hasDuplicate) {

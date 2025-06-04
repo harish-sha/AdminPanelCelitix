@@ -69,7 +69,7 @@ export const TextNodeContent = ({
               ...prev,
               [id]: {
                 ...prev[id],
-                message: e.target.value.trim(),
+                message: e.target.value,
               },
             }));
           }}

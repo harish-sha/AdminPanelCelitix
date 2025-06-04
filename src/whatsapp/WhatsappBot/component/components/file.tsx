@@ -248,7 +248,7 @@ export const FileNodeContent = ({
               ...nodesInputData,
               [id]: {
                 ...nodesInputData[id],
-                fileUrl: e.target.value.trim(),
+                fileUrl: e.target.value,
               },
             }));
           }}
@@ -311,7 +311,7 @@ export const FileNodeContent = ({
             ...prev,
             [id]: {
               ...prev[id],
-              fileCaption: e.target.value.trim(),
+              fileCaption: e.target.value,
             },
           }));
         }}

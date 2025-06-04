@@ -158,7 +158,7 @@ export const List = ({
                 [id]: {
                   ...prev[id],
                   type: "text",
-                  text: e.target.value.trim(),
+                  text: e.target.value,
                 },
               }));
             }}
@@ -181,7 +181,7 @@ export const List = ({
               ...prev,
               [id]: {
                 ...prev[id],
-                message: e.target.value.trim(),
+                message: e.target.value,
               },
             }));
           }}
@@ -222,7 +222,7 @@ export const List = ({
                 label={`Option-${index + 1}`}
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value.trim(), "option", index);
+                  handleOptionInput(e.target.value, "option", index);
                 }}
               />
               <InputField
@@ -231,7 +231,7 @@ export const List = ({
                 label={`Value-${index + 1}`}
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
-                  handleOptionInput(e.target.value.trim(), "value", index);
+                  handleOptionInput(e.target.value, "value", index);
                 }}
               />
 
