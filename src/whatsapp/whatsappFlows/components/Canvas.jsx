@@ -29,7 +29,7 @@ const Canvas = ({
   setCreateTab,
   menuRefs,
 }) => {
-  const [, drop] = useDrop(() => ({
+  const [type, drop] = useDrop(() => ({
     accept: [
       "heading",
       "subheading",
@@ -47,6 +47,37 @@ const Canvas = ({
         { id: Date.now(), type: item.type, value: "" },
       ]);
     },
+
+
+
+drop: (item) => {
+  const newItem = {
+    id: Date.now(),
+    type: item.type,
+  };
+
+  if (item.type === "radioButton") {
+    newItem.radio = {
+      radio_1: {
+        label: "Sample Radio Group",
+        "data-source": [
+          { id: "1", title: "Option 1", desc: "First option", image: "" },
+          { id: "2", title: "Option 2", desc: "Second option", image: "" }
+        ]
+      }
+    };
+  }
+
+  setTabs((prevTabs) => {
+    const newTabs = [...prevTabs];
+    const activePayload = newTabs[activeIndex].payload || [];
+    activePayload.push(newItem);
+    newTabs[activeIndex].payload = activePayload;
+    return newTabs;
+  });
+}
+
+
   }));
 
   // Handle input change for TextField components
@@ -78,6 +109,10 @@ const Canvas = ({
   if (item.type === "footerbutton") {
     return targetItem.footer?.footer_1?.center_caption || "";
   }
+
+if(item.type === "radioButton"){
+ return targetItem.radio?.radio_1?.description || "";
+}
 
   // Fallback: return an empty string
   return "";
@@ -158,6 +193,8 @@ const Canvas = ({
       </Paper>
     );
   });
+
+
 
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
@@ -243,7 +280,7 @@ const Canvas = ({
     // </Box>
     <div
       ref={drop}
-      className=" shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
+      className=" shadow-xl overflow-auto rounded-xl  h-[830px] w-full hide-scrollbar  bg-white pt-10"
     >
       {/* Tabs for multiple screens */}
       <TabView

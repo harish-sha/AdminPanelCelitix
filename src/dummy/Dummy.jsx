@@ -1146,3 +1146,279 @@ export default Dummy
 //   };
 
 
+
+
+
+
+
+
+
+  //  const typeMapping = {
+  //     textInput: "TextInput",
+  //     textArea: "TextArea"
+  //   };
+
+  //   const selectedType = selectedItem?.type; // e.g., 'textInput' or 'textArea'
+  //   const mappedType = typeMapping[selectedType];
+
+  //   if (!selectedType || !mappedType) {
+  //     toast.error("Invalid input type");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     texts: {}
+  //   };
+
+  //   const id = `${selectedType}_1`; 
+  //   payload.texts[id] = {
+  //     inputType: mappedType,
+  //     label: labelValue,
+  //     helper_text: placeholderValue,
+  //     min_chars: minNum,
+  //     max_chars: maxNum,
+  //     error_message: errorValue || "",
+  //     required: switchChecked,
+  //   };
+
+  //   console.log("payload by input", payload);
+
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //   };
+
+
+
+
+
+
+
+
+
+
+
+  // const payload = {
+  //     footer: {}
+  //   };
+
+  //   const id = `footer_1`; // Unique ID for the footer (adjust if needed)
+
+  //   payload.footer[id] = {
+  //     label: footerButtonLabel,
+  //     left_caption: leftCaption || "",
+  //     right_caption: rightCaption || "",
+  //     center_caption: centerCaption || "",
+  //     on_click_action: nextAction || "",
+  //   };
+
+  //   console.log("Saving footer payload:", payload);
+
+  //   // Assuming we want to merge it with selectedItem like in handleInputSave
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //   };
+
+  //   onSave(updatedData);
+  //   onClose();
+  //   console.log("Final footer data:", updatedData);
+  // };
+
+
+
+// export const generatePayload = (data) => {
+//   const payload = {
+//     screenJson: {
+//       screens: [],
+//     },
+//     flowJson: {
+//       dropdowns: {},
+//       checkboxGroups: {},
+//       headings: {},
+//       textInputs: {},
+//       textArea: {},
+//       emailInputs: {},
+//       phoneInputs: {},
+//       footer: {},
+//     },
+//   };
+
+//   // Include "dropDown" instead of "dropdowns"
+//   const typeCounters = {
+//     heading: 0,
+//     subheading: 0,
+//     textbody: 0,
+//     textcaption: 0,
+//     textInput: 0,
+//     textArea: 0,
+//     email: 0,
+//     phone: 0,
+//     dropDown: 0, // ← match pay.type exactly
+//   };
+
+//   data.forEach((item, screenIndex) => {
+//     // 1) Add this screen to screenJson
+//     payload.screenJson.screens.push({
+//       id: item.id,
+//       title: item.title,
+//     });
+
+//     // 2) Iterate through item.payload
+//     item.payload.forEach((pay) => {
+//       const type = pay.type;
+//       typeCounters[type] = (typeCounters[type] || 0) + 1;
+//       const id = `${type}_${typeCounters[type]}`; // e.g. "dropDown_1"
+
+//       // Build baseData for text‐based components if necessary
+//       let baseData = null;
+//       if (pay.texts && Object.keys(pay.texts).length > 0) {
+//         const key = Object.keys(pay.texts)[0];
+//         const fieldData = pay.texts[key];
+//         baseData = {
+//           screenId: item.id,
+//           name: key,
+//           type:
+//             type === "textInput"
+//               ? "TextInput"
+//               : type === "textArea"
+//               ? "TextArea"
+//               : type,
+//           label: fieldData.label || "label",
+//           required: fieldData.required ?? true,
+//           "error-message": fieldData.error_message || "Something Went Wrong",
+//           "helper-text": fieldData.helper_text || "",
+//           "max-chars": fieldData.max_chars || "",
+//           "min-chars": fieldData.min_chars || "",
+//         };
+//       }
+
+//       switch (type) {
+//         case "heading": {
+//           payload.flowJson.headings[id] = {
+//             screenId: item.id,
+//             id,
+//             type: "TextHeading",
+//             text: pay.heading || "",
+//           };
+//           break;
+//         }
+
+//         case "subheading": {
+//           payload.flowJson.headings[id] = {
+//             screenId: item.id,
+//             id,
+//             type: "TextSubheading",
+//             text: pay.subheading || "",
+//           };
+//           break;
+//         }
+
+//         case "textbody": {
+//           payload.flowJson.headings[id] = {
+//             screenId: item.id,
+//             id,
+//             type: "TextBody",
+//             text: pay.textbody || "",
+//           };
+//           break;
+//         }
+
+//         case "textcaption": {
+//           payload.flowJson.headings[id] = {
+//             screenId: item.id,
+//             id,
+//             type: "TextCaption",
+//             text: pay.textcaption || "",
+//           };
+//           break;
+//         }
+
+//         case "textInput": {
+//           payload.flowJson.textInputs[id] = baseData;
+//           break;
+//         }
+
+//         case "textArea": {
+//           payload.flowJson.textArea[id] = baseData;
+//           break;
+//         }
+
+//         case "email": {
+//           payload.flowJson.emailInputs[id] = {
+//             ...baseData,
+//             "input-type": "email",
+//           };
+//           break;
+//         }
+
+//         case "phone": {
+//           payload.flowJson.phoneInputs[id] = {
+//             ...baseData,
+//             "input-type": "phone",
+//           };
+//           break;
+//         }
+
+//         // ← Updated case to "dropDown" instead of "dropdowns"
+//         case "dropDown": {
+//           // pay["data-source"] is the array of option objects
+//           const dropdownLabel = pay.label || "Select an option";
+//           const allOptions = Array.isArray(pay["data-source"])
+//             ? pay["data-source"]
+//             : [];
+
+//           payload.flowJson.dropdowns[id] = {
+//             id,                  // e.g. "dropDown_1"
+//             screenId: item.id,
+//             type: "Dropdown",
+//             name: id,            // same as the key
+//             label: dropdownLabel,
+//             required: pay.required ?? true,
+//             "error-message": pay.error_message || "Something Went Wrong",
+//             "data-source": allOptions.map((opt) => ({
+//               id: String(opt.id ?? ""),
+//               title: opt.title || "",
+//               description: opt.description || "",
+//               metadata: opt.metadata || "",
+//               image: opt.image || "",
+//             })),
+//           };
+//           break;
+//         }
+//       }
+//     });
+
+//     // 3) Handle footerbutton if present
+//     const footerItem = item.payload.find((p) => p.type === "footerbutton");
+//     const footerId = `footers_${screenIndex + 1}`;
+//     payload.flowJson.footer[footerId] = {
+//       screenId: item.id,
+//       name: footerId,
+//       type: "Footer",
+//       label: footerItem?.footer?.footer_1?.label || "Submit",
+//       "left-caption": footerItem?.footer?.footer_1?.left_caption || "",
+//       "right-caption": footerItem?.footer?.footer_1?.right_caption || "",
+//       "center-caption": footerItem?.footer?.footer_1?.center_caption || "",
+//       "on-click-action": {
+//         name: footerItem?.footer?.footer_1?.on_click_action || "complete",
+//       },
+//     };
+//   });
+
+//   return payload;
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+

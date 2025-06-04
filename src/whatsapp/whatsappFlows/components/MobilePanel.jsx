@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
@@ -8,15 +8,28 @@ import {
   Select,
   MenuItem,
   TextField,
+  RadioGroup,
+  FormControl,
+  FormLabel,
+  Slide,
+
+
 } from "@mui/material";
 import InputField from "../../components/InputField";
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 
 
 const MobilePanel = ({ items, onUpdateItem }) => {
-  console.log("Items:", items);
-  
+  const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
+  const [radioButtonOptions, setRadioButtonOptions] = useState([
+    { title: "Option 1", desc: "Description 1", image: "url1.png" },
+    { title: "Option 2", desc: "Description 2", image: "url2.png" },
+  ]);
+  const [selectedOption, setSelectedOption] = useState(null);
+
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
@@ -27,23 +40,33 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
-  const handleRadioChange = (index, selectedOption) => {
+  const handleRadioChange = (index, groupId, selectedValue) => {
     if (onUpdateItem) {
-      onUpdateItem(index, (prevItem) => ({
-        ...prevItem,
-        selectedOption,
-      }));
+      onUpdateItem(index, (prevItem) => {
+        const updatedSelected = { ...(prevItem.selected || {}) };
+        updatedSelected[groupId] = selectedValue;
+        return { ...prevItem, selected: updatedSelected };
+      });
     }
   };
 
-  const handleDropdownChange = (index, selectedValue) => {
+
+
+  const handleDropdownChange = (index, dropdownId, selectedValue) => {
     if (onUpdateItem) {
-      onUpdateItem(index, (prevItem) => ({
-        ...prevItem,
-        selectedOption: selectedValue,
-      }));
+      onUpdateItem(index, (prevItem) => {
+        const updatedSelected = { ...(prevItem.selected || {}) };
+        updatedSelected[dropdownId] = selectedValue;
+
+        return {
+          ...prevItem,
+          selected: updatedSelected,
+        };
+      });
     }
-  };
+  }
+
+
 
   const handleFileUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -65,9 +88,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
-  console.log("itemsssssss", items)
+  // console.log("itemsssssss", items)
+
   return (
-    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2 overflow-hidden border-3 border-black">
+    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-3 border-black hide-scrollbar overflow-auto">
       <Typography variant="h6" sx={{ textAlign: "center" }}>
         Preview
       </Typography>
@@ -114,7 +138,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="caption"
                 // sx={{ whiteSpace: "pre-line" }}
                 >
-                  {item.textcaption|| "Text Caption Placeholder"}
+                  {item.textcaption || "Text Caption Placeholder"}
                 </Typography>
               );
 
@@ -122,16 +146,16 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             case "textInput":
               return (
                 <div key={index} className="mb-4">
-                <Typography
-                  variant="caption"
-                // sx={{ whiteSpace: "pre-line" }}
-                >
-                  {item.texts?.textInput_1?.label || "Label"}
-                </Typography>
+                  <Typography
+                    variant="caption"
+                  // sx={{ whiteSpace: "pre-line" }}
+                  >
+                    {item.texts?.textInput_1?.label || "Label"}
+                  </Typography>
 
-                <InputField
-                  fullWidth
-                  placeholder={item.texts?.textInput_1?.helper_text || "Placeholder"}
+                  <InputField
+                    fullWidth
+                    placeholder={item.texts?.textInput_1?.helper_text || "Placeholder"}
                   // placeholder="Text Input Placeholder"
                   // onChange={(e) =>
                   //   onUpdateItem &&
@@ -140,24 +164,24 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   //     value: e.target.value,
                   //   }))
                   // }
-                />
+                  />
                 </div>
-                
+
               );
 
             // Render Text Area
             case "textArea":
               return (
                 <div key={index} className="mb-4">
-                   <Typography variant="caption">
-                      {item.texts?.textArea_1?.label || "Label"}
-                    </Typography>
+                  <Typography variant="caption">
+                    {item.texts?.textArea_1?.label || "Label"}
+                  </Typography>
 
-                <InputField
-                  fullWidth
-                  multiline
-                  rows={4}
-                  placeholder={item.texts?.textArea_1?.helper_text || "Placeholder"}
+                  <InputField
+                    fullWidth
+                    multiline
+                    rows={4}
+                    placeholder={item.texts?.textArea_1?.helper_text || "Placeholder"}
                   // placeholder="Text Area Placeholder"
                   // onChange={(e) =>
                   //   onUpdateItem &&
@@ -166,121 +190,220 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   //     value: e.target.value,
                   //   }))
                   // }
-                />
+                  />
                 </div>
               );
 
 
             // Render Checkboxes
+           // anshu
             case "checkBox":
-  return (
-    <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-      {/* Main Label for the Checkbox Group */}
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-        {item?.checkboxGroups?.checkbox_1.label || "Checkbox Group"}
-      </Typography>
+              return (
+                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                  {item?.checkboxGroups && Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.entries(item.checkboxGroups).map(([groupId, groupData], groupIdx) => (
+                      <Box key={groupId} sx={{ mb: 2 }}>
+                        {/* Group Label */}
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                          {groupData.label || `Checkbox Group ${groupIdx + 1}`}
+                        </Typography>
 
-      {/* Checkbox List */}
-       {(Array.isArray(item?.checkboxGroups?.checkbox_1.options) && item.checkboxGroups.checkbox_1.options.length > 0
-  ? item.checkboxGroups.checkbox_1.options
-  : [
-      { title: 'Dummy Option 1', description: 'Description 1', image: 'https://via.placeholder.com/40' },
-      { title: 'Dummy Option 2', description: 'Description 2', image: 'https://via.placeholder.com/40' }
-    ]
-).map((option, optionIndex) => (
-  <Box
-    key={optionIndex}
-    sx={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      p: 1,
-      mb: 1,
-      // border: '1px solid #eee',
-      borderRadius: 1,
-    }}
-  >
-    {/* Left Side: Image + Text */}
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-      {option.image && (
-        <Box
-          component="img"
-          src={option.image}
-          alt={option.title || `Option ${optionIndex + 1}`}
-          sx={{ width: 40, height: 40, borderRadius: '10%', mr: 1 }}
-        />
-      )}
+                        {/* Options List */}
+                        {(groupData["data-source"] || []).map((option, optionIndex) => (
+                          <Box
+                            key={optionIndex}
+                            sx={{
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'space-between',
+                              p: 1,
+                              mb: 1,
+                              borderRadius: 1,
+                              border: '1px solid #e0e0e0',
+                            }}
+                          >
+                            {/* Left: Image + Title/Desc */}
+                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                              {option.image && (
+                                <Box
+                                  component="img"
+                                  src={option.image}
+                                  alt={option.title || `Option ${optionIndex + 1}`}
+                                  sx={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: '50%',
+                                    mr: 1,
+                                    border: '1px solid #ccc',
+                                  }}
+                                />
+                              )}
+                              <Box>
+                                <Typography variant="body2" fontWeight={600}>
+                                  {option.title || `Option ${optionIndex + 1}`}
+                                </Typography>
+                                {option.description && (
+                                  <Typography variant="caption" color="text.secondary">
+                                    {option.description}
+                                  </Typography>
+                                )}
+                              </Box>
+                            </Box>
 
-      <Box>
-        <Typography variant="body2" fontWeight={600}>
-          {option.title || `Option ${optionIndex + 1}`}
-        </Typography>
-        {option.description && (
-          <Typography variant="caption" color="text.secondary">
-            {option.description}
-          </Typography>
-        )}
-      </Box>
-    </Box>
-
-    {/* Right Side: Checkbox */}
-    <Checkbox
-      checked={item.checked?.[optionIndex] || false}
-      onChange={(e) =>
-        handleCheckboxChange(index, optionIndex, e.target.checked)
-      }
-      icon={<CheckBoxOutlineBlankIcon />}
-      checkedIcon={<CheckBoxIcon />}
-    />
-  </Box>
-))}
-
-    </Box>
-
+                            {/* Right: Checkbox */}
+                            <Checkbox
+                              checked={item.checked?.[`${groupId}_${optionIndex}`] || false}
+                              onChange={(e) =>
+                                handleCheckboxChange(index, `${groupId}_${optionIndex}`, e.target.checked)
+                              }
+                              icon={<CheckBoxOutlineBlankIcon />}
+                              checkedIcon={<CheckBoxIcon />}
+                            />
+                          </Box>
+                        ))}
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography color="text.secondary">No checkbox groups found.</Typography>
+                  )}
+                </Box>
               );
+            // anshu
 
             // Render Radio Buttons
             case "radioButton":
               return (
-                <Box key={index}>
-                  {(item.options || []).map((option, optionIndex) => (
-                    <FormControlLabel
-                      key={optionIndex}
-                      control={
-                        <Radio
-                          checked={item.selectedOption === option}
-                          onChange={() => handleRadioChange(index, option)}
-                        />
-                      }
-                      label={option || `Option ${optionIndex + 1}`}
-                    />
-                  ))}
+                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                  {item?.radioButton && Object.keys(item.radioButton).length > 0 ? (
+                    Object.entries(item.radioButton).map(([groupId, groupData], groupIdx) => (
+                      <Box key={groupId} sx={{ mb: 2 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                          {groupData.label || `Radio Group ${groupIdx + 1}`}
+                        </Typography>
+
+                        <RadioGroup
+                          name={`radio-${groupId}`}
+                          value={item.selected?.[groupId] || ""}
+                          onChange={(e) => handleRadioChange(index, groupId, e.target.value)}
+                        >
+                          {(groupData["data-source"] || []).map((option, optionIndex) => (
+                            <FormControlLabel
+                              key={optionIndex}
+                              value={option.id}
+                              control={<Radio />}
+                              label={
+                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                                  {option.image && (
+                                    <Box
+                                      component="img"
+                                      src={option.image}
+                                      alt={option.title || `Option ${optionIndex + 1}`}
+                                      sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: '50%',
+                                        mr: 1,
+                                        border: '1px solid #ccc',
+                                      }}
+                                    />
+                                  )}
+                                  <Box>
+                                    <Typography variant="body2" fontWeight={600}>
+                                      {option.title || `Option ${optionIndex + 1}`}
+                                    </Typography>
+                                    {option.desc && (
+                                      <Typography variant="caption" color="text.secondary">
+                                        {option.desc}
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                </Box>
+                              }
+                              sx={{
+                                mb: 1,
+                                px: 1,
+                                py: 0.5,
+                                borderRadius: 1,
+                                border: '1px solid #e0e0e0',
+                                alignItems: 'flex-start',
+                              }}
+                            />
+                          ))}
+                        </RadioGroup>
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography color="text.secondary">No radio groups found.</Typography>
+                  )}
                 </Box>
               );
 
+
             // Render Dropdown
-            case "dropDown":
+             case "dropDown":
               return (
+                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                  {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
+                    Object.entries(item.dropdown).map(([dropdownId, dropdownData], groupIdx) => (
+                      <Box key={dropdownId} sx={{ mb: 2 }}>
+                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+                          {dropdownData.label || `Dropdown ${groupIdx + 1}`}
+                        </Typography>
 
-                <Select
-                  key={index}
-                  value={item.selectedOption || ""}
-                  onChange={(e) => handleDropdownChange(index, e.target.value)}
-                  fullWidth
-                >
-                  {(item.options || []).map((option, optionIndex) => (
-                    <MenuItem key={optionIndex} value={option}>
-                      {option || `Option ${optionIndex + 1}`}
-                    </MenuItem>
-                  ))}
-                </Select>
-
+                        <TextField
+                          select
+                          fullWidth
+                          size="small"
+                          value={item.selected?.[dropdownId] || ""}
+                          onChange={(e) =>
+                            handleDropdownChange(index, dropdownId, e.target.value)
+                          }
+                          sx={{ backgroundColor: "#fff" }}
+                        >
+                          {(dropdownData["data-source"] || []).map((option, optIdx) => (
+                            <MenuItem key={option.id} value={option.id}>
+                              <Box sx={{ display: "flex", alignItems: "center" }}>
+                                {option.image && (
+                                  <Box
+                                    component="img"
+                                    src={option.image}
+                                    alt={option.title || `Option ${optIdx + 1}`}
+                                    sx={{
+                                      width: 30,
+                                      height: 30,
+                                      borderRadius: 1,
+                                      mr: 1,
+                                      border: "1px solid #ccc",
+                                    }}
+                                  />
+                                )}
+                                <Box>
+                                  <Typography variant="body2" fontWeight={600}>
+                                    {option.title}
+                                  </Typography>
+                                  {option.description && (
+                                    <Typography variant="caption" color="text.secondary">
+                                      {option.description}
+                                    </Typography>
+                                  )}
+                                </Box>
+                              </Box>
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </Box>
+                    ))
+                  ) : (
+                    <Typography color="text.secondary">No dropdowns found.</Typography>
+                  )}
+                </Box>
               );
+
 
             case "footerbutton":
               return (
                 <>
-                <div className="w-full max-w-md  text-center py-2 bottom-0 absolute pr-12">
+                  <div className="w-full max-w-md  text-center py-2 bottom-0 ">
                     {/* Left and Right Captions */}
                     <div className="flex justify-between text-sm text-gray-600 mb-2">
                       <p>{item.footer ? item.footer.footer_1.left_caption : "Left Caption"}</p>
@@ -427,7 +550,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
         })}
       </Box>
     </div>
-  );
-};
+  )
 
+}
 export default MobilePanel;

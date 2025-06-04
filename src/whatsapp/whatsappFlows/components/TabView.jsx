@@ -41,6 +41,7 @@ export default function CustomTabView({
     //   Math.floor(Math.random() * 1000)
     // );
 
+    console.log("tabs", tabs)
     const addTab = () => {
         setTabs([
             ...tabs,
@@ -58,9 +59,27 @@ export default function CustomTabView({
         }
     };
 
-    const handleTabClick = () => {
-        setDialogVisible(true);
-    };
+
+const handleTabClick = () => {
+  if (!tabs || tabs.length === 0) return;
+
+  const lastTab = tabs[tabs.length - 1];
+
+  const hasCompleteFooter = lastTab?.payload?.some(
+    (item) =>
+      item.type === "footerbutton" &&
+      item.footer?.footer_1?.on_click_action === "navigate"
+  );
+
+  if (hasCompleteFooter) {
+    setDialogVisible(true);
+  } else {
+    toast.error("The last screen must have a footer with Next Action set to 'Navigate'.");
+  }
+};
+
+
+
 
     const menuItems = (index) => [
         {
@@ -105,8 +124,8 @@ export default function CustomTabView({
     };
 
     return (
-        <div className="card">
-            <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto">
+        <div className="card ">
+            <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto absolute top-0 bg-blue-50 z-50 w-full  rounded-md">
                 {tabs.map((tab, index) => (
                     <div
                         key={index}
@@ -144,7 +163,7 @@ export default function CustomTabView({
                 >
                     <AddIcon className="text-blue-600" />
                 </div>
-                
+
             </div>
             {/* Tab Content */}
             {/* <div style={{ padding: '20px' }}>

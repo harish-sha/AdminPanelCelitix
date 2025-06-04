@@ -394,7 +394,7 @@ const WhatsappFlows = () => {
           >
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-4">
-                <InputField
+                {/* <InputField
                   tooltipContent="Enter flow name"
                   tooltipPlacement="right"
                   label="Flow Name"
@@ -404,7 +404,7 @@ const WhatsappFlows = () => {
                   placeholder="Enter Flow Name"
                   value={flowName}
                   onChange={(e) => setFlowName(e.target.value)}
-                />
+                /> */}
                 <AnimatedDropdown
                   label="Select Categories"
                   id="flowcategories"
