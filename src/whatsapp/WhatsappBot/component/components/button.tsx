@@ -56,14 +56,14 @@ export const ButtonNodeContent = ({
     setOptions(
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
-
+console.log(nodesInputData[id]);
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
-        selectedOption: nodesInputData[id]?.selectedOption,
-        type: nodesInputData[id]?.buttonType,
-        text: nodesInputData[id]?.buttonUrl,
+        selectedOption: nodesInputData[id]?.selectedOption ,
+        type: nodesInputData[id]?.buttonType || nodesInputData[id]?.type,
+        text: nodesInputData[id]?.buttonUrl || nodesInputData[id]?.text,
       },
     }));
   }, []);
