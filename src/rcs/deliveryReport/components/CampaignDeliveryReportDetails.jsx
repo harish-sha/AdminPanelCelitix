@@ -96,7 +96,7 @@ const CampaignDeliveryReportDetails = () => {
 
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState([]);
-    const [deliveryStatus, setDeliveryStatus] = useState("");
+    const [deliveryStatus, setDeliveryStatus] = useState("All");
     const [mobileNumber, setMobileNumber] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -107,12 +107,14 @@ const CampaignDeliveryReportDetails = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
+
     const fetchData = async () => {
         setIsFetching(true);
         const data = await fetchCampaignDetailReport(
             campaignSrno,
             mobileNumber,
-            currentPage
+            currentPage,
+            // deliveryStatus,
         );
         setCampaignDetails(data.data);
         setTotalPage(data.total);
@@ -272,11 +274,13 @@ const CampaignDeliveryReportDetails = () => {
                         tooltipContent="Select the delivery status."
                         tooltipPlacement="right"
                         options={[
-                            { value: "sent", label: "Sent" },
-                            { value: "delivered", label: "Delivered" },
-                            { value: "clicked", label: "Clicked" },
-                            { value: "replied", label: "Replied" },
-                            { value: "failed", label: "Failed" },
+                            { value: "All", label: "All" },
+                            { value: "READ", label: "Read" },
+                            { value: "DELIVRD", label: "Delivered" },
+                            { value: "UNDELIV", label: "UNDelivered" },
+                            // { value: "clicked", label: "Clicked" },
+                            // { value: "replied", label: "Replied" },
+                            // { value: "failed", label: "Failed" },
                         ]}
                         value={deliveryStatus}
                         onChange={setDeliveryStatus}

@@ -238,7 +238,7 @@ const WhatsappLaunchCampaign = () => {
       (waba) => waba.mobileNo === selectedWaba
     );
     const selectedTemplateData = templateList?.find(
-      (template) => template.templateName === selectedTemplate
+      (template) => template.vendorTemplateId === selectedTemplate
     );
 
     const bodyVariables = templateDataNew?.components

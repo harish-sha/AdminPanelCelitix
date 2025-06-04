@@ -230,9 +230,9 @@ const WhatsappManageCampaign = () => {
     }));
   };
 
-  const handlecampaignDialogSubmithBtn = () => {};
+  const handlecampaignDialogSubmithBtn = () => { };
 
-  const handleCustomDialogSubmithBtn = () => {};
+  const handleCustomDialogSubmithBtn = () => { };
 
   //Export Download Reports end
 
@@ -289,22 +289,20 @@ const WhatsappManageCampaign = () => {
     try {
       const data = await getWhatsappCampaignScheduledReport();
 
-      console.log("Fetched Schedule Campaign Data:", data);
 
       const mappedData = Array.isArray(data)
         ? data.map((item, index) => ({
-            id: item.srno || `row-${index}`,
-            sn: index + 1,
-            campaignName: item.campaignName || "N/A",
-            campaignDate: item.campaignDate || "N/A",
-            sentTime: item.sentTime || "N/A",
-            count: item.count || "N/A",
-            processFlag: item.processFlag === 1 ? "Pending" : "Completed",
-            srno: item.srno,
-          }))
+          id: item.srno || `row-${index}`,
+          sn: index + 1,
+          campaignName: item.campaignName || "N/A",
+          campaignDate: item.campaignDate || "N/A",
+          sentTime: item.sentTime || "N/A",
+          count: item.count || "N/A",
+          processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+          srno: item.srno,
+        }))
         : [];
 
-      console.log("Mapped Schedule Campaign Data:", mappedData);
 
       // Apply filters
       const formattedSelectedDate =
@@ -315,8 +313,8 @@ const WhatsappManageCampaign = () => {
       const filteredData = mappedData.filter((item) => {
         const matchesName = scheduleCampaignName
           ? item.campaignName
-              .toLowerCase()
-              .includes(scheduleCampaignName.toLowerCase())
+            .toLowerCase()
+            .includes(scheduleCampaignName.toLowerCase())
           : true;
 
         const matchesDate = formattedSelectedDate
@@ -325,8 +323,6 @@ const WhatsappManageCampaign = () => {
 
         return matchesName && matchesDate;
       });
-
-      console.log("Filtered Schedule Campaign Data:", filteredData);
 
       setScheduleData(filteredData);
     } catch (error) {
@@ -393,7 +389,7 @@ const WhatsappManageCampaign = () => {
     setIsFetching(true);
     const formattedFromDateLogs = selectedDateLogs
       ? // ? new Date(selectedDateLogs).toLocaleDateString("en-GB")
-        moment(selectedDateLogs).format("YYYY-MM-DD")
+      moment(selectedDateLogs).format("YYYY-MM-DD")
       : new Date().toLocaleDateString("en-GB");
 
     // currently log data mobile no is hardcoded later fetch accoding to the login as user or admin
@@ -481,11 +477,14 @@ const WhatsappManageCampaign = () => {
     try {
       if (isMonthWise) {
         result = await getSummaryReport({
-          fromDate: FinalFromDate,
-          summaryType: "waba,date,type,country",
-          toDate: FinalToDate,
-          whatsappTypes: null,
+          // fromDate: FinalFromDate,
+          // summaryType: "waba,date,type,country",
+          // toDate: FinalToDate,
+          // whatsappTypes: null,
           wabaNumber: selectedWaBaNumber,
+          monthwise: 1,
+          year: moment(FinalFromDate).format("YYYY"),
+          month: moment(FinalFromDate).format("MM"),
         });
       } else {
         const formattedFromDate = moment(fromDate).format("YYYY-MM-DD");
@@ -992,7 +991,7 @@ const WhatsappManageCampaign = () => {
           <CustomTabPanel value={value} index={3} className="">
             <div>
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                <div className="w-full sm:w-48">
+                {/* <div className="w-full sm:w-48">
                   <UniversalDatePicker
                     id="manageCampaignDate"
                     name="manageCampaignDate"
@@ -1019,7 +1018,7 @@ const WhatsappManageCampaign = () => {
                     tooltipContent="Your templatename should not contain spaces."
                     tooltipPlacement="right"
                   />
-                </div>
+                </div> */}
                 {/* <div className="w-full sm:w-48">
                   <AnimatedDropdown
                     id="manageCampaignCategory"
@@ -1078,7 +1077,7 @@ const WhatsappManageCampaign = () => {
                   <UniversalButton
                     id="manageCampaignSearchBtn"
                     name="manageCampaignSearchBtn"
-                    label={isFetching ? "Searching..." : "Search"}
+                    label={isFetching ? "Refreshing..." : "Refresh"}
                     icon={<IoSearch />}
                     onClick={fetchScheduleCampaignData}
                     variant="primary"
@@ -1110,7 +1109,7 @@ const WhatsappManageCampaign = () => {
                     name="whatsappManageCampaignTable"
                     data={scheduleData}
                     onCancel={handleCancel}
-                    // fromDate={selectedDate}
+                  // fromDate={selectedDate}
                   />
                 </div>
               )}

@@ -10,6 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { AiOutlineEye } from "react-icons/ai";
 import { Dialog } from "primereact/dialog";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 export const ButtonNodeContent = ({
   id,
@@ -54,14 +56,14 @@ export const ButtonNodeContent = ({
     setOptions(
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
-
+    console.log(nodesInputData[id]);
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
         selectedOption: nodesInputData[id]?.selectedOption,
-        type: nodesInputData[id]?.buttonType,
-        text: nodesInputData[id]?.buttonUrl,
+        type: nodesInputData[id]?.buttonType || nodesInputData[id]?.type,
+        text: nodesInputData[id]?.buttonUrl || nodesInputData[id]?.text,
       },
     }));
   }, []);
@@ -217,7 +219,9 @@ export const ButtonNodeContent = ({
               }}
               maxLength="20"
             />
-            <p className="text-xs">{nodesInputData[id]?.text?.length || 0}/20</p>
+            <p className="text-xs">
+              {nodesInputData[id]?.text?.length || 0}/20
+            </p>
           </div>
         )}
       </div>
@@ -225,11 +229,11 @@ export const ButtonNodeContent = ({
       <div>
         <div>
           <label className="text-sm font-medium text-gray-900 mb-2 ml-2">
-            Body
+            Body Text
           </label>
           <Textarea
             id="body"
-            placeholder="Body"
+            placeholder="Body Text"
             value={nodesInputData[id]?.message}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({
@@ -249,19 +253,34 @@ export const ButtonNodeContent = ({
         </p>
       </div>
 
-      <div className="w-full mt-2">
+      <div className="w-full">
         <div className="flex justify-end">
           <button onClick={handleOptionAdd}>
             <AddIcon />
           </button>
         </div>
+        <div className="flex items-center gap-2 mb-2">
+          <h1 className="text-lg font-semibold mb-2">Button Label</h1>
+          <CustomTooltip
+            title={
+              "Button label text. Must be unique if using multiple buttons. Max 20 characters"
+            }
+            placement={"top"}
+            arrow
+          >
+            <span>
+              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+            </span>
+          </CustomTooltip>
+        </div>
+
         <div className="space-y-2 ">
           {options?.map((option, index) => (
             <div className="flex gap-2 justify-center items-center" key={index}>
               <InputField
                 id="buttonText"
                 name="buttonText"
-                label={`Button-${index + 1}`}
+                label={`Button-Label-${index + 1}`}
                 value={options[index]}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, index);

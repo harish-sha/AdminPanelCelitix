@@ -17,7 +17,6 @@ import { FileNodeContent } from "./components/file";
 
 import { Button } from "@/components/ui/button";
 import { Dialog } from "primereact/dialog";
-import { motion } from "framer-motion";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import OutlinedFlagOutlinedIcon from "@mui/icons-material/OutlinedFlagOutlined";
@@ -575,8 +574,7 @@ const CreateWhatsAppBot = () => {
     setSelectedNodeId(node.id);
   };
   const commonButtonClass =
-    // "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
-    "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
+    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   function addVariable(data: String) {
     if (!data) {
@@ -682,17 +680,17 @@ const CreateWhatsAppBot = () => {
       let isError = false;
       nodeData?.options.map(
         (option: { option: string; value: string }, index: number) => {
-          if (option.option === "" && option.value === "") return;
-          if (option.option && !option.value) {
-            isError = true;
-            toast.error(`Value is required for option ${index + 1}`);
-            return;
-          }
-          if (!option.option && option.value) {
-            isError = true;
-            toast.error(`Option Name is required for option ${index + 1}`);
-            return;
-          }
+          // if (option.option === "" && option.value === "") return;
+          // if (option.option && !option.value) {
+          //   isError = true;
+          //   toast.error(`Value is required for option ${index + 1}`);
+          //   return;
+          // }
+          // if (!option.option && option.value) {
+          //   isError = true;
+          //   toast.error(`Option Name is required for option ${index + 1}`);
+          //   return;
+          // }
           optionsToSave.push(option);
         }
       );
@@ -814,7 +812,7 @@ const CreateWhatsAppBot = () => {
         !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
       ) {
         const res = await uploadImageFile(nodeData?.fileUrl);
-         if (!res?.status) {
+        if (!res?.status) {
           return toast.error(res?.msg);
         }
 
@@ -823,14 +821,14 @@ const CreateWhatsAppBot = () => {
 
       if (nodeData?.options && nodeData?.options.length > 0) {
         nodeData.options.map((item: any, index: number) => {
-          if (!item.option || !item.value) {
-            isError = true;
-            return toast.error(
-              `Missing "option" or "value" for list item ${
-                index + 1
-              } in node "${id}".`
-            );
-          }
+          // if (!item.option || !item.value) {
+          //   isError = true;
+          //   return toast.error(
+          //     `Missing "option" or "value" for list item ${
+          //       index + 1
+          //     } in node "${id}".`
+          //   );
+          // }
         });
       }
       if (nodeData?.buttonTexts && nodeData?.buttonTexts.length > 0) {
@@ -920,13 +918,9 @@ const CreateWhatsAppBot = () => {
 
   return (
     <>
-      <div
-        className="flex"
-        // style={{ height: "calc(100vh - 150px)" }}
-      >
+      <div className="flex">
         <div
-          className=""
-          style={{ width: "90vw", height: "full" }}
+          style={{ width: "90vw", height: "auto" }}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
         >
@@ -947,6 +941,7 @@ const CreateWhatsAppBot = () => {
               setIsConnecting(false);
               setConnectionType("");
             }}
+            // fitView
           >
             <Background />
             <MiniMap />
@@ -954,7 +949,7 @@ const CreateWhatsAppBot = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[250px] bg-gray-50 gap-4 px-2 py-2 rounded-md h-auto">
+        <div className="flex flex-col justify-between w-[250px] gap-4">
           <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
             <Button
               draggable
@@ -1059,214 +1054,6 @@ const CreateWhatsAppBot = () => {
           />
         </div>
       </div>
-
-      {/* Header Section */}
-      {/* <div className="flex items-center justify-between p-3 bg-white rounded-t-2xl rounded-bl-2xl">
-        <h1 className="text-xl font-semibold text-gray-800">
-          Create WhatsApp Bot
-        </h1>
-        <div className="flex gap-4">
-          <Button
-            onClick={reset}
-            className="px-4 py-2 text-white bg-red-400 rounded-md hover:bg-red-600"
-          >
-            Reset Canvas
-          </Button>
-          <Button
-            onClick={handleSubmit}
-            className="px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
-          >
-            Save Bot
-          </Button>
-        </div>
-      </div>
-
-      <div className="flex bg-white" style={{ height: "calc(100vh - 200px)" }}>
-        <div
-          className="flex-1 bg-gray-100 p-4 rounded-tr-2xl rounded-md border-2 border-gray-200 h-auto"
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-        >
-          <ReactFlow
-            nodes={nodes}
-            edges={edges}
-            onNodesChange={onNodesChange}
-            onEdgesChange={onEdgesChange}
-            onConnect={onConnect}
-            onNodeClick={onNodeClick}
-            deleteKeyCode={"Backspace"}
-            nodeTypes={nodeTypes}
-            onConnectStart={(event, { handleType }) => {
-              setIsConnecting(true);
-              setConnectionType(handleType);
-            }}
-            onConnectEnd={() => {
-              setIsConnecting(false);
-              setConnectionType("");
-            }}
-          >
-            <Background />
-            <MiniMap />
-            <Controls />
-          </ReactFlow>
-        </div>
-
-        <div className="flex flex-col justify-between w-[160px] gap-6 bg-white p-4 rounded-b-2xl shadow-lg">
-          <div className="grid grid-cols-1 gap-4">
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "starting")}
-              onClick={() => addNode("starting")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-green-400 to-green-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <OutlinedFlagOutlinedIcon />
-                <span>Start</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "text")}
-              onClick={() => addNode("text")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <TextFieldsOutlinedIcon />
-                <span>Text</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.7, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "image")}
-              onClick={() => addNode("image")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <ImageOutlinedIcon />
-                <span>Image</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "video")}
-              onClick={() => addNode("video")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer  h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <VideocamOutlinedIcon />
-                <span>Video</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "document")}
-              onClick={() => addNode("document")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <ArticleOutlinedIcon />
-                <span>Document</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "audio")}
-              onClick={() => addNode("audio")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <MicOutlinedIcon />
-                <span>Audio</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.1, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "button")}
-              onClick={() => addNode("button")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <BsMenuButton />
-                <span>Button</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.2, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "list")}
-              onClick={() => addNode("list")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <FormatListBulletedOutlinedIcon />
-                <span>List</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.3, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "agent")}
-              onClick={() => addNode("agent")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <MicOutlinedIcon />
-                <span>Agent</span>
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 1.4, ease: "easeOut" }}
-              draggable
-              onDragStart={(event) => handleDragStart(event, "answer")}
-              onClick={() => addNode("answer")}
-              className="flex items-center justify-center gap-2 p-3 text-gray-500 font-semibold bg-gradient-to-br from-indigo-100 to-indigo-300 rounded-lg shadow-md hover:shadow-lg hover:scale-105 transition-transform cursor-pointer h-14 w-33"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <QuestionAnswerOutlinedIcon />
-                <span>Answer</span>
-              </div>
-            </motion.div>
-            <Button onClick={reset} className={commonButtonClass}>
-              <RestartAltOutlinedIcon />
-              Reset
-            </Button>
-          </div>
-
-          <Details
-            setDetails={setDetails}
-            details={details}
-            handleSubmit={handleSubmit}
-            isUpdate={state ?? false}
-          />
-        </div>
-      </div> */}
 
       <Dialog
         header={

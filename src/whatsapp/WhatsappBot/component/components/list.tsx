@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { extractVariable } from "./helper/extractVariable";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import CustomTooltip from "@/components/common/CustomTooltip";
 // import { Handle, Position } from "@xyflow/react";
 
 // import { Handle, Position } from "@xyflow/react";
@@ -164,7 +166,9 @@ export const List = ({
               }));
             }}
           />
-          <p className="text-xs mt-2">{nodesInputData[id]?.text?.length || 0}/20</p>
+          <p className="text-xs mt-2">
+            {nodesInputData[id]?.text?.length || 0}/20
+          </p>
         </div>
         {/* <AnimatedDropdown
           id="type"
@@ -266,11 +270,11 @@ export const List = ({
               },
             }));
           }}
-          maxLength={1024}
+          maxLength={4096}
           className="resize-none"
         />
       </div>
-      <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/1024</p>
+      <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/4096</p>
 
       <div>
         <AnimatedDropdown
@@ -294,13 +298,27 @@ export const List = ({
             <AddIcon />
           </button>
         </div>
+        <div className="flex items-center gap-2 mb-2">
+          <h1 className="text-lg font-semibold mb-2">List Items</h1>
+          <CustomTooltip
+            title={
+              "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
+            }
+            placement={"top"}
+            arrow
+          >
+            <span>
+              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+            </span>
+          </CustomTooltip>
+        </div>
         <div className="space-y-2 ">
           {options?.map((option, index) => (
             <div className="flex gap-2 justify-center items-center" key={index}>
               <InputField
                 id="option"
                 name="option"
-                label={`Option-${index + 1}`}
+                label={`Row-Title-${index + 1}`}
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "option", index);
@@ -309,7 +327,7 @@ export const List = ({
               <InputField
                 id="value"
                 name="value"
-                label={`Value-${index + 1}`}
+                label={`Row-Description-${index + 1}`}
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "value", index);

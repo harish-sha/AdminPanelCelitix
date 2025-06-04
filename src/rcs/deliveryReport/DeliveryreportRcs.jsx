@@ -138,6 +138,7 @@ const DeliveryreportRcs = () => {
 
   //fetchCampaignData
   const handleCampaignSearch = async () => {
+    
     const data = {
       startDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
       endDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
@@ -527,7 +528,7 @@ const DeliveryreportRcs = () => {
           <CustomTabPanel value={value} index={2}>
             <div className="w-full">
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                <div className="w-full sm:w-56">
+                {/* <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     label="Created On"
                     id="created"
@@ -577,13 +578,10 @@ const DeliveryreportRcs = () => {
                       });
                     }}
                   />
-                </div>
-                {/* <div className="w-full sm:w-56">
-                  <InputField label="Status" placeholder="Schedule" />
                 </div> */}
                 <div className="w-max-content">
                   <UniversalButton
-                    label={isFetching ? "Searching..." : "Search"}
+                    label={isFetching ? "Refreshing..." : "Refresh"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
@@ -592,7 +590,7 @@ const DeliveryreportRcs = () => {
                     disabled={isFetching}
                   />
                 </div>
-                <div className="w-max-content">
+                {/* <div className="w-max-content">
                   <UniversalButton
                     id="manageCampaignExportBtn"
                     name="manageCampaignExportBtn"
@@ -605,7 +603,7 @@ const DeliveryreportRcs = () => {
                     onClick={handleExportBtn}
                     variant="primary"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
             <div className="w-full">

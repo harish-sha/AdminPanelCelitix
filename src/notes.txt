@@ -1,7 +1,16 @@
-healthsq
-UfoH3ezU
+Healthsquare
+user: healthsq
+Pass: UfoH3ezU
 
-whatsapp flows changes 
+Directuser
+User: demouser
+Pass: 9c2x*cZM
+
+reseller Admin
+user: Devtest
+pass: 7%3uShWk
+
+whatsapp flows changes files
 
 whatsapp > whatsappFlows > Pages > FlowCreationPage.jsx
 whatsapp > whatsappFlows > Pages > whatsappFlows.jsx
@@ -11,13 +20,24 @@ whatsapp > whatsappFlows > components > MobilePanel.jsx
 whatsapp > whatsappFlows > components > TabView.jsx
 whatsapp > whatsappFlows > lib > generatePayload.js
 
-==================== june 03 ===================== working files and merge in reseller also =============
+=================================== merge files june 04 to reseller and directuser ==================================
 
-1. export dialog for the wahtsapp conversation with the api - urgent 
-2. add api for the gettemplateid in whatsapp to fetch templates  - urgent
-3. make export dialog working in the reseller & reseller user - urgent
-4. convert celitix website in to next.js
-5. work flow and whatsapp flow
-6. Admin section 
-7. Template Library for the whatsapp 
-8. OBD 
+
+whatsapp > whatsappBot > component > components > answer.tsx - done
+whatsapp > whatsappBot > component > components > button.tsx - done
+whatsapp > whatsappBot > component > components > button.tsx - done
+whatsapp > whatsappBot > component > components > details.tsx - done
+whatsapp > whatsappBot > component > components > file.tsx - done
+whatsapp > whatsappBot > component > components > list.tsx - done
+whatsapp > whatsappBot > component > components > starting.tsx - done
+whatsapp > whatsappBot > component > components > text.tsx - done
+whatsapp > whatsappBot > component > components > helper > generatePayload.ts - done
+whatsapp > whatsappBot > component > components > helper > convertToReactFlow.ts - done
+whatsapp > whatsappBot > component > createBot.tsx - done
+whatsapp > whatsappManageCampaign > whatsappManageCampaign.jsx done
+
+apis > rcs > rcs.js
+
+rcs > suggestionreport > suggestionreport.jsx
+
+rcs > deliveryReport > components > CampaignDeliveryReportDetails.jsx - pending for the deliveryreport all type 

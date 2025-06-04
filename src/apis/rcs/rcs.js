@@ -20,10 +20,24 @@ export const fetchCampaignBySrno = async (campSrno) => {
 };
 
 // fetch campaign by srno
+// export const fetchCampaignDetailReport = async (
+//   campaignSrNo,
+//   mobileNo,
+//   page,
+//   deliveryStatus
+// ) => {
+//   return await fetchWithAuth(
+//     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
+
 export const fetchCampaignDetailReport = async (
   campaignSrNo,
   mobileNo,
-  page
+  page,
 ) => {
   return await fetchWithAuth(
     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
@@ -163,4 +177,12 @@ export const cancelschedule = async (data) => {
       method: "POST",
     }
   );
+};
+
+// export suggestion data
+export const exportSuggestion = async (data) => {
+  return await fetchWithAuth("/rcs/getSuggestionExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };
