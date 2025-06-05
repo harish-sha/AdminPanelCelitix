@@ -1,4 +1,4 @@
-import { getListofSendMsg } from "@/apis/whatsapp/whatsapp";
+import { getListofSendMsg, downloadCustomWhatsappReport, } from "@/apis/whatsapp/whatsapp";
 import { Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -11,6 +11,8 @@ import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
 import moment from "moment";
 import { id } from "date-fns/locale";
+import UniversalButton from "@/components/common/UniversalButton";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -134,13 +136,13 @@ export const ApiCampaignInfo = () => {
 
       const formattedData = Array.isArray(res.data)
         ? res?.data?.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+          sn: index + 1,
+          id: index + 1,
+          ...item,
+        }))
         : [];
 
-        console.log("formatted data", formattedData);
+      console.log("formatted data", formattedData);
       setData(formattedData);
     } catch (e) {
       console.log(e);
@@ -154,6 +156,31 @@ export const ApiCampaignInfo = () => {
   //   }
   //   handleFetchDetails();
   // }, [state]);
+
+  async function handleExport() {
+    toast.success("Hello World");
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: "",
+        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        isCustomField: 0,
+        customColumns: "",
+        status: state.log,
+        delStatus: {},
+      };
+      const res = await downloadCustomWhatsappReport(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+    } catch (e) {
+      toast.error("Error downloading attachment");
+    }
+  }
 
   useEffect(() => {
     handleFetchDetails(currentPage);
@@ -212,10 +239,10 @@ export const ApiCampaignInfo = () => {
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: i + 1,
-        sn: paginationModel.page * paginationModel.pageSize + i + 1,
-        ...item, // Spread the item properties
-      }))
+      id: i + 1,
+      sn: paginationModel.page * paginationModel.pageSize + i + 1,
+      ...item, // Spread the item properties
+    }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -282,7 +309,21 @@ export const ApiCampaignInfo = () => {
 
   return (
     <>
-      <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+        <UniversalButton
+          id="export"
+          name="export"
+          onClick={handleExport}
+          label={"Export"}
+          icon={
+            <IosShareOutlinedIcon
+              fontSize="small"
+              sx={{ marginBottom: "3px" }}
+            />
+          }
+        />
+      </div>
       <Paper sx={{ height: 558 }}>
         <DataGrid
           // id={id}
@@ -297,7 +338,7 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
           disableColumnResize
