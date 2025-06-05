@@ -5,9 +5,6 @@ const PageData = createContext(null);
 export const PageDataProvider = ({ children }) => {
   const [pageData, setPageData] = useState({});
 
-  useEffect(() => {
-    console.log("pageData", pageData);
-  }, [pageData]);
   const saveData = (data) => {
     setPageData(data);
     // sessionStorage.setItem("page", JSON.stringify(data));
