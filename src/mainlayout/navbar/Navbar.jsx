@@ -37,6 +37,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const isMobile = useMediaQuery("(max-width: 768px)");
   const [balance, setBalance] = useState(0);
   const [isFetchingBalance, setIsFetchingBalance] = useState(false);
+  const [isRefresh, setsRefresh] = useState(false);
 
   const { hasNewDownloads } = useDownload();
 
@@ -55,8 +56,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
 
   const handleRefresh = async () => {
     try {
+      setsRefresh(true);
       const res = await refreshParams();
-      console.log(res);
       if (res?.status !== "success") {
         toast.error("Something went wrong");
         return;
@@ -64,6 +65,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
       toast.success("Refreshed successfully");
     } catch (e) {
       toast.error("Something went wrong");
+    } finally {
+      setsRefresh(false);
     }
   };
 
@@ -300,6 +303,8 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
                     <div className="absolute inset-0 scale-x-0 group-hover:scale-x-100 bg-indigo-200 transition-transform origin-bottom duration-300 z-0"></div>
                     <span className="relative z-10 text-blue-700">
                       {title.includes("Balance") && isFetchingBalance ? (
+                        <LoopIcon className="text-[18px] animate-spin" />
+                      ) : title === "Refresh Parameters" && isRefresh ? (
                         <LoopIcon className="text-[18px] animate-spin" />
                       ) : (
                         <Icon className="text-[18px]" />
