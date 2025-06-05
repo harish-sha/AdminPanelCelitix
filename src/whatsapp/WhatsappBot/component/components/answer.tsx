@@ -18,12 +18,13 @@ export const Answer = ({
   allVariables: any[];
 }) => {
   useEffect(() => {
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
         type: nodesInputData[id]?.type,
-        variableId: nodesInputData[id]?.variableName,
+        // variableId: nodesInputData[id]?.variableName,
       },
     }));
     // type = nodesInputData[id]?.type;

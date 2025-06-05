@@ -802,6 +802,7 @@ const CreateWhatsAppBot = () => {
       const nodeData = nodesInputData[id];
       const requiredFields = dataTemplate[type];
 
+
       if (!requiredFields) {
         toast.error(`Unsupported node type "${type}" in node ${id}`);
         return;
