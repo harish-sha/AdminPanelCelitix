@@ -22,6 +22,7 @@ import { motion } from "framer-motion";
 import GroupsOutlinedIcon from "@mui/icons-material/GroupsOutlined";
 import { Grid } from "@mui/joy";
 import { useNavigate } from "react-router-dom";
+import { usePageData } from "@/context/page";
 
 const statusColors = {
   delivered: "text-green-500",
@@ -29,8 +30,27 @@ const statusColors = {
   total: "text-gray-500",
 };
 
-const CampaignLogCard = ({ log, selectedDate }) => {
+const CampaignLogCard = ({
+  log,
+  selectedDate,
+  selectedDateLogs,
+  inputValueMobileLogs,
+  logsData,
+}) => {
+  const { saveData } = usePageData();
   const navigate = useNavigate();
+
+  function handleNavigate(state) {
+    navigate("/apicampaigninfo", { state });
+    saveData({
+      selectedDate,
+      selectedDateLogs,
+      inputValueMobileLogs,
+      index: 1,
+      path: "/wmanagecampaign",
+      logsData,
+    });
+  }
   return (
     <Box className="flex justify-center items-start min-h-[70vh]">
       <Paper className="w-full  p-5 bg-white text-gray-900 shadow-lg border border-gray-300 flex flex-col space-y-4">
@@ -57,8 +77,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.delivered,
               icon: <DoneIcon className="text-green-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "delivered", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "delivered",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -66,8 +87,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.failed,
               icon: <ErrorIcon className="text-red-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "failed", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "failed",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -75,8 +97,12 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.total,
               icon: <GroupsOutlinedIcon className="text-gray-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "total", selectedDate: selectedDate },
+                // navigate("/apicampaigninfo", {
+                //   state: { log: "total", selectedDate: selectedDate },
+                // }),
+                handleNavigate({
+                  log: "total",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -84,8 +110,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.busy,
               icon: <SmsFailedIcon className="text-yellow-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "busy", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "busy",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -93,8 +120,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.block,
               icon: <BlockIcon className="text-red-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "block", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "block",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -102,8 +130,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.submitted,
               icon: <SendIcon className="text-blue-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "submitted", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "submitted",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -120,8 +149,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.read,
               icon: <DoneAllOutlinedIcon className="text-green-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "read", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "read",
+                  selectedDate: selectedDate,
                 }),
             },
             {
@@ -129,8 +159,9 @@ const CampaignLogCard = ({ log, selectedDate }) => {
               value: log.undelivered,
               icon: <SmsFailedIcon className="text-gray-500" />,
               onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "undelivered", selectedDate: selectedDate },
+                handleNavigate({
+                  log: "undelivered",
+                  selectedDate: selectedDate,
                 }),
             },
           ].map((item, index) => (

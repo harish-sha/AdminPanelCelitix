@@ -82,13 +82,17 @@ const WhatsappManageCampaign = () => {
     pageData?.campaignName || ""
   );
   const [scheduleCampaignName, setScheduleCampaignName] = useState("");
-  const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
+  const [inputValueMobileLogs, setInputValueMobileLogs] = useState(
+    pageData?.inputValueMobileLogs || ""
+  );
   const [selectedDate, setSelectedDate] = useState(
     pageData?.fromDate || new Date()
   );
   const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
   const [originalData, setOriginalData] = useState([]); // Store unfiltered data
-  const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
+  const [selectedDateLogs, setSelectedDateLogs] = useState(
+    pageData?.selectedDateLogs || new Date()
+  );
   const [campaignCategory, setCampaignCategory] = useState(
     pageData?.campaignCategory || ""
   );
@@ -102,7 +106,7 @@ const WhatsappManageCampaign = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [scheduleData, setScheduleData] = useState([]);
   const [orignalScheduleData, setOrignalScheduleData] = useState([]);
-  const [logsData, setLogsData] = useState([]);
+  const [logsData, setLogsData] = useState(pageData?.logsData || []);
   const [WabaList, setWabaList] = useState([]);
   const [isMonthWise, setIsMonthWise] = useState(false);
   const [fromDate, setfromDate] = useState(new Date());
@@ -844,19 +848,6 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               </div>
-              {/* {isFetching ? (
-                <div className="">
-                  <UniversalSkeleton height="25rem" width="100%" />
-                </div>
-              ) : (
-                <div className="w-full">
-                  <ManageCampaignLogsTable
-                    id="whatsappManageCampaignLogsTable"
-                    name="whatsappManageCampaignLogsTable"
-                    data={logsData}
-                  />
-                </div>
-              )} */}
 
               {isFetching ? (
                 <div className="">
@@ -885,6 +876,9 @@ const WhatsappManageCampaign = () => {
                           key={index}
                           log={log}
                           selectedDate={selectedDateLogs}
+                          inputValueMobileLogs={inputValueMobileLogs}
+                          selectedDateLogs={selectedDateLogs}
+                          logsData={logsData}
                         />
                       ))
                     )}
