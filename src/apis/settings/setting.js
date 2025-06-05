@@ -47,9 +47,12 @@ export const fetchTransactions = async (filterData) => {
 
 // Fetch Account Balance
 export const fetchBalance = async (userSrNo = null) => {
-  return await fetchWithAuth(`/user/getAccountBalanceByUser?userSrno=${userSrNo || ""}`, {
-    method: "POST",
-  });
+  return await fetchWithAuth(
+    `/user/getAccountBalanceByUser?userSrno=${userSrNo || ""}`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 // Update Password
@@ -65,5 +68,10 @@ export const LoginRequestIp = async (data) => {
   return await fetchWithAuth("/settings/setLoginRequestIp", {
     method: "POST",
     body: JSON.stringify(data),
+  });
+};
+export const refreshParams = async () => {
+  return await fetchWithAuth("/rest/RefreceParameter", {
+    method: "GET",
   });
 };
