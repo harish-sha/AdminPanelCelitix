@@ -1,4 +1,7 @@
-import { getListofSendMsg } from "@/apis/whatsapp/whatsapp";
+import {
+  downloadCustomWhatsappReport,
+  getListofSendMsg,
+} from "@/apis/whatsapp/whatsapp";
 import { Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -11,6 +14,8 @@ import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
 import moment from "moment";
 import { id } from "date-fns/locale";
+import UniversalButton from "@/components/common/UniversalButton";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -140,20 +145,38 @@ export const ApiCampaignInfo = () => {
           }))
         : [];
 
-        console.log("formatted data", formattedData);
+      console.log("formatted data", formattedData);
       setData(formattedData);
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
     }
   }
-  // useEffect(() => {
-  //   if (!state) {
-  //     window.history.back();
-  //     return;
-  //   }
-  //   handleFetchDetails();
-  // }, [state]);
+
+  async function handleExport() {
+    toast.success("Hello World");
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: "",
+        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        isCustomField: 0,
+        customColumns: "",
+        status: state.log,
+        delStatus: {},
+      };
+      const res = await downloadCustomWhatsappReport(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+    } catch (e) {
+      toast.error("Error downloading attachment");
+    }
+  }
 
   useEffect(() => {
     handleFetchDetails(currentPage);
@@ -173,7 +196,12 @@ export const ApiCampaignInfo = () => {
     },
     { field: "reason", headerName: "Reason", flex: 2, minWidth: 120 },
     { field: "sentTime", headerName: "Sent", flex: 1, minWidth: 120 },
-    { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 120 },
+    {
+      field: "deliveryTime",
+      headerName: "Delivery Time",
+      flex: 1,
+      minWidth: 120,
+    },
     { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
     { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
@@ -282,7 +310,21 @@ export const ApiCampaignInfo = () => {
 
   return (
     <>
-      <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+        <UniversalButton
+          id="export"
+          name="export"
+          onClick={handleExport}
+          label={"Export"}
+          icon={
+            <IosShareOutlinedIcon
+              fontSize="small"
+              sx={{ marginBottom: "3px" }}
+            />
+          }
+        />
+      </div>
       <Paper sx={{ height: 558 }}>
         <DataGrid
           // id={id}
