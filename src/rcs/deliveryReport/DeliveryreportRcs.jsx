@@ -31,25 +31,29 @@ import { ExportDialog } from "./components/exportDialog";
 import CampaignScheduleTable from "./components/CampaignSchedule";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import moment from "moment";
+import { usePageData } from "@/context/page";
 
 const DeliveryreportRcs = () => {
+  const { pageData } = usePageData();
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
 
   //campaignState
   const [campaignData, setCampaignData] = useState({
-    startDate: new Date(),
-    templateType: "",
-    campaignName: "",
-    status: "",
+    startDate: pageData.startDate || new Date(),
+    templateType: pageData.templateType || "",
+    campaignName: pageData.campaignName || "",
+    status: pageData.status || "",
   });
-  const [campaignTableData, setCampaignTableData] = useState([]);
+  const [campaignTableData, setCampaignTableData] = useState(
+    pageData?.sortedData || []
+  );
 
   //summaryState
   const [summaryData, setSummaryData] = useState({
-    fromDate: new Date(),
-    toDate: new Date(),
-    isMonthWise: false,
+    fromDate: pageData.fromDate || new Date(),
+    toDate: pageData.toDate || new Date(),
+    isMonthWise: pageData.isMonthWise || false,
   });
   const [summaryTableData, setSummaryTableData] = useState([]);
 
@@ -455,6 +459,7 @@ const DeliveryreportRcs = () => {
                 id="whatsappManageCampaignTable"
                 name="whatsappManageCampaignTable"
                 data={campaignTableData}
+                campaignData={campaignData}
               />
             </div>
           </CustomTabPanel>

@@ -25,6 +25,8 @@ import { fetchCampaignBySrno } from "@/apis/rcs/rcs.js";
 import { render } from "timeago.js";
 import moment from "moment";
 
+import { usePageData } from "@/context/page.jsx";
+
 const PaginationList = styled("ul")({
   listStyle: "none",
   padding: 0,
@@ -86,7 +88,8 @@ const CustomPagination = ({
   );
 };
 
-const CampaignsLogsTable = ({ id, name, data = [] }) => {
+const CampaignsLogsTable = ({ id, name, data = [], campaignData }) => {
+  const { saveData } = usePageData();
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -97,6 +100,10 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
   const [campaignInfoMap, setCampaignInfoMap] = useState({});
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const dropdownButtonRefs = useRef({});
+
+  const sortedData = data.sort(
+    (a, b) => new Date(b.queTime) - new Date(a.queTime)
+  );
 
   // const handleView = (row) => {
   //   // console.log("View campaign:", row);
@@ -140,6 +147,10 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
         campaignSrno: row.campaignSrno,
         campaignName: row.campaignName,
       },
+    });
+    saveData({
+      ...campaignData,
+      sortedData,
     });
   };
 
@@ -281,9 +292,6 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
     },
   ];
 
-  const sortedData = data.sort(
-    (a, b) => new Date(b.queTime) - new Date(a.queTime)
-  );
   const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
         id: index + 1,
