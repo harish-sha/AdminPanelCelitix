@@ -23,7 +23,7 @@ export const Answer = ({
       [id]: {
         ...prev[id],
         type: nodesInputData[id]?.type,
-        variableId: nodesInputData[id]?.variableName,
+        // variableId: nodesInputData[id]?.variableName,
       },
     }));
     // type = nodesInputData[id]?.type;

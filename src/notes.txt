@@ -22,7 +22,6 @@ whatsapp > whatsappFlows > lib > generatePayload.js
 
 =================================== merge files june 04 to reseller and directuser ==================================
 
-
 whatsapp > whatsappBot > component > components > answer.tsx - done
 whatsapp > whatsappBot > component > components > button.tsx - done
 whatsapp > whatsappBot > component > components > button.tsx - done
