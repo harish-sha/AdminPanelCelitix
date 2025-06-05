@@ -320,6 +320,7 @@ import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
 import InfoPopover from "../../../components/common/InfoPopover.jsx";
 import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
+import { usePageData } from "@/context/page.jsx";
 import moment from "moment";
 
 const PaginationList = styled("ul")({
@@ -383,7 +384,17 @@ const CustomPagination = ({
   );
 };
 
-const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
+const ManageCampaignTable = ({
+  id,
+  name,
+  data = [],
+  fromDate,
+  campaignCategory,
+  campaignName,
+  campaignType,
+  campaignStatus,
+}) => {
+  const { saveData } = usePageData();
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -442,6 +453,16 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
         campaignSrno: row.campaignSrno,
         campaignName: row.campaignName,
       },
+    });
+
+    saveData({
+      fromDate,
+      campaignCategory,
+      campaignName,
+      campaignType,
+      campaignStatus,
+      path: "/wmanagecampaign",
+      index: 0,
     });
   };
 

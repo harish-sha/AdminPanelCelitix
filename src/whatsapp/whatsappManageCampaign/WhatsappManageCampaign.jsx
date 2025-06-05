@@ -43,6 +43,7 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
+import { usePageData } from "@/context/page";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -74,18 +75,29 @@ function a11yProps(index) {
 }
 
 const WhatsappManageCampaign = () => {
+  const { pageData } = usePageData();
   const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = useState(0);
-  const [campaignName, setCampaignName] = useState("");
+  const [value, setValue] = useState(pageData?.index || 0);
+  const [campaignName, setCampaignName] = useState(
+    pageData?.campaignName || ""
+  );
   const [scheduleCampaignName, setScheduleCampaignName] = useState("");
   const [inputValueMobileLogs, setInputValueMobileLogs] = useState("");
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(
+    pageData?.fromDate || new Date()
+  );
   const [scheduleSelectedDate, setScheduleSelectedDate] = useState(new Date());
   const [originalData, setOriginalData] = useState([]); // Store unfiltered data
   const [selectedDateLogs, setSelectedDateLogs] = useState(new Date());
-  const [campaignCategory, setCampaignCategory] = useState("");
-  const [campaignType, setCampaignType] = useState("");
-  const [campaignStatus, setCampaignStatus] = useState("");
+  const [campaignCategory, setCampaignCategory] = useState(
+    pageData?.campaignCategory || ""
+  );
+  const [campaignType, setCampaignType] = useState(
+    pageData?.campaignType || ""
+  );
+  const [campaignStatus, setCampaignStatus] = useState(
+    pageData?.campaignStatus || ""
+  );
   const [isFetching, setIsFetching] = useState(false);
   const [filteredData, setFilteredData] = useState([]);
   const [scheduleData, setScheduleData] = useState([]);
@@ -749,6 +761,10 @@ const WhatsappManageCampaign = () => {
                     name="whatsappManageCampaignTable"
                     data={filteredData}
                     fromDate={selectedDate}
+                    campaignName={campaignName}
+                    campaignCategory={campaignCategory}
+                    campaignType={campaignType}
+                    campaignStatus={campaignStatus}
                   />
                 </div>
               )}
