@@ -41,14 +41,16 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { usePageData } from "@/context/page";
 
 import moment from "moment";
 import InfoPopover from "@/components/common/InfoPopover";
 
 const SmsReports = () => {
   const navigate = useNavigate();
+  const { saveData, pageData } = usePageData();
 
-  const [value, setValue] = useState(0);
+  const [value, setValue] = useState(pageData?.index || 0);
   const [isFetching, setIsFetching] = useState(false);
   const [isFetchingScheduleData, setIsFetchingScheduleData] = useState(false);
   const [exports, setExports] = useState(false);
@@ -75,10 +77,10 @@ const SmsReports = () => {
 
   //campaign State
   const [campaignDataToFilter, setCampaignDataToFilter] = useState({
-    toDate: new Date(),
-    campaingName: "",
-    mobilesnodata: "",
-    campaingType: 1,
+    toDate: pageData.toDate || new Date(),
+    campaingName: pageData.campaingName || "",
+    mobilesnodata: pageData.mobilesnodata || "",
+    campaingType: pageData.campaingType || 1,
   });
 
   const [campaignScheduleDataToFilter, setCampaignScheduleDataToFilter] =
@@ -121,12 +123,14 @@ const SmsReports = () => {
 
   //attachment state
   const [attachmentDataToFilter, setAttachmentDataToFilter] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-    type: "",
+    startDate: pageData?.startDate || new Date(),
+    endDate: pageData?.endDate || new Date(),
+    type: pageData?.type || "",
   });
 
-  const [attachmentTableData, setAttachmentTableData] = useState([]);
+  const [attachmentTableData, setAttachmentTableData] = useState(
+    pageData?.sortedData || []
+  );
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -444,11 +448,16 @@ const SmsReports = () => {
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
-                  onClick={() =>
+                  onClick={() => {
                     navigate("/smscampaigndetaillogs", {
                       state: { id: params.row.receipt_no_of_duplicate_message },
-                    })
-                  }
+                    });
+                    saveData({
+                      ...campaignDataToFilter,
+                      mappedData,
+                      index: 0,
+                    });
+                  }}
                 >
                   <DescriptionOutlinedIcon
                     sx={{
@@ -472,17 +481,7 @@ const SmsReports = () => {
           ),
         },
       ]);
-      // setRows(
-      //   Array.isArray(res)
-      //     ? res?.map((item, i) => ({
-      //       id: item.receipt_no_of_duplicate_message,
-      //       sn: i + 1,
-      //       ...item,
-      //       total_audience: "-",
-      //       campaign_type: "-",
-      //     }))
-      //     : []
-      // );
+
       setRows(mappedData);
     } catch (e) {
       // console.log(e);
@@ -1147,6 +1146,9 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
+      const sortedData = res.sort(
+        (a, b) => new Date(b.queTime) - new Date(a.queTime)
+      );
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
         {
@@ -1180,11 +1182,16 @@ const SmsReports = () => {
               <CustomTooltip title="Detailed Log" placement="top" arrow>
                 <IconButton
                   className="no-xs"
-                  onClick={() =>
+                  onClick={() => {
                     navigate("/smsAttachmentdetaillog", {
                       state: { id: params.row.campaign_srno },
-                    })
-                  }
+                    });
+                    saveData({
+                      ...attachmentDataToFilter,
+                      sortedData,
+                      index: 3,
+                    });
+                  }}
                 >
                   <DescriptionOutlinedIcon
                     sx={{
@@ -1212,10 +1219,6 @@ const SmsReports = () => {
           ),
         },
       ]);
-
-      const sortedData = res.sort(
-        (a, b) => new Date(b.queTime) - new Date(a.queTime)
-      );
 
       setRows(
         Array.isArray(sortedData)
