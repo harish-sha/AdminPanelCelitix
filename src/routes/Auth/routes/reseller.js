@@ -8,11 +8,22 @@ export const resellerItems = [
   {
     name: "Reports",
     links: [
-      "/smsreports",
-      "/rcsdeliveryreport",
-      "/wmanagecampaign",
-      "/rcsdeliverycampaigndetails",
-      "/apicampaigninfo",
+      {
+        id: "1",
+        links: ["/smsreports"],
+      },
+      {
+        id: "2",
+        links: ["/wmanagecampaign", "/apicampaigninfo"],
+      },
+      {
+        id: "3",
+        links: ["/rcsdeliverycampaigndetails", "/rcsdeliveryreport"],
+      },
+      {
+        id: "7",
+        links: [],
+      },
     ],
     roles: ["ADMIN"],
   },
