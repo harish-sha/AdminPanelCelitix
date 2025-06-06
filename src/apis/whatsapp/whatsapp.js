@@ -647,3 +647,28 @@ export const deleteblockUser = async (waba, data) => {
     body: JSON.stringify(data),
   });
 };
+
+// Save canned message
+export const saveCannedMessage = async (data) => {
+  return await fetchWithAuth(`/canned/save-message`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Get all canned messages
+export const getAllCannedMessages = async () => {
+  return await fetchWithAuth(`/canned/all-messages`);
+};
+
+// Get canned message by SrNo
+export const getCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/getbySrno?srNo=${srNo}`);
+};
+
+// Delete canned message by SrNo
+export const deleteCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/deleteBySrno?srNo=${srNo}`, {
+    method: "DELETE",
+  });
+};

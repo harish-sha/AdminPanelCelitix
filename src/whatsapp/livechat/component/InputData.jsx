@@ -194,7 +194,6 @@
 //   );
 // };
 
-
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { SearchOutlined } from "@mui/icons-material";
 import {
@@ -237,7 +236,7 @@ export const InputData = ({
       transition={{ duration: 0.4 }}
     >
       {/* Animated Chip */}
-      {/* <div className="flex items-center justify-center" >
+      <div className="flex items-center justify-center">
         <motion.div
           className="flex items-center justify-center px-4 text-xs w-fit py-2 mb-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium rounded-full shadow-md cursor-pointer"
           initial={{ scale: 1 }}
@@ -245,10 +244,9 @@ export const InputData = ({
           transition={{ repeat: Infinity, duration: 2 }}
           onClick={handleChipClick}
         >
-          🎉 New Feature: Canned Messages!
+          🎉 New Features!
         </motion.div>
       </div>
-
 
       <Dialog
         open={openDialog}
@@ -256,7 +254,7 @@ export const InputData = ({
         maxWidth="sm"
         fullWidth
       >
-        <DialogTitle>New Feature: Canned Messages</DialogTitle>
+        <DialogTitle>New Features: Canned Messages & User Block</DialogTitle>
         <DialogContent>
           <p className="text-gray-700 text-sm leading-6">
             We’re excited to introduce our new <strong>Canned Messages</strong>{" "}
@@ -280,6 +278,29 @@ export const InputData = ({
               Reply instantly in live chat and keep your customers engaged.
             </li>
           </ul>
+
+          <p className="text-gray-700 text-sm leading-6 mt-6">
+            We’re also introducing the <strong>Block User</strong> feature! This
+            allows you to block specific numbers directly from the live chat
+            interface, ensuring a safer and more controlled communication
+            environment.
+          </p>
+          <p className="text-gray-700 text-sm leading-6 mt-3">
+            To use this feature:
+          </p>
+          <ul className="list-disc list-inside text-gray-700 text-sm mt-2">
+            <li>
+              Navigate to the <strong>Block User Page</strong> to view and
+              manage your blocked numbers list.
+            </li>
+            <li>
+              Block unwanted numbers directly from the live chat interface.
+            </li>
+            <li>
+              Ensure uninterrupted communication by managing blocked users
+              effectively.
+            </li>
+          </ul>
           <p className="text-gray-700 text-sm leading-6 mt-3">
             Stay tuned for more updates and features to enhance your experience.
             Thank you for choosing our service!
@@ -290,7 +311,7 @@ export const InputData = ({
             Got it!
           </Button>
         </DialogActions>
-      </Dialog> */}
+      </Dialog>
       <div className="flex flex-col gap-2">
         <AnimatedDropdown
           id="createSelectWaba"
@@ -437,10 +458,11 @@ export const InputData = ({
                 setBtnOption("active");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
+              className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
+                btnOption === "active"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-                }`}
+              }`}
             >
               Active
             </button>
@@ -449,10 +471,11 @@ export const InputData = ({
                 setBtnOption("close");
                 setIsSubscribed(false);
               }}
-              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
+              className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
+                btnOption === "close"
                   ? "text-white font-semibold"
                   : "text-gray-700"
-                }`}
+              }`}
             >
               Close
             </button>

@@ -16,8 +16,23 @@ import image3 from "../../../assets/images/whatsapp.jpg";
 // import image2 from "@/assets/images/image2.jpg";
 // import image3 from "@/assets/images/image3.jpg";
 
+import { getAllCannedMessages } from "@/apis/whatsapp/whatsapp.js";
+
+// const fetchCannedMessages = async (type) => {
+//   if (type === "text") {
+//     const data = await getAllCannedMessages();
+//     return (data || []).map((msg) => ({
+//       id: msg.srNo,
+//       label: msg.cannedMessageName,
+//       content: msg.textBody,
+//     }));
+//   }
+
+//   // fallback hardcoded for others
+// };
+
 const fetchCannedMessages = async (type) => {
-  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await new Promise((resolve) => setTimeout(resolve, 300));
   const messages = {
     text: [
       {
@@ -172,42 +187,42 @@ const fetchCannedMessages = async (type) => {
       },
     ],
     image: [
-      { id: 1, content: image1 },
-      { id: 2, content: image2 },
-      { id: 3, content: image3 },
-      { id: 4, label: "Image 4", content: "https://via.placeholder.com/300" },
-      { id: 5, label: "Image 5", content: "https://via.placeholder.com/350" },
-      { id: 6, label: "Image 6", content: "https://via.placeholder.com/400" },
-      { id: 7, label: "Image 7", content: "https://via.placeholder.com/450" },
-      { id: 8, label: "Image 8", content: "https://via.placeholder.com/500" },
-      { id: 9, label: "Image 9", content: "https://via.placeholder.com/550" },
-      { id: 10, label: "Image 10", content: "https://via.placeholder.com/600" },
+      // { id: 1, content: image1 },
+      // { id: 2, content: image2 },
+      // { id: 3, content: image3 },
+      // { id: 4, label: "Image 4", content: "https://via.placeholder.com/300" },
+      // { id: 5, label: "Image 5", content: "https://via.placeholder.com/350" },
+      // { id: 6, label: "Image 6", content: "https://via.placeholder.com/400" },
+      // { id: 7, label: "Image 7", content: "https://via.placeholder.com/450" },
+      // { id: 8, label: "Image 8", content: "https://via.placeholder.com/500" },
+      // { id: 9, label: "Image 9", content: "https://via.placeholder.com/550" },
+      // { id: 10, label: "Image 10", content: "https://via.placeholder.com/600" },
     ],
     video: [
-      {
-        id: 1,
-        label: "Video 1",
-        content: "https://www.w3schools.com/html/mov_bbb.mp4",
-      },
-      {
-        id: 2,
-        label: "Video 2",
-        content: "https://www.w3schools.com/html/movie.mp4",
-      },
+      // {
+      //   id: 1,
+      //   label: "Video 1",
+      //   content: "https://www.w3schools.com/html/mov_bbb.mp4",
+      // },
+      // {
+      //   id: 2,
+      //   label: "Video 2",
+      //   content: "https://www.w3schools.com/html/movie.mp4",
+      // },
     ],
     audio: [
-      {
-        id: 1,
-        label: "Audio 1",
-        content:
-          "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
-      },
-      {
-        id: 2,
-        label: "Audio 2",
-        content:
-          "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
-      },
+      // {
+      //   id: 1,
+      //   label: "Audio 1",
+      //   content:
+      //     "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      // },
+      // {
+      //   id: 2,
+      //   label: "Audio 2",
+      //   content:
+      //     "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      // },
     ],
     document: [
       // {
@@ -340,8 +355,9 @@ export default function CannedMessageDropdown({ onSelect, onClose }) {
               <motion.div
                 key={type}
                 onClick={() => setSelectedType(type)}
-                className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-gray-100 ${selectedType === type ? "bg-gray-100" : ""
-                  }`}
+                className={`flex items-center gap-2 p-2 rounded-md cursor-pointer hover:bg-gray-100 ${
+                  selectedType === type ? "bg-gray-100" : ""
+                }`}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
               >
@@ -370,11 +386,33 @@ export default function CannedMessageDropdown({ onSelect, onClose }) {
                     {icons[selectedType] || <FaFile className="text-4xl" />}
                   </motion.div>
                   <div className="font-semibold text-gray-500 mb-1">
-                    No {selectedType ? messageTypes.find(mt => mt.type === selectedType)?.label : "content"} found
+                    No{" "}
+                    {selectedType
+                      ? messageTypes.find((mt) => mt.type === selectedType)
+                          ?.label
+                      : "content"}{" "}
+                    found
                   </div>
                   <div className="text-xs text-gray-400">
-                    You don't have any {selectedType ? messageTypes.find(mt => mt.type === selectedType)?.label.toLowerCase() : "content"} yet.<br />
-                    Add new {selectedType ? messageTypes.find(mt => mt.type === selectedType)?.label.toLowerCase() : "content"} via <span className="font-semibold text-blue-500">Live Chat Settings</span>.
+                    You don't have any{" "}
+                    {selectedType
+                      ? messageTypes
+                          .find((mt) => mt.type === selectedType)
+                          ?.label.toLowerCase()
+                      : "content"}{" "}
+                    yet.
+                    <br />
+                    Add new{" "}
+                    {selectedType
+                      ? messageTypes
+                          .find((mt) => mt.type === selectedType)
+                          ?.label.toLowerCase()
+                      : "content"}{" "}
+                    via{" "}
+                    <span className="font-semibold text-blue-500">
+                      Live Chat Settings
+                    </span>
+                    .
                   </div>
                 </div>
               ) : (

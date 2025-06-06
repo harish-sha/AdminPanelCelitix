@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+
 
 const UniversalTextArea = ({
   label,
@@ -15,6 +18,9 @@ const UniversalTextArea = ({
   readOnly = false,
   className = "",
   ref = null,
+  tooltipContent = "",
+  tooltipPlacement = "top",
+
 }) => {
   const [text, setText] = useState("");
 
@@ -39,12 +45,22 @@ const UniversalTextArea = ({
   return (
     <div className="w-full mb-2">
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-semibold text-gray-700 mb-1"
-        >
-          {label}
-        </label>
+        <div className="flex items-center gap-2 mb-2">
+          <label htmlFor={id} className="text-sm font-medium text-gray-700">
+            {label}
+          </label>
+          {tooltipContent && (
+            <CustomTooltip
+              title={tooltipContent}
+              placement={tooltipPlacement}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
+          )}
+        </div>
       )}
       <textarea
         id={id}
@@ -56,8 +72,9 @@ const UniversalTextArea = ({
         cols={col}
         rows={row}
         readOnly={readOnly}
-        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${error ? "border-red-500" : "border-gray-300"
-          }`}
+        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${
+          error ? "border-red-500" : "border-gray-300"
+        }`}
       ></textarea>
       {error && (
         <p className="text-red-500 text-xs mt-1">This field is required.</p>
@@ -79,7 +96,7 @@ UniversalTextArea.propTypes = {
 UniversalTextArea.defaultProps = {
   placeholder: "Type something...",
   error: false,
-  onChange: () => { },
+  onChange: () => {},
 };
 
 export default UniversalTextArea;
