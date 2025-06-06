@@ -527,11 +527,19 @@ const DataTable = ({
       setIsFetching(true);
       const res = await deleteTemplate(data);
       // console.log(res);
-      if (res?.msg?.includes("Successfully")) {
-        toast.success("Template deleted successfully.");
+      // if (res?.msg?.includes("successfully")) {
+      //   toast.success("Template deleted successfully.");
+      //   setVisible(false);
+      //   await fetchTemplateData();
+      //   return;
+      // }
+      if (res?.success === true) {
+        toast.success(res?.msg || "Template deleted successfully.");
         setVisible(false);
         await fetchTemplateData();
         return;
+      } else {
+        toast.error(res?.msg || "Failed to delete template.");
       }
     } catch (e) {
       // console.log(e);

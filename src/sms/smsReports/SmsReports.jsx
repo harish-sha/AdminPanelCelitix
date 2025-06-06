@@ -45,6 +45,7 @@ import { useUser } from "@/context/auth";
 import moment from "moment";
 
 import InfoPopover from "@/components/common/InfoPopover";
+import { ImInfo } from "react-icons/im";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const SmsReports = () => {
@@ -523,7 +524,7 @@ const SmsReports = () => {
       // );
       setRows(mappedData);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -563,7 +564,7 @@ const SmsReports = () => {
       setIsFetchingScheduleData(true);
 
       const res = await fetchScheduleCampaignData(selectedUser || "0");
-      console.log("API Response:", res);
+      // console.log("API Response:", res);
 
       // Step 1: Map API response first
       let mappedData = Array.isArray(res)
@@ -654,6 +655,31 @@ const SmsReports = () => {
       setIsFetchingScheduleData(false);
     }
   };
+
+  const [clicked, setClicked] = useState([]);
+
+  const handleInfo = (row) => {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+
+    const data = {
+      que_time: row.que_time,
+      account_usage_type_id: row.account_usage_type_id,
+      "Entity ID": row.PE_ID,
+      smsunit: row.smsunit,
+      actual_sms_length: row.actual_sms_length,
+      sent_time: row.sent_time,
+      isunicode: row.isunicode,
+      source: row.source,
+      circle_srno: row.circle_srno,
+      del_time: row.del_time,
+    };
+    setClicked(data || []);
+  };
+
+  useEffect(() => {
+    console.log("clicked", clicked);
+  }, [clicked]);
 
   // const handleScheduleCampaignSearch = async () => {
   //   try {
@@ -811,19 +837,19 @@ const SmsReports = () => {
       const res = await fetchPreviousDayReport(data);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "sending_user_id",
-          headerName: "User",
-          flex: 1,
-          minWidth: 120,
-        },
+        // {
+        //   field: "sending_user_id",
+        //   headerName: "User",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         {
           field: "TOTALSMS",
           headerName: "Total SMS",
           flex: 1,
           minWidth: 120,
           renderCell: (params) => (
-            <CustomTooltip title={params.row.TOTALSMS} placement="top" arrow>
+            <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
               <button
                 onClick={() => {
                   setSelectedCol("TOTALSMS");
@@ -1139,7 +1165,7 @@ const SmsReports = () => {
     const data = {
       summaryType: col || selectedCol,
       mobileNo: "",
-      fromDate: moment(previousDataToFilter.fromDat).format("YYYY-MM-DD"),
+      fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
       toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       page: currentPage,
       source: "api",
@@ -1155,36 +1181,24 @@ const SmsReports = () => {
 
       setPreviousDayColumn([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "que_time",
-          headerName: "Created on",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
-          ),
-        },
-        {
-          field: "smsunit",
-          headerName: "Sms Unit",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "mobile_no",
-          headerName: "Mobile Number",
-          flex: 1,
-          minWidth: 120,
-        },
         // {
-        //   field: "source",
-        //   headerName: "Sms Source",
+        //   field: "que_time",
+        //   headerName: "Created on",
+        //   flex: 1,
+        //   minWidth: 120,
+        //   renderCell: (params) => (
+        //     <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
+        //   ),
+        // },
+        // {
+        //   field: "smsunit",
+        //   headerName: "Sms Unit",
         //   flex: 1,
         //   minWidth: 120,
         // },
         {
-          field: "message",
-          headerName: "Message",
+          field: "status",
+          headerName: "Status",
           flex: 1,
           minWidth: 120,
         },
@@ -1194,29 +1208,105 @@ const SmsReports = () => {
           flex: 1,
           minWidth: 120,
         },
+        // {
+        //   field: "que_time",
+        //   headerName: "Created On",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         {
-          field: "source",
-          headerName: "Sms Source",
+          field: "mobile_no",
+          headerName: "Mobile Number",
+          width: 140,
+
+        },
+        {
+          field: "message",
+          headerName: "Message",
           flex: 1,
           minWidth: 120,
         },
+        {
+          field: "actual_status",
+          headerName: "Actual Status",
+          flex: 1,
+          minWidth: 120,
+        },
+        // {
+        //   field: "sent_time",
+        //   headerName: "Sent Time",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
+        // {
+        //   field: "source",
+        //   headerName: "Sms Source",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         {
           field: "senderid",
           headerName: "SenderId",
           flex: 1,
           minWidth: 120,
         },
+        // {
+        //   field: "total",
+        //   headerName: "Total",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
         {
-          field: "total",
-          headerName: "Total",
+          field: "action",
+          headerName: "Action",
           flex: 1,
           minWidth: 120,
-        },
-        {
-          field: "status",
-          headerName: "Status",
-          flex: 1,
-          minWidth: 120,
+          renderCell: (params) => (
+            <CustomTooltip title="Info" placement="top" arrow>
+              <span>
+                <IconButton
+                  type="button"
+                  ref={(el) => {
+                    if (el) dropdownButtonRefs.current[params.row.id] = el;
+                  }}
+                  onClick={() => handleInfo(params.row)}
+                  className="no-xs relative"
+                >
+                  <ImInfo size={18} className="text-green-500 " />
+                </IconButton>
+
+                <InfoPopover
+                  anchorEl={dropdownButtonRefs.current[params.row.id]}
+                  open={dropdownOpenId === params.row.id}
+                  onClose={closeDropdown}
+                >
+                  {clicked && Object.keys(clicked).length > 0 ? (
+                    <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                      <tbody>
+                        {Object.entries(clicked).map(([key, value], index) => (
+                          <tr
+                            key={index}
+                            className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                          >
+                            <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
+                              {key}
+                            </td>
+                            <td className="px-4 py-2 text-gray-800">
+                              {value || "N/A"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  ) : (
+                    <div className="text-sm text-gray-400 italic px-2 py-2">
+                      No data
+                    </div>
+                  )}
+                </InfoPopover>
+              </span>
+            </CustomTooltip>
+          ),
         },
       ]);
 

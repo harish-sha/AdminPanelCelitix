@@ -551,7 +551,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-    const res = await getWhatsappRateBySrno(srno);
+    const res = await getWhatsappRateBySrno(srno, currentUserSrno);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -1024,7 +1024,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       newKey: newAPIKey,
       userSrno: selectedId,
     };
-    console.log(data);
+    // console.log(data);
     try {
       const res = await updateApiKey(data.newKey, data.userSrno);
       if (!res?.message.includes("succesfully")) {
@@ -1319,7 +1319,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       ]);
 
     // obdRateRes && setVoicerows(voiceRows);
-    console.log(chargesRes);
+    // console.log(chargesRes);
     setCharges(chargesRes?.MonthlyRate || "0");
   };
 
@@ -1547,8 +1547,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   // ];
 
   async function handleRcsEdit(srno) {
-    const res = await getRCSRateBySrno(srno);
-    console.log("res", res);
+    const res = await getRCSRateBySrno(srno, currentUserSrno);
+    // console.log("res", res);
 
     // const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
