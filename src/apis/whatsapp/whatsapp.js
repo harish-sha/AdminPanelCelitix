@@ -629,12 +629,13 @@ export const blockUser = async (waba, data) => {
   });
 };
 export const getblockUser = async (waba) => {
-  return await fetchWithAuth(`/get-block-user/${waba}`, {
+  return await fetchWithAuth(`/whatsapp/get-block-user/${waba}`, {
     method: "GET",
   });
 };
-export const deleteblockUser = async (waba) => {
+export const deleteblockUser = async (waba,data) => {
   return await fetchWithAuth(`/whatsapp/delete-block-user/${waba}`, {
     method: "DELETE",
+    body: JSON.stringify(data),
   });
 };
