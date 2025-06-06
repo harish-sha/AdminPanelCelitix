@@ -905,19 +905,15 @@ const SmsReports = () => {
       const res = await fetchPreviousDayReport(data);
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "sending_user_id",
-          headerName: "User",
-          flex: 1,
-          minWidth: 120,
-        },
+        
         {
           field: "TOTALSMS",
           headerName: "Total SMS",
           flex: 1,
           minWidth: 120,
+          
           renderCell: (params) => (
-            <CustomTooltip title={params.row.TOTALSMS} placement="top" arrow>
+            <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
               <button
                 onClick={() => {
                   setSelectedCol("TOTALSMS");
@@ -1246,7 +1242,7 @@ const SmsReports = () => {
       //   "en-GB"
       // ),
       // toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
-      fromDate: moment(previousDataToFilter.fromDat).format("YYYY-MM-DD"),
+      fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
       toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       page: currentPage,
       source: "",
