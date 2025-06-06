@@ -11,14 +11,17 @@ import UniversalButton from "../components/UniversalButton";
 import UniversalSkeleton from "../components/UniversalSkeleton";
 import Loader from "../components/Loader";
 
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { exportToExcel } from "@/utils/utills.js";
 
 import {
+  exportConversationData,
   getConversationReport,
   getWabaList,
 } from "../../apis/whatsapp/whatsapp.js";
 
 import moment from "moment";
+import { useDownload } from "@/context/DownloadProvider";
 
 const WhatsappConversation = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -32,6 +35,9 @@ const WhatsappConversation = () => {
     mobileNo: "",
     page: 0,
   });
+
+  const { triggerDownloadNotification } = useDownload();
+
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -97,40 +103,23 @@ const WhatsappConversation = () => {
   };
 
   const handleExport = async () => {
-    console.log("Export Data:", data); // Debugging log
-
-    // Check if data exists and has length
-    if (!data?.data || !Array.isArray(data.data) || data.data.length === 0) {
-      return toast.error("No data to download");
+    const payload = {
+      ...filters,
+      fromDate: formatDate(filters?.fromDate),
+      toDate: formatDate(filters?.toDate),
+      mobileNumber: filters?.mobileNo,
+    };
+    delete payload.page;
+    try {
+      const res = await exportConversationData(payload);
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+      triggerDownloadNotification();
+      toast.success("File Downloaded Successfully");
+    } catch (e) {
+      toast.error("Error downloading file");
     }
-
-    console.log("Export Data Length:", data?.data?.length);
-
-    // Define columns for export
-    const col = [
-      "S.No",
-      "Contact Name",
-      "Mobile Number",
-      "Reply Type",
-      "Message",
-      "WabaNumber",
-      "Time",
-    ];
-
-    // Map rows for export
-    const row = data.data.map((rowData, index) => [
-      index + 1, // Serial number
-      rowData.contectName || "N/A", // Contact Name
-      rowData.mobileNo || "N/A", // Mobile Number
-      rowData.replyType || "N/A", // Reply Type
-      rowData.messageBody || "N/A", // Message
-      rowData.wabaNumber || "N/A", // WabaNumber
-      moment(rowData.replyTime).format("DD-MM-YYYY HH:mm:ss") || "N/A", // Time
-    ]);
-
-    const name = `conversationReport`;
-    exportToExcel(col, row, name);
-    toast.success("File Downloaded Successfully");
   };
 
   useEffect(() => {
@@ -218,6 +207,12 @@ const WhatsappConversation = () => {
                 id="conversationexport"
                 label="Export"
                 onClick={handleExport}
+                icon={
+                  <IosShareOutlinedIcon
+                    fontSize="small"
+                    sx={{ marginBottom: "3px" }}
+                  />
+                }
               />
             </div>
           </div>

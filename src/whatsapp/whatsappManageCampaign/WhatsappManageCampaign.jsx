@@ -178,7 +178,7 @@ const WhatsappManageCampaign = () => {
         //   setCampaignList([]);
         // }
       } catch (error) {
-        console.log(error);
+        // console.log(error);
         toast.error("Error fetching Campaign List:", error);
       }
       setIsLoading(false);
@@ -341,10 +341,10 @@ const WhatsappManageCampaign = () => {
     }
 
     try {
-      console.log("Canceling campaign with SRNO:", srno);
+      // console.log("Canceling campaign with SRNO:", srno);
       const result = await cancelCampaign({ srno: srno, selectedUserId: 0 });
       if (result) {
-        console.log("Campaign cancelled successfully:", result);
+        // console.log("Campaign cancelled successfully:", result);
         toast.success("Campaign Cancelled successfully");
 
         // Refresh the table by fetching the data again

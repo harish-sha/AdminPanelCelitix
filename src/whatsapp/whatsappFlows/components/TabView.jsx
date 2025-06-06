@@ -17,6 +17,10 @@ export default function CustomTabView({
     setActiveIndex,
     dialogVisible,
     setDialogVisible,
+    setEditDialogVisible,
+    editDialogVisible,
+    setScreenEditName,
+    screenEditName,
     screenName,
     setScreenName,
     screenID,
@@ -58,26 +62,69 @@ export default function CustomTabView({
         }
     };
 
+
     const handleTabClick = () => {
-        setDialogVisible(true);
+        if (!tabs || tabs.length === 0) return;
+
+        const lastTab = tabs[tabs.length - 1];
+
+        const hasCompleteFooter = lastTab?.payload?.some(
+            (item) =>
+                item.type === "footerbutton" &&
+                item.footer?.footer_1?.on_click_action === "navigate"
+        );
+
+        if (hasCompleteFooter) {
+            setDialogVisible(true);
+        } else {
+            toast.error("The last screen must have a footer with Next Action set to 'Navigate'.");
+        }
     };
+
+
+    const handleEditSave = () => {
+        if (!screenEditName.trim()) {
+            alert("Screen name cannot be empty.");
+            return;
+        }
+
+        const updatedTabs = tabs.map((tab, index) =>
+            index === activeIndex
+                ? { ...tab, title: screenEditName, id: screenID }
+                : tab
+        );
+        setTabs(updatedTabs);
+        setEditDialogVisible(false);
+        setScreenEditName("");
+        setScreenID("");
+    };
+
 
     const menuItems = (index) => [
         {
             label: "Edit",
             icon: <EditNoteOutlinedIcon />,
-            command: () => alert(`Edit Tab ${index + 1}`),
+            command: () => {
+                const screenData = tabs[index];
+                const screenName = screenData.title;
+                const screenID = screenData.id;
+
+                setScreenEditName(screenName);
+                setScreenID(screenID);
+                setEditDialogVisible(true);
+            }
+
         },
         {
             label: "Delete",
             icon: <DeleteForeverOutlinedIcon sx={{ color: "red" }} />,
             command: () => removeTab(index),
         },
-        {
-            label: "Export",
-            icon: <IosShareOutlinedIcon />,
-            command: () => alert(`Export Tab ${index + 1}`),
-        },
+        // {
+        //     label: "Export",
+        //     icon: <IosShareOutlinedIcon />,
+        //     command: () => alert(`Export Tab ${index + 1}`),
+        // },
     ];
 
     const handleBtnClick = () => {
@@ -104,9 +151,14 @@ export default function CustomTabView({
         setRandomNumber(Math.floor(Math.random() * 1000));
     };
 
+    const generateRandomLetters = (length = 5) => {
+        const letters = "abcdefghijklmnopqrstuvwxyz";
+        return Array.from({ length }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+    };
+
     return (
-        <div className="card">
-            <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto">
+        <div className="card ">
+            <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto absolute top-0 bg-blue-50 z-50 w-full  rounded-md">
                 {tabs.map((tab, index) => (
                     <div
                         key={index}
@@ -144,6 +196,7 @@ export default function CustomTabView({
                 >
                     <AddIcon className="text-blue-600" />
                 </div>
+
             </div>
             {/* Tab Content */}
             {/* <div style={{ padding: '20px' }}>
@@ -172,11 +225,16 @@ export default function CustomTabView({
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     setScreenName(value);
-                                    const id = `${value
-                                        .replace(/\s+/g, "_")
-                                        .toLocaleLowerCase()}_${randomNumber}`;
+
+                                    if (!value) {
+                                        setScreenID("");
+                                        return;
+                                    }
+
+                                    const sanitized = value.replace(/\s+/g, "_").toLowerCase();
+                                    const randomLetters = generateRandomLetters(); // e.g., 'abcde'
+                                    const id = `${sanitized}_${randomLetters}`.toUpperCase();
                                     setScreenID(id);
-                                    if (!value) setScreenID("");
                                 }}
                                 required
                             />
@@ -232,6 +290,72 @@ export default function CustomTabView({
                             variant="primary"
                             value={createTab}
                             onClick={(e) => handleBtnClick(e.target.value)}
+                        />
+                    </div>
+                </div>
+            </Dialog>
+
+            {/* Edit screen dialog */}
+            <Dialog
+                visible={editDialogVisible}
+                onHide={() => {
+                    setEditDialogVisible(false);
+                }}
+                className=""
+                draggable={false}
+                closable={false}
+            >
+                <p className="shadow-md p-4 rounded-md w-full text-md font-medium">
+                    Edit Screen
+                </p>
+                <div>
+                    <div className="flex flex-row mt-5 w-full gap-5">
+                        <div className="">
+                            <TextField
+                                label="Enter screen name"
+                                value={screenEditName}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    setScreenEditName(value);
+                                }}
+                                required
+                            />
+                        </div>
+                        <div className="">
+                            <TextField
+                                label="Enter screen ID (Optional)"
+                                value={screenID}
+                            />
+                        </div>
+                    </div>
+                    <div className="flex flex-col ml-2 mt-5">
+                        <h2 className="text-gray-500 font-medium text-lg">Instructions:</h2>
+                        <ul className="text-gray-500 font-normal text-sm space-y-2 mt-3 list-disc">
+                            <li>
+                                If the screen name meets the Screen ID rules, then the Screen ID
+                                used as its screen name.
+                            </li>
+                            <li>Screen ID must be unique.</li>
+                            <li>Screen ID allows only alphabets and underscores("_").</li>
+                            <li>
+                                Provide a separate Screen ID, if the screen title includes
+                                special characters, or doesn't meet screen ID rules.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div className="border-t-1 border-gray-300 mt-25 w-full">
+                    <div className="flex flex-row gap-4 justify-end items-end mt-2">
+                        <UniversalButton
+                            label="Close"
+                            variant="primary"
+                            onClick={() => setEditDialogVisible(false)}
+                        />
+                        <UniversalButton
+                            label="Create"
+                            variant="primary"
+                            value={createTab}
+                            onClick={(e) => handleEditSave(e.target.value)}
                         />
                     </div>
                 </div>

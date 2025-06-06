@@ -245,13 +245,13 @@ export const ChatInput = ({
           placeholder="Type a message..."
           ref={inputRef}
           value={input}
-          // onChange={(e) => setInput(e.target.value)}
-          onChange={(e) => {
-            const value = e.target.value;
-            setInput(value);
-            const lastChar = value[e.target.selectionStart - 1];
-            setShowCannedDropdown(lastChar === "/");
-          }}
+          onChange={(e) => setInput(e.target.value)}
+          // onChange={(e) => {
+          //   const value = e.target.value;
+          //   setInput(value);
+          //   const lastChar = value[e.target.selectionStart - 1];
+          //   setShowCannedDropdown(lastChar === "/");
+          // }}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();

@@ -23,7 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { TemplateMessagePreview } from "./Template";
-import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
+import { getWabaList, getWabaTemplateDetails, blockUser } from "@/apis/whatsapp/whatsapp";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
@@ -33,10 +33,15 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import { HiOutlineCheck } from "react-icons/hi";
+import { VscCheckAll } from "react-icons/vsc";
 import axios from "axios";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { getBaseUrl } from "@/apis/common/common";
+import { MdBlock } from "react-icons/md";
+import { CgUnblock } from "react-icons/cg";
+import CustomTooltip from "@/components/common/CustomTooltip";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -241,6 +246,22 @@ export const ChatScreen = ({
     }
   }
 
+  async function handleBlockUser(waba, phone) {
+    try {
+      const payload = {
+        messaging_product: "whatsapp",
+        block_users: [{ user: phone }],
+      };
+      const res = await blockUser(waba, payload);
+      if (res?.block_users?.added_users?.length == 0) {
+        toast.error("Unable to block user");
+      }
+      toast.success("User blocked successfully");
+    } catch (e) {
+      toast.error("Error blocking user");
+    }
+  }
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
       <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2  border rounded-tr-lg">
@@ -284,10 +305,35 @@ export const ChatScreen = ({
             sx={{ fontSize: "1.2rem", color: "green" }}
           />
         </div>
-        <SupportAgentOutlinedIcon
-          onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer text-[#22577E]"
-        />
+        <div className="flex items-center gap-2 justify-between">
+          <CustomTooltip
+            title="Block User"
+            placement="top"
+            arrow
+          >
+            <button
+              onClick={() => {
+                handleBlockUser(
+                  chatState.active.wabaNumber,
+                  chatState.active.mobileNo
+                );
+              }}
+              className="hover:bg-gray-200 transition-all duration-200 rounded-full p-1 cursor-pointer"
+            >
+              <MdBlock className="text-red-500 size-5" />
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            title="Assign Agent"
+            placement="top"
+            arrow
+          >
+            <SupportAgentOutlinedIcon
+              onClick={() => setDialogVisible(true)}
+              className="mr-2 cursor-pointer text-[#22577E]"
+            />
+          </CustomTooltip>
+        </div>
       </div>
 
       <div
@@ -360,16 +406,16 @@ export const ChatScreen = ({
                               {isImage && (
                                 <div
                                   className={`relative group w-full h-full ${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
-                                      : ""
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white"
+                                    : ""
                                     }`}
                                 >
                                   <img
                                     src={mediaUrl}
                                     alt="Image"
                                     className={`mb-2 h-auto max-h-50 w-auto object-contain select-none pointer-events-none border border-gray-200 ${msg?.caption
-                                        ? "rounded-t-lg"
-                                        : "rounded-md"
+                                      ? "rounded-t-lg"
+                                      : "rounded-md"
                                       }`}
                                   />
                                   {msg?.caption && (
@@ -398,8 +444,8 @@ export const ChatScreen = ({
                               {isVideo && (
                                 <div
                                   className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
-                                      : "relative group"
+                                    ? "border border-gray-200 rounded-md max-w-[200px] bg-white relative group"
+                                    : "relative group"
                                     }`}
                                 >
                                   <video
@@ -434,8 +480,8 @@ export const ChatScreen = ({
                               {isDocument && (
                                 <div
                                   className={`${msg?.caption
-                                      ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
-                                      : "relative group"
+                                    ? "border border-gray-200 rounded-md max-w-[200px]bg-white relative group"
+                                    : "relative group"
                                     }`}
                                 >
                                   {/* <iframe
@@ -584,8 +630,8 @@ export const ChatScreen = ({
                         <div className="max-w-[250px]">
                           <p
                             className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${isSent
-                                ? "bg-[#22577E] text-white rounded-br-none"
-                                : "bg-[#5584AC] text-white rounded-bl-none"
+                              ? "bg-[#22577E] text-white rounded-br-none"
+                              : "bg-[#5584AC] text-white rounded-bl-none"
                               }`}
                           >
                             {msg.messageBody}
@@ -610,12 +656,20 @@ export const ChatScreen = ({
 
                     {templateType && <TemplateMessagePreview template={msg} />}
 
-                    <p
+                    <div
                       className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
                         }`}
                     >
-                      {formatTime(msg?.insertTime)}
-                    </p>
+                      <div className="flex justify-end gap-2 items-center">
+                        <p>{formatTime(msg?.insertTime)}</p>
+                        {isSent && !msg?.isView && (
+                          <HiOutlineCheck className="size-4" />
+                        )}
+                        {isSent && msg?.isView && (
+                          <VscCheckAll className="size-4 text-blue-500" />
+                        )}
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })}

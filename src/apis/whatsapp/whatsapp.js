@@ -616,3 +616,34 @@ export const cancelCampaign = async ({ srno, selectedUserId }) => {
     }
   );
 };
+
+// export conversation data
+export const exportConversationData = async (data) => {
+  return await fetchWithAuth("/whatsapp/getConversationExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// block user
+export const blockUser = async (waba, data) => {
+  return await fetchWithAuth(`/whatsapp/add-block-user/${waba}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// get block user
+export const getblockUser = async (waba) => {
+  return await fetchWithAuth(`/whatsapp/get-block-user/${waba}`, {
+    method: "GET",
+  });
+};
+
+// delete block user
+export const deleteblockUser = async (waba, data) => {
+  return await fetchWithAuth(`/whatsapp/delete-block-user/${waba}`, {
+    method: "DELETE",
+    body: JSON.stringify(data),
+  });
+};

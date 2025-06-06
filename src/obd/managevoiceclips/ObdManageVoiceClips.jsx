@@ -353,7 +353,7 @@ const ObdManageVoiceClips = () => {
       const res = await fetchVoiceClipUrl(row.id);
       if (!res.path) return toast.error("Something went wrong");
       const url = `${BASE_AUDIO_URL}/${res.path}`;
-      console.log(url);
+      // console.log(url);
       setSelectedRow({ ...row, url });
       setIsOpenPlay(true);
     } catch (e) {
@@ -432,7 +432,7 @@ const ObdManageVoiceClips = () => {
           variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
-        console.log(res);
+        // console.log(res);
       }
     } catch (e) {
       toast.error("Something went wrong");

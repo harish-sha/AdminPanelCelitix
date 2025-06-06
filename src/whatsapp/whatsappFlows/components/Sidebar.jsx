@@ -18,6 +18,10 @@ import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import KeyboardIcon from "@mui/icons-material/Keyboard";
 import NotesIcon from "@mui/icons-material/Notes";
 import ArrowDropDownCircleIcon from "@mui/icons-material/ArrowDropDownCircle";
+import PermMediaOutlinedIcon from '@mui/icons-material/PermMediaOutlined';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import DeveloperBoardOutlinedIcon from '@mui/icons-material/DeveloperBoardOutlined';
+import SwitchLeftOutlinedIcon from '@mui/icons-material/SwitchLeftOutlined';
 import "./sidebar.css";
 
 const items = [
@@ -61,6 +65,12 @@ const items3 = [
     label: "Drop Down",
     icon: <ArrowDropDownCircleIcon />,
   },
+  {
+    id: 4,
+    type: 'chipSelector',
+    label: "ChipSelector",
+    icon: <DeveloperBoardOutlinedIcon />
+  }
 ];
 
 const items4 = [
@@ -80,22 +90,24 @@ const items4 = [
 ];
 
 const items5 = [
-  { id: 1, type: "photo", label: "Photo", icon: <AddAPhotoIcon /> },
+  { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
   { id: 2, type: "document", label: "Document", icon: <InsertDriveFileIcon /> },
+  { id: 3, type: "media", label: "Media", icon: <PermMediaOutlinedIcon /> }
 ];
 
 const items6 = [
   { id: 1, type: "ifelse", label: "if-Else", icon: <AccountTreeIcon /> },
+  { id: 2, type: 'switch', label: "Switch", icon: <SwitchLeftOutlinedIcon /> }
 ];
 
 const items7 = [
-  { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
-  { id: 2, type: "date", label: "Date", icon: <DateRangeIcon /> },
+  { id: 1, type: "date", label: "Date", icon: <DateRangeIcon /> },
+  { id: 2, type: 'calendar', label: "Calendar", icon: <CalendarMonthOutlinedIcon /> }
 ];
 
-const items8 = [
-  { id: 1, type: "userdetail", label: "User  Details", icon: <PersonIcon /> },
-];
+// const items8 = [
+//   { id: 1, type: "userdetail", label: "User  Details", icon: <PersonIcon /> },
+// ];
 
 const Sidebar = ({ onAdd }) => {
   return (
@@ -174,16 +186,16 @@ const Sidebar = ({ onAdd }) => {
           </div>
         ))}
       </div>
-      <span className="text-sm tracking-wide font-semibold">
+      {/* <span className="text-sm tracking-wide font-semibold">
         Templates
-      </span>
-      <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
+      </span> */}
+      {/* <div className="grid grid-cols-1 lg:grid-cols-2 mt-1.5">
         {items8.map((item) => (
           <div item xs={12} key={item.id} className="">
             <DraggableItem item={item} onClick={() => onAdd(item)} />
           </div>
         ))}
-      </div>
+      </div> */}
     </Box>
   );
 };
