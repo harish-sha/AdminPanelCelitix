@@ -23,7 +23,11 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { TemplateMessagePreview } from "./Template";
-import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
+import {
+  blockUser,
+  getWabaList,
+  getWabaTemplateDetails,
+} from "@/apis/whatsapp/whatsapp";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
@@ -39,6 +43,8 @@ import axios from "axios";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { getBaseUrl } from "@/apis/common/common";
+import { MdBlock } from "react-icons/md";
+import { CgUnblock } from "react-icons/cg";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -242,6 +248,22 @@ export const ChatScreen = ({
     }
   }
 
+  async function handleBlockUser(waba, phone) {
+    try {
+      const payload = {
+        messaging_product: "whatsapp",
+        block_users: [{ user: phone }],
+      };
+      const res = await blockUser(waba, payload);
+      if (res?.block_users?.added_users?.length == 0) {
+        toast.error("Unable to block user");
+      }
+      toast.success("User blocked successfully");
+    } catch (e) {
+      toast.error("Error blocking user");
+    }
+  }
+
   return (
     <div className="relative flex flex-col flex-1 h-screen md:h-full">
       <div className="z-1 flex items-center justify-between w-full h-15 bg-gray-100 px-2  border rounded-tr-lg">
@@ -285,10 +307,22 @@ export const ChatScreen = ({
             sx={{ fontSize: "1.2rem", color: "green" }}
           />
         </div>
-        <SupportAgentOutlinedIcon
-          onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer text-[#22577E]"
-        />
+        <div className="flex items-center gap-2 justify-between">
+          <button
+            onClick={() => {
+              handleBlockUser(
+                chatState.active.wabaNumber,
+                chatState.active.mobileNo
+              );
+            }}
+          >
+            <MdBlock className="mr-2 cursor-pointer text-red-500 size-5" />
+          </button>
+          <SupportAgentOutlinedIcon
+            onClick={() => setDialogVisible(true)}
+            className="mr-2 cursor-pointer text-[#22577E]"
+          />
+        </div>
       </div>
 
       <div
@@ -626,8 +660,12 @@ export const ChatScreen = ({
                     >
                       <div className="flex justify-end gap-2 items-center">
                         <p>{formatTime(msg?.insertTime)}</p>
-                        {isSent && !msg?.isView && <HiOutlineCheck className="size-4" />}
-                        {isSent && msg?.isView && <VscCheckAll className="size-4 text-blue-500" />}
+                        {isSent && !msg?.isView && (
+                          <HiOutlineCheck className="size-4" />
+                        )}
+                        {isSent && msg?.isView && (
+                          <VscCheckAll className="size-4 text-blue-500" />
+                        )}
                       </div>
                     </div>
                   </motion.div>

@@ -622,3 +622,9 @@ export const exportConversationData = async (data) => {
     body: JSON.stringify(data),
   });
 };
+export const blockUser = async (waba, data) => {
+  return await fetchWithAuth(`/whatsapp/add-block-user/${waba}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
