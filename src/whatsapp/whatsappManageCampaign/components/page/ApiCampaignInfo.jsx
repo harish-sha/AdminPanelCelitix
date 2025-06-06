@@ -17,6 +17,7 @@ import { id } from "date-fns/locale";
 import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
+import { max } from "date-fns";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -187,60 +188,33 @@ export const ApiCampaignInfo = () => {
   }, [currentPage]);
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "wabaNumber", headerName: "WABA Number", flex: 1, width: 150 },
-    { field: "mobileNo", headerName: "Mobile Number", flex: 1, minWidth: 150 },
-    { field: "source", headerName: "Source", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", width: 70 },
+    { field: "wabaNumber", headerName: "WABA Number", width: 130 },
+    { field: "mobileNo", headerName: "Mobile Number", width: 135 },
+    { field: "source", headerName: "Source", width: 100 },
+    { field: "status", headerName: "Status", width: 100 },
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
-      flex: 1,
-      minWidth: 120,
+      width: 100,
     },
-    { field: "reason", headerName: "Reason", flex: 2, minWidth: 120 },
-    { field: "sentTime", headerName: "Sent", flex: 1, minWidth: 120 },
+    { field: "reason", headerName: "Reason", width: 120 },
+    { field: "sentTime", headerName: "Sent", width: 150 },
     {
-      field: "deliveryTime",
-      headerName: "Delivery Time",
+      field: "requestJson",
+      headerName: "Request JSON",
       flex: 1,
       minWidth: 120,
     },
-    { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
-    { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 120,
+      
+    // },
+    
   ];
-
-  // const rows = Array.from({ length: 20 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   wabaNumber: `WABA-${1000 + i}`,
-  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
-  //   source: "API",
-  //   status: "Pending",
-  //   deliveryStatus: "Sent",
-  //   reason: "N/A",
-  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
-  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
-  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
-  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
-  // }));
-
-  // const rows = data?.map((item, i) => ({
-  //   id: i + 1,
-  //   // sn: i + 1,
-  //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
-  //   // wabaNumber: WABA-${1000 + i},
-  //   // mobileNo: 98765432${(10 + i).toString().slice(-2)},
-  //   // source: "API",
-  //   // status: "Pending",
-  //   // deliveryStatus: "Sent",
-  //   // reason: "N/A",
-  //   // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
-  //   // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
-  //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
-  //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
-  //   ...item,
-  // }));
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
@@ -338,7 +312,7 @@ export const ApiCampaignInfo = () => {
           rows={rows}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
-          checkboxSelection
+          // checkboxSelection
           rowHeight={45}
           slots={{
             footer: CustomFooter,
