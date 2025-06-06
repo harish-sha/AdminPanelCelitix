@@ -233,7 +233,7 @@ export default function CustomTabView({
 
                                 const sanitized = value.replace(/\s+/g, "_").toLowerCase();
                                 const randomLetters = generateRandomLetters(); // e.g., 'abcde'
-                                const id = `${sanitized}_${randomLetters}`;
+                                const id = `${sanitized}_${randomLetters}`.toUpperCase();
                                 setScreenID(id);
                             }}
                                 required

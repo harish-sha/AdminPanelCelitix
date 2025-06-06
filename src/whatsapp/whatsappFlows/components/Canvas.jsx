@@ -80,6 +80,7 @@ drop: (item) => {
     newTabs[activeIndex].payload = activePayload;
     return newTabs;
   });
+
 }
 
 
@@ -141,23 +142,33 @@ if(item.type === "radioButton"){
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ itemKey, item, index }) => {
-    console.log("itemmmmmmmmmm", item)
-    console.log("index", index)
-    console.log("key", itemKey)
+    console.log("item", item)
+
     if (!item?.type) {
-    console.error("DraggableItem error: item.type is not defined", item);
+    console.error("DraggableItem error: item.type is not defined");
     return null;
     }
 
-    const [, drag] = useDrag({
-      type: item.type,
-      item: { index },
-    });
+    // const [, drag] = useDrag({
+    //   type: item.type,
+    //   item: { index },
+    // });
 
-    console.log("tabs", tabs)
+    const [{ isDragging }, drag] = useDrag({
+        type: 'field',
+        item: { id: item.id, index },
+        collect: monitor => ({
+          isDragging: monitor.isDragging(),
+        }),
+      });
+
     return (
       <Paper
         ref={drag}
+        style={{
+        opacity: isDragging ? 0.5 : 1,
+        cursor: 'move',
+        }}
         sx={{
           backgroundColor: getBackgroundColor(item.type),
         }}
@@ -327,11 +338,24 @@ if(item.type === "radioButton"){
       />
       {/* Render all items on the canvas */}
       <div className="w-1/3 ml-5 ">
-        {tabs[activeIndex]?.payload?.map((item, index) => (
+        {/* {tabs[activeIndex]?.payload?.map((item, index) => (
           <div key={index}>
             <DraggableItem key={item.id} item={item} index={index} itemKey={item.id} />
           </div>
-        ))}
+        ))} */}
+
+        {tabs[activeIndex]?.payload
+  ?.filter(item => item.type !== undefined)
+  .map((item, index) => (
+    <div key={item.id || index}>
+      <DraggableItem
+        item={item}
+        index={index}
+        itemKey={item.id}
+      />
+    </div>
+))}
+
       </div>
       {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
     </div>

@@ -75,7 +75,6 @@
 //         };
 //       }
 
-
 //       console.log("baseData", baseData)
 //       console.log("item", item)
 //       switch (pay.type) {
@@ -231,7 +230,6 @@
 //       }
 //     });
 
-
 //     // console.log("itemmmmmmmmmmmmmmmmmmmmmmmmmmmm", item);
 
 //     const footerItem = item.payload.find((p) => p.type === "footerbutton");
@@ -266,12 +264,8 @@
 //   return payload;
 // };
 
-
-
-
 // neww generatepayload start here
 export const generatePayload = (data) => {
-  console.log("data", data)
   const payload = {
     version: "7.0",
     screens: [],
@@ -291,19 +285,38 @@ export const generatePayload = (data) => {
     checkBox: 0,
     footer: 0,
     document: 0,
-    media:0,
+    media: 0,
+    image: 0,
+    date: 0,
+    calendar: 0,
   };
 
   const numberToWord = (num) => {
     const words = [
-      "zero", "one", "two", "three", "four", "five", "six",
-      "seven", "eight", "nine", "ten", "eleven", "twelve",
-      "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
-      "eighteen", "nineteen", "twenty"
+      "zero",
+      "one",
+      "two",
+      "three",
+      "four",
+      "five",
+      "six",
+      "seven",
+      "eight",
+      "nine",
+      "ten",
+      "eleven",
+      "twelve",
+      "thirteen",
+      "fourteen",
+      "fifteen",
+      "sixteen",
+      "seventeen",
+      "eighteen",
+      "nineteen",
+      "twenty",
     ];
     return words[num] || String(num);
   };
-
 
   data.forEach((screenData, index) => {
     const screenId = screenData.id;
@@ -345,10 +358,10 @@ export const generatePayload = (data) => {
             type === "textInput"
               ? "TextInput"
               : type === "textArea"
-                ? "TextArea"
-                : type === "email"
-                  ? "EmailInput"
-                  : "PhoneInput",
+              ? "TextArea"
+              : type === "email"
+              ? "EmailInput"
+              : "PhoneInput",
 
           label: field.label || "Label",
           required: field.required ?? true,
@@ -410,45 +423,77 @@ export const generatePayload = (data) => {
         };
       }
 
+    
 
+      if (type === "image") {
+        component = {
+          // name,
+          type: "Image",
+          src: pay.src,
+          // width: pay.width,
+          // // height: pay.height,
+          "scale-type": pay["scale-type"],
+          "aspect-ratio": pay["aspect-ratio"],
+          "alt-text": pay["alt-text"],
+        };
+      }
 
-      if (type === 'document') {
-        console.log("Handling Document type", { pay});
-      
+      if (type === "document") {
         component = {
           name,
           type: "DocumentPicker",
           label: pay.label || "Select an Document",
           description: pay.description || "",
-          'min-uploaded-documents': pay.minDocsUpload ?? 1,
-          'max-uploaded-documents': pay.maxDocsUpload ?? 1
+          "min-uploaded-documents": pay.minDocsUpload ?? 1,
+          "max-uploaded-documents": pay.maxDocsUpload ?? 1,
         };
-        console.log(pay.label, "label")
+        console.log(pay.label, "label");
         console.log("Document component:", component);
       }
 
-
-      if (type === 'media') {
+      if (type === "media") {
         component = {
           name,
           type: "PhotoPicker",
           label: pay.label || "Select an Photo",
           description: pay.mediaDescription,
-          'min-uploaded-photos': pay.minPhotoUpload || 1,
-          'max-uploaded-photos':pay.maxPhotoUpload || 10
-        }
-
+          "min-uploaded-photos": pay.minPhotoUpload || 1,
+          "max-uploaded-photos": pay.maxPhotoUpload || 10,
+        };
       }
 
+      if (type === "date") {
+        component = {
+          name,
+          type: "DatePicker",
+          label: pay.label,
+          name: pay.name,
+          "min-date": pay["min-date"],
+          "max-date": pay["max-date"],
+          "unavailable-dates": pay["unavailable-dates"],
+          "helper-text": pay["helper-text"],
+          // "error-message":  pay.error_message,
+        };
+      }
 
-
-
+      if(type === "calendar"){
+         component = {
+          name,
+          type: "CalendarPicker",
+          label: pay.label,
+          name: pay.name,
+          "min-date": pay["min-date"],
+          "max-date": pay["max-date"],
+          "unavailable-dates": pay["unavailable-dates"],
+          "helper-text": pay["helper-text"],
+          // "error-message":  pay.error_message,
+        };
+      }
 
       if (type === "footerbutton") {
         const footerData = pay.footer?.footer_1 || {};
         const onClickActionName = footerData.on_click_action || "complete";
 
-        
         // Find the next screen ID if it exists
         const nextScreenId = data[index + 1]?.id || null;
 
@@ -457,28 +502,31 @@ export const generatePayload = (data) => {
           label: footerData.label || "Submit",
           "on-click-action": {
             name: onClickActionName,
-            next: {
-              type: "screen",
-              name: nextScreenId
-            },
+            ...(index !== data.length - 1 && {
+              next: {
+                type: "screen",
+                name: nextScreenId,
+              },
+            }),
           },
         };
       }
 
-
       layout.children.push(component);
     });
+
+    const item = data[index];
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     payload.screens.push({
       id: capitalize(screenId),
       title: screenData.title || `Screen ${index + 1}`,
-      terminal: true,
       layout,
+      // terminal: index === data.length - 1,
+      ...(index === data.length - 1 ? { terminal: true } : ""),
     });
   });
 
   return payload;
 };
 // neww generatepayload ends here
-

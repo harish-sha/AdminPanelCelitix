@@ -367,7 +367,7 @@ const WhatsappLiveChatSettings = () => {
                     color="success"
                     checked={cardDetails["welcome_message"]?.message || 0}
                     inputProps={{ "aria-label": "welcome-message-toggle" }}
-                    value={cardDetails["welcome_message"]?.status || false}
+                    value={cardDetails["_message"]?.status || false}
                     onClick={(e) => deleteAction("welcome_message")}
                   />
                 </Box>

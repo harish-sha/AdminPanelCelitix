@@ -19,14 +19,15 @@ import {
 import CloseIcon from "@mui/icons-material/Close";
 import UniversalButton from "../../components/UniversalButton";
 import toast from "react-hot-toast";
-import EditIcon from '@mui/icons-material/Edit'
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import EditIcon from "@mui/icons-material/Edit";
+import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
 import { is } from "date-fns/locale";
 import { Dialog } from "primereact/dialog";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
+import moment from "moment";
 
 const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [value, setValue] = useState("");
@@ -34,9 +35,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [checked, setChecked] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
   const [newOption, setNewOption] = useState("");
-  const [isToggled, setIsToggled] = useState(false)
+  const [isToggled, setIsToggled] = useState(false);
   // const [file, setFile] = useState("")
-  const [uploadPhoto, setUploadPhoto] = useState("")
+  const [uploadPhoto, setUploadPhoto] = useState("");
 
   useEffect(() => {
     if (selectedItem) {
@@ -44,28 +45,21 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       // setOptions(selectedItem.options || []);
       setChecked(selectedItem.checked || []);
       setSelectedOption(selectedItem.selectedOption || "");
-
     }
   }, [selectedItem]);
 
   const handleToggle = () => {
     // if (isToggled) {
     //    setIsToggled(false);
-
     // } else {
-    //  setIsToggled(true); 
+    //  setIsToggled(true);
     // }
-
     // setIsToggled((prev) = !prev)
   };
 
   const handerRequired = () => {
-    confirm.log(handerRequired)
-  }
-
-
-
-
+    confirm.log(handerRequired);
+  };
 
   // const handleSave = () => {
   //   if (
@@ -114,13 +108,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setOptions((prev) => prev.filter((_, i) => i !== index));
   };
 
-
-
-
-
-
-
-
   // akhil
 
   // const OptionsTypeTypeOptions = [
@@ -128,7 +115,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   //   { value: 'number', label: 'Number' },
   //   { value: 'email', label: 'Email' },
   // ];
-
 
   // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
   // const [inputValue, setInputValue] = useState('');
@@ -159,32 +145,24 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   // const maxLen = parseInt(maxLengthValue, 10) || 0;
   // const minLen = parseInt(minLengthValue, 10) || 0;
 
-
-
-
-
-
-
   // inputtype
 
   const OptionsTypeOptions = [
-    { value: 'text', label: 'Text' },
-    { value: 'number', label: 'Number' },
-    { value: 'email', label: 'Email' },
+    { value: "text", label: "Text" },
+    { value: "number", label: "Number" },
+    { value: "email", label: "Email" },
   ];
 
-
   const [selectedOptionsType, setSelectedOptionsType] = useState(null);
-  const [inputValue, setInputValue] = useState('');
-  const [maxValue, setMaxValue] = useState('');
-  const [minValue, setMinValue] = useState('');
-  const [labelValue, setLabelValue] = useState('');
-  const [errorValue, setErrorValue] = useState('');
-  const [placeholderValue, setPlaceholderValue] = useState('');
+  const [inputValue, setInputValue] = useState("");
+  const [maxValue, setMaxValue] = useState("");
+  const [minValue, setMinValue] = useState("");
+  const [labelValue, setLabelValue] = useState("");
+  const [errorValue, setErrorValue] = useState("");
+  const [placeholderValue, setPlaceholderValue] = useState("");
   const [switchChecked, setSwitchChecked] = useState(false);
 
-
-  const switchLabel = { inputProps: { 'aria-label': 'Switch demo' } };
+  const switchLabel = { inputProps: { "aria-label": "Switch demo" } };
   const handleErrorChange = (e) => setErrorValue(e.target.value);
   const handleLabelChange = (e) => setLabelValue(e.target.value);
   const handlePlaceholder = (e) => setPlaceholderValue(e.target.value);
@@ -193,17 +171,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   };
 
   const handleDropdownChange = (val) => {
-    const option = OptionsTypeOptions.find(opt => opt.value === val) || null;
+    const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
     setSelectedOptionsType(option);
-    setInputValue('');
+    setInputValue("");
   };
 
   const handleInputChange = (e) => {
     const val = e.target.value;
-    if (selectedOptionsType?.value === 'number') {
+    if (selectedOptionsType?.value === "number") {
       // Enforce digit count limits
       if (/^\d*$/.test(val)) {
-        if ((!maxValue || val.length <= Number(maxValue))) {
+        if (!maxValue || val.length <= Number(maxValue)) {
           setInputValue(val);
         }
       }
@@ -217,7 +195,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     const val = e.target.value;
     if (/^\d*$/.test(val)) {
       setMaxValue(val);
-      if (selectedOptionsType?.value === 'number' && inputValue.length > Number(val)) {
+      if (
+        selectedOptionsType?.value === "number" &&
+        inputValue.length > Number(val)
+      ) {
         setInputValue(inputValue.slice(0, Number(val)));
       }
     }
@@ -228,7 +209,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     if (/^\d*$/.test(val)) setMinValue(val);
   };
 
-  const isNumberType = selectedOptionsType?.value === 'number';
+  const isNumberType = selectedOptionsType?.value === "number";
   const maxNum = maxValue ? Number(maxValue) : "";
   const minNum = minValue ? Number(minValue) : "";
 
@@ -244,7 +225,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     const typeMapping = {
       textInput: "TextInput",
-      textArea: "TextArea"
+      textArea: "TextArea",
     };
 
     const selectedType = selectedItem?.type; // e.g., 'textInput' or 'textArea'
@@ -256,7 +237,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
 
     const payload = {
-      texts: {}
+      texts: {},
     };
 
     const id = `${selectedType}_1`; // Assuming only 1 for now
@@ -282,23 +263,21 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     console.log(updatedData);
   };
 
+  const allowed = ["heading", "subheading", "textbody", "textcaption"];
 
-  const allowed = ['heading', 'subheading', 'textbody', 'textcaption']
-
-
-  const { type, payload } = selectedItem || {}
+  const { type, payload } = selectedItem || {};
 
   // 1️⃣ state to track the input’s value
-  const [headingValue, setHeadingValue] = useState('')
+  const [headingValue, setHeadingValue] = useState("");
 
   // 2️⃣ prefill (or clear) when selectedItem changes
   useEffect(() => {
     if (allowed.includes(type)) {
-      setHeadingValue(payload?.[type] ?? '')
+      setHeadingValue(payload?.[type] ?? "");
     } else {
-      setHeadingValue('')
+      setHeadingValue("");
     }
-  }, [type, payload])
+  }, [type, payload]);
 
   // for headings
   // const handleHeadingSave = () => {
@@ -335,41 +314,34 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   //   console.log(payload);
   // }
 
-
-
   // EmbeddedLink
-  const [link, setLink] = useState("")
-  const [onClickAction, setOnClickAction] = useState("")
-  const [text, setText] = useState("")
-
+  const [link, setLink] = useState("");
+  const [onClickAction, setOnClickAction] = useState("");
+  const [text, setText] = useState("");
 
   const handleChange = (e) => {
-    setLink(e.target.value)
-  }
+    setLink(e.target.value);
+  };
 
   const handleEmbeddedLinkSave = () => {
-
     const payload = {
       label: embaddedlink,
       type: "EmbeddedLink",
       text: text,
       "on-click-action": onClickAction,
-    }
-    console.log(payload)
-
-  }
-
+    };
+    console.log(payload);
+  };
 
   // opt-in
-  const [name, setName] = useState("")
-  const [optLabel, setOptLabel] = useState('')
-  const [optAction, setOPTAction] = useState("")
-  const [isChecked, setIsChecked] = useState(false)
-
+  const [name, setName] = useState("");
+  const [optLabel, setOptLabel] = useState("");
+  const [optAction, setOPTAction] = useState("");
+  const [isChecked, setIsChecked] = useState(false);
 
   const handleChecked = (e) => {
-    setCheckbox(e.target.checked)
-  }
+    setCheckbox(e.target.checked);
+  };
 
   const handleOPTSave = () => {
     const payload = {
@@ -377,89 +349,197 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       type: "OptIn",
       name: "",
       "on-click-action": optAction,
-    }
-    console.log(payload)
+    };
+    console.log(payload);
     // if(optAction === 'navigate'){
 
     // }
-
-  }
-
+  };
 
   // image
-  const [width, setWidth] = useState()
-  const [height, setHeight] = useState()
-  const [scaleType, setSCaleType] = useState("contain")
-  const [aspectRatio, setAspectRatio] = useState(1)
-  const [imgAltText, setImgAltText] = useState("")
+  const [width, setWidth] = useState();
+  const [height, setHeight] = useState();
+  const [scaleType, setSCaleType] = useState("contain");
+  const [aspectRatio, setAspectRatio] = useState(1);
+  const [imgAltText, setImgAltText] = useState("");
   const [imageSrc, setImageSrc] = useState(null);
 
-
-  const handlePhotoUpload = (e) => {
-
-    const file = event.target.files[0];
-    if (file) {
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = () => {
-        setImageSrc(reader.result);
-      };
+
       reader.readAsDataURL(file);
-    }
+      reader.onload = () => {
+        const base64String = reader.result.split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+  const handlePhotoUpload = async (e) => {
+    const file = event.target.files[0];
+
+    const src = await getBase64(file);
+    setImageSrc(src);
   };
+
+  // const base64HeaderRemoved = imageSrc.split(",")[1];
+  // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
 
   const handleImageSave = (e) => {
     const selectedPhoto = "";
     const payload = {
-      type: "Image",
       src: imageSrc,
-      width: width,
-      height: height,
+      // width: width,
+      // height: height,
       "scale-type": scaleType,
       "aspect-ratio": aspectRatio,
-      "alt-text": imgAltText
+      "alt-text": imgAltText,
+    };
 
-    }
-    console.log(payload)
-  }
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log(payload);
+  };
 
   // date
-  const [dateLable, setDateLabel] = useState("")
-  const [minDate, setMinDate] = useState([])
-  const [maxDate, setMaxDate] = useState([])
-  const [dateName, setDateName] = useState("")
-  const [unavailableDate, setUnavailableDate] = useState([])
-  const [placeholader, setPlaceholder] = useState("")
+  const [dateLable, setDateLabel] = useState("");
+  const [minDate, setMinDate] = useState("");
+  const [maxDate, setMaxDate] = useState("");
+  const [dateName, setDateName] = useState("");
+  const [unavailableDate, setUnavailableDate] = useState("");
+  const [datePlaceholder, setDatePlaceholder] = useState("");
 
+  // const formatDateToString = (date) => {
+  //   if (!date) return null;
+
+  //   const d = new Date(date);
+  //   if (isNaN(d.getTime())) return null;
+
+  //   const year = d.getFullYear();
+  //   const month = `${d.getMonth() + 1}`.padStart(2, "0");
+  //   const day = `${d.getDate()}`.padStart(2, "0");
+
+  //   return `${year}-${month}-${day}`;
+  // };.
+
+  const formatDateToString = (date) => {
+    if (!date) return null;
+    const d = moment(date);
+    if (!d.isValid()) return null;
+    return d.format("YYYY-MM-DD");
+  };
+
+  const formatArrayToDates = (dates) => {
+    if (!Array.isArray(dates)) return [];
+
+    return dates.map((date) => formatDateToString(date)).filter(Boolean);
+  };
 
   const handleDateSave = () => {
-    const payload = {
-      type: "DatePicker",
-      label: dateLable,
-      "min-date": minDate,
-      "max-date": maxDate,
-      name: dateName,
-      "unavailable-dates": unavailableDate,
-      "helper-text": placeholader,
-      "error-message": ""
-    }
-    console.log(payload)
-
-    if (!name) {
-      toast.error("Please Enter Name")
-      return
+    if (!dateName) {
+      toast.error("Please Enter Name");
+      return;
     }
     if (!dateLable) {
-      toast.error("Please Enter Label")
-      return
+      toast.error("Please Enter Label");
+      return;
     }
-  }
 
+    const payload = {
+      label: dateLable,
+      name: dateName,
+      "min-date": formatDateToString(minDate),
+      "max-date": formatDateToString(maxDate),
+      "unavailable-dates": formatDateToString(unavailableDate),
+      "helper-text": datePlaceholder,
+      // "error-message": "",
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log(payload);
+  };
+
+  // Calendar
+  const [dateCalendarLable, setDateCalendarLabel] = useState("");
+  const [minCalendarDate, setMinCalendarDate] = useState("");
+  const [maxCalendarDate, setMaxCalendarDate] = useState("");
+  const [dateCalendarName, setDateCalendarName] = useState("");
+  const [unavailableCalendarDate, setUnavailableCalendarDate] = useState("");
+  const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
+
+  // const formatDateCalendarToString = (calendarDate) => {
+  //   if (!calendarDate) return "";
+  //   return String(new Date(calendarDate).getTime());
+  // };
+
+  const formatDateCalendarToString = (calendarDate) => {
+    if (!calendarDate) return "";
+    const d = moment(calendarDate);
+    if (!d.isValid()) return "";
+    return d.format("YYYY-MM-DD");
+  };
+
+  // const formatCalendarArrayToTimestamps = (arr) => {
+  //   return Array.isArray(arr)
+  //     ? arr.map((d) => String(new Date(d).getTime()))
+  //     : [];
+  // };
+
+  const formatCalendarArrayToTimestamps = (arr) => {
+    return Array.isArray(arr)
+      ? arr.map((d) => formatDateCalendarToString(d))
+      : [];
+  };
+
+  const handleCalendarSave = () => {
+    if (!dateCalendarName) {
+      toast.error("Please Enter Name");
+      return;
+    }
+    if (!dateCalendarLable) {
+      toast.error("Please Enter Label");
+      return;
+    }
+
+    const payload = {
+      label: dateCalendarLable,
+      name: dateCalendarName,
+      "min-date": formatDateCalendarToString(minCalendarDate),
+      "max-date": formatDateCalendarToString(maxCalendarDate),
+      "unavailable-dates": formatCalendarArrayToTimestamps(
+        unavailableCalendarDate
+      ),
+      "helper-text": dateCalendarPlaceholder,
+      // "error-message": "",
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log(payload);
+  };
 
   // document
-  const [documentLabel, setDocumentLabel] = useState("")
-  const [description, setDescription] = useState("")
-  const [minDocsUpload, setMinDocsUpload] = useState('')
-  const [maxDocsUpload, setMaxDocsUpload] = useState('')
+  const [documentLabel, setDocumentLabel] = useState("");
+  const [description, setDescription] = useState("");
+  const [minDocsUpload, setMinDocsUpload] = useState("");
+  const [maxDocsUpload, setMaxDocsUpload] = useState("");
   // const [documentName, setDocumentName] = useState("")
   // const [listItems, setListItems] = useState("")
   // const [mediaSize, setMediaSize] = useState("")
@@ -501,30 +581,25 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   const handleDocumentSave = () => {
     if (!description) {
-      toast.error("Please Enter Description")
-      return
+      toast.error("Please Enter Description");
+      return;
     }
     if (!documentLabel) {
-      toast.error("Please Enter Label")
-      return
+      toast.error("Please Enter Label");
+      return;
     }
-
 
     const payload = {
       label: documentLabel,
       description: description,
-      'min-uploaded-documents': minDocsUpload,
-      'max-uploaded-documents': maxDocsUpload
+      "min-uploaded-documents": minDocsUpload,
+      "max-uploaded-documents": maxDocsUpload,
       // name: documentName,
       // "media-size": mediaSize || "regular",
       // "list-items": listItems,
       // 'main-content': mainContent,
       // uploadedFile: file.name,
-      // start: imageSrc,
-      // end: end,
-      // badges: badges,
-      // tags: tags
-    }
+    };
 
     console.log("Saving:", payload);
     toast.success("Document saved successfully!");
@@ -537,34 +612,29 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     onSave(updatedData);
     onClose();
     console.log("Final Document data:", updatedData);
-  }
-
+  };
 
   // media
-  const [mediaLabel, setMediaLabel] = useState("")
-  const [mediaDescription, setMediaDescription] = useState("")
-  const [minPhotoUpload, setMinPhotoUpload] = useState('')
-  const [maxPhotoUpload, setMaxPhotoUpload] = useState('')
-
-
+  const [mediaLabel, setMediaLabel] = useState("");
+  const [mediaDescription, setMediaDescription] = useState("");
+  const [minPhotoUpload, setMinPhotoUpload] = useState("");
+  const [maxPhotoUpload, setMaxPhotoUpload] = useState("");
 
   const handleMediaSave = () => {
     if (!mediaDescription) {
-      toast.error("Please Enter Description")
-      return
+      toast.error("Please Enter Description");
+      return;
     }
     if (!mediaLabel) {
-      toast.error("Please Enter Label")
-      return
+      toast.error("Please Enter Label");
+      return;
     }
-
 
     const payload = {
       label: mediaLabel,
       description: mediaDescription,
-      'min-uploaded-photos': minPhotoUpload,
-      'max-uploaded-photos': maxPhotoUpload
-
+      "min-uploaded-photos": minPhotoUpload,
+      "max-uploaded-photos": maxPhotoUpload,
     };
 
     console.log("Saving:", payload);
@@ -578,21 +648,14 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     onSave(updatedData);
     onClose();
     console.log("Final Media data:", updatedData);
-  }
+  };
 
-
-
-
-
-
-
-  // footertype 
-  const [footerButtonLabel, setFooterButtonLabel] = useState('');
-  const [leftCaption, setLeftCaption] = useState('');
-  const [rightCaption, setRightCaption] = useState('');
-  const [centerCaption, setCenterCaption] = useState('');
-  const [nextAction, setNextAction] = useState('complete');
-
+  // footertype
+  const [footerButtonLabel, setFooterButtonLabel] = useState("");
+  const [leftCaption, setLeftCaption] = useState("");
+  const [rightCaption, setRightCaption] = useState("");
+  const [centerCaption, setCenterCaption] = useState("");
+  const [nextAction, setNextAction] = useState("complete");
 
   const handleFooterSave = () => {
     if (!footerButtonLabel) {
@@ -601,7 +664,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
 
     const payload = {
-      footer: {}
+      footer: {},
     };
 
     const id = `footer_1`; // Unique ID for the footer (adjust if needed)
@@ -629,27 +692,23 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   // footertype
 
-
-
-  // RadioBtn 
+  // RadioBtn
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
-
-  const [radioBtnLabel, setRadioBtnLabel] = useState('');
+  const [radioBtnLabel, setRadioBtnLabel] = useState("");
   const [radioButtonOptions, setRadioButtonOptions] = useState([]);
   const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
-  const [radioImageFile, setRadioImageFile] = useState(null)
-  const [radioImageSrc, setRadioImageSrc] = useState(null)
+  const [radioImageFile, setRadioImageFile] = useState(null);
+  const [radioImageSrc, setRadioImageSrc] = useState(null);
   const [uploadedRadioImgId, setUploadedRadioImgId] = useState(null);
-  const [radioOptions, setRadioOptions] = useState([])
+  const [radioOptions, setRadioOptions] = useState([]);
   const [draft, setDraft] = useState({
-    title: '',
-    description: '',
-    metadata: '',
-    image: '',
-    altText: '',
+    title: "",
+    description: "",
+    metadata: "",
+    image: "",
+    altText: "",
   });
-
 
   const handleRadioImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -669,8 +728,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     reader.readAsDataURL(file);
   };
 
-
-
   const handleRadioBtnEdit = (idx) => {
     const opt = radioButtonOptions[idx];
     setRadiobtnEditIdx(idx);
@@ -678,9 +735,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       title: opt.title,
       description: opt.description,
       metadata: opt.metadata,
-      image: opt.image || '',
-      altText: opt['alt-text'] || '',
-
+      image: opt.image || "",
+      altText: opt["alt-text"] || "",
     });
   };
 
@@ -694,32 +750,28 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       description: draft.description.slice(0, 300),
       metadata: draft.metadata.slice(0, 20),
       image: draft.image,
-      'alt-text': draft.altText,
-
+      "alt-text": draft.altText,
     };
 
     setRadioButtonOptions(newOptions);
     setRadiobtnEditIdx(null);
     setDraft({
-      title: '',
-      description: '',
-      metadata: '',
-      image: '',
-      altText: '',
-
+      title: "",
+      description: "",
+      metadata: "",
+      image: "",
+      altText: "",
     });
   };
 
   const handleCancelInlineRadio = () => {
     setRadiobtnEditIdx(null);
     setDraft({
-      title: '',
-      description: '',
-      metadata: '',
-      image: '',
-      altText: '',
-
-
+      title: "",
+      description: "",
+      metadata: "",
+      image: "",
+      altText: "",
     });
   };
 
@@ -735,14 +787,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       {
         id: newId,
         title: `Option ${newId}`,
-        description: '',
-        metadata: '',
-        image: '',
-
-      }
+        description: "",
+        metadata: "",
+        image: "",
+      },
     ]);
   };
-
 
   const handleRadioUploadFile = async () => {
     if (!radioImageFile) {
@@ -759,7 +809,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       toast.error("Failed to upload file.");
     }
   };
-
 
   const handleSaveRadioButton = () => {
     // 1) Validate label
@@ -778,7 +827,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     // }
 
     // 2) Filter and validate options
-    const filteredOptions = radioButtonOptions.filter((opt) => opt.title?.trim());
+    const filteredOptions = radioButtonOptions.filter((opt) =>
+      opt.title?.trim()
+    );
 
     if (filteredOptions.length < 2) {
       toast.error("At least two Radio option is required!");
@@ -797,7 +848,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         return;
       }
       if (opt.description?.length > 300) {
-        toast.error(`Option ${i + 1}: Description must be under 300 characters`);
+        toast.error(
+          `Option ${i + 1}: Description must be under 300 characters`
+        );
         return;
       }
       if (opt.metadata?.length > 20) {
@@ -807,7 +860,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
       if (opt.image) {
         const imageSize = Math.ceil(
-          (opt.image.length * (3 / 4)) -
+          opt.image.length * (3 / 4) -
           (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         if (imageSize > 100 * 1024) {
@@ -827,14 +880,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }));
     console.log("Filtered and processed radio button options:", payloadOptions);
 
-
     // 4) Final payload and merge
     const payload = {
       label: radioBtnLabel.trim(),
       "data-source": payloadOptions,
     };
-
-
 
     const existingCount = selectedItem?.radioButton
       ? Object.keys(selectedItem.radioButton).length
@@ -842,41 +892,40 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     const id = `radioButton_${existingCount + 1}`;
 
-
     const updatedData = {
       ...selectedItem,
       ...payload,
       radioButton: {
         ...(selectedItem?.radioButton || {}),
-        [id]: payload
-      }
-    }
-
+        [id]: payload,
+      },
+    };
 
     // 5) Save and close
     onSave(updatedData);
     onClose();
 
-    console.log("Radio button updated data which send to generate payload", updatedData);
+    console.log(
+      "Radio button updated data which send to generate payload",
+      updatedData
+    );
   };
 
-
-
-
-
   //checkbox
-  const [mainLabelCheckbox, setMainLabelCheckbox] = useState('');
-  const [mainNameCheckbox, setMainNameCheckbox] = useState('');
+  const [mainLabelCheckbox, setMainLabelCheckbox] = useState("");
+  const [mainNameCheckbox, setMainNameCheckbox] = useState("");
   const [checkBoxes, setCheckBoxes] = useState([]);
   const [editCheckBoxId, setEditCheckBoxId] = useState(null);
-  const [uploadedImgId, setUploadedImgId] = useState(null)
-  const [checkboxImageFile, setCheckboxImageFile] = useState(null)
-  const [checkboxImageSrc, setCheckboxImageSrc] = useState(null)
-  const [uploadedCheckboxImgId, setUploadedCheckboxImgId] = useState(null)
-  const [draftCheckbox, setDraftCheckbox] = useState({ title: "", description: "", metadata: "" });
+  const [uploadedImgId, setUploadedImgId] = useState(null);
+  const [checkboxImageFile, setCheckboxImageFile] = useState(null);
+  const [checkboxImageSrc, setCheckboxImageSrc] = useState(null);
+  const [uploadedCheckboxImgId, setUploadedCheckboxImgId] = useState(null);
+  const [draftCheckbox, setDraftCheckbox] = useState({
+    title: "",
+    description: "",
+    metadata: "",
+  });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
-
-
 
   // anshu
   const Max_Image_Size = 100 * 1024; // 100 KB
@@ -898,8 +947,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     };
     reader.readAsDataURL(file);
   };
-
-
 
   const handleCheckboxUploadFile = async () => {
     if (!checkboxImageFile) {
@@ -931,7 +978,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     updated[checkboxEditIdx] = {
       ...updated[checkboxEditIdx],
       ...draftCheckbox,
-      image: uploadedCheckboxImgId || updated[checkboxEditIdx].image || ""
+      image: uploadedCheckboxImgId || updated[checkboxEditIdx].image || "",
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
@@ -943,7 +990,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setCheckBoxes(updated);
   };
 
-
   const handleCheckboxAddNew = () => {
     const newId = (checkBoxes.length + 1).toString();
     setCheckBoxes((prev) => [
@@ -951,11 +997,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       {
         id: newId,
         title: `Option ${newId}`,
-        description: '',
-        metadata: '',
-        image: '',
-
-      }
+        description: "",
+        metadata: "",
+        image: "",
+      },
     ]);
   };
 
@@ -994,7 +1039,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     const id = `checkbox_${existingCount + 1}`;
 
-
     const updatedData = {
       ...selectedItem,
       ...payload,
@@ -1004,7 +1048,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       },
     };
 
-
     onSave(updatedData);
     onClose();
 
@@ -1013,19 +1056,16 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   // anshu
   //checkbox
 
-
-
   // dropdown
-  const [mainLabelDropdown, setMainLabelDropdown] = useState('');
+  const [mainLabelDropdown, setMainLabelDropdown] = useState("");
   const [options, setOptions] = useState([]);
   const [editingIdx, setEditingIdx] = useState(null);
-  const [draftTitle, setDraftTitle] = useState('');
-  const [draftDescription, setDraftDescription] = useState('');
-  const [draftMetadata, setDraftMetaData] = useState('');
+  const [draftTitle, setDraftTitle] = useState("");
+  const [draftDescription, setDraftDescription] = useState("");
+  const [draftMetadata, setDraftMetaData] = useState("");
   const [dropImageSrc, setDropImageSrc] = useState(null);
   const [dropImageFile, setDropImageFile] = useState(null);
   const [uploadedId, setUploadedId] = useState(null);
-
 
   const handleImageChange = (event) => {
     const file = event.target.files?.[0];
@@ -1045,8 +1085,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     reader.readAsDataURL(file);
   };
 
-
-
   const handleUploadFile = async () => {
     if (!dropImageFile) {
       toast.error("Please select an image first before uploading");
@@ -1054,7 +1092,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
 
     try {
-
       const response = await uploadImageFile(dropImageFile, 1);
 
       console.log("Upload response:", response);
@@ -1066,9 +1103,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
   };
 
-
-
-
   const handleStartEdit = (idx) => {
     const opt = options[idx];
     setEditingIdx(idx);
@@ -1076,7 +1110,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setDraftDescription(opt.description);
     setDraftMetaData(opt.metadata);
   };
-
 
   const handleSaveInline = () => {
     if (!draftTitle.trim()) return;
@@ -1094,34 +1127,29 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       )
     );
 
-
     setEditingIdx(null);
-    setDraftTitle('');
-    setDraftDescription('');
-    setDraftMetaData('');
+    setDraftTitle("");
+    setDraftDescription("");
+    setDraftMetaData("");
   };
-
 
   const handleCancelInline = () => {
     setEditingIdx(null);
-    setDraftTitle('');
-    setDraftDescription('');
-    setDraftMetaData('');
+    setDraftTitle("");
+    setDraftDescription("");
+    setDraftMetaData("");
   };
-
 
   const handleRemove = (idx) => {
     setOptions((prev) => prev.filter((_, i) => i !== idx));
 
-
     if (idx === editingIdx) {
       setEditingIdx(null);
-      setDraftTitle('');
-      setDraftDescription('');
-      setDraftMetaData('');
+      setDraftTitle("");
+      setDraftDescription("");
+      setDraftMetaData("");
     }
   };
-
 
   const handleAddNew = () => {
     setOptions((prev) => [
@@ -1129,16 +1157,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       {
         id: prev.length + 1,
         title: `Option ${prev.length + 1}`,
-        description: '',
-        metadata: '',
-
-      }
+        description: "",
+        metadata: "",
+      },
     ]);
   };
 
-
   const handleSaveDropdown = () => {
-
     // 1) Filter out any options with an empty title
     const filteredOptions = options.filter((o) => o.title.trim());
     if (filteredOptions.length < 2) {
@@ -1161,13 +1186,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       "data-source": payloadOptions,
     };
 
-
     const existingCount = selectedItem?.dropdown
       ? Object.keys(selectedItem.dropdown).length
       : 0;
 
     const id = `dropdown_${existingCount + 1}`;
-
 
     const updatedData = {
       ...selectedItem,
@@ -1175,14 +1198,15 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       dropdown: {
         ...(selectedItem?.dropdown || []),
         [id]: payload,
-      }
-
-
+      },
     };
 
     onSave(updatedData);
 
-    console.log("dropdown updated data which send to generate payload", updatedData)
+    console.log(
+      "dropdown updated data which send to generate payload",
+      updatedData
+    );
   };
   // dropdown
   // akhil
@@ -1215,43 +1239,36 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </IconButton>
         </div>
 
-
         {/* Input Fields for Text-Based Items */}
-        {["heading", "subheading", "textbody", "textcaption",].includes(selectedItem?.type) && (
-          <div className="mb-2 font-semibold text-lg mt-3">
-
-            <InputField
-              label={`Edit ${type}`}
-              placeholder={`Enter ${type}`}
-              variant="outlined"
-              tooltipContent={`Edit ${type}`}
-              tooltipPlacement="right"
-              fullWidth
-              value={headingValue}
-              maxLength={maxLengthMap[selectedItem?.type] || 80}
-              onChange={(e) => setHeadingValue(e.target.value)}
-            />
-
-
-
-            <div className="mt-5 flex justify-center items-center">
-              <UniversalButton
-                label="SAVE"
-                onClick={() => {
-                  onSave({
-                    index: selectedItem.index,
-                    [type]: headingValue
-                  })
-                }}
+        {["heading", "subheading", "textbody", "textcaption"].includes(
+          selectedItem?.type
+        ) && (
+            <div className="mb-2 font-semibold text-lg mt-3">
+              <InputField
+                label={`Edit ${type}`}
+                placeholder={`Enter ${type}`}
+                variant="outlined"
+                tooltipContent={`Edit ${type}`}
+                tooltipPlacement="right"
+                fullWidth
+                value={headingValue}
+                maxLength={maxLengthMap[selectedItem?.type] || 80}
+                onChange={(e) => setHeadingValue(e.target.value)}
               />
+
+              <div className="mt-5 flex justify-center items-center">
+                <UniversalButton
+                  label="SAVE"
+                  onClick={() => {
+                    onSave({
+                      index: selectedItem.index,
+                      [type]: headingValue,
+                    });
+                  }}
+                />
+              </div>
             </div>
-
-
-
-
-          </div>
-        )}
-
+          )}
 
         {["textInput", "textArea"].includes(selectedItem?.type) && (
           <div className="mb-2 text-lg space-y-2 mt-3">
@@ -1271,15 +1288,15 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 tooltipContent={`Select Type ${type}`}
                 tooltipPlacement="right"
                 options={OptionsTypeOptions}
-                value={selectedOptionsType?.value || ''}
+                value={selectedOptionsType?.value || ""}
                 onChange={handleDropdownChange}
-                placeholder={selectedOptionsType?.label || 'Select Type'}
-              />)
-            }
+                placeholder={selectedOptionsType?.label || "Select Type"}
+              />
+            )}
 
             <InputField
               label={`Placeholder ${type}`}
-              type='text'
+              type="text"
               placeholder={`Enter placeholder for ${type}`}
               tooltipContent={`Enter placeholder for ${type}`}
               tooltipPlacement="right"
@@ -1288,27 +1305,25 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               onChange={handlePlaceholder}
             />
 
-            {
-              selectedItem?.type === "textInput" && (
-                <InputField
-                  label="Enter error to display"
-                  id="maineroor"
-                  placeholder="Enter Error"
-                  tooltipContent={`Enter Error for ${type}`}
-                  tooltipPlacement="right"
-                  value={errorValue}
-                  maxLength={30}
-                  onChange={handleErrorChange}
-                />
-              )
-            }
+            {selectedItem?.type === "textInput" && (
+              <InputField
+                label="Enter error to display"
+                id="maineroor"
+                placeholder="Enter Error"
+                tooltipContent={`Enter Error for ${type}`}
+                tooltipPlacement="right"
+                value={errorValue}
+                maxLength={30}
+                onChange={handleErrorChange}
+              />
+            )}
 
-            <div style={{ display: 'flex', gap: 8 }}>
+            <div style={{ display: "flex", gap: 8 }}>
               <InputField
                 label="Min Length"
                 id="min"
                 type="number"
-                placeholder={isNumberType ? 'Min digits' : 'Min length'}
+                placeholder={isNumberType ? "Min digits" : "Min length"}
                 tooltipContent="Enter MinLength"
                 tooltipPlacement="right"
                 value={minValue}
@@ -1319,7 +1334,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 label="Max Length"
                 id="max"
                 type="number"
-                placeholder={isNumberType ? 'Max digits' : 'Max length'}
+                placeholder={isNumberType ? "Max digits" : "Max length"}
                 tooltipContent="Enter MaxLength"
                 tooltipPlacement="right"
                 value={maxValue}
@@ -1329,26 +1344,30 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             </div>
 
             <div>
-              <label htmlFor="required" className="text-sm font-medium text-gray-700"
+              <label
+                htmlFor="required"
+                className="text-sm font-medium text-gray-700"
                 tooltipContent="Select an option which required for you."
-                tooltipPlacement="right">Is Input Required??</label>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-
-                <Switch {...switchLabel} checked={switchChecked} onChange={handleSwitchChange} id="required" />
-                <span>{switchChecked ? 'Yes' : 'No'}</span>
+                tooltipPlacement="right"
+              >
+                Is Input Required??
+              </label>
+              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <Switch
+                  {...switchLabel}
+                  checked={switchChecked}
+                  onChange={handleSwitchChange}
+                  id="required"
+                />
+                <span>{switchChecked ? "Yes" : "No"}</span>
               </div>
             </div>
 
             <div className="flex justify-center items-center">
-              <UniversalButton
-                label="SAVE"
-                onClick={handleInputSave}
-              />
+              <UniversalButton label="SAVE" onClick={handleInputSave} />
             </div>
           </div>
         )}
-
-
 
         {/* Editable Options for Checkboxes */}
         {selectedItem?.type === "checkBox" && (
@@ -1373,10 +1392,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   sx={{
                     mb: 2,
                     p: 2,
-                    border: '1px solid #ccc',
+                    border: "1px solid #ccc",
                     borderRadius: 2,
                     gap: 4,
-                    bgcolor: isEditing ? '#f5f5f5' : 'white'
+                    bgcolor: isEditing ? "#f5f5f5" : "white",
                   }}
                 >
                   {isEditing ? (
@@ -1389,7 +1408,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipPlacement="right"
                           value={draftCheckbox.title}
                           onChange={(e) =>
-                            setDraftCheckbox((d) => ({ ...d, title: e.target.value }))
+                            setDraftCheckbox((d) => ({
+                              ...d,
+                              title: e.target.value,
+                            }))
                           }
                           fullWidth
                           sx={{ mb: 1 }}
@@ -1401,7 +1423,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipPlacement="right"
                           value={draftCheckbox.description}
                           onChange={(e) =>
-                            setDraftCheckbox((d) => ({ ...d, description: e.target.value }))
+                            setDraftCheckbox((d) => ({
+                              ...d,
+                              description: e.target.value,
+                            }))
                           }
                           fullWidth
                           sx={{ mb: 1 }}
@@ -1413,13 +1438,16 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipPlacement="right"
                           value={draftCheckbox.metadata}
                           onChange={(e) =>
-                            setDraftCheckbox((d) => ({ ...d, metadata: e.target.value }))
+                            setDraftCheckbox((d) => ({
+                              ...d,
+                              metadata: e.target.value,
+                            }))
                           }
                           fullWidth
                           sx={{ mb: 1 }}
                         />
 
-                        <Box sx={{ display: 'flex', mb: 1 }}>
+                        <Box sx={{ display: "flex", mb: 1 }}>
                           <InputField
                             label="Upload Image"
                             type="file"
@@ -1429,24 +1457,47 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             tooltipPlacement="right"
                             required
                             onChange={handleCheckboxImageChange}
-                            sx={{ display: 'none' }}
+                            sx={{ display: "none" }}
                           />
                           <button onClick={handleCheckboxUploadFile}>
-                            <FileUploadOutlinedIcon sx={{ fontSize: "23px", marginTop: 3 }} />
+                            <FileUploadOutlinedIcon
+                              sx={{ fontSize: "23px", marginTop: 3 }}
+                            />
                           </button>
                         </Box>
 
-                        <Box sx={{ display: 'flex', gap: 2, mt: 2, display: 'flex', justifyContent: 'center' }}>
-                          <UniversalButton label="Save" onClick={handleSaveInlineCheckbox} />
-                          <UniversalButton label="Cancel" onClick={handleCancelInlineCheckbox} />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 2,
+                            mt: 2,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <UniversalButton
+                            label="Save"
+                            onClick={handleSaveInlineCheckbox}
+                          />
+                          <UniversalButton
+                            label="Cancel"
+                            onClick={handleCancelInlineCheckbox}
+                          />
                         </Box>
                       </div>
                     </>
                   ) : (
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Box sx={{ flexGrow: 1 }} onClick={() => handleCheckboxEdit(idx)}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <Box
+                        sx={{ flexGrow: 1 }}
+                        onClick={() => handleCheckboxEdit(idx)}
+                      >
                         <Typography variant="subtitle1">{opt.title}</Typography>
-                        <Typography variant="body2">{opt.description}</Typography>
+                        <Typography variant="body2">
+                          {opt.description}
+                        </Typography>
                       </Box>
                       <IconButton onClick={() => handleCheckboxEdit(idx)}>
                         <EditIcon />
@@ -1466,15 +1517,14 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               </IconButton>
             </Box>
 
-
-
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-              <UniversalButton label="Save Checkbox" onClick={handleCheckBoxSave} />
+            <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+              <UniversalButton
+                label="Save Checkbox"
+                onClick={handleCheckBoxSave}
+              />
             </Box>
           </FormControl>
         )}
-
-
 
         {/* Editable Options for Radio Buttons */}
         {selectedItem?.type === "radioButton" && (
@@ -1494,8 +1544,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             {radioButtonOptions.map((opt, idx) => {
               const isEditing = idx === radiobtnEditIdx;
               return (
-
-                <Box key={opt.id} sx={{ mb: 2, p: 2, border: '1px solid #ccc', borderRadius: 2, gap: 4, bgcolor: isEditing ? '#f5f5f5' : 'white' }}>
+                <Box
+                  key={opt.id}
+                  sx={{
+                    mb: 2,
+                    p: 2,
+                    border: "1px solid #ccc",
+                    borderRadius: 2,
+                    gap: 4,
+                    bgcolor: isEditing ? "#f5f5f5" : "white",
+                  }}
+                >
                   {isEditing ? (
                     <>
                       <div className="space-y-3">
@@ -1505,7 +1564,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipContent="Enter Title"
                           tooltipPlacement="right"
                           value={draft.title}
-                          onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                          onChange={(e) =>
+                            setDraft((d) => ({ ...d, title: e.target.value }))
+                          }
                           fullWidth
                           sx={{ mb: 1 }}
                         />
@@ -1515,7 +1576,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipContent="Enter Description"
                           tooltipPlacement="right"
                           value={draft.description}
-                          onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                          onChange={(e) =>
+                            setDraft((d) => ({
+                              ...d,
+                              description: e.target.value,
+                            }))
+                          }
                           fullWidth
                           sx={{ mb: 1 }}
                         />
@@ -1525,7 +1591,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipContent="Enter MetaData"
                           tooltipPlacement="right"
                           value={draft.metadata}
-                          onChange={(e) => setDraft((d) => ({ ...d, metadata: e.target.value }))}
+                          onChange={(e) =>
+                            setDraft((d) => ({
+                              ...d,
+                              metadata: e.target.value,
+                            }))
+                          }
                           fullWidth
                           sx={{ mb: 1 }}
                         />
@@ -1536,7 +1607,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                         fullWidth
                         sx={{ mb: 1 }}
                        /> */}
-                        <Box sx={{ display: 'flex', mb: 1 }}>
+                        <Box sx={{ display: "flex", mb: 1 }}>
                           <InputField
                             label="Upload Image"
                             type="file"
@@ -1546,25 +1617,47 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             tooltipPlacement="right"
                             required
                             onChange={handleRadioImageChange}
-                            sx={{ display: 'none' }}
+                            sx={{ display: "none" }}
                           />
                           <button onClick={handleRadioUploadFile}>
-                            <FileUploadOutlinedIcon sx={{ fontSize: "23px", marginTop: 3 }} />
+                            <FileUploadOutlinedIcon
+                              sx={{ fontSize: "23px", marginTop: 3 }}
+                            />
                           </button>
                         </Box>
 
-
-                        <Box sx={{ display: 'flex', gap: 2, marginTop: 2, display: 'flex', justifyContent: 'center' }}>
-                          <UniversalButton label="Save" onClick={handleSaveInlineRadio} />
-                          <UniversalButton label="Cancel" onClick={handleCancelInlineRadio} />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 2,
+                            marginTop: 2,
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <UniversalButton
+                            label="Save"
+                            onClick={handleSaveInlineRadio}
+                          />
+                          <UniversalButton
+                            label="Cancel"
+                            onClick={handleCancelInlineRadio}
+                          />
                         </Box>
                       </div>
                     </>
                   ) : (
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
-                      <Box sx={{ flexGrow: 1 }} onClick={() => handleRadioBtnEdit(idx)}>
+                    <Box
+                      sx={{ display: "flex", justifyContent: "space-between" }}
+                    >
+                      <Box
+                        sx={{ flexGrow: 1 }}
+                        onClick={() => handleRadioBtnEdit(idx)}
+                      >
                         <Typography variant="subtitle1">{opt.title}</Typography>
-                        <Typography variant="body2">{opt.description}</Typography>
+                        <Typography variant="body2">
+                          {opt.description}
+                        </Typography>
                       </Box>
                       <IconButton onClick={() => handleRadioBtnEdit(idx)}>
                         <EditIcon />
@@ -1575,7 +1668,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                     </Box>
                   )}
                 </Box>
-
               );
             })}
 
@@ -1585,13 +1677,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               </IconButton>
             </Box>
 
-            <Box sx={{ mt: 3, display: 'flex', justifyContent: 'center' }}>
-              <UniversalButton label="Save RadioButton"
+            <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+              <UniversalButton
+                label="Save RadioButton"
                 onClick={handleSaveRadioButton}
               />
             </Box>
           </FormControl>
-
         )}
 
         {/* Editable Options for Dropdown */}
@@ -1622,11 +1714,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   sx={{
                     mb: 1,
                     p: 1,
-                    border: '1px solid #ddd',
+                    border: "1px solid #ddd",
                     borderRadius: 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    bgcolor: isEditing ? '#f5f5f5' : 'white'
+                    display: "flex",
+                    alignItems: "center",
+                    bgcolor: isEditing ? "#f5f5f5" : "white",
                   }}
                 >
                   {isEditing ? (
@@ -1672,7 +1764,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           fullWidth
                         />
                       </Box>
-                      <Box sx={{ display: 'flex', mb: 1 }}>
+                      <Box sx={{ display: "flex", mb: 1 }}>
                         <InputField
                           label="Upload Image"
                           type="file"
@@ -1682,13 +1774,23 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipPlacement="right"
                           required
                           onChange={handleImageChange}
-                          sx={{ display: 'none' }}
+                          sx={{ display: "none" }}
                         />
                         <button onClick={handleUploadFile}>
-                          <FileUploadOutlinedIcon sx={{ fontSize: "23px", marginTop: 3 }} />
+                          <FileUploadOutlinedIcon
+                            sx={{ fontSize: "23px", marginTop: 3 }}
+                          />
                         </button>
                       </Box>
-                      <Box sx={{ display: 'flex', gap: 1, mt: 2, display: 'flex', justifyContent: "center" }}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          mt: 2,
+                          // display: "flex",
+                          justifyContent: "center",
+                        }}
+                      >
                         <UniversalButton
                           label="Save Option"
                           onClick={handleSaveInline}
@@ -1705,7 +1807,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                     // ── Static View with Edit & Remove Icons ──
                     <>
                       <Box
-                        sx={{ flexGrow: 1, cursor: 'pointer' }}
+                        sx={{ flexGrow: 1, cursor: "pointer" }}
                         onClick={() => handleStartEdit(idx)}
                       >
                         <Typography variant="subtitle1">{opt.title}</Typography>
@@ -1757,7 +1859,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </FormControl>
         )}
 
-
         {/* Editable option for FooterButton  */}
         {selectedItem?.type === "footerbutton" && (
           <div className="mb-2 text-lg space-y-2">
@@ -1768,7 +1869,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipPlacement="right"
               id="footer-button-label"
               value={footerButtonLabel}
-              onChange={e => setFooterButtonLabel(e.target.value)}
+              onChange={(e) => setFooterButtonLabel(e.target.value)}
             />
 
             <InputField
@@ -1778,7 +1879,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipContent="Enter Left Caption"
               tooltipPlacement="rigth"
               value={leftCaption}
-              onChange={e => setLeftCaption(e.target.value)}
+              onChange={(e) => setLeftCaption(e.target.value)}
             />
 
             <InputField
@@ -1788,7 +1889,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipPlacement="right"
               id="right-caption"
               value={rightCaption}
-              onChange={e => setRightCaption(e.target.value)}
+              onChange={(e) => setRightCaption(e.target.value)}
             />
 
             <InputField
@@ -1798,7 +1899,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipPlacement="right"
               id="center-caption"
               value={centerCaption}
-              onChange={e => setCenterCaption(e.target.value)}
+              onChange={(e) => setCenterCaption(e.target.value)}
             />
 
             <AnimatedDropdown
@@ -1807,23 +1908,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipContent="Select Option"
               tooltipPlacement="right"
               options={[
-                { value: 'complete', label: 'Complete' },
-                { value: 'navigate', label: 'Navigate' },
+                { value: "complete", label: "Complete" },
+                { value: "navigate", label: "Navigate" },
               ]}
               value={nextAction}
-              onChange={val => setNextAction(val)}
+              onChange={(val) => setNextAction(val)}
             />
-            <div className='flex justify-center '>
-              <UniversalButton
-                label="SAVE"
-                onClick={handleFooterSave}
-              />
+            <div className="flex justify-center ">
+              <UniversalButton label="SAVE" onClick={handleFooterSave} />
             </div>
-
-
           </div>
         )}
-
 
         {/* Editable option for Embedded link */}
         {selectedItem?.type === "embeddedlink" && (
@@ -1842,21 +1937,18 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 id="next-action"
                 label="Action"
                 options={[
-                  { value: 'data-exchage', label: 'Data Exchange' },
-                  { value: 'navigate', label: 'Navigate' },
-                  { value: 'open-url', label: "Open URL" }
+                  { value: "data-exchage", label: "Data Exchange" },
+                  { value: "navigate", label: "Navigate" },
+                  { value: "open-url", label: "Open URL" },
                 ]}
                 value={onClickAction}
-                onChange={value => setOnClickAction(value)}
+                onChange={(value) => setOnClickAction(value)}
               />
 
-              <UniversalButton label="Save"
-                onClick={handleOPTSave} />
+              <UniversalButton label="Save" onClick={handleOPTSave} />
             </div>
-
           </>
-        )
-        }
+        )}
 
         {/* Editable option for Opt In */}
         {selectedItem?.type === "optin" && (
@@ -1885,32 +1977,27 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   id="next-action"
                   label="Action"
                   options={[
-                    { value: 'data-exchage', label: 'Data Exchange' },
-                    { value: 'navigate', label: 'Navigate' },
-                    { value: 'open-url', label: 'Open URL' }
+                    { value: "data-exchage", label: "Data Exchange" },
+                    { value: "navigate", label: "Navigate" },
+                    { value: "open-url", label: "Open URL" },
                   ]}
                   value={optAction}
-                  onChange={value => setOPTAction(value)}
+                  onChange={(value) => setOPTAction(value)}
                 />
               )}
-
-
 
               <UniversalButton
                 label="Read More"
                 onClick={handleOPTSave}
                 className="text-blue-600 underline text-sm w-fit"
               />
-
-
             </div>
           </>
         )}
 
-        {selectedItem?.type === "photo" && (
+        {selectedItem?.type === "image" && (
           <>
             <div className="space-y-3">
-
               <InputField
                 type="file"
                 id="file-upload"
@@ -1919,11 +2006,15 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 onChange={handlePhotoUpload}
               />
 
-              {imageSrc && (
-                <img src={imageSrc} alt="Uploaded preview" style={{ maxWidth: '100%', marginTop: '10px' }} />
-              )}
+              {/* {imageSrc && (
+                <img
+                  src={imageSrc}
+                  alt="Uploaded preview"
+                  style={{ maxWidth: "100%", marginTop: "10px" }}
+                />
+              )} */}
 
-              <InputField
+              {/* <InputField
                 label="Width"
                 type="integer"
                 value={width}
@@ -1935,7 +2026,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 type="integer"
                 value={height}
                 onChange={(e) => setHeight(e.target.value)}
-              />
+              /> */}
 
               <InputField
                 label="Scale-Type"
@@ -1944,12 +2035,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 onChange={(e) => setSCaleType(e.target.value)}
               />
 
-              <InputField
+              {/* <InputField
                 label="Aspect-Ratio"
                 type="number"
                 value={aspectRatio}
                 onChange={(e) => setAspectRatio(e.target.value)}
-              />
+              /> */}
 
               <InputField
                 label="Alt-Text"
@@ -1957,11 +2048,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 type="text"
                 onChange={(e) => setImgAltText(e.target.value)}
               />
-
-              <UniversalButton
-                label="Save"
-                onClick={handleImageSave}
-              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleImageSave} />
+              </div>
             </div>
           </>
         )}
@@ -1969,12 +2058,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         {selectedItem?.type === "document" && (
           <>
             <div className="space-y-3 mt-3">
-
               <InputField
                 label="Upload Documents"
-                placeholder='Enter Label'
-                tooltipContent='Enter Label For Upload Document'
-                tooltipPlacement='right'
+                placeholder="Enter Label"
+                tooltipContent="Enter Label For Upload Document"
+                tooltipPlacement="right"
                 type="text"
                 value={documentLabel}
                 onChange={(e) => setDocumentLabel(e.target.value)}
@@ -1982,14 +2070,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
               <InputField
                 label="Description"
-                placeholder='Enter Description'
-                tooltipContent='Enter Description for Document'
+                placeholder="Enter Description"
+                tooltipContent="Enter Description for Document"
                 tooltipPlacement="right"
                 type="text"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
-
 
               <InputField
                 label="Min-Upload-Document"
@@ -2002,15 +2089,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               />
 
               <InputField
-                label='Max-Upload-Document'
+                label="Max-Upload-Document"
                 placeholder="Maximum 1 document Upload"
                 tooltipContent="Maximum 1 document Upload"
                 tooltipPlacement="right"
                 value={maxDocsUpload}
                 onChange={(e) => setMaxDocsUpload(e.target.value)}
               />
-
-
 
               {/* <InputField
                 label="List-items"
@@ -2021,12 +2106,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 onChange={(e) => setListItems(e.target.value)}
               /> */}
 
-
               <div className="flex justify-center">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleDocumentSave}
-                />
+                <UniversalButton label="Save" onClick={handleDocumentSave} />
               </div>
             </div>
           </>
@@ -2035,25 +2116,23 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         {selectedItem?.type === "media" && (
           <>
             <div className="space-y-3 mt-3">
-
               <InputField
                 label="Upload photos"
-                placeholder='Enter Label'
-                tooltipContent='Enter Label For Upload Photo'
-                tooltipPlacement='right'
+                placeholder="Enter Label"
+                tooltipContent="Enter Label For Upload Photo"
+                tooltipPlacement="right"
                 value={mediaLabel}
                 onChange={(e) => setMediaLabel(e.target.value)}
               />
 
               <InputField
                 label="Description"
-                placeholder='Enter Description'
-                tooltipContent='Enter Description for Photo'
+                placeholder="Enter Description"
+                tooltipContent="Enter Description for Photo"
                 tooltipPlacement="right"
                 value={mediaDescription}
                 onChange={(e) => setMediaDescription(e.target.value)}
               />
-
 
               <InputField
                 label="Min-Upload-Photo"
@@ -2066,7 +2145,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               />
 
               <InputField
-                label='Max-Upload-Photos'
+                label="Max-Upload-Photos"
                 placeholder="Maximum 1 photos Upload"
                 tooltipContent="Maximum 1 photos Upload"
                 tooltipPlacement="right"
@@ -2075,12 +2154,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 onChange={(e) => setMaxPhotoUpload(e.target.value)}
               />
 
-
               <div className="flex justify-center">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleMediaSave}
-                />
+                <UniversalButton label="Save" onClick={handleMediaSave} />
               </div>
             </div>
           </>
@@ -2094,116 +2169,135 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           />
         )}
 
-        {selectedItem?.type === "image" && (
-          <>
-            <div className="space-y-3">
-
-              <InputField
-                type="file"
-                id="file-upload"
-                accept=".png, .jpeg"
-                required={true}
-                onChange={handlePhotoUpload}
-              />
-
-              {imageSrc && (
-                <img src={imageSrc} alt="Uploaded preview" style={{ maxWidth: '100%', marginTop: '10px' }} />
-              )}
-
-              <InputField
-                label="Width"
-                type="integer"
-                value={width}
-                onChange={(e) => setWidth(e.target.value)}
-              />
-
-              <InputField
-                label="Height"
-                type="integer"
-                value={height}
-                onChange={(e) => setHeight(e.target.value)}
-              />
-
-              <InputField
-                label="Scale-Type"
-                type="text"
-                value={scaleType}
-                onChange={(e) => setSCaleType(e.target.value)}
-              />
-
-              <InputField
-                label="Aspect-Ratio"
-                type="number"
-                value={aspectRatio}
-                onChange={(e) => setAspectRatio(e.target.value)}
-              />
-
-              <InputField
-                label="Alt-Text"
-                value={imgAltText}
-                type="text"
-                onChange={(e) => setImgAltText(e.target.value)}
-              />
-
-              <UniversalButton
-                label="Save"
-                onClick={handleImageSave}
-              />
-
-
-
-
-            </div>
-          </>
-        )}
-
         {selectedItem?.type === "date" && (
-          <div className="space-y-3">
-
-
+          <div className="space-y-3 mt-3">
             <InputField
               label="Date Label"
+              placeholder="Enter Date Label"
+              tooltipContent="Enter Date Label"
+              tooltipPlacement="right"
               maxLength={40}
               value={dateLable}
               onChange={(e) => setDateLabel(e.target.value)}
             />
 
-
             <InputField
               label="Name"
+              placeholder="Enter Name"
+              tooltipContent="Enter Name for DatePicker"
+              tooltipPlacement="right"
               value={dateName}
               onChange={(e) => setDateName(e.target.value)}
+            />
+            <InputField
+              label="Helper Text"
+              placeholder="Enter Placeholder for Date"
+              tooltipContent="Enter Placeholder for Date"
+              tooltipPlacement="right"
+              value={datePlaceholder}
+              onChange={(e) => setDatePlaceholder(e.target.value)}
             />
 
             <UniversalDatePicker
               label="Min-Date"
+              tooltipContent="Select Min-Date"
+              tooltipPlacement="right"
               value={minDate}
               onChange={(value) => setMinDate(value)}
             />
 
             <UniversalDatePicker
               label="Max-Date"
+              tooltipContent="Select Max-Date"
+              tooltipPlacement="right"
               value={maxDate}
               onChange={(value) => setMaxDate(value)}
             />
 
-
             <UniversalDatePicker
               label="Unavailable Dates"
+              tooltipContent="Select Unavailable-Date"
+              tooltipPlacement="right"
               value={unavailableDate}
               onChange={(value) => setUnavailableDate(value)}
             />
-
-            <UniversalButton
-              label="Save"
-              onClick={handleDateSave}
-            />
-
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={handleDateSave} />
+            </div>
           </div>
-
         )}
 
-        {selectedItem?.type === "userdetail" && (
+        {selectedItem?.type === "calendar" && (
+          <div className="space-y-3 mt-3">
+            <InputField
+              label="Calendar Label"
+              tooltipContent="Enter Label for Calendar "
+              tooltipPlacement="right"
+              placeholder="Calendar Label"
+              maxLength={40}
+              value={dateCalendarLable}
+              onChange={(e) => setDateCalendarLabel(e.target.value)}
+            />
+
+            <InputField
+              label="Name"
+              tooltipContent="Enter Name for Calendar "
+              tooltipPlacement="right"
+              placeholder="Enter Name"
+              value={dateCalendarName}
+              onChange={(e) => setDateCalendarName(e.target.value)}
+            />
+            <InputField
+              label="Helper Text"
+              placeholder="Enter Placeholder for Date"
+              tooltipContent="Enter Placeholder for Date"
+              tooltipPlacement="right"
+              value={dateCalendarPlaceholder}
+              onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
+            />
+
+            <UniversalDatePicker
+              label="Min-Date"
+              tooltipContent="Select Min-Date"
+              tooltipPlacement="right"
+              value={minCalendarDate}
+              onChange={(value) =>
+                setMinCalendarDate(
+                  value.map((v) => String(new Date(v).getTime()))
+                )
+              }
+            />
+
+            <UniversalDatePicker
+              label="Max-Date"
+              tooltipContent="Select Max-Date"
+              tooltipPlacement="right"
+              value={maxCalendarDate}
+              onChange={(value) =>
+                setMaxCalendarDate(
+                  value.map((v) => String(new Date(v).getTime()))
+                )
+              }
+            />
+
+            <UniversalDatePicker
+              label="Unavailable Dates"
+              value={unavailableCalendarDate}
+              tooltipContent="Select Unavailable-Date"
+              tooltipPlacement="right"
+              onChange={(value) =>
+                setUnavailableCalendarDate(
+                  value.map((v) => String(new Date(v).getTime()))
+                )
+              }
+            />
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={handleCalendarSave} />
+            </div>
+          </div>
+        )}
+
+        {/* {selectedItem?.type === "userdetail" && (
           <>
             <InputField
               placeholder="User Details"
@@ -2213,7 +2307,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             <Switch
               color={isToggled ? "primary" : "secondary"}
               onClick={handleToggle}
-            // {isToggled ? "ON" : "OFF"}
+              // {isToggled ? "ON" : "OFF"}
             />
             {isToggled && (
               <AnimatedDropdown
@@ -2226,12 +2320,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   { value: "A", label: "A" },
                   { value: "B", label: "B" },
                   { value: "C", label: "C" },
-                  { value: "D", label: "D" }
+                  { value: "D", label: "D" },
                 ]}
               />
             )}
           </>
-        )}
+        )} */}
 
         {/* Save Button */}
         {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
@@ -2244,7 +2338,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </UniversalButton>
         </Box> */}
       </Paper>
-    </Box >
+    </Box>
   );
 };
 

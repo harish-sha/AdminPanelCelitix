@@ -30,7 +30,7 @@ const FlowCreationPage = () => {
   // console.log("canvasItems", canvasItems)
   //create new screen
   const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", id: "Welcome", payload: [] },
+    { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
   ]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
@@ -58,18 +58,18 @@ const FlowCreationPage = () => {
     ];
 
     // Check for duplicates *only* if item.type is in nonDuplicateTabs
-    const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
+    // const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
 
-    if (shouldCheckDuplicate) {
-      const isDuplicate = newTabs[activeIndex]?.payload?.some(
-        (payloadItem) => payloadItem.type === item.type
-      );
+    // if (shouldCheckDuplicate) {
+    //   const isDuplicate = newTabs[activeIndex]?.payload?.some(
+    //     (payloadItem) => payloadItem.type === item.type
+    //   );
 
-      if (isDuplicate) {
-        toast.error(`Only one "${item.type}" allowed in the canvas.`);
-        return;
-      }
-    }
+    //   if (isDuplicate) {
+    //     toast.error(`Only one "${item.type}" allowed in the canvas.`);
+    //     return;
+    //   }
+    // }
 
     // Add the item
     newTabs[activeIndex] = {
@@ -137,8 +137,6 @@ const FlowCreationPage = () => {
       return;
     }
 
-
-
     try {
       const payload = generatePayload(tabs);
 
@@ -153,17 +151,20 @@ const FlowCreationPage = () => {
 
       const res = await saveFlow(params, payload);
       // console.log("final payload", payload)
-      if (res === {}) {
+      if (res == {}) {
+        return toast.error("Flow creation failed");
+      }
+      if (res && Object.keys(res).length === 0 && res.constructor === Object) {
         return toast.error("Flow creation failed");
       }
       // console.log("final response", res)
-      // if (!res.flag) {
-      //   return toast.error(res.error_user_msg);
-      // }
+      if (!res.flag) {
+        return toast.error(res.error_user_msg.error.error_user_msg);
+      }
       toast.success(res.msg);
-      // navigate("/wwhatsappflows")
+      navigate("/wwhatsappflows")
     } catch (e) {
-      console.log("error", e)
+      // console.log("error", e)
       return toast.error(e.error_user_msg);
     } finally {
       setIsLoading(false)
@@ -181,8 +182,11 @@ const FlowCreationPage = () => {
 
 
       <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
-        <span className="text-md font-semibold text-gray-700">
+        {/* <span className="text-md font-semibold text-gray-700">
           ChatFlow: {state?.flowName || "Untitled Flow"}
+        </span> */}
+        <span className="text-md font-semibold text-gray-700">
+          ChatFlow
         </span>
 
         <div className="flex items-center gap-3">
@@ -192,11 +196,14 @@ const FlowCreationPage = () => {
             type="text"
             placeholder="Enter Flow Name"
             value={flowName}
-            onChange={(e) => setFlowName(e.target.value)}
+            onChange={(e) => {
+              const noSpaces = e.target.value.replace(/\s/g, "");
+              setFlowName(noSpaces);
+            }}
             className="min-w-[200px]"
           />
 
-          <UniversalButton
+          {/* <UniversalButton
             icon={<SaveOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
             label="Save"
             onClick={handleFlowSave}
@@ -205,7 +212,7 @@ const FlowCreationPage = () => {
           <UniversalButton
             icon={<SettingsOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
             label="Settings"
-          />
+          /> */}
 
           <UniversalButton
             icon={<ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />}

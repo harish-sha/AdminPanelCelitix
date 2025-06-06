@@ -21,6 +21,7 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
+import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
 
 
 const MobilePanel = ({ items, onUpdateItem }) => {
@@ -489,17 +490,27 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "document":
               return (
-                <div>
-                  <InputField
-                    label=''
-                  />
-
-                </div>
-
+                <>
+                {item.type === "document" && (
+                    <div className="p-4 border rounded-md shadow-sm">
+                      <p className="font-semibold">{item.label || "Upload photos"}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Min Photos: {item["min-uploaded-photos"] || 1} | Max Photos: {item["max-uploaded-photos"] || 1}
+                      </p>
+                      <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
+                        <span className="text-green-400 space-x-2"> 
+                          <ArticleOutlinedIcon />
+                        Upload Document </span>
+                      </div>
+                    </div>
+                  )
+                }
+                </>
               )
             case 'media':
               return (
-                <Box>
+                <>
                 {item.type === "media" && (
                     <div className="p-4 border rounded-md shadow-sm">
                       <p className="font-semibold">{item.label || "Upload photos"}</p>
@@ -508,12 +519,14 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         Min Photos: {item["min-uploaded-photos"] || 1} | Max Photos: {item["max-uploaded-photos"] || 10}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
-                        <span className="text-gray-400"><AddAPhotoOutlinedIcon/>Photo Upload Placeholder </span>
+                        <span className="text-green-400 space-x-2"> 
+                          <AddAPhotoOutlinedIcon />
+                        Take Photo </span>
                       </div>
                     </div>
                   )
                 }
-                </Box>
+                </>
 
               )
 
