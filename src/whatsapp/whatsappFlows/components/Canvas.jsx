@@ -19,8 +19,12 @@ const Canvas = ({
   setActiveIndex,
   dialogVisible,
   setDialogVisible,
+  editDialogVisible,
+  setEditDialogVisible,
   screenName,
   setScreenName,
+  setScreenEditName,
+  screenEditName,
   screenID,
   setScreenID,
   randomNumber,
@@ -40,6 +44,7 @@ const Canvas = ({
       "radioButton",
       "checkBox",
       "dropDown",
+      "chipSelector"
     ],
     drop: (item) => {
       setItems((prev) => [
@@ -61,8 +66,8 @@ drop: (item) => {
       radio_1: {
         label: "Sample Radio Group",
         "data-source": [
-          { id: "1", title: "Option 1", desc: "First option", image: "" },
-          { id: "2", title: "Option 2", desc: "Second option", image: "" }
+          { id: "1", title: "Option 1", description: "First option", image: "" },
+          { id: "2", title: "Option 2", description: "Second option", image: "" }
         ]
       }
     };
@@ -135,12 +140,21 @@ if(item.type === "radioButton"){
   };
 
   // Draggable component for individual canvas items
-  const DraggableItem = React.memo(({ item, index }) => {
+  const DraggableItem = React.memo(({ itemKey, item, index }) => {
+    console.log("itemmmmmmmmmm", item)
+    console.log("index", index)
+    console.log("key", itemKey)
+    if (!item?.type) {
+    console.error("DraggableItem error: item.type is not defined", item);
+    return null;
+    }
+
     const [, drag] = useDrag({
       type: item.type,
       item: { index },
     });
 
+    console.log("tabs", tabs)
     return (
       <Paper
         ref={drag}
@@ -213,6 +227,7 @@ if(item.type === "radioButton"){
       case "checkBox":
       case "dropDown":
         return "#c5e1f5";
+      case  "chipSelector":
       default:
         return "#c5e1f5";
     }
@@ -239,24 +254,30 @@ if(item.type === "radioButton"){
         return "CheckBox";
       case "dropDown":
         return "DropDown";
+      case 'chipSelector':
+        return 'ChipSelector';
       case "footerbutton":
         return "FooterButton";
       case "embeddedlink":
         return "EmbeddedLink";
       case "optin":
         return "OptIn";
-      case "photo":
-        return "Photo";
-      case "document":
-        return "Document";
-      case "ifelse":
-        return "IfElse";
       case "image":
         return "Image";
+      case "document":
+        return "Document";
+      case 'media':
+        return 'Media';
+      case "ifelse":
+        return "IfElse";
+      case 'switch':
+        return 'Switch';
       case "date":
         return "Date";
-      case "userdetail":
-        return "UserDetail";
+      case 'calendar':
+        return 'Calendar';
+      // case "userdetail":
+      //   return "UserDetail";
       default:
         return "";
     }
@@ -292,6 +313,8 @@ if(item.type === "radioButton"){
         setDialogVisible={setDialogVisible}
         screenName={screenName}
         setScreenName={setScreenName}
+        screenEditName={screenEditName}
+        setScreenEditName={setScreenEditName}
         screenID={screenID}
         setScreenID={setScreenID}
         randomNumber={randomNumber}
@@ -299,12 +322,14 @@ if(item.type === "radioButton"){
         createTab={createTab}
         setCreateTab={setCreateTab}
         menuRefs={menuRefs}
+        setEditDialogVisible={setEditDialogVisible}
+        editDialogVisible={editDialogVisible}
       />
       {/* Render all items on the canvas */}
       <div className="w-1/3 ml-5 ">
         {tabs[activeIndex]?.payload?.map((item, index) => (
           <div key={index}>
-            <DraggableItem key={item.id} item={item} index={index} />
+            <DraggableItem key={item.id} item={item} index={index} itemKey={item.id} />
           </div>
         ))}
       </div>

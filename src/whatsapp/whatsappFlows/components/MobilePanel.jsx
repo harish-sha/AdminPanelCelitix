@@ -20,13 +20,14 @@ import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
 
 
 const MobilePanel = ({ items, onUpdateItem }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
   const [radioButtonOptions, setRadioButtonOptions] = useState([
-    { title: "Option 1", desc: "Description 1", image: "url1.png" },
-    { title: "Option 2", desc: "Description 2", image: "url2.png" },
+    { title: "Option 1", description: "Description 1", image: "url1.png" },
+    { title: "Option 2", description: "Description 2", image: "url2.png" },
   ]);
   const [selectedOption, setSelectedOption] = useState(null);
 
@@ -196,7 +197,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
 
             // Render Checkboxes
-           // anshu
+            // anshu
             case "checkBox":
               return (
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
@@ -311,9 +312,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                     <Typography variant="body2" fontWeight={600}>
                                       {option.title || `Option ${optionIndex + 1}`}
                                     </Typography>
-                                    {option.desc && (
+                                    {option.description && (
                                       <Typography variant="caption" color="text.secondary">
-                                        {option.desc}
+                                        {option.description}
                                       </Typography>
                                     )}
                                   </Box>
@@ -340,7 +341,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
 
             // Render Dropdown
-             case "dropDown":
+            case "dropDown":
               return (
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
                   {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
@@ -398,6 +399,23 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   )}
                 </Box>
               );
+
+            case 'chipSelector':
+              return (
+                <InputField
+                  type="url"
+                  placeholder="Enter a valid URL"
+                  value={item.value || ""}
+                  onChange={(e) =>
+                    onUpdateItem &&
+                    onUpdateItem(index, (prevItem) => ({
+                      ...prevItem,
+                      value: e.target.value,
+                    }))
+                  }
+                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                />
+              )
 
 
             case "footerbutton":
@@ -457,7 +475,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 />
               )
 
-            case "photo":
+            case "image":
               return (
                 <Box key={index}>
                   <InputField
@@ -471,17 +489,32 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "document":
               return (
-                <InputField
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
+                <div>
+                  <InputField
+                    label=''
+                  />
 
-                  }
-                />
+                </div>
+
+              )
+            case 'media':
+              return (
+                <Box>
+                {item.type === "media" && (
+                    <div className="p-4 border rounded-md shadow-sm">
+                      <p className="font-semibold">{item.label || "Upload photos"}</p>
+                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Min Photos: {item["min-uploaded-photos"] || 1} | Max Photos: {item["max-uploaded-photos"] || 10}
+                      </p>
+                      <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
+                        <span className="text-gray-400"><AddAPhotoOutlinedIcon/>Photo Upload Placeholder </span>
+                      </div>
+                    </div>
+                  )
+                }
+                </Box>
+
               )
 
             case "ifelse":
@@ -498,21 +531,14 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   }
                 />
               )
-
-            case "image":
+            case 'switch':
               return (
                 <InputField
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-
-                  }
+                  placeholder='SWITCH'
+                  label='SWITCH'
                 />
               )
+
 
             case "date":
               return (
@@ -528,21 +554,35 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   }
                 />
               )
-
-            case "userdetail":
+            case 'calendar':
               return (
                 <InputField
                   value={item.value || ""}
-                  onChange={(e) =>
+                  onChange={(value) =>
                     onUpdateItem &&
                     onUpdateItem(index, (prevItem) => ({
                       ...prevItem,
-                      value: e.target.value,
+                      value: value,
                     }))
 
                   }
                 />
               )
+
+            // case "userdetail":
+            //   return (
+            //     <InputField
+            //       value={item.value || ""}
+            //       onChange={(e) =>
+            //         onUpdateItem &&
+            //         onUpdateItem(index, (prevItem) => ({
+            //           ...prevItem,
+            //           value: e.target.value,
+            //         }))
+
+            //       }
+            //     />
+            //   )
 
             default:
               return null;

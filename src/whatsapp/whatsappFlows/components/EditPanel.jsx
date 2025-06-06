@@ -456,81 +456,129 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
 
   // document
-  const [documentName, setDocumentName] = useState("")
-  const [listItems, setListItems] = useState("")
   const [documentLabel, setDocumentLabel] = useState("")
   const [description, setDescription] = useState("")
-  const [mediaSize, setMediaSize] = useState("")
-  const [mainContent, setMainContent] = useState("")
+  const [minDocsUpload, setMinDocsUpload] = useState('')
+  const [maxDocsUpload, setMaxDocsUpload] = useState('')
+  // const [documentName, setDocumentName] = useState("")
+  // const [listItems, setListItems] = useState("")
+  // const [mediaSize, setMediaSize] = useState("")
+  // const [mainContent, setMainContent] = useState("")
   // const [imageSrc, setImageSrc] = useState(null)
-  const [end, setEnd] = useState("")
-  const [badges, setBadges] = useState("")
-  const [tags, setTags] = useState("")
-  const [file, setFile] = useState(null);
+  // const [end, setEnd] = useState("")
+  // const [badges, setBadges] = useState("")
+  // const [tags, setTags] = useState("")
+  // const [file, setFile] = useState(null);
 
-  const handleFileUpload = (e) => {
+  // const handleFileUpload = (e) => {
 
-    const MAX_FILE_SIZE = 100 * 1024;
-    if (file) {
-      if (file.size > MAX_FILE_SIZE) {
-        alert("File size exceeds 100KB. Please upload a smaller file.");
-        event.target.value = '';
-        return;
-      }
-      console.log("Uploaded file:", file);
-    }
+  //   const MAX_FILE_SIZE = 100 * 1024;
+  //   if (file) {
+  //     if (file.size > MAX_FILE_SIZE) {
+  //       alert("File size exceeds 100KB. Please upload a smaller file.");
+  //       event.target.value = '';
+  //       return;
+  //     }
+  //     console.log("Uploaded file:", file);
+  //   }
 
-    const uploadedFile = e.target.files[0];
-    if (!uploadedFile) return;
+  //   const uploadedFile = e.target.files[0];
+  //   if (!uploadedFile) return;
 
-    const fileType = uploadedFile.name.split(".").pop().toLowerCase();
-    const allowedTypes = ["pdf", "docx", "doc"];
+  //   const fileType = uploadedFile.name.split(".").pop().toLowerCase();
+  //   const allowedTypes = ["pdf", "docx", "doc"];
 
-    if (!allowedTypes.includes(fileType)) {
-      toast.error("Unsupported file type. Please upload a .pdf, .docx, or .doc file.");
-      setFile(null);
-      setMainContent("");
-      return;
-    }
+  //   if (!allowedTypes.includes(fileType)) {
+  //     toast.error("Unsupported file type. Please upload a .pdf, .docx, or .doc file.");
+  //     setFile(null);
+  //     setMainContent("");
+  //     return;
+  //   }
 
-    setFile(uploadedFile);
-    setMainContent(`Uploaded file: ${uploadedFile.name}. `);
-  };
+  //   setFile(uploadedFile);
+  //   setMainContent(`Uploaded file: ${uploadedFile.name}. `);
+  // };
 
   const handleDocumentSave = () => {
-    if (!documentName) {
-      toast.error("Please Enter Name")
+    if (!description) {
+      toast.error("Please Enter Description")
       return
     }
     if (!documentLabel) {
       toast.error("Please Enter Label")
       return
     }
-    if (!mainContent) {
-      toast.error("Please Enter MainContent")
-      return
-    }
+
 
     const payload = {
-      type: "NavigationList",
       label: documentLabel,
-      name: documentName,
       description: description,
-      "media-size": mediaSize || "regular",
-      "list-items": listItems,
-      'main-content': mainContent,
-      uploadedFile: file.name,
-      start: imageSrc,
-      end: end,
-      badges: badges,
-      tags: tags
-
+      'min-uploaded-documents': minDocsUpload,
+      'max-uploaded-documents': maxDocsUpload
+      // name: documentName,
+      // "media-size": mediaSize || "regular",
+      // "list-items": listItems,
+      // 'main-content': mainContent,
+      // uploadedFile: file.name,
+      // start: imageSrc,
+      // end: end,
+      // badges: badges,
+      // tags: tags
     }
 
     console.log("Saving:", payload);
     toast.success("Document saved successfully!");
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log("Final Document data:", updatedData);
   }
 
+
+  // media
+  const [mediaLabel, setMediaLabel] = useState("")
+  const [mediaDescription, setMediaDescription] = useState("")
+  const [minPhotoUpload, setMinPhotoUpload] = useState('')
+  const [maxPhotoUpload, setMaxPhotoUpload] = useState('')
+
+
+
+  const handleMediaSave = () => {
+    if (!mediaDescription) {
+      toast.error("Please Enter Description")
+      return
+    }
+    if (!mediaLabel) {
+      toast.error("Please Enter Label")
+      return
+    }
+
+
+    const payload = {
+      label: mediaLabel,
+      description: mediaDescription,
+      'min-uploaded-photos': minPhotoUpload,
+      'max-uploaded-photos': maxPhotoUpload
+
+    };
+
+    console.log("Saving:", payload);
+    toast.success("Media saved successfully!");
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log("Final Media data:", updatedData);
+  }
 
 
 
@@ -596,7 +644,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [radioOptions, setRadioOptions] = useState([])
   const [draft, setDraft] = useState({
     title: '',
-    desc: '',
+    description: '',
     metadata: '',
     image: '',
     altText: '',
@@ -628,7 +676,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setRadiobtnEditIdx(idx);
     setDraft({
       title: opt.title,
-      desc: opt.desc,
+      description: opt.description,
       metadata: opt.metadata,
       image: opt.image || '',
       altText: opt['alt-text'] || '',
@@ -643,7 +691,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     newOptions[radiobtnEditIdx] = {
       ...newOptions[radiobtnEditIdx],
       title: draft.title.slice(0, 30),
-      desc: draft.desc.slice(0, 300),
+      description: draft.description.slice(0, 300),
       metadata: draft.metadata.slice(0, 20),
       image: draft.image,
       'alt-text': draft.altText,
@@ -654,7 +702,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setRadiobtnEditIdx(null);
     setDraft({
       title: '',
-      desc: '',
+      description: '',
       metadata: '',
       image: '',
       altText: '',
@@ -666,7 +714,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setRadiobtnEditIdx(null);
     setDraft({
       title: '',
-      desc: '',
+      description: '',
       metadata: '',
       image: '',
       altText: '',
@@ -687,7 +735,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       {
         id: newId,
         title: `Option ${newId}`,
-        desc: '',
+        description: '',
         metadata: '',
         image: '',
 
@@ -725,14 +773,15 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
     // if(!footerButtonLabel){
     //   toast.error("Footer must be created")
-    //   return 
+    // }else {
+
     // }
 
     // 2) Filter and validate options
     const filteredOptions = radioButtonOptions.filter((opt) => opt.title?.trim());
 
-    if (filteredOptions.length < 1) {
-      toast.error("At least one radio option is required");
+    if (filteredOptions.length < 2) {
+      toast.error("At least two Radio option is required!");
       return;
     }
     if (filteredOptions.length > 20) {
@@ -747,7 +796,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         toast.error(`Option ${i + 1}: Title must be under 30 characters`);
         return;
       }
-      if (opt.desc?.length > 300) {
+      if (opt.description?.length > 300) {
         toast.error(`Option ${i + 1}: Description must be under 300 characters`);
         return;
       }
@@ -772,7 +821,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     const payloadOptions = filteredOptions.map((opt, idx) => ({
       id: (idx + 1).toString(),
       title: opt.title.trim(),
-      desc: opt.desc?.trim() || "",
+      description: opt.description?.trim() || "",
       metadata: opt.metadata?.trim() || "",
       image: uploadedRadioImgId || opt.image || "",
     }));
@@ -824,7 +873,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [checkboxImageFile, setCheckboxImageFile] = useState(null)
   const [checkboxImageSrc, setCheckboxImageSrc] = useState(null)
   const [uploadedCheckboxImgId, setUploadedCheckboxImgId] = useState(null)
-  const [draftCheckbox, setDraftCheckbox] = useState({ title: "", desc: "", metadata: "" });
+  const [draftCheckbox, setDraftCheckbox] = useState({ title: "", description: "", metadata: "" });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
 
 
@@ -874,7 +923,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   const handleCancelInlineCheckbox = () => {
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", desc: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "" });
   };
 
   const handleSaveInlineCheckbox = () => {
@@ -886,7 +935,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", desc: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "" });
   };
 
   const handleRemoveCheckbox = (idx) => {
@@ -902,7 +951,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       {
         id: newId,
         title: `Option ${newId}`,
-        desc: '',
+        description: '',
         metadata: '',
         image: '',
 
@@ -916,8 +965,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       return;
     }
 
-    if (checkBoxes.length < 1) {
-      toast.error("Please enter at least one Checkbox option");
+    if (checkBoxes.length < 2) {
+      toast.error("At least two Checkbox option is required!");
       return;
     }
 
@@ -971,7 +1020,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [options, setOptions] = useState([]);
   const [editingIdx, setEditingIdx] = useState(null);
   const [draftTitle, setDraftTitle] = useState('');
-  const [draftDesc, setDraftDesc] = useState('');
+  const [draftDescription, setDraftDescription] = useState('');
   const [draftMetadata, setDraftMetaData] = useState('');
   const [dropImageSrc, setDropImageSrc] = useState(null);
   const [dropImageFile, setDropImageFile] = useState(null);
@@ -1024,7 +1073,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     const opt = options[idx];
     setEditingIdx(idx);
     setDraftTitle(opt.title);
-    setDraftDesc(opt.description);
+    setDraftDescription(opt.description);
     setDraftMetaData(opt.metadata);
   };
 
@@ -1038,7 +1087,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           ? {
             ...o,
             title: draftTitle.trim(),
-            description: draftDesc.trim(),
+            description: draftDescription.trim(),
             metadata: draftMetadata.trim(),
           }
           : o
@@ -1048,7 +1097,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     setEditingIdx(null);
     setDraftTitle('');
-    setDraftDesc('');
+    setDraftDescription('');
     setDraftMetaData('');
   };
 
@@ -1056,7 +1105,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const handleCancelInline = () => {
     setEditingIdx(null);
     setDraftTitle('');
-    setDraftDesc('');
+    setDraftDescription('');
     setDraftMetaData('');
   };
 
@@ -1068,7 +1117,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     if (idx === editingIdx) {
       setEditingIdx(null);
       setDraftTitle('');
-      setDraftDesc('');
+      setDraftDescription('');
       setDraftMetaData('');
     }
   };
@@ -1092,6 +1141,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     // 1) Filter out any options with an empty title
     const filteredOptions = options.filter((o) => o.title.trim());
+    if (filteredOptions.length < 2) {
+      toast.error("At least two Dropdown option is required!");
+      return;
+    }
 
     // 2) Build payloadOptions
     const payloadOptions = filteredOptions.map((o, idx) => ({
@@ -1205,7 +1258,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             <InputField
               label={`Edit ${type}`}
               id="mainlabel"
-              placeholder={`Edit ${type}`}
+              placeholder={`Enter ${type}`}
               tooltipContent={`Edit ${type}`}
               tooltipPlacement="right"
               value={labelValue}
@@ -1346,9 +1399,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           placeholder="Enter Description"
                           tooltipContent="Enter Description"
                           tooltipPlacement="right"
-                          value={draftCheckbox.desc}
+                          value={draftCheckbox.description}
                           onChange={(e) =>
-                            setDraftCheckbox((d) => ({ ...d, desc: e.target.value }))
+                            setDraftCheckbox((d) => ({ ...d, description: e.target.value }))
                           }
                           fullWidth
                           sx={{ mb: 1 }}
@@ -1461,8 +1514,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           placeholder="Enter Description"
                           tooltipContent="Enter Description"
                           tooltipPlacement="right"
-                          value={draft.desc}
-                          onChange={(e) => setDraft((d) => ({ ...d, desc: e.target.value }))}
+                          value={draft.description}
+                          onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
                           fullWidth
                           sx={{ mb: 1 }}
                         />
@@ -1511,7 +1564,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
                       <Box sx={{ flexGrow: 1 }} onClick={() => handleRadioBtnEdit(idx)}>
                         <Typography variant="subtitle1">{opt.title}</Typography>
-                        <Typography variant="body2">{opt.desc}</Typography>
+                        <Typography variant="body2">{opt.description}</Typography>
                       </Box>
                       <IconButton onClick={() => handleRadioBtnEdit(idx)}>
                         <EditIcon />
@@ -1599,8 +1652,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           id={`edit-desc-${idx}`}
                           tooltipContent="Enter Description"
                           tooltipPlacement="right"
-                          value={draftDesc}
-                          onChange={(e) => setDraftDesc(e.target.value)}
+                          value={draftDescription}
+                          onChange={(e) => setDraftDescription(e.target.value)}
                           placeholder="Enter description"
                           type="text"
                           fullWidth
@@ -1760,7 +1813,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               value={nextAction}
               onChange={val => setNextAction(val)}
             />
-            <div>
+            <div className='flex justify-center '>
               <UniversalButton
                 label="SAVE"
                 onClick={handleFooterSave}
@@ -1915,107 +1968,120 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
         {selectedItem?.type === "document" && (
           <>
-            <div className="space-y-3">
+            <div className="space-y-3 mt-3">
 
               <InputField
-                label="Document Label"
-                maxLength={80}
+                label="Upload Documents"
+                placeholder='Enter Label'
+                tooltipContent='Enter Label For Upload Document'
+                tooltipPlacement='right'
+                type="text"
                 value={documentLabel}
                 onChange={(e) => setDocumentLabel(e.target.value)}
               />
 
               <InputField
-                label="Document Name"
-                required={true}
-                value={documentName}
-                onChange={(e) => setDocumentName(e.target.value)}
+                label="Description"
+                placeholder='Enter Description'
+                tooltipContent='Enter Description for Document'
+                tooltipPlacement="right"
+                type="text"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+              />
+
+
+              <InputField
+                label="Min-Upload-Document"
+                placeholder="Minimum 1 document upload"
+                tooltipContent="Minimum 1 document upload"
+                tooltipPlacement="right"
+                type="text"
+                value={minDocsUpload}
+                onChange={(e) => setMinDocsUpload(e.target.value)}
               />
 
               <InputField
+                label='Max-Upload-Document'
+                placeholder="Maximum 1 document Upload"
+                tooltipContent="Maximum 1 document Upload"
+                tooltipPlacement="right"
+                value={maxDocsUpload}
+                onChange={(e) => setMaxDocsUpload(e.target.value)}
+              />
+
+
+
+              {/* <InputField
                 label="List-items"
                 minLength={1}
                 maxLength={20}
                 required={true}
                 value={listItems}
                 onChange={(e) => setListItems(e.target.value)}
+              /> */}
+
+
+              <div className="flex justify-center">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleDocumentSave}
+                />
+              </div>
+            </div>
+          </>
+        )}
+
+        {selectedItem?.type === "media" && (
+          <>
+            <div className="space-y-3 mt-3">
+
+              <InputField
+                label="Upload photos"
+                placeholder='Enter Label'
+                tooltipContent='Enter Label For Upload Photo'
+                tooltipPlacement='right'
+                value={mediaLabel}
+                onChange={(e) => setMediaLabel(e.target.value)}
               />
 
               <InputField
                 label="Description"
-                maxLength={300}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-
-              <InputField
-                label="Media Size"
-                value={mediaSize}
-                onChange={(e) => setMediaSize(e.target.value)}
+                placeholder='Enter Description'
+                tooltipContent='Enter Description for Photo'
+                tooltipPlacement="right"
+                value={mediaDescription}
+                onChange={(e) => setMediaDescription(e.target.value)}
               />
 
 
               <InputField
-                type="file"
-                id="file-upload"
-                accept=".doc,.docx,.pdf"
-                label="Main Content"
-                onChange={handleFileUpload}
-                className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-              />
-              {mainContent && (
-                <div className="mt-4 p-4 bg-white border rounded shadow text-sm whitespace-pre-wrap">
-                  <h2 className="text-lg font-semibold mb-2">Extracted Content:</h2>
-                  {mainContent}
-                </div>
-              )}
-
-              {/* <InputField
-                label="Start"
-                maxLength={100}
-                value={start}
-                onChange={(e) => setStart(e.target.value)}
-              /> */}
-
-
-              <InputField
-                type="file"
-                id="file-upload"
-                accept=".png, .jpeg"
-                label="Start"
-                required={true}
-                onChange={handlePhotoUpload}
-              />
-
-              {imageSrc && (
-                <img src={imageSrc} alt="Uploaded preview" style={{ maxWidth: '100%', marginTop: '10px' }} />
-              )}
-
-
-              <InputField
-                label="End"
-                maxLength={10}
-                value={end}
-                onChange={(e) => setEnd(e.target.value)}
+                label="Min-Upload-Photo"
+                placeholder="Minimum 1 photo upload"
+                tooltipContent="Minimum 1 photo upload"
+                tooltipPlacement="right"
+                type="number"
+                value={minPhotoUpload}
+                onChange={(e) => setMinPhotoUpload(e.target.value)}
               />
 
               <InputField
-                label="Badge"
-                maxLength={15}
-                value={badges}
-                onChange={(e) => setBadges(e.target.value)}
+                label='Max-Upload-Photos'
+                placeholder="Maximum 1 photos Upload"
+                tooltipContent="Maximum 1 photos Upload"
+                tooltipPlacement="right"
+                type="number"
+                value={maxPhotoUpload}
+                onChange={(e) => setMaxPhotoUpload(e.target.value)}
               />
 
-              <InputField
-                label="Tag"
-                maxLength={15}
-                value={tags}
-                onChange={(e) => setTags(e.target.value)}
-              />
 
-              <UniversalButton
-                label="Save"
-                onClick={handleDocumentSave}
-              />
+              <div className="flex justify-center">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleMediaSave}
+                />
+              </div>
             </div>
           </>
         )}

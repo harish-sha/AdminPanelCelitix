@@ -30,14 +30,17 @@ const FlowCreationPage = () => {
   // console.log("canvasItems", canvasItems)
   //create new screen
   const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", id: "Welcome_1", payload: [] },
+    { title: "Welcome", content: "Welcome", id: "Welcome", payload: [] },
   ]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [editDialogVisible, setEditDialogVisible] = useState(false);
   const menuRefs = tabs.map(() => React.createRef());
   const [screenName, setScreenName] = useState("");
+  const [screenEditName, setScreenEditName] = useState("");
   const [screenID, setScreenID] = useState("");
   const [createTab, setCreateTab] = useState("");
+  const [isLoading, setIsLoading] = useState(false)
 
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
@@ -122,6 +125,19 @@ const FlowCreationPage = () => {
   };
 
   async function handleFlowBuild() {
+    if (!flowName) {
+      toast.error("Please Enter FlowName")
+      return;
+    }
+
+    const hasAtLeastOneComponent = tabs.some(tab => tab.payload.length > 0);
+
+    if (!hasAtLeastOneComponent) {
+      toast.error("Please add at least one component before building the flow");
+      return;
+    }
+
+
 
     try {
       const payload = generatePayload(tabs);
@@ -133,32 +149,31 @@ const FlowCreationPage = () => {
         id: "",
         name: flowName,
       };
-
-
+      setIsLoading(true)
 
       const res = await saveFlow(params, payload);
       // console.log("final payload", payload)
-      // if (!flowName) {
-      //   toast.error("Please Enter FlowName")
-      //   return
-      // }
       if (res === {}) {
         return toast.error("Flow creation failed");
       }
       // console.log("final response", res)
-      if (!res.flag) {
-        return toast.error(res.error_user_msg);
-      }
+      // if (!res.flag) {
+      //   return toast.error(res.error_user_msg);
+      // }
       toast.success(res.msg);
-      navigate("/wwhatsappflows")
+      // navigate("/wwhatsappflows")
     } catch (e) {
       console.log("error", e)
       return toast.error(e.error_user_msg);
+    } finally {
+      setIsLoading(false)
     }
   }
 
+
   async function handleFlowSave() {
     toast.success("Flow Saved Successfully");
+
   }
 
   return (
@@ -194,8 +209,9 @@ const FlowCreationPage = () => {
 
           <UniversalButton
             icon={<ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
-            label="BuildFlow"
+            label={isLoading ? "Building..." : "BuildFlow"}
             onClick={handleFlowBuild}
+            disabled={isLoading}
           />
         </div>
       </div>
@@ -208,54 +224,58 @@ const FlowCreationPage = () => {
         </div>
         <div className="w-full flex relative">
           {/* Canvas */}
-            <Canvas
-              items={canvasItems}
-              setItems={setCanvasItems}
-              onEdit={handleEdit}
-              tabs={tabs}
-              setTabs={setTabs}
-              activeIndex={activeIndex}
-              setActiveIndex={setActiveIndex}
-              dialogVisible={dialogVisible}
-              setDialogVisible={setDialogVisible}
-              screenName={screenName}
-              setScreenName={setScreenName}
-              screenID={screenID}
-              setScreenID={setScreenID}
-              randomNumber={randomNumber}
-              setRandomNumber={setRandomNumber}
-              createTab={createTab}
-              setCreateTab={setCreateTab}
-              menuRefs={menuRefs}
+          <Canvas
+            items={canvasItems}
+            setItems={setCanvasItems}
+            onEdit={handleEdit}
+            tabs={tabs}
+            setTabs={setTabs}
+            activeIndex={activeIndex}
+            setActiveIndex={setActiveIndex}
+            dialogVisible={dialogVisible}
+            setDialogVisible={setDialogVisible}
+            setEditDialogVisible={setEditDialogVisible}
+            editDialogVisible={editDialogVisible}
+            screenName={screenName}
+            setScreenName={setScreenName}
+            screenEditName={screenEditName}
+            setScreenEditName={setScreenEditName}
+            screenID={screenID}
+            setScreenID={setScreenID}
+            randomNumber={randomNumber}
+            setRandomNumber={setRandomNumber}
+            createTab={createTab}
+            setCreateTab={setCreateTab}
+            menuRefs={menuRefs}
+          />
+          {selectedItem && (
+            <EditPanel
+              selectedItem={selectedItem}
+              onClose={handleCloseEditPanel}
+              onSave={handleSave}
             />
-            {selectedItem && (
-              <EditPanel
-                selectedItem={selectedItem}
-                onClose={handleCloseEditPanel}
-                onSave={handleSave}
-              />
-            )}
-            
-          </div>
+          )}
 
-          <div className="flex-1 ">
-            {/* Mobile Panel Preview*/}
-            <MobilePanel
-              items={tabs[activeIndex].payload}
-              onUpdateItem={(index, updater) => {
-                setTabs((prevTabs) => {
-                  const newTabs = [...prevTabs];
-                  newTabs[activeIndex].payload[index] = updater(
-                    newTabs[activeIndex].payload[index]
-                  );
-                  return newTabs;
-                });
-              }}
-            />
-          </div>
+        </div>
+
+        <div className="flex-1 ">
+          {/* Mobile Panel Preview*/}
+          <MobilePanel
+            items={tabs[activeIndex].payload}
+            onUpdateItem={(index, updater) => {
+              setTabs((prevTabs) => {
+                const newTabs = [...prevTabs];
+                newTabs[activeIndex].payload[index] = updater(
+                  newTabs[activeIndex].payload[index]
+                );
+                return newTabs;
+              });
+            }}
+          />
         </div>
       </div>
-      );
+    </div>
+  );
 };
 
-      export default FlowCreationPage;
+export default FlowCreationPage;

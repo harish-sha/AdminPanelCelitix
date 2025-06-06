@@ -271,6 +271,7 @@
 
 // neww generatepayload start here
 export const generatePayload = (data) => {
+  console.log("data", data)
   const payload = {
     version: "7.0",
     screens: [],
@@ -289,20 +290,40 @@ export const generatePayload = (data) => {
     radioButton: 0,
     checkBox: 0,
     footer: 0,
+    document: 0,
+    media:0,
   };
 
+  const numberToWord = (num) => {
+    const words = [
+      "zero", "one", "two", "three", "four", "five", "six",
+      "seven", "eight", "nine", "ten", "eleven", "twelve",
+      "thirteen", "fourteen", "fifteen", "sixteen", "seventeen",
+      "eighteen", "nineteen", "twenty"
+    ];
+    return words[num] || String(num);
+  };
+
+
   data.forEach((screenData, index) => {
-    const screenId = screenData.id || `screen_${index + 1}`;
+    const screenId = screenData.id;
+
     const layout = {
       type: "SingleColumnLayout",
       children: [],
     };
 
     screenData?.payload?.forEach((pay) => {
+      // const type = pay.type;
+      // typeCounters[type] = (typeCounters[type] || 0) + 1;
+      // const name = `${String(type)}_${String(typeCounters[type])}`;
+      // console.log(typeof name)
+
       const type = pay.type;
       typeCounters[type] = (typeCounters[type] || 0) + 1;
-      // const id = `${type}_${typeCounters[type]}`;
-      let component = {  type };
+      const countWord = numberToWord(typeCounters[type]);
+      const name = `${type}_${countWord}`;
+      let component = { type };
 
       if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
         component.text = pay[type] || "";
@@ -319,32 +340,32 @@ export const generatePayload = (data) => {
         const field = pay.texts?.[key] || {};
 
         component = {
-          // id,
+          name,
           type:
             type === "textInput"
               ? "TextInput"
               : type === "textArea"
-              ? "TextArea"
-              : type === "email"
-              ? "EmailInput"
-              : "PhoneInput",
-          name: key,
+                ? "TextArea"
+                : type === "email"
+                  ? "EmailInput"
+                  : "PhoneInput",
+
           label: field.label || "Label",
           required: field.required ?? true,
-          "error-message": field.error_message || "",
+          // "error-message": field.error_message || "",
           "helper-text": field.helper_text || "",
-          "max-chars": field.max_chars || "",
-          "min-chars": field.min_chars || "",
+          // "max-chars": field.max_chars || "",
+          // "min-chars": field.min_chars || "",
         };
       }
 
       if (type === "dropDown") {
         component = {
-          // id,
+          name,
           type: "Dropdown",
           label: pay.label || "Select an option",
           required: pay.required ?? true,
-          "error-message": pay.error_message || "",
+          // "error-message": pay.error_message || "",
           "data-source": (pay["data-source"] || []).map((opt) => ({
             id: String(opt.id || ""),
             title: opt.title || "",
@@ -357,28 +378,11 @@ export const generatePayload = (data) => {
 
       if (type === "radioButton") {
         component = {
-          // id,
+          name,
           type: "RadioButtonsGroup",
           label: pay.label || "Select an option",
           required: pay.required ?? true,
-          "error-message": pay.error_message || "",
-          "data-source": (pay["data-source"] || []).map((opt) => ({
-            id: String(opt.id || ""),
-            title: opt.title || "",
-            desc: opt.desc || "",
-            metadata: opt.metadata || "",
-            image: opt.image || "",
-          })),
-        };
-      }
-
-      if (type === "checkBox") {
-        component = {
-          // id,
-          type: "CheckboxGroup",
-          label: pay.label || "Select an option",
-          required: pay.required ?? true,
-          "error-message": pay.error_message || "",
+          // "error-message": pay.error_message || "",
           "data-source": (pay["data-source"] || []).map((opt) => ({
             id: String(opt.id || ""),
             title: opt.title || "",
@@ -389,29 +393,87 @@ export const generatePayload = (data) => {
         };
       }
 
+      if (type === "checkBox") {
+        component = {
+          name,
+          type: "CheckboxGroup",
+          label: pay.label || "Select an option",
+          required: pay.required ?? true,
+          // "error-message": pay.error_message || "",
+          "data-source": (pay["data-source"] || []).map((opt) => ({
+            id: String(opt.id || ""),
+            title: opt.title || "",
+            description: opt.description || "",
+            metadata: opt.metadata || "",
+            image: opt.image || "",
+          })),
+        };
+      }
+
+
+
+      if (type === 'document') {
+        console.log("Handling Document type", { pay});
+      
+        component = {
+          name,
+          type: "DocumentPicker",
+          label: pay.label || "Select an Document",
+          description: pay.description || "",
+          'min-uploaded-documents': pay.minDocsUpload ?? 1,
+          'max-uploaded-documents': pay.maxDocsUpload ?? 1
+        };
+        console.log(pay.label, "label")
+        console.log("Document component:", component);
+      }
+
+
+      if (type === 'media') {
+        component = {
+          name,
+          type: "PhotoPicker",
+          label: pay.label || "Select an Photo",
+          description: pay.mediaDescription,
+          'min-uploaded-photos': pay.minPhotoUpload || 1,
+          'max-uploaded-photos':pay.maxPhotoUpload || 10
+        }
+
+      }
+
+
+
+
+
       if (type === "footerbutton") {
         const footerData = pay.footer?.footer_1 || {};
+        const onClickActionName = footerData.on_click_action || "complete";
+
+        
+        // Find the next screen ID if it exists
+        const nextScreenId = data[index + 1]?.id || null;
+
         component = {
-          // id,
           type: "Footer",
           label: footerData.label || "Submit",
-          // "left-caption": footerData.left_caption || "",
-          // "right-caption": footerData.right_caption || "",
-          // "center-caption": footerData.center_caption || "",
           "on-click-action": {
-            name: footerData.on_click_action || "complete",
-            payload: {}
+            name: onClickActionName,
+            next: {
+              type: "screen",
+              name: nextScreenId
+            },
           },
         };
       }
 
+
       layout.children.push(component);
     });
 
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     payload.screens.push({
-      id: screenId,
+      id: capitalize(screenId),
       title: screenData.title || `Screen ${index + 1}`,
-      // terminal:"true",
+      terminal: true,
       layout,
     });
   });
