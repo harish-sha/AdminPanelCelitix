@@ -615,3 +615,10 @@ export const getTemplateDetialsById = async (id) => {
     }
   );
 };
+
+export const exportConversationData = async (data) => {
+  return await fetchWithAuth("/whatsapp/getConversationExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
