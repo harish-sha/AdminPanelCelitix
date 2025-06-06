@@ -551,7 +551,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappEdit = async (srno) => {
-    const res = await getWhatsappRateBySrno(srno);
+    const res = await getWhatsappRateBySrno(srno,currentUserSrno);
 
     const d = Array.isArray(res) ? res[0] : res?.data?.[0];
 
@@ -1547,7 +1547,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   // ];
 
   async function handleRcsEdit(srno) {
-    const res = await getRCSRateBySrno(srno);
+    const res = await getRCSRateBySrno(srno, currentUserSrno);
     console.log("res", res);
 
     // const d = Array.isArray(res) ? res[0] : res?.data?.[0];
