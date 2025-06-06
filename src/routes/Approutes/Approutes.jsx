@@ -26,6 +26,7 @@ import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+import { BlockUser } from "@/whatsapp/blockUser";
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -138,7 +139,6 @@ const Approutes = () => {
   return (
     <Routes>
       <Route path="/" element={<Mainlayout />}>
-
         {/* dashboard */}
         {/* <Route index element={<Dashboard />} /> */}
         <Route index element={<ResellerDashboard />} />
@@ -216,6 +216,7 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wblockuser" element={<BlockUser />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
