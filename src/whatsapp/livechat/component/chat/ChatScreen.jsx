@@ -33,6 +33,8 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import { HiOutlineCheck } from "react-icons/hi";
+import { VscCheckAll } from "react-icons/vsc";
 import axios from "axios";
 import "react-loading-skeleton/dist/skeleton.css";
 
@@ -617,13 +619,17 @@ export const ChatScreen = ({
 
                     {templateType && <TemplateMessagePreview template={msg} />}
 
-                    <p
+                    <div
                       className={`mt-1 text-[0.7rem] ${
                         isSent ? "text-end" : "text-start"
                       }`}
                     >
-                      {formatTime(msg?.insertTime)}
-                    </p>
+                      <div className="flex justify-end gap-2 items-center">
+                        <p>{formatTime(msg?.insertTime)}</p>
+                        {isSent && !msg?.isView && <HiOutlineCheck className="size-4" />}
+                        {isSent && msg?.isView && <VscCheckAll className="size-4 text-blue-500" />}
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })}
