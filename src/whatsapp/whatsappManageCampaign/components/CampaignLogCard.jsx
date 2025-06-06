@@ -73,26 +73,6 @@ const CampaignLogCard = ({
         <Box className="grid md:grid-cols-3 grid-cols-1  gap-4 w-full mt-4">
           {[
             {
-              label: "Delivered",
-              value: log.delivered,
-              icon: <DoneIcon className="text-green-500" />,
-              onclick: () =>
-                handleNavigate({
-                  log: "delivered",
-                  selectedDate: selectedDate,
-                }),
-            },
-            {
-              label: "Failed",
-              value: log.failed,
-              icon: <ErrorIcon className="text-red-500" />,
-              onclick: () =>
-                handleNavigate({
-                  log: "failed",
-                  selectedDate: selectedDate,
-                }),
-            },
-            {
               label: "Total",
               value: log.total,
               icon: <GroupsOutlinedIcon className="text-gray-500" />,
@@ -106,12 +86,12 @@ const CampaignLogCard = ({
                 }),
             },
             {
-              label: "Busy",
-              value: log.busy,
-              icon: <SmsFailedIcon className="text-yellow-500" />,
+              label: "Failed",
+              value: log.failed,
+              icon: <ErrorIcon className="text-red-500" />,
               onclick: () =>
                 handleNavigate({
-                  log: "busy",
+                  log: "failed",
                   selectedDate: selectedDate,
                 }),
             },
@@ -136,24 +116,16 @@ const CampaignLogCard = ({
                 }),
             },
             {
-              label: "Charged",
-              value: log.chargedUnit,
-              icon: <CurrencyRupeeOutlinedIcon className="text-green-700" />,
-              // onclick: () =>
-              //   navigate("/apicampaigninfo", {
-              //     state: { log: "Charged" },
-              //   }),
-            },
-            {
-              label: "Read",
-              value: log.read,
-              icon: <DoneAllOutlinedIcon className="text-green-500" />,
+              label: "Delivered",
+              value: log.delivered,
+              icon: <DoneIcon className="text-green-500" />,
               onclick: () =>
                 handleNavigate({
-                  log: "read",
+                  log: "delivered",
                   selectedDate: selectedDate,
                 }),
             },
+
             {
               label: "Undelivered",
               value: log.undelivered,
@@ -161,6 +133,37 @@ const CampaignLogCard = ({
               onclick: () =>
                 handleNavigate({
                   log: "undelivered",
+                  selectedDate: selectedDate,
+                }),
+            },
+
+            // {
+            //   label: "Busy",
+            //   value: log.busy,
+            //   icon: <SmsFailedIcon className="text-yellow-500" />,
+            //   onclick: () =>
+            //     handleNavigate({
+            //       log: "busy",
+            //       selectedDate: selectedDate,
+            //     }),
+            // },
+
+            // {
+            //   label: "Charged",
+            //   value: log.chargedUnit,
+            //   icon: <CurrencyRupeeOutlinedIcon className="text-green-700" />,
+            //   // onclick: () =>
+            //   //   navigate("/apicampaigninfo", {
+            //   //     state: { log: "Charged" },
+            //   //   }),
+            // },
+            {
+              label: "Read",
+              value: log.read,
+              icon: <DoneAllOutlinedIcon className="text-green-500" />,
+              onclick: () =>
+                handleNavigate({
+                  log: "read",
                   selectedDate: selectedDate,
                 }),
             },

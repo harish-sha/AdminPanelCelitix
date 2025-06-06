@@ -16,6 +16,7 @@ import moment from "moment";
 import { id } from "date-fns/locale";
 import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import Loader from "@/whatsapp/components/Loader";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -95,6 +96,7 @@ export const ApiCampaignInfo = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   async function handleFetchDetails(page = 0) {
     try {
@@ -106,6 +108,7 @@ export const ApiCampaignInfo = () => {
       //   status: "",
       // };
       // later update with upper code
+      setIsLoading(true);
 
       const formattedFromDate = state.selectedDate
         ? moment(state.selectedDate).format("YYYY-MM-DD")
@@ -150,11 +153,12 @@ export const ApiCampaignInfo = () => {
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
+    } finally {
+      setIsLoading(false);
     }
   }
 
   async function handleExport() {
-    toast.success("Hello World");
     try {
       const payload = {
         type: 2,
@@ -307,6 +311,8 @@ export const ApiCampaignInfo = () => {
       </GridFooterContainer>
     );
   };
+
+  if (isLoading) return <Loader />;
 
   return (
     <>
