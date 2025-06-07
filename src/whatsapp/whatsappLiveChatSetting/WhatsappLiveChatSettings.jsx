@@ -25,7 +25,7 @@ import {
 import AnimatedDropdown from "../components/AnimatedDropdown";
 import { ConfigureDialog } from "./components/configureDialog";
 import UniversalButton from "../components/UniversalButton";
-import CannedMessageManager from "../livechat/component/CannedMessageManager";
+import CannedMessageManager from "../../cannedmessage/components/CannedMessageManager";
 
 // import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
 
@@ -445,7 +445,7 @@ const WhatsappLiveChatSettings = () => {
           borderRadius: "20px",
         }}
       >
-        <CannedMessageManager />
+        {/* <CannedMessageManager /> */}
 
         {/* Heading */}
         <Box maxWidth="lg" mx="auto" textAlign="center" mb={2} mt={2}>
@@ -725,9 +725,9 @@ const WhatsappLiveChatSettings = () => {
                     <Switch
                       sx={{
                         "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                          {
-                            backgroundColor: "#34C759",
-                          },
+                        {
+                          backgroundColor: "#34C759",
+                        },
                         "& .MuiSwitch-switchBase.Mui-checked": {
                           color: "#34C759",
                         },

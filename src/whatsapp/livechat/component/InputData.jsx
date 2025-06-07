@@ -257,7 +257,7 @@ export const InputData = ({
         <DialogTitle>New Features: Canned Messages & User Block</DialogTitle>
         <DialogContent>
           <p className="text-gray-700 text-sm leading-6">
-            We’re excited to introduce our new <strong>Canned Messages</strong>{" "}
+            We’re excited to introduce our new <strong>Canned Messages</strong>
             feature! Now you can quickly reply to your customers with pre-saved
             messages and media, making your live chat experience faster and more
             efficient.
@@ -271,8 +271,8 @@ export const InputData = ({
               saved messages.
             </li>
             <li>
-              Create your saved messages and media in the{" "}
-              <strong>Live Chat Settings</strong>.
+              Create your saved messages and media in the
+              <strong>Canned Message</strong>.
             </li>
             <li>
               Reply instantly in live chat and keep your customers engaged.

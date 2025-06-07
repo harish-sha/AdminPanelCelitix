@@ -57,7 +57,8 @@ export const PermissionRoute = ({ children }) => {
         "/wflowcreation",
         "/apicampaigninfo",
         "/wblockuser",
-        "/wmmlite"
+        "/wmmlite",
+        "/cannedmessagemanager"
       ],
       roles: ["ADMIN"],
     },
@@ -135,6 +136,8 @@ export const PermissionRoute = ({ children }) => {
         "/managenotifications",
         "/CreateWhatsappTemplateAdmin",
         "/manageadduser",
+        "/editrouting",
+        "/addoperator",
       ],
       roles: ["ADMIN"],
     },
@@ -162,6 +165,7 @@ export const PermissionRoute = ({ children }) => {
         "/settings",
         "/transactions",
         "/tagmanager",
+        
       ],
       roles: ["ADMIN"],
     },
@@ -222,6 +226,9 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "Manage Contacts") {
         allowedServices.push(item);
       }
+      // if (item.name === "Admin") {
+      //   allowedServices.push(item);
+      // }
     });
 
     return allowedServices;

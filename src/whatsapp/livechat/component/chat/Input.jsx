@@ -172,8 +172,8 @@ import { FiSend } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
-import CannedMessageDropdown from "../CannedMessageDropdown";
-import cannedCategories from "../CannedMessageDropdown";
+import CannedMessageDropdown from "../../../../cannedmessage/components/CannedMessageDropdown";
+import cannedCategories from "../../../../cannedmessage/components/CannedMessageDropdown";
 
 export const ChatInput = ({
   inputRef,

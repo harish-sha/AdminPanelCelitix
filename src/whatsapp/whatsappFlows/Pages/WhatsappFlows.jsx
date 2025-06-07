@@ -8,8 +8,8 @@ import {
 } from "@mui/material";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
-
-// import { Player } from "@lottiefiles/react-lottie-player"; 
+import { Carousel } from "primereact/carousel";
+// import { Player } from "@lottiefiles/react-lottie-player";
 import Lottie from "lottie-react";
 import nothinganimation from "@/assets/animation/nothinganimation.json";
 
@@ -35,16 +35,37 @@ import CustomTooltip from "@/components/common/CustomTooltip";
 import celifavicon from "../../../assets/icons/CELITIX FAVICON2.png";
 
 import CardHoverEffect from "../components/CardHoverEffect";
+
+import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
+// import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
+import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
+import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
+import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
+// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import { AnimatePresence, motion } from "framer-motion";
+import CardActions from '@mui/material/CardActions';
+
+import Animation_SignIn from "../../../assets/animation/Animation_SignIn.json";
+import Animation_SignUp from "../../../assets/animation/Animation_SignUp.json";
+import Animation_BookingAppointment from "../../../assets/animation/Animation_BookingAppointment.json";
+import Animation_LeadGeneration from "../../../assets/animation/Animation_LeadGeneration.json";
+import Animation_ContactUs from "../../../assets/animation/Animation_ContactUs.json"
+import Animation_CustomerSupport from "../../../assets/animation/Animation_CustomerSupport.json"
+import Animation_Survey from "../../../assets/animation/Animation_Survey.json"
 import {
   getWhatsappFlow,
   getWabaList,
   getWhatsappFlowTemplate,
   updateFlowStatus,
 } from "@/apis/whatsapp/whatsapp";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import moment from "moment";
 import DropdownMenuPortal from "@/utils/DropdownMenuPortal";
-
+import Card from '@mui/material/Card';
+import { cn } from "../lib/utils";
 const WhatsappFlows = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -156,25 +177,27 @@ const WhatsappFlows = () => {
   //   flow.flowName.toLowerCase().includes(search.toLowerCase())
   // );
 
-  const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter((flow) =>
-    (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
+  const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter(
+    (flow) =>
+      (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredFlows.length / rowsPerPage);
   // const paginatedFlows = [];
-  const paginatedFlows = filteredFlows.reverse().slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const paginatedFlows = filteredFlows
+    .reverse()
+    .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const dropdownItems = ["Edit", "Delete", "Export"];
 
   const iconMap = {
     Edit: <EditNoteIcon fontSize="small" />,
-    Delete: <MdOutlineDeleteForever
-      className="text-red-500 cursor-pointer hover:text-red-600"
-      size={20}
-    />,
+    Delete: (
+      <MdOutlineDeleteForever
+        className="text-red-500 cursor-pointer hover:text-red-600"
+        size={20}
+      />
+    ),
     Export: <FileDownloadIcon fontSize="small" />,
   };
 
@@ -239,6 +262,50 @@ const WhatsappFlows = () => {
     }
   }
 
+ // 1. Your data
+const templates = [
+  { name: "SignIn", animation: Animation_SignIn,  button: "SignIn",},
+  { name: "SignUp",    animation: Animation_SignUp, button: "SignUp", },
+  { name: "Appointment Booking",    animation: Animation_BookingAppointment, button: "Book Appointment", },
+  { name: "Lead Generation",    animation: Animation_LeadGeneration, button: "Lead Generation", },
+  { name: "Contact Us",    animation: Animation_ContactUs, button: "Contact Us", },
+];
+
+// 2. Your itemTemplate
+const templateItem = (item) => (
+  <div className="mx-2 group w-auto  rounded-2xl pt-2 my-2 overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg border border-gray-200 relative group transition-all duration-200  hover:-translate-y-1">
+    <Card sx={{ width: "auto", overflow: 'hidden' }}>
+      {/* Title */}
+      <h4 className="text-center text-lg font-bold mt-4">{item.name}</h4>
+
+      {/* Icon / Animation */}
+      <div className="m-auto h-45 w-45 flex items-center justify-center mt-4">
+              <Lottie animationData={item.animation} loop={true} />
+            </div>
+
+      {/* Button */}
+      <CardActions className="justify-center pb-4">
+        <button
+          className={cn(
+            'transition-all duration-500 transform opacity-0 translate-y-8',
+            'group-hover:opacity-100 group-hover:translate-y-0',
+            'bg-gray-700 text-white font-semibold rounded-xl px-5 py-2 shadow-md',
+            'hover:bg-gray-800 hover:scale-105 hover:shadow-lg focus:outline-none'
+          )}
+          style={{
+            boxShadow: '0 4px 24px rgba(55,65,81,0.10)',
+            border: 'none',
+          }}
+          onClick={() => console.log(`Clicked ${item.name}`)}
+        >
+          {item.button || 'Select'}
+        </button>
+      </CardActions>
+    </Card>
+  </div>
+);
+
+
   return (
     <>
       <div className=" bg-white border border-gray-300 rounded-xl shadow-sm mb-10 p-4">
@@ -257,7 +324,35 @@ const WhatsappFlows = () => {
           </div>
         </div>
         <div className="mb-2 sm:mb-0">
-          <CardHoverEffect />
+          {/* <CardHoverEffect/> */}
+
+          <div className="">
+            {/* <h2 className="text-lg font-semibold mb-2 text-gray-800">
+              Templates
+            </h2> */}
+            <Carousel
+              value={templates}
+              numVisible={4}
+              numScroll={1}
+              itemTemplate={templateItem}
+              circular
+              showIndicators={true}
+              showNavigators={true}
+              className="custom-carousel"
+              responsiveOptions={[
+                {
+                  breakpoint: "1024px",
+                  numVisible: 4,
+                  numScroll: 1,
+                },
+                {
+                  breakpoint: "768px",
+                  numVisible: 1,
+                  numScroll: 1,
+                },
+              ]}
+            />
+          </div>
         </div>
       </div>
 
@@ -290,12 +385,13 @@ const WhatsappFlows = () => {
                   <Lottie animationData={nothinganimation} loop={true} />
                 </div>
                 <div className="text-xl font-semibold text-gray-500 text-center">
-                  No flows found.<br />
+                  No flows found.
+                  <br />
                   <span className="text-base font-normal text-gray-400">
                     Start your professional journey by creating a new flow!
                   </span>
                 </div>
-                <div className="mt-4" >
+                <div className="mt-4">
                   <UniversalButton
                     label="+ Create Flow"
                     onClick={() => setShowDialog(true)}
@@ -317,12 +413,15 @@ const WhatsappFlows = () => {
                       />
                     </div>
                     <div>
-                      <div className="font-semibold text-sm">{flow.flowName}</div>
+                      <div className="font-semibold text-sm">
+                        {flow.flowName}
+                      </div>
                       <span
-                        className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
-                          ? "bg-orange-500 text-white"
-                          : "bg-blue-500 text-white"
-                          }`}
+                        className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${
+                          flow.status === "Draft"
+                            ? "bg-orange-500 text-white"
+                            : "bg-blue-500 text-white"
+                        }`}
                       >
                         {flow.status}
                       </span>
@@ -343,9 +442,11 @@ const WhatsappFlows = () => {
                     <div className="text-gray-600">{flow.channel}</div>
                   </div>
 
-                  <div className="text-sm text-center" >
+                  <div className="text-sm text-center">
                     <div className="font-semibold">Created At</div>
-                    <div className="text-gray-700">{moment(flow.insertTime).format("DD-MM-YYYY")}</div>
+                    <div className="text-gray-700">
+                      {moment(flow.insertTime).format("DD-MM-YYYY")}
+                    </div>
                   </div>
 
                   <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0">
@@ -400,12 +501,17 @@ const WhatsappFlows = () => {
                         onClick={(e) => handleMenuOpen(e, flow)}
                         size="small"
                       >
-                        <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
+                        <SettingsOutlinedIcon
+                          className="text-gray-600"
+                          fontSize="small"
+                        />
                       </IconButton>
                     </CustomTooltip>
                     {dropdownOpenId === flow.flowId && (
                       <DropdownMenuPortal
-                        targetRef={{ current: dropdownButtonRefs.current[flow.flowId] }}
+                        targetRef={{
+                          current: dropdownButtonRefs.current[flow.flowId],
+                        }}
                         onClose={handleMenuClose}
                       >
                         {dropdownItems.map((item, idx) => (
@@ -459,8 +565,9 @@ const WhatsappFlows = () => {
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i + 1}
-                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                  }`}
+                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${
+                  currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                }`}
                 onClick={() => setCurrentPage(i + 1)}
               >
                 {i + 1}
@@ -561,129 +668,129 @@ const WhatsappFlows = () => {
             <form onSubmit={handleSubmitFlowTemp}>
               {Array.isArray(selectedFlowDetails)
                 ? selectedFlowDetails.map((flow, idx, name) => (
-                  <div
-                    className="flex flex-col gap-4"
-                    key={flow.flowId || idx}
-                  >
-                    <span>
-                      <strong>Flow Name:</strong>
-                      {flow.flowName}
-                    </span>
-                  </div>
-                ))
-                : selectedFlowDetails && (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
-                      <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
-                        <div className="flex items-center gap-3">
-                          <img
-                            // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                            src={celifavicon}
-                            className="w-10 h-10 rounded-full "
-                          />
-                          <div className=" text-md text-gray-50">
-                            {selectedWaba
-                              ? wabaList.find(
-                                (waba) => waba.mobileNo === selectedWaba
-                              )?.name || ""
-                              : ""}
-                          </div>
-                        </div>
-                        <div className="pr-3 cursor-pointer">
-                          <MoreVertIcon sx={{ color: "gray" }} />
-                        </div>
-                      </div>
-                      <div className="p-5">
-                        <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
-                          <div className="mb-2 text-sm break-words text-wrap">
-                            {bodyText}
-                          </div>
-                          <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
-                            <button
-                              className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
-                              type="button"
-                            >
-                              <svg
-                                width="20"
-                                height="20"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <rect
-                                  x="4"
-                                  y="4"
-                                  width="16"
-                                  height="16"
-                                  rx="2"
-                                  fill="#bdbdbd"
-                                />
-                                <path
-                                  d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
-                                  fill="#757575"
-                                />
-                              </svg>
-                              <div className="break-words text-wrap">
-                                <div className="font-medium text-sm break-words text-wrap">
-                                  {btnText}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                    <div
+                      className="flex flex-col gap-4"
+                      key={flow.flowId || idx}
+                    >
+                      <span>
+                        <strong>Flow Name:</strong>
+                        {flow.flowName}
+                      </span>
                     </div>
-                    <span className="flex justify-center items-center">
-                      Flow :&nbsp;
-                      <strong>{selectedFlowDetails.flowName}</strong>
-                    </span>
-                    <AnimatedDropdown
-                      id="whatsappflowWabaTemplate"
-                      name="whatsappflowWabaTemplate"
-                      label="Whatsapp Account"
-                      tooltipContent="Select your whatsapp business account"
-                      tooltipPlacement="right"
-                      options={wabaList.map((waba) => ({
-                        value: waba.mobileNo,
-                        label: waba.name,
-                      }))}
-                      value={selectedWaba}
-                      onChange={setSelectedWaba}
-                      placeholder="Select WABA"
-                    />
-                    <InputField
-                      label="Mobile No"
-                      id="mobileno"
-                      name="mobileno"
-                      type="phoneno"
-                      tooltipContent="Enter Mobile of whom to send the flow"
-                      placeholder="Enter MobileNo"
-                      value={mobileNo}
-                      onChange={(e) => setMobileNo(e.target.value)}
-                    />
-                    <InputField
-                      label="Body Text"
-                      id="bodytext"
-                      name="bodytext"
-                      type="text"
-                      tooltipContent="Enter body text"
-                      placeholder="Enter Body Text"
-                      value={bodyText}
-                      onChange={(e) => setBodyText(e.target.value)}
-                    // maxLength={50}
-                    />
-                    <InputField
-                      label="Button Text"
-                      id="buttontext"
-                      name="buttontext"
-                      type="text"
-                      placeholder="Enter Button Text"
-                      tooltipContent="Enter button text"
-                      value={btnText}
-                      maxLength={25}
-                      onChange={(e) => setBtnText(e.target.value)}
-                    />
-                  </div>
-                )}
+                  ))
+                : selectedFlowDetails && (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
+                        <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
+                          <div className="flex items-center gap-3">
+                            <img
+                              // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
+                              src={celifavicon}
+                              className="w-10 h-10 rounded-full "
+                            />
+                            <div className=" text-md text-gray-50">
+                              {selectedWaba
+                                ? wabaList.find(
+                                    (waba) => waba.mobileNo === selectedWaba
+                                  )?.name || ""
+                                : ""}
+                            </div>
+                          </div>
+                          <div className="pr-3 cursor-pointer">
+                            <MoreVertIcon sx={{ color: "gray" }} />
+                          </div>
+                        </div>
+                        <div className="p-5">
+                          <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
+                            <div className="mb-2 text-sm break-words text-wrap">
+                              {bodyText}
+                            </div>
+                            <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
+                              <button
+                                className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
+                                type="button"
+                              >
+                                <svg
+                                  width="20"
+                                  height="20"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <rect
+                                    x="4"
+                                    y="4"
+                                    width="16"
+                                    height="16"
+                                    rx="2"
+                                    fill="#bdbdbd"
+                                  />
+                                  <path
+                                    d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
+                                    fill="#757575"
+                                  />
+                                </svg>
+                                <div className="break-words text-wrap">
+                                  <div className="font-medium text-sm break-words text-wrap">
+                                    {btnText}
+                                  </div>
+                                </div>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                      <span className="flex justify-center items-center">
+                        Flow :&nbsp;
+                        <strong>{selectedFlowDetails.flowName}</strong>
+                      </span>
+                      <AnimatedDropdown
+                        id="whatsappflowWabaTemplate"
+                        name="whatsappflowWabaTemplate"
+                        label="Whatsapp Account"
+                        tooltipContent="Select your whatsapp business account"
+                        tooltipPlacement="right"
+                        options={wabaList.map((waba) => ({
+                          value: waba.mobileNo,
+                          label: waba.name,
+                        }))}
+                        value={selectedWaba}
+                        onChange={setSelectedWaba}
+                        placeholder="Select WABA"
+                      />
+                      <InputField
+                        label="Mobile No"
+                        id="mobileno"
+                        name="mobileno"
+                        type="phoneno"
+                        tooltipContent="Enter Mobile of whom to send the flow"
+                        placeholder="Enter MobileNo"
+                        value={mobileNo}
+                        onChange={(e) => setMobileNo(e.target.value)}
+                      />
+                      <InputField
+                        label="Body Text"
+                        id="bodytext"
+                        name="bodytext"
+                        type="text"
+                        tooltipContent="Enter body text"
+                        placeholder="Enter Body Text"
+                        value={bodyText}
+                        onChange={(e) => setBodyText(e.target.value)}
+                        // maxLength={50}
+                      />
+                      <InputField
+                        label="Button Text"
+                        id="buttontext"
+                        name="buttontext"
+                        type="text"
+                        placeholder="Enter Button Text"
+                        tooltipContent="Enter button text"
+                        value={btnText}
+                        maxLength={25}
+                        onChange={(e) => setBtnText(e.target.value)}
+                      />
+                    </div>
+                  )}
               <div className="flex justify-center items-center mt-5">
                 <UniversalButton
                   onClick={handleSubmitFlowTemp}

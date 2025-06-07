@@ -96,7 +96,7 @@ const CampaignDeliveryReportDetails = () => {
 
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState([]);
-    const [deliveryStatus, setDeliveryStatus] = useState("All");
+    const [deliveryStatus, setDeliveryStatus] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
@@ -114,7 +114,7 @@ const CampaignDeliveryReportDetails = () => {
             campaignSrno,
             mobileNumber,
             currentPage,
-            // deliveryStatus,
+            deliveryStatus,
         );
         setCampaignDetails(data.data);
         setTotalPage(data.total);
@@ -266,7 +266,7 @@ const CampaignDeliveryReportDetails = () => {
                         type="number"
                     />
                 </div>
-                {/* <div className="w-full sm:w-64">
+                <div className="w-full sm:w-64">
                     <AnimatedDropdown
                         id="campaignDeliveryStatusdropdown"
                         name="campaignDeliveryStatusdropdown"
@@ -274,10 +274,10 @@ const CampaignDeliveryReportDetails = () => {
                         tooltipContent="Select the delivery status."
                         tooltipPlacement="right"
                         options={[
-                            { value: "All", label: "All" },
+                            // { value: "All", label: "All" },
                             { value: "READ", label: "Read" },
                             { value: "DELIVRD", label: "Delivered" },
-                            { value: "UNDELIV", label: "UNDelivered" },
+                            { value: "UNDELIV", label: "Undelivered" },
                             // { value: "clicked", label: "Clicked" },
                             // { value: "replied", label: "Replied" },
                             // { value: "failed", label: "Failed" },
@@ -286,7 +286,7 @@ const CampaignDeliveryReportDetails = () => {
                         onChange={setDeliveryStatus}
                         placeholder="Category"
                     />
-                </div> */}
+                </div>
                 <div className="w-max-content ">
                     <UniversalButton
                         id="manageCampaignSearchBtn"

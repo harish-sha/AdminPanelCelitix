@@ -20,32 +20,32 @@ export const fetchCampaignBySrno = async (campSrno) => {
 };
 
 // fetch campaign by srno
-// export const fetchCampaignDetailReport = async (
-//   campaignSrNo,
-//   mobileNo,
-//   page,
-//   deliveryStatus
-// ) => {
-//   return await fetchWithAuth(
-//     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}`,
-//     {
-//       method: "POST",
-//     }
-//   );
-// };
-
 export const fetchCampaignDetailReport = async (
   campaignSrNo,
   mobileNo,
   page,
+  deliveryStatus
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}`,
     {
       method: "POST",
     }
   );
 };
+
+// export const fetchCampaignDetailReport = async (
+//   campaignSrNo,
+//   mobileNo,
+//   page,
+// ) => {
+//   return await fetchWithAuth(
+//     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
 
 // get summary report
 export const fetchSummaryReport = async (data) => {

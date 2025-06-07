@@ -8,6 +8,9 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
 
+// canned message
+
+
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
 import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
@@ -135,6 +138,7 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 import TagManager from "@/tagmanager/TagManager";
 import MmLite from "@/whatsapp/mmlite/MmLite";
+import CannedMessage from "@/cannedmessage/CannedMessage";
 
 const Approutes = () => {
   return (
@@ -280,6 +284,10 @@ const Approutes = () => {
 
         {/* Tag Manager */}
         <Route path="/tagmanager" element={<TagManager />} />
+
+        {/* Canned Message Manager */}
+        <Route path="/cannedmessagemanager" element={<CannedMessage />} />
+
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
