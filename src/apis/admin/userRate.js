@@ -9,13 +9,20 @@ export const getRCSRateData = async (userSrno) => {
 
 // save rcs rate
 export const saveEditRcsRate = async (data) => {
-  return await fetchWithAuth("/rcs/saveEditRCSRate", {
+  return await fetchWithAuth(`/rcs/saveEditRCSRate`, {
     method: "POST",
     body: JSON.stringify(data),
   });
 };
 
 // get rcs rate by srno
+export const getRCSRateBySrno = async (srno, userSrno) => {
+  return await fetchWithAuth(
+    `/rcs/getRcsRateBySrno?srno=${srno}&userSrno=${userSrno}`,
+    {
+      method: "POST",
+    }
+  );
 export const getRCSRateBySrno = async (srno, userSrno) => {
   return await fetchWithAuth(
     `/rcs/getRcsRateBySrno?srno=${srno}&userSrno=${userSrno}`,
@@ -36,6 +43,13 @@ export const deleteRCSRateBySrno = async (srno, userSrno = null) => {
 };
 
 // get whatsapp rate by srno
+export const getWhatsappRateBySrno = async (srno, userSrno) => {
+  return await fetchWithAuth(
+    `/whatsapp/getWhatsappRateBySrno?srno=${srno}&userSrno=${userSrno}`,
+    {
+      method: "POST",
+    }
+  );
 export const getWhatsappRateBySrno = async (srno, userSrno) => {
   return await fetchWithAuth(
     `/whatsapp/getWhatsappRateBySrno?srno=${srno}&userSrno=${userSrno}`,
