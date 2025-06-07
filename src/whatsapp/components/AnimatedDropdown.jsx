@@ -82,7 +82,7 @@ const AnimatedDropdown = ({
         {/* Empty selection option */}
         <Option
           key="no-selection"
-          value="no-selection"
+          value=""
           className="italic text-gray-500 font-p"
         >
           -- No Selection --
