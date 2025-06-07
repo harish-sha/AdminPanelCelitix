@@ -28,8 +28,15 @@ import { Dialog } from "primereact/dialog";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import moment from "moment";
+import Chip from "@mui/material/Chip";
 
-const EditPanel = ({ selectedItem, onClose, onSave }) => {
+const EditPanel = ({
+  selectedItem,
+  onClose,
+  onSave,
+  headingValue,
+  setHeadingValue,
+}) => {
   const [value, setValue] = useState("");
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -268,16 +275,16 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const { type, payload } = selectedItem || {};
 
   // 1️⃣ state to track the input’s value
-  const [headingValue, setHeadingValue] = useState("");
+  // const [headingValue, setHeadingValue] = useState("");
 
   // 2️⃣ prefill (or clear) when selectedItem changes
-  useEffect(() => {
-    if (allowed.includes(type)) {
-      setHeadingValue(payload?.[type] ?? "");
-    } else {
-      setHeadingValue("");
-    }
-  }, [type, payload]);
+  // useEffect(() => {
+  //   if (allowed.includes(type)) {
+  //     setHeadingValue(payload?.[type] ?? "");
+  //   } else {
+  //     setHeadingValue("");
+  //   }
+  // }, [type, payload]);
 
   // for headings
   // const handleHeadingSave = () => {
@@ -476,13 +483,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [minCalendarDate, setMinCalendarDate] = useState("");
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
   const [dateCalendarName, setDateCalendarName] = useState("");
-  const [unavailableCalendarDate, setUnavailableCalendarDate] = useState("");
+  const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
-
-  // const formatDateCalendarToString = (calendarDate) => {
-  //   if (!calendarDate) return "";
-  //   return String(new Date(calendarDate).getTime());
-  // };
 
   const formatDateCalendarToString = (calendarDate) => {
     if (!calendarDate) return "";
@@ -491,16 +493,29 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     return d.format("YYYY-MM-DD");
   };
 
-  // const formatCalendarArrayToTimestamps = (arr) => {
-  //   return Array.isArray(arr)
-  //     ? arr.map((d) => String(new Date(d).getTime()))
-  //     : [];
-  // };
+  const formatArrayToCalendarDates = (dates) => {
+    if (!Array.isArray(dates)) return [];
+    return dates
+      .filter((date) => date instanceof Date && !isNaN(date))
+      .map(formatDateToString)
+      .filter(Boolean);
+  };
 
-  const formatCalendarArrayToTimestamps = (arr) => {
-    return Array.isArray(arr)
-      ? arr.map((d) => formatDateCalendarToString(d))
-      : [];
+  const handleAddUnavailableDate = (date) => {
+    const formatted = formatDateToString(date);
+    if (
+      formatted &&
+      !unavailableCalendarDates.some((d) => formatDateToString(d) === formatted)
+    ) {
+      setUnavailableCalendarDates((prev) => [...prev, date]);
+    }
+  };
+
+  // Handle removing a selected date
+  const handleRemoveUnavailableDate = (indexToRemove) => {
+    setUnavailableCalendarDates((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const handleCalendarSave = () => {
@@ -518,9 +533,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       name: dateCalendarName,
       "min-date": formatDateCalendarToString(minCalendarDate),
       "max-date": formatDateCalendarToString(maxCalendarDate),
-      "unavailable-dates": formatCalendarArrayToTimestamps(
-        unavailableCalendarDate
-      ),
+      "unavailable-dates": formatArrayToCalendarDates(unavailableCalendarDates),
       "helper-text": dateCalendarPlaceholder,
       // "error-message": "",
     };
@@ -861,7 +874,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         if (imageSize > 100 * 1024) {
           toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1118,11 +1131,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+            }
           : o
       )
     );
@@ -1211,6 +1224,110 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   // dropdown
   // akhil
 
+  // chipSelector
+  const [chipSelectorLabel, setChipSelectorLabel] = useState("");
+  const [chipSelectorOptions, setChipSelectorOptions] = useState([]);
+  const [editingChipIdx, setEditingChipIdx] = useState(null);
+  const [chipName, setChipName] = useState("");
+  const [chipDescription, setChipDescription] = useState("");
+ 
+
+  const handleStartChipSelectorEdit = (idx) => {
+    const opt = chipSelectorOptions[idx];
+    setEditingChipIdx(idx);
+    setChipName(opt.name);
+    setChipDescription(opt.description);
+   
+  };
+
+  const handleSaveChipSelectorInline = () => {
+    if (!chipName.trim()) return;
+
+    setChipSelectorOptions((prev) =>
+      prev.map((o, i) =>
+        i === editingChipIdx
+          ? {
+              ...o,
+              name: chipName.trim(),
+              description: chipDescription.trim(),
+             
+            }
+          : o
+      )
+    );
+
+    setEditingChipIdx(null);
+    setChipName("");
+    setChipDescription("");
+  
+  };
+
+  const handleCancelChipSelectorInline = () => {
+    setEditingChipIdx(null);
+    setChipName("");
+    setChipDescription("");
+   
+  };
+
+  const handleChipSelectorRemove = (idx) => {
+    setChipSelectorOptions((prev) => prev.filter((_, i) => i !== idx));
+
+    if (idx === editingChipIdx) {
+      handleCancelChipSelectorInline();
+    }
+  };
+
+  const handleAddNewChipSelector = () => {
+    setChipSelectorOptions((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        name: '',
+        description: "",
+       
+      },
+    ]);
+  };
+
+  const handleChipSelectorSave = () => {
+    const filteredOptions = chipSelectorOptions.filter((o) => o.name.trim());
+    if (filteredOptions.length < 2) {
+      toast.error("At least two chip options are required!");
+      return;
+    }
+
+    const payloadOptions = filteredOptions.map((o, idx) => ({
+      id: idx + 1,
+      name: o.name.trim(),
+      description: o.description.trim(),
+      
+    }));
+
+    const payload = {
+      label: chipSelectorLabel.trim(),
+       required: true,
+      "data-source": payloadOptions,
+    };
+
+    const existingCount = selectedItem?.chipSelector
+      ? Object.keys(selectedItem.chipSelector).length
+      : 0;
+
+    const id = `chipSelector_${existingCount + 1}`;
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+      chipSelector: {
+        ...(selectedItem?.chipSelector || {}),
+        [id]: payload,
+      },
+    };
+
+    onSave(updatedData);
+    onClose()
+  };
+
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -1243,32 +1360,32 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
         ) && (
-            <div className="mb-2 font-semibold text-lg mt-3">
-              <InputField
-                label={`Edit ${type}`}
-                placeholder={`Enter ${type}`}
-                variant="outlined"
-                tooltipContent={`Edit ${type}`}
-                tooltipPlacement="right"
-                fullWidth
-                value={headingValue}
-                maxLength={maxLengthMap[selectedItem?.type] || 80}
-                onChange={(e) => setHeadingValue(e.target.value)}
-              />
+          <div className="mb-2 font-semibold text-lg mt-3">
+            <InputField
+              label={`Edit ${type}`}
+              placeholder={`Enter ${type}`}
+              variant="outlined"
+              tooltipContent={`Edit ${type}`}
+              tooltipPlacement="right"
+              fullWidth
+              value={headingValue}
+              maxLength={maxLengthMap[selectedItem?.type] || 80}
+              onChange={(e) => setHeadingValue(e.target.value)}
+            />
 
-              <div className="mt-5 flex justify-center items-center">
-                <UniversalButton
-                  label="SAVE"
-                  onClick={() => {
-                    onSave({
-                      index: selectedItem.index,
-                      [type]: headingValue,
-                    });
-                  }}
-                />
-              </div>
+            <div className="mt-5 flex justify-center items-center">
+              <UniversalButton
+                label="SAVE"
+                onClick={() => {
+                  onSave({
+                    index: selectedItem.index,
+                    [type]: headingValue,
+                  });
+                }}
+              />
             </div>
-          )}
+          </div>
+        )}
 
         {["textInput", "textArea"].includes(selectedItem?.type) && (
           <div className="mb-2 text-lg space-y-2 mt-3">
@@ -1318,7 +1435,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               />
             )}
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="flex, gap-8 ">
               <InputField
                 label="Min Length"
                 id="min"
@@ -1352,7 +1469,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               >
                 Is Input Required??
               </label>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="flex, alignItems-center, gap-8 ">
                 <Switch
                   {...switchLabel}
                   checked={switchChecked}
@@ -1457,7 +1574,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             tooltipPlacement="right"
                             required
                             onChange={handleCheckboxImageChange}
-                            sx={{ display: "none" }}
+                            classname=""
                           />
                           <button onClick={handleCheckboxUploadFile}>
                             <FileUploadOutlinedIcon
@@ -1471,7 +1588,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             display: "flex",
                             gap: 2,
                             mt: 2,
-                            display: "flex",
                             justifyContent: "center",
                           }}
                         >
@@ -1617,7 +1733,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             tooltipPlacement="right"
                             required
                             onChange={handleRadioImageChange}
-                            sx={{ display: "none" }}
+                            className=""
                           />
                           <button onClick={handleRadioUploadFile}>
                             <FileUploadOutlinedIcon
@@ -1631,7 +1747,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             display: "flex",
                             gap: 2,
                             marginTop: 2,
-                            display: "flex",
                             justifyContent: "center",
                           }}
                         >
@@ -1774,7 +1889,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipPlacement="right"
                           required
                           onChange={handleImageChange}
-                          sx={{ display: "none" }}
+                          // sx={{ display: "none" }}
                         />
                         <button onClick={handleUploadFile}>
                           <FileUploadOutlinedIcon
@@ -1787,7 +1902,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           display: "flex",
                           gap: 1,
                           mt: 2,
-                          // display: "flex",
                           justifyContent: "center",
                         }}
                       >
@@ -1855,6 +1969,110 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   onClick={handleSaveDropdown}
                 />
               </Box>
+            </div>
+          </FormControl>
+        )}
+
+        {/* Editable option for chipselector In */}
+        {selectedItem?.type === "chipSelector" && (
+          <FormControl fullWidth>
+            <Box sx={{ mb: 2, mt: 3 }}>
+              <InputField
+                label="Label"
+                placeholder="Enter label"
+                tooltipContent="Enter MainLabel"
+                tooltipPlacement="right"
+                value={chipSelectorLabel}
+                onChange={(e) => setChipSelectorLabel(e.target.value)}
+              />
+            </Box>
+
+            {chipSelectorOptions.map((opt, idx) => {
+              const isEditing = idx === editingChipIdx;
+              return (
+                <Box
+                  key={opt.id}
+                  sx={{
+                    mb: 1,
+                    p: 1,
+                    border: "1px solid #ddd",
+                    borderRadius: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    bgcolor: isEditing ? "#f5f5f5" : "white",
+                  }}
+                >
+                  {isEditing ? (
+                    <Box sx={{ flexGrow: 1 }}>
+                      <InputField
+                        label="Name"
+                        placeholder="Enter Name"
+                        value={chipName}
+                        onChange={(e) => setChipName(e.target.value)}
+                      />
+                      <InputField
+                        label="Description"
+                        placeholder="Enter description"
+                        value={chipDescription}
+                        onChange={(e) => setChipDescription(e.target.value)}
+                      />
+                     
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          mt: 2,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <UniversalButton
+                          label="Save Option"
+                          onClick={handleSaveChipSelectorInline}
+                          disabled={!chipName.trim()}
+                        />
+                        <UniversalButton
+                          label="Cancel"
+                          className="p-button-text"
+                          onClick={handleCancelChipSelectorInline}
+                        />
+                      </Box>
+                    </Box>
+                  ) : (
+                    <>
+                      <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
+                        <Typography variant="subtitle1">{opt.name}</Typography>
+                        {opt.description && (
+                          <Typography variant="body2" color="textSecondary">
+                            {opt.description}
+                          </Typography>
+                        )}
+                      </Box>
+                      <IconButton
+                        onClick={() => handleStartChipSelectorEdit(idx)}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton onClick={() => handleChipSelectorRemove(idx)}>
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </>
+                  )}
+                </Box>
+              );
+            })}
+
+            <div className="flex justify-center items-center gap-2">
+              <UniversalButton
+                label="Add Option"
+                onClick={handleAddNewChipSelector}
+                disabled={chipSelectorOptions.length >= 200}
+              />
+              <UniversalButton
+                id="save-chip-selector"
+                label="Save ChipSelector"
+                onClick={handleChipSelectorSave}
+              />
             </div>
           </FormControl>
         )}
@@ -1995,6 +2213,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for Image In */}
         {selectedItem?.type === "image" && (
           <>
             <div className="space-y-3">
@@ -2055,6 +2274,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for document In */}
         {selectedItem?.type === "document" && (
           <>
             <div className="space-y-3 mt-3">
@@ -2113,6 +2333,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for media In */}
         {selectedItem?.type === "media" && (
           <>
             <div className="space-y-3 mt-3">
@@ -2161,6 +2382,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for if-else In */}
         {selectedItem?.type === "ifelse" && (
           <InputField
             placeholder="If-Else"
@@ -2169,6 +2391,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           />
         )}
 
+        {/* Editable option for date In */}
         {selectedItem?.type === "date" && (
           <div className="space-y-3 mt-3">
             <InputField
@@ -2227,6 +2450,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </div>
         )}
 
+        {/* Editable option for calendar In */}
         {selectedItem?.type === "calendar" && (
           <div className="space-y-3 mt-3">
             <InputField
@@ -2261,11 +2485,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipContent="Select Min-Date"
               tooltipPlacement="right"
               value={minCalendarDate}
-              onChange={(value) =>
-                setMinCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              onChange={(value) => setMinCalendarDate(value)}
             />
 
             <UniversalDatePicker
@@ -2273,24 +2493,29 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipContent="Select Max-Date"
               tooltipPlacement="right"
               value={maxCalendarDate}
-              onChange={(value) =>
-                setMaxCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              onChange={(value) => setMaxCalendarDate(value)}
             />
-
             <UniversalDatePicker
               label="Unavailable Dates"
-              value={unavailableCalendarDate}
               tooltipContent="Select Unavailable-Date"
               tooltipPlacement="right"
-              onChange={(value) =>
-                setUnavailableCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              value={null}
+              onChange={handleAddUnavailableDate}
             />
+            <div className="flex flex-wrap gap-2 mt-2 ">
+              {unavailableCalendarDates.map((date, index) => (
+                <Chip
+                  sx={{ padding: 1 }}
+                  key={index}
+                  label={new Date(date).toLocaleDateString()}
+                  onDelete={() =>
+                    setUnavailableCalendarDates((prev) =>
+                      prev.filter((_, i) => i !== index)
+                    )
+                  }
+                />
+              ))}
+            </div>
             <div className="flex justify-center">
               <UniversalButton label="Save" onClick={handleCalendarSave} />
             </div>

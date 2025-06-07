@@ -15,10 +15,9 @@ import { generatePayload } from "../lib/generatePayload";
 import { saveFlow } from "@/apis/whatsapp/whatsapp";
 import InputField from "@/components/layout/InputField";
 
-
 const FlowCreationPage = () => {
   const { state } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
@@ -40,7 +39,10 @@ const FlowCreationPage = () => {
   const [screenEditName, setScreenEditName] = useState("");
   const [screenID, setScreenID] = useState("");
   const [createTab, setCreateTab] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+  const [headingValue, setHeadingValue] = useState("");
+
+  // console.log("headingValue", headingValue)
 
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
@@ -54,7 +56,7 @@ const FlowCreationPage = () => {
       "heading",
       "subheading",
       "textbody",
-      "textcaption"
+      "textcaption",
     ];
 
     // Check for duplicates *only* if item.type is in nonDuplicateTabs
@@ -84,14 +86,43 @@ const FlowCreationPage = () => {
     // toast.success(`"${item.type}" added successfully`);
   };
 
-
   useEffect(() => {
-    console.log(tabs)
-  }, [])
+    console.log("1454",tabs);
+  }, [tabs]);
 
-  const handleEdit = (index) => {
-    tabs[activeIndex].payload[index];
-    setSelectedItem({ ...tabs[activeIndex].payload[index], index });
+  // const handleEdit = (index, item) => {
+  //   console.log("indexxxxxxxxxxxx", index)
+  //   console.log("itemmmmmmmmmmmmm", item)
+  //   tabs[activeIndex].payload[index];
+  //   setSelectedItem({ ...tabs[activeIndex].payload[index], index });
+  // };
+
+  const handleEdit = (index, item) => {
+    console.log("itemmmmmmmmmmmmm", item);
+    const type = item.type;
+
+    // Extract prefill value based on type
+    let prefillValue = "";
+
+    if (type === "textInput" || type === "textArea") {
+      const key = type === "textInput" ? "textInput_1" : "textArea_1";
+      prefillValue = item.texts?.[key]?.helper_text || "";
+    } else if (
+      type === "heading" ||
+      type === "subheading" ||
+      type === "textbody" ||
+      type === "textcaption"
+    ) {
+      prefillValue = item[type] || "";
+    } else if (type === "radioButton") {
+      prefillValue = item.radio?.radio_1?.description || "";
+    } else if (type === "footerbutton") {
+      prefillValue = item.footer?.footer_1?.center_caption || "";
+    }
+
+    console.log("prefillValueeeeeeee", prefillValue);
+    setSelectedItem({ ...item, index });
+    setHeadingValue(prefillValue);
   };
 
   const handleSave = (updatedData) => {
@@ -108,9 +139,9 @@ const FlowCreationPage = () => {
           options: updatedData.options || [],
           checked: updatedData.checked || [],
           selectedOption: updatedData.selectedOption || "",
-          ...updatedData
+          ...updatedData,
         };
-        console.log("all tabs content when save within tabs", newTabs)
+        console.log("all tabs content when save within tabs", newTabs);
       } else {
         console.error("Invalid index in updatedData:", updatedData.index);
       }
@@ -126,11 +157,11 @@ const FlowCreationPage = () => {
 
   async function handleFlowBuild() {
     if (!flowName) {
-      toast.error("Please Enter FlowName")
+      toast.error("Please Enter FlowName");
       return;
     }
 
-    const hasAtLeastOneComponent = tabs.some(tab => tab.payload.length > 0);
+    const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
     if (!hasAtLeastOneComponent) {
       toast.error("Please add at least one component before building the flow");
@@ -147,7 +178,7 @@ const FlowCreationPage = () => {
         id: "",
         name: flowName,
       };
-      setIsLoading(true)
+      setIsLoading(true);
 
       const res = await saveFlow(params, payload);
       // console.log("final payload", payload)
@@ -162,32 +193,26 @@ const FlowCreationPage = () => {
         return toast.error(res.error_user_msg.error.error_user_msg);
       }
       toast.success(res.msg);
-      navigate("/wwhatsappflows")
+      navigate("/wwhatsappflows");
     } catch (e) {
       // console.log("error", e)
       return toast.error(e.error_user_msg);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
-
   async function handleFlowSave() {
     toast.success("Flow Saved Successfully");
-
   }
 
   return (
     <div className="">
-
-
       <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
         {/* <span className="text-md font-semibold text-gray-700">
           ChatFlow: {state?.flowName || "Untitled Flow"}
         </span> */}
-        <span className="text-md font-semibold text-gray-700">
-          ChatFlow
-        </span>
+        <span className="text-md font-semibold text-gray-700">ChatFlow</span>
 
         <div className="flex items-center gap-3">
           <InputField
@@ -222,7 +247,6 @@ const FlowCreationPage = () => {
           />
         </div>
       </div>
-
 
       <div className="flex gap-3 items-start mt-4">
         {/* Siddebar */}
@@ -260,9 +284,10 @@ const FlowCreationPage = () => {
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}
+              headingValue={headingValue}
+              setHeadingValue={setHeadingValue}
             />
           )}
-
         </div>
 
         <div className="flex-1 ">

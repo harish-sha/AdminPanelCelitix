@@ -289,6 +289,7 @@ export const generatePayload = (data) => {
     image: 0,
     date: 0,
     calendar: 0,
+    chipSelector: 0,
   };
 
   const numberToWord = (num) => {
@@ -423,7 +424,21 @@ export const generatePayload = (data) => {
         };
       }
 
-    
+      if (type === "chipSelector") {
+        component = {
+          name,
+          type: "ChipsSelector",
+          label: pay.label,
+          required: pay.required ?? true,
+          "data-source": (pay["data-source"] || []).map((opt) => ({
+            id: String(opt.id || ""),
+            // name: opt.name || "",
+            title: opt.description || "",
+          })),
+        };
+      }
+
+  
 
       if (type === "image") {
         component = {
@@ -476,12 +491,17 @@ export const generatePayload = (data) => {
         };
       }
 
-      if(type === "calendar"){
-         component = {
+      if (type === "calendar") {
+        component = {
           name,
           type: "CalendarPicker",
           label: pay.label,
           name: pay.name,
+          mode: pay.mode || "single", 
+          ...(pay.mode === "range" && {
+            title: pay.title || "",
+            description: pay.description || "",
+          }),
           "min-date": pay["min-date"],
           "max-date": pay["max-date"],
           "unavailable-dates": pay["unavailable-dates"],
@@ -489,6 +509,8 @@ export const generatePayload = (data) => {
           // "error-message":  pay.error_message,
         };
       }
+
+    
 
       if (type === "footerbutton") {
         const footerData = pay.footer?.footer_1 || {};
