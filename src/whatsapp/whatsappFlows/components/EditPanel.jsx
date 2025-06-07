@@ -1471,7 +1471,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             display: "flex",
                             gap: 2,
                             mt: 2,
-                            display: "flex",
                             justifyContent: "center",
                           }}
                         >

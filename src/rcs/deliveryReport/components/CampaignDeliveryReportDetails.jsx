@@ -113,7 +113,7 @@ const CampaignDeliveryReportDetails = () => {
       campaignSrno,
       mobileNumber,
       currentPage,
-      // deliveryStatus,
+      deliveryStatus,
       selectedUser || ""
     );
     setCampaignDetails(data.data);
@@ -265,7 +265,7 @@ const CampaignDeliveryReportDetails = () => {
             type="number"
           />
         </div>
-        {/* <div className="w-full sm:w-64">
+        <div className="w-full sm:w-64">
           <AnimatedDropdown
             id="campaignDeliveryStatusdropdown"
             name="campaignDeliveryStatusdropdown"
@@ -273,7 +273,7 @@ const CampaignDeliveryReportDetails = () => {
             tooltipContent="Select the delivery status."
             tooltipPlacement="right"
             options={[
-              { value: "All", label: "All" },
+              // { value: "All", label: "All" },
               { value: "READ", label: "Read" },
               { value: "DELIVRD", label: "Delivered" },
               { value: "UNDELIV", label: "UNDelivered" },
@@ -285,7 +285,7 @@ const CampaignDeliveryReportDetails = () => {
             onChange={setDeliveryStatus}
             placeholder="Category"
           />
-        </div> */}
+        </div>
         <div className="w-max-content">
           <UniversalButton
             id="manageCampaignSearchBtn"
