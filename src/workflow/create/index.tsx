@@ -491,7 +491,9 @@ export const WorkflowCreate = () => {
                 onClick={() => {
                   reset();
                 }}
-                className={commonButtonClass}
+                className={
+                  "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
+                }
               >
                 Reset
               </Button>
@@ -536,10 +538,34 @@ export const WorkflowCreate = () => {
         style={{ width: "50vw" }}
         draggable={false}
       >
-        {type === "sms" && <SMSNode />}
-        {type === "voice" && <VoiceNode />}
-        {type === "rcs" && <RCSNode />}
-        {type === "whatsapp" && <WhatsAppNode />}
+        {type === "sms" && (
+          <SMSNode
+            id={selectedNodeId}
+            nodesInputData={nodesInputData}
+            setNodesInputData={setNodesInputData}
+          />
+        )}
+        {type === "voice" && (
+          <VoiceNode
+            id={selectedNodeId}
+            nodesInputData={nodesInputData}
+            setNodesInputData={setNodesInputData}
+          />
+        )}
+        {type === "rcs" && (
+          <RCSNode
+            id={selectedNodeId}
+            nodesInputData={nodesInputData}
+            setNodesInputData={setNodesInputData}
+          />
+        )}
+        {type === "whatsapp" && (
+          <WhatsAppNode
+            id={selectedNodeId}
+            nodesInputData={nodesInputData}
+            setNodesInputData={setNodesInputData}
+          />
+        )}
       </Dialog>
     </>
   );
