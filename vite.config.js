@@ -8,7 +8,7 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "VITE");
 
   return {
-    plugins: [react(), tailwindcss(), mkcert()],
+    plugins: [react(), tailwindcss()],
     define: {
       "process.env": env,
     },
