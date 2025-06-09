@@ -44,9 +44,9 @@ export const WorkflowDetails = () => {
     }
   }
 
-  //   useEffect(() => {
-  //     handleFetchAllWorkflow();
-  //   }, [type]);
+  useEffect(() => {
+    handleFetchAllWorkflow();
+  }, [type]);
 
   async function handleDelete(row) {
     if (!row.sr_no || !row.node_type) return;

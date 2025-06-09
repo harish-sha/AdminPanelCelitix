@@ -22,6 +22,7 @@ import { SMSNode } from "./components/SMSDialog";
 import { VoiceNode } from "./components/VoiceDialog";
 import { RCSNode } from "./components/RcsDialog";
 import { WhatsAppNode } from "./components/WhatsappDialog";
+import { generatePayload } from "./helpers/generatePayload";
 
 function NodeComponent({
   id,
@@ -400,6 +401,14 @@ export const WorkflowCreate = () => {
     [deleteNode, isConnecting, nodesInputData]
   );
 
+  async function handleSaveWorkflow() {
+    if (!name) return toast.error("Please enter a name for the workflow");
+    const payload = generatePayload(nodesInputData);
+    if (!payload) return toast.error("Error while saving workflow");
+    console.log(payload);
+    toast.success("Workflow saved successfully");
+  }
+
   return (
     <>
       <div className="flex h-[100%]">
@@ -520,7 +529,7 @@ export const WorkflowCreate = () => {
               id="saveWorkFlow"
               name="saveWorkFlow"
               label={`Save`}
-              onClick={() => {}}
+              onClick={handleSaveWorkflow}
               style={{ width: "100%" }}
             />
           </div>
