@@ -8,10 +8,14 @@ import { Dialog } from "primereact/dialog";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 export const WorkflowDetails = () => {
+  const navigate = useNavigate();
+
   const [type, setType] = useState("");
   const [rows, setRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [visibleDialog, setVisibledialog] = useState(false);
   const [selectedRowData, setSelectedRowData] = useState({
@@ -21,6 +25,7 @@ export const WorkflowDetails = () => {
 
   async function handleFetchAllWorkflow() {
     try {
+      setIsLoading(true);
       const res = await getAllWorkflow(type);
 
       setRows(
@@ -34,12 +39,14 @@ export const WorkflowDetails = () => {
       );
     } catch (e) {
       toast.error("Unable to fetch workflow");
+    } finally {
+      setIsLoading(false);
     }
   }
 
-  useEffect(() => {
-    handleFetchAllWorkflow();
-  }, [type]);
+  //   useEffect(() => {
+  //     handleFetchAllWorkflow();
+  //   }, [type]);
 
   async function handleDelete(row) {
     if (!row.sr_no || !row.node_type) return;
@@ -102,22 +109,43 @@ export const WorkflowDetails = () => {
 
   return (
     <>
-      <div className="mb-4 w-1/3">
-        <AnimatedDropdown
-          id="type"
-          name="type"
-          options={[
-            { label: "OBD", value: "voice" },
-            { label: "WHATSAPP", value: "whatsapp" },
-            { label: "RCS", value: "rcs" },
-            { label: "SMS", value: "sms" },
-          ]}
-          label={"Select Type"}
-          value={type}
-          onChange={(e) => {
-            setType(e);
-          }}
-          placeholder="Select Type"
+      <div className="flex justify-between items-center w-full">
+        <div className="flex items-center gap-2 w-full">
+          <div className="mb-4 w-1/3">
+            <AnimatedDropdown
+              id="type"
+              name="type"
+              options={[
+                { label: "ALL", value: "" },
+                { label: "OBD", value: "voice" },
+                { label: "WHATSAPP", value: "whatsapp" },
+                { label: "RCS", value: "rcs" },
+                { label: "SMS", value: "sms" },
+              ]}
+              label={"Select Type"}
+              value={type}
+              onChange={(e) => {
+                setType(e);
+              }}
+              placeholder="Select Type"
+            />
+          </div>
+
+          <UniversalButton
+            id="Search"
+            name="Search"
+            label={isLoading ? "Searching..." : "Search"}
+            disabled={isLoading}
+            style={{ marginLeft: "10px", marginTop: "11px" }}
+            onClick={() => handleFetchAllWorkflow()}
+          />
+        </div>
+        <UniversalButton
+          id="Add WorkFlow"
+          name="Add WorkFlow"
+          label="Add WorkFlow"
+          style={{ marginLeft: "10px", marginTop: "11px", width: "120px" }}
+          onClick={() => navigate("/workflow/create")}
         />
       </div>
 
