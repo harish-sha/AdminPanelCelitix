@@ -33,7 +33,7 @@ export const PermissionRoute = ({ children }) => {
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
         "/rcsdeliveryreport",
-        "/rcsmanagebot"
+        "/rcsmanagebot",
       ],
       roles: ["ADMIN"],
     },
@@ -56,7 +56,7 @@ export const PermissionRoute = ({ children }) => {
         "/wwhatsappflows",
         "/wflowcreation",
         "/apicampaigninfo",
-        "/wblockuser"
+        "/wblockuser",
       ],
       roles: ["ADMIN"],
     },
@@ -169,6 +169,12 @@ export const PermissionRoute = ({ children }) => {
       links: "/dummy",
       roles: ["ADMIN"],
     },
+    {
+      name: "WorkFlow",
+      links: ["/workflow", "/workflow/create"],
+
+      roles: ["ADMIN"],
+    },
   ];
 
   const currentPath = location.pathname;
@@ -219,6 +225,9 @@ export const PermissionRoute = ({ children }) => {
         allowedServices.push(item);
       }
       if (item.name === "Manage Contacts") {
+        allowedServices.push(item);
+      }
+      if (item.name === "WorkFlow") {
         allowedServices.push(item);
       }
     });

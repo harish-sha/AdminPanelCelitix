@@ -125,6 +125,11 @@ import Callback from "@/callback/Callback";
 import { AddCallback } from "@/callback/page/addCallback";
 import { EditCallback } from "@/callback/page/editCallback";
 
+//WorkFlow
+
+import { WorkflowDetails } from "@/workflow/details";
+import { WorkflowCreate } from "@/workflow/create";
+
 // Tag Manager
 
 // Not Found Page
@@ -285,6 +290,10 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Workflow */}
+        <Route path="/workflow" element={<WorkflowDetails />} />
+        <Route path="/workflow/create" element={<WorkflowCreate />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

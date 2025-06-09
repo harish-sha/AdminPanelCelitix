@@ -374,6 +374,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       id: "",
+      name: "Workflow",
+      icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Workflow",
+      type: "single",
+      to: "/workflow",
+      // links: [
+      //   { to: "/workflow", label: "Manage Workflow" },
+      //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
+      // ],
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
       name: "Wishmanagement",
       icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
       label: "Wish Management",
@@ -443,6 +456,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "Workflow",
     ];
 
     // menuItems.forEach((item) => {
