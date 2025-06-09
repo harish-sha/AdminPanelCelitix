@@ -18,6 +18,10 @@ import UniversalButton from "@/components/common/UniversalButton";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { Dialog } from "primereact/dialog";
+import { SMSNode } from "./components/SMSDialog";
+import { VoiceNode } from "./components/VoiceDialog";
+import { RCSNode } from "./components/RcsDialog";
+import { WhatsAppNode } from "./components/WhatsappDialog";
 
 function NodeComponent({
   id,
@@ -100,7 +104,7 @@ function NodeComponent({
       </div>
       <Handle
         type="target"
-        position={Position.Top}
+        position={Position.Left}
         className={`${data.type == "starting" ? "hidden" : ""} `}
         style={{
           background: connectionType === "source" ? "green" : "blue",
@@ -109,7 +113,7 @@ function NodeComponent({
 
       <Handle
         type="source"
-        position={Position.Bottom}
+        position={Position.Right}
         style={{
           background: connectionType === "target" ? "green" : "blue",
         }}
@@ -532,7 +536,10 @@ export const WorkflowCreate = () => {
         style={{ width: "50vw" }}
         draggable={false}
       >
-        Hello {type}
+        {type === "sms" && <SMSNode />}
+        {type === "voice" && <VoiceNode />}
+        {type === "rcs" && <RCSNode />}
+        {type === "whatsapp" && <WhatsAppNode />}
       </Dialog>
     </>
   );
