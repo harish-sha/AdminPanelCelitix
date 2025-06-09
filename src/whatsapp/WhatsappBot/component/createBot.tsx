@@ -574,7 +574,8 @@ const CreateWhatsAppBot = () => {
     setSelectedNodeId(node.id);
   };
   const commonButtonClass =
-    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    // "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
 
   function addVariable(data: String) {
     if (!data) {
@@ -949,7 +950,7 @@ const CreateWhatsAppBot = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[250px] gap-4">
+        <div className="flex flex-col justify-between w-[250px] bg-gray-50 gap-4 px-2 py-2 rounded-md h-auto">
           <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
             <Button
               draggable

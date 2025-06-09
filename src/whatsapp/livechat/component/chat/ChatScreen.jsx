@@ -23,7 +23,7 @@ import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { TemplateMessagePreview } from "./Template";
-import { getWabaList, getWabaTemplateDetails } from "@/apis/whatsapp/whatsapp";
+import { getWabaList, getWabaTemplateDetails, blockUser } from "@/apis/whatsapp/whatsapp";
 import CircularProgress from "@mui/material/CircularProgress";
 
 import { motion } from "framer-motion";
@@ -33,10 +33,15 @@ import InsertDriveFileIcon from "@mui/icons-material/InsertDriveFile";
 import { PiMicrosoftExcelLogo } from "react-icons/pi";
 import { PiFilePdf } from "react-icons/pi";
 import { FaFileWord } from "react-icons/fa6";
+import { HiOutlineCheck } from "react-icons/hi";
+import { VscCheckAll } from "react-icons/vsc";
 import axios from "axios";
 import "react-loading-skeleton/dist/skeleton.css";
 
 import { getBaseUrl } from "@/apis/common/common";
+import { MdBlock } from "react-icons/md";
+import { CgUnblock } from "react-icons/cg";
+import CustomTooltip from "@/components/common/CustomTooltip";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -68,7 +73,10 @@ export const ChatScreen = ({
     }
 
     if (endOfMessagesRef.current) {
-      endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+      endOfMessagesRef.current.scrollIntoView({
+        behavior: "auto",
+        block: "end",
+      });
     }
 
     const timeout = setTimeout(() => {
@@ -76,7 +84,10 @@ export const ChatScreen = ({
         messageRef.current.scrollTop = messageRef.current.scrollHeight;
       }
       if (endOfMessagesRef.current) {
-        endOfMessagesRef.current.scrollIntoView({ behavior: "auto", block: "end" });
+        endOfMessagesRef.current.scrollIntoView({
+          behavior: "auto",
+          block: "end",
+        });
       }
     }, 200);
 
@@ -94,15 +105,51 @@ export const ChatScreen = ({
     );
   };
 
+  // const BASE_MEDIA_URL = "https://cb.celitix.com";
+  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+  // const BASE_MEDIA_URL = "/image";
+
+  // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
+
+  // useEffect(() => {
+  //   const fetchBaseUrl = async () => {
+  //     try {
+  //       const url = await getBaseUrl("WhatsappChatBoxApi");
+  //       setBaseMediaUrl(url?.url);
+  //     } catch (err) {
+  //       console.error("Failed to fetch base URL", err);
+  //     }
+  //   };
+  //   fetchBaseUrl();
+  // }, []);
+
+  const handleDownload = async (url, filename) => {
+    try {
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", filename || "file");
+      // href="example.jpg" download="my-image.jpg"
+      link.setAttribute("target", "_blank"); // Corrected this line
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      toast.success("Download started!");
+    } catch (error) {
+      console.error("Download error:", error);
+      toast.error("Failed to download the file.");
+    }
+  };
+
   // const handleDownload = async (url, filename) => {
   //   try {
+  //     const res = await axios.get(url, { responseType: "blob" });
+  //     const blobUrl = window.URL.createObjectURL(res?.data);
+  //     window.open(blobUrl);
   //     const link = document.createElement("a");
-  //     link.href = url;
-  //     link.setAttribute("download", filename || "file");
-  //     document.body.appendChild(link);
+  //     link.href = blobUrl;
+  //     link.download = filename;
   //     link.click();
-  //     link.remove();
-
   //     toast.success("Download started!");
   //   } catch (error) {
   //     console.error("Download error:", error);
@@ -110,23 +157,20 @@ export const ChatScreen = ({
   //   }
   // };
 
-    const handleDownload = async (url, filename) => {
-    try {
-      const res = await axios.get(url, { responseType: "blob" });
-      const blobUrl = window.URL.createObjectURL(res?.data);
-      window.open(blobUrl);
-      const link = document.createElement("a");
-      link.href = blobUrl;
-      link.download = filename;
-      link.href = blobUrl;
-      link.download = filename;
-      link.click();
-      toast.success("Download started!");
-    } catch (error) {
-      console.error("Download error:", error);
-      toast.error("Failed to download the file.");
-    }
-  };
+  // const handleDownload = (url, filename = "file") => {
+  //   try {
+  //     const link = document.createElement("a");
+  //     link.href = url;
+  //     link.download = filename;
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     document.body.removeChild(link);
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     toast.error("Failed to download the file.");
+  //   }
+  // };
 
   // ===========================================================================
 
@@ -187,26 +231,6 @@ export const ChatScreen = ({
     },
   };
 
-  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image";
-  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // // const BASE_MEDIA_URL = "/image";
-
-  // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
-
-  // useEffect(() => {
-  //   const fetchBaseUrl = async () => {
-  //     try {
-  //       const url = await getBaseUrl("WhatsappChatBoxApi");
-  //       setBaseMediaUrl(url?.url);
-  //     } catch (err) {
-  //       console.error("Failed to fetch base URL", err);
-  //     }
-  //   };
-  //   fetchBaseUrl();
-  // }, []);
-
-
   function getFileType(extension) {
     switch (extension) {
       case "xlsx":
@@ -219,6 +243,22 @@ export const ChatScreen = ({
         return <PiFilePdf size={25} />;
       default:
         return <InsertDriveFileIcon size={25} />;
+    }
+  }
+
+  async function handleBlockUser(waba, phone) {
+    try {
+      const payload = {
+        messaging_product: "whatsapp",
+        block_users: [{ user: phone }],
+      };
+      const res = await blockUser(waba, payload);
+      if (res?.block_users?.added_users?.length == 0) {
+        toast.error("Unable to block user");
+      }
+      toast.success("User blocked successfully");
+    } catch (e) {
+      toast.error("Error blocking user");
     }
   }
 
@@ -265,10 +305,35 @@ export const ChatScreen = ({
             sx={{ fontSize: "1.2rem", color: "green" }}
           />
         </div>
-        <SupportAgentOutlinedIcon
-          onClick={() => setDialogVisible(true)}
-          className="mr-2 cursor-pointer text-[#22577E]"
-        />
+        <div className="flex items-center gap-2 justify-between">
+          <CustomTooltip
+            title="Block User"
+            placement="top"
+            arrow
+          >
+            <button
+              onClick={() => {
+                handleBlockUser(
+                  chatState.active.wabaNumber,
+                  chatState.active.mobileNo
+                );
+              }}
+              className="hover:bg-gray-200 transition-all duration-200 rounded-full p-1 cursor-pointer"
+            >
+              <MdBlock className="text-red-500 size-5" />
+            </button>
+          </CustomTooltip>
+          <CustomTooltip
+            title="Assign Agent"
+            placement="top"
+            arrow
+          >
+            <SupportAgentOutlinedIcon
+              onClick={() => setDialogVisible(true)}
+              className="mr-2 cursor-pointer text-[#22577E]"
+            />
+          </CustomTooltip>
+        </div>
       </div>
 
       <div
@@ -295,7 +360,6 @@ export const ChatScreen = ({
                 const mediaUrl = isSent
                   ? msg?.mediaPath
                   : `${BASE_MEDIA_URL}${msg?.mediaPath}`;
-
 
                 let fileType = "";
                 // const extension = url.split('.').pop().split(/\#|\?/)[0];
@@ -359,22 +423,22 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center" >
+                                  <div className="flex items-center justify-center">
                                     <button
                                       className="absolute top-20 cursor-pointer bg-gray-300 rounded-full p-1 shadow opacity-0 group-hover:opacity-100 transition-opacity"
-                                      onClick={() =>
+                                      onClick={() => {
+                                        event.stopPropagation();
                                         setPreviewDialog({
                                           open: true,
                                           type: "image",
                                           url: mediaUrl,
                                           caption: msg?.caption,
-                                        })
-                                      }
+                                        });
+                                      }}
                                     >
                                       <FullscreenIcon fontSize="small" />
                                     </button>
                                   </div>
-
                                 </div>
                               )}
                               {isVideo && (
@@ -395,17 +459,18 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center" >
+                                  <div className="flex items-center justify-center">
                                     <button
                                       className="absolute top-20 opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow cursor-pointer"
-                                      onClick={() =>
+                                      onClick={() => {
+                                        event.stopPropagation();
                                         setPreviewDialog({
                                           open: true,
                                           type: "video",
                                           url: mediaUrl,
                                           caption: msg?.caption,
-                                        })
-                                      }
+                                        });
+                                      }}
                                     >
                                       <FullscreenIcon fontSize="small" />
                                     </button>
@@ -446,24 +511,23 @@ export const ChatScreen = ({
                                       {msg?.caption}
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-center" >
+                                  <div className="flex items-center justify-center">
                                     <button
                                       className="absolute top-20 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity bg-white rounded-full p-1 shadow"
-                                      onClick={() =>
+                                      onClick={() => {
+                                        event.stopPropagation();
                                         setPreviewDialog({
                                           open: true,
                                           type: "document",
                                           url: mediaUrl,
                                           fileType,
                                           caption: msg?.caption,
-                                        })
-                                      }
+                                        });
+                                      }}
                                     >
                                       <FullscreenIcon fontSize="small" />
                                     </button>
-
                                   </div>
-
                                 </div>
                               )}
                             </>
@@ -546,9 +610,9 @@ export const ChatScreen = ({
                               onClick={() => {
                                 const url = isSent
                                   ? msg.mediaPath
-                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`
-                                const filename = msg.mediaId || "file"
-                                handleDownload(url, filename)
+                                  : `${BASE_MEDIA_URL}${msg.mediaPath}`;
+                                const filename = msg.mediaId || "file";
+                                handleDownload(url, filename);
                               }}
                             >
                               <FileDownloadOutlinedIcon className="size-2" />
@@ -592,12 +656,20 @@ export const ChatScreen = ({
 
                     {templateType && <TemplateMessagePreview template={msg} />}
 
-                    <p
+                    <div
                       className={`mt-1 text-[0.7rem] ${isSent ? "text-end" : "text-start"
                         }`}
                     >
-                      {formatTime(msg?.insertTime)}
-                    </p>
+                      <div className="flex justify-end gap-2 items-center">
+                        <p>{formatTime(msg?.insertTime)}</p>
+                        {isSent && !msg?.isView && (
+                          <HiOutlineCheck className="size-4" />
+                        )}
+                        {isSent && msg?.isView && (
+                          <VscCheckAll className="size-4 text-blue-500" />
+                        )}
+                      </div>
+                    </div>
                   </motion.div>
                 );
               })}
@@ -618,10 +690,18 @@ export const ChatScreen = ({
       >
         <div className="flex flex-col items-center justify-center bg-gray-400 rounded-md p-1">
           {previewDialog.type === "image" && (
-            <img src={previewDialog.url} alt="Preview" className="max-h-[80vh] max-w-full rounded-lg" />
+            <img
+              src={previewDialog.url}
+              alt="Preview"
+              className="max-h-[80vh] max-w-full rounded-lg"
+            />
           )}
           {previewDialog.type === "video" && (
-            <video src={previewDialog.url} controls className="h-100 max-w-full rounded-lg" />
+            <video
+              src={previewDialog.url}
+              controls
+              className="h-100 max-w-full rounded-lg"
+            />
           )}
           {previewDialog.type === "document" && (
             <iframe
@@ -890,4 +970,3 @@ export const ChatScreen = ({
     </div>
   );
 };
-

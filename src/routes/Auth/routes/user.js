@@ -48,6 +48,7 @@ export const userItems = [
       "/wwhatsappflows",
       "/wflowcreation",
       "/apicampaigninfo",
+      "/wblockuser",
       "/wmmlite",
     ],
     roles: ["ADMIN"],

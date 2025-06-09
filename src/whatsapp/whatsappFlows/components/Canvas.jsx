@@ -5,12 +5,35 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import toast from "react-hot-toast";
 import TabView from "./TabView";
-import DeleteForeverOutlinedIcon from '@mui/icons-material/DeleteForeverOutlined';
+import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import EditPanel from "./EditPanel";
 import InputField from "../../components/InputField";
 
-const Canvas = ({ items, setItems, onEdit }) => {
-  const [, drop] = useDrop(() => ({
+const Canvas = ({
+  items,
+  setItems,
+  onEdit,
+  tabs,
+  setTabs,
+  activeIndex,
+  setActiveIndex,
+  dialogVisible,
+  setDialogVisible,
+  editDialogVisible,
+  setEditDialogVisible,
+  screenName,
+  setScreenName,
+  setScreenEditName,
+  screenEditName,
+  screenID,
+  setScreenID,
+  randomNumber,
+  setRandomNumber,
+  createTab,
+  setCreateTab,
+  menuRefs,
+}) => {
+  const [type, drop] = useDrop(() => ({
     accept: [
       "heading",
       "subheading",
@@ -21,6 +44,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
       "radioButton",
       "checkBox",
       "dropDown",
+      "chipSelector"
     ],
     drop: (item) => {
       setItems((prev) => [
@@ -28,33 +52,123 @@ const Canvas = ({ items, setItems, onEdit }) => {
         { id: Date.now(), type: item.type, value: "" },
       ]);
     },
+
+
+
+    drop: (item) => {
+      const newItem = {
+        id: Date.now(),
+        type: item.type,
+      };
+
+      if (item.type === "radioButton") {
+        newItem.radio = {
+          radio_1: {
+            label: "Sample Radio Group",
+            "data-source": [
+              { id: "1", title: "Option 1", description: "First option", image: "" },
+              { id: "2", title: "Option 2", description: "Second option", image: "" }
+            ]
+          }
+        };
+      }
+
+      setTabs((prevTabs) => {
+        const newTabs = [...prevTabs];
+        const activePayload = newTabs[activeIndex].payload || [];
+        activePayload.push(newItem);
+        newTabs[activeIndex].payload = activePayload;
+        return newTabs;
+      });
+
+    }
+
+
   }));
 
   // Handle input change for TextField components
-  const handleInputChange = (index, value) => {
-    setItems((prevItems) => {
-      const updatedItems = [...prevItems];
-      updatedItems[index].value = value;
-      return updatedItems;
-    });
+  // const handleInputChange = (index, value) => {
+  //   console.log("value", value)
+  //   setItems((prevItems) => {
+  //     const updatedItems = [...prevItems];
+  //     updatedItems[index].value = value;
+  //     return updatedItems;
+  //   });
+  // };
+
+  const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
+    if (!tabs?.[activeIndex]?.payload) return "";
+
+    const targetItem = tabs[activeIndex].payload.find(
+      (payloadItem) => payloadItem.type === item.type && payloadItem.index === item.index
+    );
+
+    if (!targetItem) return "";
+
+    // For textInput and textArea: look under texts
+    if (item.type === "textInput" || item.type === "textArea") {
+      const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
+      return targetItem.texts?.[key]?.[field] || "";
+    }
+
+    // For footerbutton: look under footer
+    if (item.type === "footerbutton") {
+      return targetItem.footer?.footer_1?.center_caption || "";
+    }
+
+    if (item.type === "radioButton") {
+      return targetItem.radio?.radio_1?.description || "";
+    }
+
+    // Fallback: return an empty string
+    return "";
   };
+
+
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    setItems((prevItems) => prevItems.filter((_, i) => i !== index));
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      newTabs[activeIndex] = {
+        ...newTabs[activeIndex],
+        payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+      };
+      return newTabs;
+    });
+
     toast.success("Item deleted successfully");
   };
 
   // Draggable component for individual canvas items
-  const DraggableItem = React.memo(({ item, index }) => {
-    const [, drag] = useDrag({
-      type: item.type,
-      item: { index },
+  const DraggableItem = React.memo(({ itemKey, item, index }) => {
+    console.log("item", item)
+
+    if (!item?.type) {
+      console.error("DraggableItem error: item.type is not defined");
+      return null;
+    }
+
+    // const [, drag] = useDrag({
+    //   type: item.type,
+    //   item: { index },
+    // });
+
+    const [{ isDragging }, drag] = useDrag({
+      type: 'field',
+      item: { id: item.id, index },
+      collect: monitor => ({
+        isDragging: monitor.isDragging(),
+      }),
     });
 
     return (
       <Paper
         ref={drag}
+        style={{
+          opacity: isDragging ? 0.5 : 1,
+          cursor: 'move',
+        }}
         sx={{
           backgroundColor: getBackgroundColor(item.type),
         }}
@@ -67,6 +181,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
             alignItems: "center",
             justifyContent: "space-between",
             width: "100%",
+            position: "relative",
           }}
         >
           <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
@@ -80,21 +195,21 @@ const Canvas = ({ items, setItems, onEdit }) => {
               />
             </IconButton>
             <IconButton onClick={() => handleDelete(index)} size="small">
-              <DeleteForeverOutlinedIcon fontSize="small" className="text-red-400" />
+              <DeleteForeverOutlinedIcon
+                fontSize="small"
+                className="text-red-400"
+              />
             </IconButton>
           </Box>
         </Box>
-
-
-
 
         <InputField
           // label="Enter value"
           // variant="outlined"
           // fullWidth
           // className="text-field"
-          value={item.value}
-          onChange={(e) => handleInputChange(index, e.target.value)}
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          // onChange={(e) => handleInputChange(index, e.target.value)}
           multiline={item.type === "textArea"}
           rows={item.type === "textArea" ? 4 : undefined}
           // disabled={item.type !== "textInput" && item.type !== "textArea"}
@@ -103,6 +218,8 @@ const Canvas = ({ items, setItems, onEdit }) => {
       </Paper>
     );
   });
+
+
 
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
@@ -121,6 +238,7 @@ const Canvas = ({ items, setItems, onEdit }) => {
       case "checkBox":
       case "dropDown":
         return "#c5e1f5";
+      case "chipSelector":
       default:
         return "#c5e1f5";
     }
@@ -147,24 +265,30 @@ const Canvas = ({ items, setItems, onEdit }) => {
         return "CheckBox";
       case "dropDown":
         return "DropDown";
+      case 'chipSelector':
+        return 'ChipSelector';
       case "footerbutton":
         return "FooterButton";
       case "embeddedlink":
         return "EmbeddedLink";
       case "optin":
         return "OptIn";
-      case "photo":
-        return "Photo";
-      case "document":
-        return "Document"
-      case "ifelse":
-        return "IfElse";
       case "image":
         return "Image";
+      case "document":
+        return "Document";
+      case 'media':
+        return 'Media';
+      case "ifelse":
+        return "IfElse";
+      case 'switch':
+        return 'Switch';
       case "date":
         return "Date";
-      case "userdetail":
-        return "UserDetail";
+      case 'calendar':
+        return 'Calendar';
+      // case "userdetail":
+      //   return "UserDetail";
       default:
         return "";
     }
@@ -188,15 +312,50 @@ const Canvas = ({ items, setItems, onEdit }) => {
     // </Box>
     <div
       ref={drop}
-      className="relative shadow-xl overflow-auto rounded-xl bg-white h-[830px] w-full hide-scrollbar"
+      className=" shadow-xl overflow-auto rounded-xl  h-[830px] w-full hide-scrollbar  bg-white pt-10"
     >
       {/* Tabs for multiple screens */}
-      <TabView />
+      <TabView
+        tabs={tabs}
+        setTabs={setTabs}
+        activeIndex={activeIndex}
+        setActiveIndex={setActiveIndex}
+        dialogVisible={dialogVisible}
+        setDialogVisible={setDialogVisible}
+        screenName={screenName}
+        setScreenName={setScreenName}
+        screenEditName={screenEditName}
+        setScreenEditName={setScreenEditName}
+        screenID={screenID}
+        setScreenID={setScreenID}
+        randomNumber={randomNumber}
+        setRandomNumber={setRandomNumber}
+        createTab={createTab}
+        setCreateTab={setCreateTab}
+        menuRefs={menuRefs}
+        setEditDialogVisible={setEditDialogVisible}
+        editDialogVisible={editDialogVisible}
+      />
       {/* Render all items on the canvas */}
-      <div className="w-1/3 ml-5 " >
-        {items.map((item, index) => (
-          <DraggableItem key={item.id} item={item} index={index} />
-        ))}
+      <div className="w-1/3 ml-5 ">
+        {/* {tabs[activeIndex]?.payload?.map((item, index) => (
+          <div key={index}>
+            <DraggableItem key={item.id} item={item} index={index} itemKey={item.id} />
+          </div>
+        ))} */}
+
+        {tabs[activeIndex]?.payload
+          ?.filter(item => item.type !== undefined)
+          .map((item, index) => (
+            <div key={item.id || index}>
+              <DraggableItem
+                item={item}
+                index={index}
+                itemKey={item.id}
+              />
+            </div>
+          ))}
+
       </div>
       {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
     </div>

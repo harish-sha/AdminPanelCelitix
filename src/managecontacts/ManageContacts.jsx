@@ -2808,7 +2808,7 @@ const ManageContacts = () => {
       allowishes: updatedContactDetails.allowishes || "",
     };
 
-    console.log("update contact data", data);
+    // console.log("update contact data", data);
 
     const res = await updateContactsDetails(data);
     if (!res?.message.includes("successfully")) {

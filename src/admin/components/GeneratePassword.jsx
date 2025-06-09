@@ -43,7 +43,7 @@ const GeneratePassword = ({
     setPassword(newPassword); // Update the local state
     if (onPasswordGenerate) {
       onPasswordGenerate(newPassword); // Call the correct prop
-      console.log('Password generated:', newPassword);
+      // console.log('Password generated:', newPassword);
     } else {
       console.error("onPasswordGenerate is not defined");
     }

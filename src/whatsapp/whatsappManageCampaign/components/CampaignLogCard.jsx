@@ -53,24 +53,6 @@ const CampaignLogCard = ({ log, selectedDate, selectedUser }) => {
         <Box className="grid md:grid-cols-3 grid-cols-1  gap-4 w-full mt-4">
           {[
             {
-              label: "Delivered",
-              value: log.delivered,
-              icon: <DoneIcon className="text-green-500" />,
-              onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "delivered", selectedDate: selectedDate, selectedUser: selectedUser },
-                }),
-            },
-            {
-              label: "Failed",
-              value: log.failed,
-              icon: <ErrorIcon className="text-red-500" />,
-              onclick: () =>
-                navigate("/apicampaigninfo", {
-                  state: { log: "failed", selectedDate: selectedDate, selectedUser: selectedUser },
-                }),
-            },
-            {
               label: "Total",
               value: log.total,
               icon: <GroupsOutlinedIcon className="text-gray-500" />,
@@ -80,12 +62,12 @@ const CampaignLogCard = ({ log, selectedDate, selectedUser }) => {
                 }),
             },
             {
-              label: "Busy",
-              value: log.busy,
-              icon: <SmsFailedIcon className="text-yellow-500" />,
+              label: "Failed",
+              value: log.failed,
+              icon: <ErrorIcon className="text-red-500" />,
               onclick: () =>
                 navigate("/apicampaigninfo", {
-                  state: { log: "busy", selectedDate: selectedDate, selectedUser: selectedUser },
+                  state: { log: "failed", selectedDate: selectedDate, selectedUser: selectedUser },
                 }),
             },
             {
@@ -107,21 +89,12 @@ const CampaignLogCard = ({ log, selectedDate, selectedUser }) => {
                 }),
             },
             {
-              label: "Charged",
-              value: log.chargedUnit,
-              icon: <CurrencyRupeeOutlinedIcon className="text-green-700" />,
-              // onclick: () =>
-              //   navigate("/apicampaigninfo", {
-              //     state: { log: "Charged" },
-              //   }),
-            },
-            {
-              label: "Read",
-              value: log.read,
-              icon: <DoneAllOutlinedIcon className="text-green-500" />,
+              label: "Delivered",
+              value: log.delivered,
+              icon: <DoneIcon className="text-green-500" />,
               onclick: () =>
                 navigate("/apicampaigninfo", {
-                  state: { log: "read", selectedDate: selectedDate, selectedUser: selectedUser },
+                  state: { log: "delivered", selectedDate: selectedDate, selectedUser: selectedUser },
                 }),
             },
             {
@@ -131,6 +104,33 @@ const CampaignLogCard = ({ log, selectedDate, selectedUser }) => {
               onclick: () =>
                 navigate("/apicampaigninfo", {
                   state: { log: "undelivered", selectedDate: selectedDate, selectedUser: selectedUser },
+                }),
+            },
+            // {
+            //   label: "Busy",
+            //   value: log.busy,
+            //   icon: <SmsFailedIcon className="text-yellow-500" />,
+            //   onclick: () =>
+            //     navigate("/apicampaigninfo", {
+            //       state: { log: "busy", selectedDate: selectedDate, selectedUser: selectedUser },
+            //     }),
+            // },
+            // {
+            //   label: "Charged",
+            //   value: log.chargedUnit,
+            //   icon: <CurrencyRupeeOutlinedIcon className="text-green-700" />,
+            //   // onclick: () =>
+            //   //   navigate("/apicampaigninfo", {
+            //   //     state: { log: "Charged" },
+            //   //   }),
+            // },
+            {
+              label: "Read",
+              value: log.read,
+              icon: <DoneAllOutlinedIcon className="text-green-500" />,
+              onclick: () =>
+                navigate("/apicampaigninfo", {
+                  state: { log: "read", selectedDate: selectedDate, selectedUser: selectedUser },
                 }),
             },
           ].map((item, index) => (

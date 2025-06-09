@@ -324,11 +324,12 @@ const WhatsappManageWaba = ({ id, name }) => {
   };
 
   const handleSync = async (data) => {
-    if (!data.wabaSrno) return toast.error("Please select a WABA");
+    // if (!data.wabaSrno) return toast.error("Please select a WABA");
     try {
       const res = await refreshWhatsApp(data?.wabaSrno);
       if (res.status) {
         toast.success("Refreshed Successfully");
+        await fetchWabaList();
       } else {
         toast.error("Error Refreshing Data");
       }
@@ -415,21 +416,25 @@ const WhatsappManageWaba = ({ id, name }) => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "wabaName", headerName: "WABA Name", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, maxWidth: 60 },
+    { field: "name", headerName: "Display Name", flex: 1, minWidth: 120 },
     {
       field: "wabaNumber",
       headerName: "WABA Mobile No.",
       flex: 1,
       minWidth: 120,
     },
-    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
+    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 80 },
     {
-      field: "businessStatus", headerName: "Business Status", flex: 1, minWidth: 120,
+      field: "businessStatus", headerName: "Business Verification Status", flex: 1, minWidth: 120,
       renderCell: (params) => {
+        // Get the verification status and capitalize it
+        const verificationStatus = (params.row.businessVerificationStatus || "").charAt(0).toUpperCase() +
+          (params.row.businessVerificationStatus || "").slice(1).toLowerCase();
+
         return (
           <div className="flex items-center gap-2">
-            <span>Verified</span>
+            <span>{verificationStatus || "N/A"}</span>
             <Lottie
               animationData={verified}
               loop
@@ -437,8 +442,7 @@ const WhatsappManageWaba = ({ id, name }) => {
               style={{ width: "30px", height: "30px" }}
             />
           </div>
-        )
-
+        );
       },
     },
     {
@@ -582,11 +586,15 @@ const WhatsappManageWaba = ({ id, name }) => {
                           key={index}
                           className="hover:bg-gray-50 transition-colors border-b last:border-none"
                         >
-                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-                            {key}
+                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+                            {additionalInfoLabels[key] || key}
                           </td>
                           <td className="px-4 py-2 text-gray-800">
-                            {value || "N/A"}
+                            {key === "isEnabledForInsights"
+                              ? value === true || value === "true"
+                                ? "True"
+                                : "False"
+                              : value || "N/A"}
                           </td>
                         </tr>
                       ))}
@@ -642,21 +650,27 @@ const WhatsappManageWaba = ({ id, name }) => {
   ];
 
   // WABA LIST
-  useEffect(() => {
-    const fetchWabaList = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getWabaList();
-        setWabaList(response?.length > 0 ? response : []);
-      } catch (error) {
-        console.error("Error fetching WABA list:", error);
-        toast.error("Error fetching WABA list.");
-        setWabaList([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchWabaList = async () => {
+    try {
+      const response = await getWabaList();
+      setWabaList(response?.length > 0 ? response : []);
+    } catch (error) {
+      console.error("Error fetching WABA list:", error);
+      toast.error("Error fetching WABA list.");
+      setWabaList([]);
+    }
+  };
 
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     fetchWabaList();
   }, []);
 
@@ -664,22 +678,41 @@ const WhatsappManageWaba = ({ id, name }) => {
   const rows = wabaList.map((waba, index) => ({
     id: index + 1,
     sn: index + 1,
-    wabaName: waba.name || "N/A",
+    name: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
+    businessVerificationStatus: waba.businessVerificationStatus || "N/A",
     createdOn: moment(waba.insertTime).format("YYYY-MM-DD") || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
     quality: waba.qualityRate || "N/A",
+    expiryDate: moment(waba.expiryDate).format("YYYY-MM-DD") || "N/A",
+
     additionalInfo: {
-      expiryDate: moment(waba.expiryDate).format("YYYY-MM-DD") || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
-      // quality: waba.qualityRate || "N/A",
+      businessStatus: waba.businessStatus || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
+      wabaName: waba.wabaName || "N/A",
       phoneNumberId: waba.phoneNumberId || "N/A",
+      businessName: waba.businessName || "N/A",
+      businessId: waba.businessId || "N/A",
+      MM_Lite_Eligibility: waba.apiStatus || "N/A",
+      isEnabledForInsights: waba.isEnabledForInsights || "N/A",
     },
     ...waba,
   }));
+
+  const additionalInfoLabels = {
+    businessStatus: "Business Status",
+    messagingLimit: "Messaging Limit",
+    wabaAccountId: "WABA Account ID",
+    wabaName: "WABA Name",
+    phoneNumberId: "Phone Number ID",
+    businessName: "Business Name",
+    businessId: "Business ID",
+    MM_Lite_Eligibility: "MM Lite Eligibility",
+    isEnabledForInsights: "Insights",
+  };
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 

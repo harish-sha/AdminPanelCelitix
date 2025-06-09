@@ -196,20 +196,25 @@ const WhatsappFlows = () => {
   };
 
   const handleEdit = (flow = selectedFlow) => {
-    console.log("Edit:", flow?.flowName);
     handleMenuClose();
   };
   const handleDelete = (flow = selectedFlow) => {
-    console.log("Delete:", flow?.flowName);
     handleMenuClose();
   };
   const handleExport = (flow = selectedFlow) => {
-    console.log("Export:", flow?.flowName);
     handleMenuClose();
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (!selectCategories) {
+      toast.error("Please select a flow category.");
+      return;
+    }
+    if (!selectedWaba) {
+      toast.error("Please select a WhatsApp integration.");
+      return;
+    }
     navigate("/wflowcreation", {
       state: { flowName, selectCategories, selectedWaba },
     });
@@ -301,9 +306,9 @@ const WhatsappFlows = () => {
               paginatedFlows.map((flow, index) => (
                 <div
                   key={index}
-                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 flex items-center justify-between flex-wrap sm:flex-nowrap"
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-5 items-center justify-between flex-wrap sm:flex-nowrap"
                 >
-                  <div className="flex items-center gap-3 min-w-[180px]">
+                  <div className="flex items-center gap-3 ">
                     <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
                       {/* <div className="w-8 h-8 bg-gray-400 rounded"></div> */}
                       <RadioButtonCheckedOutlinedIcon
@@ -324,7 +329,7 @@ const WhatsappFlows = () => {
                     </div>
                   </div>
 
-                  <div className="text-sm text-center min-w-[80px]">
+                  <div className="text-sm text-center ">
                     <div className="font-semibold text-sm mb-2">
                       Flow Category
                     </div>
@@ -333,17 +338,17 @@ const WhatsappFlows = () => {
                     </span>
                   </div>
 
-                  <div className="text-sm text-center min-w-[150px]">
+                  <div className="text-sm text-center ">
                     <div className="font-semibold">WhatsApp Channel</div>
                     <div className="text-gray-600">{flow.channel}</div>
                   </div>
 
-                  <div className="text-sm text-center min-w-[150px]">
+                  <div className="text-sm text-center" >
                     <div className="font-semibold">Created At</div>
                     <div className="text-gray-700">{moment(flow.insertTime).format("DD-MM-YYYY")}</div>
                   </div>
 
-                  <div className="flex items-center gap-3 mt-3 sm:mt-0">
+                  <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0">
                     {flow.status === "DRAFT" && (
                       <button
                         className="bg-orange-400 cursor-pointer hover:bg-orange-500 text-white px-4 py-1.5 rounded-2xl text-sm flex items-center gap-2"
@@ -473,7 +478,7 @@ const WhatsappFlows = () => {
           >
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-4">
-                <InputField
+                {/* <InputField
                   tooltipContent="Enter flow name"
                   tooltipPlacement="right"
                   label="Flow Name"
@@ -483,7 +488,7 @@ const WhatsappFlows = () => {
                   placeholder="Enter Flow Name"
                   value={flowName}
                   onChange={(e) => setFlowName(e.target.value)}
-                />
+                /> */}
                 <AnimatedDropdown
                   label="Select Categories"
                   id="flowcategories"

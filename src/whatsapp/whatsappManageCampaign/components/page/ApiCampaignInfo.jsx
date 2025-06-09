@@ -1,4 +1,4 @@
-import { getListofSendMsg } from "@/apis/whatsapp/whatsapp";
+import { getListofSendMsg, downloadCustomWhatsappReport, } from "@/apis/whatsapp/whatsapp";
 import { Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
@@ -11,6 +11,10 @@ import usePagination from "@mui/material/usePagination";
 import { Button } from "@mui/material";
 import moment from "moment";
 import { id } from "date-fns/locale";
+import UniversalButton from "@/components/common/UniversalButton";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import Loader from "@/whatsapp/components/Loader";
+
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -90,6 +94,8 @@ export const ApiCampaignInfo = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+
 
   async function handleFetchDetails(page = 0) {
     try {
@@ -101,6 +107,8 @@ export const ApiCampaignInfo = () => {
       //   status: "",
       // };
       // later update with upper code
+
+      setIsLoading(true);
 
       const formattedFromDate = state.selectedDate
         ? moment(state.selectedDate).format("YYYY-MM-DD")
@@ -134,17 +142,19 @@ export const ApiCampaignInfo = () => {
 
       const formattedData = Array.isArray(res.data)
         ? res?.data?.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
+          sn: index + 1,
+          id: index + 1,
+          ...item,
+        }))
         : [];
 
-        console.log("formatted data", formattedData);
+      // console.log("formatted data", formattedData);
       setData(formattedData);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Error fetching data");
+    } finally {
+      setIsLoading(false);
     }
   }
   // useEffect(() => {
@@ -155,67 +165,65 @@ export const ApiCampaignInfo = () => {
   //   handleFetchDetails();
   // }, [state]);
 
+  async function handleExport() {
+    toast.success("Hello World");
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: "",
+        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        isCustomField: 0,
+        customColumns: "",
+        status: state.log,
+        delStatus: {},
+      };
+      const res = await downloadCustomWhatsappReport(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+    } catch (e) {
+      toast.error("Error downloading attachment");
+    }
+  }
+
   useEffect(() => {
     handleFetchDetails(currentPage);
   }, [currentPage]);
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "wabaNumber", headerName: "WABA Number", flex: 1, width: 150 },
-    { field: "mobileNo", headerName: "Mobile Number", flex: 1, minWidth: 150 },
-    { field: "source", headerName: "Source", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 70 },
+    { field: "wabaNumber", headerName: "WABA Number", width: 130 },
+    { field: "mobileNo", headerName: "Mobile Number", minWidth: 135 },
+    { field: "source", headerName: "Source", minWidth: 100 },
+    { field: "status", headerName: "Status", minWidth: 100 },
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
+      minWidth: 100,
+    },
+    { field: "reason", headerName: "Reason", minWidth: 120 },
+    { field: "sentTime", headerName: "Sent", minWidth: 150 },
+    {
+      field: "requestJson",
+      headerName: "Request JSON",
       flex: 1,
       minWidth: 120,
     },
-    { field: "reason", headerName: "Reason", flex: 2, minWidth: 120 },
-    { field: "sentTime", headerName: "Sent", flex: 1, minWidth: 120 },
-    { field: "deliveryTime", headerName: "Delivery Time", flex: 1, minWidth: 120 },
     { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
     { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
-  // const rows = Array.from({ length: 20 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   wabaNumber: `WABA-${1000 + i}`,
-  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
-  //   source: "API",
-  //   status: "Pending",
-  //   deliveryStatus: "Sent",
-  //   reason: "N/A",
-  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
-  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
-  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
-  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
-  // }));
-
-  // const rows = data?.map((item, i) => ({
-  //   id: i + 1,
-  //   // sn: i + 1,
-  //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
-  //   // wabaNumber: WABA-${1000 + i},
-  //   // mobileNo: 98765432${(10 + i).toString().slice(-2)},
-  //   // source: "API",
-  //   // status: "Pending",
-  //   // deliveryStatus: "Sent",
-  //   // reason: "N/A",
-  //   // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
-  //   // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
-  //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
-  //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
-  //   ...item,
-  // }));
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-        id: i + 1,
-        sn: paginationModel.page * paginationModel.pageSize + i + 1,
-        ...item, // Spread the item properties
-      }))
+      id: i + 1,
+      sn: paginationModel.page * paginationModel.pageSize + i + 1,
+      ...item, // Spread the item properties
+    }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -280,9 +288,25 @@ export const ApiCampaignInfo = () => {
     );
   };
 
+  if (isLoading) return <Loader />;
+
   return (
     <>
-      <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+        <UniversalButton
+          id="export"
+          name="export"
+          onClick={handleExport}
+          label={"Export"}
+          icon={
+            <IosShareOutlinedIcon
+              fontSize="small"
+              sx={{ marginBottom: "3px" }}
+            />
+          }
+        />
+      </div>
       <Paper sx={{ height: 558 }}>
         <DataGrid
           // id={id}
@@ -297,10 +321,10 @@ export const ApiCampaignInfo = () => {
             noRowsOverlay: CustomNoRowsOverlay,
           }}
           slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
+          onRowSelectionModelChange={(ids) => { }}
           disableRowSelectionOnClick
           // autoPageSize
-          disableColumnResize
+          // disableColumnResize
           disableColumnMenu
           sx={{
             border: 0,
