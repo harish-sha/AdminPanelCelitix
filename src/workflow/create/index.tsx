@@ -103,118 +103,40 @@ function NodeComponent({
         {data.type === "whatsapp" && <p>Whatsapp Node ({id})</p>}
         {data.type === "sms" && <p>SMS Node ({id})</p>}
       </div>
-      <Handle
-        type="target"
-        position={Position.Left}
-        className={`${data.type == "starting" ? "hidden" : ""} `}
-        style={{
-          background: connectionType === "source" ? "green" : "blue",
-        }}
-      />
 
-      <Handle
-        type="source"
-        position={Position.Right}
-        style={{
-          background: connectionType === "target" ? "green" : "blue",
-        }}
-      />
-      {/* {data?.type !== "list" && data?.type !== "button" && (
+      <>
         <Handle
           type="target"
-          position={Position.Top}
+          position={Position.Left}
           className={`${data.type == "starting" ? "hidden" : ""} `}
           style={{
             background: connectionType === "source" ? "green" : "blue",
           }}
         />
-      )} */}
-      {/* <Handle
-        type="source"
-        position={Position.Bottom}
-        style={{
-          background: connectionType === "target" ? "green" : "blue",
-        }} 
-      />
-         */}
-
-      {/* {data?.type === "list" ? (
-        <>
-          <Handle
-            type="target"
-            position={Position.Left}
-            className={`${data.type == "starting" ? "hidden" : ""} `}
-            style={{
-              background: connectionType === "source" ? "green" : "blue",
-            }}
-          />
-          <div className="flex flex-col gap-2 mt-2">
-            {options.map((option: any, index: number) => (
-              <div
-                key={index}
-                className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
-              >
-                <span className="text-gray-800">
-                  {option.option || `Option ${index + 1}`}
-                </span>
-                <Handle
-                  id={`opt-${index}`}
-                  type="source"
-                  position={Position.Right}
-                  style={{
-                    background: connectionType === "target" ? "green" : "blue",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    right: -8,
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </>
-      ) : data?.type === "button" ? (
-        <>
-          <Handle
-            type="target"
-            position={Position.Left}
-            className={`${data.type == "starting" ? "hidden" : ""} `}
-            style={{
-              background: connectionType === "source" ? "green" : "blue",
-            }}
-          />
-          <div className="flex flex-col gap-2 mt-2">
-            {buttonTexts.map((option: any, index: number) => (
-              <div
-                key={index}
-                className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
-              >
-                <span className="text-gray-800">
-                  {option || `Option ${index + 1}`}
-                </span>
-                <Handle
-                  id={`btn-opt-${index}`}
-                  type="source"
-                  position={Position.Right}
-                  style={{
-                    background: connectionType === "target" ? "green" : "blue",
-                    top: "50%",
-                    transform: "translateY(-50%)",
-                    right: -8,
-                  }}
-                />
-              </div>
-            ))}
-          </div>
-        </>
-      ) : (
-        <Handle
-          type="source"
-          position={Position.Bottom}
-          style={{
-            background: connectionType === "target" ? "green" : "blue",
-          }}
-        />
-      )} */}
+        <div className="flex flex-col gap-2 mt-2">
+          {options.map((option: any, index: number) => (
+            <div
+              key={index}
+              className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
+            >
+              <span className="text-gray-800">
+                {`${option.type} (${option.value})` || `Option ${index + 1}`}
+              </span>
+              <Handle
+                id={`opt-${index}`}
+                type="source"
+                position={Position.Right}
+                style={{
+                  background: connectionType === "target" ? "green" : "blue",
+                  top: "50%",
+                  transform: "translateY(-50%)",
+                  right: -8,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      </>
     </div>
   );
 }
@@ -274,7 +196,7 @@ export const WorkflowCreate = () => {
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
     if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
-    
+
     const isNodeAlreadyAdded = nodes.some((node) => node.type === type);
 
     if (isNodeAlreadyAdded) {
@@ -370,6 +292,7 @@ export const WorkflowCreate = () => {
           setIsVisible={setIsVisible}
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
+          nodesInputData={nodesInputData}
         />
       ),
       whatsapp: (node: any) => (
@@ -381,6 +304,7 @@ export const WorkflowCreate = () => {
           setIsVisible={setIsVisible}
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
+          nodesInputData={nodesInputData}
         />
       ),
       rcs: (node: any) => (
@@ -392,6 +316,7 @@ export const WorkflowCreate = () => {
           setIsVisible={setIsVisible}
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
+          nodesInputData={nodesInputData}
         />
       ),
       sms: (node: any) => (
@@ -403,6 +328,7 @@ export const WorkflowCreate = () => {
           setIsVisible={setIsVisible}
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
+          nodesInputData={nodesInputData}
         />
       ),
     }),
@@ -416,6 +342,16 @@ export const WorkflowCreate = () => {
     console.log(payload);
     toast.success("Workflow saved successfully");
   }
+
+  function handleSaveNodeData() {
+    setSelectedNodeId("");
+    setType("");
+    setIsVisible(false);
+  }
+
+  useEffect(() => {
+    console.log(nodesInputData);
+  }, [nodesInputData]);
 
   return (
     <>
@@ -555,34 +491,43 @@ export const WorkflowCreate = () => {
         style={{ width: "50vw" }}
         draggable={false}
       >
-        {type === "sms" && (
-          <SMSNode
-            id={selectedNodeId}
-            nodesInputData={nodesInputData}
-            setNodesInputData={setNodesInputData}
-          />
-        )}
-        {type === "voice" && (
-          <VoiceNode
-            id={selectedNodeId}
-            nodesInputData={nodesInputData}
-            setNodesInputData={setNodesInputData}
-          />
-        )}
-        {type === "rcs" && (
-          <RCSNode
-            id={selectedNodeId}
-            nodesInputData={nodesInputData}
-            setNodesInputData={setNodesInputData}
-          />
-        )}
-        {type === "whatsapp" && (
-          <WhatsAppNode
-            id={selectedNodeId}
-            nodesInputData={nodesInputData}
-            setNodesInputData={setNodesInputData}
-          />
-        )}
+        <div className="flex flex-col gap-2">
+          {type === "sms" && (
+            <SMSNode
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          )}
+          {type === "voice" && (
+            <VoiceNode
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          )}
+          {type === "rcs" && (
+            <RCSNode
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          )}
+          {type === "whatsapp" && (
+            <WhatsAppNode
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          )}
+
+          <div className="flex gap-2">
+            <Button onClick={handleSaveNodeData}>Save</Button>
+            <Button variant="destructive" onClick={() => setIsVisible(false)}>
+              Cancel
+            </Button>
+          </div>
+        </div>
       </Dialog>
     </>
   );

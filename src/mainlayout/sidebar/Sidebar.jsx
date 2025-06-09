@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
 
+import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -375,7 +376,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "Workflow",
-      icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
       label: "Workflow",
       type: "single",
       to: "/workflow",

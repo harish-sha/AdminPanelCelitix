@@ -65,6 +65,17 @@ export const VoiceNode = ({
     }));
   }, [conditions]);
 
+  useEffect(() => {
+    const options = nodesInputData?.[id]?.options || [
+      {
+        type: "",
+        value: "",
+        interval: "",
+      },
+    ];
+    setConditions(options);
+  }, []);
+
   return (
     <>
       <div>
@@ -167,27 +178,6 @@ export const VoiceNode = ({
               </div>
             ))}
           </div>
-        </div>
-
-        <div className="flex justify-end gap-2 w-full">
-          <Button
-            id="cancel"
-            name="cancel"
-            variant="destructive"
-            onClick={() => {}}
-            className="mt-7"
-          >
-            Cancel
-          </Button>
-          <Button
-            id="save"
-            variant="default"
-            name="save"
-            onClick={() => {}}
-            className="mt-7 bg-blue-500"
-          >
-            Save
-          </Button>
         </div>
       </div>
     </>
