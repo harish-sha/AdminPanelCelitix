@@ -445,8 +445,8 @@ export const generatePayload = (data) => {
           "min-uploaded-documents": pay.minDocsUpload ?? 1,
           "max-uploaded-documents": pay.maxDocsUpload ?? 1,
         };
-        console.log(pay.label, "label");
-        console.log("Document component:", component);
+        // console.log(pay.label, "label");
+        // console.log("Document component:", component);
       }
 
       if (type === "media") {

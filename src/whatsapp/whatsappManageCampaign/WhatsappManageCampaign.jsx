@@ -173,7 +173,7 @@ const WhatsappManageCampaign = () => {
 
   useEffect(() => {
     //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
+    if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
         const data = {
           userId: "",
@@ -285,7 +285,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -319,7 +319,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const fetchScheduleCampaignData = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -407,9 +407,9 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  useEffect(() => {
-    fetchScheduleCampaignData();
-  }, []);
+  // useEffect(() => {
+  //   fetchScheduleCampaignData();
+  // }, []);
 
   useEffect(() => {
     const fetchWabaList = async () => {
@@ -434,7 +434,7 @@ const WhatsappManageCampaign = () => {
 
   // Fetch initial data - for to load data on page load
   const handleShowLogs = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -464,7 +464,7 @@ const WhatsappManageCampaign = () => {
   };
 
   const handleSummary = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -619,7 +619,7 @@ const WhatsappManageCampaign = () => {
                 }}
               />
             </Tabs>
-            {user.role === "RESELLER" && (
+            {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
                 <AnimatedDropdown
                   id="manageuser"

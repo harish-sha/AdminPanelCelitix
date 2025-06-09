@@ -427,7 +427,7 @@ const ObdManageVoiceClips = () => {
           variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
-        console.log(res);
+        // console.log(res);
       }
     } catch (e) {
       toast.error("Something went wrong");

@@ -53,7 +53,7 @@ export const BlockUser = () => {
     }, []);
 
     useEffect(() => {
-        console.log(rows);
+        // console.log(rows);
     }, [rows]);
 
     useEffect(() => {

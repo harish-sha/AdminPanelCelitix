@@ -74,7 +74,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      console.log("File uploaded:", selectedFile.name);
+      // console.log("File uploaded:", selectedFile.name);
     } else {
       alert("Please select a file to upload.");
     }
@@ -84,7 +84,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     const selectedPhoto = e.target.files[0];
     if (selectedPhoto) {
       setUploadPhoto(selectedPhoto);
-      console.log("Photo uploaded:", selectedPhoto.name);
+      // console.log("Photo uploaded:", selectedPhoto.name);
     } else {
       alert("Please choose a photo.");
     }
@@ -99,7 +99,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
       </Typography>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
         {items.map((item, index) => {
-          console.log("item", item)
+          // console.log("item", item)
           switch (item.type) {
             // Render Heading
             case "heading":

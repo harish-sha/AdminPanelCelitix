@@ -251,7 +251,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       required: switchChecked,
     };
 
-    console.log("payload by input", payload);
+    // console.log("payload by input", payload);
 
     const updatedData = {
       ...selectedItem,
@@ -260,7 +260,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log(updatedData);
+    // console.log(updatedData);
   };
 
   const allowed = ["heading", "subheading", "textbody", "textcaption"];
@@ -330,7 +330,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       text: text,
       "on-click-action": onClickAction,
     };
-    console.log(payload);
+    // console.log(payload);
   };
 
   // opt-in
@@ -350,7 +350,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       name: "",
       "on-click-action": optAction,
     };
-    console.log(payload);
+    // console.log(payload);
     // if(optAction === 'navigate'){
 
     // }
@@ -404,7 +404,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
+    // console.log(payload);
   };
 
   // date
@@ -468,7 +468,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
+    // console.log(payload);
   };
 
   // Calendar
@@ -532,7 +532,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
+    // console.log(payload);
   };
 
   // document
@@ -601,7 +601,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       // uploadedFile: file.name,
     };
 
-    console.log("Saving:", payload);
+    // console.log("Saving:", payload);
     toast.success("Document saved successfully!");
 
     const updatedData = {
@@ -611,7 +611,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log("Final Document data:", updatedData);
+    // console.log("Final Document data:", updatedData);
   };
 
   // media
@@ -637,7 +637,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       "max-uploaded-photos": maxPhotoUpload,
     };
 
-    console.log("Saving:", payload);
+    // console.log("Saving:", payload);
     toast.success("Media saved successfully!");
 
     const updatedData = {
@@ -647,7 +647,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log("Final Media data:", updatedData);
+    // console.log("Final Media data:", updatedData);
   };
 
   // footertype
@@ -677,7 +677,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       on_click_action: nextAction || "",
     };
 
-    console.log("Saving footer payload:", payload);
+    // console.log("Saving footer payload:", payload);
 
     // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
@@ -687,7 +687,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
     onClose();
-    console.log("Final footer data:", updatedData);
+    // console.log("Final footer data:", updatedData);
   };
 
   // footertype
@@ -802,7 +802,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     try {
       const response = await uploadImageFile(radioImageFile, 1);
-      console.log("Upload response:", response);
+      // console.log("Upload response:", response);
       setUploadedRadioImgId(response.handlerid);
       toast.success("File uploaded successfully!");
     } catch (error) {
@@ -878,7 +878,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       metadata: opt.metadata?.trim() || "",
       image: uploadedRadioImgId || opt.image || "",
     }));
-    console.log("Filtered and processed radio button options:", payloadOptions);
+    // console.log("Filtered and processed radio button options:", payloadOptions);
 
     // 4) Final payload and merge
     const payload = {
@@ -905,10 +905,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     onSave(updatedData);
     onClose();
 
-    console.log(
-      "Radio button updated data which send to generate payload",
-      updatedData
-    );
+    // console.log(
+    //   "Radio button updated data which send to generate payload",
+    //   updatedData
+    // );
   };
 
   //checkbox
@@ -956,7 +956,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     try {
       const response = await uploadImageFile(checkboxImageFile, 1);
       setUploadedCheckboxImgId(response.handlerid);
-      console.log("Upload response:", response);
+      // console.log("Upload response:", response);
       toast.success("File uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload file.");
@@ -1051,7 +1051,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     onSave(updatedData);
     onClose();
 
-    console.log("Final checkboxes data:", updatedData);
+    // console.log("Final checkboxes data:", updatedData);
   };
   // anshu
   //checkbox
@@ -1094,7 +1094,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     try {
       const response = await uploadImageFile(dropImageFile, 1);
 
-      console.log("Upload response:", response);
+      // console.log("Upload response:", response);
       setUploadedId(response.handlerid);
       toast.success("File uploaded successfully!");
     } catch (error) {
@@ -1203,10 +1203,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     onSave(updatedData);
 
-    console.log(
-      "dropdown updated data which send to generate payload",
-      updatedData
-    );
+    // console.log(
+    //   "dropdown updated data which send to generate payload",
+    //   updatedData
+    // );
   };
   // dropdown
   // akhil

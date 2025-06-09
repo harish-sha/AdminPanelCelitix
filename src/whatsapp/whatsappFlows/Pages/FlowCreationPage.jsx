@@ -48,7 +48,7 @@ const FlowCreationPage = () => {
 
   const handleAddItem = (item) => {
     const newTabs = [...tabs];
-    console.log("newTabs", newTabs);
+    // console.log("newTabs", newTabs);
 
     const nonDuplicateTabs = [
       "heading",
@@ -86,7 +86,7 @@ const FlowCreationPage = () => {
 
 
   useEffect(() => {
-    console.log(tabs)
+    // console.log(tabs)
   }, [])
 
   const handleEdit = (index) => {
@@ -110,7 +110,7 @@ const FlowCreationPage = () => {
           selectedOption: updatedData.selectedOption || "",
           ...updatedData
         };
-        console.log("all tabs content when save within tabs", newTabs)
+        // console.log("all tabs content when save within tabs", newTabs)
       } else {
         console.error("Invalid index in updatedData:", updatedData.index);
       }

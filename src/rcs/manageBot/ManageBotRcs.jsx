@@ -202,10 +202,10 @@ const ManageBotRcs = () => {
   return (
     <>
       <div className="w-full">
-        <div className="flex flex-wrap items-end justify-between w-full gap-2 mb-2">
-          <div className="flex items-end gap-3" >
-            <h1 className="text-lg font-medium mt-2">Manage RCS Bot</h1>
-            {/* <div className="w-full sm:w-56">
+        <h1 className="text-2xl text-gray-700 font-medium text-center my-2">Manage RCS Bot</h1>
+        <div className="flex flex-wrap items-end justify-between w-full gap-2 mb-4">
+          <div className="flex items-end gap-3">
+            <div className="w-full sm:w-56">
               <DropdownWithSearch
                 label="Bot Name"
                 id="botName"
@@ -231,16 +231,16 @@ const ManageBotRcs = () => {
                 disabled={isFetching}
                 onClick={handleBotSearch}
               />
-            </div> */}
+            </div>
           </div>
 
-          {/* <div className="w-max-content">
+          <div className="w-max-content">
             <UniversalButton
               label="Add Bot"
               disabled={isFetching}
               onClick={() => setAddBotDialog(true)}
             />
-          </div> */}
+          </div>
         </div>
 
         <div className="w-full">

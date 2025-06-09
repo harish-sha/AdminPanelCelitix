@@ -39,7 +39,7 @@ const Recharge = () => {
 
   useEffect(() => {
     //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
+    if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
         const data = {
           userId: "",
@@ -159,7 +159,7 @@ const Recharge = () => {
         </div>
 
         <div className="flex items-center justify-center gap-3 w-full">
-          {user.role === "RESELLER" && (
+          {user.role === "ADMIN" && (
             <div className="flex-1">
               <AnimatedDropdown
                 id="manageuser"

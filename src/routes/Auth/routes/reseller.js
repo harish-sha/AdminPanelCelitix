@@ -2,7 +2,27 @@ export const resellerItems = [
   { name: "Home", links: "/", roles: ["ADMIN"] },
   {
     name: "User Management",
-    links: ["/manageuser", "/manageadduser"],
+    links: [
+      "/manageuser",
+      "/manageadduser",
+      "/managedlttemplate",
+      "/rcsmanagebot",
+      "/managevoiceclips",
+      "/manageplan",
+      "/accountmanager",
+      "/graphmain",
+      "/graphuserwise",
+      "/manageSMPP",
+      "/managerouting",
+      "/SMPPerrorcode",
+      "/addservice",
+      "/addrouting",
+      "/addoperator",
+      "/manageprefix",
+      "/blacklist",
+      "/managenotifications",
+      "/CreateWhatsappTemplateAdmin",
+    ],
     roles: ["ADMIN"],
   },
   {
@@ -43,7 +63,6 @@ export const resellerItems = [
     links: ["/callback", "/addcallback", "/editcallback"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
-
   {
     name: "openRoutes",
     links: [

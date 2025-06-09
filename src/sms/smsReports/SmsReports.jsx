@@ -78,7 +78,7 @@ const SmsReports = () => {
 
   useEffect(() => {
     //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
+    if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
         const data = {
           userId: "",
@@ -327,7 +327,7 @@ const SmsReports = () => {
   }, [isExportDialogOpen]);
 
   const handleCampaignSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -556,7 +556,7 @@ const SmsReports = () => {
   };
 
   const handleScheduleCampaignSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -678,7 +678,7 @@ const SmsReports = () => {
   };
 
   useEffect(() => {
-    console.log("clicked", clicked);
+    // console.log("clicked", clicked);
   }, [clicked]);
 
   // const handleScheduleCampaignSearch = async () => {
@@ -821,7 +821,7 @@ const SmsReports = () => {
   // };
 
   const handlePreviousDaysSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -979,7 +979,7 @@ const SmsReports = () => {
   };
 
   const handleDayWiseSummary = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -1063,7 +1063,7 @@ const SmsReports = () => {
   };
 
   const handleAttachmentSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -1336,7 +1336,7 @@ const SmsReports = () => {
     <div>
       <Box sx={{ width: "100%" }}>
         <div className="flex items-center justify-end pr-2">
-          {user.role === "RESELLER" && (
+          {user.role === "ADMIN" && (
             <>
               {/* <div className="text-gray-700 font-medium">
                 View reports for a specific user (select user from dropdown first) :
@@ -1466,7 +1466,7 @@ const SmsReports = () => {
             name="exportsmsreport"
             onClick={handleExports}
           /> */}
-          {/* {user.role === "RESELLER" && (
+          {/* {user.role === "ADMIN" && (
             <div className="w-full sm:w-54">
               <AnimatedDropdown
                 id="manageuser"

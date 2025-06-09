@@ -81,7 +81,7 @@ const TransactionsUser = () => {
 
   useEffect(() => {
     //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
+    if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
         const data = {
           userId: "",
@@ -330,7 +330,7 @@ const TransactionsUser = () => {
                 onClick={handleExport}
               />
             </div>
-            {user.role === "RESELLER" && (
+            {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
                 <AnimatedDropdown
                   id="manageuser"

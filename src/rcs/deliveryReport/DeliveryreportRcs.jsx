@@ -44,7 +44,7 @@ const DeliveryreportRcs = () => {
 
   useEffect(() => {
     //fetchAllUsersDetails
-    if (user.role === "RESELLER") {
+    if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
         const data = {
           userId: "",
@@ -171,7 +171,7 @@ const DeliveryreportRcs = () => {
 
   //fetchCampaignData
   const handleCampaignSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -199,7 +199,7 @@ const DeliveryreportRcs = () => {
 
   //fetchSummaryData
   const handleSummarySearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -229,7 +229,7 @@ const DeliveryreportRcs = () => {
 
   // fetchscheduleData
   const handleScheduleSearch = async () => {
-    if (user.role === "RESELLER" && !selectedUser) {
+    if (user.role === "ADMIN" && !selectedUser) {
       toast.error("Please select a user first.");
       return;
     }
@@ -258,7 +258,7 @@ const DeliveryreportRcs = () => {
     }
 
     try {
-      console.log("Canceling schedule with SRNO:", srno);
+      // console.log("Canceling schedule with SRNO:", srno);
       const res = await cancelschedule({ srno }, selectedUser || "0");
       if (res) {
         toast.success("Schedule cancelled successfully");
@@ -274,9 +274,9 @@ const DeliveryreportRcs = () => {
     }
   };
 
-  useEffect(() => {
-    handleSummarySearch();
-  }, [summaryData.isMonthWise]);
+  // useEffect(() => {
+  //   handleSummarySearch();
+  // }, [summaryData.isMonthWise]);
 
   function handleExportBtn() {
     setVisibledialog(true);
@@ -354,7 +354,7 @@ const DeliveryreportRcs = () => {
                 }}
               />
             </Tabs>
-            {user.role === "RESELLER" && (
+            {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
                 <AnimatedDropdown
                   id="manageuser"

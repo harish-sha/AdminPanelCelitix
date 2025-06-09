@@ -142,7 +142,7 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ itemKey, item, index }) => {
-    console.log("item", item)
+    // console.log("item", item)
 
     if (!item?.type) {
       console.error("DraggableItem error: item.type is not defined");
