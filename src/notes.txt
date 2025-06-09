@@ -20,5 +20,10 @@ whatsapp > whatsappFlows > components > MobilePanel.jsx - Done
 whatsapp > whatsappFlows > components > TabView.jsx - Done
 whatsapp > whatsappFlows > lib > generatePayload.js - Done
 
-=================================== merge files june 05 to reseller and directuser ==================================
+=================================== Merge file from main to reseller & admin ==================================
 
+june 09
+1.add whatsapp canned message feature to reseller 
+2.add obd create campaign pages 
+3.add whatsapp flows 
+4.
