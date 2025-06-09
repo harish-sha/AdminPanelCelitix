@@ -276,7 +276,7 @@ const CampaignDeliveryReportDetails = () => {
               // { value: "All", label: "All" },
               { value: "READ", label: "Read" },
               { value: "DELIVRD", label: "Delivered" },
-              { value: "UNDELIV", label: "UNDelivered" },
+              { value: "UNDELIV", label: "Undelivered" },
               // { value: "clicked", label: "Clicked" },
               // { value: "replied", label: "Replied" },
               // { value: "failed", label: "Failed" },

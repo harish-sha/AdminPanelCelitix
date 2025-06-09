@@ -27,6 +27,10 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
+import MmLite from "@/whatsapp/mmlite/MmLite";
+
+// Canned Message Manager
+import CannedMessage from "@/cannedmessage/CannedMessage";
 
 
 // manage funds
@@ -133,7 +137,7 @@ import PageNotFound from "@/NotFound/PageNotFound";
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import MmLite from "@/whatsapp/mmlite/MmLite";
+
 
 const Approutes = () => {
   return (
@@ -278,6 +282,9 @@ const Approutes = () => {
         <Route path="/callback" element={<Callback />} />
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
+
+        {/* Canned Message Manager */}
+        <Route path="/cannedmessagemanager" element={<CannedMessage />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />

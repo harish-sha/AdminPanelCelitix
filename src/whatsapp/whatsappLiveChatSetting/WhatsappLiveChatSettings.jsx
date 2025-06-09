@@ -25,6 +25,7 @@ import {
 import AnimatedDropdown from "../components/AnimatedDropdown";
 import { ConfigureDialog } from "./components/configureDialog";
 import UniversalButton from "../components/UniversalButton";
+import CannedMessageManager from "../../cannedmessage/components/CannedMessageManager";
 
 // import { extractVariable } from "../WhatsappBot/component/components/helper/extractVariable";
 
@@ -240,9 +241,7 @@ const WhatsappLiveChatSettings = () => {
     let message = basicDetails.message || variablemessage;
     specificTemplate.urlValue = btnVariable;
     // specificTemplate.message = message;
-    variablemessage && (specificTemplate.message = variablemessage)
-
-
+    variablemessage && (specificTemplate.message = variablemessage);
 
     const wabaSrno = wabaState.waba.find(
       (waba) => waba.mobileNo === wabaState.selected
@@ -446,8 +445,25 @@ const WhatsappLiveChatSettings = () => {
           borderRadius: "20px",
         }}
       >
-        <div className="flex justify-end w-full items-center mb-4 mr-5">
-          <div className="w-[15%]">
+        {/* <CannedMessageManager /> */}
+
+        {/* Heading */}
+        <Box maxWidth="lg" mx="auto" textAlign="center" mb={2} mt={2}>
+          <Typography
+            variant="h5"
+            fontWeight="bold"
+            color="text.primary"
+            gutterBottom
+          >
+            💬 WhatsApp Live Chat Settings
+          </Typography>
+          <Typography variant="subtitle1" color="text.secondary">
+            Configure and automate your WhatsApp experience for smoother
+            customer communication.
+          </Typography>
+        </Box>
+        <div className="flex justify-end w-full items-center mb-2">
+          <div className="w-56">
             <AnimatedDropdown
               id="waba"
               name="waba"
@@ -469,21 +485,6 @@ const WhatsappLiveChatSettings = () => {
             />
           </div>
         </div>
-        {/* Heading */}
-        <Box maxWidth="lg" mx="auto" textAlign="center" mb={8}>
-          <Typography
-            variant="h4"
-            fontWeight="bold"
-            color="text.primary"
-            gutterBottom
-          >
-            💬 WhatsApp Live Chat Settings
-          </Typography>
-          <Typography variant="subtitle1" color="text.secondary">
-            Configure and automate your WhatsApp experience for smoother
-            customer communication.
-          </Typography>
-        </Box>
 
         {/* <Grid container spacing={5} justifyContent="center" maxWidth="lg">
           <Grid item xs={12} sm={6}>
@@ -637,10 +638,10 @@ const WhatsappLiveChatSettings = () => {
                       {card.desc}
                     </p>
                     <div className="border border-gray-300 rounded-md p-2 bg-gray-100 h-50 overflow-scroll text-wrap">
-                      <span className="text-sm font-semibold text-gray-600">
+                      <pre className="text-sm font-normal text-gray-600 text-wrap">
                         {cardDetails[card.type]?.message ||
                           "Hi! Thanks for connecting. Our team is unavailable right now. We'll be back at 10am tomorrow."}
-                      </span>
+                      </pre>
                     </div>
                   </div>
 

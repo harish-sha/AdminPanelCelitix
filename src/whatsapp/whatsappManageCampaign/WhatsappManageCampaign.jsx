@@ -407,9 +407,9 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  useEffect(() => {
-    fetchScheduleCampaignData();
-  }, []);
+  // useEffect(() => {
+  //   fetchScheduleCampaignData();
+  // }, []);
 
   useEffect(() => {
     const fetchWabaList = async () => {

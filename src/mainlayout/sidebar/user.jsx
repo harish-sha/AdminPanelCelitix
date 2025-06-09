@@ -125,6 +125,7 @@ export const userItems = [
       { to: "/wwhatsappbot", label: "Manage Bot" },
       { to: "/wwhatsappflows", label: "Manage Flows" },
       { to: "/wblockuser", label: "Block User" },
+      { to: "/cannedmessagemanager", label: "Canned Message" },
       { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
       { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
       { to: "/createtemplate", label: "Create Bot", isHide: true },

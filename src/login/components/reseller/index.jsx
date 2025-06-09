@@ -10,9 +10,7 @@ import { UAParser } from "ua-parser-js";
 
 import UniversalButton from "@/components/common/UniversalButton";
 import celitixLogo from "@/assets/images/celitix-logo-white.svg";
-// import Header from "./Header";
 import InputField from "@/components/layout/InputField";
-// import Footer from "./components/Footer";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
@@ -118,9 +116,10 @@ const ResellerLogin = () => {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.ip || "0.0.0.0",
-        // domain: domain !== "celitix.alertsnow.in" ? domain : "",
+        // ip: ipResponse?.data?.ip || "0.0.0.0",
+        domain: domain !== "celitix.alertsnow.in" ? domain : "",
         // domain: "reseller.alertsnow.in",
+        // domain: "msg.itbizcon.in",
         // domain: "",
         domain: domain
       };

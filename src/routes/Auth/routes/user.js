@@ -49,6 +49,7 @@ export const userItems = [
       "/wflowcreation",
       "/apicampaigninfo",
       "/wblockuser",
+      "/cannedmessagemanager",
       "/wmmlite",
     ],
     roles: ["ADMIN"],

@@ -148,7 +148,7 @@ const DeliveryreportRcs = () => {
       try {
         const res = await getAllCampaign();
         setAllCampaigns(res);
-      } catch (e) {
+      } catch (e) {  
         toast.error("Error fetching all campaigns");
         return;
       }
@@ -274,9 +274,9 @@ const DeliveryreportRcs = () => {
     }
   };
 
-  useEffect(() => {
-    handleSummarySearch();
-  }, [summaryData.isMonthWise]);
+  // useEffect(() => {
+  //   handleSummarySearch();
+  // }, [summaryData.isMonthWise]);
 
   function handleExportBtn() {
     setVisibledialog(true);
