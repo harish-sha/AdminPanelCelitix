@@ -26,6 +26,8 @@ export const WorkflowCreate = () => {
   const [nodeId, setNodeId] = useState(1);
   const [name, setName] = useState("");
   const [nodesInputData, setNodesInputData] = useState({});
+  const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
+  const [type, setType] = useState("");
 
   const onConnect = useCallback(
     (connection: { source: any; target: any }) => {
@@ -34,37 +36,22 @@ export const WorkflowCreate = () => {
       let isSourceAlreadyConnected = false;
       let isTargetAlreadyConnected = false;
 
-      // if (type !== "list" || type !== "button") {
-      //   isSourceAlreadyConnected = edges.some((edge) => edge.source === source);
+      if (type === "list" || type === "button") {
+        isSourceAlreadyConnected = edges.some(
+          (edge) => edge.sourceHandle === source
+        );
+        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      } else {
+        isSourceAlreadyConnected = edges.some(
+          (edge) => edge.sourceHandle === source
+        );
+        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      }
 
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // }
-
-      // if (type === "list" || type === "button") {
-      //   isSourceAlreadyConnected = edges.some(
-      //     (edge) => edge.sourceHandle === source
-      //   );
-
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // }
-
-      // if (type === "list" || type === "button") {
-      //   isSourceAlreadyConnected = edges.some(
-      //     (edge) => edge.sourceHandle === source
-      //   );
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // } else {
-      //   isSourceAlreadyConnected = edges.some(
-      //     (edge) => edge.sourceHandle === source
-      //   );
-      //   isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      // }
-
-      // if (isSourceAlreadyConnected || isTargetAlreadyConnected) {
-      //   toast.error("This connection is not allowed!");
-      //   return;
-      // }
-
+      if (isSourceAlreadyConnected || isTargetAlreadyConnected) {
+        toast.error("This connection is not allowed!");
+        return;
+      }
       setEdges((eds) => addEdge(connection, eds));
     },
     [edges, setEdges]
@@ -78,13 +65,65 @@ export const WorkflowCreate = () => {
   const commonButtonClass =
     "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
+  const addNode = (type: string, position?: { x: number; y: number }) => {
+    const newNode = {
+      id: `${nodeId}`,
+      position: position || { ...lastPosition },
+      data: { type },
+      type,
+    };
+
+    setNodes((prevNodes) => [...prevNodes, newNode]);
+    setNodeId((prevId) => prevId + 1);
+    if (!position) {
+      setLastPosition((prevPosition) => ({
+        x: prevPosition.x + 50,
+        y: prevPosition.y + 50,
+      }));
+    }
+  };
+
+  const reset = () => {
+    setNodes([]);
+    setEdges([]);
+    setNodeId(1);
+    setNodesInputData({});
+  };
+
+  const handleDragStart = (event: React.DragEvent, type: string) => {
+    event.dataTransfer.setData("application/reactflow", type);
+    event.dataTransfer.effectAllowed = "move";
+  };
+
+  const handleDrop = (event: React.DragEvent) => {
+    event.preventDefault();
+
+    const reactFlowBounds = event.currentTarget.getBoundingClientRect();
+    const type = event.dataTransfer.getData("application/reactflow");
+
+    if (!type) return;
+
+    // Calculate the position relative to the React Flow container
+    const position = {
+      x: event.clientX - reactFlowBounds.left,
+      y: event.clientY - reactFlowBounds.top,
+    };
+
+    addNode(type, position);
+  };
+
+  const handleDragOver = (event: React.DragEvent) => {
+    event.preventDefault();
+    event.dataTransfer.dropEffect = "move";
+  };
+
   return (
     <>
       <div className="flex h-[100%]">
         <div
           style={{ width: "90vw", height: "auto" }}
-          // onDrop={handleDrop}
-          // onDragOver={handleDragOver}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
         >
           <ReactFlow
             nodes={nodes}
@@ -117,35 +156,61 @@ export const WorkflowCreate = () => {
             <div className="grid grid-cols-1 p-1 gap-x-2 gap-y-3">
               <Button
                 draggable
-                onDragStart={(event) => {}}
-                onClick={() => {}}
+                onDragStart={(event) => {
+                  handleDragStart(event, "voice");
+                }}
+                onClick={() => {
+                  addNode("voice");
+                }}
                 className={commonButtonClass}
               >
                 OBD
               </Button>
               <Button
                 draggable
-                onDragStart={(event) => {}}
-                onClick={() => {}}
+                onDragStart={(event) => {
+                  handleDragStart(event, "whatsapp");
+                }}
+                onClick={() => {
+                  addNode("whatsapp");
+                }}
                 className={commonButtonClass}
               >
                 WhatsApp
               </Button>
               <Button
                 draggable
-                onDragStart={(event) => {}}
-                onClick={() => {}}
+                onDragStart={(event) => {
+                  handleDragStart(event, "rcs");
+                }}
+                onClick={() => {
+                  addNode("rcs");
+                }}
                 className={commonButtonClass}
               >
                 RCS
               </Button>
               <Button
                 draggable
-                onDragStart={(event) => {}}
-                onClick={() => {}}
+                onDragStart={(event) => {
+                  handleDragStart(event, "sms");
+                }}
+                onClick={() => {
+                  addNode("sms");
+                }}
                 className={commonButtonClass}
               >
                 SMS
+              </Button>
+              <Button
+                draggable
+                onDragStart={(event) => {}}
+                onClick={() => {
+                  reset();
+                }}
+                className={commonButtonClass}
+              >
+                Reset
               </Button>
             </div>
           </div>
@@ -171,7 +236,7 @@ export const WorkflowCreate = () => {
               name="saveWorkFlow"
               label={`Save`}
               onClick={() => {}}
-              style={{width: "100%"}}
+              style={{ width: "100%" }}
             />
           </div>
         </div>
