@@ -1,8 +1,10 @@
 import { deleteWorkflow, getAllWorkflow } from "@/apis/workflow";
 import CustomTooltip from "@/components/common/CustomTooltip";
+import UniversalButton from "@/components/common/UniversalButton";
 import { DataTable } from "@/components/layout/DataTable";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import { IconButton } from "@mui/material";
+import { Dialog } from "primereact/dialog";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -10,6 +12,12 @@ import { MdOutlineDeleteForever } from "react-icons/md";
 export const WorkflowDetails = () => {
   const [type, setType] = useState("");
   const [rows, setRows] = useState([]);
+
+  const [visibleDialog, setVisibledialog] = useState(false);
+  const [selectedRowData, setSelectedRowData] = useState({
+    srno: "",
+    type: "",
+  });
 
   async function handleFetchAllWorkflow() {
     try {
@@ -24,22 +32,7 @@ export const WorkflowDetails = () => {
             }))
           : []
       );
-
-      //       [
-      //     {
-      //         "insert_time": "2025-06-07 15:49:59",
-      //         "node_type": "voice",
-      //         "user_srno": 2925,
-      //         "isDelete": 0,
-      //         "sr_no": 2,
-      //         "node_json": "[{\"nodeIndex\":2,\"nodeId\":\"whatsapp_1\",\"nodeType\":\"whatsapp\",\"isLastNode\":1,\"workflowType\":-1,\"position_top\":\"93px\",\"position_left\":\"557px\",\"whatsapp_1\":{\"value\":{\"wabanumber\":\"4\",\"whatsappTemplate\":\"394\",\"whatsapp_category\":\"MARKETING\",\"whatsapp_templateType\":\"text\",\"variables\":[],\"fileInput\":\"\",\"urlValues\":\"\"}}},{\"nodeIndex\":1,\"nodeId\":\"voice_0\",\"nodeType\":\"voice\",\"isLastNode\":0,\"workflowType\":-1,\"position_top\":\"191px\",\"position_left\":\"203px\",\"voice_0\":{\"conditionList\":{\"voice_0_condition_0\":{\"value\":{\"type\":\"deliverystatus\",\"val\":\"notAnswered\",\"time\":0,\"otpTimeIntervalValue\":0,\"keyPressValue\":-1,\"callDurationTime\":0,\"ansPreFix\":\"\"},\"nextNode\":\"whatsapp_1\"}}}}]",
-      //         "isOtpWorkflow": -1,
-      //         "workflow_name": "voicetest1",
-      //         "workflow_UId": "voicetest1_JXBcv"
-      //     }
-      // ]
     } catch (e) {
-      console.log(e);
       toast.error("Unable to fetch workflow");
     }
   }
@@ -51,11 +44,26 @@ export const WorkflowDetails = () => {
   async function handleDelete(row) {
     if (!row.sr_no || !row.node_type) return;
     const srno = row.sr_no;
-    const type = node_type;
+    const type = row.node_type;
+
+    setSelectedRowData({
+      srno,
+      type,
+    });
+    setVisibledialog(true);
+  }
+  async function handleConfirmDelete(row) {
+    const srno = selectedRowData.srno;
+    const type = selectedRowData.type;
 
     try {
       const res = await deleteWorkflow(srno, type);
-      console.log(res);
+      if (!res?.status) {
+        return toast.error(res?.message || "Unable to delete workflow");
+      }
+      toast.success(res?.message || "Workflow deleted successfully");
+      setVisibledialog(false);
+      await handleFetchAllWorkflow();
     } catch (e) {
       toast.error("Unable to delete workflow");
     }
@@ -65,11 +73,11 @@ export const WorkflowDetails = () => {
     { field: "sn", headerName: "S.No", width: 100 },
     { field: "insert_time", headerName: "Created On", width: 200 },
     { field: "node_type", headerName: "Type", width: 150 },
-    { field: "workflow_name", headerName: "Name", width: 100 },
+    { field: "workflow_name", headerName: "Name", width: 200 },
     {
       field: "isOtpWorkflow",
       headerName: "Is Otp Workflow",
-      width: 150,
+      width: 200,
       renderCell: (params) => (params.row.isOtpWorkflow === 1 ? "Yes" : "No"),
     },
     {
@@ -120,6 +128,39 @@ export const WorkflowDetails = () => {
         rows={rows}
         // onRowClick={handleFetchAllWorkflow}
       />
+
+      <Dialog
+        header="Delete Workflow"
+        visible={visibleDialog}
+        style={{ width: "50vw" }}
+        onHide={() => {
+          setVisibledialog(false);
+          setSelectedRowData({ srno: "", type: "" });
+        }}
+        draggable={false}
+      >
+        <div>
+          <p>Are you sure you want to delete this workflow?</p>
+          <div className="flex justify-end mt-2">
+            <UniversalButton
+              id="cancel"
+              name="cancel"
+              label="Cancel"
+              onClick={() => {
+                setVisibledialog(false);
+                setSelectedRowData({ srno: "", type: "" });
+              }}
+            />
+            <UniversalButton
+              id="Delete"
+              name="Delete"
+              label="Delete"
+              style={{ marginLeft: "10px", backgroundColor: "red" }}
+              onClick={(w) => handleConfirmDelete()}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };
