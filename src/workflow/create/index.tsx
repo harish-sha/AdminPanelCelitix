@@ -15,6 +15,204 @@ import toast from "react-hot-toast";
 import { Button } from "@/components/ui/button";
 import InputField from "@/components/layout/InputField";
 import UniversalButton from "@/components/common/UniversalButton";
+import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
+import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
+import { Dialog } from "primereact/dialog";
+
+function NodeComponent({
+  id,
+  data,
+  onDelete,
+  isConnecting,
+  setIsVisible,
+  connectionType,
+  setNodesInputData,
+  nodesInputData,
+}: {
+  id: string;
+  data: any;
+  onDelete: (id: string) => void;
+  isConnecting: boolean;
+  setIsVisible: any;
+  connectionType: string;
+  setNodesInputData: any;
+  nodesInputData?: any;
+}) {
+  const options = nodesInputData?.[id]?.options || [];
+  const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
+
+  return (
+    <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
+      <button
+        className="absolute -top-2 -right-1 text-xs text-white bg-red-500 rounded-full hover:bg-red-700 h-4 w-4 text-center"
+        onClick={() => {
+          onDelete(id);
+          setIsVisible(false);
+          setNodesInputData((prev) => {
+            const newData = {};
+            const keys = Object.keys(prev).sort(
+              (a, b) => parseInt(a) - parseInt(b)
+            );
+
+            let shift = false;
+
+            keys.forEach((key) => {
+              const keyNum = parseInt(key);
+              if (key === id) {
+                shift = true;
+                return;
+              }
+
+              if (shift) {
+                const newKey = String(keyNum - 1);
+                newData[newKey] = prev[key];
+              } else {
+                newData[key] = prev[key];
+              }
+            });
+
+            return newData;
+          });
+        }}
+      >
+        <CloseOutlinedIcon
+          fontSize="small"
+          style={{
+            fontSize: "10px",
+          }}
+        />
+      </button>
+
+      <button
+        className="absolute -left-2 p-0 text-xs -top-2"
+        onClick={() => {
+          setIsVisible(true);
+        }}
+      >
+        <SettingsOutlinedIcon fontSize="small" />
+      </button>
+
+      <div className="font-medium text-center">
+        {data.type === "voice" && <p>Voice Node ({id})</p>}
+        {data.type === "rcs" && <p>RCS Node ({id})</p>}
+        {data.type === "whatsapp" && <p>Whatsapp Node ({id})</p>}
+        {data.type === "sms" && <p>SMS Node ({id})</p>}
+      </div>
+      <Handle
+        type="target"
+        position={Position.Top}
+        className={`${data.type == "starting" ? "hidden" : ""} `}
+        style={{
+          background: connectionType === "source" ? "green" : "blue",
+        }}
+      />
+
+      <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          background: connectionType === "target" ? "green" : "blue",
+        }}
+      />
+      {/* {data?.type !== "list" && data?.type !== "button" && (
+        <Handle
+          type="target"
+          position={Position.Top}
+          className={`${data.type == "starting" ? "hidden" : ""} `}
+          style={{
+            background: connectionType === "source" ? "green" : "blue",
+          }}
+        />
+      )} */}
+      {/* <Handle
+        type="source"
+        position={Position.Bottom}
+        style={{
+          background: connectionType === "target" ? "green" : "blue",
+        }} 
+      />
+         */}
+
+      {/* {data?.type === "list" ? (
+        <>
+          <Handle
+            type="target"
+            position={Position.Left}
+            className={`${data.type == "starting" ? "hidden" : ""} `}
+            style={{
+              background: connectionType === "source" ? "green" : "blue",
+            }}
+          />
+          <div className="flex flex-col gap-2 mt-2">
+            {options.map((option: any, index: number) => (
+              <div
+                key={index}
+                className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
+              >
+                <span className="text-gray-800">
+                  {option.option || `Option ${index + 1}`}
+                </span>
+                <Handle
+                  id={`opt-${index}`}
+                  type="source"
+                  position={Position.Right}
+                  style={{
+                    background: connectionType === "target" ? "green" : "blue",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    right: -8,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </>
+      ) : data?.type === "button" ? (
+        <>
+          <Handle
+            type="target"
+            position={Position.Left}
+            className={`${data.type == "starting" ? "hidden" : ""} `}
+            style={{
+              background: connectionType === "source" ? "green" : "blue",
+            }}
+          />
+          <div className="flex flex-col gap-2 mt-2">
+            {buttonTexts.map((option: any, index: number) => (
+              <div
+                key={index}
+                className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
+              >
+                <span className="text-gray-800">
+                  {option || `Option ${index + 1}`}
+                </span>
+                <Handle
+                  id={`btn-opt-${index}`}
+                  type="source"
+                  position={Position.Right}
+                  style={{
+                    background: connectionType === "target" ? "green" : "blue",
+                    top: "50%",
+                    transform: "translateY(-50%)",
+                    right: -8,
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <Handle
+          type="source"
+          position={Position.Bottom}
+          style={{
+            background: connectionType === "target" ? "green" : "blue",
+          }}
+        />
+      )} */}
+    </div>
+  );
+}
 
 export const WorkflowCreate = () => {
   let node = [];
@@ -28,6 +226,10 @@ export const WorkflowCreate = () => {
   const [nodesInputData, setNodesInputData] = useState({});
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
   const [type, setType] = useState("");
+  const [isConnecting, setIsConnecting] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [connectionType, setConnectionType] = useState("");
+  const [selectedNodeId, setSelectedNodeId] = useState(null);
 
   const onConnect = useCallback(
     (connection: { source: any; target: any }) => {
@@ -58,8 +260,8 @@ export const WorkflowCreate = () => {
   );
 
   const onNodeClick = (_event: any, node: any) => {
-    // setType(node.type);
-    // setSelectedNodeId(node.id);
+    setType(node.type);
+    setSelectedNodeId(node.id);
   };
 
   const commonButtonClass =
@@ -103,7 +305,6 @@ export const WorkflowCreate = () => {
 
     if (!type) return;
 
-    // Calculate the position relative to the React Flow container
     const position = {
       x: event.clientX - reactFlowBounds.left,
       y: event.clientY - reactFlowBounds.top,
@@ -116,6 +317,84 @@ export const WorkflowCreate = () => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
   };
+
+  const deleteNode = useCallback(
+    (nodeId: string) => {
+      setNodes((nds) => {
+        const updatedNodes = nds.filter((node) => node.id !== nodeId);
+
+        const reorderedNodes = updatedNodes.map((node, index) => ({
+          ...node,
+          id: (index + 1).toString(),
+        }));
+
+        setNodeId(reorderedNodes.length + 1);
+        return reorderedNodes;
+      });
+
+      setEdges((eds) =>
+        eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId)
+      );
+
+      setEdges((eds) =>
+        eds.filter(
+          (edge) => edge.sourceHandler !== nodeId && edge.target !== nodeId
+        )
+      );
+
+      setIsVisible(false);
+    },
+    [setNodes, setEdges]
+  );
+  const nodeTypes = useMemo(
+    () => ({
+      voice: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
+      whatsapp: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
+      rcs: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
+      sms: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
+    }),
+    [deleteNode, isConnecting, nodesInputData]
+  );
 
   return (
     <>
@@ -133,14 +412,14 @@ export const WorkflowCreate = () => {
             onConnect={onConnect}
             onNodeClick={onNodeClick}
             deleteKeyCode={"Backspace"}
-            // nodeTypes={nodeTypes}
+            nodeTypes={nodeTypes}
             onConnectStart={(event, { handleType }) => {
-              // setIsConnecting(true);
-              // setConnectionType(handleType);
+              setIsConnecting(true);
+              setConnectionType(handleType);
             }}
             onConnectEnd={() => {
-              // setIsConnecting(false);
-              // setConnectionType("");
+              setIsConnecting(false);
+              setConnectionType("");
             }}
             // fitView
           >
@@ -241,6 +520,20 @@ export const WorkflowCreate = () => {
           </div>
         </div>
       </div>
+
+      <Dialog
+        header={"Add Conditions and details for the selected Channel"}
+        visible={isVisible}
+        onHide={() => {
+          setType("");
+          setSelectedNodeId("");
+          setIsVisible(false);
+        }}
+        style={{ width: "50vw" }}
+        draggable={false}
+      >
+        Hello {type}
+      </Dialog>
     </>
   );
 };
