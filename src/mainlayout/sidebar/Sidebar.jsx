@@ -101,13 +101,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const menuItems = resellerItems;
   // const menuItems = [];
 
-  const getFilteredMenuItems = (menuItems = [], userState) => {
-    if (userState.role === "ADMIN") {
-      return menuItems;
-    }
-  };
+  // const getFilteredMenuItems = (menuItems = [], userState) => {
+  //   if (userState?.role === "ADMIN") {
+  //     return menuItems;
+  //   }
+  // };
 
-  const filteredItems = getFilteredMenuItems(menuItems, user);
+  const filteredItems = menuItems;
 
   return (
     <motion.div
