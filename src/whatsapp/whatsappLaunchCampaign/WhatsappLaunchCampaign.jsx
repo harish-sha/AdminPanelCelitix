@@ -20,6 +20,7 @@ import InputField from "../../components/layout/InputField.jsx";
 import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
 import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
+import { RadioButton } from "primereact/radiobutton";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -676,6 +677,56 @@ const WhatsappLaunchCampaign = () => {
                       placeholder="Select Template"
                     />
                   </div>
+                  {selectedTemplateData?.category === "MARKETING" && (
+                    <div>
+                      <h1 className="mb-1 text-sm font-medium text-gray-800">
+                        Send Via
+                      </h1>
+                      <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
+                        {/* Option 1 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2 cursor-pointer">
+                            <RadioButton
+                              inputId="radioOption1"
+                              name="radioGroup"
+                              value="1"
+                              onChange={(e) => {
+                                setMarketingType(e.target.value);
+                              }}
+                              checked={marketingType === "1"}
+                            />
+                            <label
+                              htmlFor="radioOption1"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              MM Lite
+                            </label>
+                          </div>
+                        </label>
+
+                        {/* Option 2 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2">
+                            <RadioButton
+                              inputId="radioOption2"
+                              name="radioGroup"
+                              value="2"
+                              onChange={(e) => {
+                                setMarketingType(e.target.value);
+                              }}
+                              checked={marketingType === "2"}
+                            />
+                            <label
+                              htmlFor="radioOption2"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              Cloud API
+                            </label>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
