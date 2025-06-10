@@ -166,7 +166,6 @@ export const ApiCampaignInfo = () => {
   // }, [state]);
 
   async function handleExport() {
-    toast.success("Hello World");
     try {
       const payload = {
         type: 2,

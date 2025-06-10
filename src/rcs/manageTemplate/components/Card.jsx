@@ -400,6 +400,7 @@ export const Card = ({
           label={"Title"}
           value={cardData.title}
           onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
+          tooltipContent=" Enter the title that will appear on the rich card. Keep it short and engaging."
           maxLength="200"
         />
         <AnimatedDropdown
@@ -417,6 +418,10 @@ export const Card = ({
             },
           ]}
           placeholder="Select Card"
+          tooltipContent=" Tooltip for Select Orientation: Choose the layout of the card.
+Vertical: Image appears above the text/buttons.
+Horizontal: Image appears beside the text.
+Note: Media requirements vary based on selected orientation and height."
           value={cardOrientation}
           onChange={(e) => {
             setCardOrientation(e);
@@ -457,6 +462,14 @@ export const Card = ({
               ]
           }
           placeholder="Select Media"
+          tooltipContent="Tooltip for Select Media Height
+Choose the Rich Card Standalone layout size.
+Guidelines for Images (Rich Card Standalone):
+Vertical + Short: 3:1 aspect ratio, 1440x480px, max 2MB (JPG/PNG/GIF)
+Vertical + Medium: 2:1 aspect ratio, 1440x720px, max 2MB (JPG/PNG/GIF)
+Horizontal: 3:4 aspect ratio, 768x1024px, max 2MB (JPG/PNG/GIF)
+For Videos (any layout): Max size 10MB
+Unsupported sizes may cause delivery failure or layout issues."
           value={cardData.mediaHeight}
           onChange={(e) => {
             setCardData({

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useRef, useEffect } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -33,7 +33,41 @@ const Canvas = ({
   setCreateTab,
   menuRefs,
 }) => {
-  const [type, drop] = useDrop(() => ({
+  // const [{ isOver }, drop] = useDrop(() => ({
+  //   accept: [
+  //     "heading",
+  //     "subheading",
+  //     "textbody",
+  //     "textcaption",
+  //     "textInput",
+  //     "textArea",
+  //     "radioButton",
+  //     "checkBox",
+  //     "dropDown",
+  //     "chipSelector"
+  //   ],
+
+  //   drop: (item) => {
+  //     console.log("itemvvvvvvvvvv", item)
+  //     const newItem = {
+  //       id: Date.now(),
+  //       type: item.type,
+  //     };
+
+  //     console.log("newItem", newItem)
+
+  //     setTabs((prevTabs) => {
+  //       const newTabs = [...prevTabs];
+  //       const activePayload = newTabs[activeIndex].payload || [];
+  //       activePayload.push(newItem);
+  //       newTabs[activeIndex].payload = activePayload;
+  //       return newTabs;
+  //     });
+  //   }
+
+  // }));
+
+  const [{ isOver }, drop] = useDrop(() => ({
     accept: [
       "heading",
       "subheading",
@@ -44,66 +78,65 @@ const Canvas = ({
       "radioButton",
       "checkBox",
       "dropDown",
-      "chipSelector"
+      "chipSelector",
     ],
-    drop: (item) => {
-      setItems((prev) => [
-        ...prev,
-        { id: Date.now(), type: item.type, value: "" },
-      ]);
-    },
 
+    drop: (item, monitor) => {
+      if (monitor.didDrop()) {
+        return;
+      }
+      // console.log("itemfffffffffff", item);
+      // console.log("monitor", monitor);
 
-
-    drop: (item) => {
       const newItem = {
         id: Date.now(),
         type: item.type,
+        value: "",
       };
 
-      if (item.type === "radioButton") {
-        newItem.radio = {
-          radio_1: {
-            label: "Sample Radio Group",
-            "data-source": [
-              { id: "1", title: "Option 1", description: "First option", image: "" },
-              { id: "2", title: "Option 2", description: "Second option", image: "" }
-            ]
-          }
-        };
-      }
+      // console.log("newItem", tabs);
 
-      setTabs((prevTabs) => {
-        const newTabs = [...prevTabs];
-        const activePayload = newTabs[activeIndex].payload || [];
-        activePayload.push(newItem);
-        newTabs[activeIndex].payload = activePayload;
-        return newTabs;
-      });
+      const allTabs = [...tabs];
+      // console.log("allTabs", allTabs);
+      // console.log("activePayload", allTabs);
+      const activePayload = allTabs[activeIndex].payload || [];
 
-    }
+      activePayload.push(newItem);
+      // console.log("activePayload", allTabs);
 
-
+      setTabs(allTabs);
+    },
   }));
-
-  // Handle input change for TextField components
-  // const handleInputChange = (index, value) => {
-  //   console.log("value", value)
-  //   setItems((prevItems) => {
-  //     const updatedItems = [...prevItems];
-  //     updatedItems[index].value = value;
-  //     return updatedItems;
-  //   });
-  // };
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
     if (!tabs?.[activeIndex]?.payload) return "";
+    // const targetItem = tabs[activeIndex].payload.find(
+    //   (payloadItem) =>
+    //     payloadItem.type === item.type && payloadItem.index === item.index
+    // );
 
     const targetItem = tabs[activeIndex].payload.find(
-      (payloadItem) => payloadItem.type === item.type && payloadItem.index === item.index
+      (payloadItem) => payloadItem.type === item.type
     );
 
     if (!targetItem) return "";
+
+    // For Headings
+    if (item.type === "heading") {
+      return targetItem.heading;
+    }
+
+    if (item.type === "subheading") {
+      return targetItem.subheading;
+    }
+
+    if (item.type === "textcaption") {
+      return targetItem.textcaption;
+    }
+
+    if (item.type === "textbody") {
+      return targetItem.textbody;
+    }
 
     // For textInput and textArea: look under texts
     if (item.type === "textInput" || item.type === "textArea") {
@@ -117,17 +150,61 @@ const Canvas = ({
     }
 
     if (item.type === "radioButton") {
-      return targetItem.radio?.radio_1?.description || "";
+      return targetItem.label || "";
+    }
+
+    if (item.type === "checkBox") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "dropDown") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "chipSelector") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "embeddedlink") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "optin") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "image") {
+      console.log("targetItem.alt-text");
+      // return targetItem.alt-text || "";
+    }
+
+    if (item.type === "document") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "media") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "date") {
+      return targetItem.label || "";
     }
 
     // Fallback: return an empty string
     return "";
   };
 
-
-
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
+    // console.log("tabs", tabs);
+    // const newTabs = [...tabs];
+    // newTabs[activeIndex] = {
+    //   ...newTabs[activeIndex],
+    //   payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+    // };
+
+    // setTabs(newTabs);
+
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -140,24 +217,46 @@ const Canvas = ({
     toast.success("Item deleted successfully");
   };
 
-  // Draggable component for individual canvas items
-  const DraggableItem = React.memo(({ itemKey, item, index }) => {
-    console.log("item", item)
+  //   const handleDelete = (idToDelete) => {
+  //     console.log("idToDelete", idToDelete)
+  //   setTabs((prevTabs) => {
+  //     const newTabs = prevTabs.map((tab, i) => {
+  //       if (i === activeIndex) {
+  //         return {
+  //           ...tab,
+  //           payload: tab.payload.filter((item) => item.id !== idToDelete),
+  //         };
+  //       }
+  //       return tab;
+  //     });
 
+  //     return newTabs;
+  //   });
+
+  //   toast.success("Item deleted successfully");
+  // };
+
+  // Draggable component for individual canvas items
+  const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
+    // console.log("itemddddd", item);
+    // console.log("indexdddd", index);
     if (!item?.type) {
       console.error("DraggableItem error: item.type is not defined");
       return null;
     }
 
+    const itemType = item?.type;
+    // console.log("itemType", itemType);
     // const [, drag] = useDrag({
     //   type: item.type,
     //   item: { index },
     // });
 
     const [{ isDragging }, drag] = useDrag({
-      type: 'field',
-      item: { id: item.id, index },
-      collect: monitor => ({
+      type: item?.type,
+      // item: { id: item.id },
+      item: { type: item.type },
+      collect: (monitor) => ({
         isDragging: monitor.isDragging(),
       }),
     });
@@ -167,7 +266,7 @@ const Canvas = ({
         ref={drag}
         style={{
           opacity: isDragging ? 0.5 : 1,
-          cursor: 'move',
+          cursor: "move",
         }}
         sx={{
           backgroundColor: getBackgroundColor(item.type),
@@ -188,7 +287,7 @@ const Canvas = ({
             {getLabel(item.type)}
           </Typography>
           <Box>
-            <IconButton size="small" onClick={() => onEdit(index)}>
+            <IconButton size="small" onClick={() => onEdit(index, item)}>
               <EditOutlinedIcon
                 style={{ cursor: "pointer" }}
                 fontSize="small"
@@ -203,7 +302,7 @@ const Canvas = ({
           </Box>
         </Box>
 
-        <InputField
+        {/* <InputField
           // label="Enter value"
           // variant="outlined"
           // fullWidth
@@ -214,12 +313,83 @@ const Canvas = ({
           rows={item.type === "textArea" ? 4 : undefined}
           // disabled={item.type !== "textInput" && item.type !== "textArea"}
           readOnly
+        /> */}
+
+        {/* <InputField
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          multiline={item.type === "textArea"}
+          rows={item.type === "textArea" ? 4 : undefined}
+          readOnly
+        /> */}
+        <InputField
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          multiline={item.type === "textArea"}
+          rows={item.type === "textArea" ? 4 : undefined}
+          readOnly
         />
       </Paper>
     );
   });
 
+  // const DraggableItem = React.memo(({ item, index, onEdit, handleDelete, tabs, activeIndex }) => {
+  //   if (!item?.type) {
+  //     console.error(" error: item.type is not defined");
+  //     return null;
+  //   }
 
+  //   const [{ isDragging }, drag] = useDrag({
+  //     type: item.type,
+  //     item: { type: item.type },
+  //     collect: (monitor) => ({
+  //       isDragging: monitor.isDragging(),
+  //     }),
+  //   });
+
+  //   const dynamicValue = getDynamicFieldValue(tabs, activeIndex, item, "helper_text");
+  //   const isTextArea = item.type === "textArea";
+
+  //   return (
+  //     <Paper
+  //       ref={drag}
+  //       style={{
+  //         opacity: isDragging ? 0.5 : 1,
+  //         cursor: "move",
+  //       }}
+  //       sx={{
+  //         backgroundColor: getBackgroundColor(item.type),
+  //       }}
+  //       className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
+  //     >
+  //       <Box
+  //         sx={{
+  //           display: "flex",
+  //           alignItems: "center",
+  //           justifyContent: "space-between",
+  //           position: "relative",
+  //         }}
+  //       >
+  //         <Typography variant="subtitle1" ml={1}>
+  //           {getLabel(item.type)}
+  //         </Typography>
+  //         <Box>
+  //           <IconButton size="small" onClick={() => onEdit(index, item)}>
+  //             <EditOutlinedIcon fontSize="small" />
+  //           </IconButton>
+  //           <IconButton size="small" onClick={() => handleDelete(index)}>
+  //             <DeleteForeverOutlinedIcon fontSize="small" className="text-red-400" />
+  //           </IconButton>
+  //         </Box>
+  //       </Box>
+
+  //       <InputField
+  //         value={dynamicValue}
+  //         multiline={isTextArea}
+  //         rows={isTextArea ? 4 : undefined}
+  //         readOnly
+  //       />
+  //     </Paper>
+  //   );
+  // });
 
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
@@ -265,8 +435,8 @@ const Canvas = ({
         return "CheckBox";
       case "dropDown":
         return "DropDown";
-      case 'chipSelector':
-        return 'ChipSelector';
+      case "chipSelector":
+        return "ChipSelector";
       case "footerbutton":
         return "FooterButton";
       case "embeddedlink":
@@ -277,16 +447,16 @@ const Canvas = ({
         return "Image";
       case "document":
         return "Document";
-      case 'media':
-        return 'Media';
+      case "media":
+        return "Media";
       case "ifelse":
         return "IfElse";
-      case 'switch':
-        return 'Switch';
+      case "switch":
+        return "Switch";
       case "date":
         return "Date";
-      case 'calendar':
-        return 'Calendar';
+      case "calendar":
+        return "Calendar";
       // case "userdetail":
       //   return "UserDetail";
       default:
@@ -312,7 +482,7 @@ const Canvas = ({
     // </Box>
     <div
       ref={drop}
-      className=" shadow-xl overflow-auto rounded-xl  h-[830px] w-full hide-scrollbar  bg-white pt-10"
+      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-white pt-10"
     >
       {/* Tabs for multiple screens */}
       <TabView
@@ -345,17 +515,29 @@ const Canvas = ({
         ))} */}
 
         {tabs[activeIndex]?.payload
-          ?.filter(item => item.type !== undefined)
+          ?.filter((item) => item.type !== undefined)
           .map((item, index) => (
-            <div key={item.id || index}>
+            // <div key={item.id || index}>
+            <div key={index}>
               <DraggableItem
                 item={item}
                 index={index}
                 itemKey={item.id}
+                tabs={tabs}
+                activeIndex={activeIndex}
               />
             </div>
           ))}
 
+        {/* {tabs[activeIndex]?.payload
+          ?.map((item, index) => (
+            <div key={index}>
+              <DraggableItem
+                item={item}
+                index={index}
+              />
+            </div>
+          ))} */}
       </div>
       {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
     </div>

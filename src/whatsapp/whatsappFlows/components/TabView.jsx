@@ -48,7 +48,12 @@ export default function CustomTabView({
     const addTab = () => {
         setTabs([
             ...tabs,
-            { id: screenID, title: screenName, content: `Content for ${screenName}`, payload: [] },
+            {
+                id: screenID,
+                title: screenName,
+                content: `Content for ${screenName}`,
+                payload: [],
+            },
         ]);
         setActiveIndex(tabs.length);
     };
@@ -61,7 +66,6 @@ export default function CustomTabView({
             setActiveIndex(updatedTabs.length - 1);
         }
     };
-
 
     const handleTabClick = () => {
         if (!tabs || tabs.length === 0) return;
@@ -77,10 +81,11 @@ export default function CustomTabView({
         if (hasCompleteFooter) {
             setDialogVisible(true);
         } else {
-            toast.error("The last screen must have a footer with Next Action set to 'Navigate'.");
+            toast.error(
+                "The last screen must have a footer with Next Action set to 'Navigate'."
+            );
         }
     };
-
 
     const handleEditSave = () => {
         if (!screenEditName.trim()) {
@@ -99,7 +104,6 @@ export default function CustomTabView({
         setScreenID("");
     };
 
-
     const menuItems = (index) => [
         {
             label: "Edit",
@@ -112,8 +116,7 @@ export default function CustomTabView({
                 setScreenEditName(screenName);
                 setScreenID(screenID);
                 setEditDialogVisible(true);
-            }
-
+            },
         },
         {
             label: "Delete",
@@ -134,7 +137,9 @@ export default function CustomTabView({
         }
         const isTitleExists = tabs.some((tab) => tab.title === screenName);
         if (isTitleExists) {
-            toast.error("Screen already exists. Please choose a different Screen Name.");
+            toast.error(
+                "Screen already exists. Please choose a different Screen Name."
+            );
             return;
         }
         addTab();
@@ -153,7 +158,10 @@ export default function CustomTabView({
 
     const generateRandomLetters = (length = 5) => {
         const letters = "abcdefghijklmnopqrstuvwxyz";
-        return Array.from({ length }, () => letters[Math.floor(Math.random() * letters.length)]).join('');
+        return Array.from(
+            { length },
+            () => letters[Math.floor(Math.random() * letters.length)]
+        ).join("");
     };
 
     return (
@@ -196,7 +204,6 @@ export default function CustomTabView({
                 >
                     <AddIcon className="text-blue-600" />
                 </div>
-
             </div>
             {/* Tab Content */}
             {/* <div style={{ padding: '20px' }}>
@@ -322,10 +329,7 @@ export default function CustomTabView({
                             />
                         </div>
                         <div className="">
-                            <TextField
-                                label="Enter screen ID (Optional)"
-                                value={screenID}
-                            />
+                            <TextField label="Enter screen ID (Optional)" value={screenID} />
                         </div>
                     </div>
                     <div className="flex flex-col ml-2 mt-5">

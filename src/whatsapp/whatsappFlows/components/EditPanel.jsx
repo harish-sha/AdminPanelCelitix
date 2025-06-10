@@ -28,8 +28,31 @@ import { Dialog } from "primereact/dialog";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import moment from "moment";
+import Chip from "@mui/material/Chip";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 
-const EditPanel = ({ selectedItem, onClose, onSave }) => {
+const EditPanel = ({
+  selectedItem,
+  onClose,
+  onSave,
+  headingValue,
+  setHeadingValue,
+  setLabelValue,
+  labelValue,
+  selectedOptionsType,
+  setSelectedOptionsType,
+  placeholderValue,
+  setPlaceholderValue,
+  minValue,
+  setMinValue,
+  maxValue,
+  setMaxValue,
+  errorValue,
+  setErrorValue,
+  switchChecked,
+  setSwitchChecked,
+  screens,
+}) => {
   const [value, setValue] = useState("");
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -153,14 +176,14 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     { value: "email", label: "Email" },
   ];
 
-  const [selectedOptionsType, setSelectedOptionsType] = useState(null);
+  // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  const [maxValue, setMaxValue] = useState("");
-  const [minValue, setMinValue] = useState("");
-  const [labelValue, setLabelValue] = useState("");
-  const [errorValue, setErrorValue] = useState("");
-  const [placeholderValue, setPlaceholderValue] = useState("");
-  const [switchChecked, setSwitchChecked] = useState(false);
+  // const [maxValue, setMaxValue] = useState("");
+  // const [minValue, setMinValue] = useState("");
+  // const [labelValue, setLabelValue] = useState("");
+  // const [errorValue, setErrorValue] = useState("");
+  // const [placeholderValue, setPlaceholderValue] = useState("");
+  // const [switchChecked, setSwitchChecked] = useState(false);
 
   const switchLabel = { inputProps: { "aria-label": "Switch demo" } };
   const handleErrorChange = (e) => setErrorValue(e.target.value);
@@ -192,6 +215,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   };
 
   const handleMaxChange = (e) => {
+    console.log("e", e.target.value);
+
     const val = e.target.value;
     if (/^\d*$/.test(val)) {
       setMaxValue(val);
@@ -205,10 +230,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   };
 
   const handleMinChange = (e) => {
+    console.log("e", e.target.value);
     const val = e.target.value;
     if (/^\d*$/.test(val)) setMinValue(val);
   };
 
+  console.log("minVal", minValue);
   const isNumberType = selectedOptionsType?.value === "number";
   const maxNum = maxValue ? Number(maxValue) : "";
   const minNum = minValue ? Number(minValue) : "";
@@ -268,16 +295,16 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const { type, payload } = selectedItem || {};
 
   // 1️⃣ state to track the input’s value
-  const [headingValue, setHeadingValue] = useState("");
+  // const [headingValue, setHeadingValue] = useState("");
 
   // 2️⃣ prefill (or clear) when selectedItem changes
-  useEffect(() => {
-    if (allowed.includes(type)) {
-      setHeadingValue(payload?.[type] ?? "");
-    } else {
-      setHeadingValue("");
-    }
-  }, [type, payload]);
+  // useEffect(() => {
+  //   if (allowed.includes(type)) {
+  //     setHeadingValue(payload?.[type] ?? "");
+  //   } else {
+  //     setHeadingValue("");
+  //   }
+  // }, [type, payload]);
 
   // for headings
   // const handleHeadingSave = () => {
@@ -315,45 +342,114 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   // }
 
   // EmbeddedLink
-  const [link, setLink] = useState("");
-  const [onClickAction, setOnClickAction] = useState("");
   const [text, setText] = useState("");
+  const [onClickAction, setOnClickAction] = useState("complete");
+  const [screenNameList, setScreenNameList] = useState([]);
+  const [selectedScreenName, setSelectedScreenName] = useState("");
 
-  const handleChange = (e) => {
-    setLink(e.target.value);
-  };
+  const [tabs, setTabs] = useState([
+    { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
+  ]);
+
+  useEffect(() => {
+    if (tabs && Array.isArray(tabs)) {
+      const options = tabs
+        .filter((tab) => {
+          if (tab.id === selectedItem?.id) return false;
+
+          const hasEmbeddedLink = tab.payload?.some(
+            (item) => item.type === "EmbeddedLink"
+          );
+          return !hasEmbeddedLink;
+        })
+        .map((tab) => ({
+          value: tab.id,
+          label: tab.title || tab.id,
+        }));
+
+      setScreenNameList(options);
+    }
+  }, [tabs, selectedItem]);
+
+  useEffect(() => {
+    if (onClickAction !== "navigate") {
+      setSelectedScreenName("");
+    }
+  }, [onClickAction]);
+
+  useEffect(() => {
+    if (selectedItem?.type === "embeddedlink") {
+      if (selectedItem?.text?.startsWith("text ")) {
+        setText(selectedItem.text.replace("text ", ""));
+      }
+
+      const action = selectedItem["on-click-action"] || "complete";
+      setOnClickAction(action);
+
+      if (action === "navigate") {
+        const screenName = selectedItem["screen-name"];
+        const screenExists = tabs.some(
+          (tab) => tab.id === screenName && tab.id !== selectedItem.id
+        );
+
+        if (screenName && screenExists) {
+          setSelectedScreenName(screenName);
+        } else {
+          toast.error("Please Create New Screen");
+          setSelectedScreenName("");
+        }
+      } else {
+        setSelectedScreenName("");
+      }
+    }
+  }, [selectedItem, tabs]);
 
   const handleEmbeddedLinkSave = () => {
     const payload = {
-      label: embaddedlink,
-      type: "EmbeddedLink",
-      text: text,
+      text: `text `,
       "on-click-action": onClickAction,
+      ...(onClickAction === "navigate" && {
+        name: selectedScreenName,
+      }),
     };
-    console.log(payload);
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
   };
 
-  // opt-in
-  const [name, setName] = useState("");
+  // if (selectedItem?.type !== "embeddedlink") return null;
+
+  // // opt-in
+
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
 
-  const handleChecked = (e) => {
-    setCheckbox(e.target.checked);
-  };
+  // const handleChecked = (e) => {
+  //   setCheckbox(e.target.checked);
+  // };
 
   const handleOPTSave = () => {
     const payload = {
       label: optLabel,
-      type: "OptIn",
-      name: "",
+      required: true,
       "on-click-action": optAction,
     };
-    console.log(payload);
-    // if(optAction === 'navigate'){
 
-    // }
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+
+    console.log(payload);
   };
 
   // image
@@ -363,6 +459,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [aspectRatio, setAspectRatio] = useState(1);
   const [imgAltText, setImgAltText] = useState("");
   const [imageSrc, setImageSrc] = useState(null);
+  const [imageFile, setImageFile] = useState([]);
 
   function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -376,11 +473,51 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       reader.onerror = (error) => reject(error);
     });
   }
-  const handlePhotoUpload = async (e) => {
-    const file = event.target.files[0];
 
-    const src = await getBase64(file);
+  const handlePhotoUpload = async () => {
+    if (!imageFile) {
+      toast.error("Please select an image first before uploading");
+      return;
+    }
+    const src = await getBase64(imageFile);
+    console.log(src);
     setImageSrc(src);
+  };
+
+  const handleImageDelete = async () => {
+    if (!imageFile) {
+      toast.error("File not exist");
+      return;
+    }
+    try {
+      setImageFile([]);
+      setImageSrc(null);
+      setUploadedImgId(null);
+      setImageFile(null);
+      toast.success("File Delete Succesfully");
+      console.log("Image DLT");
+    } catch (error) {
+      toast.error("Failed To delete file");
+    }
+  };
+
+  const handleImageChange = (e) => {
+    console.log(e);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.match(/image\/(png|jpeg)/)) {
+      toast.error("Please select a .png or .jpeg file");
+      return;
+    }
+
+    setImageFile(file);
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setImageSrc(reader.result);
+    };
+    reader.readAsDataURL(file);
   };
 
   // const base64HeaderRemoved = imageSrc.split(",")[1];
@@ -411,22 +548,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [dateLable, setDateLabel] = useState("");
   const [minDate, setMinDate] = useState("");
   const [maxDate, setMaxDate] = useState("");
-  const [dateName, setDateName] = useState("");
-  const [unavailableDate, setUnavailableDate] = useState("");
+  const [unavailableDate, setUnavailableDate] = useState([]);
   const [datePlaceholder, setDatePlaceholder] = useState("");
-
-  // const formatDateToString = (date) => {
-  //   if (!date) return null;
-
-  //   const d = new Date(date);
-  //   if (isNaN(d.getTime())) return null;
-
-  //   const year = d.getFullYear();
-  //   const month = `${d.getMonth() + 1}`.padStart(2, "0");
-  //   const day = `${d.getDate()}`.padStart(2, "0");
-
-  //   return `${year}-${month}-${day}`;
-  // };.
 
   const formatDateToString = (date) => {
     if (!date) return null;
@@ -437,15 +560,30 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   const formatArrayToDates = (dates) => {
     if (!Array.isArray(dates)) return [];
+    return dates
+      .filter((date) => date instanceof Date && !isNaN(date))
+      .map(formatDateToString)
+      .filter(Boolean);
+  };
 
-    return dates.map((date) => formatDateToString(date)).filter(Boolean);
+  const handleAddUnavailableDate = (date) => {
+    const formatted = formatDateToString(date);
+    if (
+      formatted &&
+      !unavailableDate.some((d) => formatDateToString(d) === formatted)
+    ) {
+      setUnavailableDate((prev) => [...prev, date]);
+    }
+  };
+
+  // Handle removing a selected date
+  const handleRemoveUnavailableDate = (indexToRemove) => {
+    setUnavailableDate((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
   };
 
   const handleDateSave = () => {
-    if (!dateName) {
-      toast.error("Please Enter Name");
-      return;
-    }
     if (!dateLable) {
       toast.error("Please Enter Label");
       return;
@@ -453,10 +591,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
     const payload = {
       label: dateLable,
-      name: dateName,
+
       "min-date": formatDateToString(minDate),
       "max-date": formatDateToString(maxDate),
-      "unavailable-dates": formatDateToString(unavailableDate),
+      "unavailable-dates": formatArrayToDates(unavailableDate),
       "helper-text": datePlaceholder,
       // "error-message": "",
     };
@@ -475,14 +613,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [dateCalendarLable, setDateCalendarLabel] = useState("");
   const [minCalendarDate, setMinCalendarDate] = useState("");
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
-  const [dateCalendarName, setDateCalendarName] = useState("");
-  const [unavailableCalendarDate, setUnavailableCalendarDate] = useState("");
+  const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
-
-  // const formatDateCalendarToString = (calendarDate) => {
-  //   if (!calendarDate) return "";
-  //   return String(new Date(calendarDate).getTime());
-  // };
+  const [startCalenderRequired, setStartCalendarRequired] = useState(false);
+  const [calendarMode, setCalendarMode] = useState("single");
+  const [endCalendarLabel, setEndCalendarLabel] = useState("");
+  const [endCalendarHelperText, setEndCalendarHelperText] = useState("");
+  const [endCalendarRequired, setEndCalendarRequired] = useState(false);
 
   const formatDateCalendarToString = (calendarDate) => {
     if (!calendarDate) return "";
@@ -491,39 +628,83 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     return d.format("YYYY-MM-DD");
   };
 
-  // const formatCalendarArrayToTimestamps = (arr) => {
-  //   return Array.isArray(arr)
-  //     ? arr.map((d) => String(new Date(d).getTime()))
-  //     : [];
-  // };
+  const formatArrayToCalendarDates = (dates) => {
+    if (!Array.isArray(dates)) return [];
+    return dates
+      .filter((date) => date instanceof Date && !isNaN(date))
+      .map(formatDateToString)
+      .filter(Boolean);
+  };
 
-  const formatCalendarArrayToTimestamps = (arr) => {
-    return Array.isArray(arr)
-      ? arr.map((d) => formatDateCalendarToString(d))
-      : [];
+  const handleAddCalendarUnavailableDate = (date) => {
+    const formatted = formatDateToString(date);
+    if (
+      formatted &&
+      !unavailableCalendarDates.some((d) => formatDateToString(d) === formatted)
+    ) {
+      setUnavailableCalendarDates((prev) => [...prev, date]);
+    }
+  };
+
+  // Handle removing a selected date
+  const handleRemoveCalendarUnavailableDate = (indexToRemove) => {
+    setUnavailableCalendarDates((prev) =>
+      prev.filter((_, index) => index !== indexToRemove)
+    );
+  };
+
+  const handleChecked = (e) => {
+    setModeRange(e.target.checked);
+  };
+
+  const handleRequiredChange = () => {
+    setStartCalendarRequired((prev) => !prev);
+  };
+
+  const handleEndRequiredChange = () => {
+    setEndCalendarRequired((prev) => !prev);
   };
 
   const handleCalendarSave = () => {
-    if (!dateCalendarName) {
-      toast.error("Please Enter Name");
-      return;
-    }
     if (!dateCalendarLable) {
       toast.error("Please Enter Label");
       return;
     }
 
-    const payload = {
-      label: dateCalendarLable,
-      name: dateCalendarName,
-      "min-date": formatDateCalendarToString(minCalendarDate),
-      "max-date": formatDateCalendarToString(maxCalendarDate),
-      "unavailable-dates": formatCalendarArrayToTimestamps(
-        unavailableCalendarDate
-      ),
-      "helper-text": dateCalendarPlaceholder,
-      // "error-message": "",
-    };
+    const payload =
+      calendarMode === "single"
+        ? {
+          mode: "single",
+          label: dateCalendarLable,
+          "helper-text": dateCalendarPlaceholder,
+          required: startCalenderRequired,
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            unavailableCalendarDates
+          ),
+        }
+        : {
+          mode: "range",
+          label: {
+            "start-date": dateCalendarLable || "",
+            "end-date": endCalendarLabel || "",
+          },
+          "helper-text": {
+            "start-date": dateCalendarPlaceholder || "",
+            "end-date": endCalendarHelperText || "",
+          },
+          required: {
+            "start-date": startCalenderRequired,
+            "end-date": endCalendarRequired,
+          },
+
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            unavailableCalendarDates
+          ),
+        };
 
     const updatedData = {
       ...selectedItem,
@@ -702,6 +883,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [radioImageSrc, setRadioImageSrc] = useState(null);
   const [uploadedRadioImgId, setUploadedRadioImgId] = useState(null);
   const [radioOptions, setRadioOptions] = useState([]);
+  const [deleteRadioImg, setDeleteRadioImg] = useState(null);
   const [draft, setDraft] = useState({
     title: "",
     description: "",
@@ -742,7 +924,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   const handleSaveInlineRadio = () => {
     if (!draft.title.trim()) return;
-
     const newOptions = [...radioButtonOptions];
     newOptions[radiobtnEditIdx] = {
       ...newOptions[radiobtnEditIdx],
@@ -762,6 +943,11 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       image: "",
       altText: "",
     });
+
+    //  if(!draft.image.trim()){
+    //  toast.error("MetaData Required")
+    //  return;
+    // }
   };
 
   const handleCancelInlineRadio = () => {
@@ -801,12 +987,32 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     }
 
     try {
-      const response = await uploadImageFile(radioImageFile, 1);
-      console.log("Upload response:", response);
-      setUploadedRadioImgId(response.handlerid);
+      const base64String = await getBase64(radioImageFile);
+      console.log("base64String", base64String);
+      // const response = await uploadImageFile(radioImageFile, 1);
+      // console.log("Upload response:", response);
+      setUploadedRadioImgId(base64String);
       toast.success("File uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload file.");
+    }
+  };
+
+  const handleDeleteRadioFile = async () => {
+    if (!radioImageFile) {
+      toast.error("File not exist");
+      return;
+    }
+    try {
+      setImageFile([]);
+      setImageSrc(null);
+      setUploadedRadioImgId(null);
+      setRadioImageFile(null);
+
+      toast.success("File Delete Succesfully");
+      console.log("Image DLT");
+    } catch (error) {
+      toast.error("Failed To delete file");
     }
   };
 
@@ -939,6 +1145,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       return;
     }
 
+    // const src = await getBase64(file);
+    // setCheckboxImageFile(src);
+
     setCheckboxImageFile(file);
 
     const reader = new FileReader();
@@ -954,12 +1163,31 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       return;
     }
     try {
-      const response = await uploadImageFile(checkboxImageFile, 1);
-      setUploadedCheckboxImgId(response.handlerid);
-      console.log("Upload response:", response);
+      const base64String = await getBase64(checkboxImageFile);
+      console.log("base64String", base64String);
+      // const response = await uploadImageFile(base64String, 1);
+      setUploadedCheckboxImgId(base64String);
+      // console.log("Upload response:", response);
       toast.success("File uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload file.");
+    }
+  };
+
+  const handleCheckboxFileDelete = async () => {
+    if (!checkboxImageFile) {
+      toast.error("File not exist");
+      return;
+    }
+    try {
+      setCheckboxImageFile(null);
+      setCheckboxImageSrc(null);
+      setUploadedCheckboxImgId(null);
+
+      toast.success("File Delete Succesfully");
+      console.log("Image DLT");
+    } catch (error) {
+      toast.error("Failed To delete file");
     }
   };
 
@@ -1065,9 +1293,9 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   const [draftMetadata, setDraftMetaData] = useState("");
   const [dropImageSrc, setDropImageSrc] = useState(null);
   const [dropImageFile, setDropImageFile] = useState(null);
-  const [uploadedId, setUploadedId] = useState(null);
+  const [dropdownUploadedId, setDropdownUploadedId] = useState(null);
 
-  const handleImageChange = (event) => {
+  const handleDropdownImageChange = (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
@@ -1079,27 +1307,48 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
     setDropImageFile(file);
 
     const reader = new FileReader();
+
     reader.onload = () => {
       setDropImageSrc(reader.result);
     };
     reader.readAsDataURL(file);
   };
 
-  const handleUploadFile = async () => {
+  const handleDropdownUploadFile = async () => {
     if (!dropImageFile) {
       toast.error("Please select an image first before uploading");
       return;
     }
 
-    try {
-      const response = await uploadImageFile(dropImageFile, 1);
 
-      console.log("Upload response:", response);
-      setUploadedId(response.handlerid);
+    try {
+      // const response = await uploadImageFile(dropImageFile, 1);
+      const base64String = await getBase64(dropImageFile);
+      console.log("base64String", base64String);
+      // console.log("Upload response:", response);
+      setDropdownUploadedId(base64String);
       toast.success("File uploaded successfully!");
     } catch (error) {
       console.error("Error uploading file:", error);
       toast.error("Failed to upload file.");
+    }
+  };
+
+  const handleDropdownFileDelete = async () => {
+    if (!dropImageFile) {
+      toast.error("File not exist");
+      return;
+    }
+    try {
+      setDropImageFile(null);
+      setDropImageFile('');
+      setDropImageSrc(null);
+      setDropdownUploadedImgId(null);
+
+      toast.success("File Delete Succesfully");
+      console.log("Image DLT");
+    } catch (error) {
+      toast.error("Failed To delete file");
     }
   };
 
@@ -1113,6 +1362,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
 
   const handleSaveInline = () => {
     if (!draftTitle.trim()) return;
+
 
     setOptions((prev) =>
       prev.map((o, i) =>
@@ -1177,7 +1427,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
       title: o.title.trim(),
       description: o.description.trim(),
       metadata: o.metadata.trim(),
-      image: uploadedId || o.image || "",
+      image: dropdownUploadedId || o.image || "",
     }));
 
     // 3) Base payload (what used to be passed directly)
@@ -1210,6 +1460,105 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
   };
   // dropdown
   // akhil
+
+  // chipSelector
+  const [chipSelectorLabel, setChipSelectorLabel] = useState("");
+  const [chipSelectorOptions, setChipSelectorOptions] = useState([]);
+  const [editingChipIdx, setEditingChipIdx] = useState(null);
+  // const [chipName, setChipName] = useState("");
+  const [chipTitle, setChipTitle] = useState("");
+  const [chipDescription, setChipDescription] = useState("");
+  const [valueSelection, setValueSelection] = useState("");
+
+  const handleStartChipSelectorEdit = (idx) => {
+    const opt = chipSelectorOptions[idx];
+    setEditingChipIdx(idx);
+    // setChipName(opt.name);
+    setChipTitle(opt.title);
+  };
+
+  const handleSaveChipSelectorInline = () => {
+    if (!chipTitle.trim()) return;
+
+    setChipSelectorOptions((prev) =>
+      prev.map((o, i) =>
+        i === editingChipIdx
+          ? {
+            ...o,
+            // name: chipName.trim(),
+            title: chipTitle.trim(),
+          }
+          : o
+      )
+    );
+
+    setEditingChipIdx(null);
+    // setChipName("");
+    setChipTitle("");
+  };
+
+  const handleCancelChipSelectorInline = () => {
+    setEditingChipIdx(null);
+    // setChipName("");
+    setChipTitle("");
+  };
+
+  const handleChipSelectorRemove = (idx) => {
+    setChipSelectorOptions((prev) => prev.filter((_, i) => i !== idx));
+
+    if (idx === editingChipIdx) {
+      handleCancelChipSelectorInline();
+    }
+  };
+
+  const handleAddNewChipSelector = () => {
+    setChipSelectorOptions((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        title: `Option`,
+      },
+    ]);
+  };
+
+  const handleChipSelectorSave = () => {
+    const filteredOptions = chipSelectorOptions.filter((o) => o.title.trim());
+    if (filteredOptions.length < 2) {
+      toast.error("At least two chip options are required!");
+      return;
+    }
+
+    const payloadOptions = filteredOptions.map((o, idx) => ({
+      id: idx + 1,
+      title: o.title.trim(),
+    }));
+
+    const payload = {
+      label: chipSelectorLabel.trim(),
+      required: true,
+      description: chipDescription.trim(),
+      "max-selected-items": valueSelection,
+      "data-source": payloadOptions,
+    };
+
+    const existingCount = selectedItem?.chipSelector
+      ? Object.keys(selectedItem.chipSelector).length
+      : 0;
+
+    const id = `chipSelector_${existingCount + 1}`;
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+      chipSelector: {
+        ...(selectedItem?.chipSelector || {}),
+        [id]: payload,
+      },
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
 
   const maxLengthMap = {
     heading: 80,
@@ -1318,7 +1667,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               />
             )}
 
-            <div style={{ display: "flex", gap: 8 }}>
+            <div className="flex, gap-8 ">
               <InputField
                 label="Min Length"
                 id="min"
@@ -1352,7 +1701,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               >
                 Is Input Required??
               </label>
-              <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <div className="flex, alignItems-center, gap-8 ">
                 <Switch
                   {...switchLabel}
                   checked={switchChecked}
@@ -1390,11 +1739,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 <Box
                   key={opt.id}
                   sx={{
-                    mb: 2,
-                    p: 2,
+                    mb: 1,
+                    p: 1,
                     border: "1px solid #ccc",
-                    borderRadius: 2,
-                    gap: 4,
+                    borderRadius: 1,
                     bgcolor: isEditing ? "#f5f5f5" : "white",
                   }}
                 >
@@ -1436,6 +1784,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           placeholder="Enter MetaData"
                           tooltipContent="Enter MetaData"
                           tooltipPlacement="right"
+                          required={true}
                           value={draftCheckbox.metadata}
                           onChange={(e) =>
                             setDraftCheckbox((d) => ({
@@ -1455,12 +1804,18 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             accept=".png, .jpeg"
                             tooltipContent="Upload Image"
                             tooltipPlacement="right"
-                            required
+                            required={true}
                             onChange={handleCheckboxImageChange}
-                            sx={{ display: "none" }}
+                            classname=""
                           />
                           <button onClick={handleCheckboxUploadFile}>
                             <FileUploadOutlinedIcon
+                              sx={{ fontSize: "23px", marginTop: 3 }}
+                            />
+                          </button>
+
+                          <button onClick={handleCheckboxFileDelete}>
+                            <DeleteOutlineIcon
                               sx={{ fontSize: "23px", marginTop: 3 }}
                             />
                           </button>
@@ -1476,6 +1831,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                         >
                           <UniversalButton
                             label="Save"
+                            disabled={!draftCheckbox.metadata.trim()}
                             onClick={handleSaveInlineCheckbox}
                           />
                           <UniversalButton
@@ -1509,19 +1865,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 </Box>
               );
             })}
+            <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+              <UniversalButton
+                label="AddOptions"
+                onClick={handleCheckboxAddNew}
+              />
 
-            <Box sx={{ mt: 1 }}>
-              <IconButton onClick={handleCheckboxAddNew}>
-                <AddCircleOutlineOutlinedIcon fontSize="medium" />
-              </IconButton>
-            </Box>
-
-            <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
               <UniversalButton
                 label="Save Checkbox"
                 onClick={handleCheckBoxSave}
               />
-            </Box>
+            </div>
           </FormControl>
         )}
 
@@ -1546,11 +1900,10 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 <Box
                   key={opt.id}
                   sx={{
-                    mb: 2,
-                    p: 2,
+                    mb: 1,
+                    p: 1,
                     border: "1px solid #ccc",
-                    borderRadius: 2,
-                    gap: 4,
+                    borderRadius: 1,
                     bgcolor: isEditing ? "#f5f5f5" : "white",
                   }}
                 >
@@ -1589,7 +1942,8 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           placeholder="Enter MetaData"
                           tooltipContent="Enter MetaData"
                           tooltipPlacement="right"
-                          value={draft.metadata}
+                          required={true}
+                          value={draft.metadata.trim()}
                           onChange={(e) =>
                             setDraft((d) => ({
                               ...d,
@@ -1616,10 +1970,15 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             tooltipPlacement="right"
                             required
                             onChange={handleRadioImageChange}
-                            sx={{ display: "none" }}
+                            className=""
                           />
                           <button onClick={handleRadioUploadFile}>
                             <FileUploadOutlinedIcon
+                              sx={{ fontSize: "23px", marginTop: 3 }}
+                            />
+                          </button>
+                          <button onClick={handleDeleteRadioFile}>
+                            <DeleteOutlineIcon
                               sx={{ fontSize: "23px", marginTop: 3 }}
                             />
                           </button>
@@ -1630,12 +1989,12 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                             display: "flex",
                             gap: 2,
                             marginTop: 2,
-                            display: "flex",
                             justifyContent: "center",
                           }}
                         >
                           <UniversalButton
                             label="Save"
+                            disabled={!draft.metadata.trim()}
                             onClick={handleSaveInlineRadio}
                           />
                           <UniversalButton
@@ -1669,19 +2028,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 </Box>
               );
             })}
-
-            <Box sx={{ mt: 1 }}>
-              <IconButton onClick={handleRadioBtnAddNew}>
-                <AddCircleOutlineOutlinedIcon fontSize="medium" />
-              </IconButton>
-            </Box>
-
-            <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
+            <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
               <UniversalButton
-                label="Save RadioButton"
+                label="AddOptions"
+                onClick={handleRadioBtnAddNew}
+              />
+
+              <UniversalButton
+                label="SaveRadioButton"
                 onClick={handleSaveRadioButton}
               />
-            </Box>
+            </div>
           </FormControl>
         )}
 
@@ -1689,7 +2046,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         {selectedItem?.type === "dropDown" && (
           <FormControl fullWidth>
             {/* ── Dropdown Label Input ── */}
-            <Box sx={{ mb: 2 }}>
+            <Box sx={{ mb: 2, mt: 3 }}>
               <InputField
                 label="Label"
                 id="mainlabel"
@@ -1757,6 +2114,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipContent="Enter MetaData"
                           tooltipPlacement="right"
                           value={draftMetadata}
+                          required={true}
                           onChange={(e) => setDraftMetaData(e.target.value)}
                           placeholder="Enter Metadata"
                           type="text"
@@ -1772,11 +2130,17 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           tooltipContent="Upload Image"
                           tooltipPlacement="right"
                           required
-                          onChange={handleImageChange}
-                          sx={{ display: "none" }}
+                          onChange={handleDropdownImageChange}
+                        // sx={{ display: "none" }}
                         />
-                        <button onClick={handleUploadFile}>
+                        <button onClick={handleDropdownUploadFile}>
                           <FileUploadOutlinedIcon
+                            sx={{ fontSize: "23px", marginTop: 3 }}
+                          />
+                        </button>
+
+                        <button onClick={handleDropdownFileDelete}>
+                          <DeleteOutlineIcon
                             sx={{ fontSize: "23px", marginTop: 3 }}
                           />
                         </button>
@@ -1786,14 +2150,13 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                           display: "flex",
                           gap: 1,
                           mt: 2,
-                          // display: "flex",
                           justifyContent: "center",
                         }}
                       >
                         <UniversalButton
                           label="Save Option"
                           onClick={handleSaveInline}
-                          disabled={!draftTitle.trim()}
+                          disabled={!draftTitle.trim() || !draftMetadata.trim()}
                         />
                         <UniversalButton
                           label="Cancel"
@@ -1842,9 +2205,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                   onClick={handleAddNew}
                   disabled={options.length >= 200}
                 />
-                {/* <IconButton >
-                <AddCircleOutlineOutlinedIcon fontSize="medium" />
-              </IconButton> */}
               </Box>
 
               <Box sx={{ mt: 1 }}>
@@ -1858,9 +2218,125 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </FormControl>
         )}
 
+        {/* Editable option for chipselector In */}
+        {selectedItem?.type === "chipSelector" && (
+          <FormControl fullWidth>
+            <div className="mt-3 space-y-3 mb-3">
+              <InputField
+                label="Label"
+                placeholder="Enter label"
+                tooltipContent="Enter MainLabel"
+                tooltipPlacement="right"
+                value={chipSelectorLabel}
+                onChange={(e) => setChipSelectorLabel(e.target.value)}
+              />
+              <InputField
+                label="Description"
+                placeholder="Enter Description"
+                value={chipDescription}
+                onChange={(e) => setChipDescription(e.target.value)}
+              />
+
+              <InputField
+                label="Max-Selection Options In Chip"
+                placeholder="Enter Max-option"
+                value={valueSelection}
+                onChange={(e) => setValueSelection(e.target.value)}
+              />
+            </div>
+
+            {chipSelectorOptions.map((opt, idx) => {
+              const isEditing = idx === editingChipIdx;
+              return (
+                <Box
+                  key={opt.id}
+                  sx={{
+                    mb: 1,
+                    p: 1,
+                    border: "1px solid #ddd",
+                    borderRadius: 1,
+                    display: "flex",
+                    alignItems: "center",
+                    bgcolor: isEditing ? "#f5f5f5" : "white",
+                  }}
+                >
+                  {isEditing ? (
+                    <Box sx={{ flexGrow: 1 }}>
+                      {/* <InputField
+                        label="Name"
+                        placeholder="Enter Name"
+                        value={chipName}
+                        onChange={(e) => setChipName(e.target.value)}
+                      /> */}
+                      <InputField
+                        label="Title"
+                        placeholder="Enter Title"
+                        value={chipTitle}
+                        onChange={(e) => setChipTitle(e.target.value)}
+                      />
+
+                      <Box
+                        sx={{
+                          display: "flex",
+                          gap: 1,
+                          mt: 2,
+                          justifyContent: "center",
+                        }}
+                      >
+                        <UniversalButton
+                          label="Save Option"
+                          onClick={handleSaveChipSelectorInline}
+                          disabled={!chipTitle.trim()}
+                        />
+                        <UniversalButton
+                          label="Cancel"
+                          className="p-button-text"
+                          onClick={handleCancelChipSelectorInline}
+                        />
+                      </Box>
+                    </Box>
+                  ) : (
+                    <>
+                      <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
+                        <Typography variant="subtitle1">{opt.name}</Typography>
+                        {opt.title && (
+                          <Typography variant="body2" color="textSecondary">
+                            {opt.title}
+                          </Typography>
+                        )}
+                      </Box>
+                      <IconButton
+                        onClick={() => handleStartChipSelectorEdit(idx)}
+                      >
+                        <EditIcon fontSize="small" />
+                      </IconButton>
+                      <IconButton onClick={() => handleChipSelectorRemove(idx)}>
+                        <CloseIcon fontSize="small" />
+                      </IconButton>
+                    </>
+                  )}
+                </Box>
+              );
+            })}
+
+            <div className="flex justify-center items-center gap-2 mt-3">
+              <UniversalButton
+                label="Add Option"
+                onClick={handleAddNewChipSelector}
+                disabled={chipSelectorOptions.length >= 200}
+              />
+              <UniversalButton
+                id="save-chip-selector"
+                label="Save ChipSelector"
+                onClick={handleChipSelectorSave}
+              />
+            </div>
+          </FormControl>
+        )}
+
         {/* Editable option for FooterButton  */}
         {selectedItem?.type === "footerbutton" && (
-          <div className="mb-2 text-lg space-y-2">
+          <div className="mb-2 text-lg space-y-3 mt-3">
             <InputField
               label="Footer Button Label"
               placeholder="Enter Footer Button Label"
@@ -1920,31 +2396,96 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
         )}
 
         {/* Editable option for Embedded link */}
-        {selectedItem?.type === "embeddedlink" && (
+        {/* {selectedItem?.type === "embeddedlink" && (
           <>
-            <InputField
-              label=" "
-              type="url"
-              value={link}
-              tooltipContent="Enter Url Link"
-              tooltipPlacement=""
-              placeholder="Button Embedded Link"
-              onChange={handleChange}
-            />
-            <div className="mt-5 space-y-3">
+            <div className="mt-3 space-y-3">
+              <InputField
+                label="Text"
+                type="url"
+                value={link}
+                tooltipContent="Enter Url Link"
+                tooltipPlacement="right"
+                placeholder="Button Embedded Link"
+                onChange={handleChange}
+              />
               <AnimatedDropdown
                 id="next-action"
-                label="Action"
+                label="Next Action"
+                tooltipContent="Next-Action"
+                tooltipPlacement="right"
                 options={[
-                  { value: "data-exchage", label: "Data Exchange" },
+                  { value: "complete", label: "Complete" },
                   { value: "navigate", label: "Navigate" },
-                  { value: "open-url", label: "Open URL" },
+                ]}
+                value={onClickAction}
+                onChange={(value) => setOnClickAction(value)}
+              />
+               <AnimatedDropdown 
+              id='screen-name'
+              label='List Of Screen Name'
+              tooltipContent="List Of Screen Name"
+              tooltipPlacement="right"
+              value={}
+              onChange={()=> }
+
+              />  
+
+              <div className=" flex justify-center">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleEmbeddedLinkSave}
+                />
+              </div>
+            </div>
+
+           
+          </>
+        )} */}
+
+        {selectedItem?.type === "embeddedlink" && (
+          <>
+            <div className="mt-3 space-y-3">
+              <InputField
+                label="Text"
+                type="url"
+                value={text}
+                tooltipContent="Enter Url Link"
+                tooltipPlacement="right"
+                placeholder="Button Embedded Link"
+                onChange={(e) => setText(e.target.value)}
+              />
+
+              <AnimatedDropdown
+                id="next-action"
+                label="Next Action"
+                tooltipContent="Next-Action"
+                tooltipPlacement="right"
+                options={[
+                  { value: "complete", label: "Complete" },
+                  { value: "navigate", label: "Navigate" },
                 ]}
                 value={onClickAction}
                 onChange={(value) => setOnClickAction(value)}
               />
 
-              <UniversalButton label="Save" onClick={handleOPTSave} />
+              {onClickAction === "navigate" && (
+                <AnimatedDropdown
+                  id="screen-name"
+                  label="List Of Screen Name"
+                  tooltipContent="List Of Screen Name"
+                  tooltipPlacement="right"
+                  options={screenNameList}
+                  value={selectedScreenName}
+                  onChange={(value) => setSelectedScreenName(value)}
+                />
+              )}
+
+              <div className="flex justify-center">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleEmbeddedLinkSave}
+                />
+              </div>
             </div>
           </>
         )}
@@ -1960,50 +2501,54 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
                 onChange={(e) => setOptLabel(e.target.value)}
               />
 
-              <InputField
-                label="OPT-In Name"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
-              <input
+              {/* <input
                 type="checkbox"
                 checked={isChecked}
                 onChange={(e) => setIsChecked(e.target.checked)}
-              />
+              /> */}
 
-              {isChecked && (
-                <AnimatedDropdown
-                  id="next-action"
-                  label="Action"
-                  options={[
-                    { value: "data-exchage", label: "Data Exchange" },
-                    { value: "navigate", label: "Navigate" },
-                    { value: "open-url", label: "Open URL" },
-                  ]}
-                  value={optAction}
-                  onChange={(value) => setOPTAction(value)}
+              <AnimatedDropdown
+                id="next-action"
+                label="Action"
+                options={[
+                  { value: "data-exchage", label: "Data Exchange" },
+                  { value: "navigate", label: "Navigate" },
+                  { value: "open-url", label: "Open URL" },
+                ]}
+                value={optAction}
+                onChange={(value) => setOPTAction(value)}
+              />
+              <div className="flex justify-center ">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleOPTSave}
+                  className="text-blue-600 underline text-sm w-fit"
                 />
-              )}
-
-              <UniversalButton
-                label="Read More"
-                onClick={handleOPTSave}
-                className="text-blue-600 underline text-sm w-fit"
-              />
+              </div>
             </div>
           </>
         )}
 
+        {/* Editable option for Image In */}
         {selectedItem?.type === "image" && (
           <>
-            <div className="space-y-3">
-              <InputField
-                type="file"
-                id="file-upload"
-                accept=".png, .jpeg"
-                required={true}
-                onChange={handlePhotoUpload}
-              />
+            <div className="space-y-3 mt-3">
+              <div className="flex justify-center items-center gap-2 ">
+                <InputField
+                  type="file"
+                  id="file-upload"
+                  accept=".png, .jpeg"
+                  required={true}
+                  onChange={handleImageChange}
+                />
+                <button onClick={handlePhotoUpload}>
+                  <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+                </button>
+
+                <button onClick={handleImageDelete}>
+                  <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
+                </button>
+              </div>
 
               {/* {imageSrc && (
                 <img
@@ -2054,6 +2599,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for document In */}
         {selectedItem?.type === "document" && (
           <>
             <div className="space-y-3 mt-3">
@@ -2112,6 +2658,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for media In */}
         {selectedItem?.type === "media" && (
           <>
             <div className="space-y-3 mt-3">
@@ -2160,6 +2707,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           </>
         )}
 
+        {/* Editable option for if-else In */}
         {selectedItem?.type === "ifelse" && (
           <InputField
             placeholder="If-Else"
@@ -2168,6 +2716,7 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
           />
         )}
 
+        {/* Editable option for date In */}
         {selectedItem?.type === "date" && (
           <div className="space-y-3 mt-3">
             <InputField
@@ -2180,14 +2729,14 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               onChange={(e) => setDateLabel(e.target.value)}
             />
 
-            <InputField
+            {/* <InputField
               label="Name"
               placeholder="Enter Name"
               tooltipContent="Enter Name for DatePicker"
               tooltipPlacement="right"
               value={dateName}
               onChange={(e) => setDateName(e.target.value)}
-            />
+            /> */}
             <InputField
               label="Helper Text"
               placeholder="Enter Placeholder for Date"
@@ -2217,15 +2766,32 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               label="Unavailable Dates"
               tooltipContent="Select Unavailable-Date"
               tooltipPlacement="right"
-              value={unavailableDate}
-              onChange={(value) => setUnavailableDate(value)}
+              value={null}
+              onChange={handleAddUnavailableDate}
             />
+
+            <div className="flex flex-wrap gap-2 mt-2 ">
+              {unavailableDate.map((date, index) => (
+                <Chip
+                  sx={{ padding: 1 }}
+                  key={index}
+                  label={new Date(date).toLocaleDateString()}
+                  onDelete={() =>
+                    setUnavailableDate((prev) =>
+                      prev.filter((_, i) => i !== index)
+                    )
+                  }
+                />
+              ))}
+            </div>
+
             <div className="flex justify-center">
               <UniversalButton label="Save" onClick={handleDateSave} />
             </div>
           </div>
         )}
 
+        {/* Editable option for calendar In */}
         {selectedItem?.type === "calendar" && (
           <div className="space-y-3 mt-3">
             <InputField
@@ -2239,14 +2805,6 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
             />
 
             <InputField
-              label="Name"
-              tooltipContent="Enter Name for Calendar "
-              tooltipPlacement="right"
-              placeholder="Enter Name"
-              value={dateCalendarName}
-              onChange={(e) => setDateCalendarName(e.target.value)}
-            />
-            <InputField
               label="Helper Text"
               placeholder="Enter Placeholder for Date"
               tooltipContent="Enter Placeholder for Date"
@@ -2255,16 +2813,31 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
             />
 
+            <div>
+              <label
+                htmlFor="required"
+                className="text-sm font-medium text-gray-700"
+                tooltipcontent="Select an option which required for you."
+                tooltipplacement="right"
+              >
+                Required
+              </label>
+              <div className="flex items-center gap-2 ">
+                <Switch
+                  checked={startCalenderRequired}
+                  onChange={handleRequiredChange}
+                  id="required"
+                />
+                <span>{startCalenderRequired ? "True" : "False"}</span>
+              </div>
+            </div>
+
             <UniversalDatePicker
               label="Min-Date"
               tooltipContent="Select Min-Date"
               tooltipPlacement="right"
               value={minCalendarDate}
-              onChange={(value) =>
-                setMinCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              onChange={(value) => setMinCalendarDate(value)}
             />
 
             <UniversalDatePicker
@@ -2272,24 +2845,104 @@ const EditPanel = ({ selectedItem, onClose, onSave }) => {
               tooltipContent="Select Max-Date"
               tooltipPlacement="right"
               value={maxCalendarDate}
-              onChange={(value) =>
-                setMaxCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              onChange={(value) => setMaxCalendarDate(value)}
             />
-
             <UniversalDatePicker
               label="Unavailable Dates"
-              value={unavailableCalendarDate}
               tooltipContent="Select Unavailable-Date"
               tooltipPlacement="right"
-              onChange={(value) =>
-                setUnavailableCalendarDate(
-                  value.map((v) => String(new Date(v).getTime()))
-                )
-              }
+              value={null}
+              onChange={handleAddCalendarUnavailableDate}
             />
+            <div className="flex flex-wrap gap-2 mt-2 ">
+              {unavailableCalendarDates.map((date, index) => (
+                <Chip
+                  sx={{ padding: 1 }}
+                  key={index}
+                  label={new Date(date).toLocaleDateString()}
+                  onDelete={() =>
+                    setUnavailableCalendarDates((prev) =>
+                      prev.filter((_, i) => i !== index)
+                    )
+                  }
+                />
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <label>Mode: Range</label>
+              <input
+                type="checkbox"
+                checked={calendarMode === "range"}
+                onChange={(e) =>
+                  setCalendarMode(e.target.checked ? "range" : "single")
+                }
+              />
+            </div>
+
+            {calendarMode === "range" && (
+              <div className="space-y-2">
+                {/* <InputField
+                  label="Start Date Label"
+                  tooltipContent="Enter Start Date Label"
+                  tooltipPlacement="right"
+                  placeholder="Enter Start Date Label"
+                  value={rangeLabels["start-date"]}
+                  onChange={(e) =>
+                    setRangeLabels((prev) => ({
+                      ...prev,
+                      "start-date": e.target.value,
+                    }))
+                  }
+                /> */}
+                <InputField
+                  label="Second Calendar Label"
+                  tooltipContent="Enter End Date Label"
+                  tooltipPlacement="right"
+                  placeholder="Enter End Date Label"
+                  value={endCalendarLabel}
+                  onChange={(e) => setEndCalendarLabel(e.target.value)}
+                />
+                {/* <InputField
+                  label="Start Date Helper Text"
+                  value={rangeHelperTexts["start-date"]}
+                  onChange={(e) =>
+                    setRangeHelperTexts((prev) => ({
+                      ...prev,
+                      "start-date": e.target.value,
+                    }))
+                  }
+                /> */}
+
+                <InputField
+                  label="Second Calendar Helper Text"
+                  placeholder="Enter Second Calendar Helper-text"
+                  tooltipContent="Second Calendar Helper Text"
+                  tooltipPlacement="right"
+                  value={endCalendarHelperText}
+                  onChange={(e) => setEndCalendarHelperText(e.target.value)}
+                />
+
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2">
+                    <Switch
+                      checked={endCalendarRequired}
+                      onChange={handleEndRequiredChange}
+                      id="required"
+                    />
+                    <span>{endCalendarRequired ? "True" : "False"}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="flex justify-center">
               <UniversalButton label="Save" onClick={handleCalendarSave} />
             </div>

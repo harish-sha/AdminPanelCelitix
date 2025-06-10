@@ -297,10 +297,10 @@ const renderMedia = (type, content) => {
 
 const messageTypes = [
   { type: "text", label: "Text" },
-  { type: "image", label: "Images" },
-  { type: "video", label: "Videos" },
-  { type: "audio", label: "Audio" },
-  { type: "document", label: "Documents" },
+  // { type: "image", label: "Images" },
+  // { type: "video", label: "Videos" },
+  // { type: "audio", label: "Audio" },
+  // { type: "document", label: "Documents" },
 ];
 
 const SkeletonLoader = () => (

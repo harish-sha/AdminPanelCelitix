@@ -264,7 +264,7 @@
 //   return payload;
 // };
 
-// neww generatepayload start here
+// new generatepayload start here
 export const generatePayload = (data) => {
   const payload = {
     version: "7.0",
@@ -289,6 +289,9 @@ export const generatePayload = (data) => {
     image: 0,
     date: 0,
     calendar: 0,
+    chipSelector: 0,
+    optin: 0,
+    embaddedLink: 0,
   };
 
   const numberToWord = (num) => {
@@ -423,6 +426,21 @@ export const generatePayload = (data) => {
         };
       }
 
+      if (type === "chipSelector") {
+        component = {
+          name,
+          type: "ChipsSelector",
+          label: pay.label,
+          description: pay.description,
+          "max-selected-items": parseInt(pay["max-selected-items"]) || 2,
+          required: pay.required ?? true,
+          "data-source": (pay["data-source"] || []).map((opt) => ({
+            id: String(opt.id || ""),
+            title: opt.title || "",
+          })),
+        };
+      }
+
       if (type === "image") {
         component = {
           // name,
@@ -442,8 +460,14 @@ export const generatePayload = (data) => {
           type: "DocumentPicker",
           label: pay.label || "Select an Document",
           description: pay.description || "",
-          "min-uploaded-documents": pay.minDocsUpload ?? 1,
-          "max-uploaded-documents": pay.maxDocsUpload ?? 1,
+          "min-uploaded-documents": parseInt(
+            pay["min-uploaded-documents"] ?? 0,
+            10
+          ),
+          "max-uploaded-documents": parseInt(
+            pay["max-uploaded-documents"] ?? 0,
+            10
+          ),
         };
         console.log(pay.label, "label");
         console.log("Document component:", component);
@@ -454,9 +478,9 @@ export const generatePayload = (data) => {
           name,
           type: "PhotoPicker",
           label: pay.label || "Select an Photo",
-          description: pay.mediaDescription,
-          "min-uploaded-photos": pay.minPhotoUpload || 1,
-          "max-uploaded-photos": pay.maxPhotoUpload || 10,
+          description: pay.description,
+          "min-uploaded-photos": parseInt(pay["min-uploaded-photos"] ?? 0, 10),
+          "max-uploaded-photos": parseInt(pay["max-uploaded-photos"] ?? 0, 10),
         };
       }
 
@@ -465,10 +489,12 @@ export const generatePayload = (data) => {
           name,
           type: "DatePicker",
           label: pay.label,
-          name: pay.name,
           "min-date": pay["min-date"],
           "max-date": pay["max-date"],
           "unavailable-dates": pay["unavailable-dates"],
+          // "unavailable-dates": Array.isArray(pay["unavailable-dates"])
+          //   ? pay["unavailable-dates"].filter(Boolean)
+          //   : [],
           "helper-text": pay["helper-text"],
           // "error-message":  pay.error_message,
         };
@@ -478,13 +504,54 @@ export const generatePayload = (data) => {
         component = {
           name,
           type: "CalendarPicker",
-          label: pay.label,
-          name: pay.name,
+          mode: pay.mode || "single",
           "min-date": pay["min-date"],
           "max-date": pay["max-date"],
           "unavailable-dates": pay["unavailable-dates"],
-          "helper-text": pay["helper-text"],
-          // "error-message":  pay.error_message,
+        };
+
+        if (pay.mode === "range") {
+          component.label = {
+            "start-date": pay.label?.["start-date"] || "",
+            "end-date": pay.label?.["end-date"] || "",
+          };
+          component["helper-text"] = {
+            "start-date": pay["helper-text"]?.["start-date"] || "",
+            "end-date": pay["helper-text"]?.["end-date"] || "",
+          };
+          component.required = {
+            "start-date": pay.required?.["start-date"] ?? true,
+            "end-date": pay.required?.["end-date"] ?? false,
+          };
+        } else {
+          component.label = pay.label || "";
+          component["helper-text"] = pay["helper-text"] || "";
+          component.required = pay.required ?? false;
+        }
+      }
+
+      if (type === "optin") {
+        component = {
+          name,
+          type: "OptIn",
+          label: pay.label,
+          required: true,
+        };
+      }
+
+      if (type === "embeddedLink") {
+        component = {
+          name,
+          type: "EmbeddedLink",
+          text: pay.text,
+          "on-click-action": onClickAction,
+          ...(onClickAction === "navigate" &&
+            index !== data.length - 1 && {
+              next: {
+                type: "screen",
+                name: nextScreenId,
+              },
+            }),
         };
       }
 

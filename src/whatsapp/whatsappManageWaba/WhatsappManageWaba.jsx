@@ -435,12 +435,14 @@ const WhatsappManageWaba = ({ id, name }) => {
         return (
           <div className="flex items-center gap-2">
             <span>{verificationStatus || "N/A"}</span>
-            <Lottie
-              animationData={verified}
-              loop
-              autoplay
-              style={{ width: "30px", height: "30px" }}
-            />
+            {params.row.businessVerificationStatus === "verified" && (
+              <Lottie
+                animationData={verified}
+                loop
+                autoplay
+                style={{ width: "30px", height: "30px" }}
+              />
+            )}
           </div>
         );
       },
@@ -557,8 +559,8 @@ const WhatsappManageWaba = ({ id, name }) => {
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
-      minWidth: 150,
+      flex: 0,
+      width: 220,
       renderCell: (params) => (
         <>
           <CustomTooltip title="Info" placement="top" arrow>
