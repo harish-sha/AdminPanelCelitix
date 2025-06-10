@@ -79,6 +79,8 @@ const WhatsappLaunchCampaign = () => {
 
   const [cardIndex, setCardIndex] = useState(0);
 
+  const [marketingType, setMarketingType] = useState("1");
+
   const fileRef = useRef(null);
 
   function handleNextCard() {
@@ -698,6 +700,8 @@ const WhatsappLaunchCampaign = () => {
                           cardIndex={cardIndex}
                           setFileData={setFileData}
                           fileData={fileData}
+                          marketingType={marketingType}
+                          setMarketingType={setMarketingType}
                         />
                       )
                     )}
