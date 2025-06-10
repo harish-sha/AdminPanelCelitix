@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -94,15 +94,15 @@ const Canvas = ({
         value: "",
       };
 
-      console.log("newItem", tabs);
+      // console.log("newItem", tabs);
 
       const allTabs = [...tabs];
-      console.log("allTabs", allTabs);
+      // console.log("allTabs", allTabs);
       // console.log("activePayload", allTabs);
       const activePayload = allTabs[activeIndex].payload || [];
 
       activePayload.push(newItem);
-      console.log("activePayload", allTabs);
+      // console.log("activePayload", allTabs);
 
       setTabs(allTabs);
     },
@@ -110,10 +110,13 @@ const Canvas = ({
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
     if (!tabs?.[activeIndex]?.payload) return "";
+    // const targetItem = tabs[activeIndex].payload.find(
+    //   (payloadItem) =>
+    //     payloadItem.type === item.type && payloadItem.index === item.index
+    // );
 
     const targetItem = tabs[activeIndex].payload.find(
-      (payloadItem) =>
-        payloadItem.type === item.type && payloadItem.index === item.index
+      (payloadItem) => payloadItem.type === item.type
     );
 
     if (!targetItem) return "";
@@ -162,123 +165,175 @@ const Canvas = ({
       return targetItem.label || "";
     }
 
+    if (item.type === "embeddedlink") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "optin") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "image") {
+      console.log("targetItem.alt-text");
+      // return targetItem.alt-text || "";
+    }
+
+    if (item.type === "document") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "media") {
+      return targetItem.label || "";
+    }
+
+    if (item.type === "date") {
+      return targetItem.label || "";
+    }
+
     // Fallback: return an empty string
     return "";
   };
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    console.log("index", index);
+    // console.log("tabs", tabs);
+    // const newTabs = [...tabs];
+    // newTabs[activeIndex] = {
+    //   ...newTabs[activeIndex],
+    //   payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+    // };
 
-    const newTabs = [...tabs];
-    newTabs[activeIndex] = {
-      ...newTabs[activeIndex],
-      payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
-    };
+    // setTabs(newTabs);
 
-    console.log("newTabs", newTabs);
-
-    setTabs(newTabs);
-
-    // setTabs((prevTabs) => {
-    //   const newTabs = [...prevTabs];
-    //   newTabs[activeIndex] = {
-    //     ...newTabs[activeIndex],
-    //     payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
-    //   };
-    //   return newTabs;
-    // });
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      newTabs[activeIndex] = {
+        ...newTabs[activeIndex],
+        payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
+      };
+      return newTabs;
+    });
 
     toast.success("Item deleted successfully");
   };
 
+  //   const handleDelete = (idToDelete) => {
+  //     console.log("idToDelete", idToDelete)
+  //   setTabs((prevTabs) => {
+  //     const newTabs = prevTabs.map((tab, i) => {
+  //       if (i === activeIndex) {
+  //         return {
+  //           ...tab,
+  //           payload: tab.payload.filter((item) => item.id !== idToDelete),
+  //         };
+  //       }
+  //       return tab;
+  //     });
+
+  //     return newTabs;
+  //   });
+
+  //   toast.success("Item deleted successfully");
+  // };
+
   // Draggable component for individual canvas items
-  const DraggableItem = React.memo(
-    ({ item, index, tabs, activeIndex }) => {
-      // console.log("itemddddd", item);
-      // console.log("indexdddd", index);
-      if (!item?.type) {
-        console.error("DraggableItem error: item.type is not defined");
-        return null;
-      }
-
-      const itemType = item?.type;
-      // console.log("itemType", itemType);
-      // const [, drag] = useDrag({
-      //   type: item.type,
-      //   item: { index },
-      // });
-
-      const [{ isDragging }, drag] = useDrag({
-        type: item?.type,
-        // item: { id: item.id },
-        item: { type: item.type },
-        collect: (monitor) => ({
-          isDragging: monitor.isDragging(),
-        }),
-      });
-
-      return (
-        <Paper
-          ref={drag}
-          style={{
-            opacity: isDragging ? 0.5 : 1,
-            cursor: "move",
-          }}
-          sx={{
-            backgroundColor: getBackgroundColor(item.type),
-          }}
-          // className="fields"
-          className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
-        >
-          <Box
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              width: "100%",
-              position: "relative",
-            }}
-          >
-            <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
-              {getLabel(item.type)}
-            </Typography>
-            <Box>
-              <IconButton size="small" onClick={() => onEdit(index, item)}>
-                <EditOutlinedIcon
-                  style={{ cursor: "pointer" }}
-                  fontSize="small"
-                />
-              </IconButton>
-              <IconButton onClick={() => handleDelete(index)} size="small">
-                <DeleteForeverOutlinedIcon
-                  fontSize="small"
-                  className="text-red-400"
-                />
-              </IconButton>
-            </Box>
-          </Box>
-
-          <InputField
-            // label="Enter value"
-            // variant="outlined"
-            // fullWidth
-            // className="text-field"
-            value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
-            // onChange={(e) => handleInputChange(index, e.target.value)}
-            multiline={item.type === "textArea"}
-            rows={item.type === "textArea" ? 4 : undefined}
-            // disabled={item.type !== "textInput" && item.type !== "textArea"}
-            readOnly
-          />
-        </Paper>
-      );
+  const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
+    // console.log("itemddddd", item);
+    // console.log("indexdddd", index);
+    if (!item?.type) {
+      console.error("DraggableItem error: item.type is not defined");
+      return null;
     }
-  );
+
+    const itemType = item?.type;
+    // console.log("itemType", itemType);
+    // const [, drag] = useDrag({
+    //   type: item.type,
+    //   item: { index },
+    // });
+
+    const [{ isDragging }, drag] = useDrag({
+      type: item?.type,
+      // item: { id: item.id },
+      item: { type: item.type },
+      collect: (monitor) => ({
+        isDragging: monitor.isDragging(),
+      }),
+    });
+
+    return (
+      <Paper
+        ref={drag}
+        style={{
+          opacity: isDragging ? 0.5 : 1,
+          cursor: "move",
+        }}
+        sx={{
+          backgroundColor: getBackgroundColor(item.type),
+        }}
+        // className="fields"
+        className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
+      >
+        <Box
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
+            {getLabel(item.type)}
+          </Typography>
+          <Box>
+            <IconButton size="small" onClick={() => onEdit(index, item)}>
+              <EditOutlinedIcon
+                style={{ cursor: "pointer" }}
+                fontSize="small"
+              />
+            </IconButton>
+            <IconButton onClick={() => handleDelete(index)} size="small">
+              <DeleteForeverOutlinedIcon
+                fontSize="small"
+                className="text-red-400"
+              />
+            </IconButton>
+          </Box>
+        </Box>
+
+        {/* <InputField
+          // label="Enter value"
+          // variant="outlined"
+          // fullWidth
+          // className="text-field"
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          // onChange={(e) => handleInputChange(index, e.target.value)}
+          multiline={item.type === "textArea"}
+          rows={item.type === "textArea" ? 4 : undefined}
+          // disabled={item.type !== "textInput" && item.type !== "textArea"}
+          readOnly
+        /> */}
+
+        {/* <InputField
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          multiline={item.type === "textArea"}
+          rows={item.type === "textArea" ? 4 : undefined}
+          readOnly
+        /> */}
+        <InputField
+          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+          multiline={item.type === "textArea"}
+          rows={item.type === "textArea" ? 4 : undefined}
+          readOnly
+        />
+      </Paper>
+    );
+  });
 
   // const DraggableItem = React.memo(({ item, index, onEdit, handleDelete, tabs, activeIndex }) => {
   //   if (!item?.type) {
-  //     console.error("DraggableItem error: item.type is not defined");
+  //     console.error(" error: item.type is not defined");
   //     return null;
   //   }
 
@@ -464,7 +519,13 @@ const Canvas = ({
           .map((item, index) => (
             // <div key={item.id || index}>
             <div key={index}>
-              <DraggableItem item={item} index={index} itemKey={item.id} />
+              <DraggableItem
+                item={item}
+                index={index}
+                itemKey={item.id}
+                tabs={tabs}
+                activeIndex={activeIndex}
+              />
             </div>
           ))}
 

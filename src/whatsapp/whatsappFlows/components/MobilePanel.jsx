@@ -519,7 +519,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   <div className="flex flex-wrap gap-2">
                     {(item["data-source"] || []).map((option, i) => {
                       const isSelected = (item.selected || []).includes(
-                        option.name
+                        option.title
                       );
 
                       return (
@@ -527,7 +527,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           key={i}
                           type="button"
                           onClick={() =>
-                            handleChipOptionClick(index, option.name)
+                            handleChipOptionClick(index, option.title)
                           }
                           className={`px-3 py-1 rounded-full text-sm border transition-all ${
                             isSelected
@@ -535,7 +535,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               : "bg-white text-gray-800 border-gray-300"
                           }`}
                         >
-                          {option.name}
+                          {option.title}
                         </button>
                       );
                     })}
@@ -696,52 +696,59 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "calendar":
               return (
-                <div className="w-full px-4 py-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {item.label || "Date"}
-                  </label>
-                  <UniversalDatePicker
-                    selected={item.value ? new Date(item.value) : null}
-                    onChange={(date) =>
-                      onUpdateItem &&
-                      onUpdateItem(index, (prevItem) => ({
-                        ...prevItem,
-                        value: date?.toISOString().split("T")[0], // store as YYYY-MM-DD
-                      }))
-                    }
-                    placeholderText={item.placeholder || "Select a date"}
-                    minDate={
-                      item["min-date"] ? new Date(item["min-date"]) : undefined
-                    }
-                    maxDate={
-                      item["max-date"] ? new Date(item["max-date"]) : undefined
-                    }
-                    excludeDates={
-                      Array.isArray(item["unavailable-date"])
-                        ? item["unavailable-date"].map((d) => new Date(d))
-                        : []
-                    }
-                    dateFormat="yyyy-MM-dd"
-                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none"
-                  />
-                  {item.helperText && (
-                    <p className="text-xs text-gray-500 mt-1">
-                      {item.helperText}
-                    </p>
-                  )}
-                </div>
+                <div> </div>
+                // <div className="w-full px-4 py-2">
+                //   <label className="block text-sm font-medium text-gray-700 mb-1">
+                //     {item.label || "Date"}
+                //   </label>
+                //   <UniversalDatePicker
+                //     selected={item.value ? new Date(item.value) : null}
+                //     onChange={(date) =>
+                //       onUpdateItem &&
+                //       onUpdateItem(index, (prevItem) => ({
+                //         ...prevItem,
+                //         value: date?.toISOString().split("T")[0], 
+                //       }))
+                //     }
+                //     placeholderText={item.placeholder || "Select a date"}
+                //     minDate={
+                //       item["min-date"] ? new Date(item["min-date"]) : undefined
+                //     }
+                //     maxDate={
+                //       item["max-date"] ? new Date(item["max-date"]) : undefined
+                //     }
+                //     // excludeDates={
+                //     //   Array.isArray(item["unavailable-date"])
+                //     //     ? item["unavailable-date"].map((d) => new Date(d))
+                //     //     :  undefined
+                //     // }
+                //    unavailableDate={ item['unavailable-dates'] ? new Date(item['unavailable-dates']) : undefined
+                //     }
+                //     dateFormat="yyyy-MM-dd"
+                //     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none"
+                //   />
+                //   {item.helperText && (
+                //     <p className="text-xs text-gray-500 mt-1">
+                //       {item.helperText}
+                //     </p>
+                //   )}
+                // </div>
               );
 
+
+              // Render Date
             case "date":
               return (
                 <div className="w-full px-4 py-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {item.label || "Date"}
+                    {item.label }
                   </label>
                   <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
-                    {item.value
+                    {/* {item.value
                       ? new Date(item.value).toLocaleDateString()
-                      : "No date selected"}
+                      : "No date selected"} */}
+
+                      {item['max-date'] || "Date (Optional)"}
                   </div>
                 </div>
               );

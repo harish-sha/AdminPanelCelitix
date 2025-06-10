@@ -26,6 +26,8 @@ import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+import SelfRecharge from "@/whatsapp/SelfRecharge/SelfRecharge";
+
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -195,6 +197,7 @@ const Approutes = () => {
         <Route path="wmanageoptin" element={<WhatsappManageOptin />} />
         <Route path="wchatwidget" element={<WhatsappChatWidget />} />
         <Route path="wqrcode" element={<WhatsappQrCode />} />
+        <Route path="selfrecharge" element={<SelfRecharge/>} />
         <Route path="wlcsetting" element={<WhatsappLiveChatSettings />} />
         <Route path="wmanagewaba" element={<WhatsappManageWaba />} />
         <Route
@@ -288,11 +291,7 @@ const Approutes = () => {
 
       <Route path="*" element={<PageNotFound />} />
 
-
-      
       <Route path="/reseller" element={<ResellerDashboard/>} />
-
-
      
     </Routes>
   );

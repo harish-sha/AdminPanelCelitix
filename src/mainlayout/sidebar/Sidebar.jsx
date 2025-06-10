@@ -197,6 +197,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         // { to: "/wmanageoptin", label: "Manage Optin" },
         // { to: "/wchatwidget", label: "Chat Widget" },
         { to: "/wqrcode", label: "QR Code" },
+        { to: "/selfrecharge", label: "Recharge" },
         { to: "/wlcsetting", label: "Live Chats Settings" },
         { to: "/wmanagewaba", label: "Manage WABA" },
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
