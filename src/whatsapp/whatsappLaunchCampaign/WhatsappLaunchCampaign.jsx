@@ -699,7 +699,7 @@ const WhatsappLaunchCampaign = () => {
                               htmlFor="radioOption1"
                               className="text-sm font-medium text-gray-700 cursor-pointer"
                             >
-                              MM Lite
+                             Cloud API
                             </label>
                           </div>
                         </label>
@@ -720,7 +720,7 @@ const WhatsappLaunchCampaign = () => {
                               htmlFor="radioOption2"
                               className="text-sm font-medium text-gray-700 cursor-pointer"
                             >
-                              Cloud API
+                              MM LITE
                             </label>
                           </div>
                         </label>
