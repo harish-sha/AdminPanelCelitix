@@ -19,6 +19,8 @@ import { Dialog } from "primereact/dialog";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "@mui/material";
 import moment from "moment";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const SendRcs = () => {
   const [allAgents, setAllAgents] = useState([]);
@@ -480,6 +482,17 @@ const SendRcs = () => {
             <label htmlFor="scheduleCheckbox" className="text-md">
               Schedule
             </label>
+            <CustomTooltip
+                  title={
+                    "Schedule this campaign to be sent at a later date and time."
+                  }
+                  placement={"top"}
+                  arrow
+                >
+                  <span>
+                    <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                  </span>
+                </CustomTooltip>
             {scheduleData.isSchedule && (
               <Calendar
                 id="scheduleDateTime"

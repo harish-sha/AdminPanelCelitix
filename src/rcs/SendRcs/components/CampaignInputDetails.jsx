@@ -51,6 +51,7 @@ export const HandleCampaignDetails = ({
           id="createCampaign"
           name="createCampaign"
           label="Campaign Name"
+          tooltipContent="Your templatename should not contain spaces."
           value={campaignDetails?.campaignName}
           onChange={(e) => {
             setCampaignDetails({

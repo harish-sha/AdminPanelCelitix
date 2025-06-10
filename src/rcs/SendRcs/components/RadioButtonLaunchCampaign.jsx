@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 import { campaignUploadFile } from "@/apis/whatsapp/whatsapp";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 export const RadioButtonLaunchCampaign = ({
   allGroups,
@@ -149,6 +151,15 @@ export const RadioButtonLaunchCampaign = ({
               >
                 Select Group
               </label>
+              <CustomTooltip
+                title={"Choose a pre-saved contact group for this campaign."}
+                placement={"top"}
+                arrow
+              >
+                <span>
+                  <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                </span>
+              </CustomTooltip>
             </div>
           </label>
 
@@ -166,12 +177,24 @@ export const RadioButtonLaunchCampaign = ({
                 }}
                 checked={selectedOption === "contact"}
               />
+
               <label
                 htmlFor="radioOption2"
                 className="text-sm font-medium text-gray-700 cursor-pointer"
               >
                 Import Contact
               </label>
+              <CustomTooltip
+                title={
+                  "Upload contacts via .xlsx file with columns like Name, Mobile Number."
+                }
+                placement={"top"}
+                arrow
+              >
+                <span>
+                  <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+                </span>
+              </CustomTooltip>
             </div>
           </label>
 
