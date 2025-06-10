@@ -363,15 +363,13 @@ const WhatsappLaunchCampaign = () => {
       date.getMinutes()
     )}:${padZero(date.getSeconds())}`;
 
-    
-
     const requestData = {
       mobileIndex: selectedMobileColumn,
       ContentMessage: contentValues || "",
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplateData?.templateName,
+      templateName: selectedTemplateData?.name,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
@@ -394,7 +392,6 @@ const WhatsappLaunchCampaign = () => {
       cardsVariables: [],
       vendor: "jio",
     };
-
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -534,7 +531,7 @@ const WhatsappLaunchCampaign = () => {
 
   // Find the selected template data
   const selectedTemplateData = templateList.find(
-    (template) => template.templateName === selectedTemplate
+    (template) => template.vendorTemplateId === selectedTemplate
   );
 
   useEffect(() => {
@@ -744,7 +741,9 @@ const WhatsappLaunchCampaign = () => {
                     ?.name || "N/A"}
                 </p>
                 <span className="font-semibold font-m">Template Name : </span>
-                <p className="">{selectedTemplate || "N/A"}</p>
+                <p className="">
+                  {selectedTemplateData?.templateName || "N/A"}
+                </p>
                 <span className="font-semibold font-m">Template Type : </span>
                 <p className="">{selectedTemplateData?.type || "N/A"}</p>
                 <span className="font-semibold font-m">
