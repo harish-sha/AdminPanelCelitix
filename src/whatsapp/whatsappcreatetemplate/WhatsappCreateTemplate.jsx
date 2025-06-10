@@ -24,7 +24,9 @@ import {
 // import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import axios from "axios";
 // import ca from "date-fns/esm/locale/ca/index.js";
+// import whatappDefaultImage from "/whatsapp_default.jpg";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
@@ -74,7 +76,6 @@ const WhatsappCreateTemplate = () => {
   const [urlVariables, setUrlVariables] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
-
 
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
@@ -211,11 +212,11 @@ const WhatsappCreateTemplate = () => {
   const validateUrl = (value) => {
     const urlPattern = new RegExp(
       "^(https?:\\/\\/)?" +
-      "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
-      "((\\d{1,3}\\.){3}\\d{1,3}))" +
-      "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
-      "(\\?[;&a-z\\d%_.~+=-]*)?" +
-      "(\\#[-a-z\\d_]*)?$",
+        "((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.?)+[a-z]{2,}|" +
+        "((\\d{1,3}\\.){3}\\d{1,3}))" +
+        "(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*" +
+        "(\\?[;&a-z\\d%_.~+=-]*)?" +
+        "(\\#[-a-z\\d_]*)?$",
       "i"
     );
     setUrlValid(!!urlPattern.test(value));
@@ -227,6 +228,18 @@ const WhatsappCreateTemplate = () => {
       setPhoneNumber(value);
     }
   };
+
+  async function uploadMedia(data) {
+    const response = await fetch(data);
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch local image");
+    }
+    const blob = await response.blob();
+    console.log("blob", blob);
+    const imageuploadfile = await uploadImageFile(blob, 1);
+    console.log("imageuploadfile", imageuploadfile);
+  }
 
   // Submit Function
   const handleSubmit = async () => {
@@ -368,11 +381,22 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
+    let fileUploadUrl = "";
+
     if (selectedTemplateType != "carousel" && selectedTemplateType != "text") {
-      if (!fileUploadUrl) {
-        toast.error("Please upload a file");
-        return;
-      }
+      const fileUrl = "/whatsapp_video_default.webm";
+      // return (
+      //   <div className="border">
+      //     <img src={"https://localhost:5173/whatsapp_default.jpg"} alt="sad" />
+      //   </div>
+      // );
+      const url = uploadMedia(fileUrl, 1);
+      // console.log(url)
+      return;
+      // if (!fileUploadUrl) {
+      //   toast.error("Please upload a file");
+      //   return;
+      // }
     }
 
     if (selectedTemplateType != "text") {
@@ -384,27 +408,7 @@ const WhatsappCreateTemplate = () => {
         },
       });
     }
-    // "components": [
-    //         // {
-    //         //     "type": "body",
-    //         //     "add_security_recommendation": "" // Optional
-    //         // },
-    //         {
-    //             "type": "footer",
-    //             "code_expiration_minutes": "90" // Optional
-    //         }
-    //         // {
-    //         //     "type": "buttons",
-    //         //     "buttons": [
-    //         //         {
-    //         //             "type": "otp",
-    //         //             "otp_type": "one_tap",
-    //         //             "text": "copy code new", // Optional
-    //         //             "autofill_text": "auto fill" // Optional
-    //         //         }
-    //         //     ]
-    //         // }
-    //     ]
+
     let carData = {};
 
     if (selectedTemplateType === "carousel") {
@@ -606,9 +610,10 @@ const WhatsappCreateTemplate = () => {
         setQuickReplies([]);
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
-      }
-      else if (
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
+      } else if (
         response?.includes("language") &&
         response?.includes("not available")
       ) {
@@ -617,12 +622,14 @@ const WhatsappCreateTemplate = () => {
         );
       } else if (!response.msg || response.msg === "") {
         // Handle blank msg from backend
-        return toast.error("Unable to create template at this time. Please try again later.");
+        return toast.error(
+          "Unable to create template at this time. Please try again later."
+        );
       } else {
         return toast.error("An unknown error occurred. Please try again.");
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       return toast.error(e.message || "Something went wrong.");
     } finally {
       setIsLoading(false);
@@ -684,9 +691,9 @@ const WhatsappCreateTemplate = () => {
                     value={
                       selectedWaba
                         ? JSON.stringify({
-                          mbno: selectedWaba,
-                          sno: selectedWabaSno,
-                        })
+                            mbno: selectedWaba,
+                            sno: selectedWabaSno,
+                          })
                         : ""
                     }
                     onChange={(selectedValue) => {
@@ -791,9 +798,14 @@ const WhatsappCreateTemplate = () => {
               selectedCategory === "AUTHENTICATION" ? (
                 <div>
                   <div className="grid lg:grid-cols-2 gap-5 mt-4">
-                    <div className="border-2 border-gray-300 p-4 rounded-lg" >
+                    <div className="border-2 border-gray-300 p-4 rounded-lg">
                       <div className="flex gap-2 items-center">
-                        <span htmlFor="expiryTime" className="text-md text-gray-700 font-semibold">Set Expiry Time</span>
+                        <span
+                          htmlFor="expiryTime"
+                          className="text-md text-gray-700 font-semibold"
+                        >
+                          Set Expiry Time
+                        </span>
                         <CustomTooltip
                           title="Expiry Time should be in 1 min to 90 min"
                           placement="top"
@@ -831,10 +843,11 @@ const WhatsappCreateTemplate = () => {
                       disabled={
                         !selectedWaba || !selectedCategory || !templateName
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba && selectedCategory && templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
+                        selectedWaba && selectedCategory && templateName
+                          ? "bg-[#212529] hover:bg-[#434851]"
+                          : "bg-gray-300 cursor-not-allowed"
+                      }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"
@@ -850,33 +863,33 @@ const WhatsappCreateTemplate = () => {
                       <>
                         {
                           selectedTemplateType === "carousel" &&
-                          carouselMediaType && (
-                            <>
-                              <CarouselTemplateTypes
-                                templateFormat={templateFormat}
-                                setTemplateFormat={setTemplateFormat}
-                                templateFooter={templateFooter}
-                                setTemplateFooter={setTemplateFooter}
-                                handleAddVariable={handleAddVariable}
-                                handleEmojiSelect={handleEmojiSelect}
-                                selectedCardIndex={selectedCardIndex}
-                                setSelectedCardIndex={setSelectedCardIndex}
-                                cards={cards}
-                                setCards={setCards}
-                                file={file}
-                                setFile={setFile}
-                                onPreviewUpdate={handlePreviewUpdate}
-                                setFileUploadUrl={setFileUploadUrl}
-                                uploadImageFile={uploadImageFile}
-                                setvariables={setVariables}
-                              />
-                              <CarouselInteractiveActions
-                                cards={cards}
-                                selectedCardIndex={selectedCardIndex}
-                                setCards={setCards}
-                              />
-                            </>
-                          )
+                            carouselMediaType && (
+                              <>
+                                <CarouselTemplateTypes
+                                  templateFormat={templateFormat}
+                                  setTemplateFormat={setTemplateFormat}
+                                  templateFooter={templateFooter}
+                                  setTemplateFooter={setTemplateFooter}
+                                  handleAddVariable={handleAddVariable}
+                                  handleEmojiSelect={handleEmojiSelect}
+                                  selectedCardIndex={selectedCardIndex}
+                                  setSelectedCardIndex={setSelectedCardIndex}
+                                  cards={cards}
+                                  setCards={setCards}
+                                  file={file}
+                                  setFile={setFile}
+                                  onPreviewUpdate={handlePreviewUpdate}
+                                  setFileUploadUrl={setFileUploadUrl}
+                                  uploadImageFile={uploadImageFile}
+                                  setvariables={setVariables}
+                                />
+                                <CarouselInteractiveActions
+                                  cards={cards}
+                                  selectedCardIndex={selectedCardIndex}
+                                  setCards={setCards}
+                                />
+                              </>
+                            )
 
                           // : (
                           //   <div className="w-full">
@@ -952,7 +965,7 @@ const WhatsappCreateTemplate = () => {
                     </div>
                     <div className="flex items-start justify-center lg:mt-7 ">
                       {selectedTemplateType === "carousel" &&
-                        carouselMediaType ? (
+                      carouselMediaType ? (
                         <>
                           <CarouselTemplatePreview
                             // scrollContainerRef={scrollableContainerRef}
@@ -998,13 +1011,14 @@ const WhatsappCreateTemplate = () => {
                         !templateName ||
                         isFetching
                       }
-                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${selectedWaba &&
+                      className={`px-3 py-2 tracking-wider text-md text-white rounded-md ${
+                        selectedWaba &&
                         selectedCategory &&
                         selectedTemplateType &&
                         templateName
-                        ? "bg-[#212529] hover:bg-[#434851]"
-                        : "bg-gray-300 cursor-not-allowed"
-                        }`}
+                          ? "bg-[#212529] hover:bg-[#434851]"
+                          : "bg-gray-300 cursor-not-allowed"
+                      }`}
                       onClick={handleSubmit}
                       id="submitTemplate"
                       name="submitTemplate"

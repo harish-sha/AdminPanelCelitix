@@ -29,10 +29,12 @@ function RadioButtonLaunchCampaign({
   uploadedFile,
   setIsUploaded,
   isUploaded,
-  fileRef
+  fileRef,
+  selectedOption,
+  setSelectedOption,
   // setIsCountryCodeChecked
 }) {
-  const [selectedOption, setSelectedOption] = useState("option2");
+  // const [selectedOption, setSelectedOption] = useState("option2");
   // const [selectedGroups, setSelectedGroups] = useState([]);
   // const [uploadedFile, setUploadedFile] = useState(null);
   const [showGroupList, setShowGroupList] = useState([]);
@@ -423,8 +425,9 @@ function RadioButtonLaunchCampaign({
                 <button
                   onClick={handleFileUpload}
                   disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                    }`}
+                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                    isUploading ? "disabled" : ""
+                  }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}
@@ -501,7 +504,6 @@ function RadioButtonLaunchCampaign({
                 }
               }}
             />
-
           </div>
         )}
 

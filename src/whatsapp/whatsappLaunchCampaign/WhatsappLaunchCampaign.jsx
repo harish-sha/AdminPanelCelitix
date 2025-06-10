@@ -46,7 +46,7 @@ const WhatsappLaunchCampaign = () => {
   const [templateData, setTemplateData] = useState({});
   const [formData, setFormData] = useState({});
   const [imageFile, setImageFile] = useState(null);
-  const [selectedOption, setSelectedOption] = useState("option2");
+  // const [selectedOption, setSelectedOption] = useState("option2");
   const [fileHeaders, setFileHeaders] = useState([]);
   const [templateList, setTemplateList] = useState([]);
   const [imagePreview, setImagePreview] = useState(null);
@@ -54,7 +54,7 @@ const WhatsappLaunchCampaign = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState(null);
   const [uploadedFile, setUploadedFile] = useState(null);
-
+  const [selectedOption, setSelectedOption] = useState("option2");
   const [groups, setGroups] = useState([]);
 
   const [xlsxPath, setXlsxPath] = useState("");
@@ -227,6 +227,29 @@ const WhatsappLaunchCampaign = () => {
       });
     }
 
+    const contentValues = bodyVariables
+      ?.map((variable) => {
+        const key = `body${variable}`;
+        const value = (formData[key] || "").trim();
+        console.log("value", value);
+
+        if (!value) {
+          isError = true;
+          return;
+        }
+
+        if (value.match(/{{(.*?)}}/)) {
+          return `#${value.match(/{{(.*?)}}/)[1]}#`;
+        }
+
+        return `"${value}"`;
+      })
+      ?.join(",");
+
+    if (isError) {
+      return toast.error("Please enter all variable values!");
+    }
+
     setTotalRecords(finalTotalRecords);
     setDialogVisible(true);
   };
@@ -281,10 +304,6 @@ const WhatsappLaunchCampaign = () => {
     }
     // return
 
-    if (isError) {
-      return;
-    }
-
     // const contentValues = bodyVariables
     //   ?.map((variable) => {
     //     const key = `body${variable}`;
@@ -297,6 +316,12 @@ const WhatsappLaunchCampaign = () => {
       ?.map((variable) => {
         const key = `body${variable}`;
         const value = (formData[key] || "").trim();
+        console.log("value", value);
+
+        if (!value) {
+          isError = true;
+          return toast.error("Please enter all variable values!");
+        }
 
         if (value.match(/{{(.*?)}}/)) {
           return `#${value.match(/{{(.*?)}}/)[1]}#`;
@@ -305,6 +330,10 @@ const WhatsappLaunchCampaign = () => {
         return `"${value}"`;
       })
       ?.join(",");
+
+    if (isError) {
+      return;
+    }
 
     // const contentValues = `"var1",#name#,"var3"`
 
@@ -690,6 +719,8 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
+                    // selectedOption={selectedOption}
+                    setSelectedOption={setSelectedOption}
                     // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
