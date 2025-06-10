@@ -559,8 +559,8 @@ const WhatsappManageWaba = ({ id, name }) => {
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
-      minWidth: 150,
+      flex: 0,
+      width: 220,
       renderCell: (params) => (
         <>
           <CustomTooltip title="Info" placement="top" arrow>

@@ -15,6 +15,7 @@ import AutoFixHighOutlinedIcon from "@mui/icons-material/AutoFixHighOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import DriveFileRenameOutlineOutlinedIcon from '@mui/icons-material/DriveFileRenameOutlineOutlined';
 import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
+import ChatOutlinedIcon from '@mui/icons-material/ChatOutlined';
 
 import axios from "axios";
 import LoopIcon from "@mui/icons-material/Loop";
@@ -39,6 +40,7 @@ export default function CannedMessageManager() {
   const [hasInserted, setHasInserted] = useState(false);
   const [typingKey, setTypingKey] = useState(0);
   const [generationCount, setGenerationCount] = useState(0);
+  const [search, setSearch] = useState("");
 
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
@@ -312,25 +314,31 @@ export default function CannedMessageManager() {
   };
 
   return (
-    <div className="p-4 space-y-6">
-      <div className="flex flex-col items-center justify-center w-full">
-        <h2 className="text-2xl font-semibold text-gray-800 text-center flex items-center justify-center gap-2">
-          <span>Manage Canned Messages</span>
-          {/* <FaTrashAlt className="text-blue-500" /> */}
-        </h2>
-        <p className="text-sm text-gray-600 text-center mt-2 text-wrap ">
-          Easily create, manage, and organize pre-saved messages to enhance your
-          live chat experience. <br /> Use canned messages to respond quickly
-          and professionally, ensuring customer satisfaction and efficient
-          communication.
-        </p>
-      </div>
-      <div className="flex flex-col lg:flex-row gap-6 border-2 p-2 border-gray-300 rounded-2xl">
-        {/* Form to Add Canned Message */}
-        <div
-          className="space-y-4 p-2 border-r-2  lg:w-1/2"
-        >
-          <div className="space-y-2">
+    <div className="min-h-[90vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-4 rounded-2xl">
+      <div className="max-w-full mx-12 space-y-8">
+
+        <div className="flex flex-col items-center justify-center w-full">
+          <h2 className="text-2xl font-semibold text-gray-800 text-center flex items-center justify-center gap-2">
+            <span>Manage Canned Messages</span>
+          </h2>
+          <p className="text-sm text-gray-600 text-center mt-2 text-wrap ">
+            Easily create, manage, and organize pre-saved messages to enhance your
+            live chat experience. <br /> Use canned messages to respond quickly
+            and professionally, ensuring customer satisfaction and efficient
+            communication.
+          </p>
+        </div>
+
+        <div className="flex flex-col lg:flex-row gap-8 border-2 border-gray-200 bg-white/80 p-4 rounded-2xl shadow-xl">
+          {/* Form to Add Canned Message */}
+          <div
+            className="space-y-4 p-4 border-r-2 border-gray-100 lg:w-1/2 bg-white/90 rounded-xl shadow-sm"
+          >
+            {/* <div className="space-y-2"> */}
+            <div className="flex items-center gap-2 mb-2 justify-center">
+              <EditNoteOutlinedIcon className="text-indigo-400" />
+              <span className="text-lg font-semibold text-gray-700">Add / Edit Canned Message</span>
+            </div>
             <InputField
               label="Canned Message Name"
               tooltipContent="Enter a label for the canned message"
@@ -471,86 +479,126 @@ export default function CannedMessageManager() {
                 type="submit"
                 onClick={handleSubmit}
               />
+              {editSrNo && (
+                <button
+                  className="ml-4 text-xs text-gray-500 underline cursor-pointer"
+                  onClick={() => {
+                    setEditSrNo(null);
+                    setForm({ cannedMessageName: "", textBody: "" });
+                  }}
+                >
+                  Cancel Edit
+                </button>
+              )}
             </div>
+            {/* </div> */}
           </div>
-        </div>
 
-        {/* List of Canned Messages */}
-        <div className="lg:w-1/2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4 h-120 overflow-scroll p-2 border border-gray-200 rounded-md shadow-md">
+          {/* Divider */}
+          <div className="hidden lg:flex flex-col items-center justify-center px-2">
+            <div className="h-full w-1 bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-100 rounded-full" />
+          </div>
 
-          {messages.length === 0 ? (
-            <div className="col-span-2 flex flex-col items-center justify-center h-full w-full py-12">
-              <DriveFileRenameOutlineOutlinedIcon
-                className="animate-bounce text-indigo-500"
-                style={{ fontSize: 80 }}
-              />
-              <h3 className="text-lg font-semibold text-gray-700 mt-4">No Canned Messages Yet</h3>
-              <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
-                You haven&apos;t added any canned messages. Use the form on the left to create your first quick reply and boost your chat productivity!
-              </p>
+          {/* List of Canned Messages */}
+          <div className="lg:w-1/2 flex flex-col space-y-4 p-4 border-r-2 border-gray-100 bg-white/90 rounded-xl shadow-sm">
+            <div className="flex items-center gap-2 mb-4 justify-center">
+              <ChatOutlinedIcon className="text-indigo-400" />
+              <span className="text-lg font-semibold text-gray-700">Your Canned Messages</span>
             </div>
-          ) : (
-            messages.map((msg) => (
-              <motion.div
-                key={msg.srNo}
-                className="relative bg-white border border-gray-200 rounded-md shadow-md p-4"
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.3 }}
-              >
-                <div className="flex items-center justify-center absolute top-1 right-2">
-                  <button
-                    onClick={() => handleEdit(msg)}
-                    className="text-blue-500 hover:text-blue-600 transition cursor-pointer text-sm p-1 hover:bg-gray-100 rounded-md"
-                  >
-                    <EditNoteOutlinedIcon sx={{ fontSize: "18px" }} />
-                  </button>
-                  {/* Delete Icon */}
-                  <div className="">
-                    <button
-                      onClick={() => setDeleteDropdown(msg.srNo)}
-                      className="text-red-500 hover:text-red-600 transition cursor-pointer text-sm p-1 hover:bg-gray-100 rounded-md"
+            {/* Search Bar */}
+            <div className="mb-4">
+              <input
+                type="text"
+                placeholder="Search canned messages..."
+                className="border border-gray-300 rounded-lg px-2 py-1.5 w-full focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 h-120 overflow-y-auto p-1">
+              {messages.length === 0 ? (
+                <div className="col-span-2 flex flex-col items-center justify-center h-full w-full py-12">
+                  <DriveFileRenameOutlineOutlinedIcon
+                    className="animate-bounce text-indigo-500"
+                    style={{ fontSize: 80 }}
+                  />
+                  <h3 className="text-lg font-semibold text-gray-700 mt-4">No Canned Messages Yet</h3>
+                  <p className="text-gray-500 text-center mt-2 max-w-xs text-sm">
+                    You haven&apos;t added any canned messages. Use the form on the left to create your first quick reply and boost your chat productivity!
+                  </p>
+                </div>
+              ) : (
+                messages
+                  .filter(
+                    msg =>
+                      msg.cannedMessageName.toLowerCase().includes(search?.toLowerCase() || "") ||
+                      msg.textBody.toLowerCase().includes(search?.toLowerCase() || "")
+                  )
+                  .map((msg) => (
+                    <motion.div
+                      key={msg.srNo}
+                      className="relative bg-gradient-to-br from-indigo-50 via-white to-purple-50 border border-gray-200 rounded-xl shadow-md p-4 h-56  overflow-scroll"
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.3 }}
                     >
-                      <FaTrashAlt className="text-xs" />
-                    </button>
-                    {deleteDropdown === msg.srNo && (
-                      <div className="absolute top-6 right-0 bg-white border border-gray-300 rounded-md shadow-md p-2 text-sm z-50">
-                        <p className="text-gray-700 mb-2">Are you sure?</p>
-                        <div className="flex gap-2">
+                      {/* Message Content */}
+                      <div>
+                        <h3 className="text-sm font-semibold text-gray-800">
+                          {msg.cannedMessageName}
+                        </h3>
+                        <pre className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">
+                          {msg.textBody}
+                        </pre>
+                      </div>
+
+                      <div className="flex items-center justify-center absolute top-1 right-2">
+                        <button
+                          onClick={() => handleEdit(msg)}
+                          className="text-blue-500 hover:text-blue-600 transition cursor-pointer text-sm p-1 hover:bg-gray-100 rounded-md"
+                        >
+                          <EditNoteOutlinedIcon sx={{ fontSize: "18px" }} />
+                        </button>
+                        {/* Delete Icon */}
+                        <div className="">
                           <button
-                            onClick={() => {
-                              handleDelete(msg.srNo);
-                              setDeleteDropdown(null);
-                            }}
-                            className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition cursor-pointer"
+                            onClick={() => setDeleteDropdown(msg.srNo)}
+                            className="text-red-500 hover:text-red-600 transition cursor-pointer text-sm p-1 hover:bg-gray-100 rounded-md"
                           >
-                            Delete
+                            <FaTrashAlt className="text-xs" />
                           </button>
-                          <button
-                            onClick={() => setDeleteDropdown(null)}
-                            className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md text-xs hover:bg-gray-400 transition cursor-pointer"
-                          >
-                            Cancel
-                          </button>
+                          {deleteDropdown === msg.srNo && (
+                            <div className="absolute top-6 right-0 bg-white border border-gray-300 rounded-md shadow-md p-2 text-sm z-50">
+                              <p className="text-gray-700 mb-2">Are you sure?</p>
+                              <div className="flex gap-2">
+                                <button
+                                  onClick={() => {
+                                    handleDelete(msg.srNo);
+                                    setDeleteDropdown(null);
+                                  }}
+                                  className="bg-red-500 text-white px-3 py-1 rounded-md text-xs hover:bg-red-600 transition cursor-pointer"
+                                >
+                                  Delete
+                                </button>
+                                <button
+                                  onClick={() => setDeleteDropdown(null)}
+                                  className="bg-gray-300 text-gray-700 px-3 py-1 rounded-md text-xs hover:bg-gray-400 transition cursor-pointer"
+                                >
+                                  Cancel
+                                </button>
+                              </div>
+                            </div>
+                          )}
                         </div>
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </motion.div>
+                  ))
+              )}
+            </div>
 
-
-                {/* Message Content */}
-                <div>
-                  <h3 className="text-sm font-semibold text-gray-800">
-                    {msg.cannedMessageName}
-                  </h3>
-                  <pre className="text-xs text-gray-600 mt-1 whitespace-pre-wrap">
-                    {msg.textBody}
-                  </pre>
-                </div>
-              </motion.div>
-            ))
-          )}
+          </div>
         </div>
       </div>
     </div>

@@ -297,10 +297,10 @@ const renderMedia = (type, content) => {
 
 const messageTypes = [
   { type: "text", label: "Text" },
-  { type: "image", label: "Images" },
-  { type: "video", label: "Videos" },
-  { type: "audio", label: "Audio" },
-  { type: "document", label: "Documents" },
+  // { type: "image", label: "Images" },
+  // { type: "video", label: "Videos" },
+  // { type: "audio", label: "Audio" },
+  // { type: "document", label: "Documents" },
 ];
 
 const SkeletonLoader = () => (
@@ -343,7 +343,7 @@ export default function CannedMessageDropdown({ onSelect, onClose }) {
       animate={{ opacity: 1, y: 0, width: selectedType ? "64rem" : "14rem" }}
       exit={{ opacity: 0, y: 20 }}
       transition={{ duration: 0.3 }}
-      className="absolute bottom-22 left-0 w-full bg-white shadow-lg rounded-md border z-50 p-3 max-w-full"
+      className="absolute bottom-22 left-0 w-full bg-white shadow-lg rounded-md border z-50 p-3 max-w-full "
     >
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-sm font-semibold tracking-wide text-[#5584AC]">
