@@ -249,7 +249,6 @@
 //   );
 // };
 
-
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
@@ -401,6 +400,7 @@ export const Card = ({
           value={cardData.title}
           onChange={(e) => setCardData({ ...cardData, title: e.target.value })}
           maxLength="200"
+          tooltipContent=" Enter the title that will appear on the rich card. Keep it short and engaging."
         />
         <AnimatedDropdown
           id={"selectCardOrientation"}
@@ -417,6 +417,10 @@ export const Card = ({
             },
           ]}
           placeholder="Select Card"
+          tooltipContent=" Tooltip for Select Orientation: Choose the layout of the card.
+Vertical: Image appears above the text/buttons.
+Horizontal: Image appears beside the text.
+Note: Media requirements vary based on selected orientation and height."
           value={cardOrientation}
           onChange={(e) => {
             setCardOrientation(e);
@@ -436,27 +440,35 @@ export const Card = ({
           options={
             cardOrientation === "vertical"
               ? [
-                {
-                  label: "Medium",
-                  value: "medium",
-                },
-                {
-                  label: "Short",
-                  value: "short",
-                },
-              ]
+                  {
+                    label: "Medium",
+                    value: "medium",
+                  },
+                  {
+                    label: "Short",
+                    value: "short",
+                  },
+                ]
               : [
-                {
-                  label: "Left",
-                  value: "left",
-                },
-                {
-                  label: "Right",
-                  value: "right",
-                },
-              ]
+                  {
+                    label: "Left",
+                    value: "left",
+                  },
+                  {
+                    label: "Right",
+                    value: "right",
+                  },
+                ]
           }
           placeholder="Select Media"
+          tooltipContent="Tooltip for Select Media Height
+Choose the Rich Card Standalone layout size.
+Guidelines for Images (Rich Card Standalone):
+Vertical + Short: 3:1 aspect ratio, 1440x480px, max 2MB (JPG/PNG/GIF)
+Vertical + Medium: 2:1 aspect ratio, 1440x720px, max 2MB (JPG/PNG/GIF)
+Horizontal: 3:4 aspect ratio, 768x1024px, max 2MB (JPG/PNG/GIF)
+For Videos (any layout): Max size 10MB
+Unsupported sizes may cause delivery failure or layout issues."
           value={cardData.mediaHeight}
           onChange={(e) => {
             setCardData({

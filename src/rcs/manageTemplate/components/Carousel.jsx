@@ -579,8 +579,6 @@
 //   );
 // };
 
-
-
 import { useEffect, useState, useCallback, useRef } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
@@ -594,6 +592,8 @@ import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const INITIAL_DROPDOWN_STATE = {
   dropdown1: "",
@@ -677,8 +677,8 @@ export const Carousel = ({
   }, [caraousalData, setCaraousalData]);
 
   const addNewCard = useCallback(() => {
-    if (caraousalData.length >= 10) {
-      toast.error("Maximum limit of 10 cards reached.");
+    if (caraousalData.length >= 5) {
+      toast.error("Maximum limit of 5 cards reached.");
       return;
     }
 
@@ -752,7 +752,6 @@ export const Carousel = ({
     },
     [selectedCardIndex, setCaraousalData]
   );
-
 
   const handleImageChange = useCallback(
     (e) => {
@@ -935,22 +934,36 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handlePreviousIndex} aria-label="Previous">
             <KeyboardArrowLeftOutlinedIcon
-              className={`text-black ${selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
-                } `}
+              className={`text-black ${
+                selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
+              } `}
             />
           </IconButton>
           {/* {selectedCardIndex > 0 && (
           )} */}
         </div>
         <div className="flex items-center gap-2">
-          <button
-            className="rounded-md bg-[#212529] px-2 py-2 text-sm font-normal text-white hover:bg-[#434851] disabled:cursor-not-allowed disabled:opacity-50"
-            onClick={addNewCard}
-            type="button"
-            disabled={caraousalData.length != 10 ? false : true}
-          >
-            Add Card
-          </button>
+          <div className="flex items-center gap-1">
+            <button
+              className="rounded-md bg-[#212529] px-2 py-2 text-sm font-normal text-white hover:bg-[#434851] disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={addNewCard}
+              type="button"
+              disabled={caraousalData.length != 10 ? false : true}
+            >
+              Add Card
+            </button>
+            <CustomTooltip
+              title={
+                "Click to add a new card in the carousel. You can create a max of 5 cards."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span className="ml-2">
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
+              </span>
+            </CustomTooltip>
+          </div>
 
           {selectedCardIndex > 0 && (
             <IconButton
@@ -967,10 +980,11 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
-              className={`text-black ${selectedCardIndex < caraousalData.length - 1
+              className={`text-black ${
+                selectedCardIndex < caraousalData.length - 1
                   ? "cursor-pointer"
                   : "cursor-not-allowed"
-                }`}
+              }`}
             />
           </IconButton>
         </div>
@@ -986,6 +1000,14 @@ export const Carousel = ({
           ]}
           placeholder="Select Card Height"
           value={cardheight}
+          tooltipContent={`Tooltip: Select Card Height & Width \n
+Choose the Rich Card Carousel layout size.
+Follow RCS media specs to avoid delivery issues:
+Short + Small: 960×768px (5:4)
+Short + Medium: 1440×720px (2:1)
+Medium + Small: 576×720px (4:5)
+Medium + Medium: 1440×1080px (4:3)
+Images: Max 1MB | Videos: Max 5MB`}
           onChange={(e) => {
             setCardheight(e);
             setCaraousalData((prev) => {
@@ -1036,6 +1058,7 @@ export const Carousel = ({
           placeholder={`Sample Card ${selectedCardIndex + 1} Title`}
           onChange={handleCardTitleChange}
           maxLength="200"
+          tooltipContent="Enter the title that will appear on the rich card. Keep it short and engaging."
         />
         <div className="flex flex-col gap-2 mb-2">
           <label

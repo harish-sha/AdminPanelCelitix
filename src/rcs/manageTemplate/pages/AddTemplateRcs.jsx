@@ -483,8 +483,7 @@ const AddTemplateRcs = () => {
       setBtnInputData({});
     } catch (e) {
       toast.error("Something went wrong");
-    }
-    finally {
+    } finally {
       setIsFetching(false);
     }
 
@@ -552,7 +551,7 @@ const AddTemplateRcs = () => {
             onChange={(e) => {
               setInputData({ ...inputData, templateName: e.target.value });
             }}
-            tooltipContent="Enter Template Name"
+        tooltipContent="Enter a unique name (max 20 characters). Use letters, numbers, or underscores only. No spaces or special symbols."
             maxLength="20"
           />
         </div>
@@ -597,7 +596,7 @@ const AddTemplateRcs = () => {
               Template
             </span>
             <CustomTooltip
-              title="Enter Message content"
+              title="Enter Message content and variables. Maximum length is 2500 characters."
               placement="right"
               arrow
             >

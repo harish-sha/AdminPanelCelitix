@@ -483,16 +483,16 @@ const SendRcs = () => {
               Schedule
             </label>
             <CustomTooltip
-                  title={
-                    "Schedule this campaign to be sent at a later date and time."
-                  }
-                  placement={"top"}
-                  arrow
-                >
-                  <span>
-                    <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-                  </span>
-                </CustomTooltip>
+              title={
+                "Schedule this campaign to be sent at a later date and time."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
             {scheduleData.isSchedule && (
               <Calendar
                 id="scheduleDateTime"
