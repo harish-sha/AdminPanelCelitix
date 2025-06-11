@@ -23,7 +23,6 @@ import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 
-
 const MobilePanel = ({ items, onUpdateItem }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
   const [radioButtonOptions, setRadioButtonOptions] = useState([
@@ -128,8 +127,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h5"
                   className="text-lg font-semibold mb-1"
                 >
-                  {item.heading || "Heading Placeholder"}
+                  {item.text || "Heading Placeholder"}
                 </Typography>
+                
               );
 
             // Render Subheading
@@ -140,8 +140,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h8"
                   className="text-md font-medium  mb-1"
                 >
-                  {item.subheading || "Subheading Placeholder"}
+                  {item.text || "Subheading Placeholder"}
                 </Typography>
+                
               );
 
             // Render Text Body and Text Caption
@@ -152,8 +153,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h8"
                   sx={{ whiteSpace: "pre-line" }}
                 >
-                  {item.textbody || "Text Body "}
+                  {item.text || "Text Body "}
                 </Typography>
+              
               );
 
             case "textcaption":
@@ -161,10 +163,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
+                // sx={{ whiteSpace: "pre-line" }}
                 >
-                  {item.textcaption || "Text Caption Placeholder"}
+                  {item.text || "Text Caption Placeholder"}
                 </Typography>
+                
               );
 
             // Render Text Input
@@ -173,7 +176,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <div key={index} className="mb-4">
                   <Typography
                     variant="caption"
-                    // sx={{ whiteSpace: "pre-line" }}
+                  // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.texts?.textInput_1?.label || "Label"}
                   </Typography>
@@ -183,14 +186,14 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     placeholder={
                       item.texts?.textInput_1?.helper_text || "Placeholder"
                     }
-                    // placeholder="Text Input Placeholder"
-                    // onChange={(e) =>
-                    //   onUpdateItem &&
-                    //   onUpdateItem(index, (prevItem) => ({
-                    //     ...prevItem,
-                    //     value: e.target.value,
-                    //   }))
-                    // }
+                  // placeholder="Text Input Placeholder"
+                  // onChange={(e) =>
+                  //   onUpdateItem &&
+                  //   onUpdateItem(index, (prevItem) => ({
+                  //     ...prevItem,
+                  //     value: e.target.value,
+                  //   }))
+                  // }
                   />
                 </div>
               );
@@ -210,14 +213,14 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     placeholder={
                       item.texts?.textArea_1?.helper_text || "Placeholder"
                     }
-                    // placeholder="Text Area Placeholder"
-                    // onChange={(e) =>
-                    //   onUpdateItem &&
-                    //   onUpdateItem(index, (prevItem) => ({
-                    //     ...prevItem,
-                    //     value: e.target.value,
-                    //   }))
-                    // }
+                  // placeholder="Text Area Placeholder"
+                  // onChange={(e) =>
+                  //   onUpdateItem &&
+                  //   onUpdateItem(index, (prevItem) => ({
+                  //     ...prevItem,
+                  //     value: e.target.value,
+                  //   }))
+                  // }
                   />
                 </div>
               );
@@ -226,9 +229,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // anshu
             case "checkBox":
               return (
+
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
                   {item?.checkboxGroups &&
-                  Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
                         <Box key={groupId} sx={{ mb: 2 }}>
@@ -277,6 +281,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                       }}
                                     />
                                   )}
+
                                   <Box>
                                     <Typography
                                       variant="body2"
@@ -300,7 +305,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                 <Checkbox
                                   checked={
                                     item.checked?.[
-                                      `${groupId}_${optionIndex}`
+                                    `${groupId}_${optionIndex}`
                                     ] || false
                                   }
                                   onChange={(e) =>
@@ -333,7 +338,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
                   {item?.radioButton &&
-                  Object.keys(item.radioButton).length > 0 ? (
+                    Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
                         <Box key={groupId} sx={{ mb: 2 }}>
@@ -454,47 +459,48 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           >
                             {(dropdownData["data-source"] || []).map(
                               (option, optIdx) => (
-                                <MenuItem key={option.id} value={option.id}>
-                                  <Box
-                                    sx={{
-                                      display: "flex",
-                                      alignItems: "center",
-                                    }}
-                                  >
-                                    {option.image && (
-                                      <Box
-                                        component="img"
-                                        src={option.image}
-                                        alt={
-                                          option.title || `Option ${optIdx + 1}`
-                                        }
-                                        sx={{
-                                          width: 30,
-                                          height: 30,
-                                          borderRadius: 1,
-                                          mr: 1,
-                                          border: "1px solid #ccc",
-                                        }}
-                                      />
-                                    )}
-                                    <Box>
-                                      <Typography
-                                        variant="body2"
-                                        fontWeight={600}
-                                      >
-                                        {option.title}
-                                      </Typography>
-                                      {option.description && (
-                                        <Typography
-                                          variant="caption"
-                                          color="text.secondary"
-                                        >
-                                          {option.description}
-                                        </Typography>
-                                      )}
-                                    </Box>
-                                  </Box>
-                                </MenuItem>
+                                // <MenuItem key={option.id} value={option.id}>
+                                //   <Box
+                                //     sx={{
+                                //       display: "flex",
+                                //       alignItems: "center",
+                                //     }}
+                                //   >
+                                //     {/* {option.image && (
+                                //       <Box
+                                //         component="img"
+                                //         src={option.image}
+                                //         alt={
+                                //           option.title || `Option ${optIdx + 1}`
+                                //         }
+                                //         sx={{
+                                //           width: 30,
+                                //           height: 30,
+                                //           borderRadius: 1,
+                                //           mr: 1,
+                                //           border: "1px solid #ccc",
+                                //         }}
+                                //       />
+                                //     )} */}
+                                //     <Box>
+                                //       <Typography
+                                //         variant="body2"
+                                //         fontWeight={600}
+                                //       >
+                                //         {option.title}
+                                //       </Typography>
+                                //       {option.description && (
+                                //         <Typography
+                                //           variant="caption"
+                                //           color="text.secondary"
+                                //         >
+                                //           {option.description}
+                                //         </Typography>
+                                //       )}
+                                //     </Box>
+                                //   </Box>
+                                // </MenuItem>
+                                <div> </div>
                               )
                             )}
                           </TextField>
@@ -529,11 +535,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
-                            isSelected
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-800 border-gray-300"
-                          }`}
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-800 border-gray-300"
+                            }`}
                         >
                           {option.title}
                         </button>
@@ -617,14 +622,42 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "image":
               return (
-                <Box key={index}>
-                  <InputField
-                    type="file"
-                    id="file-upload"
-                    accept=".png, .jpeg,"
-                    onChange={handlePhotoUpload}
-                  />
-                </Box>
+                <div className="mt-6 p-4 border rounded-xl shadow-sm bg-white max-w-xs mx-auto">
+                  <h3 className="text-center text-base font-semibold mb-4">
+                    Mobile Preview
+                  </h3>
+
+                  {/* Image Preview */}
+                  {/* {imageSrc ? (
+                    <img
+                      src={imageSrc}
+                      alt={imgAltText || "Preview image"}
+                      className={`w-full h-auto rounded-md object-${
+                        scaleType || "contain"
+                      } mb-3`}
+                      style={{ aspectRatio: aspectRatio || "1" }}
+                    />
+                  ) : (
+                    <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
+                      No image uploaded
+                    </div>
+                  )} */}
+
+                  {/* Alt Text */}
+                  {/* {imgAltText && (
+                    <p className="text-center text-sm text-gray-600 italic">
+                      Alt: {imgAltText}
+                    </p>
+                  )}
+
+                  {/* Optional Scale-Type display 
+                  {scaleType && (
+                    <p className="text-center text-sm text-gray-500 mt-1">
+                      Scale Type:{" "}
+                      <span className="font-medium">{scaleType}</span>
+                    </p>
+                  )} */}
+                </div>
               );
 
             case "document":
@@ -633,14 +666,14 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   {item.type === "document" && (
                     <div className="p-4 border rounded-md shadow-sm">
                       <p className="font-semibold">
-                        {item.label || "Upload photos"}
+                        {item.label || "Upload Documents"}
                       </p>
                       <p className="text-sm text-gray-600">
                         {item.description}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Min Photos: {item["min-uploaded-photos"] || 1} | Max
-                        Photos: {item["max-uploaded-photos"] || 1}
+                        Min Documents: {item["min-document-photos"] || 1} | Max
+                        Documents: {item["max-document-photos"] || 1}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
                         <span className="text-green-400 space-x-2">
@@ -707,7 +740,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 //       onUpdateItem &&
                 //       onUpdateItem(index, (prevItem) => ({
                 //         ...prevItem,
-                //         value: date?.toISOString().split("T")[0], 
+                //         value: date?.toISOString().split("T")[0],
                 //       }))
                 //     }
                 //     placeholderText={item.placeholder || "Select a date"}
@@ -735,20 +768,19 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 // </div>
               );
 
-
-              // Render Date
+            // Render Date
             case "date":
               return (
                 <div className="w-full px-4 py-2">
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {item.label }
+                    {item.label}
                   </label>
                   <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
                     {/* {item.value
                       ? new Date(item.value).toLocaleDateString()
                       : "No date selected"} */}
 
-                      {item['max-date'] || "Date (Optional)"}
+                    {item["max-date"] || "Date (Optional)"}
                   </div>
                 </div>
               );

@@ -123,19 +123,19 @@ const Canvas = ({
 
     // For Headings
     if (item.type === "heading") {
-      return targetItem.heading;
+      return targetItem.text;
     }
 
     if (item.type === "subheading") {
-      return targetItem.subheading;
+      return targetItem.text;
     }
 
     if (item.type === "textcaption") {
-      return targetItem.textcaption;
+      return targetItem.text;
     }
 
     if (item.type === "textbody") {
-      return targetItem.textbody;
+      return targetItem.text;
     }
 
     // For textInput and textArea: look under texts

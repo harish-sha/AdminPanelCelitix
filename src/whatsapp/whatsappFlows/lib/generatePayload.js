@@ -341,38 +341,90 @@ export const generatePayload = (data) => {
       const name = `${type}_${countWord}`;
       let component = { type };
 
-      if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
-        component.text = pay[type] || "";
-        component.type = {
-          heading: "TextHeading",
-          subheading: "TextSubheading",
-          textbody: "TextBody",
-          textcaption: "TextCaption",
-        }[type];
+      // if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
+      //   component.text = pay[type] || "";
+      //   component.type = {
+      //     heading: "TextHeading",
+      //     subheading: "TextSubheading",
+      //     textbody: "TextBody",
+      //     textcaption: "TextCaption",
+      //   }[type];
+      // }
+
+      if (type === "heading") {
+        component = {
+          type: "TextHeading",
+          text: pay.text,
+        };
       }
 
-      if (["textInput", "textArea", "email", "phone"].includes(type)) {
-        const key = Object.keys(pay.texts || {})[0];
-        const field = pay.texts?.[key] || {};
-
+      if (type === "subheading") {
         component = {
-          name,
-          type:
-            type === "textInput"
-              ? "TextInput"
-              : type === "textArea"
-              ? "TextArea"
-              : type === "email"
-              ? "EmailInput"
-              : "PhoneInput",
-
-          label: field.label || "Label",
-          required: field.required ?? true,
-          // "error-message": field.error_message || "",
-          "helper-text": field.helper_text || "",
-          // "max-chars": field.max_chars || "",
-          // "min-chars": field.min_chars || "",
+          type: "TextSubheading",
+          text: pay.text,
         };
+      }
+
+      if (type === "textbody") {
+        component = {
+          type: "TextBody",
+          text: pay.text,
+        };
+      }
+
+      if(type === "textcaption"){
+         component = {
+          type: "TextCaption",
+          text: pay.text,
+        };
+      }
+
+      // if (["textInput", "textArea", "email", "phone"].includes(type)) {
+      //   const key = Object.keys(pay.texts || {})[0];
+      //   const field = pay.texts?.[key] || {};
+
+      //   component = {
+      //     name,
+      //     type:
+      //       type === "textInput"
+      //         ? "TextInput"
+      //         : type === "textArea"
+      //         ? "TextArea"
+      //         : type === "email"
+      //         ? "EmailInput"
+      //         : "PhoneInput",
+
+      //     label: field.label || "Label",
+      //     required: field.required ?? true,
+      //     // "error-message": field.error_message || "",
+      //     "helper-text": field.helper_text || "",
+      //     // "max-chars": field.max_chars || "",
+      //     // "min-chars": field.min_chars || "",
+      //   };
+      // }
+
+      if(type === "textInput"){
+        component = {
+           name,
+           type: "TextInput",
+           label:pay.label,
+           required: pay.required ?? true,
+           "helper-text": pay['helper-text'],
+           "min-chars": pay["max-chars"] || "",
+           "max-chars":pay["max-chars"] || ""
+        }
+      }
+
+      if(type === "textArea"){
+        component = {
+          name, 
+          type: "TextArea",
+          label:pay.label,
+          required: pay.required ?? true,
+           "helper-text": pay['helper-text'],
+           "min-chars": pay["max-chars"] || "",
+           "max-chars":pay["max-chars"] || ""
+        }
       }
 
       if (type === "dropDown") {

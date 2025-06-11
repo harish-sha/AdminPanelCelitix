@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import InputField from "../../components/InputField";
 import {
   Box,
@@ -170,11 +170,11 @@ const EditPanel = ({
 
   // inputtype
 
-  const OptionsTypeOptions = [
-    { value: "text", label: "Text" },
-    { value: "number", label: "Number" },
-    { value: "email", label: "Email" },
-  ];
+  // const OptionsTypeOptions = [
+  //   { value: "text", label: "Text" },
+  //   { value: "number", label: "Number" },
+  //   { value: "email", label: "Email" },
+  // ];
 
   // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -185,110 +185,110 @@ const EditPanel = ({
   // const [placeholderValue, setPlaceholderValue] = useState("");
   // const [switchChecked, setSwitchChecked] = useState(false);
 
-  const switchLabel = { inputProps: { "aria-label": "Switch demo" } };
-  const handleErrorChange = (e) => setErrorValue(e.target.value);
-  const handleLabelChange = (e) => setLabelValue(e.target.value);
-  const handlePlaceholder = (e) => setPlaceholderValue(e.target.value);
-  const handleSwitchChange = (event) => {
-    setSwitchChecked(event.target.checked);
-  };
+  // const switchLabel = { inputProps: { "aria-label": "Switch demo" } };
+  // const handleErrorChange = (e) => setErrorValue(e.target.value);
+  // const handleLabelChange = (e) => setLabelValue(e.target.value);
+  // const handlePlaceholder = (e) => setPlaceholderValue(e.target.value);
+  // const handleSwitchChange = (event) => {
+  //   setSwitchChecked(event.target.checked);
+  // };
 
-  const handleDropdownChange = (val) => {
-    const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
-    setSelectedOptionsType(option);
-    setInputValue("");
-  };
+  // const handleDropdownChange = (val) => {
+  //   const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
+  //   setSelectedOptionsType(option);
+  //   setInputValue("");
+  // };
 
-  const handleInputChange = (e) => {
-    const val = e.target.value;
-    if (selectedOptionsType?.value === "number") {
-      // Enforce digit count limits
-      if (/^\d*$/.test(val)) {
-        if (!maxValue || val.length <= Number(maxValue)) {
-          setInputValue(val);
-        }
-      }
-    } else {
-      // Text/email: enforce length via HTML attrs
-      setInputValue(val);
-    }
-  };
+  // const handleInputChange = (e) => {
+  //   const val = e.target.value;
+  //   if (selectedOptionsType?.value === "number") {
+  //     // Enforce digit count limits
+  //     if (/^\d*$/.test(val)) {
+  //       if (!maxValue || val.length <= Number(maxValue)) {
+  //         setInputValue(val);
+  //       }
+  //     }
+  //   } else {
+  //     // Text/email: enforce length via HTML attrs
+  //     setInputValue(val);
+  //   }
+  // };
 
-  const handleMaxChange = (e) => {
-    console.log("e", e.target.value);
+  // const handleMaxChange = (e) => {
+  //   console.log("e", e.target.value);
 
-    const val = e.target.value;
-    if (/^\d*$/.test(val)) {
-      setMaxValue(val);
-      if (
-        selectedOptionsType?.value === "number" &&
-        inputValue.length > Number(val)
-      ) {
-        setInputValue(inputValue.slice(0, Number(val)));
-      }
-    }
-  };
+  //   const val = e.target.value;
+  //   if (/^\d*$/.test(val)) {
+  //     setMaxValue(val);
+  //     if (
+  //       selectedOptionsType?.value === "number" &&
+  //       inputValue.length > Number(val)
+  //     ) {
+  //       setInputValue(inputValue.slice(0, Number(val)));
+  //     }
+  //   }
+  // };
 
-  const handleMinChange = (e) => {
-    console.log("e", e.target.value);
-    const val = e.target.value;
-    if (/^\d*$/.test(val)) setMinValue(val);
-  };
+  // const handleMinChange = (e) => {
+  //   console.log("e", e.target.value);
+  //   const val = e.target.value;
+  //   if (/^\d*$/.test(val)) setMinValue(val);
+  // };
 
-  console.log("minVal", minValue);
-  const isNumberType = selectedOptionsType?.value === "number";
-  const maxNum = maxValue ? Number(maxValue) : "";
-  const minNum = minValue ? Number(minValue) : "";
+  // console.log("minVal", minValue);
+  // const isNumberType = selectedOptionsType?.value === "number";
+  // const maxNum = maxValue ? Number(maxValue) : "";
+  // const minNum = minValue ? Number(minValue) : "";
 
-  const handleInputSave = () => {
-    if (!labelValue) {
-      toast.error("Please Enter Label");
-      return;
-    }
-    if (!placeholderValue) {
-      toast.error("Please Enter Placeholder value");
-      return;
-    }
+  // const handleInputSave = () => {
+  //   if (!labelValue) {
+  //     toast.error("Please Enter Label");
+  //     return;
+  //   }
+  //   if (!placeholderValue) {
+  //     toast.error("Please Enter Placeholder value");
+  //     return;
+  //   }
 
-    const typeMapping = {
-      textInput: "TextInput",
-      textArea: "TextArea",
-    };
+  //   const typeMapping = {
+  //     textInput: "TextInput",
+  //     textArea: "TextArea",
+  //   };
 
-    const selectedType = selectedItem?.type; // e.g., 'textInput' or 'textArea'
-    const mappedType = typeMapping[selectedType];
+  //   const selectedType = selectedItem?.type; // e.g., 'textInput' or 'textArea'
+  //   const mappedType = typeMapping[selectedType];
 
-    if (!selectedType || !mappedType) {
-      toast.error("Invalid input type");
-      return;
-    }
+  //   if (!selectedType || !mappedType) {
+  //     toast.error("Invalid input type");
+  //     return;
+  //   }
 
-    const payload = {
-      texts: {},
-    };
+  //   const payload = {
+  //     texts: {},
+  //   };
 
-    const id = `${selectedType}_1`; // Assuming only 1 for now
-    payload.texts[id] = {
-      inputType: mappedType,
-      label: labelValue,
-      helper_text: placeholderValue,
-      min_chars: minNum,
-      max_chars: maxNum,
-      error_message: errorValue || "",
-      required: switchChecked,
-    };
+  //   const id = `${selectedType}_1`; // Assuming only 1 for now
+  //   payload.texts[id] = {
+  //     inputType: mappedType,
+  //     label: labelValue,
+  //     helper_text: placeholderValue,
+  //     min_chars: minNum,
+  //     max_chars: maxNum,
+  //     error_message: errorValue || "",
+  //     required: switchChecked,
+  //   };
 
-    console.log("payload by input", payload);
+  //   console.log("payload by input", payload);
 
-    const updatedData = {
-      ...selectedItem,
-      ...payload,
-    };
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //   };
 
-    onSave(updatedData);
-    onClose();
-    console.log(updatedData);
-  };
+  //   onSave(updatedData);
+  //   onClose();
+  //   console.log(updatedData);
+  // };
 
   const allowed = ["heading", "subheading", "textbody", "textcaption"];
 
@@ -429,10 +429,15 @@ const EditPanel = ({
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
+  const [optRequired, setOptRequired] = useState(false);
 
   // const handleChecked = (e) => {
   //   setCheckbox(e.target.checked);
   // };
+
+  const handleOptRequiredChange = (e) => {
+    setOptRequired((prev) => !prev);
+  };
 
   const handleOPTSave = () => {
     const payload = {
@@ -490,7 +495,6 @@ const EditPanel = ({
       return;
     }
     try {
-      setImageFile([]);
       setImageSrc(null);
       setUploadedImgId(null);
       setImageFile(null);
@@ -674,37 +678,37 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-          mode: "single",
-          label: dateCalendarLable,
-          "helper-text": dateCalendarPlaceholder,
-          required: startCalenderRequired,
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            unavailableCalendarDates
-          ),
-        }
+            mode: "single",
+            label: dateCalendarLable,
+            "helper-text": dateCalendarPlaceholder,
+            required: startCalenderRequired,
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              unavailableCalendarDates
+            ),
+          }
         : {
-          mode: "range",
-          label: {
-            "start-date": dateCalendarLable || "",
-            "end-date": endCalendarLabel || "",
-          },
-          "helper-text": {
-            "start-date": dateCalendarPlaceholder || "",
-            "end-date": endCalendarHelperText || "",
-          },
-          required: {
-            "start-date": startCalenderRequired,
-            "end-date": endCalendarRequired,
-          },
+            mode: "range",
+            label: {
+              "start-date": dateCalendarLable || "",
+              "end-date": endCalendarLabel || "",
+            },
+            "helper-text": {
+              "start-date": dateCalendarPlaceholder || "",
+              "end-date": endCalendarHelperText || "",
+            },
+            required: {
+              "start-date": startCalenderRequired,
+              "end-date": endCalendarRequired,
+            },
 
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            unavailableCalendarDates
-          ),
-        };
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              unavailableCalendarDates
+            ),
+          };
 
     const updatedData = {
       ...selectedItem,
@@ -800,6 +804,11 @@ const EditPanel = ({
   const [mediaDescription, setMediaDescription] = useState("");
   const [minPhotoUpload, setMinPhotoUpload] = useState("");
   const [maxPhotoUpload, setMaxPhotoUpload] = useState("");
+  const [mediaRequired, setMediaRequied] = useState(false);
+
+  const handleMediaRequiredChange = () => {
+    setMediaRequied((prev) => !prev);
+  };
 
   const handleMediaSave = () => {
     if (!mediaDescription) {
@@ -881,8 +890,9 @@ const EditPanel = ({
   const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
   const [radioImageFile, setRadioImageFile] = useState(null);
   const [radioImageSrc, setRadioImageSrc] = useState(null);
-  const [uploadedRadioImgId, setUploadedRadioImgId] = useState(null);
+  // const [uploadedRadioImgId, setUploadedRadioImgId] = useState(null);
   const [radioOptions, setRadioOptions] = useState([]);
+  const [radioRequired, setRadioRequired] = useState(false);
   const [deleteRadioImg, setDeleteRadioImg] = useState(null);
   const [draft, setDraft] = useState({
     title: "",
@@ -891,6 +901,12 @@ const EditPanel = ({
     image: "",
     altText: "",
   });
+
+  const handleRadioRequiredChange = () => {
+    setRadioRequired((prev) => !prev);
+  };
+
+  const radioImageInputRef = useRef(null);
 
   const handleRadioImageChange = (e) => {
     const file = e.target.files?.[0];
@@ -943,11 +959,6 @@ const EditPanel = ({
       image: "",
       altText: "",
     });
-
-    //  if(!draft.image.trim()){
-    //  toast.error("MetaData Required")
-    //  return;
-    // }
   };
 
   const handleCancelInlineRadio = () => {
@@ -986,12 +997,21 @@ const EditPanel = ({
       return;
     }
 
+    if (draft?.image) {
+      toast.error("Image already Uploaded");
+      return;
+    }
+
     try {
       const base64String = await getBase64(radioImageFile);
       console.log("base64String", base64String);
-      // const response = await uploadImageFile(radioImageFile, 1);
-      // console.log("Upload response:", response);
-      setUploadedRadioImgId(base64String);
+
+      // Instead of setting global state, update the draft
+      setDraft((prev) => ({
+        ...prev,
+        image: base64String,
+      }));
+
       toast.success("File uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload file.");
@@ -999,20 +1019,21 @@ const EditPanel = ({
   };
 
   const handleDeleteRadioFile = async () => {
-    if (!radioImageFile) {
-      toast.error("File not exist");
+    if (!draft.image) {
+      toast.error("No image to delete");
       return;
     }
     try {
-      setImageFile([]);
-      setImageSrc(null);
-      setUploadedRadioImgId(null);
+      setDraft((prev) => ({ ...prev, image: "" }));
       setRadioImageFile(null);
 
-      toast.success("File Delete Succesfully");
-      console.log("Image DLT");
+      if (radioImageInputRef.current) {
+        radioImageInputRef.current.value = "";
+      }
+
+      toast.success("Image deleted successfully");
     } catch (error) {
-      toast.error("Failed To delete file");
+      toast.error("Failed to delete image");
     }
   };
 
@@ -1067,12 +1088,12 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
-        if (imageSize > 100 * 1024) {
-          toast.error(`Option ${i + 1}: Image must be under 100KB`);
-          return;
-        }
+        // if (imageSize > 100 * 1024) {
+        //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
+        //   return;
+        // }
       }
     }
 
@@ -1082,7 +1103,7 @@ const EditPanel = ({
       title: opt.title.trim(),
       description: opt.description?.trim() || "",
       metadata: opt.metadata?.trim() || "",
-      image: uploadedRadioImgId || opt.image || "",
+      image: opt.image || "",
     }));
     console.log("Filtered and processed radio button options:", payloadOptions);
 
@@ -1122,23 +1143,36 @@ const EditPanel = ({
   const [mainNameCheckbox, setMainNameCheckbox] = useState("");
   const [checkBoxes, setCheckBoxes] = useState([]);
   const [editCheckBoxId, setEditCheckBoxId] = useState(null);
-  const [uploadedImgId, setUploadedImgId] = useState(null);
+  // const [uploadedImgId, setUploadedImgId] = useState(null);
   const [checkboxImageFile, setCheckboxImageFile] = useState(null);
   const [checkboxImageSrc, setCheckboxImageSrc] = useState(null);
   const [uploadedCheckboxImgId, setUploadedCheckboxImgId] = useState(null);
+  const [checkboxRequired, setCheckboxRequired] = useState(false);
   const [draftCheckbox, setDraftCheckbox] = useState({
     title: "",
     description: "",
     metadata: "",
+    image: "",
   });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
+  const handleCheckboxRequiredChange = () => {
+    setCheckboxRequired((prev) => !prev);
+  };
 
   // anshu
+
+  const checkboxImageInputRef = useRef(null);
+
   const Max_Image_Size = 100 * 1024; // 100 KB
 
   const handleCheckboxImageChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (checkboxImageFile?.image) {
+      toast.error("Image already uploaded");
+      return;
+    }
 
     if (!file.type.match(/image\/(png|jpeg)/)) {
       toast.error("Please select a .png or .jpeg file");
@@ -1162,12 +1196,20 @@ const EditPanel = ({
       toast.error("Please select an image first before uploading");
       return;
     }
+
+    if (draftCheckbox?.image) {
+      toast.error("Image already uploaded");
+      return;
+    }
+
     try {
       const base64String = await getBase64(checkboxImageFile);
       console.log("base64String", base64String);
-      // const response = await uploadImageFile(base64String, 1);
-      setUploadedCheckboxImgId(base64String);
-      // console.log("Upload response:", response);
+
+      setDraftCheckbox((prev) => ({
+        ...prev,
+        image: base64String,
+      }));
       toast.success("File uploaded successfully!");
     } catch (error) {
       toast.error("Failed to upload file.");
@@ -1176,13 +1218,16 @@ const EditPanel = ({
 
   const handleCheckboxFileDelete = async () => {
     if (!checkboxImageFile) {
-      toast.error("File not exist");
+      toast.error("File already deleted");
       return;
     }
     try {
+      setDraftCheckbox((prev) => ({ ...prev, image: "" }));
       setCheckboxImageFile(null);
-      setCheckboxImageSrc(null);
-      setUploadedCheckboxImgId(null);
+
+      if (checkboxImageInputRef.current) {
+        checkboxImageInputRef.current.value = "";
+      }
 
       toast.success("File Delete Succesfully");
       console.log("Image DLT");
@@ -1206,7 +1251,7 @@ const EditPanel = ({
     updated[checkboxEditIdx] = {
       ...updated[checkboxEditIdx],
       ...draftCheckbox,
-      image: uploadedCheckboxImgId || updated[checkboxEditIdx].image || "",
+      image: draftCheckbox.image || updated[checkboxEditIdx].image || "",
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
@@ -1252,7 +1297,7 @@ const EditPanel = ({
       title: opt.title.trim(),
       description: opt.description?.trim() || "",
       metadata: opt.metadata?.trim() || "",
-      image: uploadedImgId || opt.image || "",
+      image: opt.image || "",
     }));
 
     // Final payload and merge
@@ -1293,7 +1338,14 @@ const EditPanel = ({
   const [draftMetadata, setDraftMetaData] = useState("");
   const [dropImageSrc, setDropImageSrc] = useState(null);
   const [dropImageFile, setDropImageFile] = useState(null);
-  const [dropdownUploadedId, setDropdownUploadedId] = useState(null);
+  const [dropdownRequired, setDropdownRequired] = useState(false);
+  // const [dropdownUploadedId, setDropdownUploadedId] = useState(null);
+
+  const dropImageInputRef = useRef(null);
+
+  const handleDropdownRequiredChange = () => {
+    setDropdownRequired((prev) => !prev);
+  };
 
   const handleDropdownImageChange = (event) => {
     const file = event.target.files?.[0];
@@ -1315,18 +1367,28 @@ const EditPanel = ({
   };
 
   const handleDropdownUploadFile = async () => {
+    const currentOption = options[editingIdx];
+
     if (!dropImageFile) {
       toast.error("Please select an image first before uploading");
       return;
     }
 
+    if (currentOption?.image) {
+      toast.error("Image already uploaded.");
+      return;
+    }
 
     try {
       // const response = await uploadImageFile(dropImageFile, 1);
       const base64String = await getBase64(dropImageFile);
       console.log("base64String", base64String);
-      // console.log("Upload response:", response);
-      setDropdownUploadedId(base64String);
+      setOptions((prev) =>
+        prev.map((o, i) =>
+          i === editingIdx ? { ...o, image: base64String } : o
+        )
+      );
+      // setDropdownUploadedId(base64String);
       toast.success("File uploaded successfully!");
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -1335,18 +1397,19 @@ const EditPanel = ({
   };
 
   const handleDropdownFileDelete = async () => {
-    if (!dropImageFile) {
+    if (!dropImageFile && !dropImageSrc) {
       toast.error("File not exist");
       return;
     }
     try {
       setDropImageFile(null);
-      setDropImageFile('');
       setDropImageSrc(null);
-      setDropdownUploadedImgId(null);
+
+      if (dropImageInputRef.current) {
+        dropImageInputRef.current.value = "";
+      }
 
       toast.success("File Delete Succesfully");
-      console.log("Image DLT");
     } catch (error) {
       toast.error("Failed To delete file");
     }
@@ -1362,17 +1425,16 @@ const EditPanel = ({
 
   const handleSaveInline = () => {
     if (!draftTitle.trim()) return;
-    
 
     setOptions((prev) =>
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+            }
           : o
       )
     );
@@ -1427,7 +1489,7 @@ const EditPanel = ({
       title: o.title.trim(),
       description: o.description.trim(),
       metadata: o.metadata.trim(),
-      image: dropdownUploadedId || o.image || "",
+      image: o.image || "",
     }));
 
     // 3) Base payload (what used to be passed directly)
@@ -1484,10 +1546,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-            ...o,
-            // name: chipName.trim(),
-            title: chipTitle.trim(),
-          }
+              ...o,
+              // name: chipName.trim(),
+              title: chipTitle.trim(),
+            }
           : o
       )
     );
@@ -1560,6 +1622,144 @@ const EditPanel = ({
     onClose();
   };
 
+  // heading
+  const [headingInput, setHeadingInput] = useState("");
+  useEffect(() => {
+    if (selectedItem) {
+      setHeadingInput(selectedItem.text || "");
+      setChecked(selectedItem.checked || []);
+      setSelectedOption(selectedItem.selectedOption || "");
+    }
+  }, [selectedItem]);
+
+  const headingSave = () => {
+    if (!headingInput) {
+      toast.error("Heading Required");
+      return;
+    }
+
+    const payload = {
+      text: headingInput,
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // sub-heading
+  const [subheadingInput, setSubheadingInput] = useState("");
+  useEffect(() => {
+    if (selectedItem) {
+      setSubheadingInput(selectedItem.text || "");
+      setChecked(selectedItem.checked || []);
+      setSelectedOption(selectedItem.selectedOption || "");
+    }
+  }, [selectedItem]);
+
+  const handleSubheadingSave = () => {
+    if (!subheadingInput) {
+      toast.error("Heading Required");
+      return;
+    }
+
+    const payload = {
+      text: subheadingInput,
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // text-body
+  const [textbodyInput, setTextbodyInput] = useState("");
+
+  useEffect(() => {
+    if (selectedItem) {
+      setTextbodyInput(selectedItem.text || "");
+      setChecked(selectedItem.checked || []);
+      setSelectedOption(selectedItem.selectedOption || "");
+    }
+  }, [selectedItem]);
+
+  const handleTextbodySave = () => {
+    if (!textbodyInput.trim()) {
+      toast.error("Heading Required");
+      return;
+    }
+
+    const payload = {
+      text: textbodyInput.trim(),
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // text-caption
+  const [textcaptionInput, setTextcaptionInput] = useState("");
+
+  useEffect(() => {
+    if (selectedItem) {
+      setTextcaptionInput(selectedItem.text || "");
+      setChecked(selectedItem.checked || []);
+      setSelectedOption(selectedItem.selectedOption || "");
+    }
+  }, [selectedItem]);
+
+  const handleTextCaptionSave = () => {
+    if (!textcaptionInput.trim()) {
+      toast.error("Heading Required");
+      return;
+    }
+
+    const payload = {
+      text: textcaptionInput.trim(),
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // textInput
+  const [inputLabel, setInputLabel] = useState("");
+  const [inputPlaceholder, setInputPlaceholder] = useState("");
+  const [inputError, setInputError] = useState("");
+
+  const handleInputSave = () => {
+    const payload = {
+      label: inputLabel,
+      "helper-text": inputPlaceholder,
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -1589,106 +1789,182 @@ const EditPanel = ({
         </div>
 
         {/* Input Fields for Text-Based Items */}
-        {["heading", "subheading", "textbody", "textcaption"].includes(
+        {/* {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
         ) && (
-            <div className="mb-2 font-semibold text-lg mt-3">
-              <InputField
-                label={`Edit ${type}`}
-                placeholder={`Enter ${type}`}
-                variant="outlined"
-                tooltipContent={`Edit ${type}`}
-                tooltipPlacement="right"
-                fullWidth
-                value={headingValue}
-                maxLength={maxLengthMap[selectedItem?.type] || 80}
-                onChange={(e) => setHeadingValue(e.target.value)}
-              />
-
-              <div className="mt-5 flex justify-center items-center">
-                <UniversalButton
-                  label="SAVE"
-                  onClick={() => {
-                    onSave({
-                      index: selectedItem.index,
-                      [type]: headingValue,
-                    });
-                  }}
-                />
-              </div>
-            </div>
-          )}
-
-        {["textInput", "textArea"].includes(selectedItem?.type) && (
-          <div className="mb-2 text-lg space-y-2 mt-3">
+          <div className="mb-2 font-semibold text-lg mt-3">
             <InputField
               label={`Edit ${type}`}
-              id="mainlabel"
               placeholder={`Enter ${type}`}
+              variant="outlined"
               tooltipContent={`Edit ${type}`}
               tooltipPlacement="right"
-              value={labelValue}
-              maxLength={20}
-              onChange={handleLabelChange}
+              fullWidth
+              value={headingValue}
+              maxLength={maxLengthMap[selectedItem?.type] || 80}
+              onChange={(e) => setHeadingValue(e.target.value)}
             />
-            {selectedItem?.type === "textInput" && (
-              <AnimatedDropdown
-                label={`Select Type ${type}`}
-                tooltipContent={`Select Type ${type}`}
-                tooltipPlacement="right"
-                options={OptionsTypeOptions}
-                value={selectedOptionsType?.value || ""}
-                onChange={handleDropdownChange}
-                placeholder={selectedOptionsType?.label || "Select Type"}
+
+            <div className="mt-5 flex justify-center items-center">
+              <UniversalButton
+                label="SAVE"
+                onClick={() => {
+                  onSave({
+                    index: selectedItem.index,
+                    [type]: headingValue,
+                  });
+                }}
               />
-            )}
+            </div>
+          </div>
+        )} */}
+
+        {/* new */}
+        {selectedItem?.type === "heading" && (
+          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            <InputField
+              label="Heading"
+              placeholder="Enter Text for  Heading"
+              variant="outlined"
+              tooltipContent="Enter Text for  Heading"
+              tooltipPlacement="right"
+              fullWidth
+              value={headingInput}
+              type="text"
+              maxLength={80}
+              onChange={(e) => setHeadingInput(e.target.value)}
+            />
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={headingSave} />
+            </div>
+          </div>
+        )}
+
+        {selectedItem?.type === "subheading" && (
+          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            <InputField
+              label="Sub-Heading"
+              placeholder="Enter Text for Sub-Heading "
+              tooltipContent="Enter Text for  Sub-Heading"
+              tooltipPlacement="right"
+              type="text"
+              maxLength={80}
+              value={subheadingInput}
+              onChange={(e) => setSubheadingInput(e.target.value)}
+              fullWidth
+            />
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={handleSubheadingSave} />
+            </div>
+          </div>
+        )}
+
+        {selectedItem?.type === "textbody" && (
+          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            <InputField
+              label="TextBody"
+              placeholder="Enter Text for TextBody "
+              tooltipContent="Enter Text for  TextBody"
+              tooltipPlacement="right"
+              type="text"
+              maxLength={4096}
+              value={textbodyInput}
+              onChange={(e) => setTextbodyInput(e.target.value)}
+              fullWidth
+            />
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={handleTextbodySave} />
+            </div>
+          </div>
+        )}
+
+        {selectedItem?.type === "textcaption" && (
+          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            <InputField
+              label="TextCaption"
+              placeholder="Enter Text for Sub-Heading "
+              tooltipContent="Enter Text for  Sub-Heading"
+              tooltipPlacement="right"
+              type="text"
+              maxLength={409}
+              value={textbodyInput}
+              onChange={(e) => setTextbodyInput(e.target.value)}
+              fullWidth
+            />
+            <div className="flex justify-center">
+              <UniversalButton label="Save" onClick={handleTextbodySave} />
+            </div>
+          </div>
+        )}
+        {/* NEW */}
+
+        {selectedItem?.type === "textInput" && (
+          <div className="mb-2 text-lg space-y-2 mt-3">
+            <InputField
+              label="Input Label"
+              id="mainlabel"
+              placeholder="Enter Input label"
+              tooltipContent="Enter Input label"
+              tooltipPlacement="right"
+              value={inputLabel}
+              onChange={(e) => setInputLabel(e.target.value)}
+              maxLength={20}
+            />
+
+            {/* <AnimatedDropdown
+              label=""
+              tooltipContent=""
+              tooltipPlacement="right"
+              options={OptionsTypeOptions}
+              value={selectedOptionsType?.value || ""}
+              onChange={handleDropdownChange}
+              placeholder={selectedOptionsType?.label || "Select Type"}
+            /> */}
 
             <InputField
-              label={`Placeholder ${type}`}
+              label="Helper-Text"
               type="text"
-              placeholder={`Enter placeholder for ${type}`}
-              tooltipContent={`Enter placeholder for ${type}`}
+              placeholder="Enter placeholder for Helper-text"
+              tooltipContent="Enter placeholder for Helper-text"
               tooltipPlacement="right"
-              value={placeholderValue}
+              value={inputPlaceholder}
               maxLength={80}
-              onChange={handlePlaceholder}
+              onChange={(e) => setInputPlaceholder(e.target.value)}
             />
 
-            {selectedItem?.type === "textInput" && (
-              <InputField
-                label="Enter error to display"
-                id="maineroor"
-                placeholder="Enter Error"
-                tooltipContent={`Enter Error for ${type}`}
-                tooltipPlacement="right"
-                value={errorValue}
-                maxLength={30}
-                onChange={handleErrorChange}
-              />
-            )}
+            <InputField
+              label="Enter error to display"
+              id="maineroor"
+              placeholder="Enter Error"
+              tooltipContent="Enter Error for TextInput"
+              tooltipPlacement="right"
+              value={inputError}
+              maxLength={30}
+              onChange={(e) => setInputError(e.target.value)}
+            />
 
             <div className="flex, gap-8 ">
               <InputField
                 label="Min Length"
                 id="min"
                 type="number"
-                placeholder={isNumberType ? "Min digits" : "Min length"}
-                tooltipContent="Enter MinLength"
-                tooltipPlacement="right"
-                value={minValue}
-                onChange={handleMinChange}
+                // placeholder={isNumberType ? "Min digits" : "Min length"}
+                // tooltipContent="Enter MinLength"
+                // tooltipPlacement="right"
+                // value={minValue}
+                // onChange={handleMinChange}
                 autoComplete="off"
               />
               <InputField
                 label="Max Length"
                 id="max"
                 type="number"
-                placeholder={isNumberType ? "Max digits" : "Max length"}
-                tooltipContent="Enter MaxLength"
-                tooltipPlacement="right"
-                value={maxValue}
-                onChange={handleMaxChange}
-                autoComplete="off"
+                // placeholder={isNumberType ? "Max digits" : "Max length"}
+                // tooltipContent="Enter MaxLength"
+                // tooltipPlacement="right"
+                // value={maxValue}
+                // onChange={handleMaxChange}
+                // autoComplete="off"
               />
             </div>
 
@@ -1703,25 +1979,117 @@ const EditPanel = ({
               </label>
               <div className="flex, alignItems-center, gap-8 ">
                 <Switch
-                  {...switchLabel}
-                  checked={switchChecked}
-                  onChange={handleSwitchChange}
+                  // {...switchLabel}
+                  // checked={switchChecked}
+                  // onChange={handleSwitchChange}
                   id="required"
                 />
-                <span>{switchChecked ? "Yes" : "No"}</span>
+                {/* <span>{switchChecked ? "Yes" : "No"}</span> */}
               </div>
             </div>
 
             <div className="flex justify-center items-center">
-              <UniversalButton label="SAVE" onClick={handleInputSave} />
+              <UniversalButton label="Save" onClick={handleInputSave} />
             </div>
           </div>
         )}
 
+        {/* {selectedItem?.type === "textArea" && (
+          <div className="mb-2 text-lg space-y-2 mt-3">
+            <InputField
+              label="Edit TextArea"
+              id="textarea_label"
+              placeholder="Enter TextArea Label"
+              tooltipContent="Edit TextArea Label"
+              tooltipPlacement="right"
+              value={textAreaConfig.label}
+              maxLength={20}
+              onChange={(e) => handleTextAreaChange("label", e.target.value)}
+            />
+
+            <InputField
+              label="Placeholder"
+              type="text"
+              placeholder="Enter placeholder for TextArea"
+              tooltipContent="Enter placeholder"
+              tooltipPlacement="right"
+              value={textAreaConfig.placeholder}
+              maxLength={80}
+              onChange={(e) =>
+                handleTextAreaChange("placeholder", e.target.value)
+              }
+            />
+
+            <InputField
+              label="Enter error to display"
+              id="textarea_error"
+              placeholder="Enter Error"
+              tooltipContent="Enter Error for TextArea"
+              tooltipPlacement="right"
+              value={textAreaConfig.error}
+              maxLength={30}
+              onChange={(e) => handleTextAreaChange("error", e.target.value)}
+            />
+
+            <div className="flex gap-8">
+              <InputField
+                label="Min Length"
+                id="textarea_min"
+                type="number"
+                placeholder="Min length"
+                tooltipContent="Enter Min Length"
+                tooltipPlacement="right"
+                value={textAreaConfig.min}
+                onChange={(e) => handleTextAreaChange("min", e.target.value)}
+                autoComplete="off"
+              />
+              <InputField
+                label="Max Length"
+                id="textarea_max"
+                type="number"
+                placeholder="Max length"
+                tooltipContent="Enter Max Length"
+                tooltipPlacement="right"
+                value={textAreaConfig.max}
+                onChange={(e) => handleTextAreaChange("max", e.target.value)}
+                autoComplete="off"
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="textarea_required"
+                className="text-sm font-medium text-gray-700"
+                tooltipContent="Set required field for TextArea"
+                tooltipPlacement="right"
+              >
+                Is TextArea Required?
+              </label>
+              <div className="flex items-center gap-4 mt-1">
+                <Switch
+                  {...switchLabel}
+                  checked={textAreaConfig.required}
+                  onChange={(e) =>
+                    handleTextAreaChange("required", e.target.checked)
+                  }
+                  id="textarea_required"
+                />
+                <span>{textAreaConfig.required ? "Yes" : "No"}</span>
+              </div>
+            </div>
+
+            <div className="flex justify-center items-center">
+              <UniversalButton label="SAVE" onClick={handleTextAreaSave} />
+            </div>
+          </div>
+        )} */}
+
+        {/* NEW */}
+
         {/* Editable Options for Checkboxes */}
         {selectedItem?.type === "checkBox" && (
           <FormControl fullWidth>
-            <Box sx={{ mb: 2, mt: 3 }}>
+            <div className="mb-2, mt-3, space-y-3 ">
               <InputField
                 label="Checkbox Group Label"
                 tooltipContent="Enter Checkbox Group Label "
@@ -1731,7 +2099,25 @@ const EditPanel = ({
                 placeholder="Enter label"
                 fullWidth
               />
-            </Box>
+              <div>
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="right"
+                >
+                  Required
+                </label>
+                <div className="flex items-center gap-2 ">
+                  <Switch
+                    checked={checkboxRequired}
+                    onChange={handleCheckboxRequiredChange}
+                    id="required"
+                  />
+                  <span>{checkboxRequired ? "True" : "False"}</span>
+                </div>
+              </div>
+            </div>
 
             {checkBoxes.map((opt, idx) => {
               const isEditing = idx === checkboxEditIdx;
@@ -1806,7 +2192,7 @@ const EditPanel = ({
                             tooltipPlacement="right"
                             required={true}
                             onChange={handleCheckboxImageChange}
-                            classname=""
+                            ref={checkboxImageInputRef}
                           />
                           <button onClick={handleCheckboxUploadFile}>
                             <FileUploadOutlinedIcon
@@ -1882,7 +2268,7 @@ const EditPanel = ({
         {/* Editable Options for Radio Buttons */}
         {selectedItem?.type === "radioButton" && (
           <FormControl fullWidth>
-            <Box sx={{ mb: 2, mt: 3 }}>
+            <div className="mb-2, mt-3">
               <InputField
                 label="Radio Group Label"
                 tooltipContent="Enter Radio Group Label"
@@ -1892,7 +2278,26 @@ const EditPanel = ({
                 placeholder="Enter label"
                 fullWidth
               />
-            </Box>
+
+              <div>
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="right"
+                >
+                  Required
+                </label>
+                <div className="flex items-center gap-2 ">
+                  <Switch
+                    checked={radioRequired}
+                    onChange={handleRadioRequiredChange}
+                    id="required"
+                  />
+                  <span>{radioRequired ? "True" : "False"}</span>
+                </div>
+              </div>
+            </div>
 
             {radioButtonOptions.map((opt, idx) => {
               const isEditing = idx === radiobtnEditIdx;
@@ -1970,7 +2375,7 @@ const EditPanel = ({
                             tooltipPlacement="right"
                             required
                             onChange={handleRadioImageChange}
-                            className=""
+                            ref={radioImageInputRef}
                           />
                           <button onClick={handleRadioUploadFile}>
                             <FileUploadOutlinedIcon
@@ -2046,7 +2451,7 @@ const EditPanel = ({
         {selectedItem?.type === "dropDown" && (
           <FormControl fullWidth>
             {/* ── Dropdown Label Input ── */}
-            <Box sx={{ mb: 2, mt: 3 }}>
+            <div className=" mb-2, mt-3 space-y-3">
               <InputField
                 label="Label"
                 id="mainlabel"
@@ -2058,7 +2463,26 @@ const EditPanel = ({
                 type="text"
                 fullWidth
               />
-            </Box>
+
+              <div>
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="right"
+                >
+                  Required
+                </label>
+                <div className="flex items-center gap-2 ">
+                  <Switch
+                    checked={dropdownRequired}
+                    onChange={handleDropdownRequiredChange}
+                    id="required"
+                  />
+                  <span>{dropdownRequired ? "True" : "False"}</span>
+                </div>
+              </div>
+            </div>
 
             {/* ── Render Each Option ── */}
             {options.map((opt, idx) => {
@@ -2131,7 +2555,7 @@ const EditPanel = ({
                           tooltipPlacement="right"
                           required
                           onChange={handleDropdownImageChange}
-                        // sx={{ display: "none" }}
+                          ref={dropImageInputRef}
                         />
                         <button onClick={handleDropdownUploadFile}>
                           <FileUploadOutlinedIcon
@@ -2493,13 +2917,32 @@ const EditPanel = ({
         {/* Editable option for Opt In */}
         {selectedItem?.type === "optin" && (
           <>
-            <div className="space-y-3">
+            <div className="space-y-3 mt-3">
               <InputField
                 label="OPT-In Label"
                 type="text"
                 value={optLabel}
                 onChange={(e) => setOptLabel(e.target.value)}
               />
+
+              <div>
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="right"
+                >
+                  Required
+                </label>
+                <div className="flex items-center gap-2 ">
+                  <Switch
+                    checked={optRequired}
+                    onChange={handleOptRequiredChange}
+                    id="required"
+                  />
+                  <span>{optRequired ? "True" : "False"}</span>
+                </div>
+              </div>
 
               {/* <input
                 type="checkbox"
@@ -2699,6 +3142,25 @@ const EditPanel = ({
                 value={maxPhotoUpload}
                 onChange={(e) => setMaxPhotoUpload(e.target.value)}
               />
+
+              <div>
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="right"
+                >
+                  Required
+                </label>
+                <div className="flex items-center gap-2 ">
+                  <Switch
+                    checked={mediaRequired}
+                    onChange={handleMediaRequiredChange}
+                    id="required"
+                  />
+                  <span>{mediaRequired ? "True" : "False"}</span>
+                </div>
+              </div>
 
               <div className="flex justify-center">
                 <UniversalButton label="Save" onClick={handleMediaSave} />

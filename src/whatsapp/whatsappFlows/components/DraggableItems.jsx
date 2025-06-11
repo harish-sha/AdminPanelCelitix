@@ -7,6 +7,7 @@ const DraggableItem = ({ item, onClick }) => {
   const [, drag] = useDrag({
     type: item.type,
     item: { type: item.type },
+
   });
 
   return (
