@@ -16,7 +16,7 @@ export const Variables = ({
   messageContent,
   setMessageContent,
   selectedCardIndex,
-  setIsRefresh
+  setIsRefresh,
 }) => {
   const [variablesData, setVariablesData] = useState([]);
   const MAX_LENGTH = 2000;
@@ -94,7 +94,7 @@ export const Variables = ({
     [messageContent, setMessageContent, MAX_LENGTH]
   );
 
-  const insertEmojiAtIndex = () => { };
+  const insertEmojiAtIndex = () => {};
 
   const handleEmojiClick = useCallback(
     (emoji) => {
@@ -186,7 +186,7 @@ export const Variables = ({
           {messageContent.length}/{MAX_LENGTH}
         </small>
         <button
-          // onClick={addVariable}
+          title="Insert dynamic fields like customer name or appointment date. Format: {{1}}, {{2}}, etc."
           onClick={() => {
             setIsVariableVisible(true);
           }}
