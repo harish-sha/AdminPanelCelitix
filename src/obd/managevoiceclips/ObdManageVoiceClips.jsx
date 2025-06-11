@@ -56,6 +56,7 @@ const ObdManageVoiceClips = () => {
     name: "",
     admin: "",
     user: "",
+    status: ""
   });
 
   const handleChangeEnablePostpaid = (event) => {
@@ -327,16 +328,25 @@ const ObdManageVoiceClips = () => {
           ? item.fileName.toLowerCase().includes(searchValue.name.toLowerCase())
           : true;
 
-        const matchesStatus = searchValue?.user
-          ? item.status === searchValue.user
+        const matchesStatus = searchValue?.userStatus
+          ? item.status.toLowerCase() === searchValue.userStatus
           : true;
+        console.log(matchesStatus, "matchesStatus")
 
         const matchesAdminStatus = searchValue?.admin
           ? item.adminStatus === searchValue.admin
           : true;
 
+
         return matchesName && matchesStatus && matchesAdminStatus;
+        // return  matchesStatus ;
+
       });
+      // console.log(filteredData)
+      // console.log("Item status:", item.status);
+
+
+
 
       let formattedData = [];
       if (filteredData.length > 0) {
@@ -366,6 +376,9 @@ const ObdManageVoiceClips = () => {
     }
   }
 
+
+
+
   useEffect(() => {
     handlefetchAllVoiceClips();
   }, []);
@@ -385,96 +398,159 @@ const ObdManageVoiceClips = () => {
   }
 
 
-   const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
+  const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
   async function handleAudioPlay(row) {
-      try {
-        const res = await fetchVoiceClipUrl(row.id);
-        if (!res.path) return toast.error("Something went wrong");
-        const url = `${BASE_AUDIO_URL}/${res.path}`;
-        console.log(url)
-        setSelectedRow({ ...row, url });
-        setIsOpenPlay(true);
-       
-      } catch (e) {
-        toast.error("Something went wrong", e);
-      }
-      
+    try {
+      const res = await fetchVoiceClipUrl(row.id);
+      if (!res.path) return toast.error("Something went wrong");
+      const url = `${BASE_AUDIO_URL}/${res.path}`;
+      console.log(url)
+      setSelectedRow({ ...row, url });
+      setIsOpenPlay(true);
 
+    } catch (e) {
+      toast.error("Something went wrong", e);
+    }
   }
 
+// savebtn
+ const handleSave = () => {
+  if (selectedOption === "option1") {
+    // Static mode
+    if (!uploadedFile) {
+      toast.error("Please upload a file.");
+      return;
+    }
 
 
+    const fileName = document.querySelector('input[placeholder="Enter File Name"]')?.value;
+    if (!fileName || fileName.trim() === "") {
+      toast.error("Please enter a file name.");
+      return;
+    }
 
+    const staticPayload = {
+      mode: "static",
+      fileName,
+      file: uploadedFile,
+    };
+
+    console.log("Saving Static Data:", staticPayload);
+    // Proceed with API call or state update
+    toast.success("Static data saved successfully.");
+  } else if (selectedOption === "option2") {
+    // Dynamic mode
+    if (!templateName || templateName.trim() === "") {
+      toast.error("Please enter a template name.");
+      return;
+    }
+
+    if (addVariable.length === 0) {
+      toast.error("Please add at least one variable.");
+      return;
+    }
+
+    const variableValues = addVariable.map((v) => v.value.trim()).filter((v) => v);
+    if (variableValues.length === 0) {
+      toast.error("Variables cannot be empty.");
+      return;
+    }
+
+    if (addDynamicFile.length === 0 || !uploadedFile) {
+      toast.error("Please upload at least one file.");
+      return;
+    }
+
+    const dynamicPayload = {
+      mode: "dynamic",
+      templateName,
+      variables: variableValues,
+      files: addDynamicFile, // Update this if each dynamic file entry contains actual file data
+    };
+
+    console.log("Saving Dynamic Data:", dynamicPayload);
+    // Proceed with API call or state update
+    toast.success("Dynamic data saved successfully.");
+  } else {
+    toast.error("Please select a mode (Static or Dynamic).");
+  }
+
+  setIsVisible(false);
+ 
+};
 
 
 
   return (
-    <div className="w-full">
-      <div className="flex items-end justify-between gap-3">
-        <div className="flex items-end gap-2">
-          <div className="w-full sm:w-46 ">
-            <InputField
-              id="obdmanagevoiceclipsfilename"
-              name="obdmanagevoiceclipsfilename"
-              value={searchValue.name}
-              label="File Name"
-              placeholder="File Name"
-              type="text"
-              onChange={(e) =>
-                setSearchValue({ ...searchValue, name: e.target.value })
-              }
-            />
-          </div>
-          <div className="w-full  sm:w-46">
-            <AnimatedDropdown
-              id="obdmanagevoiceclipsadminstatus"
-              name="obdmanagevoiceclipsadminstatus"
-              value={searchValue.admin}
-              label="Admin Status"
-              tooltipContent="Admin Status"
-              tooltipPlacement="right"
-              placeholder="Admin Status"
-              options={[
-                { value: 1, label: "Approved" },
-                { value: 2, label: "Pending" },
-                { value: 3, label: "Disapproved" },
-              ]}
-              onChange={(value) => {
-                setSearchValue({ ...searchValue, admin: value });
-              }}
-            />
-          </div>
-          <div className="w-full sm:w-46">
-            <AnimatedDropdown
-              id="manageuserstatus"
-              name="manageuserstatus"
-              value={searchValue.user}
-              label="User Status"
-              tooltipContent="User Status"
-              tooltipPlacement="right"
-              placeholder="User Status"
-              options={[
-                { value: 1, label: "Active" },
-                { value: 0, label: "Inactive" },
-              ]}
-              onChange={(value) => {
-                setSearchValue({ ...searchValue, user: value });
-              }}
-            />
-          </div>
-          <div>
-            <UniversalButton
-              id="obdvoicesearchbtn"
-              name="obdvoicesearchbtn"
-              placeholder="Search"
-              label="Search"
-              onClick={() => {
-                setIsSearchTriggered(true);
-                handlefetchAllVoiceClips();
-              }}
-              icon={<IoSearch />}
-            />
-          </div>
+    <div className="w-full p-3">
+      <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
+
+        <div className="w-full sm:w-46 ">
+          <InputField
+            id="obdmanagevoiceclipsfilename"
+            name="obdmanagevoiceclipsfilename"
+            value={searchValue.name}
+            label="File Name"
+            placeholder="File Name"
+            type="text"
+            onChange={(e) =>
+              setSearchValue({ ...searchValue, name: e.target.value })
+            }
+          />
+        </div>
+        <div className="w-full  sm:w-46">
+          <AnimatedDropdown
+            id="obdmanagevoiceclipsadminstatus"
+            name="obdmanagevoiceclipsadminstatus"
+            value={searchValue.admin}
+            label="Admin Status"
+            tooltipContent="Admin Status"
+            tooltipPlacement="right"
+            placeholder="Admin Status"
+            options={[
+              { value: 1, label: "Approved" },
+              { value: 2, label: "Pending" },
+              { value: 3, label: "Disapproved" },
+            ]}
+            onChange={(value) => {
+              setSearchValue({ ...searchValue, admin: value });
+            }}
+          />
+        </div>
+        <div className="w-full sm:w-46">
+          <AnimatedDropdown
+            id="manageuserstatus"
+            name="manageuserstatus"
+            value={searchValue.user}
+            label="User Status"
+            tooltipContent="User Status"
+            tooltipPlacement="right"
+            placeholder="User Status"
+            options={[
+              { value: 1, label: "Active" },
+              { value: 0, label: "Inactive" },
+            ]}
+            // onChange={(value) => {
+            //   setSearchValue({ ...searchValue, user: value });
+            // }}
+            value={userStatus}
+            onChange={setUserStatus}
+          />
+        </div>
+
+        <div>
+          <UniversalButton
+            id="obdvoicesearchbtn"
+            name="obdvoicesearchbtn"
+            placeholder="Search"
+            label="Search"
+            onClick={() => {
+              setIsSearchTriggered(true);
+              handlefetchAllVoiceClips();
+            }}
+            icon={<IoSearch />}
+          />
+
         </div>
 
         <div className="flex">
@@ -487,7 +563,9 @@ const ObdManageVoiceClips = () => {
           />
         </div>
       </div>
-      <div className="mt-3">
+
+
+      <div className="mt-5">
         <DataTable
           id={"obdmanagevoiceclips"}
           name={"obdmanagevoiceclips"}
@@ -541,6 +619,7 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
+                  // onChange={(value)=>  setSelecteTransactional(value)}
                   onClick={() => { }}
                 />
                 <label>Transactional</label>
@@ -553,6 +632,7 @@ const ObdManageVoiceClips = () => {
                   value="promotional"
                   checked={selecteTransactional === "promotional"}
                   onChange={handleChangeTransactional}
+                  // onChange={(value)=>  setSelecteTransactional(value)}
                 />
                 <label>Promptional</label>
               </div>
@@ -795,8 +875,17 @@ const ObdManageVoiceClips = () => {
 
                 {/* choose file end */}
               </div>
+
+
             </>
           )}
+
+          <div  className="flex justify-center items-center mt-5">
+            <UniversalButton
+              label="Save"
+              onClick={handleSave}
+            />
+          </div>
         </Dialog>
       </div>
 

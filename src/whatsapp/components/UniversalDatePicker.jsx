@@ -83,7 +83,7 @@ const UniversalDatePicker = ({
                     maxDate={maxDate}
                     views={views}
                     defaultValue={defaultValue || null}
-                    format="dd/MM/yyyy"
+                    format="yyyy-MM-dd"
                     slotProps={{
                         textField: {
                             fullWidth: true,

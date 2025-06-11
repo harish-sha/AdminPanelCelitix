@@ -28,6 +28,10 @@ import { IconButton } from "@mui/material";
 import { fetchDayWiseSummaryObd, fetchSummaryLogsObd, fetchDetailsLogsObd } from "@/apis/obd/obd.js";
 import toast from "react-hot-toast";
 
+import moment from "moment";
+import { exportToExcel } from "@/utils/utills.js";
+
+
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [obdCampaignName, setObdCampaignName] = useState("");
@@ -47,25 +51,31 @@ const ObdCampaignReports = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [dataTable, setDataTable] = useState([])
 
 
 
 
-  const formatDateToDDMMYYYY = (dateStr) => {
+
+  const formatDateToYYYYMMDD = (dateStr) => {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, '0');
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
 
-  const[campaignLogDateFilter,setCampaignLogDateFilter] = useState({
+  const [campaignLogDateFilter, setCampaignLogDateFilter] = useState({
     voiceType: "",
     fromDate: new Date(),
     toDate: new Date(),
-    page: ""
+    page: "",
   })
+
+  console.log(campaignLogDateFilter)
+
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
     fromDate: new Date(),
     toDate: new Date(),
@@ -76,49 +86,104 @@ const ObdCampaignReports = () => {
   // const [isFetching, setIsFetching] = useState(false);
 
 
- 
-  const handleCampaignLog = async () => {
-    const data = {
-      voiceType:campaignLogDateFilter.voiceType || "",
-      queTimeStart: formatDateToDDMMYYYY(campaignLogDateFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY(campaignLogDateFilter.toDate),
-      page:campaignLogDateFilter.page ,
-    };
 
-    try {
-      setIsFetching(true);
-      const res = await fetchDetailsLogsObd(data);
-      console.log(res);
+  const [allObdCampRows, setAllObdCampRows] = useState([]);
+  const [filteredObdCampRows, setFilteredObdCampRows] = useState([]);
 
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
-        { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
-        { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
-      ]);
-      setRows(
-        Array.isArray(res)
-        ? res.map((item, i) => ({
-          id: i+1,
-          sn:i+1,
-          ...item,
-        }))
-        : []
-      );
-    }catch(err) {
-      console.log("Fetching CampaignLog Data error", err);
-      toast.error("Something went wrong while fetching data.")
-    }finally{
-      setIsFetching(false);
-    }
-  }
+  const [campaignFilteredObdRow, setCampaignFilteredRow] = useState({
+    obdCampaignName: "",
+    formatDateToYYYYMMDD: "",
+    campaignType: "",
+    mobno: "",
+
+  });
+
+
+  // const handleCampaignLog = async (e) => {
+  //   const data = {
+  //     voiceType: campaignLogDateFilter.voiceType || "",
+  //     queTimeStart: moment(campaignLogDateFilter.formatDateToYYYYMMDD).format('YYYY-MM-DD'),
+  //     queTimeEnd: moment(campaignLogDateFilter.formatDateToYYYYMMDD).format('YYYY-MM-DD'),
+  //     page:"1",
+  //   };
+
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await fetchDetailsLogsObd(data);
+  //     console.log(res);
+
+  //     setColumns([
+  //       { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
+  //       { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
+  //       { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+  //       { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
+  //       { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
+  //     ]);
+  //     setRows(
+  //       Array.isArray(res)
+  //         ? res.map((item, i) => ({
+  //           id: i + 1,
+  //           sn: i + 1,
+  //           ...item,
+  //         }))
+  //         : []
+  //     );
+  //   } catch (err) {
+  //     console.log("Fetching CampaignLog Data error", err);
+  //     toast.error("Something went wrong while fetching data.")
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+
+  // }
+
+
+
+
+
+
+  const handleCampaignLog = () => {
+
+    console.log("Filter Values:", campaignFilteredObdRow);
+
+    const filteredData = obdCampRows.filter((row) => {
+      // console.log("row", row);
+
+      const matchName = obdCampaignName
+        ? row.campaignName.toLowerCase().includes(obdCampaignName.toLowerCase().trim())
+        : true;
+      // console.log("matchName", matchName);
+
+      const matchDate = obdcampaigndate
+        ? row.date === moment(obdcampaigndate).format("YYYY-MM-DD")
+        : true;
+      // console.log("matchDate ", matchDate);
+
+      const matchType = obdCampaignType
+        ? row.type?.toLowerCase() === obdCampaignType.toLowerCase()
+        : true;
+      // console.log("obdCampaignType", obdCampaignType)
+
+      const matchMobno = obdCampaignNumber
+        ? row.mobno?.toString().includes(obdCampaignNumber.toString())
+        : true;
+
+      return matchName && matchType && matchMobno && matchDate;
+
+    });
+    setDataTable(filteredData)
+
+    console.log("Filtered Data:", filteredData);
+    setFilteredRows(filteredData);
+
+  };
+
 
 
   const handleDayWiseSummary = async () => {
     const data = {
-      queTimeStart: formatDateToDDMMYYYY(daywiseDataToFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY(daywiseDataToFilter.toDate),
+      queTimeStart: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format("YYYY-MM-DD"),
+      queTimeEnd: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format("YYYY-MM-DD"),
     };
 
     try {
@@ -158,12 +223,12 @@ const ObdCampaignReports = () => {
   ];
 
   // ✅ Date formatting helper
-  const formatDateToDDMMYYYY2 = (date) => {
+  const formatDateToYYYYMMDD2 = (date) => {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, "0");
     const month = String(d.getMonth() + 1).padStart(2, "0");
     const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   const [summaryDataToFilter, setSummaryDataToFilter] = useState({
@@ -179,8 +244,8 @@ const ObdCampaignReports = () => {
 
   const handleSummaryLogs = async () => {
     const data = {
-      queTimeStart: formatDateToDDMMYYYY2(summaryDataToFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY2(summaryDataToFilter.toDate),
+      queTimeStart: moment.format("YYYY-MM-DD"),
+      queTimeEnd: moment.format("YYYY-MM-DD"),
       voiceType: summaryDataToFilter.voiceType || "",
     };
 
@@ -284,17 +349,52 @@ const ObdCampaignReports = () => {
     setValue(newValue);
   };
 
-  const handleInputChange = (event) => {
-    setObdCampaignName(event.target.value);
-  };
+  // const handleInputChange = (event) => {
+  //   setObdCampaignName(event.target.value);
+  // };
 
-  const handleNumberChange = (event) => {
-    setObdCampaignNumber(event.target.value);
-  };
+  // const handleNumberChange = (event) => {
+  //   setObdCampaignNumber(event.target.value);
+  // };
 
   const handleExportBtn = () => {
+
     setVisibledialog(true);
+    
+    const col = obdCampColumns.map((col) => col.field);
+    // console.log(col, "col")
+
+    const row = dataTable.map((obdCampRows, index) =>
+      col.map((field) => {
+        if (field === "sn") return index + 1;
+        if (field === "message") {
+          if (obdCampRows.messageType === "USER_FILE") {
+            return obdCampRows.fileUri;
+          } else if (obdCampRows.messageType === "LOCATION") {
+            return `${obdCampRows.latitude}, ${obdCampRows.longitude}`;
+          }
+
+        }
+        return obdCampRows[field] ?? "";
+        
+      })
+      
+    );
+
+    
+
+    const from = campaignLogDateFilter?.fromDate || "from";
+    const to = campaignLogDateFilter?.toDate || "to";
+    const name = `${from}_${to}_campaignLogDateFilterReport`;
+
+    
+    exportToExcel(col, row, name);
+    console.log(row);
+    toast.success("File Downloaded Successfully");
   };
+
+
+
 
   const handleSearchBtn = () => { };
 
@@ -314,9 +414,18 @@ const ObdCampaignReports = () => {
     setCustomdialognumber(e.target.value);
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = (e) => {
+      setVisibledialog(false);
+       setSelectedOption(value);
+       setCampaign(e.target.value)
+        
+    
+    toast.success("Export Successfully")
+  };
 
   const handleCustomDialogSubmithBtn = () => { };
+
+
 
 
   const obdCampColumns = [
@@ -368,7 +477,7 @@ const ObdCampaignReports = () => {
       campaignName: 'diwali',
       type: 'Transactional',
       template: 'Simple Broadcast',
-      date: '12/10/2024',
+      date: '2024-10-12',
       status: 'Success',
       action: 'True',
     },
@@ -378,7 +487,7 @@ const ObdCampaignReports = () => {
       campaignName: 'holi',
       type: 'Promotional',
       template: 'Text-2-Speech',
-      date: '13/10/2024',
+      date: '2024-10-13',
       status: 'Success',
       action: 'True',
     },
@@ -388,7 +497,7 @@ const ObdCampaignReports = () => {
       campaignName: 'christmas',
       type: 'Transactional',
       template: 'Simple Broadcast',
-      date: '15/10/2024',
+      date: '2024-10-15',
       status: 'Success',
       action: 'True',
     },
@@ -398,7 +507,7 @@ const ObdCampaignReports = () => {
       campaignName: 'easter',
       type: 'Promotional',
       template: 'Multi Broadcast',
-      date: '13/10/2024',
+      date: '2024-10-13',
       status: 'Success',
       action: 'True',
     },
@@ -408,7 +517,7 @@ const ObdCampaignReports = () => {
       campaignName: 'new year',
       type: 'Transactional',
       template: 'Simple Broadcast',
-      date: '01/01/2025',
+      date: '2025-01-01',
       status: 'Success',
       action: 'True',
     },
@@ -418,7 +527,7 @@ const ObdCampaignReports = () => {
       campaignName: 'thanksgiving',
       type: 'Promotional',
       template: 'Text-2-Speech',
-      date: '25/11/2024',
+      date: '2024-11-22',
       status: 'Success',
       action: 'True',
     },
@@ -428,7 +537,7 @@ const ObdCampaignReports = () => {
       campaignName: 'eid',
       type: 'Transactional',
       template: 'Multi Broadcast',
-      date: '10/04/2024',
+      date: '2024-04-10',
       status: 'Success',
       action: 'True',
     },
@@ -438,7 +547,7 @@ const ObdCampaignReports = () => {
       campaignName: 'halloween',
       type: 'Promotional',
       template: 'Simple Broadcast',
-      date: '31/10/2024',
+      date: '2024-10-31',
       status: 'Success',
       action: 'True',
     },
@@ -448,7 +557,7 @@ const ObdCampaignReports = () => {
       campaignName: 'rakhi',
       type: 'Transactional',
       template: 'Multi Broadcast',
-      date: '19/08/2024',
+      date: '2024-08-19',
       status: 'Success',
       action: 'True',
     },
@@ -458,7 +567,7 @@ const ObdCampaignReports = () => {
       campaignName: 'pongal',
       type: 'Promotional',
       template: 'Text-2-Speech',
-      date: '14/01/2025',
+      date: '2025-01-14',
       status: 'Success',
       action: 'True',
     },
@@ -468,7 +577,7 @@ const ObdCampaignReports = () => {
       campaignName: 'lohri',
       type: 'Transactional',
       template: 'Simple Broadcast',
-      date: '13/01/2025',
+      date: '2025-01-13',
       status: 'Success',
       action: 'True',
     },
@@ -478,7 +587,7 @@ const ObdCampaignReports = () => {
       campaignName: 'navratri',
       type: 'Promotional',
       template: 'Multi Broadcast',
-      date: '03/10/2024',
+      date: '2024-10-03',
       status: 'Success',
       action: 'True',
     },
@@ -488,7 +597,7 @@ const ObdCampaignReports = () => {
       campaignName: 'guru purab',
       type: 'Transactional',
       template: 'Text-2-Speech',
-      date: '08/11/2024',
+      date: '2024-11-08',
       status: 'Success',
       action: 'True',
     },
@@ -498,7 +607,7 @@ const ObdCampaignReports = () => {
       campaignName: 'valentine’s day',
       type: 'Promotional',
       template: 'Simple Broadcast',
-      date: '14/02/2025',
+      date: '2025-02-14',
       status: 'Success',
       action: 'True',
     },
@@ -508,7 +617,7 @@ const ObdCampaignReports = () => {
       campaignName: 'independence day',
       type: 'Transactional',
       template: 'Multi Broadcast',
-      date: '15/08/2024',
+      date: '2024-08-15',
       status: 'Success',
       action: 'True',
     },
@@ -518,7 +627,7 @@ const ObdCampaignReports = () => {
       campaignName: 'republic day',
       type: 'Promotional',
       template: 'Text-2-Speech',
-      date: '26/01/2025',
+      date: '2025-01-26',
       status: 'Success',
       action: 'True',
     },
@@ -528,7 +637,7 @@ const ObdCampaignReports = () => {
       campaignName: 'ganesh chaturthi',
       type: 'Transactional',
       template: 'Simple Broadcast',
-      date: '07/09/2024',
+      date: '2024-09-07',
       status: 'Success',
       action: 'True',
     },
@@ -538,11 +647,25 @@ const ObdCampaignReports = () => {
       campaignName: 'baisakhi',
       type: 'Promotional',
       template: 'Multi Broadcast',
-      date: '14/04/2024',
+      date: '2024-04-14',
       status: 'Success',
       action: 'True',
     }
   ];
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
 
   // const ObdSummaryRows = [
   //   {
@@ -799,7 +922,7 @@ const ObdCampaignReports = () => {
                       name="obdcampaignname"
                       label="Campaign Name"
                       value={obdCampaignName}
-                      onChange={handleInputChange}
+                      onChange={(e) => setObdCampaignName(e.target.value)}
                       placeholder="Campaign Name"
                       tooltipContent="Enter your Campaign Name"
                     />
@@ -811,7 +934,7 @@ const ObdCampaignReports = () => {
                       name="obdCampaignNumber"
                       label="Mobile Number"
                       value={obdCampaignNumber}
-                      onChange={handleNumberChange}
+                      onChange={(e) => setObdCampaignNumber(e.target.value)}
                       placeholder="Mobile number"
                       type="number"
                       tooltipContent="Enter Your Mobile Number"
@@ -839,6 +962,8 @@ const ObdCampaignReports = () => {
                       id="obdcampaigndate"
                       name="obdcampaigndate"
                       label="Date"
+                      value={campaignLogDateFilter}
+                      onChange={setCampaignLogDateFilter}
                     />
                   </div>
 
@@ -848,6 +973,7 @@ const ObdCampaignReports = () => {
                       name="obdSearchBtn"
                       label="Search"
                       onClick={handleCampaignLog}
+
                       icon={<IoSearch />}
                     />
                   </div>
@@ -857,8 +983,9 @@ const ObdCampaignReports = () => {
                   <DataTable
                     id="whatsapp-rate-table"
                     name="whatsappRateTable"
+                    data={dataTable}
                     col={obdCampColumns}
-                    rows={obdCampRows}
+                    rows={filteredRows}
                     selectedRows={selectedRows}
                     setSelectedRows={setSelectedRows}
                   />
@@ -912,19 +1039,23 @@ const ObdCampaignReports = () => {
                 </div>
 
                 {/* Table Section */}
-                <DataTable
-                  id="obd-daywise-table"
-                  name="obdDayWiseTable"
-                  col={columns}
-                  rows={rows}
-                  loading={isFetching}
-                />
+                <div className="mt-5">
+                  <DataTable
+                    id="obd-daywise-table"
+                    name="obdDayWiseTable"
+                    col={columns}
+                    rows={rows}
+                    loading={isFetching}
+                  />
+                </div>
+
+
               </div>
             </CustomTabPanel>
             <CustomTabPanel value={value} index={2}>
-              <div className="w-full p-4">
+              <div className="w-full">
                 {/* Filters */}
-                <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end pb-5">
+                <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
                       label="From Date"
@@ -973,13 +1104,17 @@ const ObdCampaignReports = () => {
                 </div>
 
                 {/* Table */}
-                <DataTable
-                  id="obd-summary-table"
-                  name="obdSummaryTable"
-                  col={summarycolumns}
-                  rows={summaryrows}
-                  loading={isFetching}
-                />
+                <div className="mt-5">
+                  <DataTable
+                    id="obd-summary-table"
+                    name="obdSummaryTable"
+                    col={summarycolumns}
+                    rows={summaryrows}
+                    loading={isFetching}
+                  />
+                </div>
+
+
               </div>
             </CustomTabPanel>
           </Box>
@@ -993,6 +1128,7 @@ const ObdCampaignReports = () => {
           setVisibledialog(false);
         }}
         draggable={false}
+        
       >
         <div className="flex gap-4">
           <div className="cursor-pointer">
@@ -1763,7 +1899,7 @@ const ObdCampaignReports = () => {
                   id="customDialogSubmithBtn"
                   name="customDialogSubmithBtn"
                   label="Submit"
-                  onClick={handleCustomDialogSubmithBtn}
+                  onClick={handlecampaignDialogSubmithBtn}
                 />
               </div>
             </div>

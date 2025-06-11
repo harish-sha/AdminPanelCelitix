@@ -18,7 +18,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 1,
             id: 1,
-            date: "20/03/2025",
+            date: "2025-20-03",
             totalunits: "3",
             blocked: "0",
             totalsent: "1",
@@ -28,7 +28,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 2,
             id: 2,
-            date: "21/03/2025",
+            date: "2025-21-03",
             totalunits: "5",
             blocked: "2",
             totalsent: "3",
@@ -38,7 +38,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 3,
             id: 3,
-            date: "22/03/2025",
+            date: "2025-22-03",
             totalunits: "6",
             blocked: "1",
             totalsent: "5",
@@ -48,7 +48,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 4,
             id: 4,
-            date: "23/03/2025",
+            date: "2025-23-03",
             totalunits: "7",
             blocked: "2",
             totalsent: "5",
@@ -58,7 +58,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 5,
             id: 5,
-            date: "24/03/2025",
+            date: "2025-24-03",
             totalunits: "4",
             blocked: "0",
             totalsent: "4",
@@ -68,7 +68,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 6,
             id: 6,
-            date: "25/03/2025",
+            date: "2025-25-03",
             totalunits: "8",
             blocked: "3",
             totalsent: "5",
@@ -78,7 +78,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 7,
             id: 7,
-            date: "26/03/2025",
+            date: "2025-26-03",
             totalunits: "6",
             blocked: "2",
             totalsent: "4",
@@ -88,7 +88,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 8,
             id: 8,
-            date: "27/03/2025",
+            date: "2025-03-27",
             totalunits: "9",
             blocked: "1",
             totalsent: "8",
@@ -98,7 +98,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 9,
             id: 9,
-            date: "28/03/2025",
+            date: "2025-03-28",
             totalunits: "10",
             blocked: "3",
             totalsent: "7",
@@ -108,7 +108,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 10,
             id: 10,
-            date: "29/03/2025",
+            date: "2025-03-29",
             totalunits: "5",
             blocked: "1",
             totalsent: "4",
@@ -118,7 +118,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 11,
             id: 11,
-            date: "30/03/2025",
+            date: "2025-03-30",
             totalunits: "7",
             blocked: "2",
             totalsent: "5",
@@ -128,7 +128,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 12,
             id: 12,
-            date: "31/03/2025",
+            date: "2025-03-31",
             totalunits: "6",
             blocked: "1",
             totalsent: "5",
@@ -138,7 +138,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 13,
             id: 13,
-            date: "01/04/2025",
+            date: "2025-04-01",
             totalunits: "8",
             blocked: "2",
             totalsent: "6",
@@ -148,7 +148,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 14,
             id: 14,
-            date: "02/04/2025",
+            date: "2025-04-02",
             totalunits: "9",
             blocked: "3",
             totalsent: "6",
@@ -158,7 +158,7 @@ const ObdDaySummaryTable = (id, name) => {
         {
             sn: 15,
             id: 15,
-            date: "03/04/2025",
+            date: "2025-04-03",
             totalunits: "7",
             blocked: "2",
             totalsent: "5",

@@ -75,6 +75,7 @@ export const DataTable = ({
   setSelectedRows,
   selectedRows,
   height = 558,
+  data =[],
 
   checkboxSelection = false,
 }) => {

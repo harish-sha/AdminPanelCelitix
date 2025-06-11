@@ -106,20 +106,7 @@ const CampaignScheduleTable = ({ id, name, data = [] }) => {
 
 
 
-    // fetchschedule data
-    useEffect(() => {
-        const fetchScheduleData = async () => {
-            try {
-                const res = await scheduledata();
-                console.log("Fetched schedule data:", res);
-                setScheduleData(res);
-            } catch (err) {
-                toast.error("Error Fetching Schedule data");
-                console.error(err);
-            }
-        };
-        fetchScheduleData();
-    }, []);
+
 
 
 
@@ -138,17 +125,6 @@ const CampaignScheduleTable = ({ id, name, data = [] }) => {
 
 
 
-    useEffect(() => {
-    const scheduleMap = {};
-
-    scheduleData.forEach((item) => {
-        if (item.campaignSrno) {
-            scheduleMap[item.campaignSrno] = true; 
-        }
-    });
-
-    setCampaignScheduleMap(scheduleMap);
-}, [scheduleData]);
 
 
     const handleCancel = async (row) => {
@@ -164,51 +140,6 @@ const CampaignScheduleTable = ({ id, name, data = [] }) => {
         } catch (err) {
             console.error("Cancel error:", err);
             toast.error("Failed to cancel schedule");
-        }
-    };
-
-
-
-    const handleSchedule = async (row) => {
-        const campaignId = row.campaignSrno;
-
-        try {
-            const data = {
-                campaignSrno: campaignId,
-
-            };
-
-            const response = await createschedule(data);
-            toast.success("Campaign scheduled successfully!");
-
-
-            const updatedData = await scheduledata();
-            setScheduleData(updatedData);
-        } catch (error) {
-            console.error("Error scheduling campaign:", error);
-            toast.error("Failed to schedule campaign");
-        }
-    };
-
-
-
-    const handleView = async (row) => {
-        const id = row.id;
-
-        // Reset for this row
-        setDropdownOpenId(null);
-
-        try {
-            const res = await fetchCampaignBySrno(row.campaignSrno);
-
-            setCampaignInfoMap((prev) => ({
-                ...prev,
-                [id]: res || null,
-            }));
-
-            setDropdownOpenId(id); // Open only after data is ready
-        } catch (e) {
-            console.error("Error fetching campaign details:", e);
         }
     };
 
@@ -272,115 +203,17 @@ const CampaignScheduleTable = ({ id, name, data = [] }) => {
             headerName: "Action",
             flex: 1,
             minWidth: 150,
-            renderCell: (params) => (
-                <>
-                    <CustomTooltip title="View Campaign" placement="top" arrow={true}>
-                        <IconButton
-                            className="text-xs"
-                            ref={(el) => {
-                                if (el) dropdownButtonRefs.current[params.row.id] = el;
-                            }}
-                            onClick={() => handleView(params.row)}
-                        >
-                            <InfoOutlinedIcon sx={{ fontSize: "1.2rem", color: "green" }} />
-                        </IconButton>
-                    </CustomTooltip>
-
-                    {
-                        campaignScheduleMap[params.row.campaignSrno] ? (
-                            <CustomTooltip title="Cancel Schedule" placement="top" arrow={true}>
-                                <IconButton
-                                    onClick={() => handleCancel(params.row)}
-                                >
-                                    <CancelOutlinedIcon sx={{ fontSize: "1.2rem", color: "red" }} />
-                                </IconButton>
-                            </CustomTooltip>
-                        ) : (
-                            <CustomTooltip title="Schedule Campaign" placement="top" arrow={true}>
-                                <IconButton
-                                    onClick={() => handleSchedule(params.row)}
-                                >
-                                    <EditNoteOutlinedIcon sx={{ fontSize: "1.2rem", color: "blue" }} />
-                                </IconButton>
-                            </CustomTooltip>
-                        )
-                    }
-
-
-
-
-
-
-
-
-
-                    {/* <InfoPopover
-            anchorEl={dropdownButtonRefs.current[params.row.id]}
-            open={dropdownOpenId === params.row.id}
-            onClose={closeDropdown}
-          >
-            {campaignInfoMap[params.row.id] &&
-              campaignInfoMap[params.row.id][0] ? (
-              <div className="w-[280px] max-w-full">
-                <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
-                  {[
-                    { label: "Total", key: "total" },
-                    { label: "Block", key: "block" },
-                    { label: "Failed", key: "failed" },
-                    { label: "Pending", key: "pending" },
-                    { label: "Submitted", key: "submitted" },
-                    { label: "Sent", key: "sent" },
-                    { label: "Delivered", key: "delivered" },
-                    { label: "Read", key: "read" },
-                    { label: "Source", key: "source" },
-                    // { label: "Charged Unit", key: "chargedUnit" },
-                    // { label: "Block Count", key: "blockCount" },
-                    // { label: "Busy", key: "busy" },
-                    // { label: "Busy Count", key: "busyCount" },
-                    // { label: "Delivered Count", key: "deliveredCount" },
-                    // { label: "Failed Count", key: "failedCount" },
-                    // { label: "Pending Count", key: "pendingCount" },
-                    // {
-                    //   label: "Pending Report Count",
-                    //   key: "pendingReportCount",
-                    // },
-                    // { label: "Read Count", key: "readCount" },
-                    // { label: "Sent Count", key: "sentCount" },
-                    // { label: "Undelivered", key: "undelivered" },
-                    // { label: "Undelivered Count", key: "undeliveredCount" },
-                  ].map(({ label, key }) => (
-                    <React.Fragment key={key}>
-                      <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
-                        {label}
-                      </div>
-                      <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
-                        {campaignInfoMap[params.row.id][0]?.[key] ?? "N/A"}
-                      </div>
-                    </React.Fragment>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="text-sm text-gray-500">No Data Available</div>
-            )}
-          </InfoPopover> */}
-
-                    <CustomTooltip
-                        title="Campaign Detail Report"
-                        placement="top"
-                        arrow={true}
-                    >
-                        <IconButton onClick={() => handleSummaryReport(params.row)}>
-                            <DescriptionOutlinedIcon
-                                sx={{
-                                    fontSize: "1.2rem",
-                                    color: "gray",
-                                }}
-                            />
-                        </IconButton>
-                    </CustomTooltip>
-                </>
-            ),
+            renderCell: (params) =>
+            ({
+                // campaignScheduleMap[params.row.campaignSrno]?(
+                //             <CustomTooltip title = "Cancel Schedule" placement = "top" arrow = { true} >
+                //         <IconButton
+                //             onClick={() => handleCancel(params.row)}>
+                //             <CancelOutlinedIcon sx={{ fontSize: "1.2rem", color: "red" }} />
+                //         </IconButton>
+                //             </CustomTooltip >
+            })
+                    
         },
 
 
@@ -389,129 +222,116 @@ const CampaignScheduleTable = ({ id, name, data = [] }) => {
 
     ];
 
-    const rows = Array.isArray(data)
-        ? data.map((item, index) => ({
-            id: index + 1,
-            sn: index + 1,
-            createdOn: item.queTime || "N/A",
-            campaignName: item.campaignName || "N/A",
-            templateName: item.templateName || "N/A",
-            templateCategory: item.templateCategory || "N/A",
-            templateType: item.templateType || "N/A",
-            status: item.status || "N/A",
-            totalAudience: item.totalAudience || "0",
-            campaignSrno: item.campaign_srno,
-        }))
-        : [];
 
-    const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
-    const CustomFooter = () => {
-        return (
-            <GridFooterContainer
+const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+
+const CustomFooter = () => {
+    return (
+        <GridFooterContainer
+            sx={{
+                display: "flex",
+                flexWrap: "wrap",
+                justifyContent: {
+                    xs: "center",
+                    lg: "space-between",
+                },
+                alignItems: "center",
+                padding: 1,
+                gap: 2,
+                overflowX: "auto",
+            }}
+        >
+            <Box
                 sx={{
                     display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: {
-                        xs: "center",
-                        lg: "space-between",
-                    },
                     alignItems: "center",
-                    padding: 1,
-                    gap: 2,
-                    overflowX: "auto",
+                    flexWrap: "wrap",
+                    gap: 1.5,
                 }}
             >
-                <Box
-                    sx={{
-                        display: "flex",
-                        alignItems: "center",
-                        flexWrap: "wrap",
-                        gap: 1.5,
-                    }}
-                >
-                    {selectedRows.length > 0 && (
-                        <Typography
-                            variant="body2"
-                            sx={{
-                                borderRight: "1px solid #ccc",
-                                paddingRight: "10px",
-                            }}
-                        >
-                            {selectedRows.length} Rows Selected
-                        </Typography>
-                    )}
-
-                    <Typography variant="body2">
-                        Total Records: <span className="font-semibold">{rows.length}</span>
+                {selectedRows.length > 0 && (
+                    <Typography
+                        variant="body2"
+                        sx={{
+                            borderRight: "1px solid #ccc",
+                            paddingRight: "10px",
+                        }}
+                    >
+                        {selectedRows.length} Rows Selected
                     </Typography>
-                </Box>
+                )}
 
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: { xs: "100%", sm: "auto" },
-                    }}
-                >
-                    <CustomPagination
-                        totalPages={totalPages}
-                        paginationModel={paginationModel}
-                        setPaginationModel={setPaginationModel}
-                    />
-                </Box>
-            </GridFooterContainer>
-        );
-    };
+                <Typography variant="body2">
+                    Total Records: <span className="font-semibold">{rows.length}</span>
+                </Typography>
+            </Box>
 
-    return (
-        <Paper sx={{ height: 558 }} id={id} name={name}>
-            <DataGrid
-                id={id}
-                name={name}
-                rows={rows}
-                columns={columns}
-                initialState={{ pagination: { paginationModel } }}
-                pageSizeOptions={[10, 20, 50]}
-                pagination
-                paginationModel={paginationModel}
-                onPaginationModelChange={setPaginationModel}
-                // checkboxSelection
-                rowHeight={45}
-                slots={{
-                    footer: CustomFooter,
-                    noRowsOverlay: CustomNoRowsOverlay,
-                }}
-                slotProps={{ footer: { totalRecords: rows.length } }}
-                onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-                disableRowSelectionOnClick
-                // autoPageSize
-                disableColumnResize
-                disableColumnMenu
+            <Box
                 sx={{
-                    border: 0,
-                    "& .MuiDataGrid-cellCheckbox": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-cell": {
-                        outline: "none !important",
-                    },
-                    "& .MuiDataGrid-columnHeaders": {
-                        color: "#193cb8",
-                        fontSize: "14px",
-                        fontWeight: "bold !important",
-                    },
-                    "& .MuiDataGrid-row--borderBottom": {
-                        backgroundColor: "#e6f4ff !important",
-                    },
-                    "& .MuiDataGrid-columnSeparator": {
-                        // display: "none",
-                        color: "#ccc",
-                    },
+                    display: "flex",
+                    justifyContent: "center",
+                    width: { xs: "100%", sm: "auto" },
                 }}
-            />
-        </Paper>
+            >
+                <CustomPagination
+                    totalPages={totalPages}
+                    paginationModel={paginationModel}
+                    setPaginationModel={setPaginationModel}
+                />
+            </Box>
+        </GridFooterContainer>
     );
+};
+
+return (
+    <Paper sx={{ height: 558 }} id={id} name={name}>
+        <DataGrid
+            id={id}
+            name={name}
+            rows={rows}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            pageSizeOptions={[10, 20, 50]}
+            pagination
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{
+                footer: CustomFooter,
+                noRowsOverlay: CustomNoRowsOverlay,
+            }}
+            slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
+            disableRowSelectionOnClick
+            // autoPageSize
+            disableColumnResize
+            disableColumnMenu
+            sx={{
+                border: 0,
+                "& .MuiDataGrid-cellCheckbox": {
+                    outline: "none !important",
+                },
+                "& .MuiDataGrid-cell": {
+                    outline: "none !important",
+                },
+                "& .MuiDataGrid-columnHeaders": {
+                    color: "#193cb8",
+                    fontSize: "14px",
+                    fontWeight: "bold !important",
+                },
+                "& .MuiDataGrid-row--borderBottom": {
+                    backgroundColor: "#e6f4ff !important",
+                },
+                "& .MuiDataGrid-columnSeparator": {
+                    // display: "none",
+                    color: "#ccc",
+                },
+            }}
+        />
+    </Paper>
+);
 };
 
 export default CampaignScheduleTable;
