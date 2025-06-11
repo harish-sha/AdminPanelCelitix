@@ -1,422 +1,3 @@
-import React, { useState, useEffect } from "react";
-
-import usePagination from "@mui/material/usePagination";
-import { styled } from "@mui/material/styles";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { Paper, Typography, Box } from "@mui/material";
-import CustomNoRowsOverlay from "../../whatsapp/components/CustomNoRowsOverlay";
-import toast from "react-hot-toast";
-import { useLocation } from "react-router-dom";
-import CustomTooltip from '../../whatsapp/components/CustomTooltip';
-import { IconButton, Popper, Button } from '@mui/material';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { Table, TableBody, TableCell, TableRow } from '@mui/material';
-
-import InputField from "../../whatsapp/components/InputField.jsx";
-import UniversalButton from "../../whatsapp/components/UniversalButton.jsx";
-
-import { getObdDetailedLogs } from "../../apis/Obd/obd"
-
-
-const PaginationList = styled("ul")({
-  listStyle: "none",
-  padding: 0,
-  margin: 0,
-  display: "flex",
-  gap: "8px",
-});
-
-const CustomPagination = ({
-  totalPages,
-  paginationModel,
-  setPaginationModel,
-}) => {
-  const { items } = usePagination({
-    count: totalPages,
-    page: paginationModel.page + 1,
-    onChange: (_, newPage) =>
-      setPaginationModel({ ...paginationModel, page: newPage - 1 }),
-  });
-
-  return (
-    <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-      <PaginationList>
-        {items.map(({ page, type, selected, ...item }, index) => {
-          let children = null;
-
-          if (type === "start-ellipsis" || type === "end-ellipsis") {
-            children = "…";
-          } else if (type === "page") {
-            children = (
-              <Button
-                key={index}
-                variant={selected ? "contained" : "outlined"}
-                size="small"
-                sx={{ minWidth: "27px" }}
-                {...item}
-              >
-                {page}
-              </Button>
-            );
-          } else {
-            children = (
-              <Button
-                key={index}
-                variant="outlined"
-                size="small"
-                {...item}
-                sx={{}}
-              >
-                {type === "previous" ? "Previous" : "Next"}
-              </Button>
-            );
-          }
-
-          return <li key={index}>{children}</li>;
-        })}
-      </PaginationList>
-    </Box>
-  );
-};
-
-const ObdDetailLogs = ({
-  //   id,
-  //   name,
-  //   col,
-  //   rows,
-  setSelectedRows,
-  selectedRows,
-
-}) => {
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
-
-  const [details, setDetails] = useState(null)
-  const [obdNumber, setObdNumber] = useState(null)
-
-
-  const location = useLocation();
-  const { campaignSrNo, id, name } = location.state || {};
-
-
-  useEffect(() => {
-    if (!campaignSrNo) return;
-    console.log("iam", campaignSrNo)
-    const fetchData = async () => {
-      const data = await getObdDetailedLogs(campaignSrNo);
-      console.log("im details", data)
-      console.log("data", data)
-      setDetails(data?.data);
-      console.log("i am after state", details)
-    };
-    fetchData();
-  }, []);
-
-
-  useEffect(() => {
-    console.log("details updated", details);
-    console.log("id", id);
-    console.log("name", name);
-  }, [details]);
-
-
-  const rows = Array.isArray(details)
-    ? details.map((item, index) => ({
-      id: index + 1,
-      sn: index + 1,
-      campaignName: item.campaignName,
-      mobileNumber: item.mobileNo,
-      unit: item.unit,
-      chargedUnit: item.chargedUnit,
-      sentTime: "N/A",
-      deliveryTime: "N/A",
-      deliveryStatus: item.status,
-      callDuration: item.callDuration,
-      retry: item.retryCount,
-      keyPress: "N/A",
-      action: "N/A",
-      campaignType: item.campaignType,
-      smsCount: item.smsCount,
-      source: item.source,
-      voiceType: item.voiceType,
-      processFlag: item.processFlag,
-      queTime: item.queTime,
-      campaignSrno: item.campaignSrno,
-      uniqueId: item.uniqueId,
-      isSchedule: item.isSchedule
-    }))
-    : [];
-
-
-
-
-
-  const columns = [
-    { field: 'sn', headerName: 'S.No', flex: 1, minWidth: 60 },
-    { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 150 },
-    { field: 'mobileNumber', headerName: 'Mobile No.', flex: 1, minWidth: 120 },
-    { field: 'unit', headerName: 'Unit', flex: 1, minWidth: 60 },
-    { field: 'chargedUnit', headerName: 'Charged Unit', flex: 1, minWidth: 120 },
-    { field: 'sentTime', headerName: 'Sent Time', flex: 1, minWidth: 100 },
-    { field: 'deliveryTime', headerName: 'Delivery Time', flex: 1, minWidth: 120 },
-    { field: 'deliveryStatus', headerName: 'Delivery Status', flex: 1, minWidth: 130 },
-    { field: 'callDuration', headerName: 'Call Duration', flex: 1, minWidth: 120 },
-    { field: 'retry', headerName: 'Retry', flex: 1, minWidth: 60 },
-    { field: 'keyPress', headerName: 'Key Press', flex: 1, minWidth: 100 },
-    { field: 'action', headerName: 'Action', flex: 1, minWidth: 80 },
-
-    {
-      field: 'more',
-      headerName: 'More',
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params) => {
-        const [anchorEl, setAnchorEl] = useState(null);
-        const [open, setOpen] = useState(false);
-
-        const handleMouseEnter = (event) => {
-          setAnchorEl(event.currentTarget);
-          setOpen(true);
-        };
-
-        const handleMouseLeave = () => {
-          setOpen(false);
-        };
-
-        return (
-          <>
-            <IconButton
-              className="no-xs"
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-            >
-              <InfoOutlinedIcon
-                sx={{ fontSize: '1.2rem', color: 'green' }}
-              />
-            </IconButton>
-
-            <Popper
-              open={open}
-              anchorEl={anchorEl}
-              placement="bottom-start"
-              disablePortal
-              onMouseEnter={handleMouseEnter}
-              onMouseLeave={handleMouseLeave}
-              modifiers={[
-                {
-                  name: 'offset',
-                  options: {
-                    offset: [-150, 8], // shift popper to left
-                  },
-                },
-                {
-                  name: 'preventOverflow',
-                  options: {
-                    boundary: 'viewport',
-                    padding: 8,
-                  },
-                },
-              ]}
-              style={{ zIndex: 1300 }}
-            >
-              <Box sx={{ bgcolor: 'background.paper', p: 2, boxShadow: 3 }}>
-                <Table size="small">
-                  <TableBody>
-                    <TableRow>
-                      <TableCell variant="head">Campaign Type</TableCell>
-                      <TableCell>{params.row.campaignType}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Sms Count</TableCell>
-                      <TableCell>{params.row.smsCount}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Source</TableCell>
-                      <TableCell>{params.row.source}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Voice Type</TableCell>
-                      <TableCell>{params.row.voiceType}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Process Flag</TableCell>
-                      <TableCell>{params.row.processFlag}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Que Time</TableCell>
-                      <TableCell>{params.row.queTime}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Campaign Sr. No.</TableCell>
-                      <TableCell>{params.row.campaignSrno}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Unique Id</TableCell>
-                      <TableCell>{params.row.uniqueId}</TableCell>
-                    </TableRow>
-                    <TableRow>
-                      <TableCell variant="head">Is Schedule</TableCell>
-                      <TableCell>{params.row.isSchedule}</TableCell>
-                    </TableRow>
-                  </TableBody>
-                </Table>
-              </Box>
-            </Popper>
-          </>
-        );
-      },
-    },
-  ];
-
-
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
-
-  const CustomFooter = () => {
-    return (
-      <GridFooterContainer
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: {
-            xs: "center",
-            lg: "space-between",
-          },
-          alignItems: "center",
-          padding: 1,
-          gap: 2,
-          overflowX: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 1.5,
-          }}
-        >
-          {selectedRows?.length > 0 && (
-            <Typography
-              variant="body2"
-              sx={{
-                borderRight: "1px solid #ccc",
-                paddingRight: "10px",
-              }}
-            >
-              {selectedRows?.length} Rows Selected
-            </Typography>
-          )}
-
-          <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
-          }}
-        >
-          <CustomPagination
-            totalPages={totalPages}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-          />
-        </Box>
-      </GridFooterContainer>
-    );
-  };
-
-
-  const handleSearchObdDetailLogs = () => { }
-
-  const handleInputChange = (e) => {
-    setObdNumber(e.target.value)
-  }
-
-
-  return (
-    <>
-      <div className="flex gap-2 mb-4">
-
-
-        <div className="w-full sm:w-56">
-          <InputField
-            id="mobileNumber"
-            name="mobile Number"
-            value={obdNumber}
-            onChange={handleInputChange}
-            placeholder="Mobile no."
-            type="number"
-          />
-        </div>
-
-        <div className="w-full sm:w-56">
-          <UniversalButton
-            id="obdTemplateSearchBtn"
-            name="obdSearchBtn"
-            label="Search"
-            onClick={handleSearchObdDetailLogs}
-          //   icon={<IoSearch />}
-          />
-        </div>
-      </div>
-      <Paper sx={{ height: 558 }}>
-        <DataGrid
-          id={id}
-          name={name}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          pageSizeOptions={[10, 20, 50]}
-          pagination
-          paginationModel={paginationModel}
-          onPaginationModelChange={setPaginationModel}
-          // checkboxSelection
-          rowHeight={45}
-          slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
-          slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
-          disableRowSelectionOnClick
-          // autoPageSize
-          disableColumnResize
-          disableColumnMenu
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-cellCheckbox": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-cell": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              color: "#193cb8",
-              fontSize: "14px",
-              fontWeight: "bold !important",
-            },
-            "& .MuiDataGrid-row--borderBottom": {
-              backgroundColor: "#e6f4ff !important",
-            },
-            "& .MuiDataGrid-columnSeparator": {
-              // display: "none",
-              color: "#ccc",
-            },
-          }}
-        />
-      </Paper>
-    </>
-  );
-};
-
-export default ObdDetailLogs
-
-
-
-// ==================================================================================
 import React from "react";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -504,19 +85,18 @@ const CustomPagination = ({
 };
 
 const CampaignDetailsReports = ({
-    setSelectedRows,
-    selectedRows,
+    // setSelectedRows,
+    // selectedRows,
 }) => {
     const location = useLocation();
     const { campaignSrno, campaignName } = location.state || {};
 
-    // const [selectedRows, setSelectedRows] = useState([]);
+    const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState(null);
     const [deliveryStatus, setDeliveryStatus] = useState("");
     const [mobileNumber, setMobileNumber] = useState("");
     const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
-
     const [paginationModel, setPaginationModel] = useState({
         page: 0,
         pageSize: 10,
@@ -524,21 +104,25 @@ const CampaignDetailsReports = ({
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
+    // useEffect(() => {
+    //     if (!campaignSrno) return;
+    //     const fetchCampaignData = async () => {
+    //         const data = await getObdDetailedLogs(campaignSrNo);
+    //         setCampaignDetails(data?.data);
+    //     };
+    //     fetchCampaignData();
+    // }, [campaignSrno, currentPage]);
+
+
     useEffect(() => {
         if (!campaignSrno) return;
         const fetchCampaignData = async () => {
-            const data = await getObdDetailedLogs(campaignSrNo);
+            const data = await fetchDetailsbySrNo(campaignSrNo);
+            console.log("campaign details report data", data)
             setCampaignDetails(data?.data);
         };
         fetchCampaignData();
     }, []);
-
-
-    useEffect(() => {
-        console.log("details updated", campaignDetails);
-        console.log("id", id);
-        console.log("name", name);
-    }, [campaignDetails]);
 
     const handleSearch = async () => {
         setIsFetching(true);
@@ -664,7 +248,7 @@ const CampaignDetailsReports = ({
         },
     ];
 
-    const rows = Array.isArray(campaignDetails) ? campaignDetails.map((item, index) => ({
+    const rows = Array.isArray(campaignDetails) ? campaignDetails?.map((item, index) => ({
         id: index + 1,
         sn: index + 1,
         campaignName: item.campaignName,

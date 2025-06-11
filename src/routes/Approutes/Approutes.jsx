@@ -139,6 +139,7 @@ import Arihant from "../../random/arihant";
 import TagManager from "@/tagmanager/TagManager";
 import MmLite from "@/whatsapp/mmlite/MmLite";
 import CannedMessage from "@/cannedmessage/CannedMessage";
+import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
 
 const Approutes = () => {
   return (
@@ -268,6 +269,8 @@ const Approutes = () => {
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
         <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
+
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />

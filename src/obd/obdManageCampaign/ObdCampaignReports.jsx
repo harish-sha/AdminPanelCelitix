@@ -1,38 +1,54 @@
 import React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Box from "@mui/material/Box";
 import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import PollOutlinedIcon from "@mui/icons-material/PollOutlined";
-import { CustomTabPanel } from "../../whatsapp/managetemplate/components/CustomTabPanel.jsx";
+import { IconButton } from "@mui/material";
 import { IoSearch } from "react-icons/io5";
 import { Dialog } from "primereact/dialog";
 import { Checkbox } from "primereact/checkbox";
-import IosShareOutlinedIcon from '@mui/icons-material/IosShareOutlined';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import Loader from "../../whatsapp/components/Loader.jsx";
-import InputField from "../../whatsapp/components/InputField.jsx";
-import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown.jsx";
-import UniversalDatePicker from "../../whatsapp/components/UniversalDatePicker.jsx";
-import ObdCampaignTable from "./ObdCampaignTable.jsx";
+import { RadioButton } from "primereact/radiobutton";
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
+import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import toast from "react-hot-toast";
+
+import Loader from "@/whatsapp/components/Loader.jsx";
+import InputField from "@/whatsapp/components/InputField.jsx";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown.jsx";
+import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker.jsx";
+
+import ObdCampaignTable from "./components/ObdCampaignTable.jsx";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel.jsx";
 import UniversalButton from "../../whatsapp/components/UniversalButton.jsx";
-import ObdDaySummaryTable from "./ObdDaySummaryTable.jsx";
-import { RadioButton } from "primereact/radiobutton";
+import ObdDaySummaryTable from "./components/ObdDaySummaryTable.jsx";
+
+import { CustomTabPanel } from "../../whatsapp/managetemplate/components/CustomTabPanel.jsx";
 import { DataTable } from "@/components/layout/DataTable.jsx";
-import { IconButton } from "@mui/material";
-import { fetchDayWiseSummaryObd, fetchSummaryLogsObd, fetchDetailsLogsObd } from "@/apis/obd/obd.js";
-import toast from "react-hot-toast";
+
+import {
+  fetchDayWiseSummaryObd,
+  fetchSummaryLogsObd,
+  fetchDetailsLogsObd,
+  getObdReportsCampaignLogs,
+} from "@/apis/obd/obd.js";
+
+import moment from "moment";
+import { exportToExcel } from "@/utils/utills.js";
+import ManageScheduleCampaignTableObd from "./components/ManageScheduleCampaignTableObd.jsx";
+import UniversalSkeleton from "@/whatsapp/components/UniversalSkeleton.jsx";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [obdCampaignName, setObdCampaignName] = useState("");
   const [obdCampaignNumber, setObdCampaignNumber] = useState("");
   const [obdCampaignType, setObdCampaignType] = useState(null);
+  const [obdVoiceType, setObdVoiceType] = useState(null);
   const [selectedOption, setSelectedOption] = useState("option1");
   const [customOptions, setCustomOptions] = useState("radioOptiondisable");
   const [customdialogtype, setCustomdialogtype] = useState(null);
@@ -45,23 +61,35 @@ const ObdCampaignReports = () => {
   const [value, setValue] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
 
+  const [obdCampaignData, setObdCampaignData] = useState(null);
+  const [campaignFromDate, setCampaigndFromDate] = useState(new Date());
+  const [campaignToDate, setCampaigndToDate] = useState(new Date());
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [paginationModel, setPaginationModel] = useState({
+    page: 0,
+    pageSize: 10,
+  });
+
   const [isFetching, setIsFetching] = useState(false);
 
-  const formatDateToDDMMYYYY = (dateStr) => {
+  const [filteredRows, setFilteredRows] = useState([]);
+  const [dataTable, setDataTable] = useState([]);
+
+  const formatDateToYYYYMMDD = (dateStr) => {
     const date = new Date(dateStr);
-    const day = String(date.getDate()).padStart(2, '0');
-    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, "0");
+    const month = String(date.getMonth() + 1).padStart(2, "0");
     const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   const [campaignLogDateFilter, setCampaignLogDateFilter] = useState({
     voiceType: "",
     fromDate: new Date(),
     toDate: new Date(),
-    page: ""
-  })
-
+    page: "",
+  });
 
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
     fromDate: new Date(),
@@ -72,45 +100,95 @@ const ObdCampaignReports = () => {
   const [rows, setRows] = useState([]);
   // const [isFetching, setIsFetching] = useState(false);
 
-  const handleCampaignLog = async () => {
-    const data = {
-      voiceType: campaignLogDateFilter.voiceType || "",
-      queTimeStart: formatDateToDDMMYYYY(campaignLogDateFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY(campaignLogDateFilter.toDate),
-      page: campaignLogDateFilter.page,
-    };
+  const [allObdCampRows, setAllObdCampRows] = useState([]);
+  const [filteredObdCampRows, setFilteredObdCampRows] = useState([]);
 
-    try {
-      setIsFetching(true);
-      const res = await fetchDetailsLogsObd(data);
+  const [campaignFilteredObdRow, setCampaignFilteredRow] = useState({
+    obdCampaignName: "",
+    formatDateToYYYYMMDD: "",
+    campaignType: "",
+    mobno: "",
+  });
 
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
-        { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
-        { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
-      ]);
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
-    } catch (err) {
-      toast.error("Something went wrong while fetching data.")
-    } finally {
-      setIsFetching(false);
-    }
-  }
+  // const handleCampaignLog = async () => {
+  //   const data = {
+  //     voiceType: campaignLogDateFilter.voiceType || "",
+  //     queTimeStart: formatDateToDDMMYYYY(campaignLogDateFilter.fromDate),
+  //     queTimeEnd: formatDateToDDMMYYYY(campaignLogDateFilter.toDate),
+  //     page: campaignLogDateFilter.page,
+  //   };
 
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await fetchDetailsLogsObd(data);
+
+  //     setColumns([
+  //       { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
+  //       { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
+  //       { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+  //       { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
+  //       { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
+  //     ]);
+  //     setRows(
+  //       Array.isArray(res)
+  //         ? res.map((item, i) => ({
+  //           id: i + 1,
+  //           sn: i + 1,
+  //           ...item,
+  //         }))
+  //         : []
+  //     );
+  //   } catch (err) {
+  //     toast.error("Something went wrong while fetching data.")
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // }
+
+  const handleCampaignLog = () => {
+    console.log("Filter Values:", campaignFilteredObdRow);
+
+    const filteredData = obdCampRows.filter((row) => {
+      // console.log("row", row);
+
+      const matchName = obdCampaignName
+        ? row.campaignName
+          .toLowerCase()
+          .includes(obdCampaignName.toLowerCase().trim())
+        : true;
+      // console.log("matchName", matchName);
+
+      const matchDate = obdcampaigndate
+        ? row.date === moment(obdcampaigndate).format("YYYY-MM-DD")
+        : true;
+      // console.log("matchDate ", matchDate);
+
+      const matchType = obdCampaignType
+        ? row.type?.toLowerCase() === obdCampaignType.toLowerCase()
+        : true;
+      // console.log("obdCampaignType", obdCampaignType)
+
+      const matchMobno = obdCampaignNumber
+        ? row.mobno?.toString().includes(obdCampaignNumber.toString())
+        : true;
+
+      return matchName && matchType && matchMobno && matchDate;
+    });
+    setDataTable(filteredData);
+
+    console.log("Filtered Data:", filteredData);
+    setFilteredRows(filteredData);
+  };
+
+  // Day wise summary Start
   const handleDayWiseSummary = async () => {
     const data = {
-      queTimeStart: formatDateToDDMMYYYY(daywiseDataToFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY(daywiseDataToFilter.toDate),
+      queTimeStart: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+        "YYYY-MM-DD"
+      ),
+      queTimeEnd: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+        "YYYY-MM-DD"
+      ),
     };
 
     try {
@@ -120,7 +198,12 @@ const ObdCampaignReports = () => {
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
         { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        {
+          field: "totalUnit",
+          headerName: "Total Unit",
+          flex: 1,
+          minWidth: 100,
+        },
         { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
         { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
       ]);
@@ -140,21 +223,13 @@ const ObdCampaignReports = () => {
       setIsFetching(false);
     }
   };
+  // Day wise summary End
 
-
+  // Summary Report Start
   const voiceType = [
     { label: "Transactional", value: "1" },
     { label: "Promotional", value: "2" },
   ];
-
-  // ✅ Date formatting helper
-  const formatDateToDDMMYYYY2 = (date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, "0");
-    const month = String(d.getMonth() + 1).padStart(2, "0");
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
-  };
 
   const [summaryDataToFilter, setSummaryDataToFilter] = useState({
     fromDate: new Date(),
@@ -165,12 +240,10 @@ const ObdCampaignReports = () => {
   const [summarycolumns, setSummaryColumns] = useState([]);
   const [summaryrows, setSummaryRows] = useState([]);
 
-
-
   const handleSummaryLogs = async () => {
     const data = {
-      queTimeStart: formatDateToDDMMYYYY2(summaryDataToFilter.fromDate),
-      queTimeEnd: formatDateToDDMMYYYY2(summaryDataToFilter.toDate),
+      queTimeStart: moment.format("YYYY-MM-DD"),
+      queTimeEnd: moment.format("YYYY-MM-DD"),
       voiceType: summaryDataToFilter.voiceType || "",
     };
 
@@ -181,7 +254,12 @@ const ObdCampaignReports = () => {
       setSummaryColumns([
         { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
-        { field: "totalUnit", headerName: "Total Unit", flex: 1, minWidth: 100 },
+        {
+          field: "totalUnit",
+          headerName: "Total Unit",
+          flex: 1,
+          minWidth: 100,
+        },
         { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
         { field: "sent", headerName: "Sent", flex: 1, minWidth: 100 },
         { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
@@ -202,6 +280,9 @@ const ObdCampaignReports = () => {
       setIsFetching(false);
     }
   };
+
+  // Summary Report End
+
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
@@ -302,398 +383,69 @@ const ObdCampaignReports = () => {
     setCustomdialognumber(e.target.value);
   };
 
-  const handlecampaignDialogSubmithBtn = () => { };
+  const handlecampaignDialogSubmithBtn = (e) => {
+    setVisibledialog(false);
+    setSelectedOption(value);
+    setCampaign(e.target.value);
+
+    toast.success("Export Successfully");
+  };
+
+  // Export Start
 
   const handleCustomDialogSubmithBtn = () => { };
 
+  // Export End
 
-  const obdCampColumns = [
-    { field: 'sn', headerName: 'S.No', flex: 0, minWidth: 80 },
-    { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 120 },
-    { field: 'type', headerName: 'Type', flex: 1, minWidth: 120 },
-    { field: 'template', headerName: 'Template', flex: 1, minWidth: 120 },
-    { field: 'date', headerName: 'Date', flex: 1, minWidth: 120 },
-    { field: 'status', headerName: 'Status', flex: 1, minWidth: 120 },
-    {
-      field: 'action',
-      headerName: 'Action',
-      flex: 1,
-      minWidth: 150,
-      renderCell: (params) => (
-        <>
-          <IconButton className='text-xs' onClick={() => handleView(params.row)}>
-            <VisibilityIcon
-              sx={{
-                fontSize: '1.2rem',
-                color: 'green'
-              }}
-            />
-          </IconButton>
-          <IconButton onClick={() => handleDuplicate(params.row)}>
-            <FileCopyIcon
-              sx={{
-                fontSize: '1.2rem',
-                color: 'gray',
-              }} />
-          </IconButton>
-          <IconButton onClick={(event) => handleDelete(event, params.row)}>
-            <DeleteForeverIcon
-              sx={{
-                fontSize: '1.2rem',
-                color: '#e31a1a',
-              }} />
-          </IconButton>
-        </>
-      ),
-    },
-  ];
+  // campaign Report Start
 
+  const [data, setData] = useState({
+    voiceType: "",
+    fromDate: "",
+    toDate: "",
+    mobile: "",
+    page: 1,
+  });
 
-  const obdCampRows = [
-    {
-      id: 1,
-      sn: 1,
-      campaignName: 'diwali',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '12/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 2,
-      sn: 2,
-      campaignName: 'holi',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '13/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 3,
-      sn: 3,
-      campaignName: 'christmas',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '15/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 4,
-      sn: 4,
-      campaignName: 'easter',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '13/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 5,
-      sn: 5,
-      campaignName: 'new year',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '01/01/2025',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 6,
-      sn: 6,
-      campaignName: 'thanksgiving',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '25/11/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 7,
-      sn: 7,
-      campaignName: 'eid',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '10/04/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 8,
-      sn: 8,
-      campaignName: 'halloween',
-      type: 'Promotional',
-      template: 'Simple Broadcast',
-      date: '31/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 9,
-      sn: 9,
-      campaignName: 'rakhi',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '19/08/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 10,
-      sn: 10,
-      campaignName: 'pongal',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '14/01/2025',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 11,
-      sn: 11,
-      campaignName: 'lohri',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '13/01/2025',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 12,
-      sn: 12,
-      campaignName: 'navratri',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '03/10/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 13,
-      sn: 13,
-      campaignName: 'guru purab',
-      type: 'Transactional',
-      template: 'Text-2-Speech',
-      date: '08/11/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 14,
-      sn: 14,
-      campaignName: 'valentine’s day',
-      type: 'Promotional',
-      template: 'Simple Broadcast',
-      date: '14/02/2025',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 15,
-      sn: 15,
-      campaignName: 'independence day',
-      type: 'Transactional',
-      template: 'Multi Broadcast',
-      date: '15/08/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 16,
-      sn: 16,
-      campaignName: 'republic day',
-      type: 'Promotional',
-      template: 'Text-2-Speech',
-      date: '26/01/2025',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 17,
-      sn: 17,
-      campaignName: 'ganesh chaturthi',
-      type: 'Transactional',
-      template: 'Simple Broadcast',
-      date: '07/09/2024',
-      status: 'Success',
-      action: 'True',
-    },
-    {
-      id: 18,
-      sn: 18,
-      campaignName: 'baisakhi',
-      type: 'Promotional',
-      template: 'Multi Broadcast',
-      date: '14/04/2024',
-      status: 'Success',
-      action: 'True',
-    }
-  ];
+  const handleSearchObdCampaignLogs = () => {
+    const formattedDate = moment(campaignFromDate).format("YYYY-MM-DD");
 
-  // const ObdSummaryRows = [
-  //   {
-  //     sn: 1,
-  //     id: 1,
-  //     date: "20/03/2025",
-  //     totalunits: "3",
-  //     blocked: "0",
-  //     totalsent: "1",
-  //     success: "1",
-  //     failed: "1"
-  //   },
-  //   {
-  //     sn: 2,
-  //     id: 2,
-  //     date: "21/03/2025",
-  //     totalunits: "5",
-  //     blocked: "2",
-  //     totalsent: "3",
-  //     success: "2",
-  //     failed: "3"
-  //   },
-  //   {
-  //     sn: 3,
-  //     id: 3,
-  //     date: "22/03/2025",
-  //     totalunits: "6",
-  //     blocked: "1",
-  //     totalsent: "5",
-  //     success: "4",
-  //     failed: "2"
-  //   },
-  //   {
-  //     sn: 4,
-  //     id: 4,
-  //     date: "23/03/2025",
-  //     totalunits: "7",
-  //     blocked: "2",
-  //     totalsent: "5",
-  //     success: "3",
-  //     failed: "4"
-  //   },
-  //   {
-  //     sn: 5,
-  //     id: 5,
-  //     date: "24/03/2025",
-  //     totalunits: "4",
-  //     blocked: "0",
-  //     totalsent: "4",
-  //     success: "3",
-  //     failed: "1"
-  //   },
-  //   {
-  //     sn: 6,
-  //     id: 6,
-  //     date: "25/03/2025",
-  //     totalunits: "8",
-  //     blocked: "3",
-  //     totalsent: "5",
-  //     success: "4",
-  //     failed: "4"
-  //   },
-  //   {
-  //     sn: 7,
-  //     id: 7,
-  //     date: "26/03/2025",
-  //     totalunits: "6",
-  //     blocked: "2",
-  //     totalsent: "4",
-  //     success: "2",
-  //     failed: "4"
-  //   },
-  //   {
-  //     sn: 8,
-  //     id: 8,
-  //     date: "27/03/2025",
-  //     totalunits: "9",
-  //     blocked: "1",
-  //     totalsent: "8",
-  //     success: "7",
-  //     failed: "2"
-  //   },
-  //   {
-  //     sn: 9,
-  //     id: 9,
-  //     date: "28/03/2025",
-  //     totalunits: "10",
-  //     blocked: "3",
-  //     totalsent: "7",
-  //     success: "5",
-  //     failed: "5"
-  //   },
-  //   {
-  //     sn: 10,
-  //     id: 10,
-  //     date: "29/03/2025",
-  //     totalunits: "5",
-  //     blocked: "1",
-  //     totalsent: "4",
-  //     success: "3",
-  //     failed: "2"
-  //   },
-  //   {
-  //     sn: 11,
-  //     id: 11,
-  //     date: "30/03/2025",
-  //     totalunits: "7",
-  //     blocked: "2",
-  //     totalsent: "5",
-  //     success: "4",
-  //     failed: "3"
-  //   },
-  //   {
-  //     sn: 12,
-  //     id: 12,
-  //     date: "31/03/2025",
-  //     totalunits: "6",
-  //     blocked: "1",
-  //     totalsent: "5",
-  //     success: "4",
-  //     failed: "2"
-  //   },
-  //   {
-  //     sn: 13,
-  //     id: 13,
-  //     date: "01/04/2025",
-  //     totalunits: "8",
-  //     blocked: "2",
-  //     totalsent: "6",
-  //     success: "5",
-  //     failed: "3"
-  //   },
-  //   {
-  //     sn: 14,
-  //     id: 14,
-  //     date: "02/04/2025",
-  //     totalunits: "9",
-  //     blocked: "3",
-  //     totalsent: "6",
-  //     success: "5",
-  //     failed: "4"
-  //   },
-  //   {
-  //     sn: 15,
-  //     id: 15,
-  //     date: "03/04/2025",
-  //     totalunits: "7",
-  //     blocked: "2",
-  //     totalsent: "5",
-  //     success: "3",
-  //     failed: "4"
-  //   }
-  // ];
+    const newData = {
+      voiceType: obdCampaignType,
+      // fromDate: formattedDate,
+      fromDate: "2025-06-01",
+      toDate: formattedDate,
+      mobile: obdCampaignNumber,
+      page: currentPage,
+    };
 
-  // const ObdSummaryColumns = [
-  //   { field: 'sn', headerName: 'S.No', flex: 1 },
-  //   { field: 'date', headerName: 'Date', flex: 1 },
-  //   { field: 'totalunits', headerName: 'Total Units', flex: 1 },
-  //   { field: 'totalsent', headerName: 'Total Sent', flex: 1 },
-  //   { field: 'success', headerName: 'Success', flex: 1 },
-  //   { field: 'failed', headerName: 'Failed', flex: 1 }
-  // ]
+    setData(newData);
 
+    const fetchCampaignReportsdata = async (data) => {
+      try {
+        setIsFetching(true);
+        const res = await fetchDetailsLogsObd(data);
+        setObdCampaignData(res);
+      } catch (error) {
+        console.error("Error fetching Obd campaign Reports:", error);
+        toast.error("Error fetching Obd campaign Reports");
+      } finally {
+        setIsFetching(false);
+      }
+    };
+    fetchCampaignReportsdata(newData);
+  };
+  // campaign Report End
+
+  // Scheduled Report Start
+
+  const fetchScheduleCampaignData = async () => { }
+
+  const handleCancel = async (srno) => { }
+
+  const [scheduleData, setScheduleData] = useState([]);
+
+  // Scheduled Report End
   return (
     <>
       <div className="w-full">
@@ -747,7 +499,25 @@ const ObdCampaignReports = () => {
                 <Tab
                   label={
                     <span>
-                      <PollOutlinedIcon size={20} />Summary Logs
+                      <PollOutlinedIcon size={20} />
+                      Summary Logs
+                    </span>
+                  }
+                  sx={{
+                    textTransform: "none",
+                    fontWeight: "bold",
+                    color: "text.secondary",
+                    "&:hover": {
+                      color: "primary.main",
+                      backgroundColor: "#f0f4ff",
+                      borderRadius: "8px",
+                    },
+                  }}
+                />
+                <Tab
+                  label={
+                    <span>
+                      <DateRangeIcon size={20} /> Scheduled
                     </span>
                   }
                   sx={{
@@ -778,9 +548,22 @@ const ObdCampaignReports = () => {
               </div>
             </div>
 
+            {/* Campaign Logs Report Start */}
             <CustomTabPanel value={value} index={0}>
               <div className="w-full">
-                <div className="flex flex-col md:flex-row lg:flex-row flex--wrap gap-4 items-end justify-start align-middle pb-5 w-full">
+                <div className="flex flex-col md:flex-row lg:flex-row flex--wrap gap-4 items-end justify-start align-middle mb-3 w-full">
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="obdcampaignfromdate"
+                      name="obdcampaignfromdate"
+                      label="From Date"
+                      value={campaignFromDate}
+                      onChange={(newValue) => setCampaigndFromDate(newValue)}
+                    // minDate={threeMonthsAgo}
+                    // maxDate={today}
+                    />
+                  </div>
+
                   <div className="w-full sm:w-56">
                     <InputField
                       id="obdcampaignname"
@@ -793,7 +576,7 @@ const ObdCampaignReports = () => {
                     />
                   </div>
 
-                  <div className="w-full sm:w-56">
+                  {/* <div className="w-full sm:w-56">
                     <InputField
                       id="obdCampaignNumber"
                       name="obdCampaignNumber"
@@ -804,29 +587,40 @@ const ObdCampaignReports = () => {
                       type="number"
                       tooltipContent="Enter Your Mobile Number"
                     />
-                  </div>
+                  </div> */}
 
                   <div className="w-full sm:w-56">
                     <AnimatedDropdown
                       id="obdCampaignType"
                       name="obdCampaignType"
                       label="Campaign Type"
-                      tooltipContent="Enter Your Campaign Type"
+                      tooltipContent="Select Campaign Type"
                       options={[
-                        { value: "Promotional", label: "Promotional" },
-                        { value: "Transactional", label: "Transactional" },
+                        { value: "0", label: "TTS" },
+                        { value: "1", label: "Multi Broadcast" },
+                        { value: "2", label: "Simple Broadcast" },
+                        { value: "2", label: "Dynamic Broadcast" },
                       ]}
                       value={obdCampaignType}
                       onChange={setObdCampaignType}
-                      placeholder="Type"
+                      placeholder="Campaign Type"
                     />
                   </div>
 
                   <div className="w-full sm:w-56">
-                    <UniversalDatePicker
-                      id="obdcampaigndate"
-                      name="obdcampaigndate"
-                      label="Date"
+                    <AnimatedDropdown
+                      id="obdVoiceType"
+                      name="obdVoiceType"
+                      label="Voice Type"
+                      tooltipContent="Select Voice Type"
+                      options={[
+                        { value: "0", label: "All" },
+                        { value: "1", label: "Promotional" },
+                        { value: "2", label: "Transactional" },
+                      ]}
+                      value={obdVoiceType}
+                      onChange={setObdVoiceType}
+                      placeholder="Voice Type"
                     />
                   </div>
 
@@ -834,25 +628,29 @@ const ObdCampaignReports = () => {
                     <UniversalButton
                       id="obdTemplateSearchBtn"
                       name="obdSearchBtn"
-                      label="Search"
-                      onClick={handleCampaignLog}
+                      label={isFetching ? "Searching..." : "Search"}
+                      onClick={handleSearchObdCampaignLogs}
                       icon={<IoSearch />}
+                      disabled={isFetching}
                     />
                   </div>
                 </div>
                 <div className="mt-5">
-                  {/* <ObdCampaignTable /> */}
-                  <DataTable
-                    id="whatsapp-rate-table"
-                    name="whatsappRateTable"
-                    col={obdCampColumns}
-                    rows={obdCampRows}
-                    selectedRows={selectedRows}
-                    setSelectedRows={setSelectedRows}
+                  <ObdCampaignTable
+                    id="CampaignTableObd"
+                    name="CampaignTableObd"
+                    data={obdCampaignData}
+                    currentPage={currentPage}
+                    paginationModel={paginationModel}
+                    setCurrentPage={setCurrentPage}
+                    setPaginationModel={setPaginationModel}
                   />
                 </div>
               </div>
             </CustomTabPanel>
+            {/* Campaign Logs Report End */}
+
+            {/*Day Wise Summary Report Start  */}
             <CustomTabPanel value={value} index={1}>
               <div className="w-full">
                 {/* Filter Section */}
@@ -909,8 +707,11 @@ const ObdCampaignReports = () => {
                 />
               </div>
             </CustomTabPanel>
+            {/*Day Wise Summary Report End  */}
+
+            {/* Summary Logs Report Start */}
             <CustomTabPanel value={value} index={2}>
-              <div className="w-full p-4">
+              <div className="w-full">
                 {/* Filters */}
                 <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end pb-5">
                   <div className="w-full sm:w-56">
@@ -918,7 +719,10 @@ const ObdCampaignReports = () => {
                       label="From Date"
                       value={summaryDataToFilter.fromDate}
                       onChange={(e) =>
-                        setSummaryDataToFilter((prev) => ({ ...prev, fromDate: e }))
+                        setSummaryDataToFilter((prev) => ({
+                          ...prev,
+                          fromDate: e,
+                        }))
                       }
                     />
                   </div>
@@ -928,7 +732,10 @@ const ObdCampaignReports = () => {
                       label="To Date"
                       value={summaryDataToFilter.toDate}
                       onChange={(e) =>
-                        setSummaryDataToFilter((prev) => ({ ...prev, toDate: e }))
+                        setSummaryDataToFilter((prev) => ({
+                          ...prev,
+                          toDate: e,
+                        }))
                       }
                     />
                   </div>
@@ -970,6 +777,39 @@ const ObdCampaignReports = () => {
                 />
               </div>
             </CustomTabPanel>
+            {/* Summary Logs Report End */}
+
+            {/* Scheduled Report Start */}
+            <CustomTabPanel value={value} index={3} className="">
+              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+                <div className="w-max-content">
+                  <UniversalButton
+                    id="manageCampaignSearchBtn"
+                    name="manageCampaignSearchBtn"
+                    label={isFetching ? "Refreshing..." : "Refresh"}
+                    icon={<IoSearch />}
+                    onClick={fetchScheduleCampaignData}
+                    variant="primary"
+                  />
+                </div>
+                {isFetching ? (
+                  <div className="">
+                    <UniversalSkeleton height="35rem" width="100%" />
+                  </div>
+                ) : (
+                  <div className="w-full">
+                    <ManageScheduleCampaignTableObd
+                      id="whatsappManageCampaignScheduleTable"
+                      name="whatsappManageCampaignTable"
+                      data={scheduleData}
+                      onCancel={handleCancel}
+                    // fromDate={selectedDate}
+                    />
+                  </div>
+                )}
+              </div>
+            </CustomTabPanel>
+            {/* Scheduled Report End */}
           </Box>
         )}
       </div>

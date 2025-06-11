@@ -84,6 +84,7 @@ export const PermissionRoute = ({ children }) => {
         "/obdmanagecampaign",
         "/obdmanagevoiceclips",
         "/obdIntegration",
+        "/obdCampaignDetailslog",
       ],
       roles: ["ADMIN"],
     },
@@ -165,7 +166,7 @@ export const PermissionRoute = ({ children }) => {
         "/settings",
         "/transactions",
         "/tagmanager",
-        
+
       ],
       roles: ["ADMIN"],
     },

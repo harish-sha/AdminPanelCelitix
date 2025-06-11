@@ -8,6 +8,19 @@ export const fetchDetailsLogsObd = async (data) => {
   });
 };
 
+export const getObdReportsCampaignLogs = async (
+  voiceType,
+  fromDate,
+  toDate,
+  mobile,
+  page
+) => {
+  return await fetchWithAuth("/obd/report/getDetailLogs", {
+    method: "POST",
+    body: JSON.stringify({ voiceType, fromDate, toDate, mobile, page }),
+  });
+};
+
 // get details log report
 export const fetchSummaryLogsObd = async (data) => {
   return await fetchWithAuth("/obd/report/getSummaryLogs", {
@@ -52,12 +65,11 @@ export const fetchVoiceClipUrl = async (srno) => {
 };
 
 // fetch getDetailsLog by srNo
-export const fetchDetailsbySrNo = async (data) => {
+export const fetchDetailsbySrNo = async (campaignSrNo) => {
   return await fetchWithAuth(
-    `/obd/report/getDetailLogByCampSrno?campaignSrno=${data.campaignSrno}`,
+    `/obd/report/getDetailLogByCampSrno?campaignSrno=${campaignSrNo}`,
     {
       method: "POST",
-      body: JSON.stringify(data),
     }
   );
 };
@@ -77,3 +89,13 @@ export const saveDynamicVoice = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+// create obd campaign
+export const sendObdCampaign = async (data) => {
+  return await fetchWithAuth("/obd/addVoiceCampaign", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+

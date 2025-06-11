@@ -38,7 +38,6 @@ const ObdIntegration = () => {
       prev.filter((integration) => integration.id !== id)
     );
     try {
-      // console.log(integrationName);
       toast.success("Integration deleted successfully");
     } catch (error) {
       toast.error("Something went wrong");
@@ -47,10 +46,10 @@ const ObdIntegration = () => {
 
   return (
     <>
-     
-        <div className="flex flex-wrap gap-2 items-end justify-start align-middle pb-5 w-full mt-4" >
-          <h1 className=" font-semibold text-2xl">Integration</h1>
-          <div className="w-max-content flex-auto justify-items-end">
+
+      <div className="flex flex-wrap gap-2 items-end justify-start align-middle pb-5 w-full mt-4" >
+        <h1 className=" font-semibold text-2xl">Integration</h1>
+        <div className="w-max-content flex-auto justify-items-end">
           <UniversalButton
             id="obdintegrationbtn"
             name="obdintegrationbtn"
@@ -59,7 +58,7 @@ const ObdIntegration = () => {
             onClick={() => setIsVisible(true)}
           />
         </div>
-        
+
       </div>
 
       <Dialog

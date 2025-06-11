@@ -13,7 +13,6 @@ import { toast } from "react-hot-toast";
 import InputField from "../../components/layout/InputField";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import Obdmanagecampaign from "./components/Obdmanagecampaign";
 import CustomTooltip from "../../components/common/CustomTooltip";
 import { DataTable } from "@/components/layout/DataTable";
 import MusicPlayerSlider from "./components/ObdAudioplayer";
@@ -224,15 +223,15 @@ const ObdManageVoiceClips = () => {
         <CustomTooltip value={"Active"}>
           <Switch
             checked={Number(params.row.status) === 1}
-            onChange={(e) => {}}
+            onChange={(e) => { }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -317,10 +316,10 @@ const ObdManageVoiceClips = () => {
 
       const formattedData = Array.isArray(filteredData)
         ? filteredData.map((item, index) => ({
-            sn: index + 1,
-            id: item.srNo,
-            ...item,
-          }))
+          sn: index + 1,
+          id: item.srNo,
+          ...item,
+        }))
         : [];
 
       setRows(formattedData);
@@ -353,7 +352,6 @@ const ObdManageVoiceClips = () => {
       const res = await fetchVoiceClipUrl(row.id);
       if (!res.path) return toast.error("Something went wrong");
       const url = `${BASE_AUDIO_URL}/${res.path}`;
-      // console.log(url);
       setSelectedRow({ ...row, url });
       setIsOpenPlay(true);
     } catch (e) {
@@ -365,8 +363,7 @@ const ObdManageVoiceClips = () => {
     for (let i = 1; i < dynamicList.length; i++) {
       if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
         toast.error(
-          `Consecutive items at positions ${i} and ${
-            i + 1
+          `Consecutive items at positions ${i} and ${i + 1
           } have the same type "${dynamicList[i].dynamicType}"`
         );
         return true;
@@ -432,7 +429,6 @@ const ObdManageVoiceClips = () => {
           variableValue: dynamicVoice?.voiceName,
         };
         const res = await saveDynamicVoice(payload);
-        // console.log(res);
       }
     } catch (e) {
       toast.error("Something went wrong");
@@ -609,7 +605,7 @@ const ObdManageVoiceClips = () => {
                   // visible={isVisible}
                   checked={selectedOption === "option1"}
                   onChange={handleChangeEnablePostpaid}
-                  // onClick={()=>setIsChecked(false)}
+                // onClick={()=>setIsChecked(false)}
                 />
                 <label className="text-sky-800 font-semibold ">Static</label>
               </div>
@@ -634,7 +630,7 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
-                  onClick={() => {}}
+                  onClick={() => { }}
                 />
                 <label>Transactional</label>
               </div>
