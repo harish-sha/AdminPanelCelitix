@@ -1,5 +1,9 @@
 import { Paper, Typography, Box, Button, styled } from "@mui/material";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
+import {
+  DataGrid,
+  GridFooterContainer,
+  renderActionsCell,
+} from "@mui/x-data-grid";
 import React, { useState } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination/usePagination";
@@ -12,6 +16,8 @@ import { Switch } from "@mui/material";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import toast from "react-hot-toast";
 import { syncTemplateRcs } from "@/apis/rcs/rcs";
+import { tooltip } from "@material-tailwind/react";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -99,7 +105,12 @@ const ManageTemplatetableRcs = ({
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    {
+      field: "sn",
+      headerName: "S.No",
+      flex: 0,
+      minWidth: 80,
+    },
     { field: "agentId", headerName: "Agent", flex: 1, minWidth: 120 },
     {
       field: "templateName",
@@ -113,8 +124,37 @@ const ManageTemplatetableRcs = ({
       flex: 1,
       minWidth: 120,
     },
-    { field: "insertTime", headerName: "Insert Time", flex: 1, minWidth: 200 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
+    {
+      field: "insertTime",
+      headerName: "Insert Time",
+      flex: 1,
+      minWidth: 200,
+      tooltip: "fd",
+    },
+    {
+      field: "status",
+      headerName: "Status",
+      flex: 1,
+      minWidth: 120,
+      renderHeader: (params) => (
+        <>
+          <CustomTooltip
+            title="Current approval state of the template: pending, approved, or rejected."
+            placement="top"
+            arrow
+          >
+            <div className="flex justify-center gap-2 items-center">
+              <p className="text-sm font-[500] tracking-wide">
+                {params.colDef.headerName}
+              </p>
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </div>
+          </CustomTooltip>
+        </>
+      ),
+    },
     {
       field: "active",
       headerName: "Active",
@@ -138,13 +178,31 @@ const ManageTemplatetableRcs = ({
                     color: "#34C759",
                   },
                   "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                  {
-                    backgroundColor: "#34C759",
-                  },
+                    {
+                      backgroundColor: "#34C759",
+                    },
                 }}
               />
             </CustomTooltip>
           )}
+        </>
+      ),
+      renderHeader: (params) => (
+        <>
+          <CustomTooltip
+            title="Toggle ON/OFF to control if this template appears in the Send RCS screen."
+            placement="top"
+            arrow
+          >
+            <div className="flex justify-center gap-2 items-center">
+              <p className="text-sm font-[500] tracking-wide">
+                {params.colDef.headerName}
+              </p>
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </div>
+          </CustomTooltip>
         </>
       ),
     },
@@ -155,7 +213,11 @@ const ManageTemplatetableRcs = ({
       minWidth: 150,
       renderCell: (params) => (
         <>
-          <CustomTooltip title="View Template" placement="top" arrow>
+          <CustomTooltip
+            title="Click to preview the selected template details, including buttons, text, and media."
+            placement="top"
+            arrow
+          >
             <IconButton
               className="no-xs"
               onClick={() => {
@@ -230,10 +292,10 @@ const ManageTemplatetableRcs = ({
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
-      id: item.srno,
-      sn: i + 1,
-      ...item,
-    }))
+        id: item.srno,
+        sn: i + 1,
+        ...item,
+      }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
@@ -303,6 +365,7 @@ const ManageTemplatetableRcs = ({
           paginationModel={paginationModel}
           onPaginationModelChange={setPaginationModel}
           rowHeight={45}
+          disableColumnSorting
           slots={{
             footer: CustomFooter,
             noRowsOverlay: CustomNoRowsOverlay,

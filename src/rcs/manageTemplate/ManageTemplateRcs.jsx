@@ -156,6 +156,7 @@ const ManageTemplateRcs = () => {
                 templateName: e.target.value,
               }));
             }}
+            
           />
         </div>
         <div className="w-full sm:w-56">

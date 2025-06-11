@@ -60,7 +60,6 @@ export const HandleCampaignDetails = ({
             });
           }}
           placeholder="Campaign Name"
-          tooltipContent="Your templatename should not contain spaces."
           tooltipPlacement="right"
         />
       </div>
