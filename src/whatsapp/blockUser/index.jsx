@@ -13,6 +13,7 @@ import { IconButton } from "@mui/material";
 import CustomTooltip from "../components/CustomTooltip";
 import { Dialog } from "primereact/dialog";
 import UniversalButton from "../components/UniversalButton";
+import InputField from "../components/InputField";
 
 export const BlockUser = () => {
   //   const [cols, setCols] = useState([]);
@@ -21,6 +22,7 @@ export const BlockUser = () => {
   const [selectedWaba, setSelectedWaba] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [dialogVisible, setDialogVisible] = useState(false);
+  const [mobile, setMobile] = useState(null);
 
   async function getAllWaba() {
     try {
@@ -32,17 +34,30 @@ export const BlockUser = () => {
   }
 
   async function handleGetAllBlockUser() {
+    if (!selectedWaba) return toast.error("Please select waba account");
     try {
       const res = await getblockUser(selectedWaba);
 
-      const formattedData = Array.isArray(res?.data)
-        ? res?.data?.map((item, index) => ({
-            sn: index + 1,
-            id: item.wa_id,
-            ...item,
-          }))
-        : [];
-      setRows(formattedData);
+      const formattedData = res?.data;
+
+      const findMbno = formattedData.filter((data) => data.wa_id == mobile);
+
+      // const formattedData = Array.isArray(res?.data)
+      //   ? res?.data?.map((item, index) => ({
+      //       sn: index + 1,
+      //       id: item.wa_id,
+      //       ...item,
+      //     }))
+      //   : [];
+      setRows(
+        Array.isArray(findMbno)
+          ? findMbno?.map((item, index) => ({
+              sn: index + 1,
+              id: item.wa_id,
+              ...item,
+            }))
+          : []
+      );
     } catch (e) {
       console.log(e);
       toast.error("Error fetching block user");
@@ -52,15 +67,11 @@ export const BlockUser = () => {
     getAllWaba();
   }, []);
 
-  useEffect(() => {
-    console.log(rows);
-  }, [rows]);
+  // useEffect(() => {
+  //   if (!selectedWaba) return;
 
-  useEffect(() => {
-    if (!selectedWaba) return;
-
-    handleGetAllBlockUser();
-  }, [selectedWaba]);
+  //   handleGetAllBlockUser();
+  // }, [selectedWaba]);
 
   function handleUnblockClick(id) {
     setSelectedId(id);
@@ -115,20 +126,41 @@ export const BlockUser = () => {
   return (
     <div>
       <h1 className="text-xl mb-2 underline">Block User Table</h1>
-      <div className="mb-4 w-[15rem]">
-        <AnimatedDropdown
-          id="selectWaba"
-          label={"Select WABA"}
-          name="selectWaba"
-          options={allWaba.map((waba) => ({
-            value: waba.mobileNo,
-            label: waba.name,
-          }))}
-          onChange={(e) => {
-            setSelectedWaba(e);
-          }}
-          value={selectedWaba}
-        />
+      <div className="flex gap-2 mb-4 items-end ">
+        <div className="w-[15rem]">
+          <AnimatedDropdown
+            id="selectWaba"
+            label={"Select WABA"}
+            name="selectWaba"
+            options={allWaba.map((waba) => ({
+              value: waba.mobileNo,
+              label: waba.name,
+            }))}
+            onChange={(e) => {
+              setSelectedWaba(e);
+            }}
+            value={selectedWaba}
+          />
+        </div>
+        <div className=" w-[15rem]">
+          <InputField
+            id="mobile"
+            name="mobile"
+            label="Mobile"
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            placeholder="Enter mobile number..."
+          />
+        </div>
+
+        <div>
+          <UniversalButton
+            id="search"
+            name="search"
+            label="Search"
+            onClick={handleGetAllBlockUser}
+          />
+        </div>
       </div>
 
       <DataTable id="blockUser" rows={rows} col={cols} title="Block User" />
