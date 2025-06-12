@@ -36,15 +36,12 @@ OBD > CreateCampaign > components > DynamicValueBox.jsx
 OBD > CreateCampaign > components > ObdVariable.jsx
 OBD > CreateCampaign > components > RadioButtonLaunchCampaignObd.jsx
 
-
 OBD > ObdManageCampaign > ObdCampaignReports.jsx
 OBD > ObdManageCampaign > ObdCampaignTable.jsx
 OBD > ObdManageCampaign > ObdSummaryTable.jsx
 
 OBD > ObdManageIntegration > ObdIntegration.jsx
 OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
-
-
 
 ================anshu commits file for obd ==================
 

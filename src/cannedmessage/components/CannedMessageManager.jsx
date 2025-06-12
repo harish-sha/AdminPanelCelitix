@@ -735,9 +735,8 @@ export default function CannedMessageManager() {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${
-              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-            }`,
+            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+              }`,
           },
         }
       );
@@ -945,7 +944,7 @@ export default function CannedMessageManager() {
       if (response.status === false) {
         toast.error(
           response.message ||
-            "Failed to delete canned message. Please try again."
+          "Failed to delete canned message. Please try again."
         );
         return;
       }
@@ -1076,11 +1075,10 @@ export default function CannedMessageManager() {
                             <button
                               key={item}
                               onClick={() => setStyle(item)}
-                              className={`px-3 py-1 rounded-full border ${
-                                style === item
-                                  ? "bg-indigo-600 text-white"
-                                  : "bg-white text-gray-700"
-                              }`}
+                              className={`px-3 py-1 rounded-full border ${style === item
+                                ? "bg-indigo-600 text-white"
+                                : "bg-white text-gray-700"
+                                }`}
                             >
                               {item}
                             </button>
@@ -1096,11 +1094,10 @@ export default function CannedMessageManager() {
                           <button
                             key={item}
                             onClick={() => setOptimizeFor(item)}
-                            className={`px-3 py-1 rounded-full border ${
-                              optimizeFor === item
-                                ? "bg-indigo-600 text-white"
-                                : "bg-white text-gray-700"
-                            }`}
+                            className={`px-3 py-1 rounded-full border ${optimizeFor === item
+                              ? "bg-indigo-600 text-white"
+                              : "bg-white text-gray-700"
+                              }`}
                           >
                             {item}
                           </button>
@@ -1163,8 +1160,8 @@ export default function CannedMessageManager() {
                       ? "Updating..."
                       : "Adding..."
                     : editSrNo
-                    ? "Update Message"
-                    : "Add Message"
+                      ? "Update Message"
+                      : "Add Message"
                 }
                 variant="primary"
                 disabled={isFetching}

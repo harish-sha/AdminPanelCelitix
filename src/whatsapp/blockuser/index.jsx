@@ -193,6 +193,8 @@ export const BlockUser = () => {
     const [dialogVisible, setDialogVisible] = useState(false);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
+    const [isBlocking, setIsBlocking] = useState(false);
+
 
     // useEffect(() => {
     //     // Only for demo: generate 50 dummy users if no real data
@@ -244,6 +246,7 @@ export const BlockUser = () => {
 
     const handleUnblock = async () => {
         try {
+            setIsBlocking(true);
             const payload = {
                 messaging_product: "whatsapp",
                 block_users: [{ user: selectedId }],
@@ -258,6 +261,8 @@ export const BlockUser = () => {
             fetchBlockedUsers();
         } catch {
             toast.error("Error unblocking user");
+        } finally {
+            setIsBlocking(false);
         }
     };
 
@@ -435,18 +440,21 @@ export const BlockUser = () => {
                             <span className="font-medium text-black ml-1">{selectedId}</span>?
                         </p>
                         <div className="flex justify-end gap-3">
-                            <UniversalButton
-                                id="cancel"
-                                name="cancel"
-                                label="Cancel"
-                                onClick={() => setDialogVisible(false)}
-                            />
+                            {!isBlocking && (
+                                <UniversalButton
+                                    id="cancel"
+                                    name="cancel"
+                                    label="Cancel"
+                                    onClick={() => setDialogVisible(false)}
+                                />
+                            )}
                             <UniversalButton
                                 id="unblock"
                                 name="unblock"
-                                label="Unblock"
+                                label={isBlocking ? "Unblocking..." : "Unblock"}
                                 style={{ backgroundColor: "#EF4444", color: "#fff" }}
                                 onClick={handleUnblock}
+                                disabled={isBlocking}
                             />
                         </div>
                     </div>

@@ -156,6 +156,12 @@ const ManageScheduleCampaignTableObd = ({ id, name, data = [], onCancel }) => {
             minWidth: 120,
         },
         {
+            field: "processFlag",
+            headerName: "Status",
+            flex: 1,
+            minWidth: 120,
+        },
+        {
             field: "action",
             headerName: "Action",
             flex: 1,
@@ -202,6 +208,16 @@ const ManageScheduleCampaignTableObd = ({ id, name, data = [], onCancel }) => {
             campaignName: item.campaignName || "N/A",
             campaignDate: item.campaignDate || "N/A",
             count: item.count || "N/A",
+            processFlag:
+                item.processFlag === 1
+                    ? "Pending"
+                    : item.processFlag === 2
+                        ? "Processing"
+                        : item.processFlag === 3
+                            ? "Undelivered"
+                            : item.processFlag === 4
+                                ? "Delivered"
+                                : "" || "N/A",
         }))
         : [];
 

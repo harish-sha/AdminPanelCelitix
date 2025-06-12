@@ -10,7 +10,6 @@
 // // import CustomNoRowsOverlay from '../../components/common/CustomNoRowsOverlay';
 // import CustomNoRowsOverlay from '@/whatsapp/components/CustomNoRowsOverlay';
 
-
 // const PaginationList = styled("ul")({
 //     listStyle: "none",
 //     padding: 0,
@@ -105,7 +104,6 @@
 //             ),
 //         },
 //     ];
-
 
 //     const rows = [
 //         {
@@ -290,9 +288,6 @@
 //         }
 //     ];
 
-
-
-
 //     const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
 //     const CustomFooter = () => {
@@ -353,8 +348,6 @@
 //         );
 //     };
 
-
-
 //     return (
 //         <Paper sx={{ height: 558 }}>
 //             <DataGrid
@@ -407,7 +400,6 @@
 
 // export default ObdCampaignTable
 
-
 import React, { useState, useRef, useEffect } from "react";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import { Paper, Typography, Box, Button } from "@mui/material";
@@ -419,7 +411,9 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 // import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay";
-import DescriptionOutlinedIcon from '@mui/icons-material/DescriptionOutlined';
+import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
+import { viewObdCampaignDetails } from "@/apis/obd/obd.js";
+import moment from "moment";
 
 import { useNavigate } from "react-router-dom";
 import CustomTooltip from "@/components/common/CustomTooltip";
@@ -493,10 +487,8 @@ const ObdCampaignTable = ({
     id,
     name,
     data,
-    currentPage,
-    paginationModel,
-    setCurrentPage,
-    setPaginationModel,
+    fetchCampaignReportsdata,
+    filterData,
 }) => {
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -504,6 +496,11 @@ const ObdCampaignTable = ({
     const [dropdownOpenId, setDropdownOpenId] = useState(null);
     const [campaignInfo, setCampaignInfo] = useState(null);
     const [campaignInfoMap, setCampaignInfoMap] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
+    const [paginationModel, setPaginationModel] = useState({
+        page: 0,
+        pageSize: 10,
+    });
 
     const navigate = useNavigate();
     const closeDropdown = () => setDropdownOpenId(null);
@@ -518,46 +515,50 @@ const ObdCampaignTable = ({
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    // const handleView = async (row) => {
-    //     const id = row.id;
+    useEffect(() => {
+        if (Object.keys(filterData)?.length > 0) {
+            fetchCampaignReportsdata({ ...filterData, page: currentPage });
+        }
+    }, [currentPage]);
 
-    //     // Reset for this row
-    //     setDropdownOpenId(null);
+    const handleView = async (row) => {
+        const id = row.id;
 
-    //     const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
-    //     const formattedDate = fromDateStr.replace(/\//g, "-");
+        // Reset for this row
+        setDropdownOpenId(null);
 
-    //     const data = {
-    //         campSrno: row?.campaignSrno,
-    //         fromDate: fromDateStr,
-    //     };
+        // const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
+        // const formattedDate = fromDateStr.replace(/\//g, "-");
 
-    //     try {
-    //         const res = await campaignSummaryInfo(data);
+        // const data = {
+        //   campSrno: row?.campaignSrno,
+        //   fromDate: fromDateStr,
+        // };
 
-    //         setCampaignInfoMap((prev) => ({
-    //             ...prev,
-    //             [id]: res[0] || null,
-    //         }));
+        let campaignSrno = id;
+        try {
+            const res = await viewObdCampaignDetails(campaignSrno);
 
-    //         setDropdownOpenId(id); // Open only after data is ready
-    //     } catch (e) {
-    //         console.error("Error fetching campaign summary:", e);
-    //     }
-    // };
+            setCampaignInfoMap((prev) => ({
+                ...prev,
+                [id]: res[0] || null,
+            }));
 
+            setDropdownOpenId(id); 
+        } catch (e) {
+            console.error("Error fetching campaign summary:", e);
+        }
+    };
 
     const handleDetailLogs = (row) => {
-        console.log(row)
         navigate("/obdCampaignDetailslog", {
             state: {
-                campaignSrNo: row.campaignSrno,
+                campaignSrNo: row,
                 id: "Obddetaillogs",
                 name: "ObdDetailLogs",
             },
         });
     };
-
 
     const columns = [
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
@@ -567,7 +568,12 @@ const ObdCampaignTable = ({
             flex: 1,
             minWidth: 120,
         },
-        { field: "campaignType", headerName: "Campaign Type", flex: 1, minWidth: 120 },
+        {
+            field: "campaignType",
+            headerName: "Campaign Type",
+            flex: 1,
+            minWidth: 120,
+        },
         { field: "voiceType", headerName: "Voice Type", flex: 1, minWidth: 120 },
         { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
         { field: "processFlag", headerName: "Status", flex: 1, minWidth: 120 },
@@ -581,6 +587,7 @@ const ObdCampaignTable = ({
                     <CustomTooltip title="View Campaign" placement="top" arrow>
                         <IconButton
                             className="text-xs"
+                            ref={(el) => (dropdownButtonRefs.current[params.row.id] = el)}
                             onClick={() => handleView(params.row)}
                         >
                             <InfoOutlinedIcon
@@ -591,6 +598,7 @@ const ObdCampaignTable = ({
                             />
                         </IconButton>
                     </CustomTooltip>
+
                     <InfoPopover
                         anchorEl={dropdownButtonRefs.current[params.row.id]}
                         open={dropdownOpenId === params.row.id}
@@ -600,16 +608,15 @@ const ObdCampaignTable = ({
                             <div className="w-[280px] max-w-full">
                                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                                     {[
-                                        "total",
-                                        "block",
+                                        "answered",
+                                        "busy",
                                         "failed",
-                                        "submitted",
+                                        "notAnswered",
                                         "pending",
                                         "sent",
-                                        "delivered",
-                                        "undelivered",
-                                        "read",
-                                        "source",
+                                        "smsCount",
+                                        "totalChargedUnit",
+                                        "unDelivered",
                                         // "queTime",
                                     ].map((key) => (
                                         <React.Fragment key={key}>
@@ -627,13 +634,12 @@ const ObdCampaignTable = ({
                             <div className="text-sm text-gray-500">No Data Available</div>
                         )}
                     </InfoPopover>
-
                     <CustomTooltip
                         title="Campaign Detail Report"
                         placement="top"
                         arrow={true}
                     >
-                        <IconButton onClick={() => handleDetailLogs(params.row)}>
+                        <IconButton onClick={() => handleDetailLogs(params.row.id)}>
                             <DescriptionOutlinedIcon
                                 sx={{
                                     fontSize: "1.2rem",
@@ -647,16 +653,33 @@ const ObdCampaignTable = ({
         },
     ];
 
+    const pageSize = paginationModel.pageSize;
+    const currentPageIndex = paginationModel.page;
+
     const rows = Array.isArray(data?.Data)
         ? data.Data.map((item, index) => ({
-            id: index + 1,
-            sn: index + 1,
+            id: item.campaignSrno,
+            sn: currentPageIndex * pageSize + (index + 1),
             campaignName: item.campaignName || "N/A",
             campaignType: item.campaignType || "N/A",
-            voiceType: item.voiceType === 1 ? "Transactional" : item.voiceType === 2 ? "Promotional" : "" || "N/A",
+            voiceType:
+                item.voiceType === 1
+                    ? "Transactional"
+                    : item.voiceType === 2
+                        ? "Promotional"
+                        : "" || "N/A",
             date: item.quetimeS || "N/A",
-            processFlag: item.processFlag === 1 ? "Pending" : item.processFlag === 2 ? "Processing" : item.processFlag === 3 ? "Undelivered" : item.processFlag === 4 ? "Delivered" : "" || "N/A",
-            campaignSrno: item.campaignSrno,
+            processFlag:
+                item.processFlag === 1
+                    ? "Pending"
+                    : item.processFlag === 2
+                        ? "Processing"
+                        : item.processFlag === 3
+                            ? "Undelivered"
+                            : item.processFlag === 4
+                                ? "Delivered"
+                                : "" || "N/A",
+            // campaignSrno: item.campaignSrno,
         }))
         : [];
 

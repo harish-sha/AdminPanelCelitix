@@ -6,7 +6,7 @@ import {
     GridFooterContainer,
     GridPagination,
 } from "@mui/x-data-grid";
-import { Paper, Typography, Box, Button } from "@mui/material";
+import { Paper, Typography, Box, Button, IconButton, Popper } from "@mui/material";
 import usePagination from "@mui/material/usePagination";
 import { styled } from "@mui/material/styles";
 import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
@@ -19,6 +19,9 @@ import UniversalButton from "@/whatsapp/components/UniversalButton.jsx";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "@/whatsapp/components/UniversalSkeleton.jsx";
 import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay.jsx";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { Table, TableBody, TableCell, TableRow } from '@mui/material';
+
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -89,8 +92,10 @@ const CampaignDetailsReports = ({
     // selectedRows,
 }) => {
     const location = useLocation();
-    const { campaignSrno, campaignName } = location.state || {};
-
+    const { campaignSrNo, campaignName } = location.state || {};
+    console.log("campaignSrno", campaignSrNo)
+    console.log("campaignName", campaignName)
+    console.log("location.state", location.state)
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState(null);
     const [deliveryStatus, setDeliveryStatus] = useState("");
@@ -115,7 +120,7 @@ const CampaignDetailsReports = ({
 
 
     useEffect(() => {
-        if (!campaignSrno) return;
+        if (!campaignSrNo) return;
         const fetchCampaignData = async () => {
             const data = await fetchDetailsbySrNo(campaignSrNo);
             console.log("campaign details report data", data)
@@ -132,120 +137,121 @@ const CampaignDetailsReports = ({
     };
 
     const columns = [
-        { field: 'sn', headerName: 'S.No', flex: 1, minWidth: 60 },
+        { field: 'sn', headerName: 'S.No', flex: 0, width: 60 },
         { field: 'campaignName', headerName: 'Campaign Name', flex: 1, minWidth: 150 },
         { field: 'mobileNumber', headerName: 'Mobile No.', flex: 1, minWidth: 120 },
-        { field: 'unit', headerName: 'Unit', flex: 1, minWidth: 60 },
-        { field: 'chargedUnit', headerName: 'Charged Unit', flex: 1, minWidth: 120 },
-        { field: 'sentTime', headerName: 'Sent Time', flex: 1, minWidth: 100 },
-        { field: 'deliveryTime', headerName: 'Delivery Time', flex: 1, minWidth: 120 },
+        { field: 'campaignType', headerName: 'Campaign Type.', flex: 1, minWidth: 120 },
+        { field: 'voiceType', headerName: 'Voice Type.', flex: 1, minWidth: 120 },
         { field: 'deliveryStatus', headerName: 'Delivery Status', flex: 1, minWidth: 130 },
+        { field: 'processFlag', headerName: 'Process Flag', flex: 1, minWidth: 120 },
+        { field: 'queTime', headerName: 'Que Time', flex: 1, minWidth: 130 },
+        { field: 'unit', headerName: 'Unit', flex: 1, minWidth: 60 },
+        { field: 'retryCount', headerName: 'Retry Count', flex: 1, minWidth: 60 },
+        { field: 'chargedUnit', headerName: 'Charged Unit', flex: 1, minWidth: 120 },
         { field: 'callDuration', headerName: 'Call Duration', flex: 1, minWidth: 120 },
-        { field: 'retry', headerName: 'Retry', flex: 1, minWidth: 60 },
-        { field: 'keyPress', headerName: 'Key Press', flex: 1, minWidth: 100 },
-        { field: 'action', headerName: 'Action', flex: 1, minWidth: 80 },
+        // { field: 'source', headerName: 'Source', flex: 1, minWidth: 120 },
 
-        {
-            field: 'more',
-            headerName: 'More',
-            flex: 1,
-            minWidth: 100,
-            renderCell: (params) => {
-                const [anchorEl, setAnchorEl] = useState(null);
-                const [open, setOpen] = useState(false);
+        // {
+        //     field: 'more',
+        //     headerName: 'More',
+        //     flex: 1,
+        //     minWidth: 100,
+        //     renderCell: (params) => {
+        //         const [anchorEl, setAnchorEl] = useState(null);
+        //         const [open, setOpen] = useState(false);
 
-                const handleMouseEnter = (event) => {
-                    setAnchorEl(event.currentTarget);
-                    setOpen(true);
-                };
+        //         const handleMouseEnter = (event) => {
+        //             setAnchorEl(event.currentTarget);
+        //             setOpen(true);
+        //         };
 
-                const handleMouseLeave = () => {
-                    setOpen(false);
-                };
+        //         const handleMouseLeave = () => {
+        //             setOpen(false);
+        //         };
 
-                return (
-                    <>
-                        <IconButton
-                            className="no-xs"
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                        >
-                            <InfoOutlinedIcon
-                                sx={{ fontSize: '1.2rem', color: 'green' }}
-                            />
-                        </IconButton>
+        //         return (
+        //             <>
+        //                 <IconButton
+        //                     className="no-xs"
+        //                     onMouseEnter={handleMouseEnter}
+        //                     onMouseLeave={handleMouseLeave}
+        //                 >
+        //                     <InfoOutlinedIcon
+        //                         sx={{ fontSize: '1.2rem', color: 'green' }}
+        //                     />
+        //                 </IconButton>
 
-                        <Popper
-                            open={open}
-                            anchorEl={anchorEl}
-                            placement="bottom-start"
-                            disablePortal
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                            modifiers={[
-                                {
-                                    name: 'offset',
-                                    options: {
-                                        offset: [-150, 8], // shift popper to left
-                                    },
-                                },
-                                {
-                                    name: 'preventOverflow',
-                                    options: {
-                                        boundary: 'viewport',
-                                        padding: 8,
-                                    },
-                                },
-                            ]}
-                            style={{ zIndex: 1300 }}
-                        >
-                            <Box sx={{ bgcolor: 'background.paper', p: 2, boxShadow: 3 }}>
-                                <Table size="small">
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell variant="head">Campaign Type</TableCell>
-                                            <TableCell>{params.row.campaignType}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Sms Count</TableCell>
-                                            <TableCell>{params.row.smsCount}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Source</TableCell>
-                                            <TableCell>{params.row.source}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Voice Type</TableCell>
-                                            <TableCell>{params.row.voiceType}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Process Flag</TableCell>
-                                            <TableCell>{params.row.processFlag}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Que Time</TableCell>
-                                            <TableCell>{params.row.queTime}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Campaign Sr. No.</TableCell>
-                                            <TableCell>{params.row.campaignSrno}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Unique Id</TableCell>
-                                            <TableCell>{params.row.uniqueId}</TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell variant="head">Is Schedule</TableCell>
-                                            <TableCell>{params.row.isSchedule}</TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </Box>
-                        </Popper>
-                    </>
-                );
-            },
-        },
+        //                 <Popper
+        //                     open={open}
+        //                     anchorEl={anchorEl}
+        //                     placement="bottom-start"
+        //                     disablePortal
+        //                     onMouseEnter={handleMouseEnter}
+        //                     onMouseLeave={handleMouseLeave}
+        //                     modifiers={[
+        //                         {
+        //                             name: 'offset',
+        //                             options: {
+        //                                 offset: [-150, 8], // shift popper to left
+        //                             },
+        //                         },
+        //                         {
+        //                             name: 'preventOverflow',
+        //                             options: {
+        //                                 boundary: 'viewport',
+        //                                 padding: 8,
+        //                             },
+        //                         },
+        //                     ]}
+        //                     style={{ zIndex: 1300 }}
+        //                 >
+        //                     <Box sx={{ bgcolor: 'background.paper', p: 2, boxShadow: 3 }}>
+        //                         <Table size="small">
+        //                             <TableBody>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Campaign Type</TableCell>
+        //                                     <TableCell>{params.row.campaignType}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Sms Count</TableCell>
+        //                                     <TableCell>{params.row.smsCount}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Source</TableCell>
+        //                                     <TableCell>{params.row.source}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Voice Type</TableCell>
+        //                                     <TableCell>{params.row.voiceType}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Process Flag</TableCell>
+        //                                     <TableCell>{params.row.processFlag}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Que Time</TableCell>
+        //                                     <TableCell>{params.row.queTime}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Campaign Sr. No.</TableCell>
+        //                                     <TableCell>{params.row.campaignSrno}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Unique Id</TableCell>
+        //                                     <TableCell>{params.row.uniqueId}</TableCell>
+        //                                 </TableRow>
+        //                                 <TableRow>
+        //                                     <TableCell variant="head">Is Schedule</TableCell>
+        //                                     <TableCell>{params.row.isSchedule}</TableCell>
+        //                                 </TableRow>
+        //                             </TableBody>
+        //                         </Table>
+        //                     </Box>
+        //                 </Popper>
+        //             </>
+        //         );
+        //     },
+        // },
     ];
 
     const rows = Array.isArray(campaignDetails) ? campaignDetails?.map((item, index) => ({
@@ -253,24 +259,30 @@ const CampaignDetailsReports = ({
         sn: index + 1,
         campaignName: item.campaignName,
         mobileNumber: item.mobileNo,
+        campaignType: item.campaignType,
         unit: item.unit,
         chargedUnit: item.chargedUnit,
-        sentTime: "N/A",
-        deliveryTime: "N/A",
         deliveryStatus: item.status,
-        callDuration: item.callDuration,
-        retry: item.retryCount,
-        keyPress: "N/A",
-        action: "N/A",
-        campaignType: item.campaignType,
-        smsCount: item.smsCount,
-        source: item.source,
-        voiceType: item.voiceType,
-        processFlag: item.processFlag,
         queTime: item.queTime,
-        campaignSrno: item.campaignSrno,
-        uniqueId: item.uniqueId,
-        isSchedule: item.isSchedule
+        callDuration: item.callDuration,
+        retryCount: item.retryCount,
+        source: item.source,
+        voiceType:
+            item.voiceType === 1
+                ? "Transactional"
+                : item.voiceType === 2
+                    ? "Promotional"
+                    : "" || "N/A",
+        processFlag:
+            item.processFlag === 1
+                ? "Pending"
+                : item.processFlag === 2
+                    ? "Processing"
+                    : item.processFlag === 3
+                        ? "Undelivered"
+                        : item.processFlag === 4
+                            ? "Delivered"
+                            : "" || "N/A",
     })) : [];
 
     const totalPages = Math.floor(totalPage / paginationModel.pageSize);
@@ -340,10 +352,9 @@ const CampaignDetailsReports = ({
 
     return (
         <div className="w-full">
-            {/* <button onClick={handlePag}>Click</button> */}
             <div>
                 <h1 className="mb-4 font-semibold text-center text-green-600 lg:text-lg text-md">
-                    <CampaignOutlinedIcon fontSize="medium" sx={{ fontSize: "1.8rem" }} />{" "}
+                    <CampaignOutlinedIcon fontSize="medium" sx={{ fontSize: "1.8rem" }} />&nbsp;
                     OBD Campaign Detail Report - {campaignName}
                 </h1>
             </div>
@@ -405,7 +416,7 @@ const CampaignDetailsReports = ({
                         slotProps={{ footer: { totalRecords: rows.length } }}
                         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
                         disableRowSelectionOnClick
-                        disableColumnResize
+                        // disableColumnResize
                         disableColumnMenu
                         sx={{
                             border: 0,

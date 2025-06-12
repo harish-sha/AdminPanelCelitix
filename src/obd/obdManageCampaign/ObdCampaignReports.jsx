@@ -27,15 +27,18 @@ import ObdCampaignTable from "./components/ObdCampaignTable.jsx";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel.jsx";
 import UniversalButton from "../../whatsapp/components/UniversalButton.jsx";
 import ObdDaySummaryTable from "./components/ObdDaySummaryTable.jsx";
+import ObdSummaryLogsTable from "./components/ObdSummaryLogsTable.jsx";
 
 import { CustomTabPanel } from "../../whatsapp/managetemplate/components/CustomTabPanel.jsx";
 import { DataTable } from "@/components/layout/DataTable.jsx";
+import ExportDialogObd from "./export/ExportDialogObd.jsx"
 
 import {
   fetchDayWiseSummaryObd,
   fetchSummaryLogsObd,
   fetchDetailsLogsObd,
-  getObdReportsCampaignLogs,
+  getScheduledVoiceCampaignReport,
+  cancelCamapign
 } from "@/apis/obd/obd.js";
 
 import moment from "moment";
@@ -64,12 +67,7 @@ const ObdCampaignReports = () => {
   const [obdCampaignData, setObdCampaignData] = useState(null);
   const [campaignFromDate, setCampaigndFromDate] = useState(new Date());
   const [campaignToDate, setCampaigndToDate] = useState(new Date());
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
-    pageSize: 10,
-  });
+  const [obdDaySummaryData, setObdDaySummaryData] = useState();
 
   const [isFetching, setIsFetching] = useState(false);
 
@@ -183,10 +181,10 @@ const ObdCampaignReports = () => {
   // Day wise summary Start
   const handleDayWiseSummary = async () => {
     const data = {
-      queTimeStart: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      fromDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
         "YYYY-MM-DD"
       ),
-      queTimeEnd: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      toDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
         "YYYY-MM-DD"
       ),
     };
@@ -194,29 +192,8 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchDayWiseSummaryObd(data);
-
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
-        { field: "summaryDate", headerName: "Date", flex: 1, minWidth: 120 },
-        {
-          field: "totalUnit",
-          headerName: "Total Unit",
-          flex: 1,
-          minWidth: 100,
-        },
-        { field: "unDeliv", headerName: "Pending", flex: 1, minWidth: 100 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
-      ]);
-
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      setObdDaySummaryData(res);
+      console.log("res", res);
     } catch (error) {
       toast.error("Something went wrong while fetching data.");
     } finally {
@@ -237,43 +214,20 @@ const ObdCampaignReports = () => {
     voiceType: "",
   });
 
-  const [summarycolumns, setSummaryColumns] = useState([]);
-  const [summaryrows, setSummaryRows] = useState([]);
+  const [summaryData, setSummarydata] = useState([])
 
   const handleSummaryLogs = async () => {
     const data = {
-      queTimeStart: moment.format("YYYY-MM-DD"),
-      queTimeEnd: moment.format("YYYY-MM-DD"),
+      fromDate: moment(summaryDataToFilter.toDate).format("YYYY-MM-DD"),
+      toDate: moment(summaryDataToFilter.toDate).format("YYYY-MM-DD"),
       voiceType: summaryDataToFilter.voiceType || "",
     };
 
     try {
       setIsFetching(true);
       const res = await fetchSummaryLogsObd(data);
-
-      setSummaryColumns([
-        { field: "sn", headerName: "S.No", flex: 0.5, minWidth: 70 },
-        { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
-        {
-          field: "totalUnit",
-          headerName: "Total Unit",
-          flex: 1,
-          minWidth: 100,
-        },
-        { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 120 },
-        { field: "sent", headerName: "Sent", flex: 1, minWidth: 100 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 100 },
-      ]);
-
-      setSummaryRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      console.log("res", res)
+      setSummarydata(res)
     } catch (error) {
       toast.error("Something went wrong while fetching data.");
     } finally {
@@ -281,8 +235,9 @@ const ObdCampaignReports = () => {
     }
   };
 
-  // Summary Report End
+  console.log("summaryData", summaryData)
 
+  // Summary Report End
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
@@ -369,21 +324,14 @@ const ObdCampaignReports = () => {
 
   const handleSummarySearchBtn = () => { };
 
-  const handleChangeOption = (event) => {
-    const value = event.target.value;
-    setSelectedOption(value);
-  };
-
-  const handleChangeOptionEnable = (event) => {
-    const value = event.target.value;
-    setCustomOptions(value);
-  };
+ 
 
   const handleCustomDialogNumber = (e) => {
     setCustomdialognumber(e.target.value);
   };
 
   const handlecampaignDialogSubmithBtn = (e) => {
+    console.log("hii")
     setVisibledialog(false);
     setSelectedOption(value);
     setCampaign(e.target.value);
@@ -393,55 +341,81 @@ const ObdCampaignReports = () => {
 
   // Export Start
 
-  const handleCustomDialogSubmithBtn = () => { };
+  const handleCustomDialogSubmithBtn = () => {
+    console.log("hiii")
+  };
 
   // Export End
 
   // campaign Report Start
 
-  const [data, setData] = useState({
-    voiceType: "",
-    fromDate: "",
-    toDate: "",
-    mobile: "",
-    page: 1,
-  });
+  // const [data, setData] = useState(
+  //   {
+  //     voiceType: "",
+  //     fromDate: "",
+  //     toDate: "",
+  //     mobile: "",
+  //     page: 2,
+  //   }
+  // );
+  const [data, setData] = useState("");
+
+  const fetchCampaignReportsdata = async (data) => {
+    try {
+      setIsFetching(true);
+      const res = await fetchDetailsLogsObd(data);
+      setObdCampaignData(res);
+    } catch (error) {
+      console.error("Error fetching Obd campaign Reports:", error);
+      toast.error("Error fetching Obd campaign Reports");
+    } finally {
+      setIsFetching(false);
+    }
+  };
 
   const handleSearchObdCampaignLogs = () => {
     const formattedDate = moment(campaignFromDate).format("YYYY-MM-DD");
 
     const newData = {
       voiceType: obdCampaignType,
-      // fromDate: formattedDate,
-      fromDate: "2025-06-01",
+      fromDate: formattedDate,
       toDate: formattedDate,
       mobile: obdCampaignNumber,
-      page: currentPage,
+      page: 1,
     };
 
     setData(newData);
 
-    const fetchCampaignReportsdata = async (data) => {
-      try {
-        setIsFetching(true);
-        const res = await fetchDetailsLogsObd(data);
-        setObdCampaignData(res);
-      } catch (error) {
-        console.error("Error fetching Obd campaign Reports:", error);
-        toast.error("Error fetching Obd campaign Reports");
-      } finally {
-        setIsFetching(false);
-      }
-    };
     fetchCampaignReportsdata(newData);
   };
+
   // campaign Report End
 
   // Scheduled Report Start
 
-  const fetchScheduleCampaignData = async () => { }
+  const fetchScheduleCampaignData = async () => {
+    try {
+      setIsFetching(true)
+      const res = await getScheduledVoiceCampaignReport()
+      setScheduleData(res)
+      console.log("res", res)
+    } catch (error) {
+      console.error("Error fetching the scheduled campaign data :", error)
+    } finally {
+      setIsFetching(false)
+    }
+  };
 
-  const handleCancel = async (srno) => { }
+  const handleCancel = async (srno) => {
+    console.log("srno", srno)
+    try {
+      const res = await cancelCamapign(srno)
+      toast.success("Campaign deleted successfully")
+      fetchScheduleCampaignData()
+    } catch (error) {
+      console.error("Error in deleting the data")
+    }
+  };
 
   const [scheduleData, setScheduleData] = useState([]);
 
@@ -640,10 +614,8 @@ const ObdCampaignReports = () => {
                     id="CampaignTableObd"
                     name="CampaignTableObd"
                     data={obdCampaignData}
-                    currentPage={currentPage}
-                    paginationModel={paginationModel}
-                    setCurrentPage={setCurrentPage}
-                    setPaginationModel={setPaginationModel}
+                    filterData={data}
+                    fetchCampaignReportsdata={fetchCampaignReportsdata}
                   />
                 </div>
               </div>
@@ -653,7 +625,6 @@ const ObdCampaignReports = () => {
             {/*Day Wise Summary Report Start  */}
             <CustomTabPanel value={value} index={1}>
               <div className="w-full">
-                {/* Filter Section */}
                 <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
@@ -689,7 +660,7 @@ const ObdCampaignReports = () => {
                     <UniversalButton
                       id="obdSummarySearchBtn"
                       name="obdSummarySearchBtn"
-                      label="Search"
+                      label={isFetching ? "Searching..." : "Search"}
                       icon={<IoSearch />}
                       onClick={handleDayWiseSummary}
                       disabled={isFetching}
@@ -697,13 +668,10 @@ const ObdCampaignReports = () => {
                   </div>
                 </div>
 
-                {/* Table Section */}
-                <DataTable
+                <ObdDaySummaryTable
                   id="obd-daywise-table"
                   name="obdDayWiseTable"
-                  col={columns}
-                  rows={rows}
-                  loading={isFetching}
+                  data={obdDaySummaryData}
                 />
               </div>
             </CustomTabPanel>
@@ -712,7 +680,6 @@ const ObdCampaignReports = () => {
             {/* Summary Logs Report Start */}
             <CustomTabPanel value={value} index={2}>
               <div className="w-full">
-                {/* Filters */}
                 <div className="flex flex-col md:flex-row flex-wrap gap-4 items-end pb-5">
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
@@ -759,7 +726,7 @@ const ObdCampaignReports = () => {
 
                   <div className="w-full sm:w-56">
                     <UniversalButton
-                      label="Search"
+                      label={isFetching ? "Searching..." : "Search"}
                       icon={<IoSearch />}
                       onClick={handleSummaryLogs}
                       disabled={isFetching}
@@ -767,13 +734,10 @@ const ObdCampaignReports = () => {
                   </div>
                 </div>
 
-                {/* Table */}
-                <DataTable
+                <ObdSummaryLogsTable
                   id="obd-summary-table"
                   name="obdSummaryTable"
-                  col={summarycolumns}
-                  rows={summaryrows}
-                  loading={isFetching}
+                  data={summaryData}
                 />
               </div>
             </CustomTabPanel>
@@ -781,32 +745,33 @@ const ObdCampaignReports = () => {
 
             {/* Scheduled Report Start */}
             <CustomTabPanel value={value} index={3} className="">
-              <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                <div className="w-max-content">
+              <div className="w-full">
+                <div className="w-max-content mb-8">
                   <UniversalButton
                     id="manageCampaignSearchBtn"
                     name="manageCampaignSearchBtn"
                     label={isFetching ? "Refreshing..." : "Refresh"}
                     icon={<IoSearch />}
+                    disabled={isFetching}
                     onClick={fetchScheduleCampaignData}
                     variant="primary"
                   />
                 </div>
-                {isFetching ? (
+                {/* {isFetching ? (
                   <div className="">
                     <UniversalSkeleton height="35rem" width="100%" />
                   </div>
-                ) : (
-                  <div className="w-full">
-                    <ManageScheduleCampaignTableObd
-                      id="whatsappManageCampaignScheduleTable"
-                      name="whatsappManageCampaignTable"
-                      data={scheduleData}
-                      onCancel={handleCancel}
-                    // fromDate={selectedDate}
-                    />
-                  </div>
-                )}
+                ) : ( */}
+                <div className="w-full">
+                  <ManageScheduleCampaignTableObd
+                    id="whatsappManageCampaignScheduleTable"
+                    name="whatsappManageCampaignTable"
+                    data={scheduleData}
+                    onCancel={handleCancel}
+                  // fromDate={selectedDate}
+                  />
+                </div>
+                {/* )} */}
               </div>
             </CustomTabPanel>
             {/* Scheduled Report End */}
@@ -814,790 +779,39 @@ const ObdCampaignReports = () => {
         )}
       </div>
 
-      <Dialog
-        visible={visibledialog}
-        style={{ width: "45rem" }}
-        onHide={() => {
-          setVisibledialog(false);
-        }}
-        draggable={false}
-      >
-        <div className="flex gap-4">
-          <div className="cursor-pointer">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="radioOption1"
-                name="radioGroup"
-                value="option1"
-                onChange={handleChangeOption}
-                checked={selectedOption === "option1"}
-              />
-              <label
-                htmlFor="radioOption1"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
-              >
-                Campaign-wise
-              </label>
-            </div>
-          </div>
-          <div className="cursor-pointer">
-            <div className="flex items-center gap-2">
-              <RadioButton
-                inputId="radioOption2"
-                name="radioGroup"
-                value="option2"
-                onChange={handleChangeOption}
-                checked={selectedOption === "option2"}
-              />
-              <label
-                htmlFor="radioOption2"
-                className="text-gray-700 font-medium text-sm cursor-pointer"
-              >
-                Custom
-              </label>
-            </div>
-          </div>
-        </div>
-
-        {selectedOption === "option1" && (
-          <>
-            <div className="mt-5">
-              <AnimatedDropdown
-                id="campaign"
-                name="campaign"
-                options={[
-                  { value: "Campaignl", label: "Camapaign1" },
-                  { value: "Campaign2", label: "Campaign2" },
-                  { value: "Campaign3", label: "Campaign3" },
-                ]}
-                onChange={setCampaign}
-                value={campaign}
-                placeholder="Search Campaign"
-              />
-            </div>
-            <div className="flex items-center lg:gap-x-20 gap-x-10  my-6">
-              <UniversalLabel text="Custom Columns" />
-
-              <div className="flex gap-4">
-                <div className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="radioOptionenable"
-                      name="radioGroup"
-                      value="radioOptionenable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptionenable"}
-                    />
-                    <label
-                      htmlFor="radioOptionenable"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
-                    >
-                      Enable
-                    </label>
-                  </div>
-                </div>
-                {/* Option 2 */}
-                <div className="cursor-pointer">
-                  <div className="flex items-center gap-2">
-                    <RadioButton
-                      inputId="radioOptiondisable"
-                      name="radioGroup"
-                      value="radioOptiondisable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptiondisable"}
-                    />
-                    <label
-                      htmlFor="radioOptiondisable"
-                      className="text-gray-700 font-medium text-sm cursor-pointer"
-                    >
-                      Disable
-                    </label>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {customOptions === "radioOptionenable" && (
-              <>
-                <div className="grid grid-cols-2 lg:grid-cols-3 ">
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="campaignName"
-                      name="campaignName"
-                      onChange={(e) => handleCheckboxChange(e, "campaignName")}
-                      checked={campaigncheckboxStates.campaignName}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="campaignName"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Campaign Name
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="mobileNo"
-                      name="mobileNo"
-                      onChange={(e) => handleCheckboxChange(e, "mobileNo")}
-                      checked={campaigncheckboxStates.mobileNo}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="mobileNo"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Mobile Number
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callType"
-                      name="callType"
-                      onChange={(e) => handleCheckboxChange(e, "callType")}
-                      checked={campaigncheckboxStates.callType}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callType"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Type
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="totalUnits"
-                      name="totalUnits"
-                      onChange={(e) => handleCheckboxChange(e, "totalUnits")}
-                      checked={campaigncheckboxStates.totalUnits}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="totalUnits"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Total Units
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="queueTime"
-                      name="queueTime"
-                      onChange={(e) => handleCheckboxChange(e, "queueTime")}
-                      checked={campaigncheckboxStates.queueTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="queueTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Queue Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="sentTime"
-                      name="sentTime"
-                      onChange={(e) => handleCheckboxChange(e, "sentTime")}
-                      checked={campaigncheckboxStates.sentTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="sentTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Sent Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="deliveryTime"
-                      name="deliveryTime"
-                      onChange={(e) => handleCheckboxChange(e, "deliveryTime")}
-                      checked={campaigncheckboxStates.deliveryTime}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="deliveryTime"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Delivery Time
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callDuration"
-                      name="callDuration"
-                      onChange={(e) => handleCheckboxChange(e, "callDuration")}
-                      checked={campaigncheckboxStates.callDuration}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callDuration"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Duration
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="retryCount"
-                      name="retryCount"
-                      onChange={(e) => handleCheckboxChange(e, "retryCount")}
-                      checked={campaigncheckboxStates.retryCount}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="retryCount"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Retry Count
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="callStatus"
-                      name="callStatus"
-                      onChange={(e) => handleCheckboxChange(e, "callStatus")}
-                      checked={campaigncheckboxStates.callStatus}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="callStatus"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Call Status
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="deliveryStatus"
-                      name="deliveryStatus"
-                      onChange={(e) =>
-                        handleCheckboxChange(e, "deliveryStatus")
-                      }
-                      checked={campaigncheckboxStates.deliveryStatus}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="deliveryStatus"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Delivery Status
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="keypress"
-                      name="keypress"
-                      onChange={(e) => handleCheckboxChange(e, "keypress")}
-                      checked={campaigncheckboxStates.keypress}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="keypress"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Key Press
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="action"
-                      name="action"
-                      onChange={(e) => handleCheckboxChange(e, "action")}
-                      checked={campaigncheckboxStates.action}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="action"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Action
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="source"
-                      name="source"
-                      onChange={(e) => handleCheckboxChange(e, "source")}
-                      checked={campaigncheckboxStates.source}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="source"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Source
-                    </label>
-                  </div>
-                </div>
-              </>
-            )}
-
-            <div className="flex item-center justify-center mt-6">
-              <UniversalButton
-                id="campaignDialogSubmithBtn"
-                name="campaignDialogSubmithBtn"
-                label="Submit"
-                onClick={handlecampaignDialogSubmithBtn}
-              />
-            </div>
-          </>
-        )}
-        {selectedOption === "option2" && (
-          <>
-            <div className="mt-4 ">
-              <div className="flex justify-between gap-x-4">
-                <UniversalDatePicker label="From Date:" />
-                <UniversalDatePicker label="To Date:" />
-              </div>
-
-              <div className="flex justify-between gap-5 my-4">
-                <div className="flex-1">
-                  <AnimatedDropdown
-                    label="Select Type"
-                    options={[
-                      { value: "Promotional", label: "Promotional" },
-                      { value: "Transactional", label: "Transactional" },
-                      { value: "Both", label: "Both" },
-                    ]}
-                    value={customdialogtype}
-                    onChange={setCustomdialogtype}
-                    placeholder="Select Type"
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <AnimatedDropdown
-                    label="Select Request"
-                    options={[
-                      { value: "Sent", label: "Sent" },
-                      { value: "Failed", label: "Failed" },
-                      { value: "NDNC", label: "NDNC" },
-                    ]}
-                    value={customdialogstatus}
-                    onChange={setCustomdialogstatus}
-                    placeholder="Select Status"
-                  />
-                </div>
-              </div>
-
-              <div className="flex flex-col mt-5">
-                <UniversalLabel text="Delivery Status" />
-                <div className="flex gap-x-5 lg:gap-x-20">
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="answered"
-                      name="answered"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "answered")
-                      }
-                      checked={deliverycheckbox.answered}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="answered"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Answered
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="unanswered"
-                      name="unanswered"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "unanswered")
-                      }
-                      checked={deliverycheckbox.unanswered}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="unanswered"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Unanswered
-                    </label>
-                  </div>
-
-                  <div className="flex items-center">
-                    <Checkbox
-                      id="dialed"
-                      name="dialed"
-                      onChange={(e) =>
-                        handleDeliveryCheckboxChange(e, "dialed")
-                      }
-                      checked={deliverycheckbox.dialed}
-                      className="m-2"
-                    />
-                    <label
-                      htmlFor="dialed"
-                      className="text-sm font-medium text-gray-800"
-                    >
-                      Dialed
-                    </label>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex my-4 gap-4">
-                <InputField
-                  label="Mobile Number"
-                  id="customdialognumber"
-                  name="customdialognumber"
-                  value={customdialognumber}
-                  onChange={handleCustomDialogNumber}
-                  placeholder="Enter mobile number..."
-                />
-                <AnimatedDropdown
-                  label="DTMF Count"
-                  id="dtmfResponse"
-                  name="dtmfResponse"
-                  options={[
-                    { value: "0", label: "0" },
-                    { value: "l", label: "1" },
-                    { value: "2", label: "2" },
-                    { value: "3", label: "3" },
-                    { value: "4", label: "4" },
-                    { value: "5", label: "5" },
-                    { value: "6", label: "6" },
-                    { value: "7", label: "7" },
-                    { value: "8", label: "8" },
-                    { value: "9", label: "9" },
-                  ]}
-                  onChange={setDtmfResponse}
-                  value={dtmfResponse}
-                  placeholder="DTMF Response"
-                />
-              </div>
-
-              <div className="flex items-center lg:gap-x-20 gap-x-10 my-6">
-                <UniversalLabel text="Custom Columns" />
-                <div className="flex gap-4">
-                  <div className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="radioOptionenable"
-                        name="radioGroup"
-                        value="radioOptionenable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptionenable"}
-                      />
-                      <label
-                        htmlFor="radioOptionenable"
-                        className="text-gray-700 font-medium text-sm cursor-pointer"
-                      >
-                        Enable
-                      </label>
-                    </div>
-                  </div>
-                  {/* Option 2 */}
-                  <div className="cursor-pointer">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="radioOptiondisable"
-                        name="radioGroup"
-                        value="radioOptiondisable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptiondisable"}
-                      />
-                      <label
-                        htmlFor="radioOptiondisable"
-                        className="text-gray-700 font-medium text-sm cursor-pointer"
-                      >
-                        Disable
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {customOptions === "radioOptionenable" && (
-                <>
-                  <div className="grid grid-cols-2 lg:grid-cols-3 ">
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="campaignName"
-                        name="campaignName"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "campaignName")
-                        }
-                        checked={customcheckboxStates.campaignName}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="campaignName"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Campaign Name
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="mobileNo"
-                        name="mobileNo"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "mobileNo")
-                        }
-                        checked={customcheckboxStates.mobileNo}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="mobileNo"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Mobile Number
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callType"
-                        name="callType"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callType")
-                        }
-                        checked={customcheckboxStates.callType}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callType"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Type
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="totalUnits"
-                        name="totalUnits"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "totalUnits")
-                        }
-                        checked={customcheckboxStates.totalUnits}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="totalUnits"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Total units
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="queueTime"
-                        name="queueTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "queueTime")
-                        }
-                        checked={customcheckboxStates.queueTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="queueTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Queue Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="sentTime"
-                        name="sentTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "sentTime")
-                        }
-                        checked={customcheckboxStates.sentTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="sentTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Sent Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="deliveryTime"
-                        name="deliveryTime"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "deliveryTime")
-                        }
-                        checked={customcheckboxStates.deliveryTime}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="deliveryTime"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Delivery Time
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callDuration"
-                        name="callDuration"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callDuration")
-                        }
-                        checked={customcheckboxStates.callDuration}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callDuration"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Duration
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="retryCount"
-                        name="retryCount"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "retryCount")
-                        }
-                        checked={customcheckboxStates.retryCount}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="retryCount"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Retry Count
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="callStatus"
-                        name="callStatus"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "callStatus")
-                        }
-                        checked={customcheckboxStates.callStatus}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="callStatus"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Call Status
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="deliveryStatus"
-                        name="deliveryStatus"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "deliveryStatus")
-                        }
-                        checked={customcheckboxStates.deliveryStatus}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="deliveryStatus"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Delivery Status
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="keypress"
-                        name="keypress"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "keypress")
-                        }
-                        checked={customcheckboxStates.keypress}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="keypress"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Key Press
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="action"
-                        name="action"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "action")
-                        }
-                        checked={customcheckboxStates.action}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="action"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Action
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <Checkbox
-                        id="source"
-                        name="source"
-                        onChange={(e) =>
-                          handleCustomCheckboxChange(e, "source")
-                        }
-                        checked={customcheckboxStates.source}
-                        className="m-2"
-                      />
-                      <label
-                        htmlFor="source"
-                        className="text-sm font-medium text-gray-800"
-                      >
-                        Source
-                      </label>
-                    </div>
-                  </div>
-                </>
-              )}
-
-              <div className="flex item-center justify-center mt-6">
-                <UniversalButton
-                  id="customDialogSubmithBtn"
-                  name="customDialogSubmithBtn"
-                  label="Submit"
-                  onClick={handleCustomDialogSubmithBtn}
-                />
-              </div>
-            </div>
-          </>
-        )}
-      </Dialog>
+      <ExportDialogObd
+        visibledialog={visibledialog}
+        selectedOption={selectedOption}
+        setSelectedOption={setSelectedOption}
+        campaign={campaign}
+        setCampaign={setCampaign}
+        setCustomOptions={setCustomOptions}
+        customOptions={customOptions}
+        handlecampaignDialogSubmithBtn={handlecampaignDialogSubmithBtn}
+        customdialogtype={customdialogtype}
+        setCustomdialogtype={setCustomdialogtype}
+        customdialogstatus={customdialogstatus}
+        setCustomdialogstatus={setCustomdialogstatus}
+        customdialognumber={customdialognumber}
+        setCustomdialognumber={setCustomdialognumber}
+        handleCheckboxChange={handleCheckboxChange}
+        campaigncheckboxStates={campaigncheckboxStates}
+        setCampaignCheckboxStates={setCampaignCheckboxStates}
+        deliverycheckbox={deliverycheckbox}
+        setDeliverycheckbox={setDeliverycheckbox}
+        handleCustomDialogNumber={handleCustomDialogNumber}
+        handleCustomDialogSubmithBtn={handleCustomDialogSubmithBtn}
+        dtmfResponse={dtmfResponse}
+        setDtmfResponse={setDtmfResponse}
+        customcheckboxStates={customcheckboxStates}
+        setcustomCheckboxStates={setcustomCheckboxStates}
+        handleDeliveryCheckboxChange={handleDeliveryCheckboxChange}
+        customcheckboxStates={customcheckboxStates}
+        handleCustomCheckboxChange={handleCustomCheckboxChange}
+        campaigncheckboxStates={campaigncheckboxStates}
+        handleCheckboxChange={handleCheckboxChange}
+        setVisibledialog={setVisibledialog}
+      />
     </>
   );
 };
