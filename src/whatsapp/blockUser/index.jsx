@@ -36,30 +36,25 @@ export const BlockUser = () => {
   async function handleGetAllBlockUser() {
     if (!selectedWaba) return toast.error("Please select waba account");
     try {
-      const res = await getblockUser(selectedWaba);
+      const { data } = await getblockUser(selectedWaba);
 
-      const formattedData = res?.data;
+      if (!Array.isArray(data)) {
+        throw new Error("Invalid data format");
+      }
 
-      const findMbno = formattedData.filter((data) => data.wa_id == mobile);
+      const filteredData = mobile
+        ? data.filter((item) => item.wa_id === mobile)
+        : data;
 
-      // const formattedData = Array.isArray(res?.data)
-      //   ? res?.data?.map((item, index) => ({
-      //       sn: index + 1,
-      //       id: item.wa_id,
-      //       ...item,
-      //     }))
-      //   : [];
       setRows(
-        Array.isArray(findMbno)
-          ? findMbno?.map((item, index) => ({
-              sn: index + 1,
-              id: item.wa_id,
-              ...item,
-            }))
-          : []
+        filteredData.map((item, index) => ({
+          sn: index + 1,
+          id: item.wa_id,
+          ...item,
+        }))
       );
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      console.error("Error fetching block user:", error);
       toast.error("Error fetching block user");
     }
   }
