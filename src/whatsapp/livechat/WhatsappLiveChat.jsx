@@ -728,7 +728,6 @@ export default function WhatsappLiveChat() {
         (temp) => temp.vendorTemplateId === sendmessageData?.templateName
       )?.templateName;
 
-     
       data = {
         srno: chatState?.active.srno,
         templateUrlVariable: btnVariables,
@@ -816,9 +815,10 @@ export default function WhatsappLiveChat() {
         setVarLength(item?.example?.body_text);
       }
       if (item?.type === "BUTTONS") {
-        item?.buttons?.map(({ type, example }) => {
-          if (type === "URL") {            
-            setBtnVarLength(example);
+        item?.buttons?.map(({ type, example, url }) => {
+          if (type === "URL") {
+            const varLength = url?.match(/{{(.+?)}}/g);
+            setBtnVarLength(varLength?.length || 0);
           }
         });
       }
