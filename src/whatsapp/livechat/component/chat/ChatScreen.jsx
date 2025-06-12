@@ -257,6 +257,7 @@ export const ChatScreen = ({
       const res = await blockUser(waba, payload);
       if (res?.block_users?.added_users?.length == 0) {
         toast.error("Unable to block user");
+        return
       }
       toast.success("User blocked successfully");
     } catch (e) {
