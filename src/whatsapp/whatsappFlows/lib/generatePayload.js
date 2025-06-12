@@ -372,8 +372,8 @@ export const generatePayload = (data) => {
         };
       }
 
-      if(type === "textcaption"){
-         component = {
+      if (type === "textcaption") {
+        component = {
           type: "TextCaption",
           text: pay.text,
         };
@@ -403,28 +403,30 @@ export const generatePayload = (data) => {
       //   };
       // }
 
-      if(type === "textInput"){
+      if (type === "textInput") {
         component = {
-           name,
-           type: "TextInput",
-           label:pay.label,
-           required: pay.required ?? true,
-           "helper-text": pay['helper-text'],
-           "min-chars": pay["max-chars"] || "",
-           "max-chars":pay["max-chars"] || ""
-        }
+          name,
+          type: "TextInput",
+          label: pay.label,
+          required: pay.required ?? true,
+          name:pay.name,
+           "error-message": pay['error-message'] || "",
+          "helper-text": pay["helper-text"],
+          "min-chars": parseInt(pay["min-chars"]) || 1,
+          "max-chars": parseInt(pay["max-chars"]) || 5,
+        };
       }
 
-      if(type === "textArea"){
+      if (type === "textArea") {
         component = {
-          name, 
+          name,
           type: "TextArea",
-          label:pay.label,
+          label: pay.label,
           required: pay.required ?? true,
-           "helper-text": pay['helper-text'],
-           "min-chars": pay["max-chars"] || "",
-           "max-chars":pay["max-chars"] || ""
-        }
+          "helper-text": pay["helper-text"],
+          "error-message": pay["error-message"],
+        
+        };
       }
 
       if (type === "dropDown") {

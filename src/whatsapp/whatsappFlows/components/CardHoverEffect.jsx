@@ -37,7 +37,7 @@ export default function CardHoverEffect() {
     },
     {
       title: "Contact Us",
-      animation:Animation_ContactUs,
+      animation: Animation_ContactUs,
       button: "Contact Us",
     },
     // {

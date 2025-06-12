@@ -138,32 +138,193 @@ const Canvas = ({
       return targetItem.text;
     }
 
-    // For textInput and textArea: look under texts
-    if (item.type === "textInput" || item.type === "textArea") {
-      const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
-      return targetItem.texts?.[key]?.[field] || "";
+    if (item.type === "textInput") {
+      return (
+        <div>
+          <label>{targetItem.label}</label>
+          <p>
+           
+            {targetItem["helper-text"] && (
+              <small>{targetItem["helper-text"]}</small>
+            )}
+          </p>
+
+           <p>{targetItem["error-message"] && (
+              <small>{targetItem["error-message"]}</small> )}
+          </p>
+          <p>{targetItem.name} </p>
+          <div>{targetItem["min-chars"]} </div>
+          <div>{targetItem["max-chars"]} </div>
+
+
+          <div>
+            <strong>Required: </strong>
+            {targetItem.required ? "True" : "False"}
+          </div>
+        </div>
+      );
     }
+
+    if (item.type === "textArea") {
+      return (
+        <div>
+          <label>{targetItem.label}</label>
+          <p>
+            {targetItem["helper-text"] && (
+              <small>{targetItem["helper-text"]}</small>
+            )}
+          </p>
+         
+          <div>
+            <strong>Required: </strong>
+            {targetItem.required ? "True" : "False"}
+          </div>
+        </div>
+      );
+    }
+
+    // For textInput and textArea: look under texts
+    // if (item.type === "textInput" || item.type === "textArea") {
+    //   const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
+    //   return targetItem.texts?.[key]?.[field] || "";
+    // }
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
       return targetItem.footer?.footer_1?.center_caption || "";
     }
 
-    if (item.type === "radioButton") {
-      return targetItem.label || "";
-    }
+  if (item.type === "radioButton") {
+  return (
+    <div className="p-3 bg-blue-50 rounded-md">
+      <label className="font-medium">{targetItem.label || "Select an option"}</label>
 
-    if (item.type === "checkBox") {
-      return targetItem.label || "";
-    }
+      {(targetItem["data-source"] || []).map((opt, i) => (
+        <div key={i} className="mt-2 p-2 border rounded bg-white shadow-sm">
+          <p><strong>Title:</strong> {opt.title}</p>
+          <p><strong>Description:</strong> {opt.description}</p>
+          <p><strong>Metadata:</strong> {opt.metadata}</p>
+          {opt.image && (
+            <img
+              src={opt.image}
+              alt={opt.title || "option image"}
+              className="mt-1 w-20 h-20 object-contain rounded"
+            />
+          )}
+        </div>
+      ))}
 
-    if (item.type === "dropDown") {
-      return targetItem.label || "";
-    }
+      <div className="mt-3">
+        <strong>Required:</strong> {targetItem.required ? "True" : "False"}
+      </div>
+    </div>
+  );
+}
+
+
+   if (item.type === "checkBox") {
+  return (
+    <div>
+      <label className="font-semibold">{targetItem.label || "Select an option"}</label>
+
+      <ul className="mt-2 space-y-2">
+        {(targetItem["data-source"] || []).map((opt, idx) => (
+          <li key={idx} className="border p-2 rounded bg-sky-100">
+            <div className="font-medium">{opt.title || "Option"}</div>
+            {opt.description && <div className="text-sm text-gray-700">{opt.description}</div>}
+            {opt.metadata && <div className="text-xs text-gray-500">Meta: {opt.metadata}</div>}
+            {opt.image && (
+              <img src={opt.image} alt="Option" className="w-12 h-12 mt-1 object-cover rounded" />
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <div className="mt-2 text-sm text-gray-600">
+        <strong>Required:</strong> {targetItem.required ? "True" : "False"}
+      </div>
+    </div>
+  );
+}
+
+if (item.type === "dropDown") {
+  return (
+    <div className="mb-4">
+      <label className="block font-medium mb-1">
+        {targetItem.label || "Select an option"}
+      </label>
+
+      <div className="space-y-1">
+        {(targetItem["data-source"] || []).map((opt, index) => (
+          <div
+            key={index}
+            className="border border-gray-300 p-2 rounded bg-blue-50"
+          >
+            <div className="font-semibold">{opt.title || "Untitled Option"}</div>
+            {opt.description && (
+              <div className="text-sm text-gray-600">{opt.description}</div>
+            )}
+            {opt.metadata && (
+              <div className="text-xs text-gray-500">Metadata: {opt.metadata}</div>
+            )}
+            {opt.image && (
+              <img
+                src={opt.image}
+                alt={opt.title}
+                className="mt-1 h-10 object-contain"
+              />
+            )}
+          </div>
+        ))}
+      </div>
+     <div className="mt-2 text-sm text-gray-600">
+        <strong>Required:</strong> {targetItem.required ? "True" : "False"}
+      </div>
+    </div>
+  );
+}
+
 
     if (item.type === "chipSelector") {
-      return targetItem.label || "";
-    }
+  const options = targetItem["data-source"] || [];
+
+  return (
+    <div>
+      <label className="block font-semibold mb-1">
+        {targetItem.label || "Chip Selector Label"}
+      </label>
+
+      {targetItem.description && (
+        <p className="text-sm text-gray-600 mb-2">
+          {targetItem.description}
+        </p>
+      )}
+
+      <div className="flex flex-wrap gap-2 mb-2">
+        {options.length > 0 ? (
+          options.map((opt, idx) => (
+            <span
+              key={idx}
+              className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+            >
+              {opt.title || `Option ${idx + 1}`}
+            </span>
+          ))
+        ) : (
+          <p className="text-sm text-gray-400">No options available</p>
+        )}
+      </div>
+
+      <p className="text-sm">
+        <strong>Max Selectable:</strong> {targetItem["max-selected-items"] || 2}
+      </p>
+      <p className="text-sm">
+        <strong>Required:</strong> {targetItem.required ? "True" : "False"}
+      </p>
+    </div>
+  );
+}
+
 
     if (item.type === "embeddedlink") {
       return targetItem.label || "";
@@ -179,7 +340,11 @@ const Canvas = ({
     }
 
     if (item.type === "document") {
-      return targetItem.label || "";
+      return (
+        <div>
+          <label>{targetItem.label || ""} </label>
+           </div>
+      ) 
     }
 
     if (item.type === "media") {
@@ -274,18 +439,10 @@ const Canvas = ({
         // className="fields"
         className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
       >
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-gray-700 tracking-wider">
             {getLabel(item.type)}
-          </Typography>
+          </label>
           <Box>
             <IconButton size="small" onClick={() => onEdit(index, item)}>
               <EditOutlinedIcon
@@ -300,7 +457,7 @@ const Canvas = ({
               />
             </IconButton>
           </Box>
-        </Box>
+        </div>
 
         {/* <InputField
           // label="Enter value"
@@ -321,12 +478,28 @@ const Canvas = ({
           rows={item.type === "textArea" ? 4 : undefined}
           readOnly
         /> */}
-        <InputField
+        {/* <InputField
           value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
           multiline={item.type === "textArea"}
           rows={item.type === "textArea" ? 4 : undefined}
           readOnly
-        />
+        /> */}
+
+        <div
+          style={{
+            whiteSpace: item.type === "textArea" ? "pre-wrap" : "secondary",
+            minHeight:
+              item.type === "textArea" ? `${item.rows || 4}em` : "auto",
+            border: "1px solid #ccc",
+            padding: "8px",
+            borderRadius: "4px",
+            background: "white",
+            height: "auto",
+            borderRadius: "10px",
+          }}
+        >
+          {getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+        </div>
       </Paper>
     );
   });
@@ -403,7 +576,9 @@ const Canvas = ({
       case "textcaption":
         return "#f8bbd0";
       case "textInput":
+        return "#E0F7FA";
       case "textArea":
+        return "#E0F7FA";
       case "radioButton":
       case "checkBox":
       case "dropDown":
@@ -422,7 +597,7 @@ const Canvas = ({
       case "subheading":
         return "Subheading";
       case "textbody":
-        return "Text Body";
+        return "Textbody";
       case "textcaption":
         return "Textcaption";
       case "textInput":

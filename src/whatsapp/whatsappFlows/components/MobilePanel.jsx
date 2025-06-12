@@ -129,7 +129,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 >
                   {item.text || "Heading Placeholder"}
                 </Typography>
-                
               );
 
             // Render Subheading
@@ -142,7 +141,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 >
                   {item.text || "Subheading Placeholder"}
                 </Typography>
-                
               );
 
             // Render Text Body and Text Caption
@@ -155,7 +153,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 >
                   {item.text || "Text Body "}
                 </Typography>
-              
               );
 
             case "textcaption":
@@ -163,11 +160,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="caption"
-                // sx={{ whiteSpace: "pre-line" }}
+                  // sx={{ whiteSpace: "pre-line" }}
                 >
                   {item.text || "Text Caption Placeholder"}
                 </Typography>
-                
               );
 
             // Render Text Input
@@ -176,24 +172,29 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <div key={index} className="mb-4">
                   <Typography
                     variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
+                    // sx={{ whiteSpace: "pre-line" }}
                   >
-                    {item.texts?.textInput_1?.label || "Label"}
+                    {item.label || "Label"}
                   </Typography>
 
                   <InputField
+                    readOnly
                     fullWidth
+                    multiline
+                    rows={4}
+                    value={item.value || ""}
                     placeholder={
-                      item.texts?.textInput_1?.helper_text || "Placeholder"
+                      item["helper-text"] || "Text Input Placeholder"
                     }
-                  // placeholder="Text Input Placeholder"
-                  // onChange={(e) =>
-                  //   onUpdateItem &&
-                  //   onUpdateItem(index, (prevItem) => ({
-                  //     ...prevItem,
-                  //     value: e.target.value,
-                  //   }))
-                  // }
+                    error={item.required && !item.value?.trim()}
+                    helperText={item["error-message"] || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
+                    }
                   />
                 </div>
               );
@@ -203,24 +204,24 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <div key={index} className="mb-4">
                   <Typography variant="caption">
-                    {item.texts?.textArea_1?.label || "Label"}
+                    {item.label || "Label"}
                   </Typography>
-
                   <InputField
+                    readOnly
                     fullWidth
                     multiline
                     rows={4}
-                    placeholder={
-                      item.texts?.textArea_1?.helper_text || "Placeholder"
+                    value={item.value || ""}
+                    placeholder={item["helper-text"] || "Text Area Placeholder"}
+                    error={item.required && !item.value?.trim()}
+                    helperText={item["error-message"] || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
                     }
-                  // placeholder="Text Area Placeholder"
-                  // onChange={(e) =>
-                  //   onUpdateItem &&
-                  //   onUpdateItem(index, (prevItem) => ({
-                  //     ...prevItem,
-                  //     value: e.target.value,
-                  //   }))
-                  // }
                   />
                 </div>
               );
@@ -229,10 +230,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // anshu
             case "checkBox":
               return (
-
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
                   {item?.checkboxGroups &&
-                    Object.keys(item.checkboxGroups).length > 0 ? (
+                  Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
                         <Box key={groupId} sx={{ mb: 2 }}>
@@ -305,7 +305,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                 <Checkbox
                                   checked={
                                     item.checked?.[
-                                    `${groupId}_${optionIndex}`
+                                      `${groupId}_${optionIndex}`
                                     ] || false
                                   }
                                   onChange={(e) =>
@@ -338,7 +338,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
                   {item?.radioButton &&
-                    Object.keys(item.radioButton).length > 0 ? (
+                  Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
                         <Box key={groupId} sx={{ mb: 2 }}>
@@ -431,88 +431,89 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Dropdown
             case "dropDown":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-                  {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
-                    Object.entries(item.dropdown).map(
-                      ([dropdownId, dropdownData], groupIdx) => (
-                        <Box key={dropdownId} sx={{ mb: 2 }}>
-                          <Typography
-                            variant="subtitle1"
-                            sx={{ fontWeight: 600, mb: 1 }}
-                          >
-                            {dropdownData.label || `Dropdown ${groupIdx + 1}`}
-                          </Typography>
+                // <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                //   {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
+                //     Object.entries(item.dropdown).map(
+                //       ([dropdownId, dropdownData], groupIdx) => (
+                //         <Box key={dropdownId} sx={{ mb: 2 }}>
+                //           <Typography
+                //             variant="subtitle1"
+                //             sx={{ fontWeight: 600, mb: 1 }}
+                //           >
+                //             {dropdownData.label || `Dropdown ${groupIdx + 1}`}
+                //           </Typography>
 
-                          <TextField
-                            select
-                            fullWidth
-                            size="small"
-                            value={item.selected?.[dropdownId] || ""}
-                            onChange={(e) =>
-                              handleDropdownChange(
-                                index,
-                                dropdownId,
-                                e.target.value
-                              )
-                            }
-                            sx={{ backgroundColor: "#fff" }}
-                          >
-                            {(dropdownData["data-source"] || []).map(
-                              (option, optIdx) => (
-                                // <MenuItem key={option.id} value={option.id}>
-                                //   <Box
-                                //     sx={{
-                                //       display: "flex",
-                                //       alignItems: "center",
-                                //     }}
-                                //   >
-                                //     {/* {option.image && (
-                                //       <Box
-                                //         component="img"
-                                //         src={option.image}
-                                //         alt={
-                                //           option.title || `Option ${optIdx + 1}`
-                                //         }
-                                //         sx={{
-                                //           width: 30,
-                                //           height: 30,
-                                //           borderRadius: 1,
-                                //           mr: 1,
-                                //           border: "1px solid #ccc",
-                                //         }}
-                                //       />
-                                //     )} */}
-                                //     <Box>
-                                //       <Typography
-                                //         variant="body2"
-                                //         fontWeight={600}
-                                //       >
-                                //         {option.title}
-                                //       </Typography>
-                                //       {option.description && (
-                                //         <Typography
-                                //           variant="caption"
-                                //           color="text.secondary"
-                                //         >
-                                //           {option.description}
-                                //         </Typography>
-                                //       )}
-                                //     </Box>
-                                //   </Box>
-                                // </MenuItem>
-                                <div> </div>
-                              )
-                            )}
-                          </TextField>
-                        </Box>
-                      )
-                    )
-                  ) : (
-                    <Typography color="text.secondary">
-                      No dropdowns found.
-                    </Typography>
-                  )}
-                </Box>
+                //           <TextField
+                //             select
+                //             fullWidth
+                //             size="small"
+                //             value={item.selected?.[dropdownId] || ""}
+                //             onChange={(e) =>
+                //               handleDropdownChange(
+                //                 index,
+                //                 dropdownId,
+                //                 e.target.value
+                //               )
+                //             }
+                //             sx={{ backgroundColor: "#fff" }}
+                //           >
+                //             {(dropdownData["data-source"] || []).map(
+                //               (option, optIdx) => (
+                //                 <MenuItem key={option.id} value={option.id}>
+                //                   <Box
+                //                     sx={{
+                //                       display: "flex",
+                //                       alignItems: "center",
+                //                     }}
+                //                   >
+                //                     {/* {option.image && (
+                //                       <Box
+                //                         component="img"
+                //                         src={option.image}
+                //                         alt={
+                //                           option.title || `Option ${optIdx + 1}`
+                //                         }
+                //                         sx={{
+                //                           width: 30,
+                //                           height: 30,
+                //                           borderRadius: 1,
+                //                           mr: 1,
+                //                           border: "1px solid #ccc",
+                //                         }}
+                //                       />
+                //                     )} */}
+                //                     <Box>
+                //                       <Typography
+                //                         variant="body2"
+                //                         fontWeight={600}
+                //                       >
+                //                         {option.title}
+                //                       </Typography>
+                //                       {option.description && (
+                //                         <Typography
+                //                           variant="caption"
+                //                           color="text.secondary"
+                //                         >
+                //                           {option.description}
+                //                         </Typography>
+                //                       )}
+                //                     </Box>
+                //                   </Box>
+                //                 </MenuItem>
+                //                 // <div> </div>
+                //               )
+                //             )}
+                //           </TextField>
+                //         </Box>
+                //       )
+                //     )
+                //   ) : (
+                //     <Typography color="text.secondary">
+                //       No dropdowns found.
+                //     </Typography>
+                //   )}
+                // </Box>
+                <div> </div>
               );
 
             case "chipSelector":
@@ -535,10 +536,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-800 border-gray-300"
-                            }`}
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
+                            isSelected
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-white text-gray-800 border-gray-300"
+                          }`}
                         >
                           {option.title}
                         </button>
@@ -772,16 +774,16 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             case "date":
               return (
                 <div className="w-full px-4 py-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">
                     {item.label}
                   </label>
                   <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
                     {/* {item.value
                       ? new Date(item.value).toLocaleDateString()
-                      : "No date selected"} */}
+                      : "No date selected"} 
 
                     {item["max-date"] || "Date (Optional)"}
-                  </div>
+                  </div> */}
                 </div>
               );
 

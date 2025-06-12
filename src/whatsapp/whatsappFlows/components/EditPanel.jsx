@@ -30,6 +30,7 @@ import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import moment from "moment";
 import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import { motion, AnimatePresence } from "framer-motion";
 
 const EditPanel = ({
   selectedItem,
@@ -39,8 +40,8 @@ const EditPanel = ({
   setHeadingValue,
   setLabelValue,
   labelValue,
-  selectedOptionsType,
-  setSelectedOptionsType,
+  // selectedOptionsType,
+  // setSelectedOptionsType,
   placeholderValue,
   setPlaceholderValue,
   minValue,
@@ -169,12 +170,6 @@ const EditPanel = ({
   // const minLen = parseInt(minLengthValue, 10) || 0;
 
   // inputtype
-
-  // const OptionsTypeOptions = [
-  //   { value: "text", label: "Text" },
-  //   { value: "number", label: "Number" },
-  //   { value: "email", label: "Email" },
-  // ];
 
   // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
   const [inputValue, setInputValue] = useState("");
@@ -466,6 +461,19 @@ const EditPanel = ({
   const [imageSrc, setImageSrc] = useState(null);
   const [imageFile, setImageFile] = useState([]);
 
+  useEffect(() => {
+    if (selectedItem) {
+      setImageFile(selectedItem.image || "");
+      setImgAltText(selectedItem["alt-text"] || "");
+      setAspectRatio(selectedItem["aspect-ratio"] || "");
+      setSCaleType(selectedItem["scale-type"] || "");
+      // setWidth(selectedItem.width || "")
+      // setHeigh(selectedItem.height || "")
+    }
+  }, [selectedItem]);
+
+  const imageInputRef = useRef(null);
+
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -484,7 +492,15 @@ const EditPanel = ({
       toast.error("Please select an image first before uploading");
       return;
     }
+
+    // if (!imageFile?.image) {
+    //   toast.error(
+    //     "Image already uploaded. Delete it before uploading a new one."
+    //   );
+    //   return;
+    // }
     const src = await getBase64(imageFile);
+    toast.success("Image Uploaded Successfully");
     console.log(src);
     setImageSrc(src);
   };
@@ -496,9 +512,12 @@ const EditPanel = ({
     }
     try {
       setImageSrc(null);
-      setUploadedImgId(null);
       setImageFile(null);
       toast.success("File Delete Succesfully");
+
+      if (imageInputRef.current) {
+        imageInputRef.current.value = "";
+      }
       console.log("Image DLT");
     } catch (error) {
       toast.error("Failed To delete file");
@@ -528,6 +547,14 @@ const EditPanel = ({
   // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
 
   const handleImageSave = (e) => {
+
+    if (!imageFile.trim()) {
+      toast.error("Image Required")
+      return;
+    }
+
+
+
     const selectedPhoto = "";
     const payload = {
       src: imageSrc,
@@ -555,6 +582,17 @@ const EditPanel = ({
   const [unavailableDate, setUnavailableDate] = useState([]);
   const [datePlaceholder, setDatePlaceholder] = useState("");
 
+  useEffect(() => {
+    if (selectedItem) {
+      setDateLabel(selectedItem.label || "")
+      setMinDate(selectedItem["min-date"] || "")
+      setMaxDate(selectedItem['max-date'] || "")
+      setUnavailableDate(selectedItem["unavailable-dates"] || "")
+
+    }
+
+  })
+
   const formatDateToString = (date) => {
     if (!date) return null;
     const d = moment(date);
@@ -578,7 +616,13 @@ const EditPanel = ({
     ) {
       setUnavailableDate((prev) => [...prev, date]);
     }
+
   };
+
+
+  useEffect(() => {
+    console.log("unavailableDate state:", unavailableDate);
+  }, [unavailableDate]);
 
   // Handle removing a selected date
   const handleRemoveUnavailableDate = (indexToRemove) => {
@@ -595,7 +639,6 @@ const EditPanel = ({
 
     const payload = {
       label: dateLable,
-
       "min-date": formatDateToString(minDate),
       "max-date": formatDateToString(maxDate),
       "unavailable-dates": formatArrayToDates(unavailableDate),
@@ -624,6 +667,20 @@ const EditPanel = ({
   const [endCalendarLabel, setEndCalendarLabel] = useState("");
   const [endCalendarHelperText, setEndCalendarHelperText] = useState("");
   const [endCalendarRequired, setEndCalendarRequired] = useState(false);
+
+  useEffect(() => {
+    if (selectedItem) {
+      setDateCalendarLabel(selectedItem.label || "")
+      setMinCalendarDate(selectedItem["min-date"] || "")
+      setMaxCalendarDate(selectedItem['max-date'] || "")
+      setUnavailableCalendarDates(selectedItem["unavailable-dates"] || [])
+      setDateCalendarPlaceholder(selectedItem["helper-text"] || "")
+      setStartCalendarRequired(selectedItem.required || "")
+
+
+    }
+
+  }, [selectedItem])
 
   const formatDateCalendarToString = (calendarDate) => {
     if (!calendarDate) return "";
@@ -678,37 +735,37 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-            mode: "single",
-            label: dateCalendarLable,
-            "helper-text": dateCalendarPlaceholder,
-            required: startCalenderRequired,
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              unavailableCalendarDates
-            ),
-          }
+          mode: "single",
+          label: dateCalendarLable,
+          "helper-text": dateCalendarPlaceholder,
+          required: startCalenderRequired,
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            unavailableCalendarDates
+          ),
+        }
         : {
-            mode: "range",
-            label: {
-              "start-date": dateCalendarLable || "",
-              "end-date": endCalendarLabel || "",
-            },
-            "helper-text": {
-              "start-date": dateCalendarPlaceholder || "",
-              "end-date": endCalendarHelperText || "",
-            },
-            required: {
-              "start-date": startCalenderRequired,
-              "end-date": endCalendarRequired,
-            },
+          mode: "range",
+          label: {
+            "start-date": dateCalendarLable || "",
+            "end-date": endCalendarLabel || "",
+          },
+          "helper-text": {
+            "start-date": dateCalendarPlaceholder || "",
+            "end-date": endCalendarHelperText || "",
+          },
+          required: {
+            "start-date": startCalenderRequired,
+            "end-date": endCalendarRequired,
+          },
 
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              unavailableCalendarDates
-            ),
-          };
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            unavailableCalendarDates
+          ),
+        };
 
     const updatedData = {
       ...selectedItem,
@@ -764,6 +821,18 @@ const EditPanel = ({
   //   setMainContent(`Uploaded file: ${uploadedFile.name}. `);
   // };
 
+
+  useEffect(() => {
+    if (selectedItem) {
+      setDocumentLabel(selectedItem.label || "");
+      setDescription(selectedItem.description || "");
+      setMinDocsUpload(selectedItem["min-uploaded-documents"] || "");
+      setMaxDocsUpload(selectedItem["max-uploaded-documents"] || "");
+
+    }
+  }, [selectedItem]);
+
+
   const handleDocumentSave = () => {
     if (!description) {
       toast.error("Please Enter Description");
@@ -806,6 +875,17 @@ const EditPanel = ({
   const [maxPhotoUpload, setMaxPhotoUpload] = useState("");
   const [mediaRequired, setMediaRequied] = useState(false);
 
+  useEffect(() => {
+    if (selectedItem) {
+      setMediaLabel(selectedItem.label || "");
+      setMediaDescription(selectedItem.description || "");
+      setMinPhotoUpload(selectedItem["min-uploaded-photos"] || "");
+      setMediaRequied(selectedItem["max-uploaded-photos"] || "");
+      setMediaRequied(selectedItem.required ?? true)
+
+    }
+  }, [selectedItem]);
+
   const handleMediaRequiredChange = () => {
     setMediaRequied((prev) => !prev);
   };
@@ -846,6 +926,20 @@ const EditPanel = ({
   const [rightCaption, setRightCaption] = useState("");
   const [centerCaption, setCenterCaption] = useState("");
   const [nextAction, setNextAction] = useState("complete");
+
+  useEffect(() => {
+    if (selectedItem?.footer) {
+      const footerData = selectedItem.footer["footer_1"];
+
+      if (footerData) {
+        setFooterButtonLabel(footerData.label || "");
+        setLeftCaption(footerData.left_caption || "");
+        setRightCaption(footerData.right_caption || "");
+        setCenterCaption(footerData.center_caption || "");
+        setNextAction(footerData.on_click_action || "complete");
+      }
+    }
+  }, [selectedItem]);
 
   const handleFooterSave = () => {
     if (!footerButtonLabel) {
@@ -901,6 +995,23 @@ const EditPanel = ({
     image: "",
     altText: "",
   });
+
+  useEffect(() => {
+    if (selectedItem?.type === "radioButton") {
+      setRadioBtnLabel(selectedItem.label || "");
+      setDraft(
+        (selectedItem =
+          {
+            title: "",
+            description: "",
+            metadata: "",
+            image: "",
+            altText: "",
+          } || "")
+      );
+      setRadioRequired(selectedItem.required ?? false);
+    }
+  }, [selectedItem]);
 
   const handleRadioRequiredChange = () => {
     setRadioRequired((prev) => !prev);
@@ -1047,9 +1158,7 @@ const EditPanel = ({
       toast.error("Label must be under 30 characters");
       return;
     }
-    // if(!footerButtonLabel){
-    //   toast.error("Footer must be created")
-    // }else {
+    
 
     // }
 
@@ -1088,7 +1197,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1110,6 +1219,7 @@ const EditPanel = ({
     // 4) Final payload and merge
     const payload = {
       label: radioBtnLabel.trim(),
+      required: radioRequired,
       "data-source": payloadOptions,
     };
 
@@ -1155,11 +1265,34 @@ const EditPanel = ({
     image: "",
   });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
+
+  //  useEffect((idx) => {
+  //   if (selectedItem) {
+  //     setMainLabelCheckbox(selectedItem.label || "");
+
+  //     const draft = selectedItem.draftCheckbox || {};
+  //     console.log("draft", draft);
+
+  //     setDraftCheckbox({
+  //       title: selectedItem.draft?.title || "",
+  //       description: selectedItem.draft?.description || "",
+  //       metadata: selectedItem.draft?.metadata || "",
+  //       image: selectedItem.draft?.image || "",
+  //     });
+  //     setCheckboxRequired(selectedItem.required ?? false);
+
+  //   //   setDraftCheckbox({
+  //   //   // title: checkBoxes[idx].title || "",
+  //   //   description: checkBoxes[idx].description || "",
+  //   //   metadata: checkBoxes[idx].metadata || "",
+  //   //   image: checkBoxes[idx].image || "",
+  //   // });
+  //   }
+  // }, [selectedItem]);
+
   const handleCheckboxRequiredChange = () => {
     setCheckboxRequired((prev) => !prev);
   };
-
-  // anshu
 
   const checkboxImageInputRef = useRef(null);
 
@@ -1239,6 +1372,12 @@ const EditPanel = ({
   const handleCheckboxEdit = (idx) => {
     setCheckboxEditIdx(idx);
     setDraftCheckbox(checkBoxes[idx]);
+    //   setDraftCheckbox({
+    //   title: checkBoxes[idx].title || "",
+    //   description: checkBoxes[idx].description || "",
+    //   metadata: checkBoxes[idx].metadata || "",
+    //   image: checkBoxes[idx].image || "",
+    // });
   };
 
   const handleCancelInlineCheckbox = () => {
@@ -1303,6 +1442,7 @@ const EditPanel = ({
     // Final payload and merge
     const payload = {
       label: mainLabelCheckbox.trim(),
+      required:checkboxRequired,
       "data-source": payloadOptions,
     };
 
@@ -1342,6 +1482,17 @@ const EditPanel = ({
   // const [dropdownUploadedId, setDropdownUploadedId] = useState(null);
 
   const dropImageInputRef = useRef(null);
+
+  useEffect(() => {
+    if (selectedItem) {
+      setMainLabelDropdown(selectedItem.label || "");
+      setDraftTitle(selectedItem.title || "");
+      setDraftDescription(selectedItem.description || "");
+      setDraftMetaData(selectedItem.metadata || "");
+      setDropImageFile(selectedItem.image || "");
+      setDropdownRequired(selectedItem.required ?? false);
+    }
+  }, [selectedItem]);
 
   const handleDropdownRequiredChange = () => {
     setDropdownRequired((prev) => !prev);
@@ -1430,11 +1581,11 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-              ...o,
-              title: draftTitle.trim(),
-              description: draftDescription.trim(),
-              metadata: draftMetadata.trim(),
-            }
+            ...o,
+            title: draftTitle.trim(),
+            description: draftDescription.trim(),
+            metadata: draftMetadata.trim(),
+          }
           : o
       )
     );
@@ -1495,6 +1646,7 @@ const EditPanel = ({
     // 3) Base payload (what used to be passed directly)
     const payload = {
       label: mainLabelDropdown.trim(),
+      required:dropdownRequired,
       "data-source": payloadOptions,
     };
 
@@ -1532,6 +1684,15 @@ const EditPanel = ({
   const [chipDescription, setChipDescription] = useState("");
   const [valueSelection, setValueSelection] = useState("");
 
+  useEffect(() => {
+    if (selectedItem) {
+      setChipSelectorLabel(selectedItem.label || "");
+      setChipTitle(selectedItem.title || "");
+      setChipDescription(selectedItem.description || "");
+      setValueSelection(selectedItem['min-selected-items'] || "");
+    }
+  }, [selectedItem]);
+
   const handleStartChipSelectorEdit = (idx) => {
     const opt = chipSelectorOptions[idx];
     setEditingChipIdx(idx);
@@ -1546,10 +1707,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-              ...o,
-              // name: chipName.trim(),
-              title: chipTitle.trim(),
-            }
+            ...o,
+            // name: chipName.trim(),
+            title: chipTitle.trim(),
+          }
           : o
       )
     );
@@ -1663,7 +1824,7 @@ const EditPanel = ({
 
   const handleSubheadingSave = () => {
     if (!subheadingInput) {
-      toast.error("Heading Required");
+      toast.error("Subheading Required");
       return;
     }
 
@@ -1693,7 +1854,7 @@ const EditPanel = ({
 
   const handleTextbodySave = () => {
     if (!textbodyInput.trim()) {
-      toast.error("Heading Required");
+      toast.error("Textbody Required");
       return;
     }
 
@@ -1723,7 +1884,7 @@ const EditPanel = ({
 
   const handleTextCaptionSave = () => {
     if (!textcaptionInput.trim()) {
-      toast.error("Heading Required");
+      toast.error("Textcaption Required");
       return;
     }
 
@@ -1744,11 +1905,151 @@ const EditPanel = ({
   const [inputLabel, setInputLabel] = useState("");
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [inputError, setInputError] = useState("");
+  const [inputMin, setInputMin] = useState("");
+  const [inputMax, setInputMax] = useState("");
+  const [inputRequired, setInputRequired] = useState(false);
+  const [inputName, setInputName] = useState("");
+  const [selectedOptionsType, setSelectedOptionsType] = useState(null);
+
+  useEffect(() => {
+    if (selectedItem?.type === "textInput") {
+      setInputLabel(selectedItem.label || "");
+      setInputPlaceholder(selectedItem["helper-text"] || "");
+      setInputError(selectedItem["error-message"] || "");
+      setInputRequired(selectedItem.required ?? false);
+      setInputName(selectedItem.name || "");
+      setInputMin(selectedItem["min-chars"] || "");
+      setInputMax(selectedItem["max-chars"] || "");
+      setSelectedOptionsType(
+        OptionsTypeOptions.find(
+          (opt) => opt.value === selectedItem["input-type"]
+        ) || { value: "text", label: "Text" }
+      );
+    }
+  }, [selectedItem]);
+
+  const OptionsTypeOptions = [
+    { value: "text", label: "Text" },
+    { value: "number", label: "Number" },
+    { value: "email", label: "Email" },
+  ];
+
+  const handleInputChange = (e) => {
+    const val = e.target.value;
+
+    if (selectedOptionsType?.value === "number") {
+      // Only allow numbers and limit to max length
+      if (/^\d*$/.test(val)) {
+        if (!inputMax || val.length <= Number(inputMax)) {
+          setInputName(val);
+        }
+      }
+    } else {
+      setInputName(val);
+    }
+  };
+
+  const handleDropdownChange = (val) => {
+    const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
+    setSelectedOptionsType(option);
+    setInputName(""); // Reset on type change
+  };
+
+  const handleMaxChange = (e) => {
+    const val = e.target.value;
+    if (/^\d*$/.test(val)) {
+      setInputMax(val);
+      if (
+        selectedOptionsType?.value === "number" &&
+        inputName.length > Number(val)
+      ) {
+        setInputName(inputName.slice(0, Number(val)));
+      }
+    }
+  };
+
+  const handleMinChange = (e) => {
+    const val = e.target.value;
+    if (/^\d*$/.test(val)) {
+      setInputMin(val);
+    }
+  };
+
+  const handleInputReqChange = () => {
+    setInputRequired((prev) => !prev);
+  };
 
   const handleInputSave = () => {
+
+    if (!inputLabel) {
+      toast.error("Label Required")
+      return
+    }
+
+    if (!inputPlaceholder) {
+      toast.error("Helper-Text Required")
+      return
+    }
+
+
     const payload = {
-      label: inputLabel,
-      "helper-text": inputPlaceholder,
+      label: inputLabel.trim(),
+      "helper-text": inputPlaceholder.trim(),
+      required: inputRequired,
+      name: inputName,
+      "error-message": inputError,
+      "min-length": inputMin ? Number(inputMin) : undefined,
+      "max-length": inputMax ? Number(inputMax) : undefined,
+     
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // textArea
+  const [textAreaLabel, setTextAreaLabel] = useState("");
+  const [textAreaPlaceholder, setTextAreaPlaceholder] = useState("");
+  const [textAreaError, setTextAreaError] = useState("");
+  const [textAreaRequired, setTextAreaRequired] = useState(false);
+  const [textAreaName, setTextAreaName] = useState("");
+
+  useEffect(() => {
+    if (selectedItem?.type === "textArea") {
+      setTextAreaLabel(selectedItem.label || "");
+      setTextAreaPlaceholder(selectedItem["helper-text"] || "");
+      setTextAreaError(selectedItem["error-message"] || "");
+      setTextAreaRequired(selectedItem.required ?? false);
+      setTextAreaName(selectedItem.name || "");
+    }
+  }, [selectedItem]);
+
+  const handleTextAreaChange = () => {
+    setTextAreaRequired((prev) => !prev);
+  };
+
+  const handleTextSave = () => {
+    if (!textAreaLabel.trim()) {
+      toast.error("Label Required");
+      return
+    }
+
+    if (!textAreaName.trim()) {
+      toast.error("Name Required");
+      return
+    }
+
+    const payload = {
+      label: textAreaLabel.trim(),
+      "helper-text": textAreaPlaceholder,
+      required: textAreaRequired,
+      name: textAreaName.trim(),
+      "error-message": textAreaError,
     };
 
     const updatedData = {
@@ -1769,27 +2070,33 @@ const EditPanel = ({
 
   return (
     <Box>
-      <Paper
-        elevation={3}
-        // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
-        className="bg-white z-10 p-5 absolute right-3 w-80 top-18"
-      >
-        {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          // elevation={3}
+          // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
+          className="bg-white z-10 p-3 absolute right-3 w-80 top-18 border-2 rounded-xl shadow-sm border-gray-200"
+        >
+          {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
           <Typography variant="h6">Edit Item</Typography>
           <IconButton onClick={onClose}>
             <CloseIcon fontSize="small" />
             </IconButton>
             </Box> */}
 
-        <div className="flex items-center justify-between">
-          <Typography variant="h7">Edit Item</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </div>
+          <div className="flex items-center justify-between border-b-2">
+            <label className="text-sm font-semibold text-gray-700 tracking-wide">
+              Edit Item
+            </label>
+            <IconButton onClick={onClose}>
+              <CloseIcon fontSize="small" />
+            </IconButton>
+          </div>
 
-        {/* Input Fields for Text-Based Items */}
-        {/* {["heading", "subheading", "textbody", "textcaption"].includes(
+          {/* Input Fields for Text-Based Items */}
+          {/* {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
         ) && (
           <div className="mb-2 font-semibold text-lg mt-3">
@@ -1819,219 +2126,233 @@ const EditPanel = ({
           </div>
         )} */}
 
-        {/* new */}
-        {selectedItem?.type === "heading" && (
-          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-            <InputField
-              label="Heading"
-              placeholder="Enter Text for  Heading"
-              variant="outlined"
-              tooltipContent="Enter Text for  Heading"
-              tooltipPlacement="right"
-              fullWidth
-              value={headingInput}
-              type="text"
-              maxLength={80}
-              onChange={(e) => setHeadingInput(e.target.value)}
-            />
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={headingSave} />
-            </div>
-          </div>
-        )}
-
-        {selectedItem?.type === "subheading" && (
-          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-            <InputField
-              label="Sub-Heading"
-              placeholder="Enter Text for Sub-Heading "
-              tooltipContent="Enter Text for  Sub-Heading"
-              tooltipPlacement="right"
-              type="text"
-              maxLength={80}
-              value={subheadingInput}
-              onChange={(e) => setSubheadingInput(e.target.value)}
-              fullWidth
-            />
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={handleSubheadingSave} />
-            </div>
-          </div>
-        )}
-
-        {selectedItem?.type === "textbody" && (
-          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-            <InputField
-              label="TextBody"
-              placeholder="Enter Text for TextBody "
-              tooltipContent="Enter Text for  TextBody"
-              tooltipPlacement="right"
-              type="text"
-              maxLength={4096}
-              value={textbodyInput}
-              onChange={(e) => setTextbodyInput(e.target.value)}
-              fullWidth
-            />
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={handleTextbodySave} />
-            </div>
-          </div>
-        )}
-
-        {selectedItem?.type === "textcaption" && (
-          <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-            <InputField
-              label="TextCaption"
-              placeholder="Enter Text for Sub-Heading "
-              tooltipContent="Enter Text for  Sub-Heading"
-              tooltipPlacement="right"
-              type="text"
-              maxLength={409}
-              value={textbodyInput}
-              onChange={(e) => setTextbodyInput(e.target.value)}
-              fullWidth
-            />
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={handleTextbodySave} />
-            </div>
-          </div>
-        )}
-        {/* NEW */}
-
-        {selectedItem?.type === "textInput" && (
-          <div className="mb-2 text-lg space-y-2 mt-3">
-            <InputField
-              label="Input Label"
-              id="mainlabel"
-              placeholder="Enter Input label"
-              tooltipContent="Enter Input label"
-              tooltipPlacement="right"
-              value={inputLabel}
-              onChange={(e) => setInputLabel(e.target.value)}
-              maxLength={20}
-            />
-
-            {/* <AnimatedDropdown
-              label=""
-              tooltipContent=""
-              tooltipPlacement="right"
-              options={OptionsTypeOptions}
-              value={selectedOptionsType?.value || ""}
-              onChange={handleDropdownChange}
-              placeholder={selectedOptionsType?.label || "Select Type"}
-            /> */}
-
-            <InputField
-              label="Helper-Text"
-              type="text"
-              placeholder="Enter placeholder for Helper-text"
-              tooltipContent="Enter placeholder for Helper-text"
-              tooltipPlacement="right"
-              value={inputPlaceholder}
-              maxLength={80}
-              onChange={(e) => setInputPlaceholder(e.target.value)}
-            />
-
-            <InputField
-              label="Enter error to display"
-              id="maineroor"
-              placeholder="Enter Error"
-              tooltipContent="Enter Error for TextInput"
-              tooltipPlacement="right"
-              value={inputError}
-              maxLength={30}
-              onChange={(e) => setInputError(e.target.value)}
-            />
-
-            <div className="flex, gap-8 ">
+          {/* new */}
+          {selectedItem?.type === "heading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
               <InputField
-                label="Min Length"
-                id="min"
-                type="number"
-                // placeholder={isNumberType ? "Min digits" : "Min length"}
-                // tooltipContent="Enter MinLength"
-                // tooltipPlacement="right"
-                // value={minValue}
-                // onChange={handleMinChange}
-                autoComplete="off"
-              />
-              <InputField
-                label="Max Length"
-                id="max"
-                type="number"
-                // placeholder={isNumberType ? "Max digits" : "Max length"}
-                // tooltipContent="Enter MaxLength"
-                // tooltipPlacement="right"
-                // value={maxValue}
-                // onChange={handleMaxChange}
-                // autoComplete="off"
-              />
-            </div>
-
-            <div>
-              <label
-                htmlFor="required"
-                className="text-sm font-medium text-gray-700"
-                tooltipContent="Select an option which required for you."
+                label="Heading"
+                placeholder="Enter Text for  Heading"
+                variant="outlined"
+                tooltipContent="Enter Text for  Heading"
                 tooltipPlacement="right"
-              >
-                Is Input Required??
-              </label>
-              <div className="flex, alignItems-center, gap-8 ">
-                <Switch
-                  // {...switchLabel}
-                  // checked={switchChecked}
-                  // onChange={handleSwitchChange}
-                  id="required"
-                />
-                {/* <span>{switchChecked ? "Yes" : "No"}</span> */}
+                fullWidth
+                value={headingInput}
+                type="text"
+                maxLength={80}
+                onChange={(e) => setHeadingInput(e.target.value)}
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={headingSave} />
               </div>
             </div>
+          )}
 
-            <div className="flex justify-center items-center">
-              <UniversalButton label="Save" onClick={handleInputSave} />
+          {selectedItem?.type === "subheading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              <InputField
+                label="Sub-Heading"
+                placeholder="Enter Text for Sub-Heading "
+                tooltipContent="Enter Text for  Sub-Heading"
+                tooltipPlacement="right"
+                type="text"
+                maxLength={80}
+                value={subheadingInput}
+                onChange={(e) => setSubheadingInput(e.target.value)}
+                fullWidth
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleSubheadingSave} />
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* {selectedItem?.type === "textArea" && (
-          <div className="mb-2 text-lg space-y-2 mt-3">
-            <InputField
-              label="Edit TextArea"
-              id="textarea_label"
-              placeholder="Enter TextArea Label"
-              tooltipContent="Edit TextArea Label"
-              tooltipPlacement="right"
-              value={textAreaConfig.label}
-              maxLength={20}
-              onChange={(e) => handleTextAreaChange("label", e.target.value)}
-            />
+          {selectedItem?.type === "textbody" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              <InputField
+                label="TextBody"
+                placeholder="Enter Text for TextBody "
+                tooltipContent="Enter Text for  TextBody"
+                tooltipPlacement="right"
+                type="text"
+                maxLength={4096}
+                value={textbodyInput}
+                onChange={(e) => setTextbodyInput(e.target.value)}
+                fullWidth
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleTextbodySave} />
+              </div>
+            </div>
+          )}
 
-            <InputField
-              label="Placeholder"
-              type="text"
-              placeholder="Enter placeholder for TextArea"
-              tooltipContent="Enter placeholder"
-              tooltipPlacement="right"
-              value={textAreaConfig.placeholder}
-              maxLength={80}
-              onChange={(e) =>
-                handleTextAreaChange("placeholder", e.target.value)
-              }
-            />
+          {selectedItem?.type === "textcaption" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              <InputField
+                label="TextCaption"
+                placeholder="Enter Text for Sub-Heading"
+                tooltipContent="Enter Text for Sub-Heading"
+                tooltipPlacement="right"
+                type="text"
+                maxLength={409}
+                value={textbodyInput}
+                onChange={(e) => setTextbodyInput(e.target.value)}
+                fullWidth
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleTextbodySave} />
+              </div>
+            </div>
+          )}
+          {/* NEW */}
 
-            <InputField
-              label="Enter error to display"
-              id="textarea_error"
-              placeholder="Enter Error"
-              tooltipContent="Enter Error for TextArea"
-              tooltipPlacement="right"
-              value={textAreaConfig.error}
-              maxLength={30}
-              onChange={(e) => handleTextAreaChange("error", e.target.value)}
-            />
+          {selectedItem?.type === "textInput" && (
+            <div className="mb-2 text-lg space-y-2 mt-3">
+              <InputField
+                label="Input Label"
+                id="mainlabel"
+                placeholder="Enter Input label"
+                tooltipContent="Enter Input label"
+                tooltipPlacement="right"
+                value={inputLabel}
+                onChange={(e) => setInputLabel(e.target.value)}
+                maxLength={20}
+              />
 
-            <div className="flex gap-8">
+              <AnimatedDropdown
+                label="Select Input Type"
+                tooltipContent="Select input type (select text for default)"
+                tooltipPlacement="right"
+                options={OptionsTypeOptions}
+                value={selectedOptionsType?.value || ""}
+                onChange={handleDropdownChange}
+                placeholder="Select Type"
+              />
+
+              <InputField
+                label="Helper-Text"
+                type="text"
+                placeholder="Enter helper text"
+                tooltipContent="Enter placeholder for helper-text"
+                tooltipPlacement="right"
+                value={inputPlaceholder}
+                maxLength={80}
+                onChange={(e) => setInputPlaceholder(e.target.value)}
+              />
+
+              <InputField
+                label="Name"
+                placeholder="Enter Name"
+                tooltipContent="Enter name for input field"
+                tooltipPlacement="right"
+                value={inputName}
+                onChange={handleInputChange}
+              />
+
+              <InputField
+                label="Enter error to display"
+                id="mainerror"
+                placeholder="Enter Error"
+                tooltipContent="Enter error for input"
+                tooltipPlacement="right"
+                value={inputError}
+                maxLength={30}
+                onChange={(e) => setInputError(e.target.value)}
+              />
+
+              <div className="flex gap-2">
+                <InputField
+                  label="Min Length"
+                  id="min"
+                  type="number"
+                  placeholder="Min Length"
+                  tooltipContent="Enter minimum length"
+                  tooltipPlacement="right"
+                  value={inputMin}
+                  onChange={handleMinChange}
+                  autoComplete="off"
+                />
+                <InputField
+                  label="Max Length"
+                  id="max"
+                  type="number"
+                  placeholder="Max Length"
+                  tooltipContent="Enter maximum length"
+                  tooltipPlacement="right"
+                  value={inputMax}
+                  onChange={handleMaxChange}
+                  autoComplete="off"
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                >
+                  Is Input Required?
+                </label>
+                <div className="flex items-center">
+                  <Switch
+                    checked={inputRequired}
+                    onChange={handleInputReqChange}
+                    id="required"
+                  />
+                  <span className="text-sm">
+                    {inputRequired ? "True" : "False"}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex justify-center items-center">
+                <UniversalButton label="Save" onClick={handleInputSave} />
+              </div>
+            </div>
+          )}
+
+          {selectedItem?.type === "textArea" && (
+            <div className="mb-2 text-lg space-y-2 mt-3">
+              <InputField
+                label="Edit TextArea"
+                id="textarea_label"
+                placeholder="Enter TextArea Label"
+                tooltipContent="Edit TextArea Label"
+                tooltipPlacement="right"
+                value={textAreaLabel}
+                maxLength={20}
+                onChange={(e) => setTextAreaLabel(e.target.value)}
+              />
+
+              <InputField
+                label="Placeholder"
+                type="text"
+                placeholder="Enter placeholder for TextArea"
+                tooltipContent="Enter placeholder"
+                tooltipPlacement="right"
+                value={textAreaPlaceholder}
+                maxLength={80}
+                onChange={(e) => setTextAreaPlaceholder(e.target.value)}
+              />
+              <InputField
+                label="Name"
+                placeholder="Enter Name"
+                tooltipContent="Enter name for TextArea"
+                tooltipPlacement="right"
+                value={textAreaName}
+                onChange={(e) => setTextAreaName(e.target.value)}
+              />
+
+              <InputField
+                label="Enter error to display"
+                id="textarea_error"
+                placeholder="Enter Error"
+                tooltipContent="Enter Error for TextArea"
+                tooltipPlacement="right"
+                value={textAreaError}
+                maxLength={30}
+                onChange={(e) => setTextAreaError(e.target.value)}
+              />
+
+              {/* <div className="flex gap-8">
               <InputField
                 label="Min Length"
                 id="textarea_min"
@@ -2039,8 +2360,8 @@ const EditPanel = ({
                 placeholder="Min length"
                 tooltipContent="Enter Min Length"
                 tooltipPlacement="right"
-                value={textAreaConfig.min}
-                onChange={(e) => handleTextAreaChange("min", e.target.value)}
+                value={textAreaMin}
+                onChange={(e) => setTextAreaMin(e.target.value)}
                 autoComplete="off"
               />
               <InputField
@@ -2050,321 +2371,510 @@ const EditPanel = ({
                 placeholder="Max length"
                 tooltipContent="Enter Max Length"
                 tooltipPlacement="right"
-                value={textAreaConfig.max}
-                onChange={(e) => handleTextAreaChange("max", e.target.value)}
+                value={textAreaMax}
+                onChange={(e) => setTextAreaMax(e.target.value)}
                 autoComplete="off"
               />
-            </div>
+            </div> */}
 
-            <div>
-              <label
-                htmlFor="textarea_required"
-                className="text-sm font-medium text-gray-700"
-                tooltipContent="Set required field for TextArea"
-                tooltipPlacement="right"
-              >
-                Is TextArea Required?
-              </label>
-              <div className="flex items-center gap-4 mt-1">
-                <Switch
-                  {...switchLabel}
-                  checked={textAreaConfig.required}
-                  onChange={(e) =>
-                    handleTextAreaChange("required", e.target.checked)
-                  }
-                  id="textarea_required"
-                />
-                <span>{textAreaConfig.required ? "Yes" : "No"}</span>
-              </div>
-            </div>
-
-            <div className="flex justify-center items-center">
-              <UniversalButton label="SAVE" onClick={handleTextAreaSave} />
-            </div>
-          </div>
-        )} */}
-
-        {/* NEW */}
-
-        {/* Editable Options for Checkboxes */}
-        {selectedItem?.type === "checkBox" && (
-          <FormControl fullWidth>
-            <div className="mb-2, mt-3, space-y-3 ">
-              <InputField
-                label="Checkbox Group Label"
-                tooltipContent="Enter Checkbox Group Label "
-                tooltipPlacement="right"
-                value={mainLabelCheckbox}
-                onChange={(e) => setMainLabelCheckbox(e.target.value)}
-                placeholder="Enter label"
-                fullWidth
-              />
               <div>
                 <label
-                  htmlFor="required"
+                  htmlFor="textarea_required"
                   className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="right"
+                  tooltipContent="Set required field for TextArea"
+                  tooltipPlacement="right"
                 >
-                  Required
+                  Is TextArea Required?
                 </label>
-                <div className="flex items-center gap-2 ">
+                <div className="flex items-center gap-4 mt-1">
                   <Switch
-                    checked={checkboxRequired}
-                    onChange={handleCheckboxRequiredChange}
-                    id="required"
+                    checked={textAreaRequired}
+                    onChange={(e) => handleTextAreaChange(e.target.checked)}
+                    id="textarea_required"
                   />
-                  <span>{checkboxRequired ? "True" : "False"}</span>
+                  <span>{textAreaRequired ? "True" : "False"}</span>
                 </div>
               </div>
+
+              <div className="flex justify-center items-center">
+                <UniversalButton label="SAVE" onClick={handleTextSave} />
+              </div>
             </div>
+          )}
 
-            {checkBoxes.map((opt, idx) => {
-              const isEditing = idx === checkboxEditIdx;
-              return (
-                <Box
-                  key={opt.id}
-                  sx={{
-                    mb: 1,
-                    p: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: 1,
-                    bgcolor: isEditing ? "#f5f5f5" : "white",
-                  }}
-                >
-                  {isEditing ? (
-                    <>
-                      <div className="space-y-3">
-                        <InputField
-                          label="Title"
-                          placeholder="Enter Title"
-                          tooltipContent="Enter Title"
-                          tooltipPlacement="right"
-                          value={draftCheckbox.title}
-                          onChange={(e) =>
-                            setDraftCheckbox((d) => ({
-                              ...d,
-                              title: e.target.value,
-                            }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
-                        <InputField
-                          label="Description"
-                          placeholder="Enter Description"
-                          tooltipContent="Enter Description"
-                          tooltipPlacement="right"
-                          value={draftCheckbox.description}
-                          onChange={(e) =>
-                            setDraftCheckbox((d) => ({
-                              ...d,
-                              description: e.target.value,
-                            }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
-                        <InputField
-                          label="Metadata"
-                          placeholder="Enter MetaData"
-                          tooltipContent="Enter MetaData"
-                          tooltipPlacement="right"
-                          required={true}
-                          value={draftCheckbox.metadata}
-                          onChange={(e) =>
-                            setDraftCheckbox((d) => ({
-                              ...d,
-                              metadata: e.target.value,
-                            }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
+          {/* NEW */}
 
-                        <Box sx={{ display: "flex", mb: 1 }}>
+          {/* Editable Options for Checkboxes */}
+          {selectedItem?.type === "checkBox" && (
+            <FormControl fullWidth>
+              <div className="mb-2, mt-3, space-y-3 ">
+                <InputField
+                  label="Checkbox Group Label"
+                  tooltipContent="Enter Checkbox Group Label "
+                  tooltipPlacement="right"
+                  value={mainLabelCheckbox}
+                  onChange={(e) => setMainLabelCheckbox(e.target.value)}
+                  placeholder="Enter label"
+                  fullWidth
+                />
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={checkboxRequired}
+                      onChange={handleCheckboxRequiredChange}
+                      id="required"
+                    />
+                    <span>{checkboxRequired ? "True" : "False"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {checkBoxes.map((opt, idx) => {
+                const isEditing = idx === checkboxEditIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ccc",
+                      borderRadius: 1,
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <>
+                        <div className="space-y-3">
                           <InputField
-                            label="Upload Image"
-                            type="file"
-                            id="checkbox-file-upload"
-                            accept=".png, .jpeg"
-                            tooltipContent="Upload Image"
+                            label="Title"
+                            placeholder="Enter Title"
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            value={draftCheckbox.title}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                title: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Description"
+                            placeholder="Enter Description"
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            value={draftCheckbox.description}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                description: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Metadata"
+                            placeholder="Enter MetaData"
+                            tooltipContent="Enter MetaData"
                             tooltipPlacement="right"
                             required={true}
-                            onChange={handleCheckboxImageChange}
-                            ref={checkboxImageInputRef}
+                            value={draftCheckbox.metadata}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                metadata: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
                           />
-                          <button onClick={handleCheckboxUploadFile}>
-                            <FileUploadOutlinedIcon
-                              sx={{ fontSize: "23px", marginTop: 3 }}
-                            />
-                          </button>
 
-                          <button onClick={handleCheckboxFileDelete}>
-                            <DeleteOutlineIcon
-                              sx={{ fontSize: "23px", marginTop: 3 }}
+                          <Box sx={{ display: "flex", mb: 1 }}>
+                            <InputField
+                              label="Upload Image"
+                              type="file"
+                              id="checkbox-file-upload"
+                              accept=".png, .jpeg"
+                              tooltipContent="Upload Image"
+                              tooltipPlacement="right"
+                              required={true}
+                              onChange={handleCheckboxImageChange}
+                              ref={checkboxImageInputRef}
                             />
-                          </button>
-                        </Box>
+                            <button onClick={handleCheckboxUploadFile}>
+                              <FileUploadOutlinedIcon
+                                sx={{ fontSize: "23px", marginTop: 3 }}
+                              />
+                            </button>
 
-                        <Box
-                          sx={{
-                            display: "flex",
-                            gap: 2,
-                            mt: 2,
-                            justifyContent: "center",
-                          }}
-                        >
-                          <UniversalButton
-                            label="Save"
-                            disabled={!draftCheckbox.metadata.trim()}
-                            onClick={handleSaveInlineCheckbox}
-                          />
-                          <UniversalButton
-                            label="Cancel"
-                            onClick={handleCancelInlineCheckbox}
-                          />
-                        </Box>
-                      </div>
-                    </>
-                  ) : (
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
+                            <button onClick={handleCheckboxFileDelete}>
+                              <DeleteOutlineIcon
+                                sx={{ fontSize: "23px", marginTop: 3 }}
+                              />
+                            </button>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 2,
+                              mt: 2,
+                              justifyContent: "center",
+                            }}
+                          >
+                            <UniversalButton
+                              label="Save"
+                              disabled={!draftCheckbox.metadata.trim()}
+                              onClick={handleSaveInlineCheckbox}
+                            />
+                            <UniversalButton
+                              label="Cancel"
+                              onClick={handleCancelInlineCheckbox}
+                            />
+                          </Box>
+                        </div>
+                      </>
+                    ) : (
                       <Box
-                        sx={{ flexGrow: 1 }}
-                        onClick={() => handleCheckboxEdit(idx)}
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
                       >
-                        <Typography variant="subtitle1">{opt.title}</Typography>
-                        <Typography variant="body2">
-                          {opt.description}
-                        </Typography>
+                        <Box
+                          sx={{ flexGrow: 1 }}
+                          onClick={() => handleCheckboxEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
+                          </Typography>
+                          <Typography variant="body2">
+                            {opt.description}
+                          </Typography>
+                        </Box>
+                        <IconButton onClick={() => handleCheckboxEdit(idx)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleRemoveCheckbox(idx)}>
+                          <CloseIcon />
+                        </IconButton>
                       </Box>
-                      <IconButton onClick={() => handleCheckboxEdit(idx)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleRemoveCheckbox(idx)}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Box>
-                  )}
-                </Box>
-              );
-            })}
-            <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
-              <UniversalButton
-                label="AddOptions"
-                onClick={handleCheckboxAddNew}
-              />
+                    )}
+                  </Box>
+                );
+              })}
+              <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+                <UniversalButton
+                  label="AddOptions"
+                  onClick={handleCheckboxAddNew}
+                />
 
-              <UniversalButton
-                label="Save Checkbox"
-                onClick={handleCheckBoxSave}
-              />
-            </div>
-          </FormControl>
-        )}
+                <UniversalButton
+                  label="Save Checkbox"
+                  onClick={handleCheckBoxSave}
+                />
+              </div>
+            </FormControl>
+          )}
 
-        {/* Editable Options for Radio Buttons */}
-        {selectedItem?.type === "radioButton" && (
-          <FormControl fullWidth>
-            <div className="mb-2, mt-3">
-              <InputField
-                label="Radio Group Label"
-                tooltipContent="Enter Radio Group Label"
-                tooltipPlacement="right"
-                value={radioBtnLabel}
-                onChange={(e) => setRadioBtnLabel(e.target.value)}
-                placeholder="Enter label"
-                fullWidth
-              />
+          {/* Editable Options for Radio Buttons */}
+          {selectedItem?.type === "radioButton" && (
+            <FormControl fullWidth>
+              <div className="mb-2, mt-3">
+                <InputField
+                  label="Radio Group Label"
+                  tooltipContent="Enter Radio Group Label"
+                  tooltipPlacement="right"
+                  value={radioBtnLabel}
+                  onChange={(e) => setRadioBtnLabel(e.target.value)}
+                  placeholder="Enter label"
+                  fullWidth
+                />
 
-              <div>
-                <label
-                  htmlFor="required"
-                  className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="right"
-                >
-                  Required
-                </label>
-                <div className="flex items-center gap-2 ">
-                  <Switch
-                    checked={radioRequired}
-                    onChange={handleRadioRequiredChange}
-                    id="required"
-                  />
-                  <span>{radioRequired ? "True" : "False"}</span>
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={radioRequired}
+                      onChange={handleRadioRequiredChange}
+                      id="required"
+                    />
+                    <span>{radioRequired ? "True" : "False"}</span>
+                  </div>
                 </div>
               </div>
-            </div>
 
-            {radioButtonOptions.map((opt, idx) => {
-              const isEditing = idx === radiobtnEditIdx;
-              return (
-                <Box
-                  key={opt.id}
-                  sx={{
-                    mb: 1,
-                    p: 1,
-                    border: "1px solid #ccc",
-                    borderRadius: 1,
-                    bgcolor: isEditing ? "#f5f5f5" : "white",
-                  }}
-                >
-                  {isEditing ? (
-                    <>
-                      <div className="space-y-3">
-                        <InputField
-                          label="Title"
-                          placeholder="Enter Title"
-                          tooltipContent="Enter Title"
-                          tooltipPlacement="right"
-                          value={draft.title}
-                          onChange={(e) =>
-                            setDraft((d) => ({ ...d, title: e.target.value }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
-                        <InputField
-                          label="Description"
-                          placeholder="Enter Description"
-                          tooltipContent="Enter Description"
-                          tooltipPlacement="right"
-                          value={draft.description}
-                          onChange={(e) =>
-                            setDraft((d) => ({
-                              ...d,
-                              description: e.target.value,
-                            }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
-                        <InputField
-                          label="Metadata"
-                          placeholder="Enter MetaData"
-                          tooltipContent="Enter MetaData"
-                          tooltipPlacement="right"
-                          required={true}
-                          value={draft.metadata.trim()}
-                          onChange={(e) =>
-                            setDraft((d) => ({
-                              ...d,
-                              metadata: e.target.value,
-                            }))
-                          }
-                          fullWidth
-                          sx={{ mb: 1 }}
-                        />
-                        {/* <InputField
+              {radioButtonOptions.map((opt, idx) => {
+                const isEditing = idx === radiobtnEditIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ccc",
+                      borderRadius: 1,
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <>
+                        <div className="space-y-3">
+                          <InputField
+                            label="Title"
+                            placeholder="Enter Title"
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            value={draft.title}
+                            onChange={(e) =>
+                              setDraft((d) => ({ ...d, title: e.target.value }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Description"
+                            placeholder="Enter Description"
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            value={draft.description}
+                            onChange={(e) =>
+                              setDraft((d) => ({
+                                ...d,
+                                description: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Metadata"
+                            placeholder="Enter MetaData"
+                            tooltipContent="Enter MetaData"
+                            tooltipPlacement="right"
+                            required={true}
+                            value={draft.metadata.trim()}
+                            onChange={(e) =>
+                              setDraft((d) => ({
+                                ...d,
+                                metadata: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          {/* <InputField
                         label="Alt Text"
                         value={draft.altText}
                         onChange={(e) => setDraft((d) => ({ ...d, altText: e.target.value }))}
                         fullWidth
                         sx={{ mb: 1 }}
                        /> */}
+                          <Box sx={{ display: "flex", mb: 1 }}>
+                            <InputField
+                              label="Upload Image"
+                              type="file"
+                              id="file-upload"
+                              accept=".png, .jpeg"
+                              tooltipContent="Upload Image"
+                              tooltipPlacement="right"
+                              required
+                              onChange={handleRadioImageChange}
+                              ref={radioImageInputRef}
+                            />
+                            <button onClick={handleRadioUploadFile}>
+                              <FileUploadOutlinedIcon
+                                sx={{ fontSize: "23px", marginTop: 3 }}
+                              />
+                            </button>
+                            <button onClick={handleDeleteRadioFile}>
+                              <DeleteOutlineIcon
+                                sx={{ fontSize: "23px", marginTop: 3 }}
+                              />
+                            </button>
+                          </Box>
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 2,
+                              marginTop: 2,
+                              justifyContent: "center",
+                            }}
+                          >
+                            <UniversalButton
+                              label="Save"
+                              disabled={!draft.metadata.trim()}
+                              onClick={handleSaveInlineRadio}
+                            />
+                            <UniversalButton
+                              label="Cancel"
+                              onClick={handleCancelInlineRadio}
+                            />
+                          </Box>
+                        </div>
+                      </>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Box
+                          sx={{ flexGrow: 1 }}
+                          onClick={() => handleRadioBtnEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
+                          </Typography>
+                          <Typography variant="body2">
+                            {opt.description}
+                          </Typography>
+                        </Box>
+                        <IconButton onClick={() => handleRadioBtnEdit(idx)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleRemoveRadio(idx)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Box>
+                    )}
+                  </Box>
+                );
+              })}
+              <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+                <UniversalButton
+                  label="AddOptions"
+                  onClick={handleRadioBtnAddNew}
+                />
+
+                <UniversalButton
+                  label="SaveRadioButton"
+                  onClick={handleSaveRadioButton}
+                />
+              </div>
+            </FormControl>
+          )}
+
+          {/* Editable Options for Dropdown */}
+          {selectedItem?.type === "dropDown" && (
+            <FormControl fullWidth>
+              {/* ── Dropdown Label Input ── */}
+              <div className=" mb-2, mt-3 space-y-3">
+                <InputField
+                  label="Label"
+                  id="mainlabel"
+                  tooltipContent="Enter MainLabel"
+                  tooltipPlacement="right"
+                  value={mainLabelDropdown}
+                  onChange={(e) => setMainLabelDropdown(e.target.value)}
+                  placeholder="Enter label"
+                  type="text"
+                  fullWidth
+                />
+
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={dropdownRequired}
+                      onChange={handleDropdownRequiredChange}
+                      id="required"
+                    />
+                    <span>{dropdownRequired ? "True" : "False"}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* ── Render Each Option ── */}
+              {options.map((opt, idx) => {
+                const isEditing = idx === editingIdx;
+
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      // ── Inline Editing Mode ──
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Title"
+                            id={`edit-title-${idx}`}
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            value={draftTitle}
+                            onChange={(e) => setDraftTitle(e.target.value)}
+                            placeholder="Enter title"
+                            type="text"
+                            fullWidth
+                            autoFocus
+                          />
+                        </Box>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Description"
+                            id={`edit-desc-${idx}`}
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            value={draftDescription}
+                            onChange={(e) =>
+                              setDraftDescription(e.target.value)
+                            }
+                            placeholder="Enter description"
+                            type="text"
+                            fullWidth
+                          />
+                        </Box>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Metadata"
+                            id={`edit-meta-${idx}`}
+                            tooltipContent="Enter MetaData"
+                            tooltipPlacement="right"
+                            value={draftMetadata}
+                            required={true}
+                            onChange={(e) => setDraftMetaData(e.target.value)}
+                            placeholder="Enter Metadata"
+                            type="text"
+                            fullWidth
+                          />
+                        </Box>
                         <Box sx={{ display: "flex", mb: 1 }}>
                           <InputField
                             label="Upload Image"
@@ -2374,453 +2884,281 @@ const EditPanel = ({
                             tooltipContent="Upload Image"
                             tooltipPlacement="right"
                             required
-                            onChange={handleRadioImageChange}
-                            ref={radioImageInputRef}
+                            onChange={handleDropdownImageChange}
+                            ref={dropImageInputRef}
                           />
-                          <button onClick={handleRadioUploadFile}>
+                          <button onClick={handleDropdownUploadFile}>
                             <FileUploadOutlinedIcon
                               sx={{ fontSize: "23px", marginTop: 3 }}
                             />
                           </button>
-                          <button onClick={handleDeleteRadioFile}>
+
+                          <button onClick={handleDropdownFileDelete}>
                             <DeleteOutlineIcon
                               sx={{ fontSize: "23px", marginTop: 3 }}
                             />
                           </button>
                         </Box>
-
                         <Box
                           sx={{
                             display: "flex",
-                            gap: 2,
-                            marginTop: 2,
+                            gap: 1,
+                            mt: 2,
                             justifyContent: "center",
                           }}
                         >
                           <UniversalButton
-                            label="Save"
-                            disabled={!draft.metadata.trim()}
-                            onClick={handleSaveInlineRadio}
+                            label="Save Option"
+                            onClick={handleSaveInline}
+                            disabled={
+                              !draftTitle.trim() || !draftMetadata.trim()
+                            }
                           />
                           <UniversalButton
                             label="Cancel"
-                            onClick={handleCancelInlineRadio}
+                            className="p-button-text"
+                            onClick={handleCancelInline}
                           />
                         </Box>
-                      </div>
-                    </>
-                  ) : (
-                    <Box
-                      sx={{ display: "flex", justifyContent: "space-between" }}
-                    >
-                      <Box
-                        sx={{ flexGrow: 1 }}
-                        onClick={() => handleRadioBtnEdit(idx)}
-                      >
-                        <Typography variant="subtitle1">{opt.title}</Typography>
-                        <Typography variant="body2">
-                          {opt.description}
-                        </Typography>
                       </Box>
-                      <IconButton onClick={() => handleRadioBtnEdit(idx)}>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleRemoveRadio(idx)}>
-                        <CloseIcon />
-                      </IconButton>
-                    </Box>
-                  )}
-                </Box>
-              );
-            })}
-            <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
-              <UniversalButton
-                label="AddOptions"
-                onClick={handleRadioBtnAddNew}
-              />
-
-              <UniversalButton
-                label="SaveRadioButton"
-                onClick={handleSaveRadioButton}
-              />
-            </div>
-          </FormControl>
-        )}
-
-        {/* Editable Options for Dropdown */}
-        {selectedItem?.type === "dropDown" && (
-          <FormControl fullWidth>
-            {/* ── Dropdown Label Input ── */}
-            <div className=" mb-2, mt-3 space-y-3">
-              <InputField
-                label="Label"
-                id="mainlabel"
-                tooltipContent="Enter MainLabel"
-                tooltipPlacement="right"
-                value={mainLabelDropdown}
-                onChange={(e) => setMainLabelDropdown(e.target.value)}
-                placeholder="Enter label"
-                type="text"
-                fullWidth
-              />
-
-              <div>
-                <label
-                  htmlFor="required"
-                  className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="right"
-                >
-                  Required
-                </label>
-                <div className="flex items-center gap-2 ">
-                  <Switch
-                    checked={dropdownRequired}
-                    onChange={handleDropdownRequiredChange}
-                    id="required"
-                  />
-                  <span>{dropdownRequired ? "True" : "False"}</span>
-                </div>
-              </div>
-            </div>
-
-            {/* ── Render Each Option ── */}
-            {options.map((opt, idx) => {
-              const isEditing = idx === editingIdx;
-
-              return (
-                <Box
-                  key={opt.id}
-                  sx={{
-                    mb: 1,
-                    p: 1,
-                    border: "1px solid #ddd",
-                    borderRadius: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    bgcolor: isEditing ? "#f5f5f5" : "white",
-                  }}
-                >
-                  {isEditing ? (
-                    // ── Inline Editing Mode ──
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Box sx={{ mb: 1 }}>
-                        <InputField
-                          label="Title"
-                          id={`edit-title-${idx}`}
-                          tooltipContent="Enter Title"
-                          tooltipPlacement="right"
-                          value={draftTitle}
-                          onChange={(e) => setDraftTitle(e.target.value)}
-                          placeholder="Enter title"
-                          type="text"
-                          fullWidth
-                          autoFocus
-                        />
-                      </Box>
-                      <Box sx={{ mb: 1 }}>
-                        <InputField
-                          label="Description"
-                          id={`edit-desc-${idx}`}
-                          tooltipContent="Enter Description"
-                          tooltipPlacement="right"
-                          value={draftDescription}
-                          onChange={(e) => setDraftDescription(e.target.value)}
-                          placeholder="Enter description"
-                          type="text"
-                          fullWidth
-                        />
-                      </Box>
-                      <Box sx={{ mb: 1 }}>
-                        <InputField
-                          label="Metadata"
-                          id={`edit-meta-${idx}`}
-                          tooltipContent="Enter MetaData"
-                          tooltipPlacement="right"
-                          value={draftMetadata}
-                          required={true}
-                          onChange={(e) => setDraftMetaData(e.target.value)}
-                          placeholder="Enter Metadata"
-                          type="text"
-                          fullWidth
-                        />
-                      </Box>
-                      <Box sx={{ display: "flex", mb: 1 }}>
-                        <InputField
-                          label="Upload Image"
-                          type="file"
-                          id="file-upload"
-                          accept=".png, .jpeg"
-                          tooltipContent="Upload Image"
-                          tooltipPlacement="right"
-                          required
-                          onChange={handleDropdownImageChange}
-                          ref={dropImageInputRef}
-                        />
-                        <button onClick={handleDropdownUploadFile}>
-                          <FileUploadOutlinedIcon
-                            sx={{ fontSize: "23px", marginTop: 3 }}
-                          />
-                        </button>
-
-                        <button onClick={handleDropdownFileDelete}>
-                          <DeleteOutlineIcon
-                            sx={{ fontSize: "23px", marginTop: 3 }}
-                          />
-                        </button>
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: 1,
-                          mt: 2,
-                          justifyContent: "center",
-                        }}
-                      >
-                        <UniversalButton
-                          label="Save Option"
-                          onClick={handleSaveInline}
-                          disabled={!draftTitle.trim() || !draftMetadata.trim()}
-                        />
-                        <UniversalButton
-                          label="Cancel"
-                          className="p-button-text"
-                          onClick={handleCancelInline}
-                        />
-                      </Box>
-                    </Box>
-                  ) : (
-                    // ── Static View with Edit & Remove Icons ──
-                    <>
-                      <Box
-                        sx={{ flexGrow: 1, cursor: "pointer" }}
-                        onClick={() => handleStartEdit(idx)}
-                      >
-                        <Typography variant="subtitle1">{opt.title}</Typography>
-                        {opt.description && (
-                          <Typography variant="body2" color="textSecondary">
-                            {opt.description}
+                    ) : (
+                      // ── Static View with Edit & Remove Icons ──
+                      <>
+                        <Box
+                          sx={{ flexGrow: 1, cursor: "pointer" }}
+                          onClick={() => handleStartEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
                           </Typography>
-                        )}
-                      </Box>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleStartEdit(idx)}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton
-                        size="small"
-                        onClick={() => handleRemove(idx)}
-                      >
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </>
-                  )}
+                          {opt.description && (
+                            <Typography variant="body2" color="textSecondary">
+                              {opt.description}
+                            </Typography>
+                          )}
+                        </Box>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleStartEdit(idx)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRemove(idx)}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
+                );
+              })}
+
+              {/* ── “Add” Button: Appends a New Option X ── */}
+              <div className="flex justify-center items-center gap-2">
+                <Box sx={{ mt: 1 }}>
+                  <UniversalButton
+                    label="Add Option"
+                    onClick={handleAddNew}
+                    disabled={options.length >= 200}
+                  />
                 </Box>
-              );
-            })}
 
-            {/* ── “Add” Button: Appends a New Option X ── */}
-            <div className="flex justify-center items-center gap-2">
-              <Box sx={{ mt: 1 }}>
-                <UniversalButton
-                  label="Add Option"
-                  onClick={handleAddNew}
-                  disabled={options.length >= 200}
+                <Box sx={{ mt: 1 }}>
+                  <UniversalButton
+                    id="save-dropdown-options"
+                    label="Save Dropdown"
+                    onClick={handleSaveDropdown}
+                  />
+                </Box>
+              </div>
+            </FormControl>
+          )}
+
+          {/* Editable option for chipselector In */}
+          {selectedItem?.type === "chipSelector" && (
+            <FormControl fullWidth>
+              <div className="mt-3 space-y-3 mb-3">
+                <InputField
+                  label="Label"
+                  placeholder="Enter label"
+                  tooltipContent="Enter MainLabel"
+                  tooltipPlacement="right"
+                  value={chipSelectorLabel}
+                  onChange={(e) => setChipSelectorLabel(e.target.value)}
                 />
-              </Box>
-
-              <Box sx={{ mt: 1 }}>
-                <UniversalButton
-                  id="save-dropdown-options"
-                  label="Save Dropdown"
-                  onClick={handleSaveDropdown}
+                <InputField
+                  label="Description"
+                  placeholder="Enter Description"
+                  value={chipDescription}
+                  onChange={(e) => setChipDescription(e.target.value)}
                 />
-              </Box>
-            </div>
-          </FormControl>
-        )}
 
-        {/* Editable option for chipselector In */}
-        {selectedItem?.type === "chipSelector" && (
-          <FormControl fullWidth>
-            <div className="mt-3 space-y-3 mb-3">
-              <InputField
-                label="Label"
-                placeholder="Enter label"
-                tooltipContent="Enter MainLabel"
-                tooltipPlacement="right"
-                value={chipSelectorLabel}
-                onChange={(e) => setChipSelectorLabel(e.target.value)}
-              />
-              <InputField
-                label="Description"
-                placeholder="Enter Description"
-                value={chipDescription}
-                onChange={(e) => setChipDescription(e.target.value)}
-              />
+                <InputField
+                  label="Max-Selection Options In Chip"
+                  placeholder="Enter Max-option"
+                  value={valueSelection}
+                  onChange={(e) => setValueSelection(e.target.value)}
+                />
+              </div>
 
-              <InputField
-                label="Max-Selection Options In Chip"
-                placeholder="Enter Max-option"
-                value={valueSelection}
-                onChange={(e) => setValueSelection(e.target.value)}
-              />
-            </div>
-
-            {chipSelectorOptions.map((opt, idx) => {
-              const isEditing = idx === editingChipIdx;
-              return (
-                <Box
-                  key={opt.id}
-                  sx={{
-                    mb: 1,
-                    p: 1,
-                    border: "1px solid #ddd",
-                    borderRadius: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    bgcolor: isEditing ? "#f5f5f5" : "white",
-                  }}
-                >
-                  {isEditing ? (
-                    <Box sx={{ flexGrow: 1 }}>
-                      {/* <InputField
+              {chipSelectorOptions.map((opt, idx) => {
+                const isEditing = idx === editingChipIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <Box sx={{ flexGrow: 1 }}>
+                        {/* <InputField
                         label="Name"
                         placeholder="Enter Name"
                         value={chipName}
                         onChange={(e) => setChipName(e.target.value)}
                       /> */}
-                      <InputField
-                        label="Title"
-                        placeholder="Enter Title"
-                        value={chipTitle}
-                        onChange={(e) => setChipTitle(e.target.value)}
-                      />
+                        <InputField
+                          label="Title"
+                          placeholder="Enter Title"
+                          value={chipTitle}
+                          onChange={(e) => setChipTitle(e.target.value)}
+                        />
 
-                      <Box
-                        sx={{
-                          display: "flex",
-                          gap: 1,
-                          mt: 2,
-                          justifyContent: "center",
-                        }}
-                      >
-                        <UniversalButton
-                          label="Save Option"
-                          onClick={handleSaveChipSelectorInline}
-                          disabled={!chipTitle.trim()}
-                        />
-                        <UniversalButton
-                          label="Cancel"
-                          className="p-button-text"
-                          onClick={handleCancelChipSelectorInline}
-                        />
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            mt: 2,
+                            justifyContent: "center",
+                          }}
+                        >
+                          <UniversalButton
+                            label="Save Option"
+                            onClick={handleSaveChipSelectorInline}
+                            disabled={!chipTitle.trim()}
+                          />
+                          <UniversalButton
+                            label="Cancel"
+                            className="p-button-text"
+                            onClick={handleCancelChipSelectorInline}
+                          />
+                        </Box>
                       </Box>
-                    </Box>
-                  ) : (
-                    <>
-                      <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
-                        <Typography variant="subtitle1">{opt.name}</Typography>
-                        {opt.title && (
-                          <Typography variant="body2" color="textSecondary">
-                            {opt.title}
+                    ) : (
+                      <>
+                        <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
+                          <Typography variant="subtitle1">
+                            {opt.name}
                           </Typography>
-                        )}
-                      </Box>
-                      <IconButton
-                        onClick={() => handleStartChipSelectorEdit(idx)}
-                      >
-                        <EditIcon fontSize="small" />
-                      </IconButton>
-                      <IconButton onClick={() => handleChipSelectorRemove(idx)}>
-                        <CloseIcon fontSize="small" />
-                      </IconButton>
-                    </>
-                  )}
-                </Box>
-              );
-            })}
+                          {opt.title && (
+                            <Typography variant="body2" color="textSecondary">
+                              {opt.title}
+                            </Typography>
+                          )}
+                        </Box>
+                        <IconButton
+                          onClick={() => handleStartChipSelectorEdit(idx)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleChipSelectorRemove(idx)}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
+                );
+              })}
 
-            <div className="flex justify-center items-center gap-2 mt-3">
-              <UniversalButton
-                label="Add Option"
-                onClick={handleAddNewChipSelector}
-                disabled={chipSelectorOptions.length >= 200}
+              <div className="flex justify-center items-center gap-2 mt-3">
+                <UniversalButton
+                  label="Add Option"
+                  onClick={handleAddNewChipSelector}
+                  disabled={chipSelectorOptions.length >= 200}
+                />
+                <UniversalButton
+                  id="save-chip-selector"
+                  label="Save ChipSelector"
+                  onClick={handleChipSelectorSave}
+                />
+              </div>
+            </FormControl>
+          )}
+
+          {/* Editable option for FooterButton  */}
+          {selectedItem?.type === "footerbutton" && (
+            <div className="mb-2 text-lg space-y-3 mt-3">
+              <InputField
+                label="Footer Button Label"
+                placeholder="Enter Footer Button Label"
+                tooltipContent="Enter Label"
+                tooltipPlacement="right"
+                id="footer-button-label"
+                value={footerButtonLabel}
+                onChange={(e) => setFooterButtonLabel(e.target.value)}
               />
-              <UniversalButton
-                id="save-chip-selector"
-                label="Save ChipSelector"
-                onClick={handleChipSelectorSave}
+
+              <InputField
+                label="Left Caption"
+                placeholder="Enter Left Caption"
+                id="left-caption"
+                tooltipContent="Enter Left Caption"
+                tooltipPlacement="rigth"
+                value={leftCaption}
+                onChange={(e) => setLeftCaption(e.target.value)}
               />
+
+              <InputField
+                label="Right Caption"
+                placeholder="Enter Right Caption"
+                tooltipContent="Enter Right Caption"
+                tooltipPlacement="right"
+                id="right-caption"
+                value={rightCaption}
+                onChange={(e) => setRightCaption(e.target.value)}
+              />
+
+              <InputField
+                label="Center Caption"
+                placeholder="Enter Center Caption"
+                tooltipContent="Enter Center Caption"
+                tooltipPlacement="right"
+                id="center-caption"
+                value={centerCaption}
+                onChange={(e) => setCenterCaption(e.target.value)}
+              />
+
+              <AnimatedDropdown
+                id="next-action"
+                label="Next Action"
+                tooltipContent="Select Option"
+                tooltipPlacement="right"
+                options={[
+                  { value: "complete", label: "Complete" },
+                  { value: "navigate", label: "Navigate" },
+                ]}
+                value={nextAction}
+                onChange={(val) => setNextAction(val)}
+              />
+              <div className="flex justify-center ">
+                <UniversalButton label="SAVE" onClick={handleFooterSave} />
+              </div>
             </div>
-          </FormControl>
-        )}
+          )}
 
-        {/* Editable option for FooterButton  */}
-        {selectedItem?.type === "footerbutton" && (
-          <div className="mb-2 text-lg space-y-3 mt-3">
-            <InputField
-              label="Footer Button Label"
-              placeholder="Enter Footer Button Label"
-              tooltipContent="Enter Label"
-              tooltipPlacement="right"
-              id="footer-button-label"
-              value={footerButtonLabel}
-              onChange={(e) => setFooterButtonLabel(e.target.value)}
-            />
-
-            <InputField
-              label="Left Caption"
-              placeholder="Enter Left Caption"
-              id="left-caption"
-              tooltipContent="Enter Left Caption"
-              tooltipPlacement="rigth"
-              value={leftCaption}
-              onChange={(e) => setLeftCaption(e.target.value)}
-            />
-
-            <InputField
-              label="Right Caption"
-              placeholder="Enter Right Caption"
-              tooltipContent="Enter Right Caption"
-              tooltipPlacement="right"
-              id="right-caption"
-              value={rightCaption}
-              onChange={(e) => setRightCaption(e.target.value)}
-            />
-
-            <InputField
-              label="Center Caption"
-              placeholder="Enter Center Caption"
-              tooltipContent="Enter Center Caption"
-              tooltipPlacement="right"
-              id="center-caption"
-              value={centerCaption}
-              onChange={(e) => setCenterCaption(e.target.value)}
-            />
-
-            <AnimatedDropdown
-              id="next-action"
-              label="Next Action"
-              tooltipContent="Select Option"
-              tooltipPlacement="right"
-              options={[
-                { value: "complete", label: "Complete" },
-                { value: "navigate", label: "Navigate" },
-              ]}
-              value={nextAction}
-              onChange={(val) => setNextAction(val)}
-            />
-            <div className="flex justify-center ">
-              <UniversalButton label="SAVE" onClick={handleFooterSave} />
-            </div>
-          </div>
-        )}
-
-        {/* Editable option for Embedded link */}
-        {/* {selectedItem?.type === "embeddedlink" && (
+          {/* Editable option for Embedded link */}
+          {/* {selectedItem?.type === "embeddedlink" && (
           <>
             <div className="mt-3 space-y-3">
               <InputField
@@ -2866,134 +3204,135 @@ const EditPanel = ({
           </>
         )} */}
 
-        {selectedItem?.type === "embeddedlink" && (
-          <>
-            <div className="mt-3 space-y-3">
-              <InputField
-                label="Text"
-                type="url"
-                value={text}
-                tooltipContent="Enter Url Link"
-                tooltipPlacement="right"
-                placeholder="Button Embedded Link"
-                onChange={(e) => setText(e.target.value)}
-              />
-
-              <AnimatedDropdown
-                id="next-action"
-                label="Next Action"
-                tooltipContent="Next-Action"
-                tooltipPlacement="right"
-                options={[
-                  { value: "complete", label: "Complete" },
-                  { value: "navigate", label: "Navigate" },
-                ]}
-                value={onClickAction}
-                onChange={(value) => setOnClickAction(value)}
-              />
-
-              {onClickAction === "navigate" && (
-                <AnimatedDropdown
-                  id="screen-name"
-                  label="List Of Screen Name"
-                  tooltipContent="List Of Screen Name"
+          {selectedItem?.type === "embeddedlink" && (
+            <>
+              <div className="mt-3 space-y-3">
+                <InputField
+                  label="Text"
+                  type="url"
+                  value={text}
+                  tooltipContent="Enter Url Link"
                   tooltipPlacement="right"
-                  options={screenNameList}
-                  value={selectedScreenName}
-                  onChange={(value) => setSelectedScreenName(value)}
+                  placeholder="Button Embedded Link"
+                  onChange={(e) => setText(e.target.value)}
                 />
-              )}
 
-              <div className="flex justify-center">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleEmbeddedLinkSave}
+                <AnimatedDropdown
+                  id="next-action"
+                  label="Next Action"
+                  tooltipContent="Next-Action"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: "complete", label: "Complete" },
+                    { value: "navigate", label: "Navigate" },
+                  ]}
+                  value={onClickAction}
+                  onChange={(value) => setOnClickAction(value)}
                 />
-              </div>
-            </div>
-          </>
-        )}
 
-        {/* Editable option for Opt In */}
-        {selectedItem?.type === "optin" && (
-          <>
-            <div className="space-y-3 mt-3">
-              <InputField
-                label="OPT-In Label"
-                type="text"
-                value={optLabel}
-                onChange={(e) => setOptLabel(e.target.value)}
-              />
-
-              <div>
-                <label
-                  htmlFor="required"
-                  className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="right"
-                >
-                  Required
-                </label>
-                <div className="flex items-center gap-2 ">
-                  <Switch
-                    checked={optRequired}
-                    onChange={handleOptRequiredChange}
-                    id="required"
+                {onClickAction === "navigate" && (
+                  <AnimatedDropdown
+                    id="screen-name"
+                    label="List Of Screen Name"
+                    tooltipContent="List Of Screen Name"
+                    tooltipPlacement="right"
+                    options={screenNameList}
+                    value={selectedScreenName}
+                    onChange={(value) => setSelectedScreenName(value)}
                   />
-                  <span>{optRequired ? "True" : "False"}</span>
+                )}
+
+                <div className="flex justify-center">
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleEmbeddedLinkSave}
+                  />
                 </div>
               </div>
+            </>
+          )}
 
-              {/* <input
+          {/* Editable option for Opt In */}
+          {selectedItem?.type === "optin" && (
+            <>
+              <div className="space-y-3 mt-3">
+                <InputField
+                  label="OPT-In Label"
+                  type="text"
+                  value={optLabel}
+                  onChange={(e) => setOptLabel(e.target.value)}
+                />
+
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={optRequired}
+                      onChange={handleOptRequiredChange}
+                      id="required"
+                    />
+                    <span>{optRequired ? "True" : "False"}</span>
+                  </div>
+                </div>
+
+                {/* <input
                 type="checkbox"
                 checked={isChecked}
                 onChange={(e) => setIsChecked(e.target.checked)}
               /> */}
 
-              <AnimatedDropdown
-                id="next-action"
-                label="Action"
-                options={[
-                  { value: "data-exchage", label: "Data Exchange" },
-                  { value: "navigate", label: "Navigate" },
-                  { value: "open-url", label: "Open URL" },
-                ]}
-                value={optAction}
-                onChange={(value) => setOPTAction(value)}
-              />
-              <div className="flex justify-center ">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleOPTSave}
-                  className="text-blue-600 underline text-sm w-fit"
+                <AnimatedDropdown
+                  id="next-action"
+                  label="Action"
+                  options={[
+                    { value: "data-exchage", label: "Data Exchange" },
+                    { value: "navigate", label: "Navigate" },
+                    { value: "open-url", label: "Open URL" },
+                  ]}
+                  value={optAction}
+                  onChange={(value) => setOPTAction(value)}
                 />
+                <div className="flex justify-center ">
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleOPTSave}
+                    className="text-blue-600 underline text-sm w-fit"
+                  />
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {/* Editable option for Image In */}
-        {selectedItem?.type === "image" && (
-          <>
-            <div className="space-y-3 mt-3">
-              <div className="flex justify-center items-center gap-2 ">
-                <InputField
-                  type="file"
-                  id="file-upload"
-                  accept=".png, .jpeg"
-                  required={true}
-                  onChange={handleImageChange}
-                />
-                <button onClick={handlePhotoUpload}>
-                  <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-                </button>
+          {/* Editable option for Image In */}
+          {selectedItem?.type === "image" && (
+            <>
+              <div className="space-y-3 mt-3">
+                <div className="flex justify-center items-center gap-2 ">
+                  <InputField
+                    type="file"
+                    id="file-upload"
+                    accept=".png, .jpeg"
+                    required={true}
+                    onChange={handleImageChange}
+                    ref={imageInputRef}
+                  />
+                  <button onClick={handlePhotoUpload}>
+                    <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
+                  </button>
 
-                <button onClick={handleImageDelete}>
-                  <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
-                </button>
-              </div>
+                  <button onClick={handleImageDelete}>
+                    <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
+                  </button>
+                </div>
 
-              {/* {imageSrc && (
+                {/* {imageSrc && (
                 <img
                   src={imageSrc}
                   alt="Uploaded preview"
@@ -3001,7 +3340,7 @@ const EditPanel = ({
                 />
               )} */}
 
-              {/* <InputField
+                {/* <InputField
                 label="Width"
                 type="integer"
                 value={width}
@@ -3015,77 +3354,77 @@ const EditPanel = ({
                 onChange={(e) => setHeight(e.target.value)}
               /> */}
 
-              <InputField
-                label="Scale-Type"
-                type="text"
-                value={scaleType}
-                onChange={(e) => setSCaleType(e.target.value)}
-              />
+                <InputField
+                  label="Scale-Type"
+                  type="text"
+                  value={scaleType}
+                  onChange={(e) => setSCaleType(e.target.value)}
+                />
 
-              {/* <InputField
+                {/* <InputField
                 label="Aspect-Ratio"
                 type="number"
                 value={aspectRatio}
                 onChange={(e) => setAspectRatio(e.target.value)}
               /> */}
 
-              <InputField
-                label="Alt-Text"
-                value={imgAltText}
-                type="text"
-                onChange={(e) => setImgAltText(e.target.value)}
-              />
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleImageSave} />
+                <InputField
+                  label="Alt-Text"
+                  value={imgAltText}
+                  type="text"
+                  onChange={(e) => setImgAltText(e.target.value)}
+                />
+                <div className="flex justify-center">
+                  <UniversalButton label="Save" onClick={handleImageSave} />
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {/* Editable option for document In */}
-        {selectedItem?.type === "document" && (
-          <>
-            <div className="space-y-3 mt-3">
-              <InputField
-                label="Upload Documents"
-                placeholder="Enter Label"
-                tooltipContent="Enter Label For Upload Document"
-                tooltipPlacement="right"
-                type="text"
-                value={documentLabel}
-                onChange={(e) => setDocumentLabel(e.target.value)}
-              />
+          {/* Editable option for document In */}
+          {selectedItem?.type === "document" && (
+            <>
+              <div className="space-y-3 mt-3">
+                <InputField
+                  label="Upload Documents"
+                  placeholder="Enter Label"
+                  tooltipContent="Enter Label For Upload Document"
+                  tooltipPlacement="right"
+                  type="text"
+                  value={documentLabel}
+                  onChange={(e) => setDocumentLabel(e.target.value)}
+                />
 
-              <InputField
-                label="Description"
-                placeholder="Enter Description"
-                tooltipContent="Enter Description for Document"
-                tooltipPlacement="right"
-                type="text"
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
+                <InputField
+                  label="Description"
+                  placeholder="Enter Description"
+                  tooltipContent="Enter Description for Document"
+                  tooltipPlacement="right"
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                />
 
-              <InputField
-                label="Min-Upload-Document"
-                placeholder="Minimum 1 document upload"
-                tooltipContent="Minimum 1 document upload"
-                tooltipPlacement="right"
-                type="text"
-                value={minDocsUpload}
-                onChange={(e) => setMinDocsUpload(e.target.value)}
-              />
+                <InputField
+                  label="Min-Upload-Document"
+                  placeholder="Minimum 1 document upload"
+                  tooltipContent="Minimum 1 document upload"
+                  tooltipPlacement="right"
+                  type="text"
+                  value={minDocsUpload}
+                  onChange={(e) => setMinDocsUpload(e.target.value)}
+                />
 
-              <InputField
-                label="Max-Upload-Document"
-                placeholder="Maximum 1 document Upload"
-                tooltipContent="Maximum 1 document Upload"
-                tooltipPlacement="right"
-                value={maxDocsUpload}
-                onChange={(e) => setMaxDocsUpload(e.target.value)}
-              />
+                <InputField
+                  label="Max-Upload-Document"
+                  placeholder="Maximum 1 document Upload"
+                  tooltipContent="Maximum 1 document Upload"
+                  tooltipPlacement="right"
+                  value={maxDocsUpload}
+                  onChange={(e) => setMaxDocsUpload(e.target.value)}
+                />
 
-              {/* <InputField
+                {/* <InputField
                 label="List-items"
                 minLength={1}
                 maxLength={20}
@@ -3094,53 +3433,187 @@ const EditPanel = ({
                 onChange={(e) => setListItems(e.target.value)}
               /> */}
 
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleDocumentSave} />
+                <div className="flex justify-center">
+                  <UniversalButton label="Save" onClick={handleDocumentSave} />
+                </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {/* Editable option for media In */}
-        {selectedItem?.type === "media" && (
-          <>
+          {/* Editable option for media In */}
+          {selectedItem?.type === "media" && (
+            <>
+              <div className="space-y-3 mt-3">
+                <InputField
+                  label="Upload photos"
+                  placeholder="Enter Label"
+                  tooltipContent="Enter Label For Upload Photo"
+                  tooltipPlacement="right"
+                  value={mediaLabel}
+                  onChange={(e) => setMediaLabel(e.target.value)}
+                />
+
+                <InputField
+                  label="Description"
+                  placeholder="Enter Description"
+                  tooltipContent="Enter Description for Photo"
+                  tooltipPlacement="right"
+                  value={mediaDescription}
+                  onChange={(e) => setMediaDescription(e.target.value)}
+                />
+
+                <InputField
+                  label="Min-Upload-Photo"
+                  placeholder="Minimum 1 photo upload"
+                  tooltipContent="Minimum 1 photo upload"
+                  tooltipPlacement="right"
+                  type="number"
+                  value={minPhotoUpload}
+                  onChange={(e) => setMinPhotoUpload(e.target.value)}
+                />
+
+                <InputField
+                  label="Max-Upload-Photos"
+                  placeholder="Maximum 1 photos Upload"
+                  tooltipContent="Maximum 1 photos Upload"
+                  tooltipPlacement="right"
+                  type="number"
+                  value={maxPhotoUpload}
+                  onChange={(e) => setMaxPhotoUpload(e.target.value)}
+                />
+
+                <div>
+                  <label
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="right"
+                  >
+                    Required
+                  </label>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={mediaRequired}
+                      onChange={handleMediaRequiredChange}
+                      id="required"
+                    />
+                    <span>{mediaRequired ? "True" : "False"}</span>
+                  </div>
+                </div>
+
+                <div className="flex justify-center">
+                  <UniversalButton label="Save" onClick={handleMediaSave} />
+                </div>
+              </div>
+            </>
+          )}
+
+          {/* Editable option for if-else In */}
+          {selectedItem?.type === "ifelse" && (
+            <InputField
+              placeholder="If-Else"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            />
+          )}
+
+          {/* Editable option for date In */}
+          {selectedItem?.type === "date" && (
             <div className="space-y-3 mt-3">
               <InputField
-                label="Upload photos"
-                placeholder="Enter Label"
-                tooltipContent="Enter Label For Upload Photo"
+                label="Date Label"
+                placeholder="Enter Date Label"
+                tooltipContent="Enter Date Label"
                 tooltipPlacement="right"
-                value={mediaLabel}
-                onChange={(e) => setMediaLabel(e.target.value)}
+                maxLength={40}
+                value={dateLable}
+                onChange={(e) => setDateLabel(e.target.value)}
+              />
+
+              {/* <InputField
+              label="Name"
+              placeholder="Enter Name"
+              tooltipContent="Enter Name for DatePicker"
+              tooltipPlacement="right"
+              value={dateName}
+              onChange={(e) => setDateName(e.target.value)}
+            /> */}
+              <InputField
+                label="Helper Text"
+                placeholder="Enter Placeholder for Date"
+                tooltipContent="Enter Placeholder for Date"
+                tooltipPlacement="right"
+                value={datePlaceholder}
+                onChange={(e) => setDatePlaceholder(e.target.value)}
+              />
+
+              <UniversalDatePicker
+                label="Min-Date"
+                tooltipContent="Select Min-Date"
+                tooltipPlacement="right"
+                value={minDate}
+                onChange={(value) => setMinDate(value)}
+              />
+
+              <UniversalDatePicker
+                label="Max-Date"
+                tooltipContent="Select Max-Date"
+                tooltipPlacement="right"
+                value={maxDate}
+                onChange={(value) => setMaxDate(value)}
+              />
+
+              <UniversalDatePicker
+                label="Unavailable Dates"
+                tooltipContent="Select Unavailable-Date"
+                tooltipPlacement="right"
+                value={null}
+                onChange={handleAddUnavailableDate}
+              />
+
+              <div className="flex flex-wrap gap-2 mt-2 ">
+                {unavailableDate.map((date, index) => (
+                  <Chip
+                    sx={{ padding: 1 }}
+                    key={index}
+                    label={new Date(date).toLocaleDateString()}
+                    onDelete={() =>
+                      setUnavailableDate((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      )
+                    }
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleDateSave} />
+              </div>
+            </div>
+          )}
+
+          {/* Editable option for calendar In */}
+          {selectedItem?.type === "calendar" && (
+            <div className="space-y-3 mt-3">
+              <InputField
+                label="Calendar Label"
+                tooltipContent="Enter Label for Calendar"
+                tooltipPlacement="right"
+                placeholder="Calendar Label"
+                maxLength={40}
+                value={dateCalendarLable}
+                onChange={(e) => setDateCalendarLabel(e.target.value)}
               />
 
               <InputField
-                label="Description"
-                placeholder="Enter Description"
-                tooltipContent="Enter Description for Photo"
-                tooltipPlacement="right"
-                value={mediaDescription}
-                onChange={(e) => setMediaDescription(e.target.value)}
-              />
+                label="Helper Text"
+                placeholder="Enter Placeholder for Date"
 
-              <InputField
-                label="Min-Upload-Photo"
-                placeholder="Minimum 1 photo upload"
-                tooltipContent="Minimum 1 photo upload"
-                tooltipPlacement="right"
-                type="number"
-                value={minPhotoUpload}
-                onChange={(e) => setMinPhotoUpload(e.target.value)}
-              />
 
-              <InputField
-                label="Max-Upload-Photos"
-                placeholder="Maximum 1 photos Upload"
-                tooltipContent="Maximum 1 photos Upload"
+                tooltipContent="Enter Placeholder for Date"
                 tooltipPlacement="right"
-                type="number"
-                value={maxPhotoUpload}
-                onChange={(e) => setMaxPhotoUpload(e.target.value)}
+                value={dateCalendarPlaceholder}
+                onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
               />
 
               <div>
@@ -3154,196 +3627,64 @@ const EditPanel = ({
                 </label>
                 <div className="flex items-center gap-2 ">
                   <Switch
-                    checked={mediaRequired}
-                    onChange={handleMediaRequiredChange}
+                    checked={startCalenderRequired}
+                    onChange={handleRequiredChange}
                     id="required"
                   />
-                  <span>{mediaRequired ? "True" : "False"}</span>
+                  <span>{startCalenderRequired ? "True" : "False"}</span>
                 </div>
               </div>
 
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleMediaSave} />
-              </div>
-            </div>
-          </>
-        )}
-
-        {/* Editable option for if-else In */}
-        {selectedItem?.type === "ifelse" && (
-          <InputField
-            placeholder="If-Else"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-          />
-        )}
-
-        {/* Editable option for date In */}
-        {selectedItem?.type === "date" && (
-          <div className="space-y-3 mt-3">
-            <InputField
-              label="Date Label"
-              placeholder="Enter Date Label"
-              tooltipContent="Enter Date Label"
-              tooltipPlacement="right"
-              maxLength={40}
-              value={dateLable}
-              onChange={(e) => setDateLabel(e.target.value)}
-            />
-
-            {/* <InputField
-              label="Name"
-              placeholder="Enter Name"
-              tooltipContent="Enter Name for DatePicker"
-              tooltipPlacement="right"
-              value={dateName}
-              onChange={(e) => setDateName(e.target.value)}
-            /> */}
-            <InputField
-              label="Helper Text"
-              placeholder="Enter Placeholder for Date"
-              tooltipContent="Enter Placeholder for Date"
-              tooltipPlacement="right"
-              value={datePlaceholder}
-              onChange={(e) => setDatePlaceholder(e.target.value)}
-            />
-
-            <UniversalDatePicker
-              label="Min-Date"
-              tooltipContent="Select Min-Date"
-              tooltipPlacement="right"
-              value={minDate}
-              onChange={(value) => setMinDate(value)}
-            />
-
-            <UniversalDatePicker
-              label="Max-Date"
-              tooltipContent="Select Max-Date"
-              tooltipPlacement="right"
-              value={maxDate}
-              onChange={(value) => setMaxDate(value)}
-            />
-
-            <UniversalDatePicker
-              label="Unavailable Dates"
-              tooltipContent="Select Unavailable-Date"
-              tooltipPlacement="right"
-              value={null}
-              onChange={handleAddUnavailableDate}
-            />
-
-            <div className="flex flex-wrap gap-2 mt-2 ">
-              {unavailableDate.map((date, index) => (
-                <Chip
-                  sx={{ padding: 1 }}
-                  key={index}
-                  label={new Date(date).toLocaleDateString()}
-                  onDelete={() =>
-                    setUnavailableDate((prev) =>
-                      prev.filter((_, i) => i !== index)
-                    )
-                  }
-                />
-              ))}
-            </div>
-
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={handleDateSave} />
-            </div>
-          </div>
-        )}
-
-        {/* Editable option for calendar In */}
-        {selectedItem?.type === "calendar" && (
-          <div className="space-y-3 mt-3">
-            <InputField
-              label="Calendar Label"
-              tooltipContent="Enter Label for Calendar "
-              tooltipPlacement="right"
-              placeholder="Calendar Label"
-              maxLength={40}
-              value={dateCalendarLable}
-              onChange={(e) => setDateCalendarLabel(e.target.value)}
-            />
-
-            <InputField
-              label="Helper Text"
-              placeholder="Enter Placeholder for Date"
-              tooltipContent="Enter Placeholder for Date"
-              tooltipPlacement="right"
-              value={dateCalendarPlaceholder}
-              onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
-            />
-
-            <div>
-              <label
-                htmlFor="required"
-                className="text-sm font-medium text-gray-700"
-                tooltipcontent="Select an option which required for you."
-                tooltipplacement="right"
-              >
-                Required
-              </label>
-              <div className="flex items-center gap-2 ">
-                <Switch
-                  checked={startCalenderRequired}
-                  onChange={handleRequiredChange}
-                  id="required"
-                />
-                <span>{startCalenderRequired ? "True" : "False"}</span>
-              </div>
-            </div>
-
-            <UniversalDatePicker
-              label="Min-Date"
-              tooltipContent="Select Min-Date"
-              tooltipPlacement="right"
-              value={minCalendarDate}
-              onChange={(value) => setMinCalendarDate(value)}
-            />
-
-            <UniversalDatePicker
-              label="Max-Date"
-              tooltipContent="Select Max-Date"
-              tooltipPlacement="right"
-              value={maxCalendarDate}
-              onChange={(value) => setMaxCalendarDate(value)}
-            />
-            <UniversalDatePicker
-              label="Unavailable Dates"
-              tooltipContent="Select Unavailable-Date"
-              tooltipPlacement="right"
-              value={null}
-              onChange={handleAddCalendarUnavailableDate}
-            />
-            <div className="flex flex-wrap gap-2 mt-2 ">
-              {unavailableCalendarDates.map((date, index) => (
-                <Chip
-                  sx={{ padding: 1 }}
-                  key={index}
-                  label={new Date(date).toLocaleDateString()}
-                  onDelete={() =>
-                    setUnavailableCalendarDates((prev) =>
-                      prev.filter((_, i) => i !== index)
-                    )
-                  }
-                />
-              ))}
-            </div>
-            <div className="flex gap-2">
-              <label>Mode: Range</label>
-              <input
-                type="checkbox"
-                checked={calendarMode === "range"}
-                onChange={(e) =>
-                  setCalendarMode(e.target.checked ? "range" : "single")
-                }
+              <UniversalDatePicker
+                label="Min-Date"
+                tooltipContent="Select Min-Date"
+                tooltipPlacement="right"
+                value={minCalendarDate}
+                onChange={(value) => setMinCalendarDate(value)}
               />
-            </div>
 
-            {calendarMode === "range" && (
-              <div className="space-y-2">
-                {/* <InputField
+              <UniversalDatePicker
+                label="Max-Date"
+                tooltipContent="Select Max-Date"
+                tooltipPlacement="right"
+                value={maxCalendarDate}
+                onChange={(value) => setMaxCalendarDate(value)}
+              />
+              <UniversalDatePicker
+                label="Unavailable Dates"
+                tooltipContent="Select Unavailable-Date"
+                tooltipPlacement="right"
+                value={null}
+                onChange={handleAddCalendarUnavailableDate}
+              />
+              <div className="flex flex-wrap gap-2 mt-2 ">
+                {unavailableCalendarDates.map((date, index) => (
+                  <Chip
+                    sx={{ padding: 1 }}
+                    key={index}
+                    label={new Date(date).toLocaleDateString()}
+                    onDelete={() =>
+                      setUnavailableCalendarDates((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      )
+                    }
+                  />
+                ))}
+              </div>
+              <div className="flex gap-2">
+                <label>Mode: Range</label>
+                <input
+                  type="checkbox"
+                  checked={calendarMode === "range"}
+                  onChange={(e) =>
+                    setCalendarMode(e.target.checked ? "range" : "single")
+                  }
+                />
+              </div>
+
+              {calendarMode === "range" && (
+                <div className="space-y-2">
+                  {/* <InputField
                   label="Start Date Label"
                   tooltipContent="Enter Start Date Label"
                   tooltipPlacement="right"
@@ -3356,15 +3697,15 @@ const EditPanel = ({
                     }))
                   }
                 /> */}
-                <InputField
-                  label="Second Calendar Label"
-                  tooltipContent="Enter End Date Label"
-                  tooltipPlacement="right"
-                  placeholder="Enter End Date Label"
-                  value={endCalendarLabel}
-                  onChange={(e) => setEndCalendarLabel(e.target.value)}
-                />
-                {/* <InputField
+                  <InputField
+                    label="Second Calendar Label"
+                    tooltipContent="Enter End Date Label"
+                    tooltipPlacement="right"
+                    placeholder="Enter End Date Label"
+                    value={endCalendarLabel}
+                    onChange={(e) => setEndCalendarLabel(e.target.value)}
+                  />
+                  {/* <InputField
                   label="Start Date Helper Text"
                   value={rangeHelperTexts["start-date"]}
                   onChange={(e) =>
@@ -3375,43 +3716,43 @@ const EditPanel = ({
                   }
                 /> */}
 
-                <InputField
-                  label="Second Calendar Helper Text"
-                  placeholder="Enter Second Calendar Helper-text"
-                  tooltipContent="Second Calendar Helper Text"
-                  tooltipPlacement="right"
-                  value={endCalendarHelperText}
-                  onChange={(e) => setEndCalendarHelperText(e.target.value)}
-                />
+                  <InputField
+                    label="Second Calendar Helper Text"
+                    placeholder="Enter Second Calendar Helper-text"
+                    tooltipContent="Second Calendar Helper Text"
+                    tooltipPlacement="right"
+                    value={endCalendarHelperText}
+                    onChange={(e) => setEndCalendarHelperText(e.target.value)}
+                  />
 
-                <div>
-                  <label
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
-                  <div className="flex items-center gap-2">
-                    <Switch
-                      checked={endCalendarRequired}
-                      onChange={handleEndRequiredChange}
-                      id="required"
-                    />
-                    <span>{endCalendarRequired ? "True" : "False"}</span>
+                  <div>
+                    <label
+                      htmlFor="required"
+                      className="text-sm font-medium text-gray-700"
+                      tooltipcontent="Select an option which required for you."
+                      tooltipplacement="right"
+                    >
+                      Required
+                    </label>
+                    <div className="flex items-center gap-2">
+                      <Switch
+                        checked={endCalendarRequired}
+                        onChange={handleEndRequiredChange}
+                        id="required"
+                      />
+                      <span>{endCalendarRequired ? "True" : "False"}</span>
+                    </div>
                   </div>
                 </div>
+              )}
+
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleCalendarSave} />
               </div>
-            )}
-
-            <div className="flex justify-center">
-              <UniversalButton label="Save" onClick={handleCalendarSave} />
             </div>
-          </div>
-        )}
+          )}
 
-        {/* {selectedItem?.type === "userdetail" && (
+          {/* {selectedItem?.type === "userdetail" && (
           <>
             <InputField
               placeholder="User Details"
@@ -3441,8 +3782,8 @@ const EditPanel = ({
           </>
         )} */}
 
-        {/* Save Button */}
-        {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          {/* Save Button */}
+          {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <UniversalButton
             onClick={handleSave}
             label="Save"
@@ -3451,7 +3792,8 @@ const EditPanel = ({
             Save
           </UniversalButton>
         </Box> */}
-      </Paper>
+        </motion.div>
+      </AnimatePresence>
     </Box>
   );
 };
