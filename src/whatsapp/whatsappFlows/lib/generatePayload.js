@@ -409,11 +409,11 @@ export const generatePayload = (data) => {
           type: "TextInput",
           label: pay.label,
           required: pay.required ?? true,
-          name:pay.name,
-           "error-message": pay['error-message'] || "",
+          // name:pay.name,
+          "error-message": pay["error-message"] || "",
           "helper-text": pay["helper-text"],
-          "min-chars": parseInt(pay["min-chars"]) || 1,
-          "max-chars": parseInt(pay["max-chars"]) || 5,
+          "min-chars": parseInt(pay["min-chars"]),
+          "max-chars": parseInt(pay["max-chars"]),
         };
       }
 
@@ -425,7 +425,6 @@ export const generatePayload = (data) => {
           required: pay.required ?? true,
           "helper-text": pay["helper-text"],
           "error-message": pay["error-message"],
-        
         };
       }
 
@@ -503,7 +502,7 @@ export const generatePayload = (data) => {
           // width: pay.width,
           // // height: pay.height,
           "scale-type": pay["scale-type"],
-          "aspect-ratio": pay["aspect-ratio"],
+          "aspect-ratio": parseInt(pay["aspect-ratio"]),
           "alt-text": pay["alt-text"],
         };
       }

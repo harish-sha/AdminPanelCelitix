@@ -13,6 +13,7 @@ import {
   FormLabel,
   Slide,
   Chip,
+  // Dropdown
 } from "@mui/material";
 import InputField from "../../components/InputField";
 import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
@@ -22,6 +23,7 @@ import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
@@ -431,89 +433,82 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Dropdown
             case "dropDown":
               return (
-                // <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-                //   {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
-                //     Object.entries(item.dropdown).map(
-                //       ([dropdownId, dropdownData], groupIdx) => (
-                //         <Box key={dropdownId} sx={{ mb: 2 }}>
-                //           <Typography
-                //             variant="subtitle1"
-                //             sx={{ fontWeight: 600, mb: 1 }}
-                //           >
-                //             {dropdownData.label || `Dropdown ${groupIdx + 1}`}
-                //           </Typography>
+                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                  {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
+                    Object.entries(item.dropdown).map(
+                      ([dropdownId, dropdownData], groupIdx) => {
+                        const dropdownOptions =
+                          (dropdownData["data-source"] || []).map(
+                            (option, optIdx) => ({
+                              value: option.id,
+                              label: (
+                                <Box
+                                  sx={{ display: "flex", alignItems: "center" }}
+                                >
+                                  {option.image && (
+                                    <Box
+                                      component="img"
+                                      src={option.image}
+                                      alt={
+                                        option.title || `Option ${optIdx + 1}`
+                                      }
+                                      sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: "50%",
+                                        mr: 1,
+                                        border: "1px solid #ccc",
+                                        objectFit: "cover",
+                                      }}
+                                    />
+                                  )}
+                                  <Box>
+                                    <Typography
+                                      variant="body2"
+                                      fontWeight={600}
+                                    >
+                                      {option.title || `Option ${optIdx + 1}`}
+                                    </Typography>
+                                    {option.description && (
+                                      <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                      >
+                                        {option.description}
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                </Box>
+                              ),
+                            })
+                          ) || [];
 
-                //           <TextField
-                //             select
-                //             fullWidth
-                //             size="small"
-                //             value={item.selected?.[dropdownId] || ""}
-                //             onChange={(e) =>
-                //               handleDropdownChange(
-                //                 index,
-                //                 dropdownId,
-                //                 e.target.value
-                //               )
-                //             }
-                //             sx={{ backgroundColor: "#fff" }}
-                //           >
-                //             {(dropdownData["data-source"] || []).map(
-                //               (option, optIdx) => (
-                //                 <MenuItem key={option.id} value={option.id}>
-                //                   <Box
-                //                     sx={{
-                //                       display: "flex",
-                //                       alignItems: "center",
-                //                     }}
-                //                   >
-                //                     {/* {option.image && (
-                //                       <Box
-                //                         component="img"
-                //                         src={option.image}
-                //                         alt={
-                //                           option.title || `Option ${optIdx + 1}`
-                //                         }
-                //                         sx={{
-                //                           width: 30,
-                //                           height: 30,
-                //                           borderRadius: 1,
-                //                           mr: 1,
-                //                           border: "1px solid #ccc",
-                //                         }}
-                //                       />
-                //                     )} */}
-                //                     <Box>
-                //                       <Typography
-                //                         variant="body2"
-                //                         fontWeight={600}
-                //                       >
-                //                         {option.title}
-                //                       </Typography>
-                //                       {option.description && (
-                //                         <Typography
-                //                           variant="caption"
-                //                           color="text.secondary"
-                //                         >
-                //                           {option.description}
-                //                         </Typography>
-                //                       )}
-                //                     </Box>
-                //                   </Box>
-                //                 </MenuItem>
-                //                 // <div> </div>
-                //               )
-                //             )}
-                //           </TextField>
-                //         </Box>
-                //       )
-                //     )
-                //   ) : (
-                //     <Typography color="text.secondary">
-                //       No dropdowns found.
-                //     </Typography>
-                //   )}
-                // </Box>
-                <div> </div>
+                        return (
+                          <Box key={dropdownId} sx={{ mb: 2 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: 600, mb: 1 }}
+                            >
+                              {dropdownData.label || `Dropdown ${groupIdx + 1}`}
+                            </Typography>
+
+                            <AnimatedDropdown
+                              value={item.selected?.[dropdownId] || ""}
+                              onChange={(value) =>
+                                handleDropdownChange(index, dropdownId, value)
+                              }
+                              options={dropdownOptions}
+                            />
+                          </Box>
+                        );
+                      }
+                    )
+                  ) : (
+                    <Typography color="text.secondary">
+                      No dropdowns found.
+                    </Typography>
+                  )}
+                </Box>
               );
 
             case "chipSelector":
@@ -581,7 +576,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
                     {/* Managed by Section */}
                     <p className="text-xs text-gray-500 mt-2">
-                      Managed by the business.{" "}
+                      Managed by the business.
                       <a href="#" className="text-blue-600 hover:underline">
                         Learn more
                       </a>
@@ -625,40 +620,40 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             case "image":
               return (
                 <div className="mt-6 p-4 border rounded-xl shadow-sm bg-white max-w-xs mx-auto">
-                  <h3 className="text-center text-base font-semibold mb-4">
-                    Mobile Preview
-                  </h3>
-
-                  {/* Image Preview */}
-                  {/* {imageSrc ? (
-                    <img
-                      src={imageSrc}
-                      alt={imgAltText || "Preview image"}
-                      className={`w-full h-auto rounded-md object-${
-                        scaleType || "contain"
-                      } mb-3`}
-                      style={{ aspectRatio: aspectRatio || "1" }}
-                    />
-                  ) : (
-                    <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
-                      No image uploaded
-                    </div>
-                  )} */}
-
-                  {/* Alt Text */}
-                  {/* {imgAltText && (
-                    <p className="text-center text-sm text-gray-600 italic">
-                      Alt: {imgAltText}
-                    </p>
-                  )}
-
-                  {/* Optional Scale-Type display 
-                  {scaleType && (
-                    <p className="text-center text-sm text-gray-500 mt-1">
-                      Scale Type:{" "}
-                      <span className="font-medium">{scaleType}</span>
-                    </p>
-                  )} */}
+                  <div className="w-full px-4 py-2">
+                    {/* Image Preview */}
+                    {item.src ? (
+                      <>
+                        <img
+                          src={item.src}
+                          alt={item["alt-text"] || "Preview image"}
+                          className={`w-full h-auto rounded-md object-${
+                            item["scale-type"] || "contain"
+                          } mb-3`}
+                          style={{ aspectRatio: item["aspect-ratio"] || "1" }}
+                        />
+                        {/* Alt Text */}
+                        {item["alt-text"] && (
+                          <p className="text-center text-sm text-gray-600 italic">
+                            Alt: {item["alt-text"]}
+                          </p>
+                        )}
+                        {/* Scale Type */}
+                        {item["scale-type"] && (
+                          <p className="text-center text-sm text-gray-500 mt-1">
+                            Scale Type:{" "}
+                            <span className="font-medium">
+                              {item["scale-type"]}
+                            </span>
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
+                        No image uploaded
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
 
@@ -674,13 +669,13 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         {item.description}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Min Documents: {item["min-document-photos"] || 1} | Max
-                        Documents: {item["max-document-photos"] || 1}
+                        Min Documents: {item["min-uploaded-documents"] || ""} |
+                        Max Documents: {item["max-uploaded-documents"] || ""}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
                         <span className="text-green-400 space-x-2">
                           <ArticleOutlinedIcon />
-                          Upload Document{" "}
+                          Upload Document
                         </span>
                       </div>
                     </div>
@@ -699,8 +694,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         {item.description}
                       </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Min Photos: {item["min-uploaded-photos"] || 1} | Max
-                        Photos: {item["max-uploaded-photos"] || 10}
+                        Min Photos: {item["min-uploaded-photos"] || ""} | Max
+                        Photos: {item["max-uploaded-photos"] || ""}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
                         <span className="text-green-400 space-x-2">
@@ -731,59 +726,164 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
             case "calendar":
               return (
-                <div> </div>
-                // <div className="w-full px-4 py-2">
-                //   <label className="block text-sm font-medium text-gray-700 mb-1">
-                //     {item.label || "Date"}
-                //   </label>
-                //   <UniversalDatePicker
-                //     selected={item.value ? new Date(item.value) : null}
-                //     onChange={(date) =>
-                //       onUpdateItem &&
-                //       onUpdateItem(index, (prevItem) => ({
-                //         ...prevItem,
-                //         value: date?.toISOString().split("T")[0],
-                //       }))
-                //     }
-                //     placeholderText={item.placeholder || "Select a date"}
-                //     minDate={
-                //       item["min-date"] ? new Date(item["min-date"]) : undefined
-                //     }
-                //     maxDate={
-                //       item["max-date"] ? new Date(item["max-date"]) : undefined
-                //     }
-                //     // excludeDates={
-                //     //   Array.isArray(item["unavailable-date"])
-                //     //     ? item["unavailable-date"].map((d) => new Date(d))
-                //     //     :  undefined
-                //     // }
-                //    unavailableDate={ item['unavailable-dates'] ? new Date(item['unavailable-dates']) : undefined
-                //     }
-                //     dateFormat="yyyy-MM-dd"
-                //     className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none"
-                //   />
-                //   {item.helperText && (
-                //     <p className="text-xs text-gray-500 mt-1">
-                //       {item.helperText}
-                //     </p>
-                //   )}
-                // </div>
+                <div className="w-full px-3 py-2">
+                  {item.mode === "range" ? (
+                    <div className="space-y-4">
+                      {/* Start Date */}
+                      <div className="w-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {item.label?.["start-date"] || "Start Date"}
+                        </label>
+                        <UniversalDatePicker
+                          selected={
+                            item.value?.["start-date"]
+                              ? new Date(item.value["start-date"])
+                              : null
+                          }
+                          onChange={(date) =>
+                            onUpdateItem &&
+                            onUpdateItem(index, (prevItem) => ({
+                              ...prevItem,
+                              value: {
+                                ...prevItem.value,
+                                "start-date": date?.toISOString().split("T")[0],
+                              },
+                            }))
+                          }
+                          placeholderText="Select start date"
+                          minDate={
+                            item["min-date"]
+                              ? new Date(item["min-date"])
+                              : undefined
+                          }
+                          maxDate={
+                            item["max-date"]
+                              ? new Date(item["max-date"])
+                              : undefined
+                          }
+                          unavailableDate={
+                            Array.isArray(item["unavailable-dates"])
+                              ? item["unavailable-dates"].map(
+                                  (d) => new Date(d)
+                                )
+                              : undefined
+                          }
+                          dateFormat="yyyy-MM-dd"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                        />
+                        {item["helper-text"]?.["start-date"] && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item["helper-text"]["start-date"]}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* End Date */}
+                      <div className="w-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {item.label?.["end-date"] || "End Date"}
+                        </label>
+                        <UniversalDatePicker
+                          selected={
+                            item.value?.["end-date"]
+                              ? new Date(item.value["end-date"])
+                              : null
+                          }
+                          onChange={(date) =>
+                            onUpdateItem &&
+                            onUpdateItem(index, (prevItem) => ({
+                              ...prevItem,
+                              value: {
+                                ...prevItem.value,
+                                "end-date": date?.toISOString().split("T")[0],
+                              },
+                            }))
+                          }
+                          placeholderText="Select end date"
+                          minDate={
+                            item["min-date"]
+                              ? new Date(item["min-date"])
+                              : undefined
+                          }
+                          maxDate={
+                            item["max-date"]
+                              ? new Date(item["max-date"])
+                              : undefined
+                          }
+                          unavailableDate={
+                            Array.isArray(item["unavailable-dates"])
+                              ? item["unavailable-dates"].map(
+                                  (d) => new Date(d)
+                                )
+                              : undefined
+                          }
+                          dateFormat="yyyy-MM-dd"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                        />
+                        {item["helper-text"]?.["end-date"] && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item["helper-text"]["end-date"]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {item.label || "Date"}
+                      </label>
+                      <UniversalDatePicker
+                        selected={item.value ? new Date(item.value) : null}
+                        onChange={(date) =>
+                          onUpdateItem &&
+                          onUpdateItem(index, (prevItem) => ({
+                            ...prevItem,
+                            value: date?.toISOString().split("T")[0],
+                          }))
+                        }
+                        placeholderText={item.placeholder || "Select a date"}
+                        minDate={
+                          item["min-date"]
+                            ? new Date(item["min-date"])
+                            : undefined
+                        }
+                        maxDate={
+                          item["max-date"]
+                            ? new Date(item["max-date"])
+                            : undefined
+                        }
+                        unavailableDate={
+                          Array.isArray(item["unavailable-dates"])
+                            ? item["unavailable-dates"].map((d) => new Date(d))
+                            : undefined
+                        }
+                        dateFormat="yyyy-MM-dd"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                      />
+                      {item["helper-text"] && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {item["helper-text"]}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
               );
 
             // Render Date
             case "date":
               return (
                 <div className="w-full px-4 py-2">
-                  {/* <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
                     {item.label}
                   </label>
                   <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
-                    {/* {item.value
+                    {item.value
                       ? new Date(item.value).toLocaleDateString()
-                      : "No date selected"} 
+                      : "No date selected"}
 
                     {item["max-date"] || "Date (Optional)"}
-                  </div> */}
+                  </div>
                 </div>
               );
 

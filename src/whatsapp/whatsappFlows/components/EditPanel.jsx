@@ -31,6 +31,7 @@ import moment from "moment";
 import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 
 const EditPanel = ({
   selectedItem,
@@ -465,7 +466,11 @@ const EditPanel = ({
     if (selectedItem) {
       setImageFile(selectedItem.image || "");
       setImgAltText(selectedItem["alt-text"] || "");
-      setAspectRatio(selectedItem["aspect-ratio"] || "");
+      setAspectRatio(
+        typeof selectedItem["aspect-ratio"] === "number"
+          ? selectedItem["aspect-ratio"]
+          : 1
+      );
       setSCaleType(selectedItem["scale-type"] || "");
       // setWidth(selectedItem.width || "")
       // setHeigh(selectedItem.height || "")
@@ -547,17 +552,14 @@ const EditPanel = ({
   // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
 
   const handleImageSave = (e) => {
-
-    if (!imageFile.trim()) {
-      toast.error("Image Required")
+    if (!imageFile) {
+      toast.error("Image Required");
       return;
     }
 
-
-
     const selectedPhoto = "";
     const payload = {
-      src: imageSrc,
+      src: imageSrc.trim(),
       // width: width,
       // height: height,
       "scale-type": scaleType,
@@ -584,14 +586,17 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setDateLabel(selectedItem.label || "")
-      setMinDate(selectedItem["min-date"] || "")
-      setMaxDate(selectedItem['max-date'] || "")
-      setUnavailableDate(selectedItem["unavailable-dates"] || "")
-
+      setDateLabel(selectedItem.label || "");
+      setMinDate(selectedItem["min-date"] || "");
+      setMaxDate(selectedItem["max-date"] || "");
+      // setUnavailableDate(selectedItem["unavailable-dates"] || "")
+      setUnavailableDate(
+        Array.isArray(selectedItem["unavailable-dates"])
+          ? selectedItem["unavailable-dates"]
+          : []
+      );
     }
-
-  })
+  }, [selectedItem]);
 
   const formatDateToString = (date) => {
     if (!date) return null;
@@ -616,9 +621,7 @@ const EditPanel = ({
     ) {
       setUnavailableDate((prev) => [...prev, date]);
     }
-
   };
-
 
   useEffect(() => {
     console.log("unavailableDate state:", unavailableDate);
@@ -670,17 +673,14 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setDateCalendarLabel(selectedItem.label || "")
-      setMinCalendarDate(selectedItem["min-date"] || "")
-      setMaxCalendarDate(selectedItem['max-date'] || "")
-      setUnavailableCalendarDates(selectedItem["unavailable-dates"] || [])
-      setDateCalendarPlaceholder(selectedItem["helper-text"] || "")
-      setStartCalendarRequired(selectedItem.required || "")
-
-
+      setDateCalendarLabel(selectedItem.label || "");
+      setMinCalendarDate(selectedItem["min-date"] || "");
+      setMaxCalendarDate(selectedItem["max-date"] || "");
+      setUnavailableCalendarDates(selectedItem["unavailable-dates"] || []);
+      setDateCalendarPlaceholder(selectedItem["helper-text"] || "");
+      setStartCalendarRequired(selectedItem.required || "");
     }
-
-  }, [selectedItem])
+  }, [selectedItem]);
 
   const formatDateCalendarToString = (calendarDate) => {
     if (!calendarDate) return "";
@@ -735,37 +735,37 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-          mode: "single",
-          label: dateCalendarLable,
-          "helper-text": dateCalendarPlaceholder,
-          required: startCalenderRequired,
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            unavailableCalendarDates
-          ),
-        }
+            mode: "single",
+            label: dateCalendarLable,
+            "helper-text": dateCalendarPlaceholder,
+            required: startCalenderRequired,
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              unavailableCalendarDates
+            ),
+          }
         : {
-          mode: "range",
-          label: {
-            "start-date": dateCalendarLable || "",
-            "end-date": endCalendarLabel || "",
-          },
-          "helper-text": {
-            "start-date": dateCalendarPlaceholder || "",
-            "end-date": endCalendarHelperText || "",
-          },
-          required: {
-            "start-date": startCalenderRequired,
-            "end-date": endCalendarRequired,
-          },
+            mode: "range",
+            label: {
+              "start-date": dateCalendarLable || "",
+              "end-date": endCalendarLabel || "",
+            },
+            "helper-text": {
+              "start-date": dateCalendarPlaceholder || "",
+              "end-date": endCalendarHelperText || "",
+            },
+            required: {
+              "start-date": startCalenderRequired,
+              "end-date": endCalendarRequired,
+            },
 
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            unavailableCalendarDates
-          ),
-        };
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              unavailableCalendarDates
+            ),
+          };
 
     const updatedData = {
       ...selectedItem,
@@ -821,17 +821,14 @@ const EditPanel = ({
   //   setMainContent(`Uploaded file: ${uploadedFile.name}. `);
   // };
 
-
   useEffect(() => {
     if (selectedItem) {
       setDocumentLabel(selectedItem.label || "");
       setDescription(selectedItem.description || "");
       setMinDocsUpload(selectedItem["min-uploaded-documents"] || "");
       setMaxDocsUpload(selectedItem["max-uploaded-documents"] || "");
-
     }
   }, [selectedItem]);
-
 
   const handleDocumentSave = () => {
     if (!description) {
@@ -880,9 +877,8 @@ const EditPanel = ({
       setMediaLabel(selectedItem.label || "");
       setMediaDescription(selectedItem.description || "");
       setMinPhotoUpload(selectedItem["min-uploaded-photos"] || "");
-      setMediaRequied(selectedItem["max-uploaded-photos"] || "");
-      setMediaRequied(selectedItem.required ?? true)
-
+      setMaxPhotoUpload(selectedItem["max-uploaded-photos"] || "");
+      setMediaRequied(selectedItem.required ?? true);
     }
   }, [selectedItem]);
 
@@ -1158,7 +1154,6 @@ const EditPanel = ({
       toast.error("Label must be under 30 characters");
       return;
     }
-    
 
     // }
 
@@ -1197,7 +1192,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1442,7 +1437,7 @@ const EditPanel = ({
     // Final payload and merge
     const payload = {
       label: mainLabelCheckbox.trim(),
-      required:checkboxRequired,
+      required: checkboxRequired,
       "data-source": payloadOptions,
     };
 
@@ -1581,11 +1576,11 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+            }
           : o
       )
     );
@@ -1646,7 +1641,7 @@ const EditPanel = ({
     // 3) Base payload (what used to be passed directly)
     const payload = {
       label: mainLabelDropdown.trim(),
-      required:dropdownRequired,
+      required: dropdownRequired,
       "data-source": payloadOptions,
     };
 
@@ -1689,7 +1684,7 @@ const EditPanel = ({
       setChipSelectorLabel(selectedItem.label || "");
       setChipTitle(selectedItem.title || "");
       setChipDescription(selectedItem.description || "");
-      setValueSelection(selectedItem['min-selected-items'] || "");
+      setValueSelection(selectedItem["min-selected-items"] || "");
     }
   }, [selectedItem]);
 
@@ -1707,10 +1702,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-            ...o,
-            // name: chipName.trim(),
-            title: chipTitle.trim(),
-          }
+              ...o,
+              // name: chipName.trim(),
+              title: chipTitle.trim(),
+            }
           : o
       )
     );
@@ -1918,8 +1913,16 @@ const EditPanel = ({
       setInputError(selectedItem["error-message"] || "");
       setInputRequired(selectedItem.required ?? false);
       setInputName(selectedItem.name || "");
-      setInputMin(selectedItem["min-chars"] || "");
-      setInputMax(selectedItem["max-chars"] || "");
+      setInputMin(
+        typeof selectedItem["min-chars"] === "number"
+          ? selectedItem["min-chars"]
+          : 1
+      );
+      setInputMax(
+        typeof selectedItem["max-chars"] === "number"
+          ? selectedItem["max-chars"]
+          : 1
+      );
       setSelectedOptionsType(
         OptionsTypeOptions.find(
           (opt) => opt.value === selectedItem["input-type"]
@@ -1980,17 +1983,15 @@ const EditPanel = ({
   };
 
   const handleInputSave = () => {
-
     if (!inputLabel) {
-      toast.error("Label Required")
-      return
+      toast.error("Label Required");
+      return;
     }
 
     if (!inputPlaceholder) {
-      toast.error("Helper-Text Required")
-      return
+      toast.error("Helper-Text Required");
+      return;
     }
-
 
     const payload = {
       label: inputLabel.trim(),
@@ -1998,10 +1999,11 @@ const EditPanel = ({
       required: inputRequired,
       name: inputName,
       "error-message": inputError,
-      "min-length": inputMin ? Number(inputMin) : undefined,
-      "max-length": inputMax ? Number(inputMax) : undefined,
-     
+      "min-chars": inputMin ? Number(inputMin) : undefined,
+      "max-chars": inputMax ? Number(inputMax) : undefined,
     };
+
+    console.log("textinput payload", payload);
 
     const updatedData = {
       ...selectedItem,
@@ -2036,13 +2038,13 @@ const EditPanel = ({
   const handleTextSave = () => {
     if (!textAreaLabel.trim()) {
       toast.error("Label Required");
-      return
+      return;
     }
 
-    if (!textAreaName.trim()) {
-      toast.error("Name Required");
-      return
-    }
+    // if (!textAreaName.trim()) {
+    //   toast.error("Name Required");
+    //   return
+    // }
 
     const payload = {
       label: textAreaLabel.trim(),
@@ -2072,10 +2074,10 @@ const EditPanel = ({
     <Box>
       <AnimatePresence>
         <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 30 }}
-          // elevation={3}
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: 30 }}
+          transition={{ type: "spring", stiffness: 300, damping: 30 }}
           // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
           className="bg-white z-10 p-3 absolute right-3 w-80 top-18 border-2 rounded-xl shadow-sm border-gray-200"
         >
@@ -2203,7 +2205,6 @@ const EditPanel = ({
               </div>
             </div>
           )}
-          {/* NEW */}
 
           {selectedItem?.type === "textInput" && (
             <div className="mb-2 text-lg space-y-2 mt-3">
@@ -2239,14 +2240,14 @@ const EditPanel = ({
                 onChange={(e) => setInputPlaceholder(e.target.value)}
               />
 
-              <InputField
+              {/* <InputField
                 label="Name"
                 placeholder="Enter Name"
                 tooltipContent="Enter name for input field"
                 tooltipPlacement="right"
                 value={inputName}
                 onChange={handleInputChange}
-              />
+              /> */}
 
               <InputField
                 label="Enter error to display"
@@ -2285,12 +2286,13 @@ const EditPanel = ({
               </div>
 
               <div className="flex items-center gap-2">
-                <label
+                <UniversalLabel
                   htmlFor="required"
                   className="text-sm font-medium text-gray-700"
-                >
-                  Is Input Required?
-                </label>
+                  text=" Required?"
+                  tooltipContent="Set required field for TextArea"
+                  tooltipPlacement="top"
+                ></UniversalLabel>
                 <div className="flex items-center">
                   <Switch
                     checked={inputRequired}
@@ -2323,7 +2325,7 @@ const EditPanel = ({
               />
 
               <InputField
-                label="Placeholder"
+                label="Helper-Text"
                 type="text"
                 placeholder="Enter placeholder for TextArea"
                 tooltipContent="Enter placeholder"
@@ -2332,14 +2334,14 @@ const EditPanel = ({
                 maxLength={80}
                 onChange={(e) => setTextAreaPlaceholder(e.target.value)}
               />
-              <InputField
+              {/* <InputField
                 label="Name"
                 placeholder="Enter Name"
                 tooltipContent="Enter name for TextArea"
                 tooltipPlacement="right"
                 value={textAreaName}
                 onChange={(e) => setTextAreaName(e.target.value)}
-              />
+              /> */}
 
               <InputField
                 label="Enter error to display"
@@ -2377,22 +2379,23 @@ const EditPanel = ({
               />
             </div> */}
 
-              <div>
-                <label
+              <div className="flex items-end">
+                <UniversalLabel
                   htmlFor="textarea_required"
                   className="text-sm font-medium text-gray-700"
                   tooltipContent="Set required field for TextArea"
-                  tooltipPlacement="right"
-                >
-                  Is TextArea Required?
-                </label>
-                <div className="flex items-center gap-4 mt-1">
+                  tooltipPlacement="top"
+                  text="Required?"
+                ></UniversalLabel>
+                <div className="flex items-center">
                   <Switch
                     checked={textAreaRequired}
                     onChange={(e) => handleTextAreaChange(e.target.checked)}
                     id="textarea_required"
                   />
-                  <span>{textAreaRequired ? "True" : "False"}</span>
+                  <span className="text-sm">
+                    {textAreaRequired ? "True" : "False"}
+                  </span>
                 </div>
               </div>
 
@@ -2417,15 +2420,14 @@ const EditPanel = ({
                   placeholder="Enter label"
                   fullWidth
                 />
-                <div>
-                  <label
-                    htmlFor="required"
+                <div className="mt-2">
+                  <UniversalLabel
+                    htmlFor="checkbox_required"
                     className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
+                    tooltipContent="Set required field for Checkbox"
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={checkboxRequired}
@@ -2602,15 +2604,14 @@ const EditPanel = ({
                   fullWidth
                 />
 
-                <div>
-                  <label
-                    htmlFor="required"
+                <div className="mt-2">
+                  <UniversalLabel
+                    htmlFor="radio_required"
                     className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
+                    tooltipContent="Select an option which required for you."
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={radioRequired}
@@ -2793,14 +2794,13 @@ const EditPanel = ({
                 />
 
                 <div>
-                  <label
-                    htmlFor="required"
+                  <UniversalLabel
+                    htmlFor="dropDown_required"
                     className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
+                    tooltipContent="Select an option which required for you."
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={dropdownRequired}
@@ -2991,6 +2991,8 @@ const EditPanel = ({
                 <InputField
                   label="Description"
                   placeholder="Enter Description"
+                  tooltipContent="Enter Description for ChipSelector"
+                  tooltipPlacement="right"
                   value={chipDescription}
                   onChange={(e) => setChipDescription(e.target.value)}
                 />
@@ -2998,6 +3000,8 @@ const EditPanel = ({
                 <InputField
                   label="Max-Selection Options In Chip"
                   placeholder="Enter Max-option"
+                  tooltipContent="Enter Max-option for ChipSelector"
+                  tooltipPlacement="right"
                   value={valueSelection}
                   onChange={(e) => setValueSelection(e.target.value)}
                 />
@@ -3029,6 +3033,8 @@ const EditPanel = ({
                         <InputField
                           label="Title"
                           placeholder="Enter Title"
+                          tooltipContent="Enter Title for ChipSelector"
+                          tooltipPlacement="right"
                           value={chipTitle}
                           onChange={(e) => setChipTitle(e.target.value)}
                         />
@@ -3263,15 +3269,16 @@ const EditPanel = ({
                   onChange={(e) => setOptLabel(e.target.value)}
                 />
 
-                <div>
-                  <label
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
+                <div className="mt-2">
+                 <UniversalLabel
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipcontent="Select an option which required for you."
+                  tooltipplacement="top"
+                  text="Required"
+                >
+              
+                </UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={optRequired}
@@ -3316,9 +3323,12 @@ const EditPanel = ({
               <div className="space-y-3 mt-3">
                 <div className="flex justify-center items-center gap-2 ">
                   <InputField
+                    label="Upload Image"
                     type="file"
                     id="file-upload"
                     accept=".png, .jpeg"
+                    tooltipContent="Upload Image"
+                    tooltipPlacement="right"
                     required={true}
                     onChange={handleImageChange}
                     ref={imageInputRef}
@@ -3354,11 +3364,16 @@ const EditPanel = ({
                 onChange={(e) => setHeight(e.target.value)}
               /> */}
 
-                <InputField
+                <AnimatedDropdown
                   label="Scale-Type"
-                  type="text"
+                  tooltipContent="Select Scale-Type"
+                  tooltipPlacement="right"
                   value={scaleType}
-                  onChange={(e) => setSCaleType(e.target.value)}
+                  options={[
+                    { value: "contain", label: "Contain" },
+                    { value: "cover", label: "Cover" },
+                  ]}
+                  onChange={(value) => setSCaleType(value)}
                 />
 
                 {/* <InputField
@@ -3370,6 +3385,8 @@ const EditPanel = ({
 
                 <InputField
                   label="Alt-Text"
+                  tooltipContent="Alt-Text"
+                  tooltipPlacement="right"
                   value={imgAltText}
                   type="text"
                   onChange={(e) => setImgAltText(e.target.value)}
@@ -3482,15 +3499,15 @@ const EditPanel = ({
                   onChange={(e) => setMaxPhotoUpload(e.target.value)}
                 />
 
-                <div>
-                  <label
+                <div className="mt-2">
+                  <UniversalLabel
+                    label=" Required"
                     htmlFor="required"
                     className="text-sm font-medium text-gray-700"
                     tooltipcontent="Select an option which required for you."
-                    tooltipplacement="right"
-                  >
-                    Required
-                  </label>
+                    tooltipplacement="top"
+                    text="Required"
+                  ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={mediaRequired}
@@ -3608,23 +3625,20 @@ const EditPanel = ({
               <InputField
                 label="Helper Text"
                 placeholder="Enter Placeholder for Date"
-
-
                 tooltipContent="Enter Placeholder for Date"
                 tooltipPlacement="right"
                 value={dateCalendarPlaceholder}
                 onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
               />
 
-              <div>
-                <label
+              <div className="mt-2">
+                <UniversalLabel
                   htmlFor="required"
                   className="text-sm font-medium text-gray-700"
                   tooltipcontent="Select an option which required for you."
-                  tooltipplacement="right"
-                >
-                  Required
-                </label>
+                  tooltipplacement="top"
+                  text="Required"
+                ></UniversalLabel>
                 <div className="flex items-center gap-2 ">
                   <Switch
                     checked={startCalenderRequired}
@@ -3725,15 +3739,14 @@ const EditPanel = ({
                     onChange={(e) => setEndCalendarHelperText(e.target.value)}
                   />
 
-                  <div>
-                    <label
+                  <div className="mt-2">
+                    <UniversalLabel
                       htmlFor="required"
                       className="text-sm font-medium text-gray-700"
                       tooltipcontent="Select an option which required for you."
-                      tooltipplacement="right"
-                    >
-                      Required
-                    </label>
+                      tooltipplacement="top"
+                      text="Required"
+                    ></UniversalLabel>
                     <div className="flex items-center gap-2">
                       <Switch
                         checked={endCalendarRequired}
