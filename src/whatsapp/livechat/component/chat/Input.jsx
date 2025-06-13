@@ -241,8 +241,8 @@ export const ChatInput = ({
       <div className="relative flex items-center justify-center w-full gap-2 border rounded-3xl">
         <textarea
           type="text"
-          className="max-h-50 p-3 w-full focus:outline-none resize-none"
-          placeholder="Type a message..."
+          className="max-h-50 p-3 w-full focus:outline-none resize-none text-sm"
+          placeholder="Type / for canned messages"
           ref={inputRef}
           value={input}
           // onChange={(e) => setInput(e.target.value)}

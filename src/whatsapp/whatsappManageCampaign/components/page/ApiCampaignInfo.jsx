@@ -13,6 +13,7 @@ import moment from "moment";
 import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
+import { useDownload } from "@/context/DownloadProvider";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -94,6 +95,7 @@ export const ApiCampaignInfo = () => {
   const [totalPage, setTotalPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { triggerDownloadNotification } = useDownload();
 
 
   async function handleFetchDetails(page = 0) {
@@ -171,7 +173,7 @@ export const ApiCampaignInfo = () => {
     // toast.success("Hello World");
     try {
       const payload = {
-        type: 2,
+        type: 1,
         selectedUserId: "",
         fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
         toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
@@ -179,14 +181,15 @@ export const ApiCampaignInfo = () => {
         customColumns: "",
         status: state.log,
         delStatus: {},
+        source: "API"
       };
       const res = await downloadCustomWhatsappReport(payload);
-
       if (!res?.status) {
         return toast.error(res?.msg);
       }
 
       toast.success(res?.msg);
+      triggerDownloadNotification();
     } catch (e) {
       toast.error("Error downloading attachment");
     }

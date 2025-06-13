@@ -136,19 +136,19 @@ const ManageScheduleCampaignTableObd = ({ id, name, data = [], onCancel }) => {
 
     const columns = [
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-        { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
-        {
-            field: "campaignName",
-            headerName: "Campaign Name",
-            flex: 1,
-            minWidth: 120,
-        },
         {
             field: "campaignDate",
             headerName: "Campaign Date",
             flex: 1,
             minWidth: 120,
         },
+        {
+            field: "campaignName",
+            headerName: "Campaign Name",
+            flex: 1,
+            minWidth: 120,
+        },
+        { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
         {
             field: "count",
             headerName: "Count",

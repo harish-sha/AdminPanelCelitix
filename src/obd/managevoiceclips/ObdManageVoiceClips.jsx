@@ -499,6 +499,9 @@ const ObdManageVoiceClips = () => {
 
   return (
     <div className="w-full">
+      <h1 className="text-2xl text-gray-600 text-center my-3 font-semibold" >
+        Manage Voice Clips
+      </h1>
       <div className="flex items-end justify-between gap-3">
         <div className="flex items-end gap-2">
           <div className="w-full sm:w-46 ">
@@ -508,6 +511,7 @@ const ObdManageVoiceClips = () => {
               value={searchValue.name}
               label="File Name"
               placeholder="File Name"
+              tooltipContent="Search by filename"
               type="text"
               onChange={(e) =>
                 setSearchValue({ ...searchValue, name: e.target.value })

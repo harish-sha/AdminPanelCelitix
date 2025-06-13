@@ -31,14 +31,14 @@ import ObdSummaryLogsTable from "./components/ObdSummaryLogsTable.jsx";
 
 import { CustomTabPanel } from "../../whatsapp/managetemplate/components/CustomTabPanel.jsx";
 import { DataTable } from "@/components/layout/DataTable.jsx";
-import ExportDialogObd from "./export/ExportDialogObd.jsx"
+import ExportDialogObd from "./export/ExportDialogObd.jsx";
 
 import {
   fetchDayWiseSummaryObd,
   fetchSummaryLogsObd,
   fetchDetailsLogsObd,
   getScheduledVoiceCampaignReport,
-  cancelCamapign
+  cancelCamapign,
 } from "@/apis/obd/obd.js";
 
 import moment from "moment";
@@ -52,15 +52,8 @@ const ObdCampaignReports = () => {
   const [obdCampaignNumber, setObdCampaignNumber] = useState("");
   const [obdCampaignType, setObdCampaignType] = useState(null);
   const [obdVoiceType, setObdVoiceType] = useState(null);
-  const [selectedOption, setSelectedOption] = useState("option1");
-  const [customOptions, setCustomOptions] = useState("radioOptiondisable");
-  const [customdialogtype, setCustomdialogtype] = useState(null);
-  const [customdialogstatus, setCustomdialogstatus] = useState(null);
-  const [customdialognumber, setCustomdialognumber] = useState("");
   const [obdcampaigndate, setObdCampaignDate] = useState(null);
   const [visibledialog, setVisibledialog] = useState(false);
-  const [campaign, setCampaign] = useState(null);
-  const [dtmfResponse, setDtmfResponse] = useState(null);
   const [value, setValue] = useState(0);
   const [selectedRows, setSelectedRows] = useState([]);
 
@@ -68,12 +61,12 @@ const ObdCampaignReports = () => {
   const [campaignFromDate, setCampaigndFromDate] = useState(new Date());
   const [campaignToDate, setCampaigndToDate] = useState(new Date());
   const [obdDaySummaryData, setObdDaySummaryData] = useState();
-
   const [isFetching, setIsFetching] = useState(false);
 
   const [filteredRows, setFilteredRows] = useState([]);
   const [dataTable, setDataTable] = useState([]);
 
+  console.log("obdCampaignData", obdCampaignData);
   const formatDateToYYYYMMDD = (dateStr) => {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, "0");
@@ -144,8 +137,6 @@ const ObdCampaignReports = () => {
   // }
 
   const handleCampaignLog = () => {
-    console.log("Filter Values:", campaignFilteredObdRow);
-
     const filteredData = obdCampRows.filter((row) => {
       // console.log("row", row);
 
@@ -173,8 +164,6 @@ const ObdCampaignReports = () => {
       return matchName && matchType && matchMobno && matchDate;
     });
     setDataTable(filteredData);
-
-    console.log("Filtered Data:", filteredData);
     setFilteredRows(filteredData);
   };
 
@@ -193,7 +182,6 @@ const ObdCampaignReports = () => {
       setIsFetching(true);
       const res = await fetchDayWiseSummaryObd(data);
       setObdDaySummaryData(res);
-      console.log("res", res);
     } catch (error) {
       toast.error("Something went wrong while fetching data.");
     } finally {
@@ -214,11 +202,11 @@ const ObdCampaignReports = () => {
     voiceType: "",
   });
 
-  const [summaryData, setSummarydata] = useState([])
+  const [summaryData, setSummarydata] = useState([]);
 
   const handleSummaryLogs = async () => {
     const data = {
-      fromDate: moment(summaryDataToFilter.toDate).format("YYYY-MM-DD"),
+      fromDate: moment(summaryDataToFilter.fromDate).format("YYYY-MM-DD"),
       toDate: moment(summaryDataToFilter.toDate).format("YYYY-MM-DD"),
       voiceType: summaryDataToFilter.voiceType || "",
     };
@@ -226,8 +214,7 @@ const ObdCampaignReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchSummaryLogsObd(data);
-      console.log("res", res)
-      setSummarydata(res)
+      setSummarydata(res);
     } catch (error) {
       toast.error("Something went wrong while fetching data.");
     } finally {
@@ -235,73 +222,7 @@ const ObdCampaignReports = () => {
     }
   };
 
-  console.log("summaryData", summaryData)
-
   // Summary Report End
-
-  const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
-    campaignName: false,
-    mobileNo: false,
-    callType: false,
-    totalUnits: false,
-    queueTime: false,
-    sentTime: false,
-    deliveryTime: false,
-    callDuration: false,
-    retryCount: false,
-    callStatus: false,
-    deliveryStatus: false,
-    keypress: false,
-    action: false,
-    source: false,
-  });
-
-  const [deliverycheckbox, setDeliverycheckbox] = useState({
-    answered: false,
-    unanswered: false,
-    dialed: false,
-  });
-
-  const [customcheckboxStates, setcustomCheckboxStates] = useState({
-    campaignName: false,
-    mobileNo: false,
-    callType: false,
-    totalUnits: false,
-    queueTime: false,
-    sentTime: false,
-    deliveryTime: false,
-    callDuration: false,
-    retryCount: false,
-    callStatus: false,
-    deliveryStatus: false,
-    keypress: false,
-    action: false,
-    source: false,
-  });
-
-  // Handle checkbox of campaign
-  const handleCheckboxChange = (e, name) => {
-    setCampaignCheckboxStates((prevState) => ({
-      ...prevState,
-      [name]: e.checked, // Update the specific checkbox state
-    }));
-  };
-
-  // Handle delivery checkbox
-  const handleDeliveryCheckboxChange = (e, name) => {
-    setDeliverycheckbox((prevState) => ({
-      ...prevState,
-      [name]: e.checked,
-    }));
-  };
-
-  // Handle checkbox of custom
-  const handleCustomCheckboxChange = (e, name) => {
-    setcustomCheckboxStates((prevState) => ({
-      ...prevState,
-      [name]: e.checked,
-    }));
-  };
 
   // events
   const handleChange = (event, newValue) => {
@@ -324,29 +245,6 @@ const ObdCampaignReports = () => {
 
   const handleSummarySearchBtn = () => { };
 
- 
-
-  const handleCustomDialogNumber = (e) => {
-    setCustomdialognumber(e.target.value);
-  };
-
-  const handlecampaignDialogSubmithBtn = (e) => {
-    console.log("hii")
-    setVisibledialog(false);
-    setSelectedOption(value);
-    setCampaign(e.target.value);
-
-    toast.success("Export Successfully");
-  };
-
-  // Export Start
-
-  const handleCustomDialogSubmithBtn = () => {
-    console.log("hiii")
-  };
-
-  // Export End
-
   // campaign Report Start
 
   // const [data, setData] = useState(
@@ -360,24 +258,79 @@ const ObdCampaignReports = () => {
   // );
   const [data, setData] = useState("");
 
+  // const fetchCampaignReportsdata = async (data) => {
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await fetchDetailsLogsObd(data);
+  //     setObdCampaignData(res);
+
+  //     if (obdCampaignName && res?.Data) {
+  //     const filteredData = res.Data.filter((item) =>
+  //       item.campaignName?.toLowerCase().includes(obdCampaignName.toLowerCase())
+  //     );
+
+  //     setObdCampaignData({
+  //       ...res,
+  //       Data: filteredData,
+  //     });
+  //   }
+  //   } catch (error) {
+  //     console.error("Error fetching Obd campaign Reports:", error);
+  //     toast.error("Error fetching Obd campaign Reports");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
+
+  const campaignTypeOptions = [
+    { value: "0", label: "TTS" },
+    { value: "1", label: "MB" },
+    { value: "2", label: "SB" },
+    { value: "3", label: "Dynamic" }, // ⚠️ Changed value to "3" to make it unique
+  ];
+
   const fetchCampaignReportsdata = async (data) => {
-    try {
-      setIsFetching(true);
-      const res = await fetchDetailsLogsObd(data);
-      setObdCampaignData(res);
-    } catch (error) {
-      console.error("Error fetching Obd campaign Reports:", error);
-      toast.error("Error fetching Obd campaign Reports");
-    } finally {
-      setIsFetching(false);
+  try {
+    setIsFetching(true);
+    const res = await fetchDetailsLogsObd(data);
+    let filteredData = res?.Data || [];
+
+    const campaignNameFilter = obdCampaignName?.trim().toLowerCase();
+    const selectedType = campaignTypeOptions.find(
+      (opt) => opt.value === obdCampaignType
+    )?.label?.toLowerCase();
+
+    if (campaignNameFilter) {
+      filteredData = filteredData.filter((item) =>
+        item.campaignName?.toLowerCase().includes(campaignNameFilter)
+      );
     }
-  };
+
+    if (selectedType) {
+      filteredData = filteredData.filter(
+        (item) => item.campaignType?.toLowerCase() === selectedType
+      );
+    }
+
+    setObdCampaignData({
+      ...res,
+      Data: filteredData,
+    });
+
+  } catch (error) {
+    console.error("Error fetching Obd campaign Reports:", error);
+    toast.error("Error fetching Obd campaign Reports");
+  } finally {
+    setIsFetching(false);
+  }
+};
+
 
   const handleSearchObdCampaignLogs = () => {
     const formattedDate = moment(campaignFromDate).format("YYYY-MM-DD");
 
     const newData = {
-      voiceType: obdCampaignType,
+      voiceType: obdVoiceType,
       fromDate: formattedDate,
       toDate: formattedDate,
       mobile: obdCampaignNumber,
@@ -395,25 +348,23 @@ const ObdCampaignReports = () => {
 
   const fetchScheduleCampaignData = async () => {
     try {
-      setIsFetching(true)
-      const res = await getScheduledVoiceCampaignReport()
-      setScheduleData(res)
-      console.log("res", res)
+      setIsFetching(true);
+      const res = await getScheduledVoiceCampaignReport();
+      setScheduleData(res);
     } catch (error) {
-      console.error("Error fetching the scheduled campaign data :", error)
+      console.error("Error fetching the scheduled campaign data :", error);
     } finally {
-      setIsFetching(false)
+      setIsFetching(false);
     }
   };
 
   const handleCancel = async (srno) => {
-    console.log("srno", srno)
     try {
-      const res = await cancelCamapign(srno)
-      toast.success("Campaign deleted successfully")
-      fetchScheduleCampaignData()
+      const res = await cancelCamapign(srno);
+      toast.success("Campaign deleted successfully");
+      fetchScheduleCampaignData();
     } catch (error) {
-      console.error("Error in deleting the data")
+      console.error("Error in deleting the data");
     }
   };
 
@@ -573,7 +524,7 @@ const ObdCampaignReports = () => {
                         { value: "0", label: "TTS" },
                         { value: "1", label: "Multi Broadcast" },
                         { value: "2", label: "Simple Broadcast" },
-                        { value: "2", label: "Dynamic Broadcast" },
+                        { value: "3", label: "Dynamic Broadcast" },
                       ]}
                       value={obdCampaignType}
                       onChange={setObdCampaignType}
@@ -588,9 +539,9 @@ const ObdCampaignReports = () => {
                       label="Voice Type"
                       tooltipContent="Select Voice Type"
                       options={[
-                        { value: "0", label: "All" },
-                        { value: "1", label: "Promotional" },
-                        { value: "2", label: "Transactional" },
+                        // { value: "0", label: "All" },
+                        { value: "2", label: "Promotional" },
+                        { value: "1", label: "Transactional" },
                       ]}
                       value={obdVoiceType}
                       onChange={setObdVoiceType}
@@ -781,35 +732,6 @@ const ObdCampaignReports = () => {
 
       <ExportDialogObd
         visibledialog={visibledialog}
-        selectedOption={selectedOption}
-        setSelectedOption={setSelectedOption}
-        campaign={campaign}
-        setCampaign={setCampaign}
-        setCustomOptions={setCustomOptions}
-        customOptions={customOptions}
-        handlecampaignDialogSubmithBtn={handlecampaignDialogSubmithBtn}
-        customdialogtype={customdialogtype}
-        setCustomdialogtype={setCustomdialogtype}
-        customdialogstatus={customdialogstatus}
-        setCustomdialogstatus={setCustomdialogstatus}
-        customdialognumber={customdialognumber}
-        setCustomdialognumber={setCustomdialognumber}
-        handleCheckboxChange={handleCheckboxChange}
-        campaigncheckboxStates={campaigncheckboxStates}
-        setCampaignCheckboxStates={setCampaignCheckboxStates}
-        deliverycheckbox={deliverycheckbox}
-        setDeliverycheckbox={setDeliverycheckbox}
-        handleCustomDialogNumber={handleCustomDialogNumber}
-        handleCustomDialogSubmithBtn={handleCustomDialogSubmithBtn}
-        dtmfResponse={dtmfResponse}
-        setDtmfResponse={setDtmfResponse}
-        customcheckboxStates={customcheckboxStates}
-        setcustomCheckboxStates={setcustomCheckboxStates}
-        handleDeliveryCheckboxChange={handleDeliveryCheckboxChange}
-        customcheckboxStates={customcheckboxStates}
-        handleCustomCheckboxChange={handleCustomCheckboxChange}
-        campaigncheckboxStates={campaigncheckboxStates}
-        handleCheckboxChange={handleCheckboxChange}
         setVisibledialog={setVisibledialog}
       />
     </>

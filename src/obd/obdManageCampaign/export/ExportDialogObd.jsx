@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Dialog } from "primereact/dialog";
 import { RadioButton } from "primereact/radiobutton";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown.jsx";
@@ -7,38 +7,84 @@ import UniversalButton from "../../../whatsapp/components/UniversalButton.jsx";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker.jsx";
 import { Checkbox } from "primereact/checkbox";
 import InputField from "@/whatsapp/components/InputField.jsx";
+import { getAllCampaignNames, exportCampaignData } from "@/apis/obd/obd.js";
+import toast from "react-hot-toast";
+import { useDownload } from "@/context/DownloadProvider";
 
-const ExportDialogObd = ({
-  visibledialog,
-  selectedOption,
-  setSelectedOption,
-  campaign,
-  setCampaign,
-  customOptions,
-  setCustomOptions,
-  handlecampaignDialogSubmithBtn,
-  customdialogtype,
-  setCustomdialogtype,
-  customdialogstatus,
-  setCustomdialogstatus,
-  customdialognumber,
-  setCustomdialognumber,
-  deliverycheckbox,
-  setDeliverycheckbox,
-  handleCustomDialogNumber,
-  handleCustomDialogSubmithBtn,
-  dtmfResponse,
-  setDtmfResponse,
-  handleDeliveryCheckboxChange,
-  customcheckboxStates,
-  handleCustomCheckboxChange,
-  campaigncheckboxStates,
-  handleCheckboxChange,
-  setVisibledialog 
-}) => {
-  console.log("visibledialog", visibledialog);
+const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
+  const { triggerDownloadNotification } = useDownload();
+  const [selectedOption, setSelectedOption] = useState("option1");
+  const [campaign, setCampaign] = useState(null);
+  const [customOptions, setCustomOptions] = useState("radioOptiondisable");
+  const [customdialogtype, setCustomdialogtype] = useState(null);
+  const [customdialogstatus, setCustomdialogstatus] = useState(null);
+  const [customdialognumber, setCustomdialognumber] = useState("");
+  const [dtmfResponse, setDtmfResponse] = useState(null);
+  const [campaignNames, setCampaignNames] = useState([]);
+  const [dataToExport, setDataToExport] = useState({
+    campaignName: "",
+    fromDate: "",
+    toDate: "",
+    srno: 0,
+    isCustomField: 0,
+    customColumns: "",
+    type: "campaign",
+  });
 
-   const handleChangeOption = (event) => {
+  const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
+    campaignName: false,
+    mobileNo: false,
+    callType: false,
+    totalUnits: false,
+    queueTime: false,
+    sentTime: false,
+    deliveryTime: false,
+    callDuration: false,
+    retryCount: false,
+    callStatus: false,
+    deliveryStatus: false,
+    keypress: false,
+    action: false,
+    source: false,
+  });
+
+  const [customcheckboxStates, setcustomCheckboxStates] = useState({
+    campaignName: false,
+    mobileNo: false,
+    callType: false,
+    totalUnits: false,
+    queueTime: false,
+    sentTime: false,
+    deliveryTime: false,
+    callDuration: false,
+    retryCount: false,
+    callStatus: false,
+    deliveryStatus: false,
+    keypress: false,
+    action: false,
+    source: false,
+  });
+
+  const [deliverycheckbox, setDeliverycheckbox] = useState({
+    answered: false,
+    unanswered: false,
+    dialed: false,
+  });
+
+  useEffect(() => {
+    const fetchCampaignNames = async () => {
+      try {
+        const res = await getAllCampaignNames();
+        setCampaignNames(res);
+      } catch (error) {
+        console.error("Failed to fetch campaign names", error);
+      }
+    };
+
+    fetchCampaignNames();
+  }, [visibledialog]);
+
+  const handleChangeOption = (event) => {
     const value = event.target.value;
     setSelectedOption(value);
   };
@@ -47,6 +93,117 @@ const ExportDialogObd = ({
     const value = event.target.value;
     setCustomOptions(value);
   };
+
+  // Handle checkbox of campaign
+  const handleCheckboxChange = (e, name) => {
+    setCampaignCheckboxStates((prevState) => ({
+      ...prevState,
+      [name]: e.target.checked, // Update the specific checkbox state
+    }));
+  };
+
+  // Handle delivery checkbox
+  const handleDeliveryCheckboxChange = (e, name) => {
+    setDeliverycheckbox((prevState) => ({
+      ...prevState,
+      [name]: e.checked,
+    }));
+  };
+
+  const handleCustomDialogNumber = (e) => {
+    setCustomdialognumber(e.target.value);
+  };
+
+  // const handlecampaignDialogSubmithBtn = (e) => {
+  //   setVisibledialog(false);
+  //   setSelectedOption(value);
+  //   setCampaign(e.target.value);
+
+  //   toast.success("Export Successfully");
+  // };
+
+  const handleCustomCheckboxChange = (e, name) => {
+    setcustomCheckboxStates((prevState) => ({
+      ...prevState,
+      [name]: e.target.checked,
+    }));
+  };
+
+  useEffect(() => {
+    const selectedFields = Object.keys(campaigncheckboxStates)
+      .filter((key) => campaigncheckboxStates[key] === true)
+      .join(",");
+
+    setDataToExport((prev) => ({
+      ...prev,
+      customColumns: selectedFields,
+    }));
+  }, [campaigncheckboxStates]);
+
+  async function handleCustomDialogSubmithBtn() {
+    if (selectedOption === "option1" && !dataToExport?.srno) {
+      toast.error("Please select campaign");
+      return;
+    }
+
+    // if (selectedOption === "option2") {
+    //   toast.error("Please select custom columns");
+    //   return;
+    // }
+
+    const name = campaignNames.find(
+      (c) => c.srno === dataToExport?.srno
+    )?.campaignName;
+
+    const payload = {
+      ...dataToExport,
+      fromDate: dataToExport.fromDate
+        ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
+        : "",
+      toDate: dataToExport.toDate
+        ? new Date(dataToExport.toDate).toISOString().split("T")[0]
+        : "",
+      type: selectedOption === "option1" ? 1 : 2,
+      ...(selectedOption === "option1"
+        ? { srno: dataToExport.srno, campaignName: name }
+        : {}),
+    };
+
+    try {
+      const res = await exportCampaignData(payload);
+      if (res.status && res.msg) {
+        if (res.msg.toLowerCase().includes("wrong")) {
+          toast.error(res.msg || "Something went wrong!");
+          setVisibledialog(false);
+          return;
+        }
+
+        toast.success(res.msg);
+      } else {
+        toast.error(res.msg || "Something went wrong!");
+        return;
+      }
+
+      // Reset
+      setDataToExport({
+        fromDate: "",
+        toDate: "",
+        campaignName: "",
+        srno: 0,
+        isCustomField: 0,
+        customColumns: "",
+        type: "campaign",
+      });
+      setCampaignCheckboxStates("")
+      setcustomCheckboxStates("")
+      setVisibledialog(false);
+
+      triggerDownloadNotification();
+    } catch (e) {
+      console.error("Error in exportCampaignData:", e);
+      toast.error("Something went wrong. Please try again later.");
+    }
+  }
 
   return (
     <div>
@@ -101,13 +258,17 @@ const ExportDialogObd = ({
               <AnimatedDropdown
                 id="campaign"
                 name="campaign"
-                options={[
-                  { value: "Campaignl", label: "Camapaign1" },
-                  { value: "Campaign2", label: "Campaign2" },
-                  { value: "Campaign3", label: "Campaign3" },
-                ]}
-                onChange={setCampaign}
-                value={campaign}
+                options={campaignNames?.map((item) => ({
+                  value: item.srno,
+                  label: item.campaignName,
+                }))}
+                onChange={(e) =>
+                  setDataToExport((prev) => ({
+                    ...prev,
+                    srno: e,
+                  }))
+                }
+                value={dataToExport.srno || ""}
                 placeholder="Search Campaign"
               />
             </div>
@@ -121,8 +282,13 @@ const ExportDialogObd = ({
                       inputId="radioOptionenable"
                       name="radioGroup"
                       value="radioOptionenable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptionenable"}
+                      onChange={() =>
+                        setDataToExport((prev) => ({
+                          ...prev,
+                          isCustomField: 1,
+                        }))
+                      }
+                      checked={dataToExport.isCustomField === 1}
                     />
                     <label
                       htmlFor="radioOptionenable"
@@ -139,8 +305,13 @@ const ExportDialogObd = ({
                       inputId="radioOptiondisable"
                       name="radioGroup"
                       value="radioOptiondisable"
-                      onChange={handleChangeOptionEnable}
-                      checked={customOptions === "radioOptiondisable"}
+                      onChange={() =>
+                        setDataToExport((prev) => ({
+                          ...prev,
+                          isCustomField: 0,
+                        }))
+                      }
+                      checked={dataToExport.isCustomField === 0}
                     />
                     <label
                       htmlFor="radioOptiondisable"
@@ -153,7 +324,7 @@ const ExportDialogObd = ({
               </div>
             </div>
 
-            {customOptions === "radioOptionenable" && (
+            {dataToExport.isCustomField === 1 && (
               <>
                 <div className="grid grid-cols-2 lg:grid-cols-3 ">
                   <div className="flex items-center">
@@ -390,7 +561,8 @@ const ExportDialogObd = ({
                 id="campaignDialogSubmithBtn"
                 name="campaignDialogSubmithBtn"
                 label="Submit"
-                onClick={handlecampaignDialogSubmithBtn}
+                // onClick={handlecampaignDialogSubmithBtn}
+                onClick={handleCustomDialogSubmithBtn}
               />
             </div>
           </>
@@ -399,8 +571,22 @@ const ExportDialogObd = ({
           <>
             <div className="mt-4 ">
               <div className="flex justify-between gap-x-4">
-                <UniversalDatePicker label="From Date:" />
-                <UniversalDatePicker label="To Date:" />
+                <UniversalDatePicker
+                  label="From Date:"
+                  value={dataToExport.fromDate}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, fromDate: e })
+                  }
+                  defaultValue={new Date()}
+                />
+                <UniversalDatePicker
+                  label="To Date:"
+                  value={dataToExport.toDate}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, toDate: e })
+                  }
+                  defaultValue={new Date()}
+                />
               </div>
 
               <div className="flex justify-between gap-5 my-4">
@@ -532,8 +718,13 @@ const ExportDialogObd = ({
                         inputId="radioOptionenable"
                         name="radioGroup"
                         value="radioOptionenable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptionenable"}
+                        onChange={() =>
+                          setDataToExport((prev) => ({
+                            ...prev,
+                            isCustomField: 1,
+                          }))
+                        }
+                        checked={dataToExport.isCustomField === 1}
                       />
                       <label
                         htmlFor="radioOptionenable"
@@ -550,8 +741,13 @@ const ExportDialogObd = ({
                         inputId="radioOptiondisable"
                         name="radioGroup"
                         value="radioOptiondisable"
-                        onChange={handleChangeOptionEnable}
-                        checked={customOptions === "radioOptiondisable"}
+                        onChange={() =>
+                          setDataToExport((prev) => ({
+                            ...prev,
+                            isCustomField: 0,
+                          }))
+                        }
+                        checked={dataToExport.isCustomField === 0}
                       />
                       <label
                         htmlFor="radioOptiondisable"
@@ -564,7 +760,7 @@ const ExportDialogObd = ({
                 </div>
               </div>
 
-              {customOptions === "radioOptionenable" && (
+              {dataToExport.isCustomField === 1 && (
                 <>
                   <div className="grid grid-cols-2 lg:grid-cols-3 ">
                     <div className="flex items-center">

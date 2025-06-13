@@ -77,7 +77,6 @@ export const saveDynamicVoice = async (data) => {
   });
 };
 
-
 // create obd campaign
 export const sendObdCampaign = async (data) => {
   return await fetchWithAuth("/obd/addVoiceCampaign", {
@@ -88,21 +87,48 @@ export const sendObdCampaign = async (data) => {
 
 // view Obd Campaign Details
 export const viewObdCampaignDetails = async (campaignSrno) => {
-  return await fetchWithAuth(`/obd/report/getDetailLogInfo?campaignSrno=${campaignSrno}&selectedUserId=0`, {
-    method: "POST",
-  });
+  return await fetchWithAuth(
+    `/obd/report/getDetailLogInfo?campaignSrno=${campaignSrno}&selectedUserId=0`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 // get Scheduled Voice Campaign Report
 export const getScheduledVoiceCampaignReport = async () => {
-  return await fetchWithAuth(`/obd/report/getScheduledVoiceCampaignReport?selectedUserId=0`, {
-    method: "POST",
-  })
-}
+  return await fetchWithAuth(
+    `/obd/report/getScheduledVoiceCampaignReport?selectedUserId=0`,
+    {
+      method: "POST",
+    }
+  );
+};
 
 // cancel campaign
 export const cancelCamapign = async (srno) => {
-  return await fetchWithAuth(`/obd/report/cancelCampaign?srNo=${srno}&selectedUserId=0`, {
+  return await fetchWithAuth(
+    `/obd/report/cancelCampaign?srNo=${srno}&selectedUserId=0`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// get all campaign names
+export const getAllCampaignNames = async () => {
+  return await fetchWithAuth(
+    `/obd/report/getAllVoiceCampaign?selectedUserId=0`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// export campaign
+export const exportCampaignData = async (data) => {
+  return await fetchWithAuth(`/obd/report/downloadVoiceCustomReport`, {
     method: "POST",
-  })
-}
+    body: JSON.stringify(data),
+  });
+};
