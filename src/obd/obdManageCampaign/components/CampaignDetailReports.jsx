@@ -391,7 +391,7 @@ const CampaignDetailsReports = ({
                         placeholder="Category"
                     />
                 </div>
-                <div className="w-max-content ">
+                <div className="w-max-content">
                     <UniversalButton
                         id="manageCampaignSearchBtn"
                         name="manageCampaignSearchBtn"

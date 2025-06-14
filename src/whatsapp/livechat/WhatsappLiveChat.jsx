@@ -819,12 +819,18 @@ export default function WhatsappLiveChat() {
         setVarLength(item?.example?.body_text);
       }
       if (item?.type === "BUTTONS") {
-        item?.buttons?.map(({ type, example }) => {
+        // item?.buttons?.map(({ type, example }) => {
+        //   if (type === "URL") {
+        //     // const regex = /{{(\d+)}}/g;
+        //     // const matches = regex.exec(example);
+        //     // setBtnVarLength(matches);
+        //     setBtnVarLength(example);
+        //   }
+        // });
+        item?.buttons?.map(({ type, example, url }) => {
           if (type === "URL") {
-            // const regex = /{{(\d+)}}/g;
-            // const matches = regex.exec(example);
-            // setBtnVarLength(matches);
-            setBtnVarLength(example);
+            const varLength = url?.match(/{{(.+?)}}/g);
+            setBtnVarLength(varLength?.length || 0);
           }
         });
       }
