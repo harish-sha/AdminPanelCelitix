@@ -20,11 +20,10 @@ function generateBotPayload(
 
     const incomingEdge = edges.find((edge) => edge.target === node.id);
     const prevNode = incomingEdge
-      ? `${
-          nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
-            ? "START"
-            : nodes.find((n) => n.id === incomingEdge.source)?.type
-        }_${incomingEdge.source}`
+      ? `${nodes.find((n) => n.id === incomingEdge.source)?.type === "starting"
+        ? "START"
+        : nodes.find((n) => n.id === incomingEdge.source)?.type
+      }_${incomingEdge.source}`
       : "";
 
     const outgoingEdges = edges.filter((edge) => edge.source === node.id);
@@ -93,6 +92,7 @@ function generateBotPayload(
       entry["buttonTexts"] = nodeInput?.buttonTexts;
       // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
+      entry["buttonFooter"] = nodeInput?.buttonFooter.trim();
     }
 
     if (finalType === "list") {
@@ -101,7 +101,7 @@ function generateBotPayload(
       entry["listUrl"] = nodeInput?.text.trim();
       entry["listBody"] = nodeInput?.message.trim();
       entry["listType"] = nodeInput?.type.trim();
-      entry["listFooter"] = "Sample Section";
+      entry["listFooter"] = nodeInput?.listFooter.trim();
 
       entry["type"] = finalType;
 
