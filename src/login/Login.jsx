@@ -738,17 +738,17 @@ const Login = () => {
         },
       };
 
-      const ipResponse = await axios.get("https://ipapi.co/json/");
+      // const ipResponse = await axios.get("https://ipapi.co/json/");
       setInputDetails((prev) => ({
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.ip || "0.0.0.0",
+        // ip: ipResponse?.data?.ip || "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.ip || "0.0.0.0",
+        // ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: "127.0.0.4"
       };
 
