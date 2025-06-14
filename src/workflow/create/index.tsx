@@ -120,7 +120,9 @@ function NodeComponent({
               className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
             >
               <span className="text-gray-800">
-                {`${option.type} (${option.value})` || `Option ${index + 1}`}
+                {`${option.type || `Condition-${index + 1}`} (${
+                  option.value || `Value-${index + 1}`
+                })`}
               </span>
               <Handle
                 id={`opt-${index}`}
@@ -340,6 +342,13 @@ export const WorkflowCreate = () => {
     const payload = generatePayload(nodesInputData);
     if (!payload) return toast.error("Error while saving workflow");
     console.log(payload);
+
+    const data = {
+      workflowName: name,
+      isEditWorkflow: 0,
+      srNo: 0,
+      nodeJson: JSON.stringify(payload),
+    };
     toast.success("Workflow saved successfully");
   }
 
@@ -371,6 +380,7 @@ export const WorkflowCreate = () => {
             deleteKeyCode={"Backspace"}
             nodeTypes={nodeTypes}
             onConnectStart={(event, { handleType }) => {
+              console.log(event);
               setIsConnecting(true);
               setConnectionType(handleType);
             }}
