@@ -412,8 +412,8 @@ export const generatePayload = (data) => {
           // name:pay.name,
           "error-message": pay["error-message"] || "",
           "helper-text": pay["helper-text"],
-          "min-chars": parseInt(pay["min-chars"]),
-          "max-chars": parseInt(pay["max-chars"]),
+          "min-chars": parseInt(pay["min-chars"]) || undefined,
+          "max-chars": parseInt(pay["max-chars"]) || undefined,
         };
       }
 

@@ -33,6 +33,8 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 
+
+
 const EditPanel = ({
   selectedItem,
   onClose,
@@ -589,7 +591,6 @@ const EditPanel = ({
       setDateLabel(selectedItem.label || "");
       setMinDate(selectedItem["min-date"] || "");
       setMaxDate(selectedItem["max-date"] || "");
-      // setUnavailableDate(selectedItem["unavailable-dates"] || "")
       setUnavailableDate(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"]
@@ -699,6 +700,20 @@ const EditPanel = ({
 
   const handleAddCalendarUnavailableDate = (date) => {
     const formatted = formatDateToString(date);
+    const d = moment(date);
+    const min = moment(minCalendarDate);
+    const max = moment(maxCalendarDate);
+
+    // Check if within range
+    const isValid =
+      (!min.isValid() || d.isSameOrAfter(min, "day")) &&
+      (!max.isValid() || d.isSameOrBefore(max, "day"));
+
+    if (!isValid) {
+      toast.error("Unavailable date must be between Min and Max dates");
+      return;
+    }
+
     if (
       formatted &&
       !unavailableCalendarDates.some((d) => formatDateToString(d) === formatted)
@@ -732,6 +747,35 @@ const EditPanel = ({
       return;
     }
 
+    const minDate = moment(minCalendarDate);
+    const maxDate = moment(maxCalendarDate);
+
+    if (minDate.isValid() && maxDate.isValid() && maxDate.isBefore(minDate)) {
+      toast.error("Max date cannot be earlier than Min date");
+      return;
+    }
+
+     useEffect(() => {
+  if (
+    minCalendarDate &&
+    maxCalendarDate &&
+    moment(maxCalendarDate).isBefore(moment(minCalendarDate))
+  ) {
+    toast.error("Max date cannot be earlier than Min date");
+  }
+}, [minCalendarDate, maxCalendarDate]);
+    
+
+    // Filter unavailable dates within range
+    const validUnavailableDates = unavailableCalendarDates.filter((date) => {
+      const d = moment(date);
+      return (
+        d.isValid() &&
+        (!minDate.isValid() || d.isSameOrAfter(minDate, "day")) &&
+        (!maxDate.isValid() || d.isSameOrBefore(maxDate, "day"))
+      );
+    });
+
     const payload =
       calendarMode === "single"
         ? {
@@ -742,7 +786,7 @@ const EditPanel = ({
             "min-date": formatDateCalendarToString(minCalendarDate),
             "max-date": formatDateCalendarToString(maxCalendarDate),
             "unavailable-dates": formatArrayToCalendarDates(
-              unavailableCalendarDates
+              validUnavailableDates
             ),
           }
         : {
@@ -759,11 +803,10 @@ const EditPanel = ({
               "start-date": startCalenderRequired,
               "end-date": endCalendarRequired,
             },
-
             "min-date": formatDateCalendarToString(minCalendarDate),
             "max-date": formatDateCalendarToString(maxCalendarDate),
             "unavailable-dates": formatArrayToCalendarDates(
-              unavailableCalendarDates
+              validUnavailableDates
             ),
           };
 
@@ -1916,12 +1959,12 @@ const EditPanel = ({
       setInputMin(
         typeof selectedItem["min-chars"] === "number"
           ? selectedItem["min-chars"]
-          : 1
+          : ""
       );
       setInputMax(
         typeof selectedItem["max-chars"] === "number"
           ? selectedItem["max-chars"]
-          : 1
+          : ""
       );
       setSelectedOptionsType(
         OptionsTypeOptions.find(
@@ -3003,6 +3046,7 @@ const EditPanel = ({
                   tooltipContent="Enter Max-option for ChipSelector"
                   tooltipPlacement="right"
                   value={valueSelection}
+                  type="number"
                   onChange={(e) => setValueSelection(e.target.value)}
                 />
               </div>
@@ -3270,15 +3314,13 @@ const EditPanel = ({
                 />
 
                 <div className="mt-2">
-                 <UniversalLabel
-                  htmlFor="required"
-                  className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="top"
-                  text="Required"
-                >
-              
-                </UniversalLabel>
+                  <UniversalLabel
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="top"
+                    text="Required"
+                  ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
                       checked={optRequired}
@@ -3424,19 +3466,20 @@ const EditPanel = ({
 
                 <InputField
                   label="Min-Upload-Document"
-                  placeholder="Minimum 1 document upload"
-                  tooltipContent="Minimum 1 document upload"
+                  placeholder="Minimum document upload"
+                  tooltipContent="Minimum document user can upload 1 is necessary"
                   tooltipPlacement="right"
-                  type="text"
+                  type="number"
                   value={minDocsUpload}
                   onChange={(e) => setMinDocsUpload(e.target.value)}
                 />
 
                 <InputField
                   label="Max-Upload-Document"
-                  placeholder="Maximum 1 document Upload"
-                  tooltipContent="Maximum 1 document Upload"
+                  placeholder="Maximum document upload"
+                  tooltipContent="Maximum document user can Upload"
                   tooltipPlacement="right"
+                  type="number"
                   value={maxDocsUpload}
                   onChange={(e) => setMaxDocsUpload(e.target.value)}
                 />
@@ -3664,13 +3707,17 @@ const EditPanel = ({
                 value={maxCalendarDate}
                 onChange={(value) => setMaxCalendarDate(value)}
               />
+             
+
               <UniversalDatePicker
                 label="Unavailable Dates"
                 tooltipContent="Select Unavailable-Date"
                 tooltipPlacement="right"
                 value={null}
+                disabled={!minCalendarDate || !maxCalendarDate}
                 onChange={handleAddCalendarUnavailableDate}
               />
+
               <div className="flex flex-wrap gap-2 mt-2 ">
                 {unavailableCalendarDates.map((date, index) => (
                   <Chip
@@ -3698,19 +3745,6 @@ const EditPanel = ({
 
               {calendarMode === "range" && (
                 <div className="space-y-2">
-                  {/* <InputField
-                  label="Start Date Label"
-                  tooltipContent="Enter Start Date Label"
-                  tooltipPlacement="right"
-                  placeholder="Enter Start Date Label"
-                  value={rangeLabels["start-date"]}
-                  onChange={(e) =>
-                    setRangeLabels((prev) => ({
-                      ...prev,
-                      "start-date": e.target.value,
-                    }))
-                  }
-                /> */}
                   <InputField
                     label="Second Calendar Label"
                     tooltipContent="Enter End Date Label"
@@ -3719,16 +3753,6 @@ const EditPanel = ({
                     value={endCalendarLabel}
                     onChange={(e) => setEndCalendarLabel(e.target.value)}
                   />
-                  {/* <InputField
-                  label="Start Date Helper Text"
-                  value={rangeHelperTexts["start-date"]}
-                  onChange={(e) =>
-                    setRangeHelperTexts((prev) => ({
-                      ...prev,
-                      "start-date": e.target.value,
-                    }))
-                  }
-                /> */}
 
                   <InputField
                     label="Second Calendar Helper Text"

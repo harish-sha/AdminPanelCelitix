@@ -204,7 +204,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Text Area
             case "textArea":
               return (
-                <div key={index} className="mb-4">
+                <div key={index} className="mb-0">
                   <Typography variant="caption">
                     {item.label || "Label"}
                   </Typography>
@@ -232,12 +232,12 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // anshu
             case "checkBox":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                <div key={index} className="">
                   {item?.checkboxGroups &&
                   Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
-                        <Box key={groupId} sx={{ mb: 2 }}>
+                        <div key={groupId} className="p-1">
                           {/* Group Label */}
                           <Typography
                             variant="subtitle1"
@@ -256,7 +256,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "space-between",
-                                  p: 1,
+                                  px: 0.5,
+                                  py:0.4,
                                   mb: 1,
                                   borderRadius: 1,
                                   border: "1px solid #e0e0e0",
@@ -264,7 +265,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               >
                                 {/* Left: Image + Title/Desc */}
                                 <Box
-                                  sx={{ display: "flex", alignItems: "center" }}
+                                  sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        marginLeft:1
+                                      }}
                                 >
                                   {option.image && (
                                     <Box
@@ -274,13 +279,13 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                         option.title ||
                                         `Option ${optionIndex + 1}`
                                       }
-                                      sx={{
-                                        width: 40,
-                                        height: 40,
-                                        borderRadius: "50%",
-                                        mr: 1,
-                                        border: "1px solid #ccc",
-                                      }}
+                                       sx={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: "50%",
+                                            mr: 1,
+                                            border: "1px solid #ccc",
+                                          }}
                                     />
                                   )}
 
@@ -323,7 +328,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               </Box>
                             )
                           )}
-                        </Box>
+                        </div>
                       )
                     )
                   ) : (
@@ -331,19 +336,19 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                       No checkbox groups found.
                     </Typography>
                   )}
-                </Box>
+                </div>
               );
             // anshu
 
             // Render Radio Buttons
             case "radioButton":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                <div key={index} className="ml-3">
                   {item?.radioButton &&
                   Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
-                        <Box key={groupId} sx={{ mb: 2 }}>
+                        <div key={groupId} className="">
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: 600, mb: 1 }}
@@ -409,8 +414,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   }
                                   sx={{
                                     mb: 1,
-                                    px: 1,
-                                    py: 0.5,
+                                     px: 0.5,
+                                  py:0.4,
                                     borderRadius: 1,
                                     border: "1px solid #e0e0e0",
                                     alignItems: "flex-start",
@@ -419,7 +424,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               )
                             )}
                           </RadioGroup>
-                        </Box>
+                        </div>
                       )
                     )
                   ) : (
@@ -427,13 +432,13 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                       No radio groups found.
                     </Typography>
                   )}
-                </Box>
+                </div>
               );
 
             // Render Dropdown
             case "dropDown":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
+                <div key={index} >
                   {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
                     Object.entries(item.dropdown).map(
                       ([dropdownId, dropdownData], groupIdx) => {
@@ -508,7 +513,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                       No dropdowns found.
                     </Typography>
                   )}
-                </Box>
+                </div>
               );
 
             case "chipSelector":

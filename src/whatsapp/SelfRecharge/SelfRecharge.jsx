@@ -53,9 +53,6 @@ function SelfRecharge() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
-  // const [paymentSessionId, setPaymentSessionId] = useState(
-  //   "session_05gREoHQzvqwuytiFDJhp83mrXpOGRrfyxLdA-isA_nh3xb7KDCPgm3dvprMCmhnM_zQdUdttsnGIC9kzuuFP-_PcYOcOnAFZTSXUHoI_ruAmsCVdAnL6EnG_dUpayment"
-  // );
   const [paymentSessionId, setPaymentSessionId] = useState();
 
   useEffect(() => {

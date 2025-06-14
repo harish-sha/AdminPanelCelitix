@@ -145,7 +145,7 @@ const Canvas = ({
 
     if (item.type === "textInput") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md space-y-2">
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
           {targetItem.label && (
             <div>
               <span className="font-semibold">Label: </span>
@@ -174,14 +174,14 @@ const Canvas = ({
             </div>
           )}
 
-          {targetItem["min-chars"] !== undefined && (
+          {targetItem["min-chars"]  && (
             <div>
               <span className="font-semibold">Min Characters: </span>
               {targetItem["min-chars"]}
             </div>
           )}
 
-          {targetItem["max-chars"] !== undefined && (
+          {targetItem["max-chars"]  && (
             <div>
               <span className="font-semibold">Max Characters: </span>
               {targetItem["max-chars"]}
@@ -200,7 +200,7 @@ const Canvas = ({
 
     if (item.type === "textArea") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md space-y-2">
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
           {targetItem.label && (
             <div>
               <span className="font-semibold">Label: </span>
@@ -234,7 +234,7 @@ const Canvas = ({
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md">
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
           {targetItem.label && (
             <div>
               <span className="font-semibold">Label: </span>
@@ -268,9 +268,9 @@ const Canvas = ({
 
     if (item.type === "radioButton") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md">
+        <div className="p-3  rounded-md bg-blue-50 border shadow-sm">
           {targetItem.label && (
-            <div>
+            <div className="mb-1">
               <span className="font-semibold">Label: </span>
               {targetItem.label}
             </div>
@@ -278,14 +278,14 @@ const Canvas = ({
 
           {(targetItem["data-source"] || []).map((opt, i) => (
             <div key={i} className="mt-2 p-2 border rounded bg-white shadow-sm">
-              <p>
-                <strong>Title:</strong> {opt.title}
+              <p className="mb-1">
+                <span className="font-semibold">Title:</span> {opt.title}
               </p>
-              <p>
-                <strong>Description:</strong> {opt.description}
+               <p className="mb-1">
+                <span className="font-semibold">Description:</span> {opt.description}
               </p>
-              <p>
-                <strong>Metadata:</strong> {opt.metadata}
+              <p className="mb-1">
+                <span className="font-semibold">Metadata:</span> {opt.metadata}
               </p>
               {opt.image && (
                 <img
@@ -298,7 +298,7 @@ const Canvas = ({
           ))}
 
           {targetItem.required && (
-            <div>
+            <div className="mt-1">
               <span className="font-semibold">Required: </span>
               {targetItem.required ? "True" : "False"}
             </div>
@@ -309,9 +309,9 @@ const Canvas = ({
 
     if (item.type === "checkBox") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md">
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
           {targetItem.label && (
-            <div>
+            <div className="mb-1">
               <span className="font-semibold">Label: </span>
               {targetItem.label}
             </div>
@@ -319,14 +319,22 @@ const Canvas = ({
 
           <ul className="mt-2 space-y-2">
             {(targetItem["data-source"] || []).map((opt, idx) => (
-              <li key={idx} className="border p-2 rounded bg-sky-100">
-                <div className="font-medium">{opt.title || "Option"}</div>
+              <li key={idx} className="border p-2 rounded bg-white">
+                {opt.title && (
+                  <div className="mb-1">
+                  <span className="font-semibold"> Title: </span>
+                    {opt.title || "Option"}
+                    </div>
+                )}
                 {opt.description && (
-                  <div className="text-sm text-gray-700">{opt.description}</div>
+                  <div className="mb-1">
+                    <span className="font-semibold"> Description: </span>
+                    {opt.description}
+                  </div>
                 )}
                 {opt.metadata && (
-                  <div className="text-xs text-gray-500">
-                    <span className="font-semibold"> Meta: </span>{" "}
+                  <div className="mb-1">
+                    <span className="font-semibold"> Meta: </span>
                     {opt.metadata}
                   </div>
                 )}
@@ -342,7 +350,7 @@ const Canvas = ({
           </ul>
 
           {targetItem.required && (
-            <div>
+            <div className="mt-1">
               <span className="font-semibold">Required: </span>
               {targetItem.required ? "True" : "False"}
             </div>
@@ -353,7 +361,7 @@ const Canvas = ({
 
     if (item.type === "dropDown") {
       return (
-        <div className="p-3 bg-blue-50 rounded-md">
+        <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
           {targetItem.label && (
             <div className="mb-1">
               <span className="font-semibold">Label: </span>
@@ -365,20 +373,20 @@ const Canvas = ({
             {(targetItem["data-source"] || []).map((opt, index) => (
               <div
                 key={index}
-                className="border border-gray-300 p-2 rounded bg-blue-50"
+                className="border border-gray-300 p-2 rounded bg-white"
               >
-                <div className="mb-2">
+                <div className="mb-1">
                   <span className="font-semibold"> Title: </span>
                   {opt.title || "Untitled Option"}
                 </div>
                 {opt.description && (
-                  <div className="mb-2">
+                  <div className="mb-1">
                     <span className="font-semibold"> Description: </span>
                     {opt.description}
                   </div>
                 )}
                 {opt.metadata && (
-                  <div className="mb-2">
+                  <div className="mb-1">
                     <span className="font-semibold"> Metadata: </span>
                     {opt.metadata}
                   </div>
@@ -406,16 +414,16 @@ const Canvas = ({
     if (item.type === "chipSelector") {
       const options = targetItem["data-source"] || [];
       return (
-        <div>
+        <div className=" p-3 rounded-md  bg-blue-50 border shadow-sm">
           {targetItem.label && (
-            <div>
+            <div className="mb-1">
               <span className="font-semibold">Label: </span>
               {targetItem.label}
             </div>
           )}
 
           {targetItem.description && (
-            <p className="mb-2">
+            <p className="mb-1">
               <span className="font-semibold">Description: </span>
               {targetItem.description}
             </p>
@@ -426,7 +434,7 @@ const Canvas = ({
               options.map((opt, idx) => (
                 <span
                   key={idx}
-                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                  className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm"
                 >
                   {opt.title || `Option ${idx + 1}`}
                 </span>
@@ -437,7 +445,7 @@ const Canvas = ({
           </div>
 
           {targetItem["max-selected-items"] && (
-            <p className="text-sm">
+            <p className="mb-1">
               <span className="font-semibold">Max Selectable: </span>
               {targetItem["max-selected-items"] || 2}
             </p>
@@ -463,7 +471,7 @@ const Canvas = ({
 
     if (item.type === "image") {
       return (
-        <div className="w-full px-4 py-2">
+        <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm ">
           {targetItem.src && (
             <img
               src={targetItem.src}
@@ -483,24 +491,19 @@ const Canvas = ({
             </div>
           )}
 
-
-
-
           {targetItem["scale-type"] && (
             <div className="mt-1">
               <span className="font-semibold"> Scale Type: </span>
               {targetItem["scale-type"] || "contain"}
             </div>
           )}
-
-
         </div>
       );
     }
 
     if (item.type === "document") {
       return (
-        <div className="p-4 border rounded-md shadow-sm">
+        <div className="p-3 border rounded-md shadow-sm bg-blue-50">
           {targetItem.label && (
             <label className="font-semibold">
               <span className="font-semibold">Label: </span>
@@ -533,7 +536,7 @@ const Canvas = ({
 
     if (item.type === "media") {
       return (
-        <div className="p-4 border rounded-md shadow-sm">
+        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
           {targetItem.label && (
             <label className="">
               <span className="font-semibold">Label: </span>
@@ -567,7 +570,7 @@ const Canvas = ({
 
     if (item.type === "date") {
       return (
-        <div className="w-full px-4 py-2">
+        <div className="w-full px-4 py-2  bg-blue-50 border rounded-md shadow-sm">
           {targetItem.label && (
             <label className="mb-1">
               <span className="font-semibold">Label: </span>
@@ -595,6 +598,15 @@ const Canvas = ({
               {targetItem["max-date"] || ""}
             </div>
           )}
+
+          {targetItem["unavailable-dates"] && (
+            <div>
+              <span className="font-semibold"> Unavailable-Date: </span>
+              {Array.isArray(targetItem["unavailable-dates"])
+                ? targetItem["unavailable-dates"].join(", ")
+                : targetItem["unavailable-dates"] || ""}
+            </div>
+          )}
         </div>
       );
     }
@@ -602,7 +614,7 @@ const Canvas = ({
     if (item.type === "calendar") {
       const isRange = targetItem.mode === "range";
       return (
-        <div className="space-y-2">
+        <div className="space-y-2  bg-blue-50 border rounded-md shadow-sm p-3">
           {targetItem.label && (
             <label className=" mb-1">
               {isRange && typeof targetItem.label === "object" ? (
