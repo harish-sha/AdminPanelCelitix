@@ -56,7 +56,6 @@ export const ButtonNodeContent = ({
     setOptions(
       nodesInputData[id]?.buttonTexts ? nodesInputData[id]?.buttonTexts : [""]
     );
-    console.log(nodesInputData[id]);
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -250,6 +249,29 @@ export const ButtonNodeContent = ({
         </div>
         <p className="text-xs mt-2">
           {nodesInputData[id]?.message?.length || 0}/1024
+        </p>
+      </div>
+
+      <div className="mt-2">
+        <InputField
+          id="text"
+          name="text"
+          tooltipContent="Enter Footer Text for Button Node. Max 60 characters"
+          label={"Button Footer"}
+          value={nodesInputData[id]?.buttonFooter}
+          onChange={(e: { target: { value: any } }) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                buttonFooter: e.target.value,
+              },
+            }));
+          }}
+          maxLength="60"
+        />
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.buttonFooter?.length || 0}/60
         </p>
       </div>
 

@@ -103,7 +103,7 @@ const Settings = () => {
 
     const response = await updateApiKey(newAPIKey);
 
-    if (response.message === "Api Key update succesfully") {
+    if (response.message.includes("succesfully")) {
       toast.success(response.message);
       await handlegetOldApiKey();
     } else {
