@@ -211,6 +211,29 @@ export const List = ({
       </div>
 
       <div className="w-full mt-2">
+        <InputField
+          id="text"
+          name="text"
+          tooltipContent="Give a footer for the list. Maximum 20 characters."
+          maxLength="20"
+          label={"List Footer"}
+          value={nodesInputData[id]?.listFooter}
+          onChange={(e: { target: { value: any } }) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                listFooter: e.target.value,
+              },
+            }));
+          }}
+        />
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.listFooter?.length || 0}/20
+        </p>
+      </div>
+
+      <div className="w-full mt-2">
         <div className="flex justify-end">
           <button onClick={handleOptionAdd}>
             <AddIcon />
