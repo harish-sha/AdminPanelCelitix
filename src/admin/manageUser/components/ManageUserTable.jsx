@@ -1380,7 +1380,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
             arrow
             title={
               userBalance.find((balance) => balance.id == params.row.srno)
-                ?.balance || 0
+                ?.balance || "Click to see balance"
             }
             placement="top"
           >
