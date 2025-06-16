@@ -36,3 +36,21 @@ export const verifyOtp = async (data) => {
     },
   });
 };
+
+// request OTP
+export const requestOtp = async (data) => {
+  return await axios.post(`${apiUrl}/auth/request-otp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+// get client ip address
+export const getIpAddress = async () => {
+  return await axios.post(`${apiUrl}/auth/getClientIp`, "", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};

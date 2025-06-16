@@ -138,7 +138,8 @@ const Recharge = () => {
           setRechargeSuccess(false);
         }, 5000);
       } else {
-        toast.error("Recharge failed.");
+        const errorMessage = res?.msg || "Recharge failed.";
+        toast.error(errorMessage);
       }
     } catch (error) {
       toast.error("Recharge failed.");
@@ -146,7 +147,6 @@ const Recharge = () => {
       setIsSubmitting(false);
     }
   };
-
 
 
   return (

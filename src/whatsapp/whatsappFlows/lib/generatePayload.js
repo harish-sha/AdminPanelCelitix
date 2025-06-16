@@ -266,6 +266,7 @@
 
 // new generatepayload start here
 export const generatePayload = (data) => {
+  console.log("data", data);
   const payload = {
     version: "7.0",
     screens: [],
@@ -292,6 +293,7 @@ export const generatePayload = (data) => {
     chipSelector: 0,
     optin: 0,
     embaddedLink: 0,
+    imageCarousel: 0,
   };
 
   const numberToWord = (num) => {
@@ -330,6 +332,7 @@ export const generatePayload = (data) => {
     };
 
     screenData?.payload?.forEach((pay) => {
+      console.log("pay", pay);
       // const type = pay.type;
       // typeCounters[type] = (typeCounters[type] || 0) + 1;
       // const name = `${String(type)}_${String(typeCounters[type])}`;
@@ -341,37 +344,90 @@ export const generatePayload = (data) => {
       const name = `${type}_${countWord}`;
       let component = { type };
 
-      if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
-        component.text = pay[type] || "";
-        component.type = {
-          heading: "TextHeading",
-          subheading: "TextSubheading",
-          textbody: "TextBody",
-          textcaption: "TextCaption",
-        }[type];
+      // if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
+      //   component.text = pay[type] || "";
+      //   component.type = {
+      //     heading: "TextHeading",
+      //     subheading: "TextSubheading",
+      //     textbody: "TextBody",
+      //     textcaption: "TextCaption",
+      //   }[type];
+      // }
+
+      if (type === "heading") {
+        component = {
+          type: "TextHeading",
+          text: pay.text,
+        };
       }
 
-      if (["textInput", "textArea", "email", "phone"].includes(type)) {
-        const key = Object.keys(pay.texts || {})[0];
-        const field = pay.texts?.[key] || {};
+      if (type === "subheading") {
+        component = {
+          type: "TextSubheading",
+          text: pay.text,
+        };
+      }
 
+      if (type === "textbody") {
+        component = {
+          type: "TextBody",
+          text: pay.text,
+        };
+      }
+
+      if (type === "textcaption") {
+        component = {
+          type: "TextCaption",
+          text: pay.text,
+        };
+      }
+
+      // if (["textInput", "textArea", "email", "phone"].includes(type)) {
+      //   const key = Object.keys(pay.texts || {})[0];
+      //   const field = pay.texts?.[key] || {};
+
+      //   component = {
+      //     name,
+      //     type:
+      //       type === "textInput"
+      //         ? "TextInput"
+      //         : type === "textArea"
+      //         ? "TextArea"
+      //         : type === "email"
+      //         ? "EmailInput"
+      //         : "PhoneInput",
+
+      //     label: field.label || "Label",
+      //     required: field.required ?? true,
+      //     // "error-message": field.error_message || "",
+      //     "helper-text": field.helper_text || "",
+      //     // "max-chars": field.max_chars || "",
+      //     // "min-chars": field.min_chars || "",
+      //   };
+      // }
+
+      if (type === "textInput") {
         component = {
           name,
-          type:
-            type === "textInput"
-              ? "TextInput"
-              : type === "textArea"
-              ? "TextArea"
-              : type === "email"
-              ? "EmailInput"
-              : "PhoneInput",
+          type: "TextInput",
+          label: pay.label,
+          required: pay.required ?? true,
+          // name:pay.name,
+          "error-message": pay["error-message"] || "",
+          "helper-text": pay["helper-text"],
+          "min-chars": parseInt(pay["min-chars"]) || undefined,
+          "max-chars": parseInt(pay["max-chars"]) || undefined,
+        };
+      }
 
-          label: field.label || "Label",
-          required: field.required ?? true,
-          // "error-message": field.error_message || "",
-          "helper-text": field.helper_text || "",
-          // "max-chars": field.max_chars || "",
-          // "min-chars": field.min_chars || "",
+      if (type === "textArea") {
+        component = {
+          name,
+          type: "TextArea",
+          label: pay.label,
+          required: pay.required ?? true,
+          "helper-text": pay["helper-text"],
+          "error-message": pay["error-message"],
         };
       }
 
@@ -449,7 +505,7 @@ export const generatePayload = (data) => {
           // width: pay.width,
           // // height: pay.height,
           "scale-type": pay["scale-type"],
-          "aspect-ratio": pay["aspect-ratio"],
+          "aspect-ratio": parseInt(pay["aspect-ratio"]),
           "alt-text": pay["alt-text"],
         };
       }
@@ -481,6 +537,28 @@ export const generatePayload = (data) => {
           description: pay.description,
           "min-uploaded-photos": parseInt(pay["min-uploaded-photos"] ?? 0, 10),
           "max-uploaded-photos": parseInt(pay["max-uploaded-photos"] ?? 0, 10),
+        };
+      }
+
+      if (type === "imageCarousel") {
+        component = {
+          type: "ImageCarousel",
+          "scale-type": String(pay["scale-type"] || "contain"),
+          // "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
+          images: [
+            {
+              src: pay["image-1"]?.src || "",
+              "alt-text": pay["image-1"]?.["alt-text"] || "",
+            },
+            {
+              src: pay["image-2"]?.src || "",
+              "alt-text": pay["image-2"]?.["alt-text"] || "",
+            },
+            {
+              src: pay["image-3"]?.src || "",
+              "alt-text": pay["image-3"]?.["alt-text"] || "",
+            },
+          ],
         };
       }
 
@@ -535,6 +613,28 @@ export const generatePayload = (data) => {
           name,
           type: "OptIn",
           label: pay.label,
+          required: true,
+        };
+      }
+
+      if (pay.type === "If") {
+        console.log("pay", pay);
+
+        component = {
+          type: pay.type,
+          condition: pay.condition,
+          then: [
+            {
+              type: pay.then?.[0]?.type,
+              text: "It is a cat",
+            },
+          ],
+          else: [
+            {
+              type: pay.else?.[0]?.type,
+              text: "It is not a cat",
+            },
+          ],
           required: true,
         };
       }

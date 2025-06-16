@@ -14,7 +14,7 @@ import InputField from "@/components/layout/InputField";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { login } from "@/apis/auth/auth";
+import { getIpAddress, login } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 
@@ -111,17 +111,20 @@ const ResellerLogin = () => {
 
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
+      const ipResponse = await getIpAddress();
       const domain = window.location.hostname;
       const payload = {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        domain: "reseller.alertsnow.in",
+        // domain: "reseller.alertsnow.in",
         // domain: "msg.itbizcon.in",
+        // domain: "digitalyug.in",
         // domain: "",
-        // domain: domain
+        domain: domain
       };
 
       const res = await login(payload);

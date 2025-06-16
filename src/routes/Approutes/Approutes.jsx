@@ -109,6 +109,7 @@ import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
 import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
 import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
 import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
+import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
@@ -269,6 +270,7 @@ const Approutes = () => {
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
         <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />

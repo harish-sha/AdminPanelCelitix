@@ -14,6 +14,8 @@ import { id } from "date-fns/locale";
 import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
+import { useDownload } from "@/context/DownloadProvider";
+import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
 
 
 const PaginationList = styled("ul")({
@@ -32,10 +34,10 @@ const CustomPaginatior = ({
 }) => {
   const { items } = usePagination({
     count: totalPages,
-    page: paginationModel.page + 1,
+    page: paginationModel.page,
     onChange: (_, newPage) => {
       setCurrentPage(newPage);
-      setPaginationModel({ ...paginationModel, page: newPage - 1 });
+      setPaginationModel({ ...paginationModel, page: newPage });
     },
   });
 
@@ -88,16 +90,16 @@ export const ApiCampaignInfo = () => {
 
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+    page: 1,
     pageSize: 10,
   });
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { triggerDownloadNotification } = useDownload();
 
-
-  async function handleFetchDetails(page = 0) {
+  async function handleFetchDetails(page = 1) {
     try {
       // const payload = {
       //   mobile: "",
@@ -116,6 +118,7 @@ export const ApiCampaignInfo = () => {
 
       let status = "";
       let deliveryStatus = "";
+      let selectedUser = state.selectedUser;
 
       const statusBased = ["failed", "submitted", "block", "busy"];
       const deliveryBased = ["read", "delivered", "undelivered"];
@@ -128,7 +131,7 @@ export const ApiCampaignInfo = () => {
 
       const payload = {
         fromDate: formattedFromDate,
-
+        selectedUserId: selectedUser,
         toDate: formattedFromDate,
         mobile: "",
         page,
@@ -138,7 +141,8 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      setTotalPage(res?.total || 0);
+      console.log('response of res', res)
+      setTotalPage(res?.pages || 0);
 
       const formattedData = Array.isArray(res.data)
         ? res?.data?.map((item, index) => ({
@@ -150,8 +154,9 @@ export const ApiCampaignInfo = () => {
 
       // console.log("formatted data", formattedData);
       setData(formattedData);
+      console.log("formatted data", formattedData)
     } catch (e) {
-      // console.log(e);
+      console.log(e);
       return toast.error("Error fetching data");
     } finally {
       setIsLoading(false);
@@ -166,10 +171,11 @@ export const ApiCampaignInfo = () => {
   // }, [state]);
 
   async function handleExport() {
+    let selectedUser = state.selectedUser;
     try {
       const payload = {
         type: 2,
-        selectedUserId: "",
+        selectedUserId: selectedUser,
         fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
         toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
         isCustomField: 0,
@@ -184,8 +190,11 @@ export const ApiCampaignInfo = () => {
       }
 
       toast.success(res?.msg);
+      triggerDownloadNotification();
+
     } catch (e) {
       toast.error("Error downloading attachment");
+      console.log(e);
     }
   }
 
@@ -220,13 +229,13 @@ export const ApiCampaignInfo = () => {
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
       id: i + 1,
-      sn: paginationModel.page * paginationModel.pageSize + i + 1,
+      sn: i + 1,
       ...item, // Spread the item properties
     }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
-  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
+  const totalPages = totalPage;
 
   const CustomFooter = () => {
     return (
@@ -287,13 +296,13 @@ export const ApiCampaignInfo = () => {
     );
   };
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
 
   return (
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
-        <UniversalButton
+        {/* <UniversalButton
           id="export"
           name="export"
           onClick={handleExport}
@@ -304,50 +313,57 @@ export const ApiCampaignInfo = () => {
               sx={{ marginBottom: "3px" }}
             />
           }
-        />
+        /> */}
       </div>
-      <Paper sx={{ height: 558 }}>
-        <DataGrid
-          // id={id}
-          // name={name}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          // checkboxSelection
-          rowHeight={45}
-          slots={{
-            footer: CustomFooter,
-            noRowsOverlay: CustomNoRowsOverlay,
-          }}
-          slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => { }}
-          disableRowSelectionOnClick
-          // autoPageSize
-          // disableColumnResize
-          disableColumnMenu
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-cellCheckbox": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-cell": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              color: "#193cb8",
-              fontSize: "14px",
-              fontWeight: "bold !important",
-            },
-            "& .MuiDataGrid-row--borderBottom": {
-              backgroundColor: "#e6f4ff !important",
-            },
-            "& .MuiDataGrid-columnSeparator": {
-              // display: "none",
-              color: "#ccc",
-            },
-          }}
-        />
-      </Paper>
+
+      {isLoading ? (
+        <div className="w-full">
+          <UniversalSkeleton height="35rem" width="100%" />
+        </div>
+      ) : (
+        <Paper sx={{ height: 558 }}>
+          <DataGrid
+            // id={id}
+            // name={name}
+            rows={rows}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{
+              footer: CustomFooter,
+              noRowsOverlay: CustomNoRowsOverlay,
+            }}
+            slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => { }}
+            disableRowSelectionOnClick
+            // autoPageSize
+            // disableColumnResize
+            disableColumnMenu
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-cellCheckbox": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-cell": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                color: "#193cb8",
+                fontSize: "14px",
+                fontWeight: "bold !important",
+              },
+              "& .MuiDataGrid-row--borderBottom": {
+                backgroundColor: "#e6f4ff !important",
+              },
+              "& .MuiDataGrid-columnSeparator": {
+                // display: "none",
+                color: "#ccc",
+              },
+            }}
+          />
+        </Paper>
+      )}
     </>
   );
 };

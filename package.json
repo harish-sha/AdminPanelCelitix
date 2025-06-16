@@ -23,6 +23,7 @@
     "@radix-ui/react-label": "^2.1.2",
     "@radix-ui/react-slot": "^1.1.2",
     "@tailwindcss/vite": "^4.0.0",
+    "@wavesurfer/react": "^1.0.11",
     "@xyflow/react": "^12.4.4",
     "autoprefixer": "^10.4.20",
     "axios": "^1.8.3",
@@ -73,6 +74,7 @@
     "timeago.js": "^4.0.2",
     "tw-animate-css": "^1.2.4",
     "ua-parser-js": "^2.0.3",
+    "wavesurfer-react": "^3.0.4",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
