@@ -8,6 +8,11 @@ import TabView from "./TabView";
 import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined";
 import EditPanel from "./EditPanel";
 import InputField from "../../components/InputField";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
+import { motion, AnimatePresence } from "framer-motion";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 
 const Canvas = ({
   items,
@@ -123,46 +128,337 @@ const Canvas = ({
 
     // For Headings
     if (item.type === "heading") {
-      return targetItem.heading;
+      return targetItem.text;
     }
 
     if (item.type === "subheading") {
-      return targetItem.subheading;
+      return targetItem.text;
     }
 
     if (item.type === "textcaption") {
-      return targetItem.textcaption;
+      return targetItem.text;
     }
 
     if (item.type === "textbody") {
-      return targetItem.textbody;
+      return targetItem.text;
+    }
+
+    if (item.type === "textInput") {
+      return (
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div>
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          {targetItem["helper-text"] && (
+            <div>
+              <span className="font-semibold">Helper Text: </span>
+              {targetItem["helper-text"]}
+            </div>
+          )}
+
+          {targetItem["error-message"] && (
+            <div>
+              <span className="font-semibold">Error Message: </span>
+              {targetItem["error-message"]}
+            </div>
+          )}
+
+          {targetItem["init-value"] && (
+            <div>
+              <span className="font-semibold">Initial Value: </span>
+              {targetItem["init-value"]}
+            </div>
+          )}
+
+          {targetItem["min-chars"] && (
+            <div>
+              <span className="font-semibold">Min Characters: </span>
+              {targetItem["min-chars"]}
+            </div>
+          )}
+
+          {targetItem["max-chars"] && (
+            <div>
+              <span className="font-semibold">Max Characters: </span>
+              {targetItem["max-chars"]}
+            </div>
+          )}
+
+          {targetItem.required && (
+            <div>
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (item.type === "textArea") {
+      return (
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div>
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          {targetItem["helper-text"] && (
+            <div>
+              <span className="font-semibold">Helper Text: </span>
+              {targetItem["helper-text"]}
+            </div>
+          )}
+
+          {targetItem.required && (
+            <div>
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     // For textInput and textArea: look under texts
-    if (item.type === "textInput" || item.type === "textArea") {
-      const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
-      return targetItem.texts?.[key]?.[field] || "";
-    }
+    // if (item.type === "textInput" || item.type === "textArea") {
+    //   const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
+    //   return targetItem.texts?.[key]?.[field] || "";
+    // }
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
-      return targetItem.footer?.footer_1?.center_caption || "";
+      return (
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div>
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          {targetItem["left-caption"] && (
+            <div className="mt-1">
+              <span className="font-semibold">Left-caption: </span>
+              {targetItem["left-caption"] || " "}
+            </div>
+          )}
+
+          {targetItem["right-caption"] && (
+            <div className="mt-1">
+              <span className="font-semibold">Right-caption: </span>
+              {targetItem["right-caption"] || " "}
+            </div>
+          )}
+
+          {targetItem["center-caption"] && (
+            <div className="mt-1">
+              <span className="font-semibold">Center-caption: </span>
+              {targetItem["center-caption"] || " "}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "radioButton") {
-      return targetItem.label || "";
+      return (
+        <div className="p-3  rounded-md bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div className="mb-1">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          {(targetItem["data-source"] || []).map((opt, i) => (
+            <div key={i} className="mt-2 p-2 border rounded bg-white shadow-sm">
+              <p className="mb-1">
+                <span className="font-semibold">Title:</span> {opt.title}
+              </p>
+              <p className="mb-1">
+                <span className="font-semibold">Description:</span> {opt.description}
+              </p>
+              <p className="mb-1">
+                <span className="font-semibold">Metadata:</span> {opt.metadata}
+              </p>
+              {opt.image && (
+                <img
+                  src={opt.image}
+                  alt={opt.title || "option image"}
+                  className="mt-1 w-20 h-20 object-contain rounded"
+                />
+              )}
+            </div>
+          ))}
+
+          {targetItem.required && (
+            <div className="mt-1">
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "checkBox") {
-      return targetItem.label || "";
+      return (
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div className="mb-1">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          <ul className="mt-2 space-y-2">
+            {(targetItem["data-source"] || []).map((opt, idx) => (
+              <li key={idx} className="border p-2 rounded bg-white">
+                {opt.title && (
+                  <div className="mb-1">
+                    <span className="font-semibold"> Title: </span>
+                    {opt.title || "Option"}
+                  </div>
+                )}
+                {opt.description && (
+                  <div className="mb-1">
+                    <span className="font-semibold"> Description: </span>
+                    {opt.description}
+                  </div>
+                )}
+                {opt.metadata && (
+                  <div className="mb-1">
+                    <span className="font-semibold"> Meta: </span>
+                    {opt.metadata}
+                  </div>
+                )}
+                {opt.image && (
+                  <img
+                    src={opt.image}
+                    alt="Option"
+                    className="w-12 h-12 mt-1 object-cover rounded"
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+
+          {targetItem.required && (
+            <div className="mt-1">
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "dropDown") {
-      return targetItem.label || "";
+      return (
+        <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div className="mb-1">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          <div className="space-y-1">
+            {(targetItem["data-source"] || []).map((opt, index) => (
+              <div
+                key={index}
+                className="border border-gray-300 p-2 rounded bg-white"
+              >
+                <div className="mb-1">
+                  <span className="font-semibold"> Title: </span>
+                  {opt.title || "Untitled Option"}
+                </div>
+                {opt.description && (
+                  <div className="mb-1">
+                    <span className="font-semibold"> Description: </span>
+                    {opt.description}
+                  </div>
+                )}
+                {opt.metadata && (
+                  <div className="mb-1">
+                    <span className="font-semibold"> Metadata: </span>
+                    {opt.metadata}
+                  </div>
+                )}
+                {opt.image && (
+                  <img
+                    src={opt.image}
+                    alt={opt.title}
+                    className="mt-1 h-10 object-contain"
+                  />
+                )}
+              </div>
+            ))}
+          </div>
+          {targetItem.required && (
+            <div className="mt-1">
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "chipSelector") {
-      return targetItem.label || "";
+      const options = targetItem["data-source"] || [];
+      return (
+        <div className=" p-3 rounded-md  bg-blue-50 border shadow-sm">
+          {targetItem.label && (
+            <div className="mb-1">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </div>
+          )}
+
+          {targetItem.description && (
+            <p className="mb-1">
+              <span className="font-semibold">Description: </span>
+              {targetItem.description}
+            </p>
+          )}
+
+          <div className="flex flex-wrap gap-2 mb-2">
+            {options.length > 0 ? (
+              options.map((opt, idx) => (
+                <span
+                  key={idx}
+                  className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm"
+                >
+                  {opt.title || `Option ${idx + 1}`}
+                </span>
+              ))
+            ) : (
+              <p className="text-sm text-gray-400"></p>
+            )}
+          </div>
+
+          {targetItem["max-selected-items"] && (
+            <p className="mb-1">
+              <span className="font-semibold">Max Selectable: </span>
+              {targetItem["max-selected-items"] || 2}
+            </p>
+          )}
+
+          {targetItem.required && (
+            <div className="mt-1">
+              <span className="font-semibold">Required: </span>
+              {targetItem.required ? "True" : "False"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "embeddedlink") {
@@ -174,20 +470,268 @@ const Canvas = ({
     }
 
     if (item.type === "image") {
-      console.log("targetItem.alt-text");
-      // return targetItem.alt-text || "";
+      return (
+        <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm ">
+          {targetItem.src && (
+            <img
+              src={targetItem.src}
+              alt={targetItem["alt-text"] || "Image preview"}
+              className="rounded-md max-w-full"
+              style={{
+                objectFit: targetItem["scale-type"] || "contain",
+                aspectRatio: targetItem["aspect-ratio"] || "auto",
+              }}
+            />
+          )}
+
+          {targetItem["alt-text"] && (
+            <div className="mt-1">
+              <span className="font-semibold">Alt Text: </span>
+              {targetItem["alt-text"] || "No description"}
+            </div>
+          )}
+
+          {targetItem["scale-type"] && (
+            <div className="mt-1">
+              <span className="font-semibold"> Scale Type: </span>
+              {targetItem["scale-type"] || "contain"}
+            </div>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "document") {
-      return targetItem.label || "";
+      return (
+        <div className="p-3 border rounded-md shadow-sm bg-blue-50">
+          {targetItem.label && (
+            <label className="font-semibold">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label || "Upload Documents"}
+            </label>
+          )}
+
+          {targetItem.description && (
+            <p className="">
+              <span className="font-semibold">Description: </span>
+              {targetItem.description}
+            </p>
+          )}
+
+          {targetItem["min-uploaded-documents"] && (
+            <p className=" mt-1">
+              <span className="font-semibold">Min Documents: </span>
+              {targetItem["min-uploaded-documents"] || ""}
+            </p>
+          )}
+          {targetItem["max-uploaded-documents"] && (
+            <p>
+              <span className="font-semibold"> Max Documents: </span>
+              {targetItem["max-uploaded-documents"] || ""}
+            </p>
+          )}
+        </div>
+      );
     }
 
     if (item.type === "media") {
-      return targetItem.label || "";
+      return (
+        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
+          {targetItem.label && (
+            <label className="">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label || "Upload photos"}
+            </label>
+          )}
+
+          {targetItem.description && (
+            <p className="">
+              <span className="font-semibold">Description: </span>
+              {targetItem.description}
+            </p>
+          )}
+
+          {targetItem["min-uploaded-photos"] && (
+            <p className=" mt-1">
+              <span className="font-semibold"> Min Photos: </span>
+              {targetItem["min-uploaded-photos"] || ""}
+            </p>
+          )}
+
+          {targetItem["max-uploaded-photos"] && (
+            <p>
+              <span className="font-semibold"> Max Photos: </span>
+              {targetItem["max-uploaded-photos"] || ""}
+            </p>
+          )}
+        </div>
+      );
+    }
+
+    if (item.type === "imageCarousel") {
+      return (
+        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
+          {targetItem["scale-type"] && (
+            <p>
+              <span className="font-semibold">Scale-Type: </span>
+              {targetItem["scale-type"]}
+            </p>
+          )}
+
+          {/* {targetItem["alt-text"] && (
+            <p>
+              <span className="font-semibold">Alt-Text: </span>
+              {targetItem["alt-text"]}
+            </p> 
+          )} */}
+        </div>
+      )
     }
 
     if (item.type === "date") {
-      return targetItem.label || "";
+      return (
+        <div className="w-full px-4 py-2  bg-blue-50 border rounded-md shadow-sm">
+          {targetItem.label && (
+            <label className="mb-1">
+              <span className="font-semibold">Label: </span>
+              {targetItem.label}
+            </label>
+          )}
+
+          {targetItem["helper-text"] && (
+            <div className="mt-1">
+              <span className="font-semibold">Helper-Text: </span>
+              {targetItem["helper-text"] || ""}
+            </div>
+          )}
+
+          {targetItem["min-date"] && (
+            <div className="mt-1">
+              <span className="font-semibold"> Min-Date: </span>
+              {targetItem["min-date"] || ""}
+            </div>
+          )}
+
+          {targetItem["max-date"] && (
+            <div className="mt-1">
+              <span className="font-semibold"> Max-Date: </span>
+              {targetItem["max-date"] || ""}
+            </div>
+          )}
+
+          {targetItem["unavailable-dates"] && (
+            <div>
+              <span className="font-semibold"> Unavailable-Date: </span>
+              {Array.isArray(targetItem["unavailable-dates"])
+                ? targetItem["unavailable-dates"].join(", ")
+                : targetItem["unavailable-dates"] || ""}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    if (item.type === "calendar") {
+      const isRange = targetItem.mode === "range";
+      return (
+        <div className="space-y-2  bg-blue-50 border rounded-md shadow-sm p-3">
+          {targetItem.label && (
+            <label className=" mb-1">
+              {isRange && typeof targetItem.label === "object" ? (
+                <>
+                  <div>
+                    <span className="font-semibold">First-label: </span>
+                    {targetItem.label?.["start-date"] || ""}
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-semibold">Second-label: </span>
+                    {targetItem.label?.["end-date"] || ""}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">Label:</span>
+                  {targetItem.label}
+                </>
+              )}
+            </label>
+          )}
+
+          {targetItem["helper-text"] && (
+            <div className=" mb-1">
+              {isRange && typeof targetItem["helper-text"] === "object" ? (
+                <>
+                  <div>
+                    <span className="font-semibold">Start: </span>
+                    {targetItem["helper-text"]?.["start-date"] || ""} {"   "}
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-semibold">End: </span>
+                    {targetItem["helper-text"]?.["end-date"] || ""}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">Helper-Text: </span>
+                  {targetItem["helper-text"] || ""}
+                </>
+              )}
+            </div>
+          )}
+
+          {targetItem.mode && (
+            <div>
+              <span className="font-semibold"> Mode: </span>
+              {targetItem.mode || ""}
+            </div>
+          )}
+
+          {targetItem["min-date"] && (
+            <div>
+              <span className="font-semibold"> Min-Date: </span>
+              {targetItem["min-date"] || ""}
+            </div>
+          )}
+
+          {targetItem["max-date"] && (
+            <div>
+              <span className="font-semibold"> Max-Date: </span>
+              {targetItem["max-date"] || ""}
+            </div>
+          )}
+
+          {targetItem["unavailable-dates"] && (
+            <div>
+              <span className="font-semibold"> Unavailable-Date: </span>
+              {Array.isArray(targetItem["unavailable-dates"])
+                ? targetItem["unavailable-dates"].join(", ")
+                : targetItem["unavailable-dates"] || ""}
+            </div>
+          )}
+
+          {targetItem.required && (
+            <div className="text-sm">
+              {isRange && typeof targetItem.required === "object" ? (
+                <>
+                  <div>
+                    <span className="font-semibold">Start-date:</span>{" "}
+                    {targetItem.required["start-date"] ? "True" : "False"}
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-semibold">End-date:</span>{" "}
+                    {targetItem.required["end-date"] ? "True" : "False"}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <span className="font-semibold">Required:</span>{" "}
+                  {targetItem.required ? "True" : "False"}
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      );
     }
 
     // Fallback: return an empty string
@@ -262,6 +806,12 @@ const Canvas = ({
     });
 
     return (
+      // <motion.div
+      //   initial={{ opacity: 0, x: -100 }}
+      //   animate={{ opacity: 1, x: 0 }}
+      //   exit={{ opacity: 0, x: -100 }}
+      //   transition={{ type: "spring", stiffness: 200, damping: 25 }}
+      // >
       <Paper
         ref={drag}
         style={{
@@ -272,20 +822,12 @@ const Canvas = ({
           backgroundColor: getBackgroundColor(item.type),
         }}
         // className="fields"
-        className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
+        className="w-110 p-2 mb-2 rounded-lg shadow-md mt-10"
       >
-        <Box
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            position: "relative",
-          }}
-        >
-          <Typography variant="subtitle1" style={{ marginLeft: 8 }}>
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-semibold text-gray-700 tracking-wider">
             {getLabel(item.type)}
-          </Typography>
+          </label>
           <Box>
             <IconButton size="small" onClick={() => onEdit(index, item)}>
               <EditOutlinedIcon
@@ -297,37 +839,23 @@ const Canvas = ({
               <DeleteForeverOutlinedIcon
                 fontSize="small"
                 className="text-red-400"
+                style={{ cursor: "pointer" }}
               />
             </IconButton>
           </Box>
-        </Box>
-
-        {/* <InputField
-          // label="Enter value"
-          // variant="outlined"
-          // fullWidth
-          // className="text-field"
-          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
-          // onChange={(e) => handleInputChange(index, e.target.value)}
-          multiline={item.type === "textArea"}
-          rows={item.type === "textArea" ? 4 : undefined}
-          // disabled={item.type !== "textInput" && item.type !== "textArea"}
-          readOnly
-        /> */}
-
-        {/* <InputField
-          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
-          multiline={item.type === "textArea"}
-          rows={item.type === "textArea" ? 4 : undefined}
-          readOnly
-        /> */}
-        <InputField
-          value={getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
-          multiline={item.type === "textArea"}
-          rows={item.type === "textArea" ? 4 : undefined}
-          readOnly
-        />
+        </div>
+        <div
+          className="text-sm p-2 rounded-md bg-white border border-gray-300 text-wrap"
+          style={{
+            whiteSpace: item.type === "textArea" ? "pre-wrap" : "secondary",
+            minHeight:
+              item.type === "textArea" ? `${item.rows || 4}em` : "auto",
+          }}
+        >
+          {getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
+        </div>
       </Paper>
+      // {/* </motion.div> */}
     );
   });
 
@@ -403,7 +931,9 @@ const Canvas = ({
       case "textcaption":
         return "#f8bbd0";
       case "textInput":
+        return "#E0F7FA";
       case "textArea":
+        return "#E0F7FA";
       case "radioButton":
       case "checkBox":
       case "dropDown":
@@ -422,7 +952,7 @@ const Canvas = ({
       case "subheading":
         return "Subheading";
       case "textbody":
-        return "Text Body";
+        return "Textbody";
       case "textcaption":
         return "Textcaption";
       case "textInput":
@@ -449,6 +979,8 @@ const Canvas = ({
         return "Document";
       case "media":
         return "Media";
+      case "imageCarousel":
+        return "ImageCarousel"
       case "ifelse":
         return "IfElse";
       case "switch":
@@ -514,32 +1046,24 @@ const Canvas = ({
           </div>
         ))} */}
 
-        {tabs[activeIndex]?.payload
-          ?.filter((item) => item.type !== undefined)
-          .map((item, index) => (
-            // <div key={item.id || index}>
-            <div key={index}>
-              <DraggableItem
-                item={item}
-                index={index}
-                itemKey={item.id}
-                tabs={tabs}
-                activeIndex={activeIndex}
-              />
-            </div>
-          ))}
-
-        {/* {tabs[activeIndex]?.payload
-          ?.map((item, index) => (
-            <div key={index}>
-              <DraggableItem
-                item={item}
-                index={index}
-              />
-            </div>
-          ))} */}
+        <AnimatePresence>
+          {tabs[activeIndex]?.payload
+            ?.filter((item) => item.type !== undefined)
+            .map((item, index) => (
+              // <div key={item.id || index}>
+              <div key={index}>
+                <DraggableItem
+                  key={item.id || index}
+                  item={item}
+                  index={index}
+                  itemKey={item.id}
+                  tabs={tabs}
+                  activeIndex={activeIndex}
+                />
+              </div>
+            ))}
+        </AnimatePresence>
       </div>
-      {/* <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div> */}
     </div>
   );
 };

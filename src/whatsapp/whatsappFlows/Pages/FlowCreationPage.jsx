@@ -306,17 +306,18 @@ const FlowCreationPage = () => {
   };
 
   async function handleFlowBuild() {
-    if (!flowName) {
-      toast.error("Please Enter FlowName");
-      return;
-    }
-
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
     if (!hasAtLeastOneComponent) {
       toast.error("Please add at least one component before building the flow");
       return;
     }
+
+    if (!flowName) {
+      toast.error("Please Enter FlowName");
+      return;
+    }
+
 
     try {
       const payload = generatePayload(tabs);
@@ -327,37 +328,66 @@ const FlowCreationPage = () => {
         id: "",
         name: flowName,
       };
-      setIsLoading(true);
 
+      setIsLoading(true);
       console.log("Calling saveFlow with:", params, payload);
 
       const res = await saveFlow(params, payload);
-      console.log("final payload", res);
+      console.log("Response from saveFlow final payload:", res);
 
-      // if (res == {}) {
-      //   return toast.error("Flow creation failed");
-      // }
+      if (!res || (typeof res === "object" && Object.keys(res).length === 0)) {
+        toast.error("Flow creation failed. Please try again.");
+        return;
+      }
 
       if (res && Object.keys(res).length === 0 && res.constructor === Object) {
         return toast.error("Flow creation failed");
       }
 
+      if (res.flag === false) {
+        const backendError =
+          res?.error_user_msg?.error?.error_user_msg ||
+          res?.msg?.validation_errors?.[0]?.message ||
+          "Something went wrong while creating the flow.";
+
+        toast.error(backendError);
+        return;
+      }
+
       if (!res.flag) {
         return toast.error(res.error_user_msg.error.error_user_msg);
       }
-      toast.success(res.msg);
-      // navigate("/wwhatsappflows");
-    } catch (e) {
-      console.log("API error", e);
-      return toast.error(e.error_user_msg);
+
+      if (res.flag === true && typeof res.msg === "string") {
+        toast.success(res.msg);
+        // navigate("/wwhatsappflows"); // uncomment when navigation is needed
+        return;
+      }
+
+      if (res.flag === true && res.msg?.validation_errors?.length > 0) {
+        const firstError = res.msg.validation_errors[0]?.message;
+        toast.error(firstError || "Flow JSON is not valid.");
+        return;
+      }
+
+      toast.error("Unexpected response. Please try again.");
+    } catch (err) {
+      console.error("Unexpected API error:", err);
+      const fallbackMessage =
+        err?.error_user_msg?.error?.error_user_msg ||
+        err?.message ||
+        "An unexpected error occurred. Please try again.";
+
+      toast.error(fallbackMessage);
+      // return toast.error(e.error_user_msg);
     } finally {
       setIsLoading(false);
     }
   }
 
-  async function handleFlowSave() {
-    toast.success("Flow Saved Successfully");
-  }
+  // async function handleFlowSave() {
+  //   toast.success("Flow Saved Successfully");
+  // }
 
   return (
     <div className="">

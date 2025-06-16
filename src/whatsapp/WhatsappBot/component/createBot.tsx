@@ -46,12 +46,14 @@ import { Details } from "./components/details";
 import generateBotPayload from "./components/helper/generatePayload";
 import { List } from "./components/list";
 import { ButtonNodeContent } from "./components/button";
+import LinkIcon from "@mui/icons-material/Link";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   convertToReactFlow,
   transformNodesById,
 } from "./components/helper/convertToReactFlow";
+import { Url } from "./components/url";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -140,6 +142,7 @@ function NodeComponent({
         {data.type === "answer" && <p>Answer Node ({id})</p>}
         {data.type === "list" && <p>List Node ({id})</p>}
         {data.type === "button" && <p>Button Node ({id})</p>}
+        {data.type === "urlbutton" && <p>Url Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -565,6 +568,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      urlbutton: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData]
   );
@@ -648,6 +662,7 @@ const CreateWhatsAppBot = () => {
         message: "",
         buttonTexts: [],
       },
+      urlbutton: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -793,6 +808,7 @@ const CreateWhatsAppBot = () => {
         message: "",
         buttonTexts: [],
       },
+      urlbutton: {},
     };
 
     let name = "";
@@ -1034,6 +1050,15 @@ const CreateWhatsAppBot = () => {
             </Button>
             <Button
               draggable
+              onDragStart={(event) => handleDragStart(event, "urlbutton")}
+              onClick={() => addNode("urlbutton")}
+              className={commonButtonClass}
+            >
+              <LinkIcon />
+              URL
+            </Button>
+            <Button
+              draggable
               onDragStart={(event) => handleDragStart(event, "answer")}
               onClick={() => addNode("answer")}
               className={commonButtonClass}
@@ -1137,6 +1162,12 @@ const CreateWhatsAppBot = () => {
             />
           ) : type === "button" ? (
             <ButtonNodeContent
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          ) : type === "urlbutton" ? (
+            <Url
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}

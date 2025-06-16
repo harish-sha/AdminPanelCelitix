@@ -279,9 +279,9 @@ const CampaignDetailsReports = ({
                 : item.processFlag === 2
                     ? "Processing"
                     : item.processFlag === 3
-                        ? "Undelivered"
+                        ? "Completed"
                         : item.processFlag === 4
-                            ? "Delivered"
+                            ? "Cancelled"
                             : "" || "N/A",
     })) : [];
 

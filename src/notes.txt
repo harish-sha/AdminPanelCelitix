@@ -37,13 +37,16 @@ OBD > CreateCampaign > components > ObdVariable.jsx
 OBD > CreateCampaign > components > RadioButtonLaunchCampaignObd.jsx
 
 OBD > ObdManageCampaign > ObdCampaignReports.jsx
-OBD > ObdManageCampaign > ObdCampaignTable.jsx
-OBD > ObdManageCampaign > ObdSummaryTable.jsx
+OBD > ObdManageCampaign > component > ObdCampaignTable.jsx
+OBD > ObdManageCampaign > component > CampaignDetailReports.jsx
+OBD > ObdManageCampaign > component > ObdDaySummaryTable.jsx
+OBD > ObdManageCampaign > component > ObSummaryLogsTable.jsx
+OBD > ObdManageCampaign > component > ManageScheduleCampaignTableObd.jsx
+OBD > ObdManageCampaign > export > ExportDialogObd.jsx
 
 OBD > ObdManageIntegration > ObdIntegration.jsx
 OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
 
-================anshu commits file for obd ==================
-
+===================
 
 

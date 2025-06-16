@@ -544,7 +544,7 @@ const ObdCampaignTable = ({
                 [id]: res[0] || null,
             }));
 
-            setDropdownOpenId(id); 
+            setDropdownOpenId(id);
         } catch (e) {
             console.error("Error fetching campaign summary:", e);
         }
@@ -675,9 +675,9 @@ const ObdCampaignTable = ({
                     : item.processFlag === 2
                         ? "Processing"
                         : item.processFlag === 3
-                            ? "Undelivered"
+                            ? "Completed"
                             : item.processFlag === 4
-                                ? "Delivered"
+                                ? "Cancelled"
                                 : "" || "N/A",
             // campaignSrno: item.campaignSrno,
         }))

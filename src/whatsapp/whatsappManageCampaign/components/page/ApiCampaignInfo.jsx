@@ -14,6 +14,7 @@ import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
 import { useDownload } from "@/context/DownloadProvider";
+import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -31,10 +32,10 @@ const CustomPaginatior = ({
 }) => {
   const { items } = usePagination({
     count: totalPages,
-    page: paginationModel.page + 1,
+    page: paginationModel.page,
     onChange: (_, newPage) => {
       setCurrentPage(newPage);
-      setPaginationModel({ ...paginationModel, page: newPage - 1 });
+      setPaginationModel({ ...paginationModel, page: newPage });
     },
   });
 
@@ -88,7 +89,7 @@ export const ApiCampaignInfo = () => {
 
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+    page: 1,
     pageSize: 10,
   });
   const [currentPage, setCurrentPage] = useState(1);
@@ -98,17 +99,8 @@ export const ApiCampaignInfo = () => {
   const { triggerDownloadNotification } = useDownload();
 
 
-  async function handleFetchDetails(page = 0) {
+  async function handleFetchDetails(page = 1) {
     try {
-      // const payload = {
-      //   mobile: "",
-      //   page: 0,
-      //   source: "",
-      //   deliveryStatus: state.log,
-      //   status: "",
-      // };
-      // later update with upper code
-
       setIsLoading(true);
 
       const formattedFromDate = state.selectedDate
@@ -138,11 +130,7 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      // const responseData = Array.isArray(res) ? res : [];
-      // setTotalPage(5000);
-      // // console.log(res);
-      // setData(responseData);
-      setTotalPage(res?.total || 0);
+      setTotalPage(res?.pages || 0);
 
       const formattedData = Array.isArray(res.data)
         ? res?.data?.map((item, index) => ({
@@ -152,36 +140,27 @@ export const ApiCampaignInfo = () => {
         }))
         : [];
 
-      // console.log("formatted data", formattedData);
       setData(formattedData);
     } catch (e) {
-      // console.log(e);
       return toast.error("Error fetching data");
     } finally {
       setIsLoading(false);
     }
   }
-  // useEffect(() => {
-  //   if (!state) {
-  //     window.history.back();
-  //     return;
-  //   }
-  //   handleFetchDetails();
-  // }, [state]);
 
   async function handleExport() {
     // toast.success("Hello World");
     try {
       const payload = {
-        type: 1,
-        selectedUserId: "",
+        // type: 1,
+        // selectedUserId: "",
         fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
         toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        isCustomField: 0,
-        customColumns: "",
-        status: state.log,
-        delStatus: {},
-        source: "API"
+        // isCustomField: 1,
+        // customColumns: "",
+        // status: state.log,
+        // delStatus: {},
+        source: "api"
       };
       const res = await downloadCustomWhatsappReport(payload);
       if (!res?.status) {
@@ -222,48 +201,15 @@ export const ApiCampaignInfo = () => {
     { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
   ];
 
-  // const rows = Array.from({ length: 20 }, (_, i) => ({
-  //   id: i + 1,
-  //   sn: i + 1,
-  //   wabaNumber: `WABA-${1000 + i}`,
-  //   mobileNo: `98765432${(10 + i).toString().slice(-2)}`,
-  //   source: "API",
-  //   status: "Pending",
-  //   deliveryStatus: "Sent",
-  //   reason: "N/A",
-  //   sent: `2025-04-10 10:${i.toString().padStart(2, "0")}`,
-  //   deliveryTime: `2025-04-10 10:${(i + 2).toString().padStart(2, "0")}`,
-  //   read: `2025-04-10 10:${(i + 4).toString().padStart(2, "0")}`,
-  //   que: `2025-04-10 10:${(i + 1).toString().padStart(2, "0")}`,
-  // }));
-
-  // const rows = data?.map((item, i) => ({
-  //   id: i + 1,
-  //   // sn: i + 1,
-  //   sn: paginationModel.page * paginationModel.pageSize + i + 1,
-  //   // wabaNumber: WABA-${1000 + i},
-  //   // mobileNo: 98765432${(10 + i).toString().slice(-2)},
-  //   // source: "API",
-  //   // status: "Pending",
-  //   // deliveryStatus: "Sent",
-  //   // reason: "N/A",
-  //   // sent: 2025-04-10 10:${i.toString().padStart(2, "0")},
-  //   // deliveryTime: 2025-04-10 10:${(i + 2).toString().padStart(2, "0")},
-  //   // read: 2025-04-10 10:${(i + 4).toString().padStart(2, "0")},
-  //   // que: 2025-04-10 10:${(i + 1).toString().padStart(2, "0")},
-  //   ...item,
-  // }));
-
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
       id: i + 1,
-      sn: paginationModel.page * paginationModel.pageSize + i + 1,
-      ...item, // Spread the item properties
+      sn: i + 1,
+      ...item,
     }))
     : [];
 
-  //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
-  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
+  const totalPages = totalPage;
 
   const CustomFooter = () => {
     return (
@@ -324,13 +270,13 @@ export const ApiCampaignInfo = () => {
     );
   };
 
-  if (isLoading) return <Loader />;
+  // if (isLoading) return <Loader />;
 
   return (
     <>
       <div className="flex justify-between items-center">
         <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
-        <UniversalButton
+        {/* <UniversalButton
           id="export"
           name="export"
           onClick={handleExport}
@@ -341,50 +287,56 @@ export const ApiCampaignInfo = () => {
               sx={{ marginBottom: "3px" }}
             />
           }
-        />
+        /> */}
       </div>
-      <Paper sx={{ height: 558 }}>
-        <DataGrid
-          // id={id}
-          // name={name}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          // checkboxSelection
-          rowHeight={45}
-          slots={{
-            footer: CustomFooter,
-            noRowsOverlay: CustomNoRowsOverlay,
-          }}
-          slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => { }}
-          disableRowSelectionOnClick
-          // autoPageSize
-          // disableColumnResize
-          disableColumnMenu
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-cellCheckbox": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-cell": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              color: "#193cb8",
-              fontSize: "14px",
-              fontWeight: "bold !important",
-            },
-            "& .MuiDataGrid-row--borderBottom": {
-              backgroundColor: "#e6f4ff !important",
-            },
-            "& .MuiDataGrid-columnSeparator": {
-              // display: "none",
-              color: "#ccc",
-            },
-          }}
-        />
-      </Paper>
+      {isLoading ? (
+        <div className="w-full">
+          <UniversalSkeleton height="35rem" width="100%" />
+        </div>
+      ) : (
+        <Paper sx={{ height: 558 }}>
+          <DataGrid
+            // id={id}
+            // name={name}
+            rows={rows}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{
+              footer: CustomFooter,
+              noRowsOverlay: CustomNoRowsOverlay,
+            }}
+            slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => { }}
+            disableRowSelectionOnClick
+            // autoPageSize
+            // disableColumnResize
+            disableColumnMenu
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-cellCheckbox": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-cell": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                color: "#193cb8",
+                fontSize: "14px",
+                fontWeight: "bold !important",
+              },
+              "& .MuiDataGrid-row--borderBottom": {
+                backgroundColor: "#e6f4ff !important",
+              },
+              "& .MuiDataGrid-columnSeparator": {
+                // display: "none",
+                color: "#ccc",
+              },
+            }}
+          />
+        </Paper>
+      )}
     </>
   );
 };

@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Preview } from "../components/Preview";
 import { useNavigate } from "react-router-dom";
+import { addCallback } from "@/apis/callback/callback";
 
 export const EditCallback = () => {
     const navigate = useNavigate();
@@ -103,11 +104,12 @@ export const EditCallback = () => {
     }
     async function handleUpdateCallback() {
         try {
-            const data = {
+            const payload = {
+                srno: data?.srNo,
                 ...details,
                 authorizationType: details?.authorizationType || authorization,
             };
-            const res = await addCallback(data);
+            const res = await addCallback(payload);
             if (!res?.status) {
                 toast.error(res?.msg);
                 return;
@@ -127,6 +129,7 @@ export const EditCallback = () => {
             setAuthorization("");
             navigate("/callback");
         } catch (e) {
+            console.log(e);
             toast.error("Something went wrong");
         }
     }

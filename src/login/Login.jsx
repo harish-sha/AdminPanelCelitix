@@ -645,7 +645,7 @@ import celitixLogo from "@/assets/images/celitix-logo-white.svg";
 import { useUser } from "@/context/auth";
 import UniversalButton from "@/components/common/UniversalButton";
 import celitix_logo from "@/assets/images/celitix-logo-white.svg";
-import { forgotPassword, login, verifyOtp } from "@/apis/auth/auth";
+import { forgotPassword, getIpAddress, login, verifyOtp } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 
 const Login = () => {
@@ -738,10 +738,13 @@ const Login = () => {
 
       // const ipResponse = await axios.get("https://ipapi.co/json/");
 
+      const ipResponse = await getIpAddress();
+
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
         // ip: ipResponse?.data?.ip || "0.0.0.0",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // domain: "127.0.0.4"
       }
 
