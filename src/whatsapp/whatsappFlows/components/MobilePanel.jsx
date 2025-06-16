@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -109,6 +109,12 @@ const MobilePanel = ({ items, onUpdateItem }) => {
       alert("Please choose a photo.");
     }
   };
+
+ 
+
+
+
+ 
 
   // console.log("itemsssssss", items)
 
@@ -257,7 +263,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   alignItems: "center",
                                   justifyContent: "space-between",
                                   px: 0.5,
-                                  py:0.4,
+                                  py: 0.4,
                                   mb: 1,
                                   borderRadius: 1,
                                   border: "1px solid #e0e0e0",
@@ -266,10 +272,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                 {/* Left: Image + Title/Desc */}
                                 <Box
                                   sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        marginLeft:1
-                                      }}
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginLeft: 1,
+                                  }}
                                 >
                                   {option.image && (
                                     <Box
@@ -279,13 +285,13 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                         option.title ||
                                         `Option ${optionIndex + 1}`
                                       }
-                                       sx={{
-                                            width: 40,
-                                            height: 40,
-                                            borderRadius: "50%",
-                                            mr: 1,
-                                            border: "1px solid #ccc",
-                                          }}
+                                      sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: "50%",
+                                        mr: 1,
+                                        border: "1px solid #ccc",
+                                      }}
                                     />
                                   )}
 
@@ -414,8 +420,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   }
                                   sx={{
                                     mb: 1,
-                                     px: 0.5,
-                                  py:0.4,
+                                    px: 0.5,
+                                    py: 0.4,
                                     borderRadius: 1,
                                     border: "1px solid #e0e0e0",
                                     alignItems: "flex-start",
@@ -438,7 +444,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Dropdown
             case "dropDown":
               return (
-                <div key={index} >
+                <div key={index}>
                   {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
                     Object.entries(item.dropdown).map(
                       ([dropdownId, dropdownData], groupIdx) => {
@@ -622,45 +628,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 />
               );
 
-            case "image":
-              return (
-                <div className="mt-6 p-4 border rounded-xl shadow-sm bg-white max-w-xs mx-auto">
-                  <div className="w-full px-4 py-2">
-                    {/* Image Preview */}
-                    {item.src ? (
-                      <>
-                        <img
-                          src={item.src}
-                          alt={item["alt-text"] || "Preview image"}
-                          className={`w-full h-auto rounded-md object-${
-                            item["scale-type"] || "contain"
-                          } mb-3`}
-                          style={{ aspectRatio: item["aspect-ratio"] || "1" }}
-                        />
-                        {/* Alt Text */}
-                        {item["alt-text"] && (
-                          <p className="text-center text-sm text-gray-600 italic">
-                            Alt: {item["alt-text"]}
-                          </p>
-                        )}
-                        {/* Scale Type */}
-                        {item["scale-type"] && (
-                          <p className="text-center text-sm text-gray-500 mt-1">
-                            Scale Type:{" "}
-                            <span className="font-medium">
-                              {item["scale-type"]}
-                            </span>
-                          </p>
-                        )}
-                      </>
-                    ) : (
-                      <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
-                        No image uploaded
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
+          
+            
 
             case "document":
               return (
@@ -713,19 +682,66 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </>
               );
 
+            // case "imageCarousel":
+            //   const images = item?.images || [];
+            //   const scaleType = item?.["scale-type"] || "contain";
+            //   return (
+            //     <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white">
+            //       <div
+            //         className=""
+            //       >
+            //         {images.map((img, idx) => (
+            //           <img
+            //             key={idx}
+            //             src={img?.src || ""}
+            //             alt={img?.["alt-text"] || `Image ${idx + 1}`}
+            //             className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
+            //               }`}
+            //           />
+            //         ))}
+
+            //         {images.length > 1 && (
+            //           <>
+            //             <button
+            //               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+            //               onClick={() =>
+            //                 setCurrentIndex(
+            //                   (prev) =>
+            //                     (prev - 1 + images.length) % images.length
+            //                 )
+            //               }
+            //             >
+            //               ‹
+            //             </button>
+            //             <button
+            //               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+            //               onClick={() =>
+            //                 setCurrentIndex(
+            //                   (prev) => (prev + 1) % images.length
+            //                 )
+            //               }
+            //             >
+            //               ›
+            //             </button>
+            //           </>
+            //         )}
+            //       </div>
+
+            //       <div className="text-center py-2 text-sm text-gray-500">
+            //         {images[currentIndex]?.["alt-text"] ||
+            //           `Image ${currentIndex + 1}`}
+            //       </div>
+            //     </div>
+
+            //   );
+
+
+
+
+         
+
             case "ifelse":
-              return (
-                <InputField
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                />
-              );
+              return <InputField value={item.value || ""} />;
             case "switch":
               return <InputField placeholder="SWITCH" label="SWITCH" />;
 

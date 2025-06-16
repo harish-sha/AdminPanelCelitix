@@ -174,14 +174,14 @@ const Canvas = ({
             </div>
           )}
 
-          {targetItem["min-chars"]  && (
+          {targetItem["min-chars"] && (
             <div>
               <span className="font-semibold">Min Characters: </span>
               {targetItem["min-chars"]}
             </div>
           )}
 
-          {targetItem["max-chars"]  && (
+          {targetItem["max-chars"] && (
             <div>
               <span className="font-semibold">Max Characters: </span>
               {targetItem["max-chars"]}
@@ -281,7 +281,7 @@ const Canvas = ({
               <p className="mb-1">
                 <span className="font-semibold">Title:</span> {opt.title}
               </p>
-               <p className="mb-1">
+              <p className="mb-1">
                 <span className="font-semibold">Description:</span> {opt.description}
               </p>
               <p className="mb-1">
@@ -322,9 +322,9 @@ const Canvas = ({
               <li key={idx} className="border p-2 rounded bg-white">
                 {opt.title && (
                   <div className="mb-1">
-                  <span className="font-semibold"> Title: </span>
+                    <span className="font-semibold"> Title: </span>
                     {opt.title || "Option"}
-                    </div>
+                  </div>
                 )}
                 {opt.description && (
                   <div className="mb-1">
@@ -568,6 +568,26 @@ const Canvas = ({
       );
     }
 
+    if (item.type === "imageCarousel") {
+      return (
+        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
+          {targetItem["scale-type"] && (
+            <p>
+              <span className="font-semibold">Scale-Type: </span>
+              {targetItem["scale-type"]}
+            </p>
+          )}
+
+          {/* {targetItem["alt-text"] && (
+            <p>
+              <span className="font-semibold">Alt-Text: </span>
+              {targetItem["alt-text"]}
+            </p> 
+          )} */}
+        </div>
+      )
+    }
+
     if (item.type === "date") {
       return (
         <div className="w-full px-4 py-2  bg-blue-50 border rounded-md shadow-sm">
@@ -638,7 +658,7 @@ const Canvas = ({
           )}
 
           {targetItem["helper-text"] && (
-            <p className=" mb-1">
+            <div className=" mb-1">
               {isRange && typeof targetItem["helper-text"] === "object" ? (
                 <>
                   <div>
@@ -656,7 +676,7 @@ const Canvas = ({
                   {targetItem["helper-text"] || ""}
                 </>
               )}
-            </p>
+            </div>
           )}
 
           {targetItem.mode && (
@@ -690,7 +710,7 @@ const Canvas = ({
           )}
 
           {targetItem.required && (
-            <p className="text-sm">
+            <div className="text-sm">
               {isRange && typeof targetItem.required === "object" ? (
                 <>
                   <div>
@@ -708,7 +728,7 @@ const Canvas = ({
                   {targetItem.required ? "True" : "False"}
                 </>
               )}
-            </p>
+            </div>
           )}
         </div>
       );
@@ -959,6 +979,8 @@ const Canvas = ({
         return "Document";
       case "media":
         return "Media";
+      case "imageCarousel":
+        return "ImageCarousel"
       case "ifelse":
         return "IfElse";
       case "switch":

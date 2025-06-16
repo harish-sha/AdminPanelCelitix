@@ -33,8 +33,6 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 
-
-
 const EditPanel = ({
   selectedItem,
   onClose,
@@ -57,7 +55,6 @@ const EditPanel = ({
   setSwitchChecked,
   screens,
 }) => {
-  const [value, setValue] = useState("");
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
   const [selectedOption, setSelectedOption] = useState("");
@@ -579,6 +576,179 @@ const EditPanel = ({
     console.log(payload);
   };
 
+  // IMAGECarousel
+  const [imageCarouselImages, setImageCarouselImages] = useState([
+    { src: "", file: null },
+    { src: "", file: null },
+    { src: "", file: null },
+  ]);
+
+  const [imageCarouselScaleType, setImageCarouselScaleType] =
+    useState("contain");
+  const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
+    useState("4:3");
+  const [imageCarouselAltText, setImageCarouselAltText] = useState("");
+  const imageCarouselInputRefs = [useRef(null), useRef(null), useRef(null)];
+
+  useEffect(() => {
+    if (selectedItem) {
+      setImageCarouselAltText(selectedItem["alt-text"] || "");
+      setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
+      setImageCarouselScaleType(selectedItem["scale-type"] || "contain");
+
+      if (Array.isArray(selectedItem.images)) {
+        const mappedImages = selectedItem.images.map((img) => ({
+          file: null,
+          src: img?.src || "",
+        }));
+        setImageCarouselImages(mappedImages);
+      }
+    }
+  }, [selectedItem]);
+
+  const imageCarouselInputRef = useRef(null);
+
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        const base64String = reader.result.split(",")[1];
+        resolve(base64String);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  }
+
+  const handleImageCarouselChange = (e, index) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.match(/image\/(png|jpeg)/)) {
+      toast.error("Please select a .png or .jpeg file");
+      return;
+    }
+
+    if (imageCarouselImages[index].file) {
+      toast.error(
+        `Please delete the existing image before uploading a new one in slot ${
+          index + 1
+        }`
+      );
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const updated = [...imageCarouselImages];
+      updated[index] = { file, src: reader.result };
+      setImageCarouselImages(updated);
+      toast.success(`Image ${index + 1} uploaded successfully`);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageUpload = async () => {
+    if (!imageCarouselFile) {
+      toast.error("Please select an image first before uploading");
+      return;
+    }
+    const src = await getBase64(imageCarouselFile);
+    toast.success("Image Uploaded Successfully");
+    console.log(src);
+    setImageCarouselSrc(src);
+  };
+
+  const handleImageCarouselDelete = (index) => {
+    const updated = [...imageCarouselImages];
+    if (!updated[index].file) {
+      toast.error("File not exist.");
+      return;
+    }
+
+    updated[index] = { file: null, src: null };
+    setImageCarouselImages(updated);
+    if (imageCarouselInputRefs[index].current) {
+      imageCarouselInputRefs[index].current.value = "";
+    }
+    toast.success(`Image ${index + 1} deleted`);
+  };
+
+  const handleImageCarouselSave = async () => {
+    if (imageCarouselImages.some((img) => !img)) {
+      toast.error("Please upload all three images");
+      return;
+    }
+
+    const payload = {
+      "scale-type": imageCarouselScaleType,
+      // "aspect-ratio": imageCarouselAspectRatio,
+      "image-1": {
+        src: imageCarouselImages[0]?.src || "",
+        "alt-text": imageCarouselAltText || "",
+      },
+      "image-2": {
+        src: imageCarouselImages[1]?.src || "",
+        "alt-text": imageCarouselAltText || "",
+      },
+      "image-3": {
+        src: imageCarouselImages[2]?.src || "",
+        "alt-text": imageCarouselAltText || "",
+      },
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+  };
+
+  // if-else
+  const [value, setValue] = useState("");
+  const [condition, setCondition] = useState();
+  const [thenComponents, setThenComponents] = useState();
+  const [selectedThenComponent, setSelectedThenComponent] = useState();
+  const [elseComponents, setElseComponents] = useState();
+  const [selectedElseComponent, setSelectedElseComponent] = useState();
+  const [selectedCondition, setSelectedCondition] = useState();
+
+  const handleIfElseSave = () => {
+    if (!selectedCondition) {
+      toast.error("Please Enter condition first");
+      return;
+    }
+
+    const payload = {
+      type: "If",
+      condition: selectedCondition,
+      then: [
+        {
+          type: selectedThenComponent,
+          text: "It is a cat",
+        },
+      ],
+      else: [
+        {
+          type: selectedElseComponent,
+          text: "It is not a cat",
+        },
+      ],
+    };
+
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
+    onSave(updatedData);
+    onClose();
+    console.log("payload", payload);
+  };
+
   // date
   const [dateLable, setDateLabel] = useState("");
   const [minDate, setMinDate] = useState("");
@@ -616,17 +786,31 @@ const EditPanel = ({
 
   const handleAddUnavailableDate = (date) => {
     const formatted = formatDateToString(date);
+    const d = moment(date);
+    const min = moment(minDate);
+    const max = moment(maxDate);
+
+    // Check if within range
+    const isValid =
+      (!min.isValid() || d.isSameOrAfter(min, "day")) &&
+      (!max.isValid() || d.isSameOrBefore(max, "day"));
+
+    if (!isValid) {
+      toast.error("Unavailable date must be between Min and Max dates");
+      return;
+    }
+
     if (
       formatted &&
-      !unavailableDate.some((d) => formatDateToString(d) === formatted)
+      !unavailableDates.some((d) => formatDateToString(d) === formatted)
     ) {
-      setUnavailableDate((prev) => [...prev, date]);
+      setUnavailableDates((prev) => [...prev, date]);
     }
   };
 
-  useEffect(() => {
-    console.log("unavailableDate state:", unavailableDate);
-  }, [unavailableDate]);
+  // useEffect(() => {
+  //   console.log("unavailableDate state:", unavailableDate);
+  // }, [unavailableDate]);
 
   // Handle removing a selected date
   const handleRemoveUnavailableDate = (indexToRemove) => {
@@ -641,13 +825,33 @@ const EditPanel = ({
       return;
     }
 
+    const minDates = moment(minDate);
+    const maxDates = moment(maxDate);
+
+    if (
+      minDates.isValid() &&
+      maxDates.isValid() &&
+      maxDates.isBefore(minDates)
+    ) {
+      toast.error("Max date cannot be earlier than Min date");
+      return;
+    }
+
+    const validUnavailableDates = unavailableDate.filter((date) => {
+      const d = moment(date);
+      return (
+        d.isValid() &&
+        (!minDates.isValid() || d.isSameOrAfter(minDates, "day")) &&
+        (!maxDates.isValid() || d.isSameOrBefore(maxDates, "day"))
+      );
+    });
+
     const payload = {
       label: dateLable,
       "min-date": formatDateToString(minDate),
       "max-date": formatDateToString(maxDate),
-      "unavailable-dates": formatArrayToDates(unavailableDate),
+      "unavailable-dates": formatArrayToDates(validUnavailableDates),
       "helper-text": datePlaceholder,
-      // "error-message": "",
     };
 
     const updatedData = {
@@ -754,17 +958,6 @@ const EditPanel = ({
       toast.error("Max date cannot be earlier than Min date");
       return;
     }
-
-     useEffect(() => {
-  if (
-    minCalendarDate &&
-    maxCalendarDate &&
-    moment(maxCalendarDate).isBefore(moment(minCalendarDate))
-  ) {
-    toast.error("Max date cannot be earlier than Min date");
-  }
-}, [minCalendarDate, maxCalendarDate]);
-    
 
     // Filter unavailable dates within range
     const validUnavailableDates = unavailableCalendarDates.filter((date) => {
@@ -2140,6 +2333,13 @@ const EditPanel = ({
             </IconButton>
           </div>
 
+          {/* if-else condition */}
+          {selectedCondition && (
+            <h2 className="text-xl font-semibold mb-2 top-0">
+              {selectedCondition}
+            </h2>
+          )}
+          {/* if-else condition */}
           {/* Input Fields for Text-Based Items */}
           {/* {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
@@ -2172,8 +2372,15 @@ const EditPanel = ({
         )} */}
 
           {/* new */}
-          {selectedItem?.type === "heading" && (
+          {(selectedItem?.type === "heading" ||
+            selectedThenComponent === "heading" ||
+            selectedElseComponent === "heading") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              {selectedThenComponent === "heading"
+                ? "Then Component"
+                : selectedElseComponent === "heading"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Heading"
                 placeholder="Enter Text for  Heading"
@@ -2187,12 +2394,18 @@ const EditPanel = ({
                 onChange={(e) => setHeadingInput(e.target.value)}
               />
               <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={headingSave} />
+                {selectedItem?.type === "heading" ? (
+                  <UniversalButton label="Save" onClick={headingSave} />
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
 
-          {selectedItem?.type === "subheading" && (
+          {(selectedItem?.type === "subheading" ||
+            selectedThenComponent === "subHeading" ||
+            selectedElseComponent === "subHeading") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
               <InputField
                 label="Sub-Heading"
@@ -2206,12 +2419,21 @@ const EditPanel = ({
                 fullWidth
               />
               <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleSubheadingSave} />
+                {selectedItem?.type === "subheading" ? (
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleSubheadingSave}
+                  />
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
 
-          {selectedItem?.type === "textbody" && (
+          {(selectedItem?.type === "textbody" ||
+            selectedThenComponent === "textBody" ||
+            selectedElseComponent === "textBody") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
               <InputField
                 label="TextBody"
@@ -2225,17 +2447,23 @@ const EditPanel = ({
                 fullWidth
               />
               <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleTextbodySave} />
+                {selectedItem?.type === "textbody" ? (
+                  <UniversalButton label="Save" onClick={handleTextbodySave} />
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
 
-          {selectedItem?.type === "textcaption" && (
+          {(selectedItem?.type === "textcaption" ||
+            selectedThenComponent === "textCaption" ||
+            selectedElseComponent === "textCaption") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
               <InputField
                 label="TextCaption"
-                placeholder="Enter Text for Sub-Heading"
-                tooltipContent="Enter Text for Sub-Heading"
+                placeholder="Enter Text for text caption"
+                tooltipContent="Enter Text for text caption"
                 tooltipPlacement="right"
                 type="text"
                 maxLength={409}
@@ -2244,12 +2472,18 @@ const EditPanel = ({
                 fullWidth
               />
               <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleTextbodySave} />
+                {selectedItem?.type === "textcaption" ? (
+                  <UniversalButton label="Save" onClick={handleTextbodySave} />
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
 
-          {selectedItem?.type === "textInput" && (
+          {(selectedItem?.type === "textInput" ||
+            selectedThenComponent === "textInput" ||
+            selectedElseComponent === "textInput") && (
             <div className="mb-2 text-lg space-y-2 mt-3">
               <InputField
                 label="Input Label"
@@ -2349,12 +2583,16 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center items-center">
-                <UniversalButton label="Save" onClick={handleInputSave} />
+                {selectedItem?.type === "textInput" && (
+                  <UniversalButton label="Save" onClick={handleInputSave} />
+                )}
               </div>
             </div>
           )}
 
-          {selectedItem?.type === "textArea" && (
+          {(selectedItem?.type === "textArea" ||
+            selectedThenComponent === "textArea" ||
+            selectedElseComponent === "textArea") && (
             <div className="mb-2 text-lg space-y-2 mt-3">
               <InputField
                 label="Edit TextArea"
@@ -2443,7 +2681,9 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center items-center">
-                <UniversalButton label="SAVE" onClick={handleTextSave} />
+                {selectedItem?.type === "textArea" && (
+                  <UniversalButton label="SAVE" onClick={handleTextSave} />
+                )}
               </div>
             </div>
           )}
@@ -2451,7 +2691,9 @@ const EditPanel = ({
           {/* NEW */}
 
           {/* Editable Options for Checkboxes */}
-          {selectedItem?.type === "checkBox" && (
+          {(selectedItem?.type === "checkBox" ||
+            selectedThenComponent === "checkBox" ||
+            selectedElseComponent === "checkBox") && (
             <FormControl fullWidth>
               <div className="mb-2, mt-3, space-y-3 ">
                 <InputField
@@ -2625,16 +2867,20 @@ const EditPanel = ({
                   onClick={handleCheckboxAddNew}
                 />
 
-                <UniversalButton
-                  label="Save Checkbox"
-                  onClick={handleCheckBoxSave}
-                />
+                {selectedItem?.type === "checkBox" && (
+                  <UniversalButton
+                    label="Save Checkbox"
+                    onClick={handleCheckBoxSave}
+                  />
+                )}
               </div>
             </FormControl>
           )}
 
           {/* Editable Options for Radio Buttons */}
-          {selectedItem?.type === "radioButton" && (
+          {(selectedItem?.type === "radioButton" ||
+            selectedThenComponent === "radioButton" ||
+            selectedElseComponent === "radioButton") && (
             <FormControl fullWidth>
               <div className="mb-2, mt-3">
                 <InputField
@@ -2820,7 +3066,9 @@ const EditPanel = ({
           )}
 
           {/* Editable Options for Dropdown */}
-          {selectedItem?.type === "dropDown" && (
+          {(selectedItem?.type === "dropDown" ||
+            selectedThenComponent === "textCaption" ||
+            selectedElseComponent === "textCaption") && (
             <FormControl fullWidth>
               {/* ── Dropdown Label Input ── */}
               <div className=" mb-2, mt-3 space-y-3">
@@ -3020,7 +3268,9 @@ const EditPanel = ({
           )}
 
           {/* Editable option for chipselector In */}
-          {selectedItem?.type === "chipSelector" && (
+          {(selectedItem?.type === "chipSelector" ||
+            selectedThenComponent === "chipSelector" ||
+            selectedElseComponent === "chipSelector") && (
             <FormControl fullWidth>
               <div className="mt-3 space-y-3 mb-3">
                 <InputField
@@ -3568,13 +3818,130 @@ const EditPanel = ({
             </>
           )}
 
+          {selectedItem?.type === "imageCarousel" && (
+            <div className="space-y-3 mt-3">
+              {[0, 1, 2].map((index) => (
+                <div key={index} className="flex items-center space-x-2">
+                  <InputField
+                    label={`Image ${index + 1}`}
+                    type="file"
+                    accept=".png, .jpeg"
+                    tooltipContent="Upload Image"
+                    tooltipPlacement="right"
+                    required={true}
+                    onChange={(e) => handleImageCarouselChange(e, index)}
+                    ref={imageCarouselInputRefs[index]}
+                  />
+                  <button onClick={() => handleImageCarouselDelete(index)}>
+                    <DeleteOutlineIcon
+                      sx={{ fontSize: "23px", marginTop: 3 }}
+                    />
+                  </button>
+                </div>
+              ))}
+
+              <AnimatedDropdown
+                label="Scale-Type"
+                tooltipContent="Select Scale-Type"
+                tooltipPlacement="right"
+                value={imageCarouselScaleType}
+                options={[
+                  { value: "contain", label: "Contain" },
+                  { value: "cover", label: "Cover" },
+                ]}
+                onChange={(value) => setImageCarouselScaleType(value)}
+              />
+
+              <InputField
+                label="Alt-Text"
+                placeholder="Enter an Alt-text"
+                value={imageCarouselAltText}
+                onChange={(e) => setImageCarouselAltText(e.target.value)}
+              />
+
+              {/* <InputField
+                label="Aspect-Ratio"
+                placeholder=""
+                value={imageCarouselAspectRatio}
+                onChange={(e) => setImageCarouselAspectRatio(e.target.value)}
+              /> */}
+
+              <div className="flex justify-center">
+                <UniversalButton
+                  label="Save"
+                  onClick={handleImageCarouselSave}
+                />
+              </div>
+            </div>
+          )}
+
           {/* Editable option for if-else In */}
+
           {selectedItem?.type === "ifelse" && (
-            <InputField
-              placeholder="If-Else"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
+            <>
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="If-Condition"
+                  tooltipContent="Select If-Condition"
+                  tooltipPlacement="right"
+                  value={selectedCondition}
+                  options={[
+                    { label: "Equal to", value: "==" },
+                    { label: "Not equal to", value: "!=" },
+                    { label: "AND", value: "&&" },
+                    { label: "OR", value: "||" },
+                    { label: "NOT", value: "!" },
+                  ]}
+                  onChange={(value) => setSelectedCondition(value)}
+                />
+              </div>
+
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Then Branch"
+                  tooltipContent="Select Then Branch"
+                  tooltipPlacement="right"
+                  value={selectedThenComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                  ]}
+                  onChange={(value) => setSelectedThenComponent(value)}
+                />
+              </div>
+
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Else Branch"
+                  tooltipContent="Select Else Branch"
+                  tooltipPlacement="right"
+                  value={selectedElseComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                  ]}
+                  onChange={(value) => setSelectedElseComponent(value)}
+                />
+
+                <div className="flex justify-center mt-4">
+                  <UniversalButton label="Save" onClick={handleIfElseSave} />
+                </div>
+              </div>
+            </>
           )}
 
           {/* Editable option for date In */}
@@ -3590,14 +3957,6 @@ const EditPanel = ({
                 onChange={(e) => setDateLabel(e.target.value)}
               />
 
-              {/* <InputField
-              label="Name"
-              placeholder="Enter Name"
-              tooltipContent="Enter Name for DatePicker"
-              tooltipPlacement="right"
-              value={dateName}
-              onChange={(e) => setDateName(e.target.value)}
-            /> */}
               <InputField
                 label="Helper Text"
                 placeholder="Enter Placeholder for Date"
@@ -3629,6 +3988,7 @@ const EditPanel = ({
                 tooltipPlacement="right"
                 value={null}
                 onChange={handleAddUnavailableDate}
+                disabled={!minDate || !maxDate}
               />
 
               <div className="flex flex-wrap gap-2 mt-2 ">
@@ -3707,7 +4067,6 @@ const EditPanel = ({
                 value={maxCalendarDate}
                 onChange={(value) => setMaxCalendarDate(value)}
               />
-             
 
               <UniversalDatePicker
                 label="Unavailable Dates"

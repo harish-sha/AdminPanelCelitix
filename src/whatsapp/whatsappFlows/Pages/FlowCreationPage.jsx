@@ -371,7 +371,7 @@ const FlowCreationPage = () => {
       }
 
       toast.error("Unexpected response. Please try again.");
-    } catch (e) {
+    } catch (err) {
       console.error("Unexpected API error:", err);
       const fallbackMessage =
         err?.error_user_msg?.error?.error_user_msg ||

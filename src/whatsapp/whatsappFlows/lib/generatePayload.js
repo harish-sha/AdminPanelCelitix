@@ -266,6 +266,7 @@
 
 // new generatepayload start here
 export const generatePayload = (data) => {
+  console.log("data", data);
   const payload = {
     version: "7.0",
     screens: [],
@@ -292,6 +293,7 @@ export const generatePayload = (data) => {
     chipSelector: 0,
     optin: 0,
     embaddedLink: 0,
+    imageCarousel: 0,
   };
 
   const numberToWord = (num) => {
@@ -330,6 +332,7 @@ export const generatePayload = (data) => {
     };
 
     screenData?.payload?.forEach((pay) => {
+      console.log("pay", pay);
       // const type = pay.type;
       // typeCounters[type] = (typeCounters[type] || 0) + 1;
       // const name = `${String(type)}_${String(typeCounters[type])}`;
@@ -537,6 +540,28 @@ export const generatePayload = (data) => {
         };
       }
 
+      if (type === "imageCarousel") {
+        component = {
+          type: "ImageCarousel",
+          "scale-type": String(pay["scale-type"] || "contain"),
+          // "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
+          images: [
+            {
+              src: pay["image-1"]?.src || "",
+              "alt-text": pay["image-1"]?.["alt-text"] || "",
+            },
+            {
+              src: pay["image-2"]?.src || "",
+              "alt-text": pay["image-2"]?.["alt-text"] || "",
+            },
+            {
+              src: pay["image-3"]?.src || "",
+              "alt-text": pay["image-3"]?.["alt-text"] || "",
+            },
+          ],
+        };
+      }
+
       if (type === "date") {
         component = {
           name,
@@ -588,6 +613,28 @@ export const generatePayload = (data) => {
           name,
           type: "OptIn",
           label: pay.label,
+          required: true,
+        };
+      }
+
+      if (pay.type === "If") {
+        console.log("pay", pay);
+
+        component = {
+          type: pay.type,
+          condition: pay.condition,
+          then: [
+            {
+              type: pay.then?.[0]?.type,
+              text: "It is a cat",
+            },
+          ],
+          else: [
+            {
+              type: pay.else?.[0]?.type,
+              text: "It is not a cat",
+            },
+          ],
           required: true,
         };
       }
