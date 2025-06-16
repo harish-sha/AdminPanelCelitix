@@ -645,7 +645,13 @@ import celitixLogo from "@/assets/images/celitix-logo-white.svg";
 import { useUser } from "@/context/auth";
 import UniversalButton from "@/components/common/UniversalButton";
 import celitix_logo from "@/assets/images/celitix-logo-white.svg";
-import { forgotPassword, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
+import {
+  forgotPassword,
+  getIpAddress,
+  login,
+  requestOtp,
+  verifyOtp,
+} from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import { input } from "@material-tailwind/react";
 
@@ -738,17 +744,19 @@ const Login = () => {
         },
       };
 
-      // const ipResponse = await axios.get("https://ipapi.co/json/");
+      const ipResponse = await getIpAddress();
+
+      console.log(ipResponse?.data?.clientIp);
       setInputDetails((prev) => ({
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.ip || "0.0.0.0",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.ip || "0.0.0.0",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // domain: "127.0.0.4"
       };
 
@@ -778,7 +786,7 @@ const Login = () => {
       toast.success("Login Successful!");
       authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
       navigate("/");
-       setStep(2);
+      setStep(2);
     } catch (e) {
       return toast.error("Login failed");
     } finally {

@@ -44,3 +44,11 @@ export const requestOtp = async (data) => {
     },
   });
 };
+
+export const getIpAddress = async () => {
+  return await axios.post(`${apiUrl}/auth/getClientIp`, "", {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
