@@ -322,6 +322,11 @@ export const Card = ({
         return;
       }
     }
+
+    if (fileType === "video") {
+      setCardData({ ...cardData, filePath: file });
+      return;
+    }
     img.onload = () => {
       const width = img.naturalWidth;
       const height = img.naturalHeight;

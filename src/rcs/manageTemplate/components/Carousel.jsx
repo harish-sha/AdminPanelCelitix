@@ -783,6 +783,17 @@ export const Carousel = ({
         );
       }
 
+      if (isVideo) {
+        setCaraousalData((prev) =>
+          prev.map((item, index) =>
+            index === selectedCardIndex
+              ? { ...item, fileName: file.name, fileTempPath: file }
+              : item
+          )
+        );
+        return;
+      }
+
       const img = new Image();
       img.src = URL.createObjectURL(file);
 
