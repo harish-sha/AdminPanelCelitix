@@ -773,8 +773,8 @@ export const Carousel = ({
       const isVideo = fileType === "video";
 
       if (
-        (isImage && file.size > 2 * 1024 * 1024) || // 2MB
-        (isVideo && file.size > 10 * 1024 * 1024) // 10MB
+        (isImage && file.size > 1 * 1024 * 1024) || // 2MB
+        (isVideo && file.size > 5 * 1024 * 1024) // 10MB
       ) {
         return clearInputsAndShowError(
           isImage
