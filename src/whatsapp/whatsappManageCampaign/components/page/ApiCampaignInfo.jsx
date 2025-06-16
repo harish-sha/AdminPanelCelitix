@@ -18,6 +18,7 @@ import UniversalButton from "@/components/common/UniversalButton";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
 import { max } from "date-fns";
+import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -35,10 +36,10 @@ const CustomPaginatior = ({
 }) => {
   const { items } = usePagination({
     count: totalPages,
-    page: paginationModel.page + 1,
+    page: paginationModel.page,
     onChange: (_, newPage) => {
       setCurrentPage(newPage);
-      setPaginationModel({ ...paginationModel, page: newPage - 1 });
+      setPaginationModel({ ...paginationModel, page: newPage });
     },
   });
 
@@ -91,7 +92,7 @@ export const ApiCampaignInfo = () => {
 
   const [data, setData] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+    page: 1,
     pageSize: 10,
   });
   const [currentPage, setCurrentPage] = useState(1);
@@ -99,7 +100,7 @@ export const ApiCampaignInfo = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  async function handleFetchDetails(page = 0) {
+  async function handleFetchDetails(page = 1) {
     try {
       // const payload = {
       //   mobile: "",
@@ -139,7 +140,7 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      setTotalPage(res?.total || 0);
+      setTotalPage(res?.pages || 0);
 
       const formattedData = Array.isArray(res.data)
         ? res?.data?.map((item, index) => ({
@@ -149,7 +150,6 @@ export const ApiCampaignInfo = () => {
           }))
         : [];
 
-      console.log("formatted data", formattedData);
       setData(formattedData);
     } catch (e) {
       console.log(e);
@@ -211,21 +211,20 @@ export const ApiCampaignInfo = () => {
     //   headerName: "Action",
     //   flex: 1,
     //   minWidth: 120,
-      
+
     // },
-    
   ];
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
         id: i + 1,
-        sn: paginationModel.page * paginationModel.pageSize + i + 1,
+        sn: i + 1,
         ...item, // Spread the item properties
       }))
     : [];
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
-  const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
+  const totalPages = totalPage;
 
   const CustomFooter = () => {
     return (
@@ -286,7 +285,7 @@ export const ApiCampaignInfo = () => {
     );
   };
 
-  if (isLoading) return <Loader />;
+
 
   return (
     <>
@@ -305,48 +304,54 @@ export const ApiCampaignInfo = () => {
           }
         />
       </div>
-      <Paper sx={{ height: 558 }}>
-        <DataGrid
-          // id={id}
-          // name={name}
-          rows={rows}
-          columns={columns}
-          initialState={{ pagination: { paginationModel } }}
-          // checkboxSelection
-          rowHeight={45}
-          slots={{
-            footer: CustomFooter,
-            noRowsOverlay: CustomNoRowsOverlay,
-          }}
-          slotProps={{ footer: { totalRecords: rows.length } }}
-          onRowSelectionModelChange={(ids) => {}}
-          disableRowSelectionOnClick
-          // autoPageSize
-          disableColumnResize
-          disableColumnMenu
-          sx={{
-            border: 0,
-            "& .MuiDataGrid-cellCheckbox": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-cell": {
-              outline: "none !important",
-            },
-            "& .MuiDataGrid-columnHeaders": {
-              color: "#193cb8",
-              fontSize: "14px",
-              fontWeight: "bold !important",
-            },
-            "& .MuiDataGrid-row--borderBottom": {
-              backgroundColor: "#e6f4ff !important",
-            },
-            "& .MuiDataGrid-columnSeparator": {
-              // display: "none",
-              color: "#ccc",
-            },
-          }}
-        />
-      </Paper>
+      {isLoading ? (
+        <div className="w-full">
+          <UniversalSkeleton height="35rem" width="100%" />
+        </div>
+      ) : (
+        <Paper sx={{ height: 558 }}>
+          <DataGrid
+            // id={id}
+            // name={name}
+            rows={rows}
+            columns={columns}
+            initialState={{ pagination: { paginationModel } }}
+            // checkboxSelection
+            rowHeight={45}
+            slots={{
+              footer: CustomFooter,
+              noRowsOverlay: CustomNoRowsOverlay,
+            }}
+            slotProps={{ footer: { totalRecords: rows.length } }}
+            onRowSelectionModelChange={(ids) => {}}
+            disableRowSelectionOnClick
+            // autoPageSize
+            disableColumnResize
+            disableColumnMenu
+            sx={{
+              border: 0,
+              "& .MuiDataGrid-cellCheckbox": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-cell": {
+                outline: "none !important",
+              },
+              "& .MuiDataGrid-columnHeaders": {
+                color: "#193cb8",
+                fontSize: "14px",
+                fontWeight: "bold !important",
+              },
+              "& .MuiDataGrid-row--borderBottom": {
+                backgroundColor: "#e6f4ff !important",
+              },
+              "& .MuiDataGrid-columnSeparator": {
+                // display: "none",
+                color: "#ccc",
+              },
+            }}
+          />
+        </Paper>
+      )}
     </>
   );
 };
