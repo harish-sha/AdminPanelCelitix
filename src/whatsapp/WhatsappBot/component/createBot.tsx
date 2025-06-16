@@ -52,6 +52,7 @@ import {
   convertToReactFlow,
   transformNodesById,
 } from "./components/helper/convertToReactFlow";
+import { Url } from "./components/url";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -140,6 +141,7 @@ function NodeComponent({
         {data.type === "answer" && <p>Answer Node ({id})</p>}
         {data.type === "list" && <p>List Node ({id})</p>}
         {data.type === "button" && <p>Button Node ({id})</p>}
+        {data.type === "url" && <p>Url Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -565,6 +567,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      url: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData]
   );
@@ -802,7 +815,6 @@ const CreateWhatsAppBot = () => {
       const nodeData = nodesInputData[id];
       const requiredFields = dataTemplate[type];
 
-
       if (!requiredFields) {
         toast.error(`Unsupported node type "${type}" in node ${id}`);
         return;
@@ -1034,6 +1046,15 @@ const CreateWhatsAppBot = () => {
             </Button>
             <Button
               draggable
+              onDragStart={(event) => handleDragStart(event, "url")}
+              onClick={() => addNode("url")}
+              className={commonButtonClass}
+            >
+              <QuestionAnswerOutlinedIcon />
+              URL
+            </Button>
+            <Button
+              draggable
               onDragStart={(event) => handleDragStart(event, "answer")}
               onClick={() => addNode("answer")}
               className={commonButtonClass}
@@ -1141,7 +1162,13 @@ const CreateWhatsAppBot = () => {
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
             />
-          ) : null}
+          ) : type === "url" ? (
+            <Url
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          ): null}
 
           <div className="flex gap-2">
             <Button onClick={handleSaveNodeData}>Save</Button>
