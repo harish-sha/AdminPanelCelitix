@@ -400,7 +400,7 @@ const WhatsappLaunchCampaign = () => {
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplateData?.name,
+      templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
@@ -424,7 +424,7 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    // console.log(requestData)
+    console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);

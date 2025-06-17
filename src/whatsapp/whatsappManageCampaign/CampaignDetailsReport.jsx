@@ -127,7 +127,7 @@ const CampaignDetailsReport = () => {
       mobno: mobileNumber,
       status: "status",
       page: currentPage,
-      delStatus: deliveryStatus,
+      delStatus: deliveryStatus || "",
       selectedUserId: selectedUser || "0",
 
     };
@@ -286,7 +286,7 @@ const CampaignDetailsReport = () => {
             ]}
             value={deliveryStatus}
             onChange={setDeliveryStatus}
-            placeholder="delivery status"
+            placeholder="Select Status"
           />
         </div>
         <div className="w-max-content ">

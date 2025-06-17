@@ -420,6 +420,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
+  const [whatsappAuthentication, setWhatsappAuthentication] = useState("");
   const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
   const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
@@ -459,6 +460,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           countryCode: String(item.country_srno || ""),
           utility: String(item.transactional || 0),
           marketing: String(item.promotional || 0),
+          authentication: String(item.authentication || 0),
           isoCode: String(item.ISO_code || ""),
           updateTime: item.update_time || "-",
         };
@@ -524,7 +526,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappAddCredit = async () => {
-    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
+    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing || !whatsappAuthentication) {
       toast.error("Please fill all the fields.");
       return;
     }
@@ -534,6 +536,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       userSrno: String(currentUserSrno),
       utility: String(whatsappUtility),
       marketing: String(whatsappMarketing),
+      authentication: String(whatsappAuthentication),
       countryCode: String(whatsappCountry),
     };
 
@@ -605,6 +608,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setWhatsappCountry(null);
     setWhatsappUtility("");
     setWhatsappMarketing("");
+    setWhatsappAuthentication("");
   };
 
   // whatsapp End
@@ -1300,11 +1304,11 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     }
     const rcsRowss = Array.isArray(rcsRateRes)
       ? rcsRateRes.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          srno: item.sr_no,
-          ...item,
-        }))
+        id: index + 1,
+        sn: index + 1,
+        srno: item.sr_no,
+        ...item,
+      }))
       : [];
     rcsRateRes.length > 0 && setRcsrows(rcsRowss);
 
@@ -1361,9 +1365,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
         return (
           <div className="flex items-center gap-2">
             <span
-              className={`w-3 h-3 rounded-full ${
-                isActive ? "bg-green-500" : "bg-red-500"
-              }`}
+              className={`w-3 h-3 rounded-full ${isActive ? "bg-green-500" : "bg-red-500"
+                }`}
             ></span>
             <span>{isActive ? "Active" : "Inactive"}</span>
           </div>
@@ -1489,6 +1492,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     { field: "sn", headerName: "S.No", flex: 0.5 },
     { field: "countryName", headerName: "Country", flex: 1 },
     { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "authentication", headerName: "Authentication", flex: 1 },
     { field: "marketing", headerName: "Marketing", flex: 1 },
     { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
@@ -1657,10 +1661,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
 
   const rows = Array.isArray(allUsers)
     ? allUsers.map((item, i) => ({
-        id: i + 1,
-        sn: i + 1,
-        ...item,
-      }))
+      id: i + 1,
+      sn: i + 1,
+      ...item,
+    }))
     : [];
 
   // const rcsrows = Array.from({ length: 20 }, (_, i) => ({
@@ -2218,18 +2222,18 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           />
           {(petmDetails.petmChainType === 2 ||
             petmDetails.petmChainType === 3) && (
-            <InputField
-              label="TMA-1"
-              id="tma1"
-              name="tma1"
-              placeholder="Enter TMA-1"
-              type="number"
-              value={petmDetails.TMA1}
-              onChange={(e) => {
-                setPetmDetails({ ...petmDetails, TMA1: e.target.value });
-              }}
-            />
-          )}
+              <InputField
+                label="TMA-1"
+                id="tma1"
+                name="tma1"
+                placeholder="Enter TMA-1"
+                type="number"
+                value={petmDetails.TMA1}
+                onChange={(e) => {
+                  setPetmDetails({ ...petmDetails, TMA1: e.target.value });
+                }}
+              />
+            )}
           {petmDetails.petmChainType === 3 && (
             <InputField
               label="TMA-2"
@@ -2464,8 +2468,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                   {selectedUserDetails.status === 1
                     ? "Active"
                     : selectedUserDetails.status === 0
-                    ? "Inactive"
-                    : "Not Available"}
+                      ? "Inactive"
+                      : "Not Available"}
                 </p>
               </div>
             </div>
@@ -2750,6 +2754,19 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     />
 
                     <InputField
+                      id="whatsappauthentication"
+                      name="whatsappauthentication"
+                      label="Authentication"
+                      placeholder="INR / Credit"
+                      value={whatsappAuthentication}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setWhatsappAuthentication)
+                      }
+                      type="text"
+                      readOnly={!whatsappCountry}
+                    />
+
+                    <InputField
                       id="whatsappmarketing"
                       name="whatsappmarketing"
                       label="Marketing"
@@ -2761,6 +2778,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       type="text"
                       readOnly={!whatsappCountry}
                     />
+
+
 
                     <UniversalButton
                       label="Add"
@@ -3561,7 +3580,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                           ?.enable || false
                       }
                       onChange={handleServiceChange}
-                      // checked={true}
+                    // checked={true}
                     />
                     <label
                       htmlFor={item.id}

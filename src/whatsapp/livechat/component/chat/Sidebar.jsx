@@ -93,11 +93,12 @@ export const ChatSidebar = ({
   setChatState,
   setSelectedAgentList,
   selectedWaba,
-  setSelectedGroupList
+  setSelectedGroupList,
+  isLoading
 }) => {
-  const isLoading =
-    selectedWaba &&
-    (!chatState?.allConversations || chatState.allConversations.length === 0);
+  // const isLoading =
+  //   selectedWaba &&
+  //   (!chatState?.allConversations || chatState.allConversations.length === 0);
 
   // async function fetchAgentDetails(srno) {
   //   try {
