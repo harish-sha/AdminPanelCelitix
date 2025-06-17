@@ -471,12 +471,13 @@ const WhatsappLaunchCampaign = () => {
         setVarLength(0);
         setFileData([]);
         setIsGroup(-1);
-        fileRef.current.value = "";
+        fileRef.current && (fileRef.current.value = "");
       } else {
         toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");
       }
     } catch (error) {
+      console.log(error);
       toast.error("Error launching campaign. Please try again.");
     } finally {
       // window.reload();
@@ -699,7 +700,7 @@ const WhatsappLaunchCampaign = () => {
                               htmlFor="radioOption1"
                               className="text-sm font-medium text-gray-700 cursor-pointer"
                             >
-                             Cloud API
+                              Cloud API
                             </label>
                           </div>
                         </label>
