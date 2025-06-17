@@ -959,6 +959,8 @@ const Canvas = ({
         return "TextInput";
       case "textArea":
         return "TextArea";
+      case "richText" :
+        return "RichText" ;
       case "radioButton":
         return "RadioButton";
       case "checkBox":
