@@ -45,6 +45,7 @@ import "react-loading-skeleton/dist/skeleton.css";
 import { getBaseUrl } from "@/apis/common/common";
 import { MdBlock } from "react-icons/md";
 import { CgUnblock } from "react-icons/cg";
+import BotPreview from "../BotPreview";
 
 export const ChatScreen = ({
   setVisibleRight,
@@ -257,7 +258,7 @@ export const ChatScreen = ({
       const res = await blockUser(waba, payload);
       if (res?.block_users?.added_users?.length == 0) {
         toast.error("Unable to block user");
-        return
+        return;
       }
       toast.success("User blocked successfully");
     } catch (e) {
@@ -342,9 +343,8 @@ export const ChatScreen = ({
                 const isVideo = msg.replyType === "video";
                 const isDocument = msg.replyType === "document";
                 const templateType = msg?.templateType;
-                const isText = ["text", "button", "interactive"].includes(
-                  msg.replyType
-                );
+                const isBot = msg?.replyType === "interactive";
+                const isText = ["text", "button"].includes(msg.replyType);
                 const isReply = msg?.isReply;
                 const commonMediaClass = "object-contain mb-2 select-none";
                 const mediaUrl = isSent
@@ -653,6 +653,7 @@ export const ChatScreen = ({
                     )}
 
                     {templateType && <TemplateMessagePreview template={msg} />}
+                    {isBot && <BotPreview template={msg} />}
 
                     <div
                       className={`mt-1 text-[0.7rem] ${
