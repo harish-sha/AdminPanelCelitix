@@ -144,7 +144,7 @@ const WhatsappManageCampaign = () => {
     isCustomField: 0,
     customColumns: "",
     campaignType: 0,
-    status: "",
+    status: "" || "",
     delStatus: {},
     type: "campaign",
   });
@@ -289,6 +289,54 @@ const WhatsappManageCampaign = () => {
     setIsFetching(false);
   };
 
+  // const fetchScheduleCampaignData = async () => {
+  //   setIsFetching(true);
+
+  //   try {
+  //     const data = await getWhatsappCampaignScheduledReport();
+
+  //     const mappedData = Array.isArray(data)
+  //       ? data.map((item, index) => ({
+  //         id: item.srno || `row-${index}`,
+  //         sn: index + 1,
+  //         campaignName: item.campaignName || "N/A",
+  //         campaignDate: item.campaignDate || "N/A",
+  //         sentTime: item.sentTime || "N/A",
+  //         count: item.count || "N/A",
+  //         processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+  //         srno: item.srno,
+  //       }))
+  //       : [];
+
+  //     // Apply filters
+  //     const formattedSelectedDate =
+  //       scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+  //         ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
+  //         : null;
+
+  //     const filteredData = mappedData.filter((item) => {
+  //       const matchesName = scheduleCampaignName
+  //         ? item.campaignName
+  //           .toLowerCase()
+  //           .includes(scheduleCampaignName.toLowerCase())
+  //         : true;
+
+  //       const matchesDate = formattedSelectedDate
+  //         ? item.campaignDate === formattedSelectedDate
+  //         : true;
+
+  //       return matchesName && matchesDate;
+  //     });
+
+  //     setScheduleData(filteredData);
+  //   } catch (error) {
+  //     console.error("Error fetching data:", error);
+  //     toast.error("Failed to fetch schedule campaign data.");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
+
   const fetchScheduleCampaignData = async () => {
     setIsFetching(true);
 
@@ -296,41 +344,23 @@ const WhatsappManageCampaign = () => {
       const data = await getWhatsappCampaignScheduledReport();
 
 
-      const mappedData = Array.isArray(data)
-        ? data.map((item, index) => ({
-          id: item.srno || `row-${index}`,
-          sn: index + 1,
-          campaignName: item.campaignName || "N/A",
-          campaignDate: item.campaignDate || "N/A",
-          sentTime: item.sentTime || "N/A",
-          count: item.count || "N/A",
-          processFlag: item.processFlag === 1 ? "Pending" : "Completed",
-          srno: item.srno,
-        }))
+      const sortedData = Array.isArray(data)
+        ? data.sort((a, b) => new Date(b.sentTime) - new Date(a.sentTime))
         : [];
 
+      const rows = sortedData.map((item, index) => ({
+        id: item.srno || `row-${index}`,
+        sn: index + 1,
+        srno: item.srno,
+        sentTime: item.sentTime || "N/A",
+        campaignName: item.campaignName || "N/A",
+        campaignDate: item.campaignDate || "N/A",
+        count: item.count || "N/A",
+        processFlag: item.processFlag === 1 ? "Scheduled" : "Completed",
+      }));
 
-      // Apply filters
-      const formattedSelectedDate =
-        scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-          ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
-          : null;
+      setScheduleData(rows);
 
-      const filteredData = mappedData.filter((item) => {
-        const matchesName = scheduleCampaignName
-          ? item.campaignName
-            .toLowerCase()
-            .includes(scheduleCampaignName.toLowerCase())
-          : true;
-
-        const matchesDate = formattedSelectedDate
-          ? item.campaignDate === formattedSelectedDate
-          : true;
-
-        return matchesName && matchesDate;
-      });
-
-      setScheduleData(filteredData);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch schedule campaign data.");
@@ -339,29 +369,39 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  const handleCancel = async (srno) => {
-    if (!srno) {
+  const handleCancel = (srno, campaignName) => {
+    if (!srno || !campaignName) {
       console.error("SRNO is undefined. Cannot cancel campaign.");
       toast.error("Failed to cancel campaign. SRNO is missing.");
       return;
     }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("SRNO is missing. Cannot cancel the campaign.");
+      return;
+    }
 
     try {
-      // console.log("Canceling campaign with SRNO:", srno);
-      const result = await cancelCampaign({ srno: srno, selectedUserId: 0 });
-      if (result) {
-        // console.log("Campaign cancelled successfully:", result);
-        toast.success("Campaign Cancelled successfully");
+      setIsFetching(true);
 
-        // Refresh the table by fetching the data again
+      const result = await cancelCampaign({ srno: srno });
+
+      if (result) {
+        toast.success("Campaign Cancelled successfully");
         fetchScheduleCampaignData();
+        setVisible(false);
       } else {
-        console.warn("Cancel request failed or returned empty response.");
-        toast.error("Cancel request failed");
+        toast.error("Failed to cancel campaign.");
       }
     } catch (error) {
       console.error("Error cancelling campaign:", error);
       toast.error("Error cancelling campaign");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -1120,9 +1160,9 @@ const WhatsappManageCampaign = () => {
                 </div>
               )}
 
-              {/* Delete Template Start */}
-              {/* <Dialog
-                header={"Confirm Delete"}
+              {/* cancel campaign Start */}
+              <Dialog
+                header={"Confirm Cancel"}
                 visible={visible}
                 style={{ width: "27rem" }}
                 onHide={() => setVisible(false)}
@@ -1138,8 +1178,8 @@ const WhatsappManageCampaign = () => {
                 </div>
                 <div className="p-4 text-center">
                   <p className="text-[1.1rem] font-semibold text-gray-700">
-                    Are you sure you want to delete the template <br />
-                    <span className="text-green-500">"{currentRow?.templateName}"</span>
+                    Are you sure you want to cancel the campaign:
+                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
                   </p>
                   <p className="mt-2 text-sm text-gray-500">
                     This action is irreversible.
@@ -1158,16 +1198,14 @@ const WhatsappManageCampaign = () => {
                   )}
                   <UniversalButton
                     label={isFetching ? "Deleting..." : "Delete"}
-                    style={
-                      {
-                      }
-                    }
-                    onClick={handledeleteTemplate}
+                    style={{}}
+                    onClick={() => handleCancelConfirm(currentRow.srno)}
                     disabled={isFetching}
                   />
                 </div>
-              </Dialog> */}
-              {/* Delete Template End */}
+              </Dialog>
+
+              {/* cancel campaign End */}
 
               {/* {isFetching ? (
                 <UniversalSkeleton height="35rem" width="100%" />

@@ -801,6 +801,7 @@ export const ExportDialog = ({
         ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
         : "",
       type: dataToExport?.type === "campaign" ? 1 : 2,
+      status: "",
       // campaignName: name,
     };
 

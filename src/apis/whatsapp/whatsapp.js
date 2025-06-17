@@ -608,9 +608,9 @@ export const saveFlow = async (params, data) => {
 };
 
 // cancel campaign
-export const cancelCampaign = async ({ srno, selectedUserId }) => {
+export const cancelCampaign = async ({ srno }) => {
   return await fetchWithAuth(
-    `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUserId}`,
+    `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=0`,
     {
       method: "POST",
     }

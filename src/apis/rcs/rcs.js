@@ -87,9 +87,22 @@ export const fetchAllAgents = async () => {
 };
 
 // fetch all templates list
-export const fetchAllTemplates = async (data = "", isActive = "") => {
+// export const fetchAllTemplates = async (data = "", isActive = "") => {
+//   return await fetchWithAuth(
+//     `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
+
+export const fetchAllTemplates = async (
+  data = "",
+  isActive = "",
+  status = ""
+) => {
   return await fetchWithAuth(
-    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}&status=${status}`,
     {
       method: "POST",
     }

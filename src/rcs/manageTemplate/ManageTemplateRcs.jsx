@@ -61,6 +61,7 @@ const ManageTemplateRcs = () => {
       keys.every((key) => String(item[key]).includes(data[key]))
     );
     setSummaryFilterData(filtered);
+    fetchAllTemplates();
   };
 
   const updateTemplateStatus = async ({ srno, active }) => {
@@ -262,9 +263,8 @@ const ManageTemplateRcs = () => {
                 {templateDetails?.data[0]?.suggestions?.map((sug, idx) => (
                   <div key={idx} className="my-2 w-full">
                     <button
-                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
-                        templateTypeConfig[sug.type]?.css || ""
-                      }`}
+                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
+                        }`}
                       title={sug.suggestionValue}
                     >
                       {templateTypeConfig[sug.type]?.icon}
@@ -322,9 +322,8 @@ const ManageTemplateRcs = () => {
                     {template?.suggestions?.map((sug, idx) => (
                       <div key={idx} className="my-2">
                         <button
-                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
-                            templateTypeConfig[sug.type]?.css || ""
-                          }`}
+                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
+                            }`}
                           title={sug.suggestionValue}
                         >
                           {templateTypeConfig[sug.type]?.icon}

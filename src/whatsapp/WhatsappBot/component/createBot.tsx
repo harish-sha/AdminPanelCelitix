@@ -1055,7 +1055,7 @@ const CreateWhatsAppBot = () => {
               className={commonButtonClass}
             >
               <LinkIcon />
-              URL
+              CTA URL
             </Button>
             <Button
               draggable

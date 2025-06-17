@@ -852,7 +852,7 @@ const ObdManageVoiceClips = () => {
       </Dialog>
 
       <Dialog
-        header="Music Player"
+        header="Audio Player"
         visible={isOpenPlay}
         onHide={() => {
           setIsOpenPlay(false);

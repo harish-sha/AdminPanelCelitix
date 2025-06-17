@@ -99,41 +99,6 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
     pageSize: 10,
   });
 
-  // const handleCancel = async (row) => {
-  //   const srno = row.srno;
-  //   const selectedUserId = 0;
-
-  //   try {
-  //     const result = await cancelCampaign({ srno, selectedUserId });
-  //     if (result) {
-  //       console.log("Campaign cancelled successfully:", result);
-  //       toast.success("Campaign Cancelled successfully");
-  //       if (onCancel) {
-  //         onCancel(srno);
-  //       }
-  //     } else {
-  //       console.warn("Cancel request failed or returned empty response.");
-  //       toast.error("Cancel request failed");
-  //     }
-  //   } catch (error) {
-  //     console.error("Error cancelling campaign:", error);
-  //   }
-  // };
-
-  // **Format Date Function** (Ensures proper date format)
-  const formatDate = (dateString) => {
-    if (!dateString) return "N/A";
-    const date = new Date(dateString);
-    return date.toLocaleString("en-GB", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      // hour: "2-digit",
-      // minute: "2-digit",
-      // second: "2-digit",
-    });
-  };
-
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "sentTime", headerName: "Sent Time", flex: 1, minWidth: 120 },
@@ -146,6 +111,12 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
     {
       field: "campaignDate",
       headerName: "Campaign Date",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "processFlag",
+      headerName: "Status",
       flex: 1,
       minWidth: 120,
     },
@@ -164,7 +135,7 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
         return (
           <>
             <CustomTooltip title="Cancel Campaign" placement="top" arrow>
-              <IconButton onClick={() => onCancel(params.row.srno)}>
+              <IconButton onClick={() => onCancel(params.row.srno, params.row.campaignName)}>
                 <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
               </IconButton>
             </CustomTooltip>
@@ -174,20 +145,6 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
     },
   ];
 
-  // use this when you want to create rows dynamically
-  // const rows = Array.from({ length: 500 }, (_, i) => ({
-  //     id: i + 1,
-  //     sn: i + 1,
-  //     queTime: '11/05/2024 14:58:39',
-  //     campaignName: 'Demo',
-  //     templateName: 'NewTemplate',
-  //     templateCategory: 'Utility',
-  //     templateType: 'Text',
-  //     status: 'Pending',
-  //     totalAudience: '10000',
-  //     action: 'True',
-  // }));
-
   const sortedData = data.sort(
     (a, b) => new Date(b.queTime) - new Date(a.queTime)
   );
@@ -196,12 +153,12 @@ const ManageScheduleCampaignTable = ({ id, name, data = [], onCancel }) => {
     ? data.map((item, index) => ({
       id: index + 1,
       sn: index + 1,
-      // queTime: formatDate(item.queTime) || "N/A",
       srno: item.srno,
       sentTime: item.sentTime || "N/A",
       campaignName: item.campaignName || "N/A",
       campaignDate: item.campaignDate || "N/A",
       count: item.count || "N/A",
+      processFlag: item.processFlag || "N/A",
     }))
     : [];
 

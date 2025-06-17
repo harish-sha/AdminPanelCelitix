@@ -424,7 +424,7 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    console.log(requestData)
+    // console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);

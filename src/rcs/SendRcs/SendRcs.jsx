@@ -145,7 +145,8 @@ const SendRcs = () => {
   useEffect(() => {
     async function handleFetchAllTemplates() {
       try {
-        const res = await fetchAllTemplates(campaignDetails?.agent, 1);
+        // const res = await fetchAllTemplates(campaignDetails?.agent, 1);
+        const res = await fetchAllTemplates(campaignDetails?.agent, 1, "approved");
         setAllTemplates(res?.Data);
       } catch (e) {
         toast.error("Something went wrong.");
