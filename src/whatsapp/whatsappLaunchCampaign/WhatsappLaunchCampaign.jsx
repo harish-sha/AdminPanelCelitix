@@ -472,7 +472,8 @@ const WhatsappLaunchCampaign = () => {
         setVarLength(0);
         setFileData([]);
         setIsGroup(-1);
-        fileRef.current.value = "";
+        // fileRef.current.value = "";
+        fileRef.current && (fileRef.current.value = "");
       } else {
         toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");

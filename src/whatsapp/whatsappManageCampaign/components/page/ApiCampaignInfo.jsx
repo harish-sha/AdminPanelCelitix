@@ -119,6 +119,7 @@ export const ApiCampaignInfo = () => {
       let status = "";
       let deliveryStatus = "";
       let selectedUser = state.selectedUser;
+      console.log(selectedUser)
 
       const statusBased = ["failed", "submitted", "block", "busy"];
       const deliveryBased = ["read", "delivered", "undelivered"];
@@ -131,7 +132,7 @@ export const ApiCampaignInfo = () => {
 
       const payload = {
         fromDate: formattedFromDate,
-        selectedUserId: selectedUser,
+        selectedUserId: selectedUser || 0,
         toDate: formattedFromDate,
         mobile: "",
         page,
@@ -141,7 +142,6 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
-      console.log('response of res', res)
       setTotalPage(res?.pages || 0);
 
       const formattedData = Array.isArray(res.data)
@@ -152,9 +152,7 @@ export const ApiCampaignInfo = () => {
         }))
         : [];
 
-      // console.log("formatted data", formattedData);
       setData(formattedData);
-      console.log("formatted data", formattedData)
     } catch (e) {
       console.log(e);
       return toast.error("Error fetching data");
