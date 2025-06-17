@@ -7,33 +7,12 @@ import { FaExternalLinkAlt } from "react-icons/fa";
 import { IoIosList } from "react-icons/io";
 
 const BotPreview = ({ template }) => {
-  //   const [data, setData] = React.useState([]);
-  //   useEffect(() => {
-  //     const botJson = JSON.parse(template?.requestJson || "{}");
-  //     const type = botJson?.interactive?.type;
-  //     const mediaType = botJson?.interactive?.header?.type;
-  //     const mediaUrl = botJson?.interactive?.header?.[mediaType]?.link;
-  //     let fileType = null;
-
-  //     // mediaUrl?.link &&
-  //     //   (fileType = mediaUrl?.link?.split(".")?.pop()?.split(/\#|\?/)[0]);
-
-  //     if (mediaUrl && typeof mediaUrl === "string") {
-  //       fileType = mediaUrl?.split(".")?.pop()?.split(/\#|\?/)[0];
-  //     console.log(typeof mediaUrl)
-  //     }
-
-  //     console.log(mediaUrl);
-  //   }, [template]);
 
   const botJson = JSON.parse(template?.requestJson || "{}");
   const type = botJson?.interactive?.type;
   const mediaType = botJson?.interactive?.header?.type;
   const mediaUrl = botJson?.interactive?.header?.[mediaType]?.link;
   let fileType = null;
-
-  // mediaUrl?.link &&
-  //   (fileType = mediaUrl?.link?.split(".")?.pop()?.split(/\#|\?/)[0]);
 
   if (mediaUrl && typeof mediaUrl === "string") {
     fileType = mediaUrl?.split(".")?.pop()?.split(/\#|\?/)[0];
@@ -59,7 +38,7 @@ const BotPreview = ({ template }) => {
   function renderCTABtn() {
     return (
       <>
-        <h1>CTA BTN</h1>
+       
         <div className="border p-2 space-y-2">
           <div className="bg-[#e1f3fb] text-black p-4 rounded-2xl shadow-md max-w-xs flex items-center gap-3">
             <div className="bg-white p-3 rounded-full shadow-inner text-blue-500">
@@ -86,7 +65,6 @@ const BotPreview = ({ template }) => {
   function renderList() {
     return (
       <div className="text-sm">
-        Hello lisyt
         <div className="border p-2 space-y-2 w-50">
           <p className="font-bold">
             {botJson?.interactive?.header?.text || "No Heading"}
