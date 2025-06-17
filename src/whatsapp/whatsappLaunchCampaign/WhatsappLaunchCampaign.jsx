@@ -400,7 +400,7 @@ const WhatsappLaunchCampaign = () => {
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplateData?.name,
+      templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
@@ -424,7 +424,7 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    // console.log(requestData)
+    console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -472,7 +472,8 @@ const WhatsappLaunchCampaign = () => {
         setVarLength(0);
         setFileData([]);
         setIsGroup(-1);
-        fileRef.current.value = "";
+        // fileRef.current.value = "";
+        fileRef.current && (fileRef.current.value = "");
       } else {
         toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");

@@ -41,6 +41,7 @@ import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 
@@ -99,6 +100,11 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
+
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+
+
 
   //Export Download Reports start
 
@@ -1113,6 +1119,55 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               )}
+
+              {/* Delete Template Start */}
+              {/* <Dialog
+                header={"Confirm Delete"}
+                visible={visible}
+                style={{ width: "27rem" }}
+                onHide={() => setVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon
+                    sx={{
+                      fontSize: 64,
+                      color: "#ff3f3f",
+                    }}
+                  />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Are you sure you want to delete the template <br />
+                    <span className="text-green-500">"{currentRow?.templateName}"</span>
+                  </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    This action is irreversible.
+                  </p>
+                </div>
+
+                <div className="flex justify-center gap-4 mt-2">
+                  {!isFetching && (
+                    <UniversalButton
+                      label="Cancel"
+                      style={{
+                        backgroundColor: "#090909",
+                      }}
+                      onClick={() => setVisible(false)}
+                    />
+                  )}
+                  <UniversalButton
+                    label={isFetching ? "Deleting..." : "Delete"}
+                    style={
+                      {
+                      }
+                    }
+                    onClick={handledeleteTemplate}
+                    disabled={isFetching}
+                  />
+                </div>
+              </Dialog> */}
+              {/* Delete Template End */}
 
               {/* {isFetching ? (
                 <UniversalSkeleton height="35rem" width="100%" />

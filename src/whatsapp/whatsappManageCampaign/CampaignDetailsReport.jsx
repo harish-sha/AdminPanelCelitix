@@ -126,7 +126,7 @@ const CampaignDetailsReport = () => {
             mobno: mobileNumber,
             status: "status",
             page: currentPage,
-            delStatus: deliveryStatus,
+            delStatus: deliveryStatus || "",
         };
         const data = await getWhatsappCampaignDetailsReport(body);
         setCampaignDetails(data.data);
@@ -174,7 +174,8 @@ const CampaignDetailsReport = () => {
         // wabaNumber: item.wabaNumber || "N/A",
         mobileNo: item.mobileNo || "N/A",
         status: item.status || "N/A",
-        sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+        // sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+        sentTime: item.sentTime || "-",
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
         deliveryStatus: item.deliveryStatus || "-",
@@ -283,10 +284,10 @@ const CampaignDetailsReport = () => {
                         ]}
                         value={deliveryStatus}
                         onChange={setDeliveryStatus}
-                        placeholder="delivery status"
+                        placeholder="Select Status"
                     />
                 </div>
-                <div className="w-max-content ">
+                <div className="w-max-content">
                     <UniversalButton
                         id="manageCampaignSearchBtn"
                         name="manageCampaignSearchBtn"

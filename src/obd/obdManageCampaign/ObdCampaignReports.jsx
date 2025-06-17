@@ -290,40 +290,40 @@ const ObdCampaignReports = () => {
   ];
 
   const fetchCampaignReportsdata = async (data) => {
-  try {
-    setIsFetching(true);
-    const res = await fetchDetailsLogsObd(data);
-    let filteredData = res?.Data || [];
+    try {
+      setIsFetching(true);
+      const res = await fetchDetailsLogsObd(data);
+      let filteredData = res?.Data || [];
 
-    const campaignNameFilter = obdCampaignName?.trim().toLowerCase();
-    const selectedType = campaignTypeOptions.find(
-      (opt) => opt.value === obdCampaignType
-    )?.label?.toLowerCase();
+      const campaignNameFilter = obdCampaignName?.trim().toLowerCase();
+      const selectedType = campaignTypeOptions.find(
+        (opt) => opt.value === obdCampaignType
+      )?.label?.toLowerCase();
 
-    if (campaignNameFilter) {
-      filteredData = filteredData.filter((item) =>
-        item.campaignName?.toLowerCase().includes(campaignNameFilter)
-      );
+      if (campaignNameFilter) {
+        filteredData = filteredData.filter((item) =>
+          item.campaignName?.toLowerCase().includes(campaignNameFilter)
+        );
+      }
+
+      if (selectedType) {
+        filteredData = filteredData.filter(
+          (item) => item.campaignType?.toLowerCase() === selectedType
+        );
+      }
+
+      setObdCampaignData({
+        ...res,
+        Data: filteredData,
+      });
+
+    } catch (error) {
+      console.error("Error fetching Obd campaign Reports:", error);
+      toast.error("Error fetching Obd campaign Reports");
+    } finally {
+      setIsFetching(false);
     }
-
-    if (selectedType) {
-      filteredData = filteredData.filter(
-        (item) => item.campaignType?.toLowerCase() === selectedType
-      );
-    }
-
-    setObdCampaignData({
-      ...res,
-      Data: filteredData,
-    });
-
-  } catch (error) {
-    console.error("Error fetching Obd campaign Reports:", error);
-    toast.error("Error fetching Obd campaign Reports");
-  } finally {
-    setIsFetching(false);
-  }
-};
+  };
 
 
   const handleSearchObdCampaignLogs = () => {
@@ -577,7 +577,7 @@ const ObdCampaignReports = () => {
             <CustomTabPanel value={value} index={1}>
               <div className="w-full">
                 <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
-                  <div className="w-full sm:w-56">
+                  {/* <div className="w-full sm:w-56">
                     <UniversalDatePicker
                       label="From Date"
                       id="summaryfromDate"
@@ -590,11 +590,11 @@ const ObdCampaignReports = () => {
                         }))
                       }
                     />
-                  </div>
+                  </div> */}
 
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
-                      label="To Date"
+                      label="Created Date"
                       id="summarytodate"
                       name="summarytodate"
                       value={daywiseDataToFilter.toDate}

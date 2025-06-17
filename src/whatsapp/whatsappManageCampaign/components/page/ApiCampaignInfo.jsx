@@ -1,7 +1,7 @@
 import { getListofSendMsg, downloadCustomWhatsappReport } from "@/apis/whatsapp/whatsapp";
 import { Paper, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import styled from "styled-components";
@@ -15,6 +15,12 @@ import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import Loader from "@/whatsapp/components/Loader";
 import { useDownload } from "@/context/DownloadProvider";
 import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import IconButton from "@mui/material/IconButton";
+import { ImInfo } from "react-icons/im";
+import InfoPopover from "@/components/common/InfoPopover";
+
+
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -97,6 +103,17 @@ export const ApiCampaignInfo = () => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const { triggerDownloadNotification } = useDownload();
+  const dropdownButtonRefs = useRef({});
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [clicked, setClicked] = useState([]);
+  const closeDropdown = () => setDropdownOpenId(null);
+
+
+  const handleInfo = (row) => {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+    setClicked(row.additionalInfo || []);
+  };
 
 
   async function handleFetchDetails(page = 1) {
@@ -149,7 +166,6 @@ export const ApiCampaignInfo = () => {
   }
 
   async function handleExport() {
-    // toast.success("Hello World");
     try {
       const payload = {
         // type: 1,
@@ -179,7 +195,7 @@ export const ApiCampaignInfo = () => {
   }, [currentPage]);
 
   const columns = [
-    { field: "sn", headerName: "S.No", maxWidth: 70 },
+    { field: "sn", headerName: "S.No", width: 60 },
     { field: "wabaNumber", headerName: "WABA Number", width: 130 },
     { field: "mobileNo", headerName: "Mobile Number", minWidth: 135 },
     { field: "source", headerName: "Source", minWidth: 100 },
@@ -187,25 +203,105 @@ export const ApiCampaignInfo = () => {
     {
       field: "deliveryStatus",
       headerName: "Delivery Status",
-      minWidth: 100,
+      width: 150,
     },
-    { field: "reason", headerName: "Reason", minWidth: 120 },
-    { field: "sentTime", headerName: "Sent", minWidth: 150 },
+    { field: "reason", headerName: "Reason", width: 150 },
+    { field: "sentTime", headerName: "Sent", width: 200 },
     {
       field: "requestJson",
       headerName: "Request JSON",
       flex: 1,
       minWidth: 120,
     },
-    { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
-    { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
+    // { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
+    // { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 0,
+      width: 70,
+      renderCell: (params) => (
+        <>
+          <CustomTooltip title="Info" placement="top" arrow>
+            <span>
+              <IconButton
+                type="button"
+                ref={(el) => {
+                  if (el) dropdownButtonRefs.current[params.row.id] = el;
+                }}
+                onClick={() => handleInfo(params.row)}
+                className="no-xs relative"
+              >
+                <ImInfo size={18} className="text-green-500 " />
+              </IconButton>
+              <InfoPopover
+                anchorEl={dropdownButtonRefs.current[params.row.id]}
+                open={dropdownOpenId === params.row.id}
+                onClose={closeDropdown}
+              >
+                {clicked && Object.keys(clicked).length > 0 ? (
+                  <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+                    <tbody>
+                      {Object.entries(clicked).map(([key, value], index) => (
+                        <tr
+                          key={index}
+                          className="hover:bg-gray-50 transition-colors border-b last:border-none"
+                        >
+                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+                            {additionalInfoLabels[key] || key}
+                          </td>
+                          <td className="px-4 py-2 text-gray-800">
+                            {key === "isEnabledForInsights"
+                              ? value === true || value === "true"
+                                ? "True"
+                                : "False"
+                              : value || "N/A"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                ) : (
+                  <div className="text-sm text-gray-400 italic px-2 py-2">
+                    No data
+                  </div>
+                )}
+              </InfoPopover>
+            </span>
+          </CustomTooltip>
+        </>
+      ),
+    },
+
   ];
+
+  const additionalInfoLabels = {
+    queTime: "Que Time",
+    readTime: "Read Time",
+    // sentTime: "Sent Time"
+
+  };
 
   const rows = Array.isArray(data)
     ? data.map((item, i) => ({
       id: i + 1,
       sn: i + 1,
-      ...item,
+      wabaNumber: item.wabaNumber,
+      mobileNo: item.mobileNo,
+      source: item.source,
+      status: item.status,
+      deliveryStatus: item.deliveryStatus,
+      reason: item.reason || "-",
+      requestJson: item.requestJson || "-",
+      readTime: item.readTime || "-",
+      queTime: item.queTime || "-",
+      sentTime: item.sentTime || "-",
+      additionalInfo: {
+        queTime: item.queTime || "-",
+        readTime: item.readTime || "-",
+        // sentTime: item.sentTime || "N/A",
+      },
+      // ...item,
     }))
     : [];
 
