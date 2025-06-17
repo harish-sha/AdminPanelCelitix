@@ -52,9 +52,9 @@ export const fetchVoiceClipUrl = async (srno) => {
 };
 
 // fetch getDetailsLog by srNo
-export const fetchDetailsbySrNo = async (campaignSrNo) => {
+export const fetchDetailsbySrNo = async (campaignSrNo, selectedUser = 0) => {
   return await fetchWithAuth(
-    `/obd/report/getDetailLogByCampSrno?campaignSrno=${campaignSrNo}`,
+    `/obd/report/getDetailLogByCampSrno?campaignSrno=${campaignSrNo}&selectedUserId=${selectedUser}`,
     {
       method: "POST",
     }
@@ -86,9 +86,9 @@ export const sendObdCampaign = async (data) => {
 };
 
 // view Obd Campaign Details
-export const viewObdCampaignDetails = async (campaignSrno) => {
+export const viewObdCampaignDetails = async (campaignSrno, selectedUser) => {
   return await fetchWithAuth(
-    `/obd/report/getDetailLogInfo?campaignSrno=${campaignSrno}&selectedUserId=0`,
+    `/obd/report/getDetailLogInfo?campaignSrno=${campaignSrno}&selectedUserId=${selectedUser}`,
     {
       method: "POST",
     }
@@ -96,9 +96,9 @@ export const viewObdCampaignDetails = async (campaignSrno) => {
 };
 
 // get Scheduled Voice Campaign Report
-export const getScheduledVoiceCampaignReport = async () => {
+export const getScheduledVoiceCampaignReport = async (selectedUser = 0) => {
   return await fetchWithAuth(
-    `/obd/report/getScheduledVoiceCampaignReport?selectedUserId=0`,
+    `/obd/report/getScheduledVoiceCampaignReport?selectedUserId=${selectedUser || "0"}`,
     {
       method: "POST",
     }
@@ -106,9 +106,9 @@ export const getScheduledVoiceCampaignReport = async () => {
 };
 
 // cancel campaign
-export const cancelCamapign = async (srno) => {
+export const cancelCamapign = async (srno, selectedUser) => {
   return await fetchWithAuth(
-    `/obd/report/cancelCampaign?srNo=${srno}&selectedUserId=0`,
+    `/obd/report/cancelCampaign?srNo=${srno}&selectedUserId=${selectedUser}`,
     {
       method: "POST",
     }
@@ -116,9 +116,9 @@ export const cancelCamapign = async (srno) => {
 };
 
 // get all campaign names
-export const getAllCampaignNames = async () => {
+export const getAllCampaignNames = async (selectedUser = null) => {
   return await fetchWithAuth(
-    `/obd/report/getAllVoiceCampaign?selectedUserId=0`,
+    `/obd/report/getAllVoiceCampaign?selectedUserId=${selectedUser || "0"}`,
     {
       method: "POST",
     }

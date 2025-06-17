@@ -45,6 +45,8 @@ import moment from "moment";
 import { exportToExcel } from "@/utils/utills.js";
 import ManageScheduleCampaignTableObd from "./components/ManageScheduleCampaignTableObd.jsx";
 import UniversalSkeleton from "@/whatsapp/components/UniversalSkeleton.jsx";
+import { useUser } from "@/context/auth.jsx";
+import { fetchAllUsers } from "@/apis/admin/admin.js";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +67,36 @@ const ObdCampaignReports = () => {
 
   const [filteredRows, setFilteredRows] = useState([]);
   const [dataTable, setDataTable] = useState([]);
+
+  const { user } = useUser();
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUser, setSelectedUser] = useState("");
+
+  useEffect(() => {
+    //fetchAllUsersDetails
+    if (user.role === "RESELLER") {
+      const fetchAllUsersDetails = async () => {
+        const data = {
+          userId: "",
+          mobileNo: "",
+          companyName: "",
+          status: "-1",
+        };
+        try {
+          setIsFetching(true);
+          const res = await fetchAllUsers(data);
+          setAllUsers(res.userMstPojoList);
+        } catch (e) {
+          // console.log(e);
+          toast.error("Something went wrong! Please try again later.");
+        } finally {
+          setIsFetching(false);
+        }
+      };
+      fetchAllUsersDetails();
+    }
+  }, []);
+
 
   console.log("obdCampaignData", obdCampaignData);
   const formatDateToYYYYMMDD = (dateStr) => {
@@ -169,6 +201,11 @@ const ObdCampaignReports = () => {
 
   // Day wise summary Start
   const handleDayWiseSummary = async () => {
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
+
     const data = {
       fromDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
         "YYYY-MM-DD"
@@ -176,6 +213,7 @@ const ObdCampaignReports = () => {
       toDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
         "YYYY-MM-DD"
       ),
+      selectedUserId: selectedUser || 0
     };
 
     try {
@@ -205,10 +243,15 @@ const ObdCampaignReports = () => {
   const [summaryData, setSummarydata] = useState([]);
 
   const handleSummaryLogs = async () => {
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     const data = {
       fromDate: moment(summaryDataToFilter.fromDate).format("YYYY-MM-DD"),
       toDate: moment(summaryDataToFilter.toDate).format("YYYY-MM-DD"),
       voiceType: summaryDataToFilter.voiceType || "",
+      selectedUserId: selectedUser || 0
     };
 
     try {
@@ -290,43 +333,49 @@ const ObdCampaignReports = () => {
   ];
 
   const fetchCampaignReportsdata = async (data) => {
-  try {
-    setIsFetching(true);
-    const res = await fetchDetailsLogsObd(data);
-    let filteredData = res?.Data || [];
+    try {
+      setIsFetching(true);
+      const res = await fetchDetailsLogsObd(data);
+      let filteredData = res?.Data || [];
 
-    const campaignNameFilter = obdCampaignName?.trim().toLowerCase();
-    const selectedType = campaignTypeOptions.find(
-      (opt) => opt.value === obdCampaignType
-    )?.label?.toLowerCase();
+      const campaignNameFilter = obdCampaignName?.trim().toLowerCase();
+      const selectedType = campaignTypeOptions.find(
+        (opt) => opt.value === obdCampaignType
+      )?.label?.toLowerCase();
 
-    if (campaignNameFilter) {
-      filteredData = filteredData.filter((item) =>
-        item.campaignName?.toLowerCase().includes(campaignNameFilter)
-      );
+      if (campaignNameFilter) {
+        filteredData = filteredData.filter((item) =>
+          item.campaignName?.toLowerCase().includes(campaignNameFilter)
+        );
+      }
+
+      if (selectedType) {
+        filteredData = filteredData.filter(
+          (item) => item.campaignType?.toLowerCase() === selectedType
+        );
+      }
+
+      setObdCampaignData({
+        ...res,
+        Data: filteredData,
+      });
+
+    } catch (error) {
+      console.error("Error fetching Obd campaign Reports:", error);
+      toast.error("Error fetching Obd campaign Reports");
+    } finally {
+      setIsFetching(false);
     }
-
-    if (selectedType) {
-      filteredData = filteredData.filter(
-        (item) => item.campaignType?.toLowerCase() === selectedType
-      );
-    }
-
-    setObdCampaignData({
-      ...res,
-      Data: filteredData,
-    });
-
-  } catch (error) {
-    console.error("Error fetching Obd campaign Reports:", error);
-    toast.error("Error fetching Obd campaign Reports");
-  } finally {
-    setIsFetching(false);
-  }
-};
+  };
 
 
   const handleSearchObdCampaignLogs = () => {
+
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
+
     const formattedDate = moment(campaignFromDate).format("YYYY-MM-DD");
 
     const newData = {
@@ -334,6 +383,7 @@ const ObdCampaignReports = () => {
       fromDate: formattedDate,
       toDate: formattedDate,
       mobile: obdCampaignNumber,
+      selectedUserId: selectedUser || 0,
       page: 1,
     };
 
@@ -347,9 +397,13 @@ const ObdCampaignReports = () => {
   // Scheduled Report Start
 
   const fetchScheduleCampaignData = async () => {
+    if (user.role === "RESELLER" && !selectedUser) {
+      toast.error("Please select a user first.");
+      return;
+    }
     try {
       setIsFetching(true);
-      const res = await getScheduledVoiceCampaignReport();
+      const res = await getScheduledVoiceCampaignReport(selectedUser);
       setScheduleData(res);
     } catch (error) {
       console.error("Error fetching the scheduled campaign data :", error);
@@ -360,7 +414,7 @@ const ObdCampaignReports = () => {
 
   const handleCancel = async (srno) => {
     try {
-      const res = await cancelCamapign(srno);
+      const res = await cancelCamapign(srno, selectedUser);
       toast.success("Campaign deleted successfully");
       fetchScheduleCampaignData();
     } catch (error) {
@@ -458,7 +512,8 @@ const ObdCampaignReports = () => {
                 />
               </Tabs>
 
-              <div className="w-full sm:w-56 mt-4 ml-6 flex lg:justify-end md:justify-end">
+
+              <div className="ml-6 flex lg:justify-end md:justify-end items-end gap-3">
                 <UniversalButton
                   id="exportBtn"
                   name="exportBtn"
@@ -470,6 +525,24 @@ const ObdCampaignReports = () => {
                   }
                   onClick={handleExportBtn}
                 />
+                {user.role === "RESELLER" && (
+                  <div className="w-full sm:w-56">
+                    <AnimatedDropdown
+                      id="manageuser"
+                      name="manageuser"
+                      label="Select User"
+                      tooltipContent="Select user you want to see reports"
+                      tooltipPlacement="right"
+                      options={allUsers.map((user) => ({
+                        label: user.userId,
+                        value: user.srno,
+                      }))}
+                      value={selectedUser}
+                      onChange={setSelectedUser}
+                      placeholder="Select User"
+                    />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -567,6 +640,8 @@ const ObdCampaignReports = () => {
                     data={obdCampaignData}
                     filterData={data}
                     fetchCampaignReportsdata={fetchCampaignReportsdata}
+                    selectedUser={selectedUser}
+
                   />
                 </div>
               </div>
@@ -733,6 +808,7 @@ const ObdCampaignReports = () => {
       <ExportDialogObd
         visibledialog={visibledialog}
         setVisibledialog={setVisibledialog}
+        selectedUser={selectedUser}
       />
     </>
   );

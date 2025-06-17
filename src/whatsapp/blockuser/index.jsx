@@ -290,7 +290,7 @@ export const BlockUser = () => {
 
     return (
         <>
-            <div className="min-h-[90vh] bg-gray-50 rounded-xl py-6 px-4 shadow-lg">
+            <div className="min-h-[90vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-4 ">
                         <h1 className="text-2xl font-bold text-gray-700 mb-2">

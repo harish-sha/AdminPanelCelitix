@@ -46,7 +46,8 @@ export const resellerItems = [
       { to: "/smsreports", label: "SMS" },
       { to: "/rcsdeliveryreport", label: "RCS" },
       { to: "/wmanagecampaign", label: "WHATSAPP" },
-      // { to: "/obdmanagecampaign", label: "OBD" },
+      { to: "/obdmanagecampaign", label: "OBD" },
+      { to: "/obdCampaignDetailslog", label: "OBD", isHide: true },
       {
         to: "/rcsdeliverycampaigndetails",
         label: "Delivery Campaign Report",

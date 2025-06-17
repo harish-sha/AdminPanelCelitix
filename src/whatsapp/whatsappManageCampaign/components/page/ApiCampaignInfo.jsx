@@ -157,6 +157,7 @@ export const ApiCampaignInfo = () => {
         status,
       };
       const res = await getListofSendMsg(payload);
+      console.log("mapped data", res)
       setTotalPage(res?.pages || 0);
 
       const formattedData = Array.isArray(res.data)
@@ -219,7 +220,7 @@ export const ApiCampaignInfo = () => {
     { field: "sn", headerName: "S.No", width: 60 },
     { field: "wabaNumber", headerName: "WABA Number", width: 130 },
     { field: "mobileNo", headerName: "Mobile Number", minWidth: 135 },
-    { field: "source", headerName: "Source", minWidth: 100 },
+    { field: "source", headerName: "Source", width: 80 },
     { field: "status", headerName: "Status", minWidth: 100 },
     {
       field: "deliveryStatus",
@@ -227,7 +228,7 @@ export const ApiCampaignInfo = () => {
       width: 150,
     },
     { field: "reason", headerName: "Reason", width: 150 },
-    { field: "sentTime", headerName: "Sent", width: 200 },
+    { field: "sentTime", headerName: "Sent", width: 180 },
     {
       field: "requestJson",
       headerName: "Request JSON",
@@ -293,14 +294,12 @@ export const ApiCampaignInfo = () => {
         </>
       ),
     },
-
   ];
 
   const additionalInfoLabels = {
     queTime: "Que Time",
     readTime: "Read Time",
     // sentTime: "Sent Time"
-
   };
 
 

@@ -489,6 +489,7 @@ const ObdCampaignTable = ({
     data,
     fetchCampaignReportsdata,
     filterData,
+    selectedUser
 }) => {
     const [selectedRows, setSelectedRows] = useState([]);
 
@@ -523,6 +524,8 @@ const ObdCampaignTable = ({
 
     const handleView = async (row) => {
         const id = row.id;
+        const user = selectedUser || 0;
+
 
         // Reset for this row
         setDropdownOpenId(null);
@@ -537,8 +540,7 @@ const ObdCampaignTable = ({
 
         let campaignSrno = id;
         try {
-            const res = await viewObdCampaignDetails(campaignSrno);
-
+            const res = await viewObdCampaignDetails(campaignSrno, user);
             setCampaignInfoMap((prev) => ({
                 ...prev,
                 [id]: res[0] || null,
@@ -551,9 +553,11 @@ const ObdCampaignTable = ({
     };
 
     const handleDetailLogs = (row) => {
+        const user = selectedUser || 0;
         navigate("/obdCampaignDetailslog", {
             state: {
                 campaignSrNo: row,
+                selectedUserId: user,
                 id: "Obddetaillogs",
                 name: "ObdDetailLogs",
             },

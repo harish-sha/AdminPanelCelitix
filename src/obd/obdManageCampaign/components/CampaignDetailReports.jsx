@@ -92,10 +92,7 @@ const CampaignDetailsReports = ({
     // selectedRows,
 }) => {
     const location = useLocation();
-    const { campaignSrNo, campaignName } = location.state || {};
-    console.log("campaignSrno", campaignSrNo)
-    console.log("campaignName", campaignName)
-    console.log("location.state", location.state)
+    const { campaignSrNo, campaignName, user } = location.state || {};
     const [selectedRows, setSelectedRows] = useState([]);
     const [campaignDetails, setCampaignDetails] = useState(null);
     const [deliveryStatus, setDeliveryStatus] = useState("");
@@ -122,7 +119,7 @@ const CampaignDetailsReports = ({
     useEffect(() => {
         if (!campaignSrNo) return;
         const fetchCampaignData = async () => {
-            const data = await fetchDetailsbySrNo(campaignSrNo);
+            const data = await fetchDetailsbySrNo(campaignSrNo, user);
             console.log("campaign details report data", data)
             setCampaignDetails(data?.data);
         };

@@ -11,7 +11,7 @@ import { getAllCampaignNames, exportCampaignData } from "@/apis/obd/obd.js";
 import toast from "react-hot-toast";
 import { useDownload } from "@/context/DownloadProvider";
 
-const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
+const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
   const { triggerDownloadNotification } = useDownload();
   const [selectedOption, setSelectedOption] = useState("option1");
   const [campaign, setCampaign] = useState(null);
@@ -74,7 +74,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
   useEffect(() => {
     const fetchCampaignNames = async () => {
       try {
-        const res = await getAllCampaignNames();
+        const res = await getAllCampaignNames(selectedUser || null);
         setCampaignNames(res);
       } catch (error) {
         console.error("Failed to fetch campaign names", error);
@@ -82,7 +82,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
     };
 
     fetchCampaignNames();
-  }, [visibledialog]);
+  }, [visibledialog, selectedUser]);
 
   const handleChangeOption = (event) => {
     const value = event.target.value;
@@ -167,6 +167,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
       ...(selectedOption === "option1"
         ? { srno: dataToExport.srno, campaignName: name }
         : {}),
+      selectedUser,
     };
 
     try {

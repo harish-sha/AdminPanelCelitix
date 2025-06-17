@@ -13,6 +13,8 @@ export const resellerItems = [
       "/wmanagecampaign",
       "/rcsdeliverycampaigndetails",
       "/apicampaigninfo",
+      "/obdmanagecampaign",
+      "/obdCampaignDetailslog",
     ],
     roles: ["ADMIN"],
   },

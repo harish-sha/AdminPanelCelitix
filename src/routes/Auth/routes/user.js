@@ -74,9 +74,9 @@ export const userItems = [
     links: [
       "/obdcreatecampaign",
       "/obdmanagecampaign",
+      "/obdCampaignDetailslog",
       "/obdmanagevoiceclips",
       "/obdIntegration",
-      "/obdCampaignDetailslog",
     ],
     roles: ["ADMIN"],
   },
