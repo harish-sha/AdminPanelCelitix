@@ -584,7 +584,7 @@ const EditPanel = ({
   ]);
 
   const [imageCarouselScaleType, setImageCarouselScaleType] =
-    useState("contain");
+    useState("");
   const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
     useState("4:3");
   const [imageCarouselAltText, setImageCarouselAltText] = useState("");
@@ -594,7 +594,7 @@ const EditPanel = ({
     if (selectedItem) {
       setImageCarouselAltText(selectedItem["alt-text"] || "");
       setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
-      setImageCarouselScaleType(selectedItem["scale-type"] || "contain");
+      setImageCarouselScaleType(selectedItem["scale-type"] || "");
 
       if (Array.isArray(selectedItem.images)) {
         const mappedImages = selectedItem.images.map((img) => ({
@@ -613,51 +613,54 @@ const EditPanel = ({
       const reader = new FileReader();
 
       reader.readAsDataURL(file);
-      reader.onload = () => {
+      reader.onloadend = () => {
         const base64String = reader.result.split(",")[1];
+
         resolve(base64String);
       };
       reader.onerror = (error) => reject(error);
     });
   }
 
+  
+
   const handleImageCarouselChange = (e, index) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const file = e.target.files?.[0];
+  if (!file) return;
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
-      return;
-    }
+  if (!file.type.match(/image\/(png|jpeg)/)) {
+    toast.error("Please select a .png or .jpeg file");
+    return;
+  }
 
-    if (imageCarouselImages[index].file) {
-      toast.error(
-        `Please delete the existing image before uploading a new one in slot ${
-          index + 1
-        }`
-      );
-      return;
-    }
+  if (imageCarouselImages[index].file) {
+    toast.error(
+      `Please delete the existing image before uploading a new one in slot ${index + 1}`
+    );
+    return;
+  }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const updated = [...imageCarouselImages];
-      updated[index] = { file, src: reader.result };
-      setImageCarouselImages(updated);
-      toast.success(`Image ${index + 1} uploaded successfully`);
-    };
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onloadend = () => {
+    const base64 = reader.result.split(',')[1]; 
+    const updated = [...imageCarouselImages];
+    updated[index] = { src: base64, file }; 
+    setImageCarouselImages(updated);
+    toast.success(`Image ${index + 1} uploaded successfully`);
   };
+  reader.readAsDataURL(file);
+};
+
 
   const handleImageUpload = async () => {
-    if (!imageCarouselFile) {
+    if (!imageCarouselImages) {
       toast.error("Please select an image first before uploading");
       return;
     }
-    const src = await getBase64(imageCarouselFile);
+    const src = await getBase64(imageCarouselImages);
     toast.success("Image Uploaded Successfully");
     console.log(src);
-    setImageCarouselSrc(src);
+    setImageCarouselImages(src);
   };
 
   const handleImageCarouselDelete = (index) => {
@@ -685,15 +688,15 @@ const EditPanel = ({
       "scale-type": imageCarouselScaleType,
       // "aspect-ratio": imageCarouselAspectRatio,
       "image-1": {
-        src: imageCarouselImages[0]?.src || "",
+        src: imageCarouselImages[0].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-2": {
-        src: imageCarouselImages[1]?.src || "",
+        src: imageCarouselImages[1].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-3": {
-        src: imageCarouselImages[2]?.src || "",
+        src: imageCarouselImages[2].src || "",
         "alt-text": imageCarouselAltText || "",
       },
     };
@@ -2407,6 +2410,11 @@ const EditPanel = ({
             selectedThenComponent === "subHeading" ||
             selectedElseComponent === "subHeading") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            {selectedThenComponent === "subHeading"
+                ? "Then Component"
+                : selectedElseComponent === "subHeading"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Sub-Heading"
                 placeholder="Enter Text for Sub-Heading "
@@ -2435,6 +2443,11 @@ const EditPanel = ({
             selectedThenComponent === "textBody" ||
             selectedElseComponent === "textBody") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            {selectedThenComponent === "textBody"
+                ? "Then Component"
+                : selectedElseComponent === "textBody"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="TextBody"
                 placeholder="Enter Text for TextBody "
@@ -2460,6 +2473,11 @@ const EditPanel = ({
             selectedThenComponent === "textCaption" ||
             selectedElseComponent === "textCaption") && (
             <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+            {selectedThenComponent === "textcaption"
+                ? "Then Component"
+                : selectedElseComponent === "textcaption"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="TextCaption"
                 placeholder="Enter Text for text caption"
@@ -2485,6 +2503,11 @@ const EditPanel = ({
             selectedThenComponent === "textInput" ||
             selectedElseComponent === "textInput") && (
             <div className="mb-2 text-lg space-y-2 mt-3">
+            {selectedThenComponent === "textInput"
+                ? "Then Component"
+                : selectedElseComponent === "textInput"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Input Label"
                 id="mainlabel"
@@ -2594,6 +2617,11 @@ const EditPanel = ({
             selectedThenComponent === "textArea" ||
             selectedElseComponent === "textArea") && (
             <div className="mb-2 text-lg space-y-2 mt-3">
+            {selectedThenComponent === "textArea"
+                ? "Then Component"
+                : selectedElseComponent === "textArea"
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Edit TextArea"
                 id="textarea_label"
@@ -2696,6 +2724,11 @@ const EditPanel = ({
             selectedElseComponent === "checkBox") && (
             <FormControl fullWidth>
               <div className="mb-2, mt-3, space-y-3 ">
+              {selectedThenComponent === "checkBox"
+                ? "Then Component"
+                : selectedElseComponent === "checkBox"
+                ? "Else Component"
+                : ""}
                 <InputField
                   label="Checkbox Group Label"
                   tooltipContent="Enter Checkbox Group Label "
@@ -2883,6 +2916,11 @@ const EditPanel = ({
             selectedElseComponent === "radioButton") && (
             <FormControl fullWidth>
               <div className="mb-2, mt-3">
+              {selectedThenComponent === "radioButton"
+                ? "Then Component"
+                : selectedElseComponent === "radioButton"
+                ? "Else Component"
+                : ""}
                 <InputField
                   label="Radio Group Label"
                   tooltipContent="Enter Radio Group Label"
@@ -3057,21 +3095,31 @@ const EditPanel = ({
                   onClick={handleRadioBtnAddNew}
                 />
 
-                <UniversalButton
+                {selectedItem?.type === "radioButton" ? (
+                  <UniversalButton
                   label="SaveRadioButton"
                   onClick={handleSaveRadioButton}
                 />
+                ) : (
+                  ""
+                )}
+                
               </div>
             </FormControl>
           )}
 
           {/* Editable Options for Dropdown */}
           {(selectedItem?.type === "dropDown" ||
-            selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
+            selectedThenComponent === "dropDown" ||
+            selectedElseComponent === "dropDown") && (
             <FormControl fullWidth>
               {/* ── Dropdown Label Input ── */}
               <div className=" mb-2, mt-3 space-y-3">
+              {selectedThenComponent === "dropDown"
+                ? "Then Component"
+                : selectedElseComponent === "dropDown"
+                ? "Else Component"
+                : ""}
                 <InputField
                   label="Label"
                   id="mainlabel"
@@ -3257,11 +3305,15 @@ const EditPanel = ({
                 </Box>
 
                 <Box sx={{ mt: 1 }}>
+                  {selectedItem?.type === "dropDown" ? (
                   <UniversalButton
                     id="save-dropdown-options"
                     label="Save Dropdown"
                     onClick={handleSaveDropdown}
                   />
+                ) : (
+                  ""
+                )}
                 </Box>
               </div>
             </FormControl>
@@ -3273,6 +3325,11 @@ const EditPanel = ({
             selectedElseComponent === "chipSelector") && (
             <FormControl fullWidth>
               <div className="mt-3 space-y-3 mb-3">
+              {selectedThenComponent === "chipSelector"
+                ? "Then Component"
+                : selectedElseComponent === "chipSelector"
+                ? "Else Component"
+                : ""}
                 <InputField
                   label="Label"
                   placeholder="Enter label"
@@ -3387,11 +3444,17 @@ const EditPanel = ({
                   onClick={handleAddNewChipSelector}
                   disabled={chipSelectorOptions.length >= 200}
                 />
-                <UniversalButton
+
+                {selectedItem?.type === "chipSelector" ? (
+                  <UniversalButton
                   id="save-chip-selector"
                   label="Save ChipSelector"
                   onClick={handleChipSelectorSave}
                 />
+                ) : (
+                  ""
+                )}
+                
               </div>
             </FormControl>
           )}
@@ -3414,7 +3477,7 @@ const EditPanel = ({
                 placeholder="Enter Left Caption"
                 id="left-caption"
                 tooltipContent="Enter Left Caption"
-                tooltipPlacement="rigth"
+                tooltipPlacement="right"
                 value={leftCaption}
                 onChange={(e) => setLeftCaption(e.target.value)}
               />
@@ -3912,6 +3975,7 @@ const EditPanel = ({
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
                     { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown"}
                   ]}
                   onChange={(value) => setSelectedThenComponent(value)}
                 />
@@ -3933,6 +3997,7 @@ const EditPanel = ({
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
                     { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown"}
                   ]}
                   onChange={(value) => setSelectedElseComponent(value)}
                 />

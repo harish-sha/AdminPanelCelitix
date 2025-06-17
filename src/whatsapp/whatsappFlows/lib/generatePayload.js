@@ -543,7 +543,7 @@ export const generatePayload = (data) => {
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
-          "scale-type": String(pay["scale-type"] || "contain"),
+          "scale-type": String(pay["scale-type"] || " "),
           // "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
           images: [
             {
@@ -621,7 +621,7 @@ export const generatePayload = (data) => {
         console.log("pay", pay);
 
         component = {
-          type: pay.type,
+          type: "If",
           condition: pay.condition,
           then: [
             {
@@ -635,7 +635,7 @@ export const generatePayload = (data) => {
               text: "It is not a cat",
             },
           ],
-          required: true,
+          // required: true,
         };
       }
 

@@ -110,7 +110,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
- 
+
+  // imageCarousel
+   const [currentIndex, setCurrentIndex] = useState(0);
+
 
 
 
@@ -682,58 +685,58 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </>
               );
 
-            // case "imageCarousel":
-            //   const images = item?.images || [];
-            //   const scaleType = item?.["scale-type"] || "contain";
-            //   return (
-            //     <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white">
-            //       <div
-            //         className=""
-            //       >
-            //         {images.map((img, idx) => (
-            //           <img
-            //             key={idx}
-            //             src={img?.src || ""}
-            //             alt={img?.["alt-text"] || `Image ${idx + 1}`}
-            //             className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
-            //               }`}
-            //           />
-            //         ))}
+           case "imageCarousel":
+  const images = [
+    item?.["image-1"] || {},
+    item?.["image-2"] || {},
+    item?.["image-3"] || {},
+  ].filter((img) => img?.src); // filter out empty slots
 
-            //         {images.length > 1 && (
-            //           <>
-            //             <button
-            //               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-            //               onClick={() =>
-            //                 setCurrentIndex(
-            //                   (prev) =>
-            //                     (prev - 1 + images.length) % images.length
-            //                 )
-            //               }
-            //             >
-            //               ‹
-            //             </button>
-            //             <button
-            //               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-            //               onClick={() =>
-            //                 setCurrentIndex(
-            //                   (prev) => (prev + 1) % images.length
-            //                 )
-            //               }
-            //             >
-            //               ›
-            //             </button>
-            //           </>
-            //         )}
-            //       </div>
+  const scaleType = item?.["scale-type"] || "contain";
 
-            //       <div className="text-center py-2 text-sm text-gray-500">
-            //         {images[currentIndex]?.["alt-text"] ||
-            //           `Image ${currentIndex + 1}`}
-            //       </div>
-            //     </div>
+  return (
+    <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white relative">
+      <div className="relative h-[200px]">
+        {images.map((img, idx) => (
+          <img
+            key={idx}
+            src={`${img?.src}`} // use full src format for <img>
+            alt={img?.["alt-text"] || `Image ${idx + 1}`}
+            className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
+              }`}
+          />
+        ))}
 
-            //   );
+        {images.length > 1 && (
+          <>
+            <button
+              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+              onClick={() =>
+                setCurrentIndex(
+                  (prev) => (prev - 1 + images.length) % images.length
+                )
+              }
+            >
+              ‹
+            </button>
+            <button
+              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+              onClick={() =>
+                setCurrentIndex((prev) => (prev + 1) % images.length)
+              }
+            >
+              ›
+            </button>
+          </>
+        )}
+      </div>
+
+      <div className="text-center py-2 text-sm text-gray-500">
+        {images[currentIndex]?.["alt-text"] || `Image ${currentIndex + 1}`}
+      </div>
+    </div>
+  );
+
 
 
 
