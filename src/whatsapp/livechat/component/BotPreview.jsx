@@ -56,40 +56,6 @@ const BotPreview = ({ template }) => {
     }
   }
 
-  // {
-  //   "recipient_type": "individual",
-  //   "messaging_product": "whatsapp",
-  //   "interactive": {
-  //     "footer": {
-  //       "text": "this is footer"
-  //     },
-  //     "action": {
-  //       "button": "list footer testing",
-  //       "sections": [
-  //         {
-  //           "rows": [
-  //             {
-  //               "description": "1",
-  //               "id": 1,
-  //               "title": "1"
-  //             }
-  //           ]
-  //         }
-  //       ]
-  //     },
-  //     "header": {
-  //       "text": "list footer testing",
-  //       "type": "text"
-  //     },
-  //     "body": {
-  //       "text": "list footer testing"
-  //     },
-  //     "type": "list"
-  //   },
-  //   "to": "919672670732",
-  //   "type": "interactive"
-  // }
-
   function renderCTABtn() {
     return (
       <>
@@ -151,10 +117,89 @@ const BotPreview = ({ template }) => {
       </div>
     );
   }
+
+  function renderText() {
+    return (
+      <div className="text-sm">
+        <p className="w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm  bg-[#5584AC] text-white rounded-bl-none">
+          {template?.messageBody}
+        </p>
+      </div>
+    );
+  }
+
+  //   {
+  //   "recipient_type": "individual",
+  //   "messaging_product": "whatsapp",
+  //   "interactive": {
+  //     "footer": {
+  //       "text": "Hii, I am Btn Footer"
+  //     },
+  //     "action": {
+  //       "buttons": [
+  //         {
+  //           "reply": {
+  //             "id": 1,
+  //             "title": "1"
+  //           },
+  //           "type": "reply"
+  //         },
+  //         {
+  //           "reply": {
+  //             "id": 2,
+  //             "title": "2"
+  //           },
+  //           "type": "reply"
+  //         }
+  //       ]
+  //     },
+  //     "body": {
+  //       "text": "Hii, I am Btn"
+  //     },
+  //     "type": "button"
+  //   },
+  //   "to": "917491079208",
+  //   "type": "interactive"
+  // }
+
+  function renderBtn() {
+    return (
+      <div className="text-sm">
+        Hello BTN
+        <div className="border p-2 space-y-2 w-50">
+          <p className="font-bold">
+            {botJson?.interactive?.header?.text || "No Heading"}
+          </p>
+          <p>{botJson?.interactive?.body?.text || "No Body"}</p>
+          <p className="text-sm">
+            {botJson?.interactive?.footer?.text || "No Footer"}
+          </p>
+          {/* <div className="flex items-center justify-center text-green-500 text-sm space-x-2">
+          <IoIosList />
+          <p>{botJson?.interactive?.action?.button || "No Btn"}</p>
+        </div> */}
+
+          <div className="space-y-2 text-sm">
+            <p className="underline">Button Reply Actions</p>
+            {botJson?.interactive?.action?.buttons?.map((button) => (
+              <div>
+                <div className="flex gap-2">
+                  <p>Title: {button?.reply.title}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {type === "cta_url" && renderCTABtn()}
       {type === "list" && renderList()}
+      {type === "button" && renderBtn()}
+      {template?.messageBody && renderText()}
     </>
   );
   //   return <h1>Bot Preview</h1>;
