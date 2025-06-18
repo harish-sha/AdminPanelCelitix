@@ -234,24 +234,34 @@ export const List = ({
       </div>
 
       <div className="w-full mt-2">
-        <div className="flex justify-end">
+        {/* <div className="flex justify-end">
           <button onClick={handleOptionAdd}>
             <AddIcon />
           </button>
-        </div>
+        </div> */}
         <div className="flex items-center gap-2 mb-2">
           <h1 className="text-lg font-semibold mb-2">List Items</h1>
-          <CustomTooltip
-            title={
-              "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
-            }
-            placement={"top"}
-            arrow
+
+          <button
+            title="Add List Items"
+            onClick={handleOptionAdd}
+            className="border border-gray-400 rounded-full"
           >
-            <span>
-              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-            </span>
-          </CustomTooltip>
+            <AddIcon />
+          </button>
+          <div className="mb-1">
+            <CustomTooltip
+              title={
+                "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
+          </div>
         </div>
         <div className="space-y-2 ">
           {options?.map((option, index) => (
