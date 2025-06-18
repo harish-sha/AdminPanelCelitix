@@ -36,6 +36,7 @@ import {
   getAllCampaignWhatsapp,
   getWhatsappCampaignScheduledReport,
   cancelCampaign,
+  downloadCustomWhatsappReport,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -44,6 +45,7 @@ import { ExportDialog } from "./components/exportDialog";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
+import { useDownload } from "@/context/DownloadProvider";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -100,11 +102,10 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
-
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
 
-
+  const { triggerDownloadNotification } = useDownload();
 
   //Export Download Reports start
 
@@ -145,7 +146,7 @@ const WhatsappManageCampaign = () => {
     customColumns: "",
     campaignType: 0,
     status: "" || "",
-    delStatus: {},
+    // delStatus: {},
     type: "campaign",
   });
 
@@ -343,7 +344,6 @@ const WhatsappManageCampaign = () => {
     try {
       const data = await getWhatsappCampaignScheduledReport();
 
-
       const sortedData = Array.isArray(data)
         ? data.sort((a, b) => new Date(b.sentTime) - new Date(a.sentTime))
         : [];
@@ -458,6 +458,50 @@ const WhatsappManageCampaign = () => {
     }
   };
 
+
+  useEffect(() => {
+    const FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
+    const FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
+
+    const fetchMonthWiseReport = async () => {
+      try {
+        const monthWiseData = await getSummaryReport({
+          wabaNumber: selectedWaBaNumber,
+          monthwise: 1,
+          year: moment(FinalFromDate).format("YYYY"),
+          month: moment(FinalFromDate).format("MM"),
+        });
+
+        if (Array.isArray(monthWiseData)) {
+          const formattedResult = monthWiseData.map((item) => ({
+            ...item,
+            marketing: item.marketing.toFixed(1),
+            utility: item.utility.toFixed(1),
+            categoryCreditUsage: item.categoryCreditUsage.toFixed(1),
+            userCharge: item.userCharge.toFixed(1),
+          }));
+
+          setSummaryReport(formattedResult);
+        } else {
+          // Handle non-array response
+          console.error("Unexpected API response:", result);
+          toast.error("Failed to fetch summary report. Please try again.");
+          setSummaryReport([]); // Reset summary report
+        }
+
+        // Do something with monthWise here
+        console.log("Month-wise report:", monthWise);
+      } catch (error) {
+        console.error("Failed to fetch month-wise report", error);
+      }
+    };
+
+    if (isMonthWise) {
+      fetchMonthWiseReport();
+    }
+  }, [isMonthWise, selectedWaBaNumber, selectedMonth]); // ✅ use selectedMonth instead
+
+
   const handleSummary = async () => {
     let result;
 
@@ -569,6 +613,34 @@ const WhatsappManageCampaign = () => {
       setIsFetching(false);
     }
   };
+
+  async function handleExport() {
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: "",
+        fromDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
+        toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
+        isCustomField: 1,
+        // customColumns: "",
+        customColumns: "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
+        // status: state.log,
+        status: "",
+        // deliveryStatus: "",
+        source: "api"
+      };
+      const res = await downloadCustomWhatsappReport(payload);
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+      triggerDownloadNotification();
+    } catch (e) {
+      console.log(e)
+      toast.error("Error downloading attachment");
+    }
+  }
 
   return (
     <div className="w-full ">
@@ -852,15 +924,31 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="w-max-content ">
-                  <UniversalButton
-                    id="manageCampaignLogsShowhBtn"
-                    name="manageCampaignLogsShowhBtn"
-                    label={isFetching ? "Searching..." : "Search"}
-                    icon={<IoSearch />}
-                    onClick={handleShowLogs}
-                    variant="primary"
-                  />
+                <div className="flex items-end gap-3" >
+                  <div className="w-max-content ">
+                    <UniversalButton
+                      id="manageCampaignLogsShowhBtn"
+                      name="manageCampaignLogsShowhBtn"
+                      label={isFetching ? "Searching..." : "Search"}
+                      icon={<IoSearch />}
+                      onClick={handleShowLogs}
+                      variant="primary"
+                    />
+                  </div>
+                  <div className="w-max-content" >
+                    <UniversalButton
+                      id="export"
+                      name="export"
+                      onClick={handleExport}
+                      label={"Export"}
+                      icon={
+                        <IosShareOutlinedIcon
+                          fontSize="small"
+                          sx={{ marginBottom: "1px" }}
+                        />
+                      }
+                    />
+                  </div>
                 </div>
               </div>
               {/* {isFetching ? (
@@ -921,9 +1009,9 @@ const WhatsappManageCampaign = () => {
                       <UniversalDatePicker
                         id="manageFromDate"
                         name="manageFromDate"
-                        label="Month and Year"
+                        label="Month"
                         value={selectedMonth}
-                        views={["month", "year"]}
+                        views={["month"]}
                         onChange={(newValue) => setSelectedMonth(newValue)}
                         placeholder="Pick a month"
                         tooltipContent="Select the month"
@@ -932,6 +1020,24 @@ const WhatsappManageCampaign = () => {
                         minDate={new Date().setMonth(new Date().getMonth() - 3)}
                         maxDate={new Date()}
                         errorText="Please select a valid month"
+                      />
+                    </div>
+
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="Year"
+                        value={selectedMonth}
+                        views={["year"]}
+                        onChange={(newValue) => setSelectedMonth(newValue)}
+                        placeholder="Pick a year"
+                        tooltipContent="Select the year"
+                        tooltipPlacement="right"
+                        error={!selectedMonth}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid year"
                       />
                     </div>
                   </>

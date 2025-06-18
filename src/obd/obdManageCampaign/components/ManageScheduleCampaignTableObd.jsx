@@ -170,7 +170,7 @@ const ManageScheduleCampaignTableObd = ({ id, name, data = [], onCancel }) => {
                 return (
                     <>
                         <CustomTooltip title="Cancel Campaign" placement="top" arrow>
-                            <IconButton onClick={() => onCancel(params.row.srno)}>
+                            <IconButton onClick={() => onCancel(params.row.srno, params.row.campaignName)}>
                                 <CloseIcon sx={{ fontSize: "1.2rem", color: "red" }} />
                             </IconButton>
                         </CustomTooltip>

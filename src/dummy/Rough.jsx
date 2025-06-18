@@ -1,30 +1,620 @@
-const handleCancelConfirm = async (srno) => {
-  if (!srno) {
-    toast.error("SRNO is missing. Cannot cancel the campaign.");
-    return;
-  }
 
-  try {
-    setIsFetching(true);
+import axios from "axios";
+import { UAParser } from "ua-parser-js";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
-    // Call the cancel campaign API
-    const result = await cancelCampaign({ srno });
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import "./login.css";
 
-    if (result) {
-      toast.success("Campaign Cancelled successfully");
+import InputField from "@/components/layout/InputField";
+import celitixLogo from "@/assets/images/celitix-logo-white.svg";
+import { useUser } from "@/context/auth";
+import UniversalButton from "@/components/common/UniversalButton";
+import celitix_logo from "@/assets/images/celitix-logo-white.svg";
+import {
+  forgotPassword,
+  getIpAddress,
+  login,
+  requestOtp,
+  verifyOtp,
+} from "@/apis/auth/auth";
+import { getAllowedServices } from "@/apis/admin/admin";
+import { input } from "@material-tailwind/react";
 
-      // Close the dialog after a successful cancellation
-      setVisible(false);
+const Login = () => {
+  const parser = new UAParser();
+  const uaResult = parser.getResult();
 
-      // Refresh the data by calling the fetch function again
-      fetchScheduleCampaignData(currentPage);
-    } else {
-      toast.error("Failed to cancel campaign.");
+  const navigate = useNavigate();
+  const { authLogin } = useUser();
+
+  const [step, setStep] = useState(1);
+  const [showPassword, setShowPassword] = useState(false);
+  const [phone, setPhone] = useState("");
+  const [countdown, setCountdown] = useState(0);
+  const [error, setError] = useState("");
+  const [isBtnVisible, setIsBtnVisible] = useState(true);
+  const [loading, setLoading] = useState(false);
+
+  const [inputDetails, setInputDetails] = useState({
+    userId: "",
+    password: "",
+    rememberMe: false,
+    mobileNo: "",
+    otp: "",
+  });
+
+  const [forgotPassState, setForgotPassState] = useState({
+    userId: inputDetails.userId,
+    mobileNo: "",
+  });
+
+  const [otp, setOtp] = useState({
+    email: "",
+    mobileNo: "",
+  });
+
+  const [passwordState, setPasswordState] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  useEffect(() => {
+    let timer;
+
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      // Countdown reached zero, show button and trigger OTP resend
+      setIsBtnVisible(true);
+
+      const handleResendOtp = async () => {
+        if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
+        try {
+          const res = await forgotPassword(forgotPassState);
+          console.log(res);
+
+          if (!res?.data.status) {
+            return toast.error(res?.data?.msg || "Unable to send OTP");
+          }
+          toast.success(res?.data?.msg);
+        } catch (e) {
+          console.log(e);
+          toast.error("Unable to send OTP");
+        }
+      };
+
+      handleResendOtp();
     }
-  } catch (error) {
-    console.error("Error cancelling campaign:", error);
-    toast.error("Error cancelling campaign");
-  } finally {
-    setIsFetching(false);
+
+    return () => clearInterval(timer);
+  }, [countdown]);
+
+  async function handleLogin() {
+    if (!inputDetails.userId || !inputDetails.password) {
+      return toast.error("Enter email and password");
+    }
+
+    setLoading(true);
+    try {
+      const systemData = {
+        browser: {
+          name: uaResult.browser.name || "Unknown",
+          version: uaResult.browser.version || "Unknown",
+        },
+        os: {
+          name: uaResult.os.name || "Unknown",
+          version: uaResult.os.version || "Unknown",
+        },
+      };
+
+      const ipResponse = await getIpAddress();
+
+      console.log(ipResponse?.data?.clientIp);
+      setInputDetails((prev) => ({
+        ...prev,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+      }));
+
+      const payloadd = {
+        ...inputDetails,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // domain: "127.0.0.4"
+      };
+
+      delete payloadd.rememberMe;
+      const res = await login(payloadd);
+
+      if (res?.data?.validateOtp) {
+        setStep(2);
+        return;
+      }
+
+      if (!res?.data?.token) {
+        return toast.error("Invalid credentials");
+      }
+
+      if (inputDetails?.rememberMe) {
+        localStorage.setItem("token", res?.data?.token);
+      } else {
+        sessionStorage.setItem("token", res?.data?.token);
+      }
+
+      let allowedServices = null;
+
+      if (res?.data?.role !== "AGENT") {
+        allowedServices = await getAllowedServices();
+      }
+      toast.success("Login Successful!");
+      authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
+      navigate("/");
+      setStep(2);
+    } catch (e) {
+      return toast.error("Login failed");
+    } finally {
+      setLoading(false);
+    }
   }
+
+  async function handleSendOtp() {
+    if (!forgotPassState.userId || !forgotPassState.mobileNo)
+      return toast.error("Enter email and phone number");
+
+    try {
+      const res = await forgotPassword(forgotPassState);
+
+      if (!res?.data.status) {
+        return toast.error("Either user id or mobile number is incorrect");
+      }
+      toast.success(res?.data?.msg);
+      setStep(3);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Unable to send OTP");
+    }
+  }
+
+  async function handleVerifyOtp() {
+    console.log(otp);
+    if (!otp?.mobileNo) {
+      return toast.error("Enter OTP");
+    }
+
+    delete inputDetails.rememberMe;
+
+    try {
+      const res = await verifyOtp(inputDetails);
+      if (!res?.data?.status) {
+        return toast.error(res?.data?.msg);
+      }
+      toast.success("OTP verified successfully");
+      // setStep(2);
+    } catch (e) {
+      console.log(e);
+      return toast.error("Unable to verify OTP");
+    }
+  }
+
+  async function handleResendOTP() {
+    setCountdown(15);
+    setIsBtnVisible(false);
+  }
+
+  async function sendOtp() {
+    delete inputDetails.rememberMe;
+    try {
+      const res = await requestOtp(inputDetails);
+      if (!res?.data?.status) {
+        toast.error(res?.data?.msg);
+        // return;
+      }
+      toast.success(res?.data?.msg);
+      setStep(3);
+    } catch (e) {
+      console.log(e);
+      toast.error("Unable to send OTP");
+    }
+  }
+
+  return (
+    <>
+      <Header />
+
+      <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
+        {/* main content */}
+        <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
+          {step === 1 && (
+            <div className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
+              <div className="grid grid-cols-1 md:grid-cols-2 h-full">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    handleLogin();
+                  }}
+                  className="h-full flex flex-col md:p-6 mt-12 space-y-4 p-2"
+                >
+                  <h1 className="text-[2.8rem] text-center font-semibold bluetxt pb-2">
+                    Sign In
+                  </h1>
+                  <label className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                    User ID
+                  </label>
+                  <input
+                    type="text"
+                    id="userId"
+                    name="userId"
+                    label="User ID"
+                    // value={userId}
+                    // onChange={(e) => setUserId(e.target.value)}
+                    value={inputDetails.userId}
+                    onChange={(e) => {
+                      setInputDetails({
+                        ...inputDetails,
+                        userId: e.target.value,
+                      });
+                    }}
+                    placeholder="Enter User ID"
+                    className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                    required
+                  />
+                  <div className="">
+                    <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
+                      Password
+                    </div>
+                    <div className="relative z-0">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        placeholder="Enter password"
+                        // value={password}
+                        // onChange={(e) => setPassword(e.target.value)}
+                        value={inputDetails.password}
+                        onChange={(e) => {
+                          setInputDetails({
+                            ...inputDetails,
+                            password: e.target.value,
+                          });
+                        }}
+                        required
+                        id="password"
+                        name="password"
+                        className={`block w-full p-2 py-2.5 border rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm`}
+                      />
+                      <div
+                        className="absolute right-3 top-3 cursor-pointer"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <AiOutlineEyeInvisible size={20} />
+                        ) : (
+                          <AiOutlineEye size={20} />
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center ">
+                    <button
+                      className={`custom-signin-btn ${loading ? "loading" : ""
+                        }`}
+                      disabled={loading}
+                    >
+                      <div className="back"></div>
+                      {!loading ? (
+                        <span className="text">Sign In</span>
+                      ) : (
+                        <div className="circle-spinner" />
+                      )}
+                    </button>
+                  </div>
+                </form>
+                <div
+                  className="hidden md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6"
+                  style={{
+                    borderRadius: "150px 10px 10px 100px",
+                  }}
+                >
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-5"
+                  >
+                    <Link to="https://celitix.com">
+                      <img
+                        src={celitixLogo}
+                        alt="Celitix"
+                        style={{ width: "220px" }}
+                      />
+                    </Link>
+                  </motion.div>
+                  <p className="text-center text-md">
+                    Welcome to the Future of Customer Communication - Your
+                    Engagement Journey Begins Here.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+          {step === 2 && (
+            <>
+              <div className="flex flex-col space-y-3  justify-center">
+                <InputField
+                  id="mobileNo"
+                  name="mobileNo"
+                  label={"Enter Registered Mobile No"}
+                  value={inputDetails.mobileNo}
+                  placeholder="Enter Mobile Number"
+                  onChange={(e) => {
+                    setInputDetails((prev) => ({
+                      ...prev,
+                      mobileNo: e.target.value,
+                    }));
+                  }}
+                  type="number"
+                />
+                <UniversalButton
+                  id="Send Otp"
+                  name="Send Otp"
+                  label={"Send Otp"}
+                  onClick={sendOtp}
+                />
+              </div>
+            </>
+          )}
+          {step === 3 && (
+            <>
+              <div className="flex flex-col space-y-3  justify-center">
+                {/* <label className="text-md font-medium text-gray-500">
+                    Enter Email Otp
+                  </label>
+                  <input
+                    placeholder="Enter Email OTP"
+                    className="w-full p-2  rounded-lg mb-3 bg-gray-100 text-center tracking-wide text-md "
+                    value={otp.email}
+                    otpEmail={123456}
+                    maxLength={6}
+                    onChange={(e) => {
+                      setOtp((prevOtp) => ({
+                        ...prevOtp,
+                        email: e.target.value,
+                      }));
+                    }}
+                  /> */}
+
+                <label className="text-md font-medium text-gray-500">
+                  Enter Otp
+                </label>
+                <input
+                  placeholder="Enter OTP"
+                  className="w-full p-2  rounded-lg  bg-gray-100 text-center tracking-wide text-md border-gray-500 border-2"
+                  value={otp.mobileNo}
+                  // otpPhone={987654}
+                  maxLength={6}
+                  onChange={(e) => {
+                    setOtp((prevOtp) => ({
+                      ...prevOtp,
+                      mobileNo: e.target.value,
+                    }));
+                  }}
+                />
+
+                {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
+
+                <div className="flex justify-center">
+                  <button
+                    className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                    onClick={handleVerifyOtp}
+                  >
+                    Verify OTP
+                  </button>
+                </div>
+
+                {countdown > 0 && (
+                  <p className="text-md text-gray-800 mt-2 flex justify-center">
+                    Resend OTP in {countdown}s
+                  </p>
+                )}
+                {isBtnVisible && (
+                  // <div className="mt-4">
+                  <div className="flex justify-center">
+                    <button
+                      className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                      onClick={handleResendOTP}
+                    >
+                      Resend OTP
+                    </button>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+        {/* main content */}
+        <Footer />
+      </div>
+    </>
+  );
+
+
 };
+export default Login;
+
+
+
+import { motion } from 'framer-motion';
+import { useState } from 'react';
+import { AiOutlineEye, AiOutlineEyeInvisible } from 'react-icons/ai';
+import { KeyboardBackspaceOutlinedIcon } from '@mui/icons-material';
+
+const SignInForm = () => {
+  const [step, setStep] = useState(1);
+  const [inputDetails, setInputDetails] = useState({ userId: '', password: '' });
+  const [otp, setOtp] = useState({ mobileNo: '' });
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [countdown, setCountdown] = useState(60);
+  const [error, setError] = useState('');
+  const [isBtnVisible, setIsBtnVisible] = useState(false);
+
+  // Handle "Back to Login" button click to go back to Step 1
+  const handleBackToLogin = () => {
+    setStep(1); // Go back to Step 1 (Sign In)
+  };
+
+  // Placeholder functions for sending OTP, verifying OTP, etc.
+  const sendOtp = () => { };
+  const handleVerifyOtp = () => { };
+  const handleResendOTP = () => { };
+
+  return (
+    <div className="w-full h-full flex justify-center items-center">
+      <motion.div
+        className="w-full max-w-md bg-white p-8 rounded-lg shadow-lg"
+        initial={{ opacity: 0, x: 100 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: -100 }}
+        transition={{ duration: 0.5 }}
+      >
+        {step === 1 && (
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              // handleLogin(); (Uncomment when implementing login)
+            }}
+            className="h-full flex flex-col space-y-4"
+          >
+            <h1 className="text-3xl text-center font-semibold bluetxt pb-2">Sign In</h1>
+            <label className="text-sm font-medium text-gray-700 mb-2">User ID</label>
+            <input
+              type="text"
+              id="userId"
+              name="userId"
+              placeholder="Enter User ID"
+              value={inputDetails.userId}
+              onChange={(e) => setInputDetails({ ...inputDetails, userId: e.target.value })}
+              className="block w-full p-2 border rounded-md shadow-sm focus:ring-gray-300"
+              required
+            />
+            <div>
+              <label className="text-sm font-medium text-gray-700 mb-2">Password</label>
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Enter Password"
+                  value={inputDetails.password}
+                  onChange={(e) => setInputDetails({ ...inputDetails, password: e.target.value })}
+                  className="block w-full p-2 border rounded-md shadow-sm focus:ring-gray-300"
+                  required
+                />
+                <div
+                  className="absolute right-3 top-3 cursor-pointer"
+                  onClick={() => setShowPassword(!showPassword)}
+                >
+                  {showPassword ? <AiOutlineEyeInvisible size={20} /> : <AiOutlineEye size={20} />}
+                </div>
+              </div>
+            </div>
+            <button
+              className={`w-full py-2 bg-blue-500 text-white rounded-md ${loading ? 'loading' : ''}`}
+              disabled={loading}
+            >
+              {loading ? <div className="circle-spinner" /> : 'Sign In'}
+            </button>
+            <div
+              className="text-sm text-gray-500 cursor-pointer hover:underline mt-2"
+              onClick={() => setStep(2)}
+            >
+              Forgot password? {/* Optional if needed */}
+            </div>
+          </form>
+        )}
+
+        {step === 2 && (
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col space-y-3"
+          >
+            <label className="text-sm font-medium text-gray-700">Enter Registered Mobile No</label>
+            <input
+              type="number"
+              id="mobileNo"
+              name="mobileNo"
+              placeholder="Enter Mobile Number"
+              value={inputDetails.mobileNo}
+              onChange={(e) =>
+                setInputDetails({ ...inputDetails, mobileNo: e.target.value })
+              }
+              className="block w-full p-2 border rounded-md shadow-sm"
+            />
+            <button onClick={sendOtp} className="w-full py-2 bg-green-500 text-white rounded-md">
+              Send OTP
+            </button>
+            <p
+              className="text-sm text-gray-800 cursor-pointer hover:underline mt-2"
+              onClick={handleBackToLogin}
+            >
+              <KeyboardBackspaceOutlinedIcon /> Back to login
+            </p>
+          </motion.div>
+        )}
+
+        {step === 3 && (
+          <motion.div
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -100 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col space-y-3"
+          >
+            <label className="text-sm font-medium text-gray-700">Enter OTP</label>
+            <input
+              type="number"
+              id="otp"
+              name="otp"
+              value={otp.mobileNo}
+              onChange={(e) => setOtp({ ...otp, mobileNo: e.target.value })}
+              maxLength={6}
+              className="block w-full p-2 border rounded-md shadow-sm"
+              placeholder="Enter OTP"
+            />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <button onClick={handleVerifyOtp} className="w-full py-2 bg-blue-500 text-white rounded-md">
+              Verify OTP
+            </button>
+            {countdown > 0 && (
+              <p className="text-sm text-gray-800 mt-2">Resend OTP in {countdown}s</p>
+            )}
+            {isBtnVisible && (
+              <button onClick={handleResendOTP} className="w-full py-2 bg-yellow-500 text-white rounded-md">
+                Resend OTP
+              </button>
+            )}
+            <p
+              className="text-sm text-gray-800 cursor-pointer hover:underline mt-2"
+              onClick={handleBackToLogin}
+            >
+              <KeyboardBackspaceOutlinedIcon /> Back to login
+            </p>
+          </motion.div>
+        )}
+      </motion.div>
+    </div>
+  );
+};
+
+export default SignInForm;
+
+

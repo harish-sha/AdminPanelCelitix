@@ -10,15 +10,9 @@ reseller Admin
 user: Devtest
 pass: 7%3uShWk
 
-whatsapp flows changes files 
-
-whatsapp > whatsappFlows > Pages > FlowCreationPage.jsx - Done
-whatsapp > whatsappFlows > Pages > whatsappFlows.jsx - Done
-whatsapp > whatsappFlows > components > Canvas.jsx - Done
-whatsapp > whatsappFlows > components > EditPanel.jsx - Done
-whatsapp > whatsappFlows > components > MobilePanel.jsx - Done
-whatsapp > whatsappFlows > components > TabView.jsx - Done
-whatsapp > whatsappFlows > lib > generatePayload.js - Done
+reseller user with otp enable
+user: demores
+pass: 9mNVybkc
 
 =================================== Merge file from main to reseller & admin ==================================
 
@@ -49,5 +43,6 @@ OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
 
 ===================
 
-
+add cancel confirm dialog - in user and reseller
+summary table calendar - whatsapp and rcs
 

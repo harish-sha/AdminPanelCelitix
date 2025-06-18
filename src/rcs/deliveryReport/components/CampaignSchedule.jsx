@@ -138,7 +138,7 @@ const CampaignScheduleTable = ({ id, name, data = [], onCancel }) => {
       renderCell: (params) => (
         <>
           <CustomTooltip title="Cancel Schedule" placement="top" arrow={true}>
-            <IconButton onClick={() => onCancel(params.row.srno)}>
+            <IconButton onClick={() => onCancel(params.row.srno, params.row.campaignName)}>
               <CancelOutlinedIcon sx={{ fontSize: "1.2rem", color: "red" }} />
             </IconButton>
           </CustomTooltip>
@@ -149,15 +149,15 @@ const CampaignScheduleTable = ({ id, name, data = [], onCancel }) => {
 
   const rows = Array.isArray(data)
     ? data.map((item, index) => ({
-        id: index + 1, // Unique ID for the row
-        sn: index + 1, // Serial number
-        campaignDate: item.campaignDate || "N/A", // Campaign date
-        campaignName: item.campaignName || "N/A", // Campaign name
-        sentTime: item.sentTime || "N/A", // Sent time
-        count: item.count || "0", // Total audience count
-        processFlag: item.processFlag === 1 ? "Pending" : "Completed", // Status
-        srno: item.srno, // Campaign serial number (used for cancel action)
-      }))
+      id: index + 1, // Unique ID for the row
+      sn: index + 1, // Serial number
+      campaignDate: item.campaignDate || "N/A", // Campaign date
+      campaignName: item.campaignName || "N/A", // Campaign name
+      sentTime: item.sentTime || "N/A", // Sent time
+      count: item.count || "0", // Total audience count
+      processFlag: item.processFlag === 1 ? "Pending" : "Completed", // Status
+      srno: item.srno, // Campaign serial number (used for cancel action)
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

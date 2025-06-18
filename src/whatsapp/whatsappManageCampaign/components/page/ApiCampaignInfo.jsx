@@ -168,12 +168,12 @@ export const ApiCampaignInfo = () => {
   async function handleExport() {
     try {
       const payload = {
-        // type: 1,
+        type: 2,
         // selectedUserId: "",
         fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
         toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        // isCustomField: 1,
-        // customColumns: "",
+        isCustomField: 0,
+        customColumns: "",
         // status: state.log,
         // delStatus: {},
         source: "api"

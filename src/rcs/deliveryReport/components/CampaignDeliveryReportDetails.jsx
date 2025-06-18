@@ -101,12 +101,14 @@ const CampaignDeliveryReportDetails = () => {
     const [filteredData, setFilteredData] = useState([]);
     const [isFetching, setIsFetching] = useState(false);
     const [paginationModel, setPaginationModel] = useState({
-        page: 0,
+        page: 1,
         pageSize: 10,
     });
+    const [pageSize, setPageSize] = useState(10);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
+    let deliverstatusupdate = deliveryStatus || ""
 
     const fetchData = async () => {
         setIsFetching(true);
@@ -114,15 +116,15 @@ const CampaignDeliveryReportDetails = () => {
             campaignSrno,
             mobileNumber,
             currentPage,
-            deliveryStatus,
+            deliverstatusupdate,
         );
         setCampaignDetails(data.data);
         setTotalPage(data.total);
         setIsFetching(false);
     };
+
     useEffect(() => {
         if (!campaignSrno) return;
-
         fetchData();
     }, [campaignSrno, currentPage, mobileNumber]);
 
@@ -169,17 +171,18 @@ const CampaignDeliveryReportDetails = () => {
     const rows = campaignDetails?.map((item, index) => ({
         id: index + 1,
         // srNo: item.srNo || "N/A",
-        sn: index + 1,
+        // sn: index + 1,
+        sn: (currentPage - 1) * pageSize + index + 1,
         mobileNo: item.mobileNo || "N/A",
         status: item.status === "rcs_pending" ? "Pending" : item.status || "N/A",
         sentTime: item.sentTime || "-",
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
-        deliveryStatus: item.deliveryStatus || "-",
-        reason: item.reason.toUpperCase() || "-",
+        deliveryStatus: item.deliveryStatus === "READ" ? "read" : item.deliveryStatus === "DELIVRD" ? "Delivered" : item.deliveryStatus === "UNDELIV" ? "Undelivered" : "-",
+        reason: item.reason.toLowerCase() || "-",
     }));
 
-    const totalPages = Math.floor(totalPage / paginationModel.pageSize);
+    const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
     const CustomFooter = () => {
         return (
@@ -243,6 +246,7 @@ const CampaignDeliveryReportDetails = () => {
     function handlePag() {
         setCurrentPage(currentPage + 1);
     }
+
     return (
         <div className="w-full">
             {/* <button onClick={handlePag}>Click</button> */}
