@@ -54,6 +54,7 @@ const DeliveryreportRcs = () => {
     toDate: new Date(),
     isMonthWise: false,
   });
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [summaryTableData, setSummaryTableData] = useState([]);
 
   // scheduleState
@@ -144,7 +145,6 @@ const DeliveryreportRcs = () => {
 
   //fetchCampaignData
   const handleCampaignSearch = async () => {
-
     const data = {
       startDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
       endDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
@@ -152,7 +152,6 @@ const DeliveryreportRcs = () => {
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
     };
-
 
     try {
       setIsFetching(true);
@@ -165,6 +164,32 @@ const DeliveryreportRcs = () => {
       setIsFetching(false);
     }
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      // if (!summaryData.fromDate || !summaryData.toDate) {
+      //   toast.error("Please select from and to date.");
+      //   return;
+      // }
+
+      const data = {
+        year: moment(FinalFromDate).format("YYYY"),
+        month: moment(FinalFromDate).format("MM"),
+        summaryType: "rcs,date,user",
+        isMonthWise: Number(summaryData.isMonthWise),
+      };
+
+      try {
+        const res = await fetchSummaryReport(data);
+        setSummaryTableData(res);
+      } catch (error) {
+        toast.error("Failed to fetch summary report.");
+        console.error("fetchSummaryReport error:", error);
+      }
+    };
+
+    fetchData();
+  }, [summaryData.isMonthWise]);
 
   //fetchSummaryData
   const handleSummarySearch = async () => {
@@ -263,8 +288,8 @@ const DeliveryreportRcs = () => {
   // };
 
   const handleCancel = (srno, campaignName) => {
-    console.log("srno", srno)
-    console.log("campaignName", campaignName)
+    console.log("srno", srno);
+    console.log("campaignName", campaignName);
     // if (!srno || !campaignName) {
     //   console.error("SRNO is undefined. Cannot cancel campaign.");
     //   toast.error("Failed to cancel campaign. SRNO is missing.");
@@ -499,40 +524,82 @@ const DeliveryreportRcs = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-56">
-                <UniversalDatePicker
-                  label="From Date"
-                  id="fromDate"
-                  name="fromDate"
-                  defaultValue={new Date()}
-                  value={setSummaryData?.fromDate}
-                  onChange={(e) => {
-                    setSummaryData({
-                      ...summaryData,
-                      fromDate: e,
-                    });
-                  }}
-                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                  maxDate={new Date()}
-                />
-              </div>
-              <div className="w-full sm:w-56">
-                <UniversalDatePicker
-                  defaultValue={new Date()}
-                  label="To Date"
-                  id="toDate"
-                  name="toDate"
-                  value={setSummaryData.toDate}
-                  onChange={(e) => {
-                    setSummaryData({
-                      ...summaryData,
-                      toDate: e,
-                    });
-                  }}
-                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                  maxDate={new Date()}
-                />
-              </div>
+              {!summaryData.isMonthWise ? (
+                <>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      label="From Date"
+                      id="fromDate"
+                      name="fromDate"
+                      defaultValue={new Date()}
+                      value={setSummaryData?.fromDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          fromDate: e,
+                        });
+                      }}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                    />
+                  </div>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      defaultValue={new Date()}
+                      label="To Date"
+                      id="toDate"
+                      name="toDate"
+                      value={setSummaryData.toDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          toDate: e,
+                        });
+                      }}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageFromDate"
+                      name="manageFromDate"
+                      label="Month"
+                      value={selectedMonth}
+                      views={["month"]}
+                      onChange={(newValue) => setSelectedMonth(newValue)}
+                      placeholder="Pick a month"
+                      tooltipContent="Select the month"
+                      tooltipPlacement="right"
+                      error={!selectedMonth}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid month"
+                    />
+                  </div>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageFromDate"
+                      name="manageFromDate"
+                      label="Year"
+                      value={selectedMonth}
+                      views={["year"]}
+                      onChange={(newValue) => setSelectedMonth(newValue)}
+                      placeholder="Pick a year"
+                      tooltipContent="Select the year"
+                      tooltipPlacement="right"
+                      error={!selectedMonth}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid year"
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="flex items-center justify-center gap-2">
                 <Checkbox
                   id="isMonthWise"
@@ -693,7 +760,10 @@ const DeliveryreportRcs = () => {
               <div className="p-4 text-center">
                 <p className="text-[1.1rem] font-semibold text-gray-700">
                   Are you sure you want to cancel the campaign:
-                  <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                  <span className="text-green-500">
+                    "{currentRow?.campaignName}"
+                  </span>
+                  ?
                 </p>
                 <p className="mt-2 text-sm text-gray-500">
                   This action is irreversible.
@@ -721,7 +791,6 @@ const DeliveryreportRcs = () => {
           </CustomTabPanel>
         </Box>
       </div>
-
 
       {visibledialog && (
         <ExportDialog
