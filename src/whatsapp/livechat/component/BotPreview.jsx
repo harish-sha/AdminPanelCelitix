@@ -80,8 +80,8 @@ const BotPreview = ({ template }) => {
 
           <div className="space-y-2 text-sm">
             <p className="underline">List Rows</p>
-            {botJson?.interactive?.action?.sections?.map((section) => (
-              <div>
+            {botJson?.interactive?.action?.sections?.map((section,index) => (
+              <div key={index}>
                 {section?.rows?.map((row) => (
                   <div className="flex gap-2">
                     <p>Title: {row?.title}</p>
@@ -159,8 +159,8 @@ const BotPreview = ({ template }) => {
 
           <div className="space-y-2 text-sm">
             <p className="underline">Button Reply Actions</p>
-            {botJson?.interactive?.action?.buttons?.map((button) => (
-              <div>
+            {botJson?.interactive?.action?.buttons?.map((button,index) => (
+              <div key={index}>
                 <div className="flex gap-2">
                   <p>Title: {button?.reply.title}</p>
                 </div>
