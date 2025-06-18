@@ -17,6 +17,8 @@ import FileCopyIcon from "@mui/icons-material/FileCopy";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import toast from "react-hot-toast";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+
 
 import Loader from "@/whatsapp/components/Loader.jsx";
 import InputField from "@/whatsapp/components/InputField.jsx";
@@ -67,6 +69,9 @@ const ObdCampaignReports = () => {
 
   const [filteredRows, setFilteredRows] = useState([]);
   const [dataTable, setDataTable] = useState([]);
+
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   const { user } = useUser();
   const [allUsers, setAllUsers] = useState([]);
@@ -412,13 +417,50 @@ const ObdCampaignReports = () => {
     }
   };
 
-  const handleCancel = async (srno) => {
+  // const handleCancel = async (srno) => {
+  //   try {
+  //     const res = await cancelCamapign(srno, selectedUser);
+  //     toast.success("Campaign deleted successfully");
+  //     fetchScheduleCampaignData();
+  //   } catch (error) {
+  //     console.error("Error in deleting the data");
+  //   }
+  // };
+
+  const handleCancel = (srno, campaignName) => {
+    if (!srno || !campaignName) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("SRNO is missing. Cannot cancel the campaign.");
+      return;
+    }
+
     try {
-      const res = await cancelCamapign(srno, selectedUser);
-      toast.success("Campaign deleted successfully");
-      fetchScheduleCampaignData();
+      setIsFetching(true);
+
+      const result = await cancelCamapign(srno, selectedUser);
+
+      if (result) {
+        toast.success("Campaign Cancelled successfully");
+        fetchScheduleCampaignData();
+        setVisible(false);
+      } else {
+        toast.error("Failed to cancel campaign.");
+      }
     } catch (error) {
-      console.error("Error in deleting the data");
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    } finally {
+      setIsFetching(false);
     }
   };
 
@@ -783,21 +825,66 @@ const ObdCampaignReports = () => {
                     variant="primary"
                   />
                 </div>
-                {/* {isFetching ? (
+                {isFetching ? (
                   <div className="">
                     <UniversalSkeleton height="35rem" width="100%" />
                   </div>
-                ) : ( */}
-                <div className="w-full">
-                  <ManageScheduleCampaignTableObd
-                    id="whatsappManageCampaignScheduleTable"
-                    name="whatsappManageCampaignTable"
-                    data={scheduleData}
-                    onCancel={handleCancel}
-                  // fromDate={selectedDate}
-                  />
-                </div>
-                {/* )} */}
+                ) : (
+                  <div className="w-full">
+                    <ManageScheduleCampaignTableObd
+                      id="whatsappManageCampaignScheduleTable"
+                      name="whatsappManageCampaignTable"
+                      data={scheduleData}
+                      onCancel={handleCancel}
+                    // fromDate={selectedDate}
+                    />
+                  </div>
+                )}
+
+                {/* cancel campaign Start */}
+                <Dialog
+                  header={"Confirm Cancel"}
+                  visible={visible}
+                  style={{ width: "27rem" }}
+                  onHide={() => setVisible(false)}
+                  draggable={false}
+                >
+                  <div className="flex items-center justify-center">
+                    <CancelOutlinedIcon
+                      sx={{
+                        fontSize: 64,
+                        color: "#ff3f3f",
+                      }}
+                    />
+                  </div>
+                  <div className="p-4 text-center">
+                    <p className="text-[1.1rem] font-semibold text-gray-700">
+                      Are you sure you want to cancel the campaign:
+                      <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                    </p>
+                    <p className="mt-2 text-sm text-gray-500">
+                      This action is irreversible.
+                    </p>
+                  </div>
+
+                  <div className="flex justify-center gap-4 mt-2">
+                    {!isFetching && (
+                      <UniversalButton
+                        label="Cancel"
+                        style={{
+                          backgroundColor: "#090909",
+                        }}
+                        onClick={() => setVisible(false)}
+                      />
+                    )}
+                    <UniversalButton
+                      label={isFetching ? "Deleting..." : "Delete"}
+                      style={{}}
+                      onClick={() => handleCancelConfirm(currentRow.srno)}
+                      disabled={isFetching}
+                    />
+                  </div>
+                </Dialog>
               </div>
             </CustomTabPanel>
             {/* Scheduled Report End */}

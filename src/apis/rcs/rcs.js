@@ -39,7 +39,7 @@ export const fetchCampaignDetailReport = async (
   selectedUserId = ""
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}${
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus = ""}${
       selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
     }`,
     {

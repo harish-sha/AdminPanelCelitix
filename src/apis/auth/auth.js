@@ -30,7 +30,7 @@ export const forgotPassword = async (inputDetails) => {
 
 // Verify OTP
 export const verifyOtp = async (data) => {
-  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
+  return await axios.post(`${apiUrl}/user/validate-otp`, data, {
     headers: {
       "Content-Type": "application/json",
     },

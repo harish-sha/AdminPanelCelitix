@@ -94,6 +94,17 @@ const AddUser = () => {
       toast.error("Please Enter First Name");
       return;
     }
+
+    if (!userid) {
+      toast.error("Please Enter User Id");
+      return;
+    }
+
+    if (!/^[a-zA-Z0-9]+$/.test(userid)) {
+      toast.error("User Id should be alphanumeric only");
+      return
+    }
+
     if (!userLastName) {
       toast.error("Please Enter Last Name");
       return;
@@ -169,7 +180,13 @@ const AddUser = () => {
             required
             value={userid}
             maxLength="8"
-            onChange={(e) => setUserId(e.target.value)}
+            // onChange={(e) => setUserId(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^[a-zA-Z0-9]*$/.test(value)) {
+                setUserId(value);
+              }
+            }}
           />
         </div>
         <div className="w-150">

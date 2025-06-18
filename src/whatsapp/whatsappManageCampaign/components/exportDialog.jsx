@@ -803,6 +803,7 @@ export const ExportDialog = ({
         ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
         : "",
       type: dataToExport?.type === "campaign" ? 1 : 2,
+      status: dataToExport.status || "",
       // campaignName: name,
     };
 
@@ -1077,7 +1078,7 @@ export const ExportDialog = ({
                 />
               </div>
             </div>
-
+            {/* 
             <div className="flex flex-col mt-5">
               <UniversalLabel text="Delivery Status" />
               <div className="flex gap-x-5 lg:gap-x-20">
@@ -1151,7 +1152,7 @@ export const ExportDialog = ({
                   </label>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex my-4 gap-4">
               {/* <InputField

@@ -14,9 +14,10 @@ import InputField from "@/components/layout/InputField";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { getIpAddress, login } from "@/apis/auth/auth";
+import { getIpAddress, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
+import { InputOtp } from "primereact/inputotp";
 
 const ResellerLogin = () => {
   const { authLogin } = useUser();
@@ -41,6 +42,8 @@ const ResellerLogin = () => {
 
   const [captchaProblem, setCaptchaProblem] = useState("");
   const [captchaSolution, setCaptchaSolution] = useState(null);
+
+  const [basicDetails, setBasicDetails] = useState({});
 
   const parser = new UAParser();
   const uaResult = parser.getResult();
@@ -113,6 +116,12 @@ const ResellerLogin = () => {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
       const ipResponse = await getIpAddress();
       const domain = window.location.hostname;
+
+      setBasicDetails({
+        systemInfo: uaResult.browser.name,
+        ip: ipResponse?.data?.clientIp,
+      });
+
       const payload = {
         userId: username,
         password,
@@ -121,8 +130,6 @@ const ResellerLogin = () => {
         // ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
         // domain: "reseller.alertsnow.in",
-        // domain: "msg.itbizcon.in",
-        // domain: "digitalyug.in",
         // domain: "",
         domain: domain
       };
@@ -179,7 +186,7 @@ const ResellerLogin = () => {
     setStep("verifyOTP");
   }
 
-  function handleVerifyNumberRequest() {
+  async function handleVerifyNumberRequest() {
     const phoneRegex = /^\d{10}$/;
 
     if (!verifyNumber) {
@@ -187,22 +194,46 @@ const ResellerLogin = () => {
       return;
     }
 
-    if (!phoneRegex.test(verifyNumber)) {
-      toast.error("Invalid mobile number. Please enter a 10-digit number.");
-      return;
-    }
+    // if (!phoneRegex.test(verifyNumber)) {
+    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
+    //   return;
+    // }
+
+    const payload = {
+      userId: username,
+      password: password,
+      mobileNo: verifyNumber,
+    };
+
+    const res = await requestOtp(payload);
 
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
   }
 
-  function handleVerifyNumberOTP() {
-    if (numberOtp === "123456") {
-      toast.success("Successfully Sign");
-      // Optionally reset to login or another appropriate step
-      // setStep("login");
-    } else {
-      toast.error("Incorrect OTP");
+  // function handleVerifyNumberOTP() {
+  //   if (numberOtp === "123456") {
+  //     toast.success("Successfully Sign");
+  //     // Optionally reset to login or another appropriate step
+  //     // setStep("login");
+  //   } else {
+  //     toast.error("Incorrect OTP");
+  //   }
+  // }
+
+  async function handleVerifyNumberOTP() {
+    try {
+      const payload = {
+        userId: username,
+        password: password,
+
+        mobileNo: verifyNumber,
+        otp: numberOtp,
+        ...basicDetails,
+      };
+      const res = await verifyOtp(payload);
+    } catch (e) {
+      toast.error("Unable to Verify OTP");
     }
   }
 
@@ -389,7 +420,7 @@ const ResellerLogin = () => {
                     placeholder="Enter Username"
                     className="w-full p-2 mb-2 border border-gray-200 rounded-md"
                     onChange={(e) => setUsername(e.target.value)}
-                  // maxLength={8}
+                    maxLength={8}
                   />
                 </div>
 
@@ -413,55 +444,21 @@ const ResellerLogin = () => {
                     className="absolute inset-y-0 right-2 top-6 flex items-center"
                   >
                     {showPassword ? (
-                      // Eye Slash (Hide password)
-                      <svg
-                        className="w-5 h-5 text-black hover:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
+                      <AiOutlineEyeInvisible size={20} />
                     ) : (
-                      // Eye Open (Show password)
-                      <svg
-                        className="w-5 h-5 text-black hover:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                        />
-                      </svg>
+                      <AiOutlineEye size={20} />
                     )}
                   </button>
                 </div>
 
-                {/* <div className="flex items-center justify-end">
+                <div className="flex items-center justify-end">
                   <button
                     className="text-black mt-2 cursor-pointer text-right "
                     onClick={() => setStep("forgotPassword")}
                   >
                     Forgot Password?
                   </button>
-                </div> */}
+                </div>
 
                 <h2 className="my-3 text-l">Solve Captcha</h2>
                 <div className="flex justify-between items-center mt-2">
@@ -473,7 +470,6 @@ const ResellerLogin = () => {
                     className="w-2/3 p-2 border border-gray-200 rounded-md"
                     onChange={(e) => {
                       const inputValue = e.target.value;
-                      // Allow only numeric characters
                       if (/^\d*$/.test(inputValue)) {
                         setCaptcha(inputValue);
                       }
@@ -504,7 +500,7 @@ const ResellerLogin = () => {
                   placeholder="Mobile Number"
                   className="w-full p-2 my-4 border border-gray-200 rounded"
                   onChange={(e) => setVerifyNumber(e.target.value)}
-                  maxLength={10}
+                  maxLength={13}
                 />
                 <button
                   className="w-full text-white bg-black p-2 rounded-lg mt-2"
@@ -531,6 +527,7 @@ const ResellerLogin = () => {
                     value={numberOtp}
                     onChange={(e) => setNumberOtp(e.value)}
                     variant={"outlined"}
+                    className="p-2"
                   />
                 </div>
 

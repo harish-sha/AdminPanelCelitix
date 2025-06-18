@@ -35,6 +35,7 @@ import {
   getWabaList,
   getAllCampaignWhatsapp,
   getWhatsappCampaignScheduledReport,
+  downloadCustomWhatsappReport,
 } from "../../apis/whatsapp/whatsapp.js";
 import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
@@ -42,8 +43,10 @@ import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
 import { fetchAllUsers } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
+import { useDownload } from "@/context/DownloadProvider";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -100,10 +103,15 @@ const WhatsappManageCampaign = () => {
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [hasSearched, setHasSearched] = useState(false);
+  const { triggerDownloadNotification } = useDownload();
+
 
   // const { user } = useUser();
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState("");
+
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   //Export Download Reports start
 
@@ -143,8 +151,8 @@ const WhatsappManageCampaign = () => {
     isCustomField: 0,
     customColumns: "",
     campaignType: 0,
-    status: "",
-    delStatus: {},
+    status: "" || "",
+    // delStatus: {},
     type: "campaign",
   });
 
@@ -330,46 +338,56 @@ const WhatsappManageCampaign = () => {
         selectedUser || "0"
       );
 
-      // console.log("Fetched Schedule Campaign Data:", data);
-
-      const mappedData = Array.isArray(data)
-        ? data.map((item, index) => ({
-          id: item.srno || `row-${index}`,
-          sn: index + 1,
-          campaignName: item.campaignName || "N/A",
-          campaignDate: item.campaignDate || "N/A",
-          sentTime: item.sentTime || "N/A",
-          count: item.count || "N/A",
-          processFlag: item.processFlag === 1 ? "Pending" : "Completed",
-          srno: item.srno,
-        }))
+      const sortedData = Array.isArray(data)
+        ? data.sort((a, b) => new Date(b.sentTime) - new Date(a.sentTime))
         : [];
 
-      // console.log("Mapped Schedule Campaign Data:", mappedData);
+      // const mappedData = Array.isArray(data)
+      //   ? data.map((item, index) => ({
+      //     id: item.srno || `row-${index}`,
+      //     sn: index + 1,
+      //     campaignName: item.campaignName || "N/A",
+      //     campaignDate: item.campaignDate || "N/A",
+      //     sentTime: item.sentTime || "N/A",
+      //     count: item.count || "N/A",
+      //     processFlag: item.processFlag === 1 ? "Pending" : "Completed",
+      //     srno: item.srno,
+      //   }))
+      //   : [];
 
-      // Apply filters
-      const formattedSelectedDate =
-        scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
-          ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
-          : null;
+      const rows = sortedData.map((item, index) => ({
+        id: item.srno || `row-${index}`,
+        sn: index + 1,
+        srno: item.srno,
+        sentTime: item.sentTime || "N/A",
+        campaignName: item.campaignName || "N/A",
+        campaignDate: item.campaignDate || "N/A",
+        count: item.count || "N/A",
+        processFlag: item.processFlag === 1 ? "Scheduled" : "Completed",
+      }));
 
-      const filteredData = mappedData.filter((item) => {
-        const matchesName = scheduleCampaignName
-          ? item.campaignName
-            .toLowerCase()
-            .includes(scheduleCampaignName.toLowerCase())
-          : true;
+      // const formattedSelectedDate =
+      //   scheduleSelectedDate && !isNaN(new Date(scheduleSelectedDate))
+      //     ? moment(scheduleSelectedDate).format("YYYY-MM-DD")
+      //     : null;
 
-        const matchesDate = formattedSelectedDate
-          ? item.campaignDate === formattedSelectedDate
-          : true;
+      // const filteredData = mappedData.filter((item) => {
+      //   const matchesName = scheduleCampaignName
+      //     ? item.campaignName
+      //       .toLowerCase()
+      //       .includes(scheduleCampaignName.toLowerCase())
+      //     : true;
 
-        return matchesName && matchesDate;
-      });
+      //   const matchesDate = formattedSelectedDate
+      //     ? item.campaignDate === formattedSelectedDate
+      //     : true;
 
-      // console.log("Filtered Schedule Campaign Data:", filteredData);
+      //   return matchesName && matchesDate;
+      // });
 
-      setScheduleData(filteredData);
+      // setScheduleData(filteredData);
+
+      setScheduleData(rows);
     } catch (error) {
       console.error("Error fetching data:", error);
       toast.error("Failed to fetch schedule campaign data.");
@@ -378,34 +396,70 @@ const WhatsappManageCampaign = () => {
     }
   };
 
-  const handleCancel = async (srno) => {
-    if (!srno) {
+  const handleCancel = (srno, campaignName) => {
+    if (!srno || !campaignName) {
       console.error("SRNO is undefined. Cannot cancel campaign.");
       toast.error("Failed to cancel campaign. SRNO is missing.");
       return;
     }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("SRNO is missing. Cannot cancel the campaign.");
+      return;
+    }
 
     try {
-      // console.log("Canceling campaign with SRNO:", srno);
-      const result = await cancelCampaign({
-        srno: srno,
-        selectedUserId: selectedUser || "0",
-      });
-      if (result) {
-        // console.log("Campaign cancelled successfully:", result);
-        toast.success("Campaign Cancelled successfully");
+      setIsFetching(true);
 
-        // Refresh the table by fetching the data again
+      const result = await cancelCampaign({ srno: srno, selectedUserId: selectedUser || "0", });
+
+      if (result) {
+        toast.success("Campaign Cancelled successfully");
         fetchScheduleCampaignData();
+        setVisible(false);
       } else {
-        console.warn("Cancel request failed or returned empty response.");
-        toast.error("Cancel request failed");
+        toast.error("Failed to cancel campaign.");
       }
     } catch (error) {
       console.error("Error cancelling campaign:", error);
       toast.error("Error cancelling campaign");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  // const handleCancel = async (srno) => {
+  //   if (!srno) {
+  //     console.error("SRNO is undefined. Cannot cancel campaign.");
+  //     toast.error("Failed to cancel campaign. SRNO is missing.");
+  //     return;
+  //   }
+
+  //   try {
+  //     // console.log("Canceling campaign with SRNO:", srno);
+  //     const result = await cancelCampaign({
+  //       srno: srno,
+  //       selectedUserId: selectedUser || "0",
+  //     });
+  //     if (result) {
+  //       // console.log("Campaign cancelled successfully:", result);
+  //       toast.success("Campaign Cancelled successfully");
+
+  //       // Refresh the table by fetching the data again
+  //       fetchScheduleCampaignData();
+  //     } else {
+  //       console.warn("Cancel request failed or returned empty response.");
+  //       toast.error("Cancel request failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error cancelling campaign:", error);
+  //     toast.error("Error cancelling campaign");
+  //   }
+  // };
 
   // useEffect(() => {
   //   fetchScheduleCampaignData();
@@ -525,6 +579,35 @@ const WhatsappManageCampaign = () => {
     // setSummaryReport(result);
     setIsFetching(false);
   };
+
+  async function handleExport() {
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: selectedUser || "",
+        fromDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
+        toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
+        isCustomField: 0,
+        // customColumns: "",
+        customColumns: "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
+        // status: state.log,
+        status: "",
+        // deliveryStatus: "",
+        source: "api"
+      };
+
+      const res = await downloadCustomWhatsappReport(payload);
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+      triggerDownloadNotification();
+    } catch (e) {
+      console.log(e)
+      toast.error("Error downloading attachment");
+    }
+  }
 
   return (
     <div className="w-full ">
@@ -828,15 +911,33 @@ const WhatsappManageCampaign = () => {
                     tooltipPlacement="right"
                   />
                 </div>
-                <div className="w-max-content ">
-                  <UniversalButton
-                    id="manageCampaignLogsShowhBtn"
-                    name="manageCampaignLogsShowhBtn"
-                    label={isFetching ? "Searching..." : "Search"}
-                    icon={<IoSearch />}
-                    onClick={handleShowLogs}
-                    variant="primary"
-                  />
+                <div className="flex items-end gap-3" >
+
+
+                  <div className="w-max-content ">
+                    <UniversalButton
+                      id="manageCampaignLogsShowhBtn"
+                      name="manageCampaignLogsShowhBtn"
+                      label={isFetching ? "Searching..." : "Search"}
+                      icon={<IoSearch />}
+                      onClick={handleShowLogs}
+                      variant="primary"
+                    />
+                  </div>
+                  <div className="w-max-content" >
+                    <UniversalButton
+                      id="export"
+                      name="export"
+                      onClick={handleExport}
+                      label={"Export"}
+                      icon={
+                        <IosShareOutlinedIcon
+                          fontSize="small"
+                          sx={{ marginBottom: "1px" }}
+                        />
+                      }
+                    />
+                  </div>
                 </div>
               </div>
               {/* {isFetching ? (
@@ -1137,6 +1238,53 @@ const WhatsappManageCampaign = () => {
                   />
                 </div>
               )}
+
+              {/* cancel campaign Start */}
+              <Dialog
+                header={"Confirm Cancel"}
+                visible={visible}
+                style={{ width: "27rem" }}
+                onHide={() => setVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon
+                    sx={{
+                      fontSize: 64,
+                      color: "#ff3f3f",
+                    }}
+                  />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Are you sure you want to cancel the campaign:
+                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                  </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    This action is irreversible.
+                  </p>
+                </div>
+
+                <div className="flex justify-center gap-4 mt-2">
+                  {!isFetching && (
+                    <UniversalButton
+                      label="Cancel"
+                      style={{
+                        backgroundColor: "#090909",
+                      }}
+                      onClick={() => setVisible(false)}
+                    />
+                  )}
+                  <UniversalButton
+                    label={isFetching ? "Deleting..." : "Delete"}
+                    style={{}}
+                    onClick={() => handleCancelConfirm(currentRow.srno)}
+                    disabled={isFetching}
+                  />
+                </div>
+              </Dialog>
+
+              {/* cancel campaign End */}
 
               {/* {isFetching ? (
                 <UniversalSkeleton height="35rem" width="100%" />
