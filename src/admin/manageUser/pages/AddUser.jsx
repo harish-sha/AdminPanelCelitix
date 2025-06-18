@@ -101,7 +101,7 @@ const AddUser = () => {
 
     if (!/^[a-zA-Z0-9]+$/.test(userid)) {
       toast.error("User Id should be alphanumeric only");
-      return
+      return;
     }
 
     if (!userLastName) {
@@ -179,7 +179,12 @@ const AddUser = () => {
             required
             value={userid}
             maxLength="8"
-            onChange={(e) => setUserId(e.target.value)}
+            onChange={(e) => {
+              const value = e.target.value;
+              if (/^[a-zA-Z0-9]*$/.test(value)) {
+                setUserId(value);
+              }
+            }}
           />
         </div>
         <div className="w-150">
