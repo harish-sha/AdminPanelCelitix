@@ -106,115 +106,7 @@ export const ApiCampaignInfo = () => {
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [clicked, setClicked] = useState([]);
   const closeDropdown = () => setDropdownOpenId(null);
-
-  const handleInfo = (row) => {
-    const id = row.id;
-    setDropdownOpenId((prevId) => (prevId === id ? null : id));
-    setClicked(row.additionalInfo || []);
-  };
-
-
-  async function handleFetchDetails(page = 1) {
-    try {
-      // const payload = {
-      //   mobile: "",
-      //   page: 0,
-      //   source: "",
-      //   deliveryStatus: state.log,
-      //   status: "",
-      // };
-      // later update with upper code
-
-      setIsLoading(true);
-
-      const formattedFromDate = state.selectedDate
-        ? moment(state.selectedDate).format("YYYY-MM-DD")
-        : moment().format("YYYY-MM-DD");
-
-      let status = "";
-      let deliveryStatus = "";
-      let selectedUser = state.selectedUser;
-      console.log(selectedUser)
-
-      const statusBased = ["failed", "submitted", "block", "busy"];
-      const deliveryBased = ["read", "delivered", "undelivered"];
-
-      if (statusBased.includes(state.log)) {
-        status = state.log;
-      } else if (deliveryBased.includes(state.log)) {
-        deliveryStatus = state.log;
-      }
-
-      const payload = {
-        fromDate: formattedFromDate,
-        selectedUserId: selectedUser || 0,
-        toDate: formattedFromDate,
-        mobile: "",
-        page,
-        pageSize: paginationModel.pageSize,
-        source: "API",
-        deliveryStatus,
-        status,
-      };
-      const res = await getListofSendMsg(payload);
-      console.log("mapped data", res)
-      setTotalPage(res?.pages || 0);
-
-      const formattedData = Array.isArray(res.data)
-        ? res?.data?.map((item, index) => ({
-          sn: index + 1,
-          id: index + 1,
-          ...item,
-        }))
-        : [];
-
-      setData(formattedData);
-    } catch (e) {
-      console.log(e);
-      return toast.error("Error fetching data");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-  // useEffect(() => {
-  //   if (!state) {
-  //     window.history.back();
-  //     return;
-  //   }
-  //   handleFetchDetails();
-  // }, [state]);
-
-  async function handleExport() {
-    let selectedUser = state.selectedUser;
-    try {
-      const payload = {
-        type: 2,
-        selectedUserId: selectedUser,
-        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        isCustomField: 0,
-        customColumns: "",
-        status: state.log,
-        delStatus: {},
-      };
-      const res = await downloadCustomWhatsappReport(payload);
-
-      if (!res?.status) {
-        return toast.error(res?.msg);
-      }
-
-      toast.success(res?.msg);
-      triggerDownloadNotification();
-
-    } catch (e) {
-      toast.error("Error downloading attachment");
-      console.log(e);
-    }
-  }
-
-  useEffect(() => {
-    handleFetchDetails(currentPage);
-  }, [currentPage]);
+  const [totalRecords, setTotalRecords] = useState(0);
 
   const columns = [
     { field: "sn", headerName: "S.No", width: 60 },
@@ -311,28 +203,154 @@ export const ApiCampaignInfo = () => {
   //   }))
   //   : [];
 
-  const rows = Array.isArray(data)
-    ? data.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      wabaNumber: item.wabaNumber,
-      mobileNo: item.mobileNo,
-      source: item.source,
-      status: item.status,
-      deliveryStatus: item.deliveryStatus,
-      reason: item.reason || "-",
-      requestJson: item.requestJson || "-",
-      readTime: item.readTime || "-",
-      queTime: item.queTime || "-",
-      sentTime: item.sentTime || "-",
-      additionalInfo: {
-        queTime: item.queTime || "-",
-        readTime: item.readTime || "-",
-        // sentTime: item.sentTime || "N/A",
-      },
-      // ...item,
-    }))
-    : [];
+  // const rows = Array.isArray(data)
+  //   ? data.map((item, i) => ({
+  //     id: i + 1,
+  //     sn: i + 1,
+  //     wabaNumber: item.wabaNumber,
+  //     mobileNo: item.mobileNo,
+  //     source: item.source,
+  //     status: item.status,
+  //     deliveryStatus: item.deliveryStatus,
+  //     reason: item.reason || "-",
+  //     requestJson: item.requestJson || "-",
+  //     readTime: item.readTime || "-",
+  //     queTime: item.queTime || "-",
+  //     sentTime: item.sentTime || "-",
+  //     additionalInfo: {
+  //       queTime: item.queTime || "-",
+  //       readTime: item.readTime || "-",
+  //       // sentTime: item.sentTime || "N/A",
+  //     },
+  //     // ...item,
+  //   }))
+  //   : [];
+
+  const handleInfo = (row) => {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+    setClicked(row.additionalInfo || []);
+  };
+
+  const handleFetchDetails = async (page = 1) => {
+    setIsLoading(true);
+    try {
+
+      const formattedFromDate = state.selectedDate
+        ? moment(state.selectedDate).format("YYYY-MM-DD")
+        : moment().format("YYYY-MM-DD");
+
+      let status = "";
+      let deliveryStatus = "";
+      let selectedUser = state.selectedUser || 0;
+
+      const statusBased = ["failed", "submitted", "block", "busy"];
+      const deliveryBased = ["read", "delivered", "undelivered"];
+
+      if (statusBased.includes(state.log)) {
+        status = state.log;
+      } else if (deliveryBased.includes(state.log)) {
+        deliveryStatus = state.log;
+      }
+
+      const payload = {
+        fromDate: formattedFromDate,
+        selectedUserId: selectedUser,
+        toDate: formattedFromDate,
+        mobile: "",
+        page,
+        pageSize: paginationModel.pageSize,
+        source: "API",
+        deliveryStatus,
+        status,
+      };
+      const res = await getListofSendMsg(payload);
+
+      setTotalPage(res?.pages || 0);
+      setTotalRecords(res?.total || 0);
+
+      // const formattedData = Array.isArray(res.data)
+      //   ? res?.data?.map((item, index) => ({
+      //     sn: index + 1,
+      //     id: index + 1,
+      //     ...item,
+      //   }))
+      //   : [];
+
+      // setData(formattedData);
+      if (res?.data) {
+        const formattedData = res.data.map((item, index) => ({
+          sn: (page - 1) * paginationModel.pageSize + index + 1,
+          // id: item.id || `row-${index}`, // Ensure unique IDs for rows
+          id: `${item.id || 'row'}-${(page - 1) * paginationModel.pageSize + index}`,
+          wabaNumber: item.wabaNumber || "N/A",
+          mobileNo: item.mobileNo || "N/A",
+          source: item.source || "N/A",
+          status: item.status || "N/A",
+          deliveryStatus: item.deliveryStatus || "-",
+          reason: item.reason || "-",
+          requestJson: item.requestJson || "-",
+          // readTime: item.readTime || "-",
+          // queTime: item.queTime || "-",
+          sentTime: item.sentTime || "-",
+          additionalInfo: {
+            queTime: item.queTime || "-",
+            readTime: item.readTime || "-",
+          },
+        }));
+
+        setData(formattedData);
+      } else {
+        toast.error("No data received");
+      }
+    } catch (e) {
+      console.log(e);
+      return toast.error("Error fetching data");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+  // useEffect(() => {
+  //   if (!state) {
+  //     window.history.back();
+  //     return;
+  //   }
+  //   handleFetchDetails();
+  // }, [state]);
+
+  async function handleExport() {
+    let selectedUser = state.selectedUser;
+    try {
+      const payload = {
+        type: 2,
+        selectedUserId: selectedUser,
+        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+        isCustomField: 0,
+        customColumns: "",
+        status: state.log,
+        delStatus: {},
+      };
+      const res = await downloadCustomWhatsappReport(payload);
+
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+
+      toast.success(res?.msg);
+      triggerDownloadNotification();
+
+    } catch (e) {
+      toast.error("Error downloading attachment");
+      console.log(e);
+    }
+  }
+
+  useEffect(() => {
+    handleFetchDetails(currentPage);
+  }, [currentPage]);
+
+
 
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
   const totalPages = totalPage;
@@ -373,9 +391,9 @@ export const ApiCampaignInfo = () => {
             </Typography>
           )}
 
-          {/* <Typography variant="body2">
-            Total Records: <span className="font-semibold">{totalPage}</span>
-          </Typography> */}
+          <Typography variant="body2">
+            Total Records: <span className="font-semibold">{totalRecords}</span>
+          </Typography>
         </Box>
 
         <Box
@@ -425,7 +443,7 @@ export const ApiCampaignInfo = () => {
           <DataGrid
             // id={id}
             // name={name}
-            rows={rows}
+            rows={data}
             columns={columns}
             initialState={{ pagination: { paginationModel } }}
             // checkboxSelection
@@ -434,7 +452,7 @@ export const ApiCampaignInfo = () => {
               footer: CustomFooter,
               noRowsOverlay: CustomNoRowsOverlay,
             }}
-            slotProps={{ footer: { totalRecords: rows.length } }}
+            slotProps={{ footer: { totalRecords: data.length } }}
             onRowSelectionModelChange={(ids) => { }}
             disableRowSelectionOnClick
             // autoPageSize

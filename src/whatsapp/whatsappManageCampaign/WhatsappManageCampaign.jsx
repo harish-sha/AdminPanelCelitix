@@ -587,7 +587,7 @@ const WhatsappManageCampaign = () => {
         selectedUserId: selectedUser || "",
         fromDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
         toDate: moment(selectedDateLogs).format("YYYY-MM-DD"),
-        isCustomField: 0,
+        isCustomField: 1,
         // customColumns: "",
         customColumns: "mobile_no,charged_multiplier,status,delivery_status,que_time,sent_time,delivery_time,read_status,reason,source",
         // status: state.log,
