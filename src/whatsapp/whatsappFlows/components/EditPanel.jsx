@@ -32,9 +32,9 @@ import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
-import IfElseBlock from "./IfElseBlock"
+import IfElseBlock from "./IfElseBlock";
 
-import RichTextEditor from "./Editor.jsx"
+import RichTextEditor from "./Editor.jsx";
 
 const EditPanel = ({
   selectedItem,
@@ -57,7 +57,8 @@ const EditPanel = ({
   switchChecked,
   setSwitchChecked,
   screens,
-  onPayloadChange
+  onPayloadChange,
+  handleComponentUpdate
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -394,7 +395,7 @@ const EditPanel = ({
   };
 
   // richtextPayload
-  const [richTextPayload, setRichTextPayload] = useState()
+  const [richTextPayload, setRichTextPayload] = useState();
 
   // // opt-in
 
@@ -692,6 +693,7 @@ const EditPanel = ({
   const [elseComponents, setElseComponents] = useState();
   const [selectedElseComponent, setSelectedElseComponent] = useState();
   const [selectedCondition, setSelectedCondition] = useState();
+  const [componentTree, setComponentTree] = useState({});
 
   const handleIfElseSave = () => {
     if (!selectedCondition) {
@@ -723,6 +725,24 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
+  };
+
+  const handleUpdateTree = (path, data) => {
+    setComponentTree((prev) => {
+      const updated = { ...prev };
+      let node = updated;
+
+      path.forEach((key, index) => {
+        if (!node[key]) node[key] = {};
+        if (index === path.length - 1) {
+          node[key] = data;
+        } else {
+          node = node[key];
+        }
+      });
+
+      return { ...updated };
+    });
   };
 
   // date
@@ -2275,10 +2295,6 @@ const EditPanel = ({
     onClose();
   };
 
-
-
-
-
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -2694,9 +2710,20 @@ const EditPanel = ({
             )}
           {/* NEW */}
 
-          {selectedItem.type === "richText" && (
-            <RichTextEditor onPayloadChange={(payload) => setRichTextPayload(payload)} />
+          {/* {selectedItem.type === "richText" && (
+            <RichTextEditor
+              onPayloadChange={(payload) => setRichTextPayload(payload)}
+            />
+          )} */}
+
+          {selectedItem?.type === "richText" && (
+            <RichTextEditor
+              content={selectedItem?.content || ""}
+              text={selectedItem?.text || []}
+              onUpdate={handleComponentUpdate}
+            />
           )}
+
 
           {/* richtext strt here */}
           {/* {selectedItem.type === "richText" && (
@@ -2731,8 +2758,6 @@ const EditPanel = ({
 )} */}
 
           {/* richtext ends here */}
-
-
 
           {/* Editable Options for Checkboxes */}
           {(selectedItem?.type === "checkBox" ||
@@ -4180,17 +4205,23 @@ const EditPanel = ({
            */}
 
           {selectedItem?.type === "ifelse" && (
-            <IfElseBlock
-              level={1}
-              selectedThenComponent={selectedThenComponent}
-              setSelectedThenComponent={setSelectedThenComponent}
-              selectedElseComponent={selectedElseComponent}
-              handleIfElseSave={handleIfElseSave}
-              setSelectedElseComponent={setSelectedElseComponent}
-              selectedCondition={selectedCondition}
-              setSelectedCondition={setSelectedCondition}
-            />
+            <>
+              <IfElseBlock
+                level={1}
+                selectedThenComponent={selectedThenComponent}
+                setSelectedThenComponent={setSelectedThenComponent}
+                selectedElseComponent={selectedElseComponent}
+                setSelectedElseComponent={setSelectedElseComponent}
+                selectedCondition={selectedCondition}
+                setSelectedCondition={setSelectedCondition}
+                handleIfElseSave={handleIfElseSave}
+                onUpdateTree={handleUpdateTree}
+              />
+
+            </>
           )}
+
+
 
 
           {/* Editable option for date In */}

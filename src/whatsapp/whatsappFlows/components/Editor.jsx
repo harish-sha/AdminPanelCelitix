@@ -359,6 +359,7 @@
 
 // RichTextEditor.jsx - Markdown-style payload generator without turndownService
 import React, { useRef, useState } from "react";
+
 import toast from "react-hot-toast";
 import {
   FormatBoldOutlined,
@@ -371,6 +372,78 @@ import {
 } from "@mui/icons-material";
 import UniversalButton from "../../components/UniversalButton";
 
+export const convertNodeToMarkdown = (node) => {
+  if (!node) return "";
+
+  if (node.nodeType === 3) return node.nodeValue;
+  if (node.nodeType !== 1) return "";
+
+  const tag = node.tagName.toLowerCase();
+  const children = Array.from(node.childNodes)
+    .map(convertNodeToMarkdown)
+    .join("");
+
+  switch (tag) {
+    case "h1":
+      return `# ${children.trim()}`;
+    case "h2":
+      return `## ${children.trim()}`;
+    case "strong":
+    case "b":
+      return `**${children}**`;
+    case "em":
+    case "i":
+      return `*${children}*`;
+    case "s":
+    case "strike":
+      return `~~${children}~~`;
+    case "a":
+      return `[${children}](${node.getAttribute("href")})`;
+    case "img":
+      return `![${node.getAttribute("alt") || ""}](${node.getAttribute(
+        "src"
+      )})`;
+    case "ul":
+      return Array.from(node.children)
+        .map((li) => `+ ${convertNodeToMarkdown(li)}`)
+        .join("\n");
+    case "ol":
+      return Array.from(node.children)
+        .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+        .join("\n");
+    case "li":
+      return children;
+    case "br":
+      return "\n";
+    case "p":
+      return children;
+    case "table": {
+      const rows = Array.from(node.querySelectorAll("tr"));
+      return rows
+        .map((row, i) => {
+          const cells = Array.from(row.children).map((cell) =>
+            convertNodeToMarkdown(cell)
+          );
+          return (
+            `| ${cells.join(" | ")} |` +
+            (i === 0
+              ? `\n| ${cells.map(() => "--------").join(" | ")} |`
+              : "")
+          );
+        })
+        .join("\n");
+    }
+    case "thead":
+    case "tbody":
+    case "tr":
+    case "th":
+    case "td":
+      return children;
+    default:
+      return children;
+  }
+};
+
 const RichTextEditor = ({ onPayloadChange }) => {
   const editorRef = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
@@ -380,6 +453,8 @@ const RichTextEditor = ({ onPayloadChange }) => {
     editorRef.current?.focus();
     document.execCommand(command, false, value);
   };
+
+
 
   const insertLink = () => {
     let inputValue = "";
@@ -468,7 +543,7 @@ const RichTextEditor = ({ onPayloadChange }) => {
   };
 
   const insertTable = () => {
-  const tableHTML = `
+    const tableHTML = `
     <table>
       <thead>
         <tr>
@@ -496,103 +571,152 @@ const RichTextEditor = ({ onPayloadChange }) => {
       </tbody>
     </table><br/>
   `;
-  editorRef.current?.focus();
-  document.execCommand("insertHTML", false, tableHTML);
-  toast.success("Table inserted!");
-};
-
-
-
-
-  const convertNodeToMarkdown = (node) => {
-    if (!node) return "";
-
-    if (node.nodeType === 3) return node.nodeValue; // TextNode
-    if (node.nodeType !== 1) return "";
-
-    const tag = node.tagName.toLowerCase();
-    const children = Array.from(node.childNodes)
-      .map(convertNodeToMarkdown)
-      .join("");
-
-    switch (tag) {
-      case "h1":
-        return `# ${children.trim()}`;
-      case "h2":
-        return `## ${children.trim()}`;
-      case "strong":
-      case "b":
-        return `**${children}**`;
-      case "em":
-      case "i":
-        return `*${children}*`;
-      case "s":
-      case "strike":
-        return `~~${children}~~`;
-      case "a":
-        return `[${children}](${node.getAttribute("href")})`;
-      case "img":
-        return `![${node.getAttribute("alt") || ""}](${node.getAttribute(
-          "src"
-        )})`;
-      case "ul":
-        return Array.from(node.children)
-          .map((li) => `+ ${convertNodeToMarkdown(li)}`)
-          .join("\n");
-      case "ol":
-        return Array.from(node.children)
-          .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
-          .join("\n");
-      case "li":
-        return children;
-      case "br":
-        return "\n";
-      case "p":
-        return children;
-      case "table": {
-        const rows = Array.from(node.querySelectorAll("tr"));
-        return rows
-          .map((row, i) => {
-            const cells = Array.from(row.children).map((cell) =>
-              convertNodeToMarkdown(cell)
-            );
-            return (
-              `| ${cells.join(" | ")} |` +
-              (i === 0
-                ? `\n| ${cells.map(() => "--------").join(" | ")} |`
-                : "")
-            );
-          })
-          .join("\n");
-      }
-      case "thead":
-      case "tbody":
-      case "tr":
-      case "th":
-      case "td":
-        return children;
-      default:
-        return children;
-    }
+    editorRef.current?.focus();
+    document.execCommand("insertHTML", false, tableHTML);
+    toast.success("Table inserted!");
   };
+
+  // export  const convertNodeToMarkdown = (node) => {
+  //   if (!node) return "";
+
+  //   if (node.nodeType === 3) return node.nodeValue; 
+  //   if (node.nodeType !== 1) return "";
+
+  //   const tag = node.tagName.toLowerCase();
+  //   const children = Array.from(node.childNodes)
+  //     .map(convertNodeToMarkdown)
+  //     .join("");
+
+  //   switch (tag) {
+  //     case "h1":
+  //       return `# ${children.trim()}`;
+  //     case "h2":
+  //       return `## ${children.trim()}`;
+  //     case "strong":
+  //     case "b":
+  //       return `**${children}**`;
+  //     case "em":
+  //     case "i":
+  //       return `*${children}*`;
+  //     case "s":
+  //     case "strike":
+  //       return `~~${children}~~`;
+  //     case "a":
+  //       return `[${children}](${node.getAttribute("href")})`;
+  //     case "img":
+  //       return `![${node.getAttribute("alt") || ""}](${node.getAttribute(
+  //         "src"
+  //       )})`;
+  //     case "ul":
+  //       return Array.from(node.children)
+  //         .map((li) => `+ ${convertNodeToMarkdown(li)}`)
+  //         .join("\n");
+  //     case "ol":
+  //       return Array.from(node.children)
+  //         .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+  //         .join("\n");
+  //     case "li":
+  //       return children;
+  //     case "br":
+  //       return "\n";
+  //     case "p":
+  //       return children;
+  //     case "table": {
+  //       const rows = Array.from(node.querySelectorAll("tr"));
+  //       return rows
+  //         .map((row, i) => {
+  //           const cells = Array.from(row.children).map((cell) =>
+  //             convertNodeToMarkdown(cell)
+  //           );
+  //           return (
+  //             `| ${cells.join(" | ")} |` +
+  //             (i === 0
+  //               ? `\n| ${cells.map(() => "--------").join(" | ")} |`
+  //               : "")
+  //           );
+  //         })
+  //         .join("\n");
+  //     }
+  //     case "thead":
+  //     case "tbody":
+  //     case "tr":
+  //     case "th":
+  //     case "td":
+  //       return children;
+  //     default:
+  //       return children;
+  //   }
+  // };
+
+  // const handleSave = () => {
+  //   const html = editorRef.current?.innerHTML || "";
+  //   setContent(html);
+  //   toast.success("Changes saved!");
+
+
+
+  //   const lines = Array.from(editorRef.current.childNodes)
+  //     .map(convertNodeToMarkdown)
+  //     .map((line) => line.trim())
+  //     .filter((line) => line !== "");
+
+  //   const payload = {
+  //     // type: "RichText",
+  //     text: lines,
+  //   };
+
+  //   console.log("Generated RichText Payload:", payload);
+  //   if (onPayloadChange) onPayloadChange(payload);
+
+  // };
 
   const handleSave = () => {
     const html = editorRef.current?.innerHTML || "";
     setContent(html);
-    toast.success("Changes saved!");
 
-    const lines = Array.from(editorRef.current.childNodes)
+    // Convert to markdown
+    const lines = Array.from(editorRef.current?.childNodes || [])
       .map(convertNodeToMarkdown)
       .map((line) => line.trim())
       .filter((line) => line !== "");
 
     const payload = {
-      type: "RichText",
+      type: "richText",
+      content: html,
       text: lines,
     };
 
-    console.log("Generated RichText Payload:", payload);
+    
+
+    toast.success("Changes saved!");
+    console.log("RichText Payload", payload);
+
     if (onPayloadChange) onPayloadChange(payload);
+  };
+
+  const handleComponentUpdate = (newPayload) => {
+    if (selectedItem?.type === "richText") {
+      setTabs((prevTabs) => {
+        const updatedTabs = [...prevTabs];
+        const currentScreen = updatedTabs[activeIndex];
+        const payload = [...currentScreen.payload];
+
+        if (selectedItem.index !== undefined && payload[selectedItem.index]) {
+          payload[selectedItem.index] = {
+            ...payload[selectedItem.index],
+            content: newPayload.content,
+            text: newPayload.text,
+          };
+        }
+
+        updatedTabs[activeIndex] = {
+          ...currentScreen,
+          payload,
+        };
+
+        return updatedTabs;
+      });
+    }
   };
 
   return (
@@ -614,8 +738,8 @@ const RichTextEditor = ({ onPayloadChange }) => {
         <button onClick={() => exec("strikeThrough")} className="btn">
           <StrikethroughSOutlined />
         </button>
-        <button  onClick={() => exec("normalParagraph")} className="btn"> 
-             <StrikethroughSOutlined />
+        <button onClick={() => exec("normalParagraph")} className="btn">
+          <StrikethroughSOutlined />
         </button>
         <button onClick={() => exec("insertUnorderedList")} className="btn">
           <ListAltOutlined />
