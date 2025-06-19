@@ -56,7 +56,6 @@ const DeliveryreportRcs = () => {
   });
   const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [summaryTableData, setSummaryTableData] = useState([]);
-
   // scheduleState
   const [scheduleData, setScheduleData] = useState({
     startDate: new Date(),
@@ -165,56 +164,67 @@ const DeliveryreportRcs = () => {
     }
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      // if (!summaryData.fromDate || !summaryData.toDate) {
-      //   toast.error("Please select from and to date.");
-      //   return;
-      // }
+const handleSummarySearch = async () => {
+  let FinalFromDate, FinalToDate;
 
-      const data = {
-        year: moment(FinalFromDate).format("YYYY"),
-        month: moment(FinalFromDate).format("MM"),
-        summaryType: "rcs,date,user",
-        isMonthWise: Number(summaryData.isMonthWise),
-      };
+  // Case 1: Use selectedMonth if isMonthWise is enabled
+  if (selectedMonth && Number(summaryData.isMonthWise) === 1) {
+    FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
+    FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
+  }
 
-      try {
-        const res = await fetchSummaryReport(data);
-        setSummaryTableData(res);
-      } catch (error) {
-        toast.error("Failed to fetch summary report.");
-        console.error("fetchSummaryReport error:", error);
-      }
-    };
+  // ✅ Case 2: No selectedMonth, but isMonthWise is true — fallback to fromDate
+  else if (
+    Number(summaryData.isMonthWise) === 1 &&
+    summaryData.fromDate
+  ) {
+    const fallbackMonth = summaryData.fromDate;
+    FinalFromDate = moment(fallbackMonth).startOf("month").format("YYYY-MM-DD");
+    FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
 
-    fetchData();
-  }, [summaryData.isMonthWise]);
+    // Clear selectedMonth ONLY in fallback case
+    setSelectedMonth(null);
+  }
 
-  //fetchSummaryData
-  const handleSummarySearch = async () => {
-    if (!summaryData.fromDate || !summaryData.toDate) {
-      toast.error("Please select from and to date.");
-    }
-    const data = {
-      fromDate: moment(summaryData.fromDate).format("YYYY-MM-DD"),
-      toDate: moment(summaryData.toDate).format("YYYY-MM-DD"),
-      // fromDate: "2022-10-01",
-      // toDate: "2025-02-26",
-      summaryType: "rcs,date,user",
-      isMonthWise: Number(summaryData.isMonthWise),
-    };
+  // Case 3: Manual date range mode
+  else if (
+    Number(summaryData.isMonthWise) !== 1 &&
+    summaryData.fromDate &&
+    summaryData.toDate
+  ) {
+    FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
+    FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
 
-    try {
-      setIsFetching(true);
-      const res = await fetchSummaryReport(data);
-      setSummaryTableData(res);
-    } catch (e) {
-      toast.error("Something went wrong.");
-    } finally {
-      setIsFetching(false);
-    }
+    // Optional: clear selectedMonth if switching to manual
+    setSelectedMonth(null);
+  }
+
+  // Invalid case
+  else {
+    toast.error("Please select a valid date range or month.");
+    return;
+  }
+
+  const data = {
+    fromDate: FinalFromDate,
+    toDate: FinalToDate,
+    summaryType: "rcs,date,user",
+    isMonthWise: Number(summaryData.isMonthWise),
   };
+
+  try {
+    setIsFetching(true);
+    const res = await fetchSummaryReport(data);
+    setSummaryTableData(res);
+  } catch (e) {
+    toast.error("Something went wrong.");
+    console.error("Summary Search Error:", e);
+  } finally {
+    setIsFetching(false);
+  }
+};
+
+
 
   // fetchscheduleData
   // const handleScheduleSearch = async () => {
@@ -288,8 +298,6 @@ const DeliveryreportRcs = () => {
   // };
 
   const handleCancel = (srno, campaignName) => {
-    console.log("srno", srno);
-    console.log("campaignName", campaignName);
     // if (!srno || !campaignName) {
     //   console.error("SRNO is undefined. Cannot cancel campaign.");
     //   toast.error("Failed to cancel campaign. SRNO is missing.");
@@ -325,9 +333,9 @@ const DeliveryreportRcs = () => {
     }
   };
 
-  useEffect(() => {
-    handleSummarySearch();
-  }, [summaryData.isMonthWise]);
+  // useEffect(() => {
+  //   handleSummarySearch();
+  // }, [summaryData.isMonthWise]);
 
   function handleExportBtn() {
     setVisibledialog(true);

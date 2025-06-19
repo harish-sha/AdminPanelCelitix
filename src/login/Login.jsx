@@ -637,7 +637,7 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 
-// import Header from "./components/Header";
+import Header from "./components/Header";
 import Footer from "./components/Footer";
 import "./login.css";
 
@@ -856,11 +856,11 @@ const Login = () => {
 
   return (
     <>
-      {/* <Header /> */}
+      <Header />
 
       <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
         {/* main content */}
-        <div className="flex-1 flex items-center justify-center min-h-screen  bg-[#edf5ff]">
+        <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff]">
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}

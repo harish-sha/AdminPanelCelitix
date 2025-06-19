@@ -1085,10 +1085,6 @@ export const ChatScreen = ({
     );
   };
 
-  // const BASE_MEDIA_URL = "https://cb.celitix.com";
-  const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
-  // const BASE_MEDIA_URL = "/image";
-
   // const [BASE_MEDIA_URL, setBaseMediaUrl] = useState("");
 
   // useEffect(() => {
@@ -1103,13 +1099,18 @@ export const ChatScreen = ({
   //   fetchBaseUrl();
   // }, []);
 
+  const BASE_MEDIA_URL = "https://cb.celitix.com";
+
+  // const BASE_MEDIA_URL = "/image";
+
+  // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
+
   const handleDownload = async (url, filename) => {
     try {
       const link = document.createElement("a");
       link.href = url;
       link.setAttribute("download", filename || "file");
-      // href="example.jpg" download="my-image.jpg"
-      link.setAttribute("target", "_blank"); // Corrected this line
+      link.setAttribute("target", "_blank");
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -1120,6 +1121,66 @@ export const ChatScreen = ({
       toast.error("Failed to download the file.");
     }
   };
+
+  // const handleDownload = async (url, filename = "file") => {
+  //   try {
+  //     const proxy = "https://cors-anywhere.herokuapp.com/";
+  //     const finalUrl = `${proxy}${url}`;
+
+  //     const response = await fetch(finalUrl);
+  //     if (!response.ok) throw new Error("Network error");
+
+  //     const blob = await response.blob();
+  //     const blobUrl = URL.createObjectURL(blob);
+
+  //     const link = document.createElement("a");
+  //     link.href = blobUrl;
+  //     link.setAttribute("download", filename);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     URL.revokeObjectURL(blobUrl);
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download failed:", error);
+  //     toast.error("CORS Blocked: Cannot download file directly.");
+  //   }
+  // };
+
+
+
+
+  // const handleDownload = async (relativePathOrUrl, filename = "file") => {
+  //   try {
+  //     // Check if it's already a full URL (starts with http/https)
+  //     const isFullUrl = /^https?:\/\//.test(relativePathOrUrl);
+  //     const url = isFullUrl
+  //       ? relativePathOrUrl
+  //       : `${BASE_MEDIA_URL.replace(/\/$/, "")}/${relativePathOrUrl.replace(/^\/+/, "")}`;
+
+  //     const response = await fetch(url, { mode: 'cors' });
+
+  //     if (!response.ok) throw new Error("Network response was not ok");
+
+  //     const blob = await response.blob();
+  //     const blobUrl = window.URL.createObjectURL(blob);
+
+  //     const link = document.createElement("a");
+  //     link.href = blobUrl;
+  //     link.setAttribute("download", filename);
+  //     document.body.appendChild(link);
+  //     link.click();
+  //     link.remove();
+
+  //     window.URL.revokeObjectURL(blobUrl);
+  //     toast.success("Download started!");
+  //   } catch (error) {
+  //     console.error("Download error:", error);
+  //     toast.error("Failed to download the file.");
+  //   }
+  // };
+
 
   // const handleDownload = async (url, filename) => {
   //   try {

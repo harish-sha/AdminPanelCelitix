@@ -238,7 +238,7 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
                 pagination
                 paginationModel={paginationModel}
                 onPaginationModelChange={setPaginationModel}
-                checkboxSelection
+                // checkboxSelection
                 rowHeight={45}
                 slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
                 slotProps={{ footer: { totalRecords: rows.length } }}

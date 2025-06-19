@@ -101,6 +101,7 @@ const WhatsappManageCampaign = () => {
   const [summaryReport, setSummaryReport] = useState([]);
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
   const [selectedMonth, setSelectedMonth] = useState(new Date());
+  console.log("selectedMonth", selectedMonth)
   const [hasSearched, setHasSearched] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
@@ -462,7 +463,10 @@ const WhatsappManageCampaign = () => {
   useEffect(() => {
     const FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
     const FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
-
+    // if (!selectedWaBaNumber) {
+    //   toast.error("Please select waba Account")
+    //   return;
+    // }
     const fetchMonthWiseReport = async () => {
       try {
         const monthWiseData = await getSummaryReport({
