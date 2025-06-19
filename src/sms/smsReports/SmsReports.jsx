@@ -41,7 +41,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-
+import ManageScheduleCampaignSmsTable from "./components/ManageScheduleCampaignSmsTable";
 import moment from "moment";
 import InfoPopover from "@/components/common/InfoPopover";
 import { ImInfo } from "react-icons/im";
@@ -72,6 +72,7 @@ const SmsReports = () => {
 
   //common State
   const [rows, setRows] = useState([]);
+  const [scheduleData, setScheduleData] = useState([])
   const [columns, setColumns] = useState([]);
 
   //campaign State
@@ -156,6 +157,9 @@ const SmsReports = () => {
     },
     type: "campaign",
   });
+
+  const [visible, setVisible] = useState(false)
+  const [currentRow, setCurrentRow] = useState(null);
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -485,6 +489,7 @@ const SmsReports = () => {
       //     : []
       // );
       setRows(mappedData);
+      setScheduleData(mappedData)
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -669,20 +674,34 @@ const SmsReports = () => {
   //   }
   // };
 
-  const handleScheduleSmsCancel = async (row) => {
-    const srno = row.campaignSrno;
+  // ManageScheduleCampaignSmsTable starts
+  const handleCancel = (srno, campaignName) => {
+    if (!srno || !campaignName) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("SRNO is missing. Cannot cancel the campaign.");
+      return;
+    }
+
     const selectedUserId = 0; // Or dynamically if required
 
     try {
+      setIsFetching(true);
+
       const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+
       if (result) {
         toast.success("Campaign cancelled successfully");
-
-        // Remove it from the data table
-        setCampaignTableData((prev) =>
-          prev.filter((item) => item.campaignSrno !== srno)
-        );
-        setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+        handleScheduleCampaignSearch()
+        setVisible(false)
       } else {
         console.warn("Cancel request failed or returned empty response.");
         toast.error("Cancel request failed");
@@ -690,37 +709,64 @@ const SmsReports = () => {
     } catch (error) {
       console.error("Error cancelling campaign:", error);
       toast.error("Error cancelling campaign");
+    } finally {
+      setIsFetching(false);
     }
   };
+
+  // ManageScheduleCampaignSmsTable ends
+
+  // const handleScheduleSmsCancel = async (row) => {
+  //   const srno = row.campaignSrno;
+  //   const selectedUserId = 0; // Or dynamically if required
+
+  //   try {
+  //     const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+  //     if (result) {
+  //       toast.success("Campaign cancelled successfully");
+
+  //       // Remove it from the data table
+  //       setCampaignTableData((prev) =>
+  //         prev.filter((item) => item.campaignSrno !== srno)
+  //       );
+  //       setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+  //     } else {
+  //       console.warn("Cancel request failed or returned empty response.");
+  //       toast.error("Cancel request failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error cancelling campaign:", error);
+  //     toast.error("Error cancelling campaign");
+  //   }
+  // };
 
   const handleScheduleCampaignSearch = async () => {
     try {
       setIsFetchingScheduleData(true);
 
       const res = await fetchScheduleCampaignData();
-      console.log("API Response:", res);
 
       // Step 1: Map API response first
-      let mappedData = Array.isArray(res)
-        ? res.map((item, i) => ({
-          id: item.srno || `row-${i}`,
-          sn: i + 1,
-          campaign_date: item.campaignDate || "-",
-          campaign_name: item.campaignName || "-",
-          sent_time: item.sentTime || "-",
-          campaignSrno: item.srno,
-        }))
-        : [];
+      // let mappedData = Array.isArray(res)
+      //   ? res.map((item, i) => ({
+      //     id: item.srno || `row-${i}`,
+      //     sn: i + 1,
+      //     campaign_date: item.campaignDate || "-",
+      //     campaign_name: item.campaignName || "-",          
+      //     sent_time: item.sentTime || "-",
+      //     campaignSrno: item.srno,
+      //   }))
+      //   : [];
 
       // Step 2: Extract filters if any
-      const filterCampaignName = campaignScheduleDataToFilter?.campaignName
-        ?.toLowerCase()
-        .trim();
-      const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
-        ? new Date(campaignScheduleDataToFilter.campaignDate)
-          .toISOString()
-          .slice(0, 10)
-        : null;
+      // const filterCampaignName = campaignScheduleDataToFilter?.campaignName
+      //   ?.toLowerCase()
+      //   .trim();
+      // const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
+      //   ? new Date(campaignScheduleDataToFilter.campaignDate)
+      //     .toISOString()
+      //     .slice(0, 10)
+      //   : null;
 
       // Step 3: Filter only if filters are provided
       // if (filterCampaignName || filterCampaignDate) {
@@ -742,46 +788,46 @@ const SmsReports = () => {
       // }
 
       // Step 4: Update table state
-      setCampaignTableData(mappedData);
-      setRows(mappedData);
-
+      // setCampaignTableData(mappedData);
+      // setRows(mappedData);
+      setScheduleData(res)
       // Step 5: Setup columns
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "campaign_date",
-          headerName: "Campaign Date",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 150,
-        },
-        { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Cancel" placement="top" arrow>
-                <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
-                  <CancelOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   {
+      //     field: "campaign_date",
+      //     headerName: "Campaign Date",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 150,
+      //   },
+      //   { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Cancel" placement="top" arrow>
+      //           <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+      //             <CancelOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
     } catch (error) {
       console.error("Error fetching campaign data:", error);
       toast.error("Something went wrong.");
@@ -2008,16 +2054,66 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="ScheduleCampaignTableSms"
               name="ScheduleCampaignTableSms"
               rows={rows}
               col={columns}
+            /> */}
+            <ManageScheduleCampaignSmsTable
+              id="ScheduleCampaignTableSms"
+              name="ScheduleCampaignTableSms"
+              data={scheduleData}
+              onCancel={handleCancel}
             />
           </div>
         </CustomTabPanel>
       </Box>
 
+      {/* cancel campaign Start */}
+              <Dialog
+                header={"Confirm Cancel"}
+                visible={visible}
+                style={{ width: "27rem" }}
+                onHide={() => setVisible(false)}
+                draggable={false}
+              >
+                <div className="flex items-center justify-center">
+                  <CancelOutlinedIcon
+                    sx={{
+                      fontSize: 64,
+                      color: "#ff3f3f",
+                    }}
+                  />
+                </div>
+                <div className="p-4 text-center">
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Are you sure you want to cancel the campaign:
+                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+                  </p>
+                  <p className="mt-2 text-sm text-gray-500">
+                    This action is irreversible.
+                  </p>
+                </div>
+
+                <div className="flex justify-center gap-4 mt-2">
+                  {!isFetching && (
+                    <UniversalButton
+                      label="Cancel"
+                      style={{
+                        backgroundColor: "#090909",
+                      }}
+                      onClick={() => setVisible(false)}
+                    />
+                  )}
+                  <UniversalButton
+                    label={isFetching ? "Deleting..." : "Delete"}
+                    style={{}}
+                    onClick={() => handleCancelConfirm(currentRow.srno)}
+                    disabled={isFetching}
+                  />
+                </div>
+              </Dialog>
       <Dialog
         header={selectedColDetails}
         visible={previousDayDetailsDialog}

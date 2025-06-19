@@ -46,3 +46,33 @@ OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
 add cancel confirm dialog - in user and reseller
 summary table calendar - whatsapp and rcs
 
+scope=public_profile%2Cemail%2Cads_read%2Cads_management%2Cpages_show_list%2Cbusiness_management%2Cpages_manage_metadata%2Cpages_read_engagement%2Cpages_manage_engagement%2Cpages_read_user_content%2Cpages_messaging%2Cpage_events%2Ccatalog_management&sdk=joey&version=v14.0
+
+scope =
+  public_profile,
+  email,
+  ads_read,
+  ads_management,
+  pages_show_list,
+  business_management,
+  pages_manage_metadata,
+  pages_read_engagement,
+  pages_manage_engagement,
+  pages_read_user_content,
+  pages_messaging,
+  page_events,
+  catalog_management
+
+
+scope=public_profile,email,ads_read,ads_management,pages_show_list,business_management,pages_manage_metadata,pages_read_engagement,pages_manage_engagement,pages_read_user_content,pages_messaging,page_events,catalog_management
+&sdk=joey
+&version=v14.0
+
+
+https://www.facebook.com/v14.0/dialog/oauth?
+client_id=YOUR_APP_ID
+&redirect_uri=YOUR_REDIRECT_URI
+&scope=public_profile,email,ads_read,ads_management,pages_show_list,business_management,pages_manage_metadata,pages_read_engagement,pages_manage_engagement,pages_read_user_content,pages_messaging,page_events,catalog_management
+&response_type=code
+&sdk=joey
+

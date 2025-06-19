@@ -102,8 +102,10 @@ const ObdCampaignReports = () => {
     mobno: "",
   });
 
-  const [visible, setVisible] = useState(false);
+  // ManageScheduleCampaignSmsTable
+  const [visible, setVisible] = useState(false);   
   const [currentRow, setCurrentRow] = useState(null);
+  // ManageScheduleCampaignSmsTable
 
   // const handleCampaignLog = async () => {
   //   const data = {
