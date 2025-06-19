@@ -22,6 +22,7 @@ export const VoiceNode = ({
       type: "",
       value: "",
       interval: "",
+      comparison: "",
     },
   ]);
   function handleOptionAdd() {
@@ -34,6 +35,7 @@ export const VoiceNode = ({
         type: "",
         value: "",
         interval: "",
+        comparison: "",
       },
     ]);
   }
@@ -103,66 +105,122 @@ export const VoiceNode = ({
           <div className="space-y-2 ">
             {conditions?.map((option, index) => (
               <div
-                className="flex gap-2 justify-center items-center"
+                className="flex gap-2 justify-center items-center space-y-5"
                 key={index}
               >
-                <AnimatedDropdown
-                  id="type"
-                  name="type"
-                  label={`Condition-${index + 1}-Type`}
-                  value={conditions[index]?.type}
-                  onChange={(e: string) => {
-                    handleOptionInput(e, "type", index);
-                  }}
-                  options={[
-                    {
-                      label: "Delivery Status",
-                      value: "deliveryStatus",
-                    },
-                  ]}
-                />
-                <AnimatedDropdown
-                  id="value"
-                  name="value"
-                  label={`Condition-${index + 1}-Value`}
-                  value={conditions[index]?.value}
-                  onChange={(e: string) => {
-                    handleOptionInput(e, "value", index);
-                  }}
-                  options={[
-                    {
-                      label: "Delivery Status",
-                      value: "deliveryStatus",
-                    },
-                  ]}
-                />
-                <AnimatedDropdown
-                  id="value"
-                  name="value"
-                  label={`Condition-${index + 1}-Interval`}
-                  value={conditions[index]?.interval}
-                  onChange={(e: string) => {
-                    handleOptionInput(e, "interval", index);
-                  }}
-                  options={[
-                    {
-                      label: "5",
-                      value: "5",
-                    },
-                    {
-                      label: "10",
-                      value: "10",
-                    },
-                    {
-                      label: "15",
-                      value: "15",
-                    },
-                    {
-                      label: "20",
-                      value: "20",
-                    },
-                  ]}
-                />
+                <div className="w-full flex flex-col gap-2">
+                  <div className="flex gap-2">
+                    <AnimatedDropdown
+                      id="type"
+                      name="type"
+                      label={`Condition-${index + 1}-Type`}
+                      value={conditions[index]?.type}
+                      onChange={(e: string) => {
+                        handleOptionInput(e, "type", index);
+                      }}
+                      options={[
+                        {
+                          label: "Delivered",
+                          value: "delivered",
+                        },
+                      ]}
+                    />
+                    <AnimatedDropdown
+                      id="value"
+                      name="value"
+                      label={`Condition-${index + 1}-Value`}
+                      value={conditions[index]?.value}
+                      onChange={(e: string) => {
+                        handleOptionInput(e, "value", index);
+                      }}
+                      options={[
+                        {
+                          label: "Answer",
+                          value: "answer",
+                        },
+                        {
+                          label: "Dialed",
+                          value: "dialed",
+                        },
+                        {
+                          label: "Busy",
+                          value: "busy",
+                        },
+                        {
+                          label: "Not Available",
+                          value: "not_available",
+                        },
+                        {
+                          label: "DTMF",
+                          value: "dtmf",
+                        },
+                      ]}
+                    />
+                    <AnimatedDropdown
+                      id="interval"
+                      name="interval"
+                      label={`Condition-${index + 1}-Interval`}
+                      value={conditions[index]?.interval}
+                      onChange={(e: string) => {
+                        handleOptionInput(e, "interval", index);
+                      }}
+                      options={[
+                        {
+                          label: "5",
+                          value: "5",
+                        },
+                        {
+                          label: "10",
+                          value: "10",
+                        },
+                        {
+                          label: "15",
+                          value: "15",
+                        },
+                        {
+                          label: "20",
+                          value: "20",
+                        },
+                      ]}
+                    />
+                  </div>
+                  <div className="flex gap-2">
+                    <AnimatedDropdown
+                      id="comparison"
+                      name="comparison"
+                      label={`Select Comparison Type`}
+                      value={conditions[index]?.comparison}
+                      onChange={(e: string) => {
+                        handleOptionInput(e, "comparison", index);
+                      }}
+                      options={[
+                        {
+                          label: "Equal To (=)",
+                          value: "equal_to",
+                        },
+                        {
+                          label: "Greater Than (>)",
+                          value: "greater_than",
+                        },
+                        {
+                          label: "Less Than (<)",
+                          value: "less_than",
+                        },
+                      ]}
+                    />
+
+                    <InputField
+                      id="value"
+                      name="value"
+                      value={conditions[index]?.value}
+                      onChange={(e: string) => {
+                        handleOptionInput(e, "value", index);
+                      }}
+                      label={`Call Duration (in seconds)`}
+                      maxLength={50}
+                    />
+                  </div>
+                </div>
 
                 {conditions.length > 1 && (
                   <Button
