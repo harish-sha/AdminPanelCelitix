@@ -30,12 +30,63 @@ const PaginationList = styled("ul")({
   gap: "8px",
 });
 
-const CustomPaginatior = ({
-  totalPages,
-  paginationModel,
-  setPaginationModel,
-  setCurrentPage,
-}) => {
+// const CustomPaginatior = ({
+//   totalPages,
+//   paginationModel,
+//   setPaginationModel,
+//   setCurrentPage,
+// }) => {
+//   const { items } = usePagination({
+//     count: totalPages,
+//     page: paginationModel.page,
+//     onChange: (_, newPage) => {
+//       setCurrentPage(newPage);
+//       setPaginationModel({ ...paginationModel, page: newPage });
+//     },
+//   });
+
+//   return (
+//     <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
+//       <PaginationList>
+//         {items.map(({ page, type, selected, ...item }, index) => {
+//           let children = null;
+
+//           if (type === "start-ellipsis" || type === "end-ellipsis") {
+//             children = "…";
+//           } else if (type === "page") {
+//             children = (
+//               <Button
+//                 key={index}
+//                 variant={selected ? "contained" : "outlined"}
+//                 size="small"
+//                 sx={{ minWidth: "27px" }}
+//                 {...item}
+//               >
+//                 {page}
+//               </Button>
+//             );
+//           } else {
+//             children = (
+//               <Button
+//                 key={index}
+//                 variant="outlined"
+//                 size="small"
+//                 {...item}
+//                 sx={{}}
+//               >
+//                 {type === "previous" ? "Previous" : "Next"}
+//               </Button>
+//             );
+//           }
+
+//           return <li key={index}>{children}</li>;
+//         })}
+//       </PaginationList>
+//     </Box>
+//   );
+// };
+
+const CustomPaginator = ({ totalPages, paginationModel, setPaginationModel, setCurrentPage }) => {
   const { items } = usePagination({
     count: totalPages,
     page: paginationModel.page,
@@ -46,40 +97,22 @@ const CustomPaginatior = ({
   });
 
   return (
-    <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
+    <Box sx={{ display: "flex", justifyContent: "center", padding: 0.5 }}>
       <PaginationList>
         {items.map(({ page, type, selected, ...item }, index) => {
-          let children = null;
-
-          if (type === "start-ellipsis" || type === "end-ellipsis") {
-            children = "…";
-          } else if (type === "page") {
-            children = (
+          if (type === "start-ellipsis" || type === "end-ellipsis") return <li key={index}>…</li>;
+          return (
+            <li key={index}>
               <Button
-                key={index}
                 variant={selected ? "contained" : "outlined"}
                 size="small"
-                sx={{ minWidth: "27px" }}
                 {...item}
+                sx={{ minWidth: "30px" }}
               >
-                {page}
+                {type === "page" ? page : type === "previous" ? "Prev" : "Next"}
               </Button>
-            );
-          } else {
-            children = (
-              <Button
-                key={index}
-                variant="outlined"
-                size="small"
-                {...item}
-                sx={{}}
-              >
-                {type === "previous" ? "Previous" : "Next"}
-              </Button>
-            );
-          }
-
-          return <li key={index}>{children}</li>;
+            </li>
+          );
         })}
       </PaginationList>
     </Box>
@@ -236,10 +269,11 @@ export const ApiCampaignInfo = () => {
     setIsLoading(true);
     try {
 
-      const formattedFromDate = state.selectedDate
-        ? moment(state.selectedDate).format("YYYY-MM-DD")
-        : moment().format("YYYY-MM-DD");
+      // const formattedFromDate = state.selectedDate
+      //   ? moment(state.selectedDate).format("YYYY-MM-DD")
+      //   : moment().format("YYYY-MM-DD");
 
+      const formattedFromDate = moment(state.selectedDate).format("YYYY-MM-DD");
       let status = "";
       let deliveryStatus = "";
       let selectedUser = state.selectedUser || 0;
@@ -266,7 +300,7 @@ export const ApiCampaignInfo = () => {
       };
       const res = await getListofSendMsg(payload);
 
-      setTotalPage(res?.pages || 0);
+      setTotalPage(res?.pages || 1);
       setTotalRecords(res?.total || 0);
 
       // const formattedData = Array.isArray(res.data)
@@ -318,36 +352,40 @@ export const ApiCampaignInfo = () => {
   //   handleFetchDetails();
   // }, [state]);
 
-  async function handleExport() {
-    let selectedUser = state.selectedUser;
-    try {
-      const payload = {
-        type: 2,
-        selectedUserId: selectedUser,
-        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        isCustomField: 0,
-        customColumns: "",
-        status: state.log,
-        delStatus: {},
-      };
-      const res = await downloadCustomWhatsappReport(payload);
+  // async function handleExport() {
+  //   let selectedUser = state.selectedUser;
+  //   try {
+  //     const payload = {
+  //       type: 2,
+  //       selectedUserId: selectedUser,
+  //       fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+  //       toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
+  //       isCustomField: 0,
+  //       customColumns: "",
+  //       status: state.log,
+  //       delStatus: {},
+  //     };
+  //     const res = await downloadCustomWhatsappReport(payload);
 
-      if (!res?.status) {
-        return toast.error(res?.msg);
-      }
+  //     if (!res?.status) {
+  //       return toast.error(res?.msg);
+  //     }
 
-      toast.success(res?.msg);
-      triggerDownloadNotification();
+  //     toast.success(res?.msg);
+  //     triggerDownloadNotification();
 
-    } catch (e) {
-      toast.error("Error downloading attachment");
-      console.log(e);
-    }
-  }
+  //   } catch (e) {
+  //     toast.error("Error downloading attachment");
+  //     console.log(e);
+  //   }
+  // }
+
+  // useEffect(() => {
+  //   handleFetchDetails(currentPage);
+  // }, [currentPage]);
 
   useEffect(() => {
-    handleFetchDetails(currentPage);
+    if (state) handleFetchDetails(currentPage);
   }, [currentPage]);
 
 
@@ -355,71 +393,71 @@ export const ApiCampaignInfo = () => {
   //   const totalPages = Math.floor(totalPage / paginationModel.pageSize);
   const totalPages = totalPage;
 
-  const CustomFooter = () => {
-    return (
-      <GridFooterContainer
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: {
-            xs: "center",
-            lg: "space-between",
-          },
-          alignItems: "center",
-          padding: 1,
-          gap: 2,
-          overflowX: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 1.5,
-          }}
-        >
-          {selectedRows?.length > 0 && (
-            <Typography
-              variant="body2"
-              sx={{
-                borderRight: "1px solid #ccc",
-                paddingRight: "10px",
-              }}
-            >
-              {selectedRows?.length} Rows Selected
-            </Typography>
-          )}
+  // const CustomFooter = () => {
+  //   return (
+  //     <GridFooterContainer
+  //       sx={{
+  //         display: "flex",
+  //         flexWrap: "wrap",
+  //         justifyContent: {
+  //           xs: "center",
+  //           lg: "space-between",
+  //         },
+  //         alignItems: "center",
+  //         padding: 1,
+  //         gap: 2,
+  //         overflowX: "auto",
+  //       }}
+  //     >
+  //       <Box
+  //         sx={{
+  //           display: "flex",
+  //           alignItems: "center",
+  //           flexWrap: "wrap",
+  //           gap: 1.5,
+  //         }}
+  //       >
+  //         {selectedRows?.length > 0 && (
+  //           <Typography
+  //             variant="body2"
+  //             sx={{
+  //               borderRight: "1px solid #ccc",
+  //               paddingRight: "10px",
+  //             }}
+  //           >
+  //             {selectedRows?.length} Rows Selected
+  //           </Typography>
+  //         )}
 
-          <Typography variant="body2">
-            Total Records: <span className="font-semibold">{totalRecords}</span>
-          </Typography>
-        </Box>
+  //         <Typography variant="body2">
+  //           Total Records: <span className="font-semibold">{totalRecords}</span>
+  //         </Typography>
+  //       </Box>
 
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
-          }}
-        >
-          <CustomPaginatior
-            totalPages={totalPages}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-            setCurrentPage={setCurrentPage}
-          />
-        </Box>
-      </GridFooterContainer>
-    );
-  };
+  //       <Box
+  //         sx={{
+  //           display: "flex",
+  //           justifyContent: "center",
+  //           width: { xs: "100%", sm: "auto" },
+  //         }}
+  //       >
+  //         <CustomPaginatior
+  //           totalPages={totalPages}
+  //           paginationModel={paginationModel}
+  //           setPaginationModel={setPaginationModel}
+  //           setCurrentPage={setCurrentPage}
+  //         />
+  //       </Box>
+  //     </GridFooterContainer>
+  //   );
+  // };
 
   // if (isLoading) return <Loader />;
 
   return (
     <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
+      <div className="flex justify-between items-center w-full text-center">
+        <h1 className="text-2xl mb-5 text-gray-700 text-center">Logs Detail Report</h1>
         {/* <UniversalButton
           id="export"
           name="export"
@@ -436,50 +474,146 @@ export const ApiCampaignInfo = () => {
 
       {isLoading ? (
         <div className="w-full">
-          <UniversalSkeleton height="35rem" width="100%" />
+          <UniversalSkeleton height="37rem" width="100%" />
         </div>
       ) : (
-        <Paper sx={{ height: 558 }}>
-          <DataGrid
-            // id={id}
-            // name={name}
-            rows={data}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            // checkboxSelection
-            rowHeight={45}
-            slots={{
-              footer: CustomFooter,
-              noRowsOverlay: CustomNoRowsOverlay,
-            }}
-            slotProps={{ footer: { totalRecords: data.length } }}
-            onRowSelectionModelChange={(ids) => { }}
-            disableRowSelectionOnClick
-            // autoPageSize
-            // disableColumnResize
-            disableColumnMenu
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-cellCheckbox": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-cell": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-columnHeaders": {
-                color: "#193cb8",
-                fontSize: "14px",
-                fontWeight: "bold !important",
-              },
-              "& .MuiDataGrid-row--borderBottom": {
-                backgroundColor: "#e6f4ff !important",
-              },
-              "& .MuiDataGrid-columnSeparator": {
-                // display: "none",
-                color: "#ccc",
-              },
-            }}
-          />
+        // <Paper sx={{ height: 558 }}>
+        //   <DataGrid
+        //     // id={id}
+        //     // name={name}
+        //     rows={data}
+        //     columns={columns}
+        //     initialState={{ pagination: { paginationModel } }}
+        //     // checkboxSelection
+        //     rowHeight={45}
+        //     slots={{
+        //       footer: CustomFooter,
+        //       noRowsOverlay: CustomNoRowsOverlay,
+        //     }}
+        //     slotProps={{ footer: { totalRecords: data.length } }}
+        //     onRowSelectionModelChange={(ids) => { }}
+        //     disableRowSelectionOnClick
+        //     // autoPageSize
+        //     // disableColumnResize
+        //     disableColumnMenu
+        //     sx={{
+        //       border: 0,
+        //       "& .MuiDataGrid-cellCheckbox": {
+        //         outline: "none !important",
+        //       },
+        //       "& .MuiDataGrid-cell": {
+        //         outline: "none !important",
+        //       },
+        //       "& .MuiDataGrid-columnHeaders": {
+        //         color: "#193cb8",
+        //         fontSize: "14px",
+        //         fontWeight: "bold !important",
+        //       },
+        //       "& .MuiDataGrid-row--borderBottom": {
+        //         backgroundColor: "#e6f4ff !important",
+        //       },
+        //       "& .MuiDataGrid-columnSeparator": {
+        //         // display: "none",
+        //         color: "#ccc",
+        //       },
+        //     }}
+        //   />
+        // </Paper>
+        <Paper sx={{ padding: 0, overflowX: "scroll", height: 625 }} className="flex items-center flex-col justify-between">
+          <table className="w-full table-auto border-collapse overflow-x-scroll">
+            <thead className="bg-[#e6f4ff] text-gray-700 text-sm">
+              <tr  >
+                {["S.No", "WABA Number", "Mobile No", "Source", "Status", "Delivery Status", "Reason", "Sent", "Request JSON", "Action"].map(
+                  (header, i) => (
+                    <th key={i} className="px-3 py-4 text-left border-b font-[500] border-r-2 text-[#193cb8]">
+                      {header}
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+            <tbody>
+              {data.map((row, index) => (
+                <tr key={row.id} className="border-b hover:bg-gray-50 text-sm w-full">
+                  <td className="px-3 py-2 w-10 ">{row.sn}</td>
+                  <td className="px-3 py-2 w-40">{row.wabaNumber}</td>
+                  <td className="px-3 py-2 w-30">{row.mobileNo}</td>
+                  <td className="px-3 py-2 w-20">{row.source}</td>
+                  <td className="px-3 py-2 w-30">{row.status}</td>
+                  <td className="px-3 py-2 w-40">{row.deliveryStatus}</td>
+                  <td className="px-3 py-2 w-35">{row.reason}</td>
+                  <td className="px-3 py-2 w-45">{row.sentTime}</td>
+                  {/* <td className="px-3 py-2 truncate max-w-xs">{row.requestJson}</td> */}
+                  <td className="px-3 py-2 w-0">
+                    <CustomTooltip
+                      className="text-white"
+                      title={
+                        <pre className="whitespace-pre-wrap break-words max-w-sm text-xs text-wrap">
+                          {typeof row.requestJson === "object"
+                            ? JSON.stringify(row.requestJson, null, 2)
+                            : row.requestJson}
+                        </pre>
+                      }
+                      arrow
+                      placement="bottom"
+                    >
+                      <div className="truncate cursor-pointer max-w-xs">
+                        {typeof row.requestJson === "object"
+                          ? JSON.stringify(row.requestJson).slice(0, 40) + "..."
+                          : String(row.requestJson).slice(0, 40) + "..."}
+                      </div>
+                    </CustomTooltip>
+                  </td>
+                  <td className="px-3 py-2 w-10">
+                    <CustomTooltip title="Info" placement="top" arrow>
+                      <span>
+                        <IconButton
+                          ref={(el) => (dropdownButtonRefs.current[row.id] = el)}
+                          onClick={() => handleInfo(row)}
+                        >
+                          <ImInfo size={16} className="text-green-500" />
+                        </IconButton>
+                        <InfoPopover
+                          anchorEl={dropdownButtonRefs.current[row.id]}
+                          open={dropdownOpenId === row.id}
+                          onClose={() => setDropdownOpenId(null)}
+                        >
+                          {clicked && Object.keys(clicked).length > 0 ? (
+                            <table className="w-72 text-sm text-left">
+                              <tbody>
+                                {Object.entries(clicked).map(([key, value], i) => (
+                                  <tr key={i} className="border-b">
+                                    <td className="px-2 py-2 font-medium text-gray-600 w-1/3 text-nowrap">
+                                      {additionalInfoLabels[key] || key}
+                                    </td>
+                                    <td className="px-2 py-1">{value || "N/A"}</td>
+                                  </tr>
+                                ))}
+                              </tbody>
+                            </table>
+                          ) : (
+                            <div className="p-2 text-gray-500 italic">No data</div>
+                          )}
+                        </InfoPopover>
+                      </span>
+                    </CustomTooltip>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+
+          <div className="my-2 flex items-center justify-between px-3 w-full">
+            <Typography variant="body2">
+              Total Records: <strong>{totalRecords}</strong>
+            </Typography>
+            <CustomPaginator
+              totalPages={totalPage}
+              paginationModel={paginationModel}
+              setPaginationModel={setPaginationModel}
+              setCurrentPage={setCurrentPage}
+            />
+          </div>
         </Paper>
       )}
     </>

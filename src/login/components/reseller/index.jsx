@@ -420,7 +420,7 @@ const ResellerLogin = () => {
                     placeholder="Enter Username"
                     className="w-full p-2 mb-2 border border-gray-200 rounded-md"
                     onChange={(e) => setUsername(e.target.value)}
-                    maxLength={8}
+                  // maxLength={8}
                   />
                 </div>
 
@@ -436,7 +436,7 @@ const ResellerLogin = () => {
                     className="w-full p-2 mb-2 border border-gray-200 rounded-md"
                     onChange={(e) => setPassword(e.target.value)}
                     value={password}
-                    maxLength={8}
+                  // maxLength={8}
                   />
                   <button
                     type="button"
@@ -451,14 +451,14 @@ const ResellerLogin = () => {
                   </button>
                 </div>
 
-                <div className="flex items-center justify-end">
+                {/* <div className="flex items-center justify-end">
                   <button
                     className="text-black mt-2 cursor-pointer text-right "
                     onClick={() => setStep("forgotPassword")}
                   >
                     Forgot Password?
                   </button>
-                </div>
+                </div> */}
 
                 <h2 className="my-3 text-l">Solve Captcha</h2>
                 <div className="flex justify-between items-center mt-2">
