@@ -76,6 +76,51 @@ export const WhatsAppNode = ({
     setConditions(options);
   }, []);
 
+  const deliveryStatusValue = [
+    {
+      label: "Marketing-Unread",
+      value: "marketing-unread",
+    },
+    {
+      label: "All Delivered",
+      value: "all-delivered",
+    },
+    {
+      label: "Single Tick",
+      value: "single-tick",
+    },
+    {
+      label: "Double Tick",
+      value: "double-tick",
+    },
+    {
+      label: "Blue Tick",
+      value: "blue-tick",
+    },
+  ];
+
+  const statusValue = [
+    {
+      label: "Enabled",
+      value: "enabled",
+    },
+    {
+      label: "Disabled",
+      value: "disabled",
+    },
+  ];
+
+  const ClickValue = [
+    {
+      label: "Yes",
+      value: "yes",
+    },
+    {
+      label: "No",
+      value: "no",
+    },
+  ];
+
   return (
     <>
       <div>
@@ -116,8 +161,16 @@ export const WhatsAppNode = ({
                   }}
                   options={[
                     {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
                       label: "Delivery Status",
                       value: "deliveryStatus",
+                    },
+                    {
+                      label: "Click Status",
+                      value: "clickStatus",
                     },
                   ]}
                 />
@@ -129,14 +182,15 @@ export const WhatsAppNode = ({
                   onChange={(e: string) => {
                     handleOptionInput(e, "value", index);
                   }}
-                  options={[
-                    {
-                      label: "Delivery Status",
-                      value: "deliveryStatus",
-                    },
-                  ]}
+                  options={
+                    conditions[index]?.type === "status"
+                      ? statusValue
+                      : conditions[index]?.type === "deliveryStatus"
+                      ? deliveryStatusValue
+                      : ClickValue
+                  }
                 />
-                <AnimatedDropdown
+                {/* <AnimatedDropdown
                   id="value"
                   name="value"
                   label={`Condition-${index + 1}-Interval`}
@@ -162,7 +216,7 @@ export const WhatsAppNode = ({
                       value: "20",
                     },
                   ]}
-                />
+                /> */}
 
                 {conditions.length > 1 && (
                   <Button
