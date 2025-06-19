@@ -65,16 +65,16 @@ export const RCSNode = ({
     }));
   }, [conditions]);
 
-    useEffect(() => {
-      const options = nodesInputData?.[id]?.options || [
-        {
-          type: "",
-          value: "",
-          interval: "",
-        },
-      ];
-      setConditions(options);
-    }, []);
+  useEffect(() => {
+    const options = nodesInputData?.[id]?.options || [
+      {
+        type: "",
+        value: "",
+        interval: "",
+      },
+    ];
+    setConditions(options);
+  }, []);
 
   return (
     <>
@@ -119,6 +119,10 @@ export const RCSNode = ({
                       label: "Delivery Status",
                       value: "deliveryStatus",
                     },
+                    {
+                      label: "Status",
+                      value: "status",
+                    },
                   ]}
                 />
                 <AnimatedDropdown
@@ -129,15 +133,32 @@ export const RCSNode = ({
                   onChange={(e: string) => {
                     handleOptionInput(e, "value", index);
                   }}
-                  options={[
-                    {
-                      label: "Delivery Status",
-                      value: "deliveryStatus",
-                    },
-                  ]}
+                  options={
+                    conditions[index]?.type === "status"
+                      ? [
+                          {
+                            label: "Enabled",
+                            value: "enabled",
+                          },
+                          {
+                            label: "Disabled",
+                            value: "disabled",
+                          },
+                        ]
+                      : [
+                        {
+                            label: "Delivered",
+                            value: "delivered",
+                          },
+                          {
+                            label: "Read",
+                            value: "read",
+                          },
+                      ]
+                  }
                 />
-                <AnimatedDropdown
-                  id="value"
+                {/* <AnimatedDropdown
+                  id="interval"
                   name="value"
                   label={`Condition-${index + 1}-Interval`}
                   value={conditions[index]?.interval}
@@ -162,7 +183,7 @@ export const RCSNode = ({
                       value: "20",
                     },
                   ]}
-                />
+                /> */}
 
                 {conditions.length > 1 && (
                   <Button
