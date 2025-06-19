@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-
+import Confetti from 'react-confetti';
 import { AnimatePresence, motion } from "framer-motion";
 import {
   FaWhatsapp,
@@ -44,6 +44,7 @@ import {
 import Loader from "../components/Loader";
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
+import dummyimg from "../../assets/images/uploadimage.png";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
 import moment from "moment";
@@ -137,6 +138,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [selectedWaba, setSelectedWaba] = useState(null);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [wabaCreatebtn, setWabaCreatebtn] = useState(false);
+  const [wabaCreateMMbtn, setWabaCreateMMbtn] = useState(false);
   const [clicked, setClicked] = useState([]);
   const [wabadetails, setwabadetails] = useState(null);
   const [editWebsite1, seteditWebsite1] = useState("");
@@ -146,6 +148,26 @@ const WhatsappManageWaba = ({ id, name }) => {
     page: 0,
     pageSize: 10,
   });
+
+  const [isCelebrating, setIsCelebrating] = useState(false);
+
+  // Show toast and trigger confetti
+  const handleCelebration = () => {
+    // Trigger toast notification
+    // toast.success('🎉 Congratulations! 🎉', {
+    //   position: "top-center",
+    //   autoClose: 3000,
+    //   hideProgressBar: true,
+    //   pauseOnHover: false,
+    //   draggable: false,
+    // });
+
+    // Trigger confetti animation
+    setIsCelebrating(true);
+
+    // Stop confetti after 5 seconds
+    setTimeout(() => setIsCelebrating(false), 5000);
+  };
 
   const fileInputRef = useRef(null);
 
@@ -229,7 +251,6 @@ const WhatsappManageWaba = ({ id, name }) => {
         document.body.appendChild(script);
       }
     };
-
     loadFacebookSDK();
   }, []);
 
@@ -250,8 +271,9 @@ const WhatsappManageWaba = ({ id, name }) => {
     // console.log(data)
     if (!data.ok) {
       toast.error(data.message || "Something went wrong")
+    } else {
+      toast.success(data.message || "Something went wrong")
     }
-    toast.success(data.message || "Something went wrong")
     // return data;
   }
 
@@ -263,8 +285,13 @@ const WhatsappManageWaba = ({ id, name }) => {
           const accessToken = response.authResponse.code;
           // console.log('Access Token:', accessToken);
           onboardUser(accessToken)
+          getWabaList()
         } else {
-          console.log('User cancelled login or did not fully authorize.');
+          toast.error("User cancelled login")
+          console.log('User cancelled login');
+          setTimeout(() => {
+            setWabaCreatebtn(false)
+          }, [1500])
         }
       },
       {
@@ -274,6 +301,40 @@ const WhatsappManageWaba = ({ id, name }) => {
         extras: {
           feature: 'whatsapp_embedded_signup',
           version: 2,
+          setup: {
+            solutionID: "597385276367677",
+          },
+        },
+      }
+    );
+  };
+
+  const handleFacebookLoginMMLite = () => {
+    window.FB.login(
+      (response) => {
+        // console.log(response)
+        if (response.authResponse) {
+          const accessToken = response.authResponse.code;
+          // console.log('Access Token:', accessToken);
+          onboardUser(accessToken)
+          getWabaList()
+        } else {
+          toast.error("User cancelled login")
+          console.log('User cancelled login');
+          setTimeout(() => {
+            setWabaCreateMMbtn(false)
+          }, [1500])
+        }
+      },
+      {
+        config_id: "827520649332611",
+        response_type: 'code',
+        override_default_response_type: true,
+        return_scope: true,
+        extras: {
+          scope: "public_profile,email,ads_read,ads_management,pages_show_list,business_management,pages_manage_metadata,pages_read_engagement,pages_manage_engagement,pages_read_user_content,pages_messaging,page_events,catalog_management",
+          sessionInfoVersion: 3,
+          featureType: 'marketing_messages_lite',
           setup: {
             solutionID: "597385276367677",
           },
@@ -323,6 +384,10 @@ const WhatsappManageWaba = ({ id, name }) => {
     setWabaCreatebtn(true);
   };
 
+  const handleWabaMMCreate = (e) => {
+    setWabaCreateMMbtn(true);
+  };
+
   const handleSync = async (data) => {
     // if (!data.wabaSrno) return toast.error("Please select a WABA");
     try {
@@ -363,7 +428,6 @@ const WhatsappManageWaba = ({ id, name }) => {
       websites: website,
       vertical: vertical,
     };
-
     const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
   };
 
@@ -797,13 +861,32 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <FaWhatsapp /> Manage Waba Accounts
               </label>
             </div>
-            <div className="w-max-content">
-              <UniversalButton
-                label="Create WABA"
-                id="mainwabacreate"
-                name="mainwabacreate"
-                onClick={handleWabaCreate}
-              />
+            <div className="flex items-center gap-3" >
+              <div className="w-max-content">
+                <UniversalButton
+                  label="Create WABA"
+                  id="mainwabacreate"
+                  name="mainwabacreate"
+                  onClick={handleWabaCreate}
+                />
+              </div>
+              {/* <div className="w-max-content">
+                <UniversalButton
+                  label="Onboard MM LIte"
+                  id="wabammliteonboard"
+                  name="wabammliteonboard"
+                  onClick={handleWabaMMCreate}
+                />
+              </div> */}
+              {/* <div className="w-max-content">
+                <UniversalButton
+                  label="Celebrate"
+                  id="mainwabacreate"
+                  name="mainwabacreate"
+                  onClick={handleCelebration}
+                />
+              </div> */}
+              {isCelebrating && <Confetti />}
             </div>
           </div>
           <div style={{ transition: "filter 0.3s ease" }}>
@@ -854,7 +937,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         </>
       ) : (
         <div className="flex h-[80vh] justify-center w-full items-center">
-          <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
+          {/* <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
             <h1 className="text-xl font-semibold">No account connected yet!</h1>
             <p className="mb-6 font-medium">
               Login with Facebook to start launching campaigns and analyse phone
@@ -867,6 +950,31 @@ const WhatsappManageWaba = ({ id, name }) => {
             >
               Login with Facebook
             </button>
+          </div> */}
+          <div className="bg-white w-1/2 px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
+            <div className="space-y-2">
+              <h2 className="text-2xl font-bold text-gray-800">Set Up Your WhatsApp Business Account</h2>
+              <p className="text-gray-600 text-sm leading-relaxed">
+                Welcome! To get started with managing your business on WhatsApp, you need to link your official
+                WhatsApp Business Account (WABA). This will allow you to securely communicate with your customers
+                and manage interactions effectively.
+                <br className="hidden md:block" />
+                Click the button below to securely link your account via Facebook Business.
+              </p>
+            </div>
+            <button
+              onClick={handleFacebookLogin}
+              className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+                <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+              </svg>
+              Link with Facebook
+            </button>
+            <p className="text-xs text-gray-400 mt-2">
+              Rest assured, your privacy and security are our top priority. We do not store any of your credentials.
+              This login is exclusively for linking your new WABA through Meta's official authorization process.
+            </p>
           </div>
         </div>
       )}
@@ -919,7 +1027,7 @@ const WhatsappManageWaba = ({ id, name }) => {
 
           <div className="flex flex-col items-center p-6 text-white bg-gradient-to-r rounded-t-2xl from-purple-400 to-blue-300">
             <motion.img
-              src={wabadetails?.profile_picture_url || logo}
+              src={wabadetails?.profile_picture_url || dummyimg}
               alt="Profile"
               className="w-24 h-24 border-4 border-white rounded-full shadow-lg"
               initial={{ scale: 0.8 }}
@@ -1261,8 +1369,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         </div>
       </Dialog>
 
+      {/* add more waba accounts Dialog start */}
       <Dialog
-        header="Create Waba"
+        header="Link more accounts"
         visible={wabaCreatebtn}
         onHide={() => {
           setWabaCreatebtn(false);
@@ -1271,20 +1380,69 @@ const WhatsappManageWaba = ({ id, name }) => {
         className="lg:w-[50rem] md:w-[35rem] sm:w-[20rem]"
         modal
       >
-        <div className="p-2 md:p-10 lg:p-10 space-y-2 text-center bg-white shadow-md rounded-xl h-48 md:h-auto lg:h-auto">
-          <h1 className="text-xl font-semibold">Add Another Account</h1>
-          <p className="mb-6 font-medium">
-            To add another WABA account, link the new account through Facebook.
-          </p>
+        <div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-bold text-gray-800">Link an Additional WhatsApp Business Account</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              You can connect multiple WhatsApp Business Accounts (WABAs) to manage different brands or regions under one platform.
+              <br className="hidden md:block" />
+              Click the button below to securely link a new account via your Facebook Business login.
+            </p>
+          </div>
           <button
-            // href="#signup"
-            className="bg-[#4267b2] p-2.5 rounded-lg lg:text-[1rem] md:text-[0.9rem] sm:text-[0.5rem] text-white cursor-pointer font-medium tracking-wide"
             onClick={handleFacebookLogin}
+            className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
           >
-            Login with Facebook
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+              <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+            </svg>
+            Link with Facebook
           </button>
+          <p className="text-xs text-gray-400 mt-2">
+            We do not store your credentials. This access is used only to link your new WABA through Meta's official authorization process.
+          </p>
         </div>
       </Dialog>
+      {/* add more waba accounts Dialog End */}
+
+      {/* MM Lite Onboard Dialog start */}
+      <Dialog
+        // header="Onboard MM Lite"
+        visible={wabaCreateMMbtn}
+        onHide={() => {
+          setWabaCreateMMbtn(false);
+        }}
+        draggable={false}
+        className="lg:w-[50rem] md:w-[35rem] sm:w-[20rem]"
+        modal
+      >
+        <div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border rounded-2xl border-[#1877F2] shadow-2xl">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-[500] text-[#1877F2]   rounded-4xl shadow-xl py-3 mb-7 bg-gradient-to-br from-purple-100 to-blue-100">Get Started With MM Lite</h1>
+            <h2 className="text-xl font-[500] text-gray-600">Connect Your Business Account</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              As an official Meta Partner, we help you seamlessly onboard your WhatsApp Business account.
+              To continue, connect your Facebook Business account to get started with MM Lite.
+            </p>
+          </div>
+
+          <button
+            onClick={handleFacebookLoginMMLite}
+            className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+              <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+            </svg>
+            Login with Facebook
+          </button>
+
+          <div className="text-xs text-gray-400">
+            Your information is secure and used only to set up your WhatsApp Business account.
+          </div>
+        </div>
+      </Dialog>
+      {/* MM Lite Onboard Dialog End */}
+
     </div>
   );
 };

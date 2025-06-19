@@ -436,3 +436,29 @@ export const ApiCampaignInfo = () => {
     </>
   );
 };
+
+
+
+
+<div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
+  <div className="space-y-2">
+    <h2 className="text-2xl font-bold text-gray-800">Link an Additional WhatsApp Business Account</h2>
+    <p className="text-gray-600 text-sm leading-relaxed">
+      You can connect multiple WhatsApp Business Accounts (WABAs) to manage different brands or regions under one platform.
+      <br className="hidden md:block" />
+      Click the button below to securely link a new account via your Facebook Business login.
+    </p>
+  </div>
+  <button
+    onClick={handleFacebookLogin}
+    className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+      <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+    </svg>
+    Link with Facebook
+  </button>
+  <p className="text-xs text-gray-400 mt-2">
+    We do not store your credentials. This access is used only to link your new WABA through Meta's official authorization process.
+  </p>
+</div>
