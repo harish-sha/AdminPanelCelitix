@@ -121,6 +121,8 @@ export default function WhatsappLiveChat() {
 
   const [cardIndex, setCardIndex] = useState(0);
 
+  // const[isLoading, setIsLoading] = useState(false)
+
   function handleNextCard() {
     setCardIndex(cardIndex + 1);
   }
@@ -956,6 +958,7 @@ export default function WhatsappLiveChat() {
           setSelectedAgentList={setSelectedAgentList}
           selectedWaba={selectedWaba}
           setSelectedGroupList={setSelectedGroupList}
+          isLoading={isFetching}
         />
       </div>
 

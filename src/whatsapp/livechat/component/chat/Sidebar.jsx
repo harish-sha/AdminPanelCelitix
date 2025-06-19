@@ -1,82 +1,3 @@
-// import { getAgentList } from "@/apis/Agent/Agent";
-// import { getUserAgent } from "@/apis/whatsapp/whatsapp";
-
-// export const ChatSidebar = ({ formatDate, chatState, setChatState, setSelectedAgentList }) => {
-//   async function fetchAgentDetails(srno) {
-//     try {
-//       const res = await getAgentList();
-//       return res?.data?.find((agent) => agent.sr_no === srno)?.name;
-//     } catch (e) {
-//       console.log(e);
-//     }
-//   }
-//   return (
-//     <div className="mt-4 h-[70vh] overflow-y-scroll">
-//       {chatState?.allConversations
-//         ?.slice()
-//         ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))
-//         ?.map((chat, index) => (
-//           <div
-//             key={chat.srno || index}
-//             className={`p-3 border-b cursor-pointer rounded-md  select-none ${chatState?.active?.srno === chat.srno ? "bg-gray-300 " : ""
-//               }`}
-//             onClick={async () => {
-//               const agentName = await getUserAgent(chat?.mobileNo);
-//               // setActiveChat(chat);
-//               setChatState((prev) => ({
-//                 ...prev,
-//                 active: chat,
-//                 replyData: "",
-//                 isReply: false,
-//                 agentName: agentName,
-//               }));
-//               setSelectedAgentList(chat?.agentSrno);
-//             }}
-//           >
-//             <div className="flex items-center justify-between ">
-//               <div className="flex items-center gap-2">
-//                 <div className="relative">
-//                   {chat.image ? (
-//                     <img
-//                       src={chat.image}
-//                       alt=""
-//                       className="w-10 h-10 rounded-full object-cover"
-//                     />
-//                   ) : (
-//                     <div
-//                       className={`w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold text-sm ${chatState?.active?.srno === chat.srno
-//                         ? "bg-gray-500"
-//                         : "bg-gray-300"
-//                         }`}
-//                     >
-//                       {chat.contectName?.charAt(0)?.toUpperCase() || "?"}
-//                     </div>
-//                   )}
-
-//                   <div className="absolute bottom-0 right-0 w-2 h-2 bg-green-500 rounded-lg"></div>
-//                 </div>
-//                 <div className="ml-2">
-//                   {chat.contectName || chat.mobileNo}
-//                   <p className="text-xs truncate w-[200px]">
-//                     {chat?.messageBody}
-//                   </p>
-//                 </div>
-//               </div>
-//               <div className="flex flex-col items-end justify-end">
-//                 <p className="text-xs">{formatDate(chat.insertTime)}</p>
-//                 {chat.unreadCount > 0 && (
-//                   <div className="flex items-center justify-center w-5 h-5 text-sm text-white bg-green-500 rounded-full">
-//                     {chat.unreadCount}
-//                   </div>
-//                 )}
-//               </div>
-//             </div>
-//           </div>
-//         ))}
-//     </div>
-//   );
-// };
-
 import { getAgentList } from "@/apis/Agent/Agent";
 import { getUserAgent } from "@/apis/whatsapp/whatsapp";
 import { motion } from "framer-motion";
@@ -94,7 +15,7 @@ export const ChatSidebar = ({
   setSelectedAgentList,
   selectedWaba,
   setSelectedGroupList,
-  isLoading
+  isLoading,
 }) => {
   // const isLoading =
   //   selectedWaba &&
@@ -131,8 +52,6 @@ export const ChatSidebar = ({
     }
   }
 
-
-
   const defaultOptions = {
     loop: true,
     autoplay: true,
@@ -167,7 +86,7 @@ export const ChatSidebar = ({
               loop
               autoplay
               className="w-60 h-45"
-            // style={{ width: "full", height: "48px" }}
+              // style={{ width: "full", height: "48px" }}
             />
           </motion.div>
           <motion.p
@@ -213,11 +132,12 @@ export const ChatSidebar = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.1 }}
-              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${chatState?.active?.srno === chat.srno
-                ? // ? "bg-gradient-to-br from-blue-600 to-indigo-400 border-l-6 border-[#22577E] text-white "
-                "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
-                : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
-                }`}
+              className={`group p-4 rounded-xl cursor-pointer transition-all duration-200 mb-2 shadow-sm ${
+                chatState?.active?.srno === chat.srno
+                  ? // ? "bg-gradient-to-br from-blue-600 to-indigo-400 border-l-6 border-[#22577E] text-white "
+                    "bg-gradient-to-br from-[#5584AC] to-[#5584AC] border-l-6 border-[#22577E] text-white "
+                  : "bg-gradient-to-br from-gray-100 to-blue-100 hover:from-gray-200 hover:to-blue-200 text-gray-800"
+              }`}
               onClick={async () => {
                 const agentName = await getUserAgent(chat?.mobileNo);
                 const grpSrno = await fetchGrpList(agentName?.groupName);
@@ -244,10 +164,11 @@ export const ChatSidebar = ({
                       />
                     ) : (
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${chatState?.active?.srno === chat.srno
-                          ? "bg-white text-blue-600"
-                          : "bg-gray-300 text-gray-900"
-                          }`}
+                        className={`w-10 h-10 rounded-full flex items-center justify-center  font-semibold text-sm ${
+                          chatState?.active?.srno === chat.srno
+                            ? "bg-white text-blue-600"
+                            : "bg-gray-300 text-gray-900"
+                        }`}
                       >
                         {chat.contectName?.charAt(0)?.toUpperCase() || "?"}
                       </div>
@@ -273,6 +194,17 @@ export const ChatSidebar = ({
               </div>
             </motion.div>
           ))}
+
+      {chatState?.allConversations.length === 0 && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="text-sm font-normal text-gray-900 mb-2"
+        >
+          No conversation found
+        </motion.div>
+      )}
     </div>
   );
 };
