@@ -1000,6 +1000,7 @@ export const Carousel = ({
           </IconButton>
         </div>
       </div>
+      <p className="mr-auto ml-auto underline text-[#212529]">Card - {selectedCardIndex + 1}</p>
       <div className="flex gap-2">
         <AnimatedDropdown
           id="selectCardHeight"
