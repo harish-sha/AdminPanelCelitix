@@ -76,6 +76,43 @@ export const SMSNode = ({
     setConditions(options);
   }, []);
 
+  const deliveryStatusValue = [
+    {
+      label: "Delivered",
+      value: "delivered",
+    },
+    {
+      label: "DND Block",
+      value: "dnd-block",
+    },
+    {
+      label: "Undelivered but Active",
+      value: "undelivered-active",
+    },
+  ];
+
+  const statusValue = [
+    {
+      label: "Sent",
+      value: "sent",
+    },
+    {
+      label: "DND Block",
+      value: "dnd-block",
+    },
+  ];
+
+  const ClickValue = [
+    {
+      label: "Yes",
+      value: "yes",
+    },
+    {
+      label: "No",
+      value: "no",
+    },
+  ];
+
   return (
     <>
       <div>
@@ -116,8 +153,16 @@ export const SMSNode = ({
                   }}
                   options={[
                     {
+                      label: "Status",
+                      value: "status",
+                    },
+                    {
                       label: "Delivery Status",
                       value: "deliveryStatus",
+                    },
+                    {
+                      label: "Click Status",
+                      value: "clickStatus",
                     },
                   ]}
                 />
@@ -129,40 +174,43 @@ export const SMSNode = ({
                   onChange={(e: string) => {
                     handleOptionInput(e, "value", index);
                   }}
-                  options={[
-                    {
-                      label: "Delivery Status",
-                      value: "deliveryStatus",
-                    },
-                  ]}
+                  options={
+                    conditions[index]?.type === "status"
+                      ? statusValue
+                      : conditions[index]?.type === "deliveryStatus"
+                      ? deliveryStatusValue
+                      : ClickValue
+                  }
                 />
-                <AnimatedDropdown
-                  id="value"
-                  name="value"
-                  label={`Condition-${index + 1}-Interval`}
-                  value={conditions[index]?.interval}
-                  onChange={(e: string) => {
-                    handleOptionInput(e, "interval", index);
-                  }}
-                  options={[
-                    {
-                      label: "5",
-                      value: "5",
-                    },
-                    {
-                      label: "10",
-                      value: "10",
-                    },
-                    {
-                      label: "15",
-                      value: "15",
-                    },
-                    {
-                      label: "20",
-                      value: "20",
-                    },
-                  ]}
-                />
+                {conditions[index]?.type !== "status" && (
+                  <AnimatedDropdown
+                    id="value"
+                    name="value"
+                    label={`Condition-${index + 1}-Interval`}
+                    value={conditions[index]?.interval}
+                    onChange={(e: string) => {
+                      handleOptionInput(e, "interval", index);
+                    }}
+                    options={[
+                      {
+                        label: "5",
+                        value: "5",
+                      },
+                      {
+                        label: "10",
+                        value: "10",
+                      },
+                      {
+                        label: "15",
+                        value: "15",
+                      },
+                      {
+                        label: "20",
+                        value: "20",
+                      },
+                    ]}
+                  />
+                )}
 
                 {conditions.length > 1 && (
                   <Button
