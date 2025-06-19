@@ -549,7 +549,11 @@ const AddTemplateRcs = () => {
             placeholder="Enter Template Name"
             value={inputData.templateName}
             onChange={(e) => {
-              setInputData({ ...inputData, templateName: e.target.value });
+              const value = e.target.value
+              if(/^[a-zA-Z0-9_]*$/.test(value)){
+                setInputData({ ...inputData, templateName: value });
+              }
+              // setInputData({ ...inputData, templateName: e.target.value });
             }}
             tooltipContent="Enter a unique name (max 20 characters). Use letters, numbers, or underscores only. No spaces or special symbols."
             maxLength="20"
