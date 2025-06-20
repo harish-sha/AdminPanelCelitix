@@ -114,25 +114,20 @@ const ResellerLogin = () => {
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
       const ipResponse = await getIpAddress();
-      const domain = window.location.hostname;
+      // const domain = window.location.hostname;
+      const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
         ip: ipResponse?.data?.clientIp,
-        domain
+        domain,
       });
       const payload = {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: ipResponse?.data?.ip || "0.0.0.0",
-        // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        // domain: "reseller.alertsnow.in",
-        // domain: "msg.itbizcon.in",
-        // domain: "digitalyug.in",
-        // domain: "",
-        domain: domain
+        ip: "0.0.0.0",
+        domain,
       };
 
       const res = await login(payload);
@@ -211,10 +206,14 @@ const ResellerLogin = () => {
       password: password,
       mobileNo: verifyNumber,
 
-      domain: window.location.hostname,
+      domain: "reseller.alertsnow.in",
     };
 
     const res = await requestOtp(payload);
+
+    if (!res?.data?.status) {
+      return toast.error(res?.data?.msg || "Unable to send OTP");
+    }
 
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
@@ -231,6 +230,24 @@ const ResellerLogin = () => {
         ...basicDetails,
       };
       const res = await verifyOtp(payload);
+     
+      if (!res?.data?.token) {
+        return toast.error("Invalid otp");
+      }
+
+      const { token, role, ttl } = res.data;
+
+      // Set token (consider using localStorage if rememberMe is implemented)
+      sessionStorage.setItem("token", token);
+
+      let allowedServices = null;
+      if (role !== "AGENT") {
+        allowedServices = await getAllowedServices();
+      }
+
+      toast.success("Login Successful!");
+      authLogin(role, allowedServices, ttl);
+      navigate("/");
     } catch (e) {
       toast.error("Unable to Verify OTP");
     }
