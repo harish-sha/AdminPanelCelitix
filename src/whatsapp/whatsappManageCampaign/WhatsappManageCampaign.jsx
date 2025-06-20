@@ -139,7 +139,7 @@ const WhatsappManageCampaign = () => {
   });
 
   const [dataToExport, setDataToExport] = useState({
-    // campaignName: "",
+    campaignName: "",
     fromDate: "",
     toDate: "",
     srno: 0,
@@ -147,7 +147,8 @@ const WhatsappManageCampaign = () => {
     customColumns: "",
     campaignType: 0,
     status: "" || "",
-    // delStatus: {},
+    source:"",
+    deliveryStatus: "",
     type: "campaign",
   });
 

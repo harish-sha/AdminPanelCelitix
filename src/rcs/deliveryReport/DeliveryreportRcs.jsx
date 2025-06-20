@@ -95,6 +95,7 @@ const DeliveryreportRcs = () => {
     customColumns: "",
     campaignType: "",
     status: "",
+    source:"",
     delStatus: {},
     type: "campaign",
   });

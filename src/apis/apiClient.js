@@ -8,7 +8,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
 
   if (!token) {
     // console.error("No token found, redirecting to login.");
-    window.location.href = "/login";
+    // window.location.href = "/login";
     return;
   }
 

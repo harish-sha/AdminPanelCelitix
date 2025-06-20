@@ -67,7 +67,6 @@ const ObdCampaignReports = () => {
   const [filteredRows, setFilteredRows] = useState([]);
   const [dataTable, setDataTable] = useState([]);
 
-  console.log("obdCampaignData", obdCampaignData);
   const formatDateToYYYYMMDD = (dateStr) => {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, "0");
@@ -103,7 +102,7 @@ const ObdCampaignReports = () => {
   });
 
   // ManageScheduleCampaignSmsTable
-  const [visible, setVisible] = useState(false);   
+  const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
   // ManageScheduleCampaignSmsTable
 
@@ -144,24 +143,20 @@ const ObdCampaignReports = () => {
 
   const handleCampaignLog = () => {
     const filteredData = obdCampRows.filter((row) => {
-      // console.log("row", row);
 
       const matchName = obdCampaignName
         ? row.campaignName
           .toLowerCase()
           .includes(obdCampaignName.toLowerCase().trim())
         : true;
-      // console.log("matchName", matchName);
 
       const matchDate = obdcampaigndate
         ? row.date === moment(obdcampaigndate).format("YYYY-MM-DD")
         : true;
-      // console.log("matchDate ", matchDate);
 
       const matchType = obdCampaignType
         ? row.type?.toLowerCase() === obdCampaignType.toLowerCase()
         : true;
-      // console.log("obdCampaignType", obdCampaignType)
 
       const matchMobno = obdCampaignNumber
         ? row.mobno?.toString().includes(obdCampaignNumber.toString())
@@ -176,10 +171,10 @@ const ObdCampaignReports = () => {
   // Day wise summary Start
   const handleDayWiseSummary = async () => {
     const data = {
-      fromDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      fromDate: moment(daywiseDataToFilter.toDate).format(
         "YYYY-MM-DD"
       ),
-      toDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      toDate: moment(daywiseDataToFilter.toDate).format(
         "YYYY-MM-DD"
       ),
     };

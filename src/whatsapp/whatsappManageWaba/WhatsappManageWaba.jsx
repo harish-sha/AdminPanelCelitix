@@ -11,6 +11,7 @@ import {
   FaEnvelope,
   FaMapMarkerAlt,
   FaGlobe,
+  FaFacebookF,
 } from "react-icons/fa";
 
 import {
@@ -847,6 +848,37 @@ const WhatsappManageWaba = ({ id, name }) => {
   const phoneNumber = selectedWaba?.wabaNumber || "";
   const whatsappLinkPreview = `wa.me/${phoneNumber}`;
 
+  const FloatingIcons = () => {
+    const icons = Array.from({ length: 15 });
+    return (
+      <div className="absolute inset-0 overflow-hidden pointerevents-none z-0">
+        {icons.map((_, idx) => {
+          const left = Math.floor(Math.random() *
+            window.innerWidth); // Full width
+          return (
+            <motion.div
+              key={idx}
+              className="absolute text-green-500 opacity-30"
+              style={{ left: `${left}px`, bottom: -50 }}
+              initial={{ y: 0, rotate: 0 }}
+              animate={{
+                y: -window.innerHeight - 100, rotate: 0
+              }}
+              transition={{
+                duration: 20 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 3,
+              }}
+            >
+              <FaWhatsapp size={74 + Math.random() * 24} />
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="">
       {isLoading ? (
@@ -936,8 +968,10 @@ const WhatsappManageWaba = ({ id, name }) => {
           </div>
         </>
       ) : (
-        <div className="flex h-[80vh] justify-center w-full items-center">
-          {/* <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
+        <div className="relative h-[90vh] w-full border-2 flex items-center justify-center rounded-4xl border-green-600 shadow-2xl bg-gradient-to-tr from-blue-50 to-green-50">
+          <FloatingIcons />
+          <div className="flex justify-center items-center z-50">
+            {/* <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
             <h1 className="text-xl font-semibold">No account connected yet!</h1>
             <p className="mb-6 font-medium">
               Login with Facebook to start launching campaigns and analyse phone
@@ -951,18 +985,18 @@ const WhatsappManageWaba = ({ id, name }) => {
               Login with Facebook
             </button>
           </div> */}
-          <div className="bg-white w-1/2 px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
-            <div className="space-y-2">
-              <h2 className="text-2xl font-bold text-gray-800">Set Up Your WhatsApp Business Account</h2>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                Welcome! To get started with managing your business on WhatsApp, you need to link your official
-                WhatsApp Business Account (WABA). This will allow you to securely communicate with your customers
-                and manage interactions effectively.
-                <br className="hidden md:block" />
-                Click the button below to securely link your account via Facebook Business.
-              </p>
-            </div>
-            <button
+            <div className="bg-white w-170 px-6 py-10 md:px-10 space-y-6 text-center border-2 border-[#1877F2] rounded-2xl shadow-2xl bg-gradient-to-tr from-green-100 to-blue-50">
+              <div className="space-y-2">
+                <h2 className="text-4xl font-[500] playf mb-4 text-green-600">Set Up Your WhatsApp Business Account</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Welcome! To get started with managing your business on WhatsApp, you need to link your official
+                  WhatsApp Business Account (WABA). This will allow you to securely communicate with your customers
+                  and manage interactions effectively.
+                  <br className="hidden md:block" />
+                  Click the button below to securely link your account via Facebook Business.
+                </p>
+              </div>
+              {/* <button
               onClick={handleFacebookLogin}
               className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
             >
@@ -970,11 +1004,36 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
               </svg>
               Link with Facebook
-            </button>
-            <p className="text-xs text-gray-400 mt-2">
-              Rest assured, your privacy and security are our top priority. We do not store any of your credentials.
-              This login is exclusively for linking your new WABA through Meta's official authorization process.
-            </p>
+            </button> */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                animate={{
+                  boxShadow: [
+                    "0 0 0px #1877F2",
+                    "0 0 8px #1877F2",
+                    "0 0 0px #1877F2",
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                }}
+                onClick={handleFacebookLogin}
+                className="bg-[#1877F2] hover:bg-[#166fe5]
+transition-all px-6 py-3 rounded-xl text-white text-base fontmedium flex items-center justify-center gap-2 mx-auto cursor-pointer"
+              >
+                <span className="bg-blue-900 p-1.5 rounded-full" >
+                  <FaFacebookF size={20} />
+                </span>
+                Link with Facebook
+              </motion.button>
+              <p className="text-xs text-gray-400 mt-2">
+                Rest assured, your privacy and security are our top priority. We do not store any of your credentials.
+                This login is exclusively for linking your new WABA through Meta's official authorization process.
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -1382,7 +1441,7 @@ const WhatsappManageWaba = ({ id, name }) => {
       >
         <div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-gray-800">Link an Additional WhatsApp Business Account</h2>
+            <h2 className="text-2xl font-[500] text-[#1877F2]   rounded-4xl shadow-xl py-3 mb-7 bg-gradient-to-br from-purple-100 to-blue-100">Link an Additional WhatsApp Business Account</h2>
             <p className="text-gray-600 text-sm leading-relaxed">
               You can connect multiple WhatsApp Business Accounts (WABAs) to manage different brands or regions under one platform.
               <br className="hidden md:block" />

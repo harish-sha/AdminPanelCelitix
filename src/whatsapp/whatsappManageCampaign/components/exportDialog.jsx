@@ -802,7 +802,7 @@ export const ExportDialog = ({
         : "",
       type: dataToExport?.type === "campaign" ? 1 : 2,
       status: dataToExport.status || "",
-      // campaignName: name,
+      campaignName: name,
     };
 
     try {
@@ -817,7 +817,7 @@ export const ExportDialog = ({
         customColumns: "",
         campaignType: 0,
         status: "",
-        delStatus: {},
+        deliveryStatus: "",
         type: "campaign",
       });
       setVisibledialog(false);
@@ -833,12 +833,12 @@ export const ExportDialog = ({
       [name]: e.target.checked,
     };
     if (selectedField[name] === false) {
-      delete dataToExport.delStatus[name];
+      delete dataToExport.deliveryStatus[name];
       delete selectedField[name];
     }
     setDataToExport((prev) => ({
       ...prev,
-      delStatus: { ...prev.delStatus, ...selectedField },
+      deliveryStatus: { ...prev.deliveryStatus, ...selectedField },
     }));
   }
 
@@ -887,7 +887,7 @@ export const ExportDialog = ({
                   customColumns: "",
                   campaignType: 0,
                   status: "",
-                  delStatus: {},
+                  deliveryStatus: {},
                 }));
               }}
               checked={dataToExport.type === "campaign"}
@@ -919,7 +919,7 @@ export const ExportDialog = ({
                   customColumns: "",
                   campaignType: 0,
                   status: "",
-                  delStatus: {},
+                  deliveryStatus: "",
                 }));
                 // setDataToExport({
                 //   campaignName: "",
@@ -1073,6 +1073,40 @@ export const ExportDialog = ({
                     setDataToExport({ ...dataToExport, status: e })
                   }
                   placeholder="Select Status"
+                />
+              </div>
+            </div>
+
+            <div className="flex justify-between gap-5 my-4">
+              <div className="flex-1">
+                <AnimatedDropdown
+                  label="Select Source"
+                  options={[
+                    { value: "api", label: "Api" },
+                    { value: "gui", label: "Gui" },
+                  ]}
+                  value={dataToExport.source}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, source: e })
+                  }
+                  placeholder="Select Source"
+                />
+              </div>
+
+              <div className="flex-1">
+                <AnimatedDropdown
+                  label="Select Delivery Status"
+                  options={[
+                    { value: "DELIVRD", label: "Delivered" },
+                    { value: "UNDELIV", label: "Undelivered" },
+                    { value: "failed", label: "Failed" },
+                    { value: "read", label: "Read"}
+                  ]}
+                  value={dataToExport.deliveryStatus}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, deliveryStatus: e })
+                  }
+                  placeholder="Select Delivery Status"
                 />
               </div>
             </div>

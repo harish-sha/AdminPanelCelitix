@@ -896,6 +896,39 @@ export const ExportDialog = ({
               </div>
             </div>
 
+            <div className="flex justify-between gap-5 my-4">
+              <div className="flex-1">
+                <AnimatedDropdown
+                  label="Select Source"
+                  options={[
+                    { value: "api", label: "Api" },
+                    { value: "gui", label: "Gui" },
+                  ]}
+                  value={dataToExport.source}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, source: e })
+                  }
+                  placeholder="Select Source"
+                />
+              </div>
+
+              {/* <div className="flex-1">
+                <AnimatedDropdown
+                  label="Select Request"
+                  options={[
+                    { value: "Sent", label: "Sent" },
+                    { value: "Failed", label: "Failed" },
+                    { value: "Blocked", label: "Blocked" },
+                  ]}
+                  value={dataToExport.status}
+                  onChange={(e) =>
+                    setDataToExport({ ...dataToExport, status: e })
+                  }
+                  placeholder="Select Status"
+                />
+              </div> */}
+            </div>
+
             <div className="flex flex-col mt-5">
               <UniversalLabel text="Delivery Status" />
               <div className="flex gap-x-5 lg:gap-x-20">

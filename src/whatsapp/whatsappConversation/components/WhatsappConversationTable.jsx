@@ -104,7 +104,7 @@ const WhatsappConversationTable = ({
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
-   const BASE_MEDIA_URL = "https://cb.celitix.com";
+  const BASE_MEDIA_URL = "https://cb.celitix.com";
   // const BASE_MEDIA_URL = import.meta.env.VITE_IMAGE_URL;
   // const BASE_MEDIA_URL = "/image";
 
@@ -115,10 +115,10 @@ const WhatsappConversationTable = ({
     if (!row.mediaPath || !row.replyType) return;
     const type = row.replyType.toLowerCase();
     let url = row.mediaPath;
-    let finalUrl = `${BASE_MEDIA_URL}${url}`
-    console.log(finalUrl)
+    // let finalUrl = `${BASE_MEDIA_URL}${url}`
+    // console.log(finalUrl)
 
-    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(finalUrl);
+    const parsed = /^[a-zA-Z]+:\/\/[^\/]+/.test(url);
 
     if (!parsed) {
       return toast.error("Invalid URL");
@@ -129,7 +129,7 @@ const WhatsappConversationTable = ({
       const pathname = new URL(row.mediaPath).pathname;
       mimeType = pathname.split(".").pop();
     }
-    setFileData({ finalUrl, type, mimeType });
+    setFileData({ url, type, mimeType });
     setIsDialogOpen(true);
   }
 
@@ -289,7 +289,7 @@ const WhatsappConversationTable = ({
         onHide={() => {
           setIsDialogOpen(false);
           setFileData({
-            finalUrl: "",
+            url: "",
             type: "",
           });
         }}
@@ -300,15 +300,15 @@ const WhatsappConversationTable = ({
         <div className="flex items-center justify-center">
           {fileData && fileData.type === "image" && (
             <img
-              src={fileData?.finalUrl}
-              alt={fileData?.finalUrl}
+              src={fileData?.url}
+              alt={fileData?.url}
               className="rounded-md max-w-full max-h-[30rem]"
             />
           )}
           {fileData && fileData.type === "video" && (
             <video
               controls
-              src={fileData?.finalUrl}
+              src={fileData?.url}
               className="rounded-md max-w-full max-h-[30rem]"
             />
           )}
@@ -317,7 +317,7 @@ const WhatsappConversationTable = ({
             fileData.type === "document" &&
             fileData.mimeType === "pdf" && (
               <iframe
-                src={fileData.finalUrl}
+                src={fileData.url}
                 className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
               />
             )}
@@ -326,7 +326,7 @@ const WhatsappConversationTable = ({
             fileData.mimeType === "xlsx" && (
               <iframe
                 // src={fileData?.url}
-                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.finalUrl}`}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.url}`}
                 className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
               />
             )}
@@ -335,7 +335,7 @@ const WhatsappConversationTable = ({
             fileData.mimeType === "docx" && (
               <iframe
                 // src={fileData?.url}
-                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.finalUrl}`}
+                src={`https://view.officeapps.live.com/op/embed.aspx?src=${fileData.url}`}
                 className="h-100 w-full border border-gray-200 rounded-md bg-center bg-no-repeat"
               />
             )}

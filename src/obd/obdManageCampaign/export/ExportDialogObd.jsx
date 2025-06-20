@@ -29,6 +29,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
     isCustomField: 0,
     customColumns: "",
     type: "campaign",
+    source: "",
+    deliveryStatus:""
   });
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -194,8 +196,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
         customColumns: "",
         type: "campaign",
       });
-      setCampaignCheckboxStates("")
-      setcustomCheckboxStates("")
+      setCampaignCheckboxStates("");
+      setcustomCheckboxStates("");
       setVisibledialog(false);
 
       triggerDownloadNotification();
@@ -619,7 +621,40 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                 </div>
               </div>
 
-              <div className="flex flex-col mt-5">
+              <div className="flex justify-between gap-5 my-4">
+                <div className="flex-1">
+                  <AnimatedDropdown
+                    label="Select Source"
+                    options={[
+                      { value: "api", label: "Api" },
+                      { value: "gui", label: "Gui" },
+                    ]}
+                    value={dataToExport.source}
+                    onChange={(e) =>
+                      setDataToExport({ ...dataToExport, source: e })
+                    }
+                    placeholder="Select Source"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <AnimatedDropdown
+                    label="Select DElivery Status"
+                    options={[
+                      { value: "Answered", label: "Answered" },
+                      { value: "Unanswered", label: "Unanswered" },
+                      { value: "Dialed", label: "Dialed" },
+                    ]}
+                    value={dataToExport.deliveryStatus}
+                    onChange={(e) =>
+                      setDataToExport({ ...dataToExport, deliveryStatus: e })
+                    }
+                    placeholder="Select Delivery Status"
+                  />
+                </div>
+              </div>
+
+              {/* <div className="flex flex-col mt-5">
                 <UniversalLabel text="Delivery Status" />
                 <div className="flex gap-x-5 lg:gap-x-20">
                   <div className="flex items-center">
@@ -676,7 +711,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex my-4 gap-4">
                 <InputField

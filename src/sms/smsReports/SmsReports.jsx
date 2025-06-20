@@ -12,7 +12,8 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import { IoSearch } from "react-icons/io5";
 import { RadioButton } from "primereact/radiobutton";
-import AttachmentLogsTbaleSms from "./components/AttachmentLogsTbaleSms";
+import AttachmentLogsTableSms from "./components/AttachmentLogsTableSms";
+import DayWiseSummaryTableSms from "./components/DayWiseSummaryTableSms";
 import { Dialog } from "primereact/dialog";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel";
@@ -121,6 +122,8 @@ const SmsReports = () => {
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
 
+  console.log("daywiseTableData", daywiseTableData)
+
   //attachment state
   const [attachmentDataToFilter, setAttachmentDataToFilter] = useState({
     startDate: new Date(),
@@ -148,13 +151,9 @@ const SmsReports = () => {
     customColumns: "",
     campaignType: "",
     status: "",
+    source:"",
     // delStatus: {},
-    delStatus: {
-      delivered: false,
-      undelivered: false,
-      rejected: false,
-      pdr: false,
-    },
+    deliveryStatus:"",
     type: "campaign",
   });
 
@@ -1130,71 +1129,73 @@ const SmsReports = () => {
       fromDate: moment(daywiseDataToFilter.fromDate).format("YYYY-MM-DD"),
       toDate: moment(daywiseDataToFilter.toDate).format("YYYY-MM-DD"),
       summaryType: "date,user",
-      smsType: daywiseDataToFilter.smsType ?? "",
+      campaignType: daywiseDataToFilter.smsType ?? "",
     };
 
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      // console.log(res);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
-        { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
-        { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
-        { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
-        { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
-        { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
-        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
-        {
-          field: "not_delivered",
-          headerName: "Not delivered",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "pending",
-          headerName: "Pending DR",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 50,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      setDaywiseTableData(res)
+      
+      console.log("res", res);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
+      //   { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
+      //   { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
+      //   { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
+      //   { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
+      //   { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
+      //   { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
+      //   { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
+      //   {
+      //     field: "not_delivered",
+      //     headerName: "Not delivered",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "pending",
+      //     headerName: "Pending DR",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 50,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Download" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() => {
+      //               // console.log(params.row);
+      //             }}
+      //           >
+      //             <DownloadForOfflineOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
 
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1220,85 +1221,88 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        // { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
-        {
-          field: "queTime",
-          headerName: "Date",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) =>
-            moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
-        },
-        {
-          field: "count",
-          headerName: "Total clicks",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smsAttachmentdetaillog", {
-                      state: { id: params.row.campaign_srno },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      setAttachmentTableData(res)
+      console.log("res", res)
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   // { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
+      //   {
+      //     field: "queTime",
+      //     headerName: "Date",
+      //     flex: 1,
+      //     minWidth: 120,
+      //     renderCell: (params) =>
+      //       moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
+      //   },
+      //   {
+      //     field: "count",
+      //     headerName: "Total clicks",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Detailed Log" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() =>
+      //               navigate("/smsAttachmentdetaillog", {
+      //                 state: { id: params.row.campaign_srno },
+      //               })
+      //             }
+      //           >
+      //             <DescriptionOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //         <CustomTooltip title="Download" placement="top" arrow>
+      //           <IconButton
+      //             onClick={() => {
+      //               // console.log(params.row);
+      //             }}
+      //           >
+      //             <DownloadForOfflineOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
 
-      const sortedData = res.sort(
-        (a, b) => new Date(b.queTime) - new Date(a.queTime)
-      );
+      // const sortedData = res.sort(
+      //   (a, b) => new Date(b.queTime) - new Date(a.queTime)
+      // );
 
-      setRows(
-        Array.isArray(sortedData)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(sortedData)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
+
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1875,10 +1879,10 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap w-full gap-4 sm:w-56">
+              {/* <div className="flex flex-wrap w-full gap-4 sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
-                  id="SmsTyoe"
+                  id="SmsType"
                   name="SmsType"
                   options={[
                     { value: 1, label: "Day Wise" },
@@ -1893,7 +1897,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
@@ -1927,11 +1931,16 @@ const SmsReports = () => {
           </div>
 
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="DayWiseSummaryTableSms"
               name="DayWiseSummaryTableSms"
               col={columns}
               rows={rows}
+            /> */}
+            <DayWiseSummaryTableSms
+              id="DayWiseSummaryTableSms"
+              name="DayWiseSummaryTableSms"
+              data={daywiseTableData}
             />
           </div>
         </CustomTabPanel>
@@ -1995,11 +2004,16 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="AttachmentTableSms"
               name="AttachmentTableSms"
               col={columns}
               rows={rows}
+            /> */}
+            <ManageScheduleCampaignSmsTable
+              id="AttachmentTableSms"
+              name="AttachmentTableSms"
+              data={attachmentTableData}
             />
           </div>
         </CustomTabPanel>

@@ -314,7 +314,7 @@ const WhatsappCreateTemplate = () => {
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
-      toast.error("Only underscore (_) and alphanumeric are allowed.");
+      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
       return;
     }
 
@@ -331,10 +331,16 @@ const WhatsappCreateTemplate = () => {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
-        // text: templateHeader,
-        example: {
-          header_text: [templateHeader],
-        },
+        text: templateHeader,
+        // example: {
+        //   header_text: [
+        //     "variable one", "variable two"
+        //   ]
+        // },
+        // text: "text header value {{1}}",
+        // example: {
+        //   header_text: "variable value",
+        // },
       });
     }
 
@@ -568,6 +574,7 @@ const WhatsappCreateTemplate = () => {
         );
         // } else if (response.message === "Template Save Successfully") {
       } else if (message.message === "Template Save Successfully") {
+        // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
         setSelectedWaba("");

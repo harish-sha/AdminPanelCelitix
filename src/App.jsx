@@ -24,6 +24,8 @@ const App = () => {
       <LoadingBar />
 
       <Routes>
+        <Route path="/*" element={<Approutes />} />
+          <Route path="/docs/*" element={<Apiroutes />} />
         <Route
           path="/login"
           element={

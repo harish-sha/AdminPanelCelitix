@@ -92,7 +92,7 @@ const CustomPagination = ({
 };
 
 const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
-    console.log("data", data)
+  console.log("data", data)
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -238,7 +238,7 @@ const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
         rowHeight={45}
         slots={{
           footer: CustomFooter,
-        //   noRowsOverlay: CustomNoRowsOverlay,
+          //   noRowsOverlay: CustomNoRowsOverlay,
         }}
         slotProps={{ footer: { totalRecords: rows.length } }}
         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}

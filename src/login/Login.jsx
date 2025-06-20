@@ -829,12 +829,16 @@ const Login = () => {
   }
 
   async function sendOtp() {
+    if (!inputDetails.mobileNo) {
+      toast.error("Please enter your mobile number.");
+      return;
+    }
     delete inputDetails.rememberMe;
     try {
       const res = await requestOtp(inputDetails);
       if (!res?.data?.status) {
         toast.error(res?.data?.msg);
-        // return;
+        return;
       }
       toast.success(res?.data?.msg);
       setStep(3);
