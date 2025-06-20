@@ -526,8 +526,9 @@ const WhatsappLaunchCampaign = () => {
       const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
+        const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
         setTemplateOptions(
-          response.map((template) => ({
+          approvedTemplateList.map((template) => ({
             value: template.vendorTemplateId,
             label: template.templateName,
           }))

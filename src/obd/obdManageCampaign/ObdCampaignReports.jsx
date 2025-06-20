@@ -212,10 +212,10 @@ const ObdCampaignReports = () => {
     }
 
     const data = {
-      fromDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      fromDate: moment(daywiseDataToFilter.toDate).format(
         "YYYY-MM-DD"
       ),
-      toDate: moment(daywiseDataToFilter.formatDateToYYYYMMDD).format(
+      toDate: moment(daywiseDataToFilter.toDate).format(
         "YYYY-MM-DD"
       ),
       selectedUserId: selectedUser || 0
@@ -694,7 +694,7 @@ const ObdCampaignReports = () => {
             <CustomTabPanel value={value} index={1}>
               <div className="w-full">
                 <div className="flex flex-col md:flex-row lg:flex-row flex-wrap gap-4 items-end pb-5 w-full">
-                  <div className="w-full sm:w-56">
+                  {/* <div className="w-full sm:w-56">
                     <UniversalDatePicker
                       label="From Date"
                       id="summaryfromDate"
@@ -707,11 +707,11 @@ const ObdCampaignReports = () => {
                         }))
                       }
                     />
-                  </div>
+                  </div> */}
 
                   <div className="w-full sm:w-56">
                     <UniversalDatePicker
-                      label="To Date"
+                      label="Created Date"
                       id="summarytodate"
                       name="summarytodate"
                       value={daywiseDataToFilter.toDate}

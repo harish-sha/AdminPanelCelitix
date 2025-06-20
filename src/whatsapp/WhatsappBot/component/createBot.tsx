@@ -653,7 +653,7 @@ const CreateWhatsAppBot = () => {
         options: [],
       },
       answer: {
-        variableId: "",
+        // variableId: "",
         type: "",
       },
       button: {
@@ -793,7 +793,7 @@ const CreateWhatsAppBot = () => {
         id: "",
       },
       answer: {
-        variableId: "",
+        // variableId: "",
         type: "",
       },
       list: {

@@ -314,7 +314,7 @@ const WhatsappCreateTemplate = () => {
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
-      toast.error("Only underscore (_) and alphanumeric are allowed.");
+      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
       return;
     }
 

@@ -1,464 +1,828 @@
-import { getListofSendMsg, downloadCustomWhatsappReport } from "@/apis/whatsapp/whatsapp";
-import { Paper, Typography } from "@mui/material";
-import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
-import { useEffect, useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
-import { useLocation } from "react-router-dom";
-import styled from "styled-components";
-import CustomNoRowsOverlay from "@/whatsapp/components/CustomNoRowsOverlay";
-import { Box } from "@mui/material";
-import usePagination from "@mui/material/usePagination";
-import { Button } from "@mui/material";
-import moment from "moment";
+import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
+import { motion } from "framer-motion";
+
+import { useUser } from "@/context/auth";
+import { UAParser } from "ua-parser-js";
+
 import UniversalButton from "@/components/common/UniversalButton";
-import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
-import Loader from "@/whatsapp/components/Loader";
-import { useDownload } from "@/context/DownloadProvider";
-import UniversalSkeleton from "@/components/common/UniversalSkeleton.jsx";
-import CustomTooltip from "@/components/common/CustomTooltip";
-import IconButton from "@mui/material/IconButton";
-import { ImInfo } from "react-icons/im";
-import InfoPopover from "@/components/common/InfoPopover";
+import celitixLogo from "@/assets/images/celitix-logo-white.svg";
+import InputField from "@/components/layout/InputField";
+import loginBanner from "@/assets/images/loginBanner.jpg";
 
+import "../../login.css";
+import { getIpAddress, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
+import { getAllowedServices } from "@/apis/admin/admin";
+import axios from "axios";
+import { InputOtp } from "primereact/inputotp";
 
+const ResellerLogin = () => {
+  const { authLogin } = useUser();
+  const navigate = useNavigate();
+  const [step, setStep] = useState("login");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [captcha, setCaptcha] = useState("");
+  const [mobile, setMobile] = useState("");
+  const [email, setEmail] = useState("");
+  const [mobileotp, setMobileOtp] = useState("");
+  const [emailotp, setEmailOtp] = useState("");
+  const [timer, setTimer] = useState(20);
+  const [isResendDisabled, setIsResendDisabled] = useState(true);
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [verifyNumber, setVerifyNumber] = useState("");
+  const [numberOtp, setNumberOtp] = useState("");
 
-const PaginationList = styled("ul")({
-  listStyle: "none",
-  padding: 0,
-  margin: 0,
-  display: "flex",
-  gap: "8px",
-});
+  const [captchaProblem, setCaptchaProblem] = useState("");
+  const [captchaSolution, setCaptchaSolution] = useState(null);
 
-const CustomPaginatior = ({
-  totalPages,
-  paginationModel,
-  setPaginationModel,
-  setCurrentPage,
-}) => {
-  const { items } = usePagination({
-    count: totalPages,
-    page: paginationModel.page,
-    onChange: (_, newPage) => {
-      setCurrentPage(newPage);
-      setPaginationModel({ ...paginationModel, page: newPage });
-    },
-  });
+  const [basicDetails, setBasicDetails] = useState({});
 
-  return (
-    <Box sx={{ display: "flex", justifyContent: "center", padding: 0 }}>
-      <PaginationList>
-        {items.map(({ page, type, selected, ...item }, index) => {
-          let children = null;
+  const parser = new UAParser();
+  const uaResult = parser.getResult();
 
-          if (type === "start-ellipsis" || type === "end-ellipsis") {
-            children = "…";
-          } else if (type === "page") {
-            children = (
-              <Button
-                key={index}
-                variant={selected ? "contained" : "outlined"}
-                size="small"
-                sx={{ minWidth: "27px" }}
-                {...item}
-              >
-                {page}
-              </Button>
-            );
-          } else {
-            children = (
-              <Button
-                key={index}
-                variant="outlined"
-                size="small"
-                {...item}
-                sx={{}}
-              >
-                {type === "previous" ? "Previous" : "Next"}
-              </Button>
-            );
-          }
-
-          return <li key={index}>{children}</li>;
-        })}
-      </PaginationList>
-    </Box>
-  );
-};
-
-export const ApiCampaignInfo = () => {
-  const { state } = useLocation();
-
-  if (!state) {
-    return null;
-  }
-
-  const [data, setData] = useState([]);
-  const [paginationModel, setPaginationModel] = useState({
-    page: 1,
-    pageSize: 10,
-  });
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPage, setTotalPage] = useState(1);
-  const [selectedRows, setSelectedRows] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { triggerDownloadNotification } = useDownload();
-  const dropdownButtonRefs = useRef({});
-  const [dropdownOpenId, setDropdownOpenId] = useState(null);
-  const [clicked, setClicked] = useState([]);
-  const closeDropdown = () => setDropdownOpenId(null);
-
-
-  const handleInfo = (row) => {
-    const id = row.id;
-    setDropdownOpenId((prevId) => (prevId === id ? null : id));
-    setClicked(row.additionalInfo || []);
-  };
-
-
-  async function handleFetchDetails(page = 1) {
-    try {
-      setIsLoading(true);
-
-      const formattedFromDate = state.selectedDate
-        ? moment(state.selectedDate).format("YYYY-MM-DD")
-        : moment().format("YYYY-MM-DD");
-
-      let status = "";
-      let deliveryStatus = "";
-
-      const statusBased = ["failed", "submitted", "block", "busy"];
-      const deliveryBased = ["read", "delivered", "undelivered"];
-
-      if (statusBased.includes(state.log)) {
-        status = state.log;
-      } else if (deliveryBased.includes(state.log)) {
-        deliveryStatus = state.log;
-      }
-
-      const payload = {
-        fromDate: formattedFromDate,
-        toDate: formattedFromDate,
-        mobile: "",
-        page,
-        pageSize: paginationModel.pageSize,
-        source: "API",
-        deliveryStatus,
-        status,
-      };
-      const res = await getListofSendMsg(payload);
-      setTotalPage(res?.pages || 0);
-
-      const formattedData = Array.isArray(res.data)
-        ? res?.data?.map((item, index) => ({
-          sn: index + 1,
-          id: index + 1,
-          ...item,
-        }))
-        : [];
-
-      setData(formattedData);
-    } catch (e) {
-      return toast.error("Error fetching data");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  async function handleExport() {
-    try {
-      const payload = {
-        // type: 1,
-        // selectedUserId: "",
-        fromDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        toDate: moment(state.selectedDate).format("YYYY-MM-DD"),
-        // isCustomField: 1,
-        // customColumns: "",
-        // status: state.log,
-        // delStatus: {},
-        source: "api"
-      };
-      const res = await downloadCustomWhatsappReport(payload);
-      if (!res?.status) {
-        return toast.error(res?.msg);
-      }
-
-      toast.success(res?.msg);
-      triggerDownloadNotification();
-    } catch (e) {
-      toast.error("Error downloading attachment");
-    }
-  }
+  // Password validation state for border color
+  const [passwordsMatch, setPasswordsMatch] = useState(null);
 
   useEffect(() => {
-    handleFetchDetails(currentPage);
-  }, [currentPage]);
+    generateCaptcha();
+  }, []);
 
-  const columns = [
-    { field: "sn", headerName: "S.No", width: 60 },
-    { field: "wabaNumber", headerName: "WABA Number", width: 130 },
-    { field: "mobileNo", headerName: "Mobile Number", minWidth: 135 },
-    { field: "source", headerName: "Source", minWidth: 100 },
-    { field: "status", headerName: "Status", minWidth: 100 },
-    {
-      field: "deliveryStatus",
-      headerName: "Delivery Status",
-      width: 150,
-    },
-    { field: "reason", headerName: "Reason", width: 150 },
-    { field: "sentTime", headerName: "Sent", width: 200 },
-    {
-      field: "requestJson",
-      headerName: "Request JSON",
-      flex: 1,
-      minWidth: 120,
-    },
-    // { field: "readTime", headerName: "Read Time", flex: 1, minWidth: 120 },
-    // { field: "queTime", headerName: "Que Time", flex: 1, minWidth: 120 },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 0,
-      width: 70,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip title="Info" placement="top" arrow>
-            <span>
-              <IconButton
-                type="button"
-                ref={(el) => {
-                  if (el) dropdownButtonRefs.current[params.row.id] = el;
-                }}
-                onClick={() => handleInfo(params.row)}
-                className="no-xs relative"
-              >
-                <ImInfo size={18} className="text-green-500 " />
-              </IconButton>
-              <InfoPopover
-                anchorEl={dropdownButtonRefs.current[params.row.id]}
-                open={dropdownOpenId === params.row.id}
-                onClose={closeDropdown}
-              >
-                {clicked && Object.keys(clicked).length > 0 ? (
-                  <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-                    <tbody>
-                      {Object.entries(clicked).map(([key, value], index) => (
-                        <tr
-                          key={index}
-                          className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                        >
-                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
-                            {additionalInfoLabels[key] || key}
-                          </td>
-                          <td className="px-4 py-2 text-gray-800">
-                            {key === "isEnabledForInsights"
-                              ? value === true || value === "true"
-                                ? "True"
-                                : "False"
-                              : value || "N/A"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                ) : (
-                  <div className="text-sm text-gray-400 italic px-2 py-2">
-                    No data
-                  </div>
-                )}
-              </InfoPopover>
-            </span>
-          </CustomTooltip>
-        </>
-      ),
-    },
+  // Check if passwords match and update border color state
+  useEffect(() => {
+    if (newPassword === "" && confirmPassword === "") {
+      setPasswordsMatch(null);
+    } else if (newPassword === confirmPassword && newPassword !== "") {
+      setPasswordsMatch(true);
+    } else {
+      setPasswordsMatch(false);
+    }
+  }, [newPassword, confirmPassword]);
 
-  ];
+  useEffect(() => {
+    let countdown;
+    if (
+      isResendDisabled &&
+      (step === "verifyOTP" || step === "verifynumberotp")
+    ) {
+      setTimer(20); // Reset timer to 20
+      countdown = setInterval(() => {
+        setTimer((prev) => {
+          if (prev <= 1) {
+            clearInterval(countdown);
+            setIsResendDisabled(false); // Enable Resend OTP button
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+    }
 
-  const additionalInfoLabels = {
-    queTime: "Que Time",
-    readTime: "Read Time",
-    // sentTime: "Sent Time"
+    return () => clearInterval(countdown);
+  }, [isResendDisabled, step]);
 
+  function generateCaptcha() {
+    const num1 = Math.floor(Math.random() * 10) + 1;
+    const num2 = Math.floor(Math.random() * (num1 + 1));
+    const operator = ["+", "-"][Math.floor(Math.random() * 2)];
+    const solution = operator === "+" ? num1 + num2 : num1 - num2;
+
+    setCaptchaProblem(`${num1} ${operator} ${num2} = ?`);
+    setCaptchaSolution(solution);
+  }
+
+  async function handleLogin() {
+    // Basic validation
+    if (!username || !password) {
+      return toast.error("All fields are required. Please fill them out.");
+    }
+
+    if (!captcha) {
+      return toast.error("CAPTCHA is required. Please fill it out.");
+    }
+
+    if (parseInt(captcha) !== captchaSolution) {
+      return toast.error("Invalid CAPTCHA");
+    }
+
+    try {
+      // const ipResponse = await axios.get("https://ipapi.co/json/");
+      const ipResponse = await getIpAddress();
+      const domain = window.location.hostname;
+
+      setBasicDetails({
+        systemInfo: uaResult.browser.name,
+        ip: ipResponse?.data?.clientIp,
+        domain
+      });
+      const payload = {
+        userId: username,
+        password,
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // ip: ipResponse?.data?.ip || "0.0.0.0",
+        // domain: domain !== "celitix.alertsnow.in" ? domain : "",
+        // domain: "reseller.alertsnow.in",
+        // domain: "msg.itbizcon.in",
+        // domain: "digitalyug.in",
+        // domain: "",
+        domain: domain
+      };
+
+      const res = await login(payload);
+
+      if (res?.data?.validateOtp) {
+        // return toast.error(res?.data?.message);
+        setStep("verifyNumber");
+        return;
+      }
+
+      if (!res?.data?.token) {
+        return toast.error("Invalid credentials");
+      }
+
+      const { token, role, ttl } = res.data;
+
+      // Set token (consider using localStorage if rememberMe is implemented)
+      sessionStorage.setItem("token", token);
+
+      let allowedServices = null;
+      if (role !== "AGENT") {
+        allowedServices = await getAllowedServices();
+      }
+
+      toast.success("Login Successful!");
+      authLogin(role, allowedServices, ttl);
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      toast.error("Error while logging in");
+    }
+  }
+
+  function handleRequestOTP() {
+    const phoneRegex = /^\d{10}$/;
+    const emailRegex = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+    // Check if both fields are empty
+    if (!mobile || !email) {
+      toast.error("Both mobile number and email are required.");
+      return;
+    }
+
+    // Validate Mobile Number
+    if (!phoneRegex.test(mobile)) {
+      toast.error("Invalid mobile number. Please enter a 10-digit number.");
+      return;
+    }
+
+    // Validate Email
+    if (!emailRegex.test(email)) {
+      toast.error("Invalid email format. Please enter a valid email.");
+      return;
+    }
+
+    // If both fields are valid, proceed
+    toast.success("OTP Sent to your mobile number and email");
+    setStep("verifyOTP");
+  }
+
+  async function handleVerifyNumberRequest() {
+    // const phoneRegex = /^\d{10}$/;
+
+    if (!verifyNumber) {
+      toast.error("Mobile number is required.");
+      return;
+    }
+
+    // if (!phoneRegex.test(verifyNumber)) {
+    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
+    //   return;
+    // }
+
+    const payload = {
+      userId: username,
+      password: password,
+      mobileNo: verifyNumber,
+      domain: window.location.hostname,
+    };
+
+    const res = await requestOtp(payload);
+
+    toast.success("OTP Sent to your mobile number");
+    setStep("verifynumberotp");
+  }
+
+  async function handleVerifyNumberOTP() {
+    try {
+      const payload = {
+        userId: username,
+        password: password,
+
+        mobileNo: verifyNumber,
+        otp: numberOtp,
+        ...basicDetails,
+      };
+      const res = await verifyOtp(payload);
+    } catch (e) {
+      toast.error("Unable to Verify OTP");
+    }
+  }
+
+  function handleVerifyOTP() {
+    if (mobileotp === "123456" && emailotp === "456789") {
+      toast.success("OTP Verified successfully");
+      setStep("resetPassword");
+    } else {
+      toast.error("Incorrect OTPs");
+    }
+  }
+
+  function handleResendOTP() {
+    toast.success("New OTP Sent to your mobile and email");
+    setIsResendDisabled(true); // Disable the Resend button
+  }
+
+  function handleResetPassword() {
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{8}$/;
+
+    if (!passwordRegex.test(newPassword) || newPassword !== confirmPassword) {
+      toast.error(
+        "Password must be exactly 8 characters, with at least one uppercase and one lowercase letter, and both fields must match."
+      );
+      return;
+    }
+
+    toast.success("Password Reset Successful");
+    setStep("login");
+  }
+
+  function generatePassword() {
+    const uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const lowercase = "abcdefghijklmnopqrstuvwxyz";
+    const numbers = "0123456789";
+    const allCharacters = uppercase + lowercase + numbers;
+
+    let password = "";
+    password += uppercase[Math.floor(Math.random() * uppercase.length)];
+    password += lowercase[Math.floor(Math.random() * lowercase.length)];
+    password += numbers[Math.floor(Math.random() * numbers.length)];
+
+    // Fill the rest of the password with random characters from all options
+    for (let i = 3; i < 8; i++) {
+      password +=
+        allCharacters[Math.floor(Math.random() * allCharacters.length)];
+    }
+
+    // Shuffle the password to make it less predictable
+    password = password
+      .split("")
+      .sort(() => Math.random() - 0.5)
+      .join("");
+
+    setNewPassword(password);
+    setConfirmPassword(password);
+  }
+
+  // back to login step button
+  const handleBackToLogin = () => {
+    setStep("login");
   };
-
-  const rows = Array.isArray(data)
-    ? data.map((item, i) => ({
-      id: i + 1,
-      sn: i + 1,
-      wabaNumber: item.wabaNumber,
-      mobileNo: item.mobileNo,
-      source: item.source,
-      status: item.status,
-      deliveryStatus: item.deliveryStatus,
-      reason: item.reason || "-",
-      requestJson: item.requestJson || "-",
-      readTime: item.readTime || "-",
-      queTime: item.queTime || "-",
-      sentTime: item.sentTime || "-",
-      additionalInfo: {
-        queTime: item.queTime || "-",
-        readTime: item.readTime || "-",
-        // sentTime: item.sentTime || "N/A",
-      },
-      // ...item,
-    }))
-    : [];
-
-  const totalPages = totalPage;
-
-  const CustomFooter = () => {
-    return (
-      <GridFooterContainer
-        sx={{
-          display: "flex",
-          flexWrap: "wrap",
-          justifyContent: {
-            xs: "center",
-            lg: "space-between",
-          },
-          alignItems: "center",
-          padding: 1,
-          gap: 2,
-          overflowX: "auto",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            flexWrap: "wrap",
-            gap: 1.5,
-          }}
-        >
-          {selectedRows?.length > 0 && (
-            <Typography
-              variant="body2"
-              sx={{
-                borderRight: "1px solid #ccc",
-                paddingRight: "10px",
-              }}
-            >
-              {selectedRows?.length} Rows Selected
-            </Typography>
-          )}
-
-          {/* <Typography variant="body2">
-            Total Records: <span className="font-semibold">{totalPage}</span>
-          </Typography> */}
-        </Box>
-
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            width: { xs: "100%", sm: "auto" },
-          }}
-        >
-          <CustomPaginatior
-            totalPages={totalPages}
-            paginationModel={paginationModel}
-            setPaginationModel={setPaginationModel}
-            setCurrentPage={setCurrentPage}
-          />
-        </Box>
-      </GridFooterContainer>
-    );
-  };
-
-  // if (isLoading) return <Loader />;
 
   return (
-    <>
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl mb-5 text-gray-700">Logs Detail Report</h1>
-        {/* <UniversalButton
-          id="export"
-          name="export"
-          onClick={handleExport}
-          label={"Export"}
-          icon={
-            <IosShareOutlinedIcon
-              fontSize="small"
-              sx={{ marginBottom: "3px" }}
-            />
-          }
-        /> */}
-      </div>
-      {isLoading ? (
-        <div className="w-full">
-          <UniversalSkeleton height="35rem" width="100%" />
-        </div>
-      ) : (
-        <Paper sx={{ height: 558 }}>
-          <DataGrid
-            // id={id}
-            // name={name}
-            rows={rows}
-            columns={columns}
-            initialState={{ pagination: { paginationModel } }}
-            // checkboxSelection
-            rowHeight={45}
-            slots={{
-              footer: CustomFooter,
-              noRowsOverlay: CustomNoRowsOverlay,
-            }}
-            slotProps={{ footer: { totalRecords: rows.length } }}
-            onRowSelectionModelChange={(ids) => { }}
-            disableRowSelectionOnClick
-            // autoPageSize
-            // disableColumnResize
-            disableColumnMenu
-            sx={{
-              border: 0,
-              "& .MuiDataGrid-cellCheckbox": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-cell": {
-                outline: "none !important",
-              },
-              "& .MuiDataGrid-columnHeaders": {
-                color: "#193cb8",
-                fontSize: "14px",
-                fontWeight: "bold !important",
-              },
-              "& .MuiDataGrid-row--borderBottom": {
-                backgroundColor: "#e6f4ff !important",
-              },
-              "& .MuiDataGrid-columnSeparator": {
-                // display: "none",
-                color: "#ccc",
-              },
-            }}
+    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-red-200 via-slate-50 to-slate-50">
+      <div className="bg-white flex rounded-2xl shadow-2xl h-[90%] w-[95%]">
+        <div className="relative w-1/2 p-6 hidden lg:block rounded-2xl">
+          <img
+            className="rounded-xl w-[100%] h-[100%] "
+            src={loginBanner}
+            alt="Login"
           />
-        </Paper>
-      )}
-    </>
+
+          {step === "login" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Simplified{" "}
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Communication,
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Empowered results
+              </h1>
+              <p className="text-cyan-800 font- normal mt-6">
+                Welcome to the Future of Customer Communication
+              </p>
+              <p className="text-cyan-800 font-normal">
+                "Your Engagement Journey Begins Here"
+              </p>
+            </div>
+          )}
+          {step === "verifyNumber" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Simplified{" "}
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Communication,
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Empowered results
+              </h1>
+              <p className="text-cyan-800 font- normal mt-6">
+                Welcome to the Future of Customer Communication
+              </p>
+              <p className="text-cyan-800 font-normal">
+                "Your Engagement Journey Begins Here"
+              </p>
+            </div>
+          )}
+          {step === "verifynumberotp" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Simplified{" "}
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Communication,
+              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Empowered results
+              </h1>
+              <p className="text-cyan-800 font- normal mt-6">
+                Welcome to the Future of Customer Communication
+              </p>
+              <p className="text-cyan-800 font-normal">
+                "Your Engagement Journey Begins Here"
+              </p>
+            </div>
+          )}
+          {step === "forgotPassword" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Reset Password!
+              </h1>
+              <p className="text-cyan-600 font-medium mt-2">
+                Follow the prompts to reset your password & regain access{" "}
+              </p>
+            </div>
+          )}
+          {step === "verifyOTP" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Reset Password!
+              </h1>
+              <p className="text-cyan-600 font-medium mt-2">
+                Follow the prompts to reset your password & regain access{" "}
+              </p>
+            </div>
+          )}
+          {step === "resetPassword" && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+              <h1 className="text-cyan-600 text-5xl font-medium">
+                Reset Password!
+              </h1>
+              <p className="text-cyan-600 font-medium mt-2">
+                Follow the prompts to reset your password & regain access{" "}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex items-center justify-center rounded-2xl p-6 w-full lg:w-1/2 lg:p-12">
+          <div>
+            {step === "login" && (
+              <>
+                <div className="flex flex-col items-center justify-center my-2 ">
+                  <h3 className="text-5xl font-medium my-2 playf">
+                    Welcome Back
+                  </h3>
+                  <p className="text-base sm:text-sm my-2 text-center ">
+                    Enter your username and password to access your account{" "}
+                  </p>
+                </div>
+
+                <div className="w-full">
+                  <div htmlFor="username" className="text-base mb-2">
+                    Username
+                  </div>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    placeholder="Enter Username"
+                    className="w-full p-2 mb-2 border border-gray-200 rounded-md"
+                    onChange={(e) => setUsername(e.target.value)}
+                  // maxLength={8}
+                  />
+                </div>
+
+                <div className="relative w-full ">
+                  <div htmlFor="password" className="text-base mb-2">
+                    Password
+                  </div>
+                  <input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Enter Password"
+                    className="w-full p-2 mb-2 border border-gray-200 rounded-md"
+                    onChange={(e) => setPassword(e.target.value)}
+                    value={password}
+                    maxLength={8}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className="absolute inset-y-0 right-2 top-6 flex items-center"
+                  >
+                    {showPassword ? (
+                      // Eye Slash (Hide password)
+                      <svg
+                        className="w-5 h-5 text-black hover:text-gray-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                        />
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                        />
+                      </svg>
+                    ) : (
+                      // Eye Open (Show password)
+                      <svg
+                        className="w-5 h-5 text-black hover:text-gray-700"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
+                        />
+                      </svg>
+                    )}
+                  </button>
+                </div>
+
+                {/* <div className="flex items-center justify-end">
+                  <button
+                    className="text-black mt-2 cursor-pointer text-right "
+                    onClick={() => setStep("forgotPassword")}
+                  >
+                    Forgot Password?
+                  </button>
+                </div> */}
+
+                <h2 className="my-3 text-l">Solve Captcha</h2>
+                <div className="flex justify-between items-center mt-2">
+                  <span className="p-2 ">{captchaProblem}</span>
+                  <input
+                    type="number"
+                    maxLength={2}
+                    placeholder="Enter Captcha"
+                    className="w-2/3 p-2 border border-gray-200 rounded-md"
+                    onChange={(e) => {
+                      const inputValue = e.target.value;
+                      // Allow only numeric characters
+                      if (/^\d*$/.test(inputValue)) {
+                        setCaptcha(inputValue);
+                      }
+                    }}
+                  />
+                </div>
+
+                <button
+                  className="w-full bg-black text-white p-2 rounded-lg mt-6"
+                  onClick={handleLogin}
+                >
+                  Sign In
+                </button>
+                {/* <ToastContainer /> */}
+              </>
+            )}
+
+            {step === "verifyNumber" && (
+              <div className="p-1 ">
+                <h1 className="text-4xl font-semibold text-center my-2 playf">
+                  Verify Number
+                </h1>
+                <p className="text-centre font-medium sm:text-lg playf">
+                  Provide your mobile number for secure access.{" "}
+                </p>
+                <input
+                  type="text"
+                  placeholder="Mobile Number"
+                  className="w-full p-2 my-4 border border-gray-200 rounded"
+                  onChange={(e) => setVerifyNumber(e.target.value)}
+                  maxLength={13}
+                />
+                <button
+                  className="w-full text-white bg-black p-2 rounded-lg mt-2"
+                  onClick={handleVerifyNumberRequest}
+                >
+                  Request OTP
+                </button>
+                {/* <ToastContainer /> */}
+              </div>
+            )}
+
+            {step === "verifynumberotp" && (
+              <>
+                <h2 className="text-4xl font-bold mb-4 text-center playf">
+                  Enter OTP
+                </h2>
+                <p className="text-center mb-4">
+                  We've sent a 6-digit code to your mobile. Enter it below
+                </p>
+
+                <div className="flex items-center justify-center">
+                  <InputOtp
+                    length={6}
+                    value={numberOtp}
+                    onChange={(e) => setNumberOtp(e.value)}
+                    variant={"outlined"}
+                    className="p-2"
+                  />
+                </div>
+
+                <div className="flex items-center justify-center gap-4 mt-6">
+                  <button
+                    className="w-full bg-black text-white p-2 rounded-lg"
+                    onClick={handleVerifyNumberOTP}
+                  >
+                    Verify OTP
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center">
+                  <button
+                    className=" text-black underline p-2 rounded-lg mt-4 text-centre"
+                    onClick={handleBackToLogin}
+                  >
+                    ← Back to Login
+                  </button>
+                </div>
+                {/* <ToastContainer /> */}
+              </>
+            )}
+
+            {step === "forgotPassword" && (
+              <div className="flex flex-col ">
+                <h1 className="lg:text-3xl text-2xl font-medium text-center playf">
+                  Enter Your Registered{" "}
+                </h1>
+                <h1 className="lg:text-2xl text-xl font-medium text-center my-1 playf">
+                  Mobile Number & Email Address
+                </h1>
+                <input
+                  type="text"
+                  placeholder="Mobile Number"
+                  className=" p-2 my-4 border border-gray-200 rounded-md"
+                  onChange={(e) => setMobile(e.target.value)}
+                  maxLength={10}
+                />
+                <input
+                  type="email"
+                  placeholder="Email Address"
+                  className=" p-2 my-4 border border-gray-200 rounded"
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <button
+                  className=" text-white bg-black p-2 rounded-lg mt-2"
+                  onClick={handleRequestOTP}
+                >
+                  Request OTP
+                </button>
+                {/* <ToastContainer /> */}
+              </div>
+            )}
+
+            {step === "verifyOTP" && (
+              <>
+                <h2 className="text-xl font-medium mb-4 text-center playf">
+                  Enter the mobile OTP
+                </h2>
+                <InputOtp
+                  length={6}
+                  value={mobileotp}
+                  onChange={(e) => setMobileOtp(e.value)}
+                  variant={"outlined"}
+                />
+
+                <h2 className="text-xl font-medium mb-4 text-center mt-4 playf">
+                  Enter the email OTP
+                </h2>
+                <InputOtp
+                  length={6}
+                  value={emailotp}
+                  onChange={(e) => setEmailOtp(e.value)}
+                  variant={"outlined"}
+                />
+
+                <div className="flex items-center justify-center gap-4 mt-6">
+                  <button
+                    className="w-full bg-black text-white p-2 rounded-lg"
+                    onClick={handleVerifyOTP}
+                  >
+                    Verify OTP
+                  </button>
+
+                  {!isResendDisabled && (
+                    <button
+                      className="w-full bg-black text-white p-2 rounded-lg"
+                      onClick={handleResendOTP}
+                    >
+                      Resend OTP
+                    </button>
+                  )}
+                </div>
+
+                <p className="text-center mt-3 text-gray-500">
+                  {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                </p>
+
+                {/* <ToastContainer /> */}
+              </>
+            )}
+
+            {step === "resetPassword" && (
+              <div className="w-xl flex flex-col items-center justify-center sm:p-4">
+                <h2 className="text-4xl font-medium mb-2 text-center playf">
+                  Reset Password
+                </h2>
+
+                {/* New Password - with dynamic border color */}
+                <div className="relative flex flex-col items-center my-4">
+                  <p className="text-base">New Password</p>
+
+                  <div className="relative w-full max-w-xs">
+                    <input
+                      id="new-password"
+                      placeholder="New Password"
+                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
+                        }`}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      type={showNewPassword ? "text" : "password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword((prev) => !prev)}
+                      className="absolute inset-y-0 right-3 flex items-center"
+                    >
+                      {showNewPassword ? (
+                        // Eye Slash (Hide password)
+                        <svg
+                          className="w-5 h-5 text-black"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
+                          />
+                        </svg>
+                      ) : (
+                        // Eye Open (Show password)
+                        <svg
+                          className="w-5 h-5 text-black"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Confirm Password - with dynamic border color */}
+                <div className="relative flex flex-col items-center my-1">
+                  <p className="text-base">Confirm New Password</p>
+                  <div className="relative w-full max-w-xs">
+                    <input
+                      placeholder="Confirm New Password"
+                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
+                        }`}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      type={showConfirmPassword ? "text" : "password"}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      className="absolute inset-y-0 right-3 flex items-center"
+                    >
+                      {showConfirmPassword ? (
+                        // Eye Slash (Hide password)
+                        <svg
+                          className="w-5 h-5 text-black hover:text-gray-700"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
+                          />
+                        </svg>
+                      ) : (
+                        // Eye Open (Show password)
+                        <svg
+                          className="w-5 h-5 text-black hover:text-gray-700"
+                          xmlns="http://www.w3.org/2000/svg"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                          />
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                          />
+                        </svg>
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                {/* Buttons */}
+                <div className="w-1/2 flex items-center justify-center gap-2 p-1 mt-2">
+                  <button
+                    className="w-3xs bg-black text-white p-2 rounded-lg"
+                    onClick={generatePassword}
+                  >
+                    Generate
+                  </button>
+                  <button
+                    className="w-3xs bg-black text-white p-2 rounded-lg"
+                    onClick={handleResetPassword}
+                  >
+                    Submit
+                  </button>
+                </div>
+                {/* <ToastContainer /> */}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
-
-
-
-<div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
-  <div className="space-y-2">
-    <h2 className="text-2xl font-bold text-gray-800">Link an Additional WhatsApp Business Account</h2>
-    <p className="text-gray-600 text-sm leading-relaxed">
-      You can connect multiple WhatsApp Business Accounts (WABAs) to manage different brands or regions under one platform.
-      <br className="hidden md:block" />
-      Click the button below to securely link a new account via your Facebook Business login.
-    </p>
-  </div>
-  <button
-    onClick={handleFacebookLogin}
-    className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
-  >
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
-      <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
-    </svg>
-    Link with Facebook
-  </button>
-  <p className="text-xs text-gray-400 mt-2">
-    We do not store your credentials. This access is used only to link your new WABA through Meta's official authorization process.
-  </p>
-</div>
+export default ResellerLogin;

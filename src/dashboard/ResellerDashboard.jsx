@@ -69,13 +69,6 @@ const targetRealityData = [
 
 
 
-
-
-
-
-
-
-
 const services = [
     {
         name: "WhatsApp",
