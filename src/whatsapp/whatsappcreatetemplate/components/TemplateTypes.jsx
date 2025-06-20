@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { MdOutlineDeleteForever } from "react-icons/md";
@@ -47,10 +46,13 @@ const TemplateTypes = ({
   setvariables,
   uploadImageFile,
   setFileUploadUrl,
+  setHeaderVariable,
+  headerVariable,
 }) => {
   const [lastUploadedFileName, setLastUploadedFileName] = useState("");
   const fileInputRef = useRef(null);
   const textAreaRef = useRef(null);
+  const HeaderRef = useRef(null);
 
   const updateVariables = (updatedVariables) => {
     setvariables(updatedVariables);
@@ -59,6 +61,14 @@ const TemplateTypes = ({
       return variable ? `[${variable.value || id}]` : match;
     });
     onPreviewUpdate(previewFormat);
+  };
+  const updateHeaderVariables = (updatedVariables) => {
+    setHeaderVariable(updatedVariables);
+    const previewFormat = templateHeader.replace(/{#(.*?)#}/g, (match, id) => {
+      const variable = updatedVariables.find((v) => v.id === id);
+      return variable ? `[${variable.value || id}]` : match;
+    });
+    // onPreviewUpdate(previewFormat);
   };
 
   const [isOpen, setIsOpen] = useState(false);
@@ -179,41 +189,52 @@ const TemplateTypes = ({
   return (
     <div className="w-full">
       {selectedTemplateType === "text" && (
-        <div className="w-full mb-4">
-          <div className="flex items-center mb-2">
-            <label className="text-sm font-medium text-gray-700">
-              Template Header(Optional)
-            </label>
-            <CustomTooltip
-              title="Enter the template header"
-              placement="right"
-              arrow
-            >
-              <span className="ml-2">
-                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
-              </span>
-            </CustomTooltip>
+        <div>
+          <div className="w-full mb-4">
+            <div className="flex items-center mb-2">
+              <label className="text-sm font-medium text-gray-700">
+                Template Header(Optional)
+              </label>
+              <CustomTooltip
+                title="Enter the template header"
+                placement="right"
+                arrow
+              >
+                <span className="ml-2">
+                  <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
+                </span>
+              </CustomTooltip>
+            </div>
+            <div className="relative">
+              <input
+                id="template-header-textarea"
+                name="template-header-textarea"
+                className="w-full p-2 break-words bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
+                value={templateHeader}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  const isValid = /^[a-zA-Z0-9\s]*$/.test(value);
+                  setTemplateHeader(value);
+                  if (isValid) {
+                  }
+                }}
+                maxLength={60}
+                placeholder="Enter template header"
+                ref={HeaderRef}
+              />
+            </div>
+            <p className="mt-1 text-sm text-gray-500">
+              {templateHeader.length}/60
+            </p>
           </div>
           <div className="relative">
-            <input
-              id="template-header-textarea"
-              name="template-header-textarea"
-              className="w-full p-2 break-words bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
-              value={templateHeader}
-              onChange={(e) => {
-                const value = e.target.value;
-                const isValid = /^[a-zA-Z0-9\s]*$/.test(value);
-                if (isValid) {
-                  setTemplateHeader(value);
-                }
-              }}
-              maxLength={60}
-              placeholder="Enter template header"
+            <VariableManager
+              templateFormat={templateHeader}
+              setTemplateFormat={setTemplateHeader}
+              onUpdateVariables={updateHeaderVariables}
+              ref={HeaderRef}
             />
           </div>
-          <p className="mt-1 text-sm text-gray-500">
-            {templateHeader.length}/60
-          </p>
         </div>
       )}
 
@@ -566,6 +587,7 @@ const TemplateTypes = ({
             messageContent={templateFormat}
             length={2500}
           />
+          <p className="text-sm text-gray-500">{templateFormat.length}/1024</p>
         </div>
 
         {/* <div className="text-sm text-gray-500 mt-1">

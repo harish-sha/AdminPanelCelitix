@@ -109,7 +109,7 @@ const VariableManager = ({
 
   return (
     <div className="relative w-full ">
-      <p className="text-sm text-gray-500">{templateFormat.length}/1024</p>
+      
       <div className="flex items-center justify-end mb-7">
         <button
           onClick={addVariable}

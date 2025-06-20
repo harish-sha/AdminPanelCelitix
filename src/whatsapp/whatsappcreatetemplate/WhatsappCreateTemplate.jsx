@@ -77,6 +77,9 @@ const WhatsappCreateTemplate = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
+  const[headerVariable, setHeaderVariable] = useState("");
+
+
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
     setTemplatePreview(updatedPreview);
@@ -327,7 +330,9 @@ const WhatsappCreateTemplate = () => {
     const isValid = /^[a-z0-9_]+$/.test(templateName);
 
     if (!isValid) {
-      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
+      toast.error(
+        "Only underscore (_) and alphanumeric are allowed in template name."
+      );
       return;
     }
 
@@ -339,6 +344,14 @@ const WhatsappCreateTemplate = () => {
       whatsappSrno: selectedWabaSno,
       components: [],
     };
+    data.components.push({
+      type: "HEADER",
+      format: "TEXT",
+      text: templateHeader,
+      // example: {
+      //   header_text: [templateHeader],
+      // },
+    });
 
     if (selectedTemplateType === "text" && templateHeader) {
       data.components.push({
@@ -936,6 +949,8 @@ const WhatsappCreateTemplate = () => {
                               setvariables={setVariables}
                               uploadImageFile={uploadImageFile}
                               setFileUploadUrl={setFileUploadUrl}
+                              setHeaderVariable={setHeaderVariable}
+                              headerVariable={headerVariable}
                             />
 
                             <InteractiveActions
