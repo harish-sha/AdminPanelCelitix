@@ -119,6 +119,7 @@ const ResellerLogin = () => {
       setBasicDetails({
         systemInfo: uaResult.browser.name,
         ip: ipResponse?.data?.clientIp,
+        domain
       });
       const payload = {
         userId: username,
@@ -127,20 +128,20 @@ const ResellerLogin = () => {
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // ip: ipResponse?.data?.ip || "0.0.0.0",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        domain: "reseller.alertsnow.in",
+        // domain: "reseller.alertsnow.in",
         // domain: "msg.itbizcon.in",
         // domain: "digitalyug.in",
         // domain: "",
-        // domain: domain
+        domain: domain
       };
 
       const res = await login(payload);
 
-      // if (res?.data?.message.includes("required")) {
-      //   // return toast.error(res?.data?.message);
-      //   setStep("verifyNumber");
-      //   return;
-      // }
+      if (res?.data?.validateOtp) {
+        // return toast.error(res?.data?.message);
+        setStep("verifyNumber");
+        return;
+      }
 
       if (!res?.data?.token) {
         return toast.error("Invalid credentials");
@@ -209,6 +210,8 @@ const ResellerLogin = () => {
       userId: username,
       password: password,
       mobileNo: verifyNumber,
+
+      domain: window.location.hostname,
     };
 
     const res = await requestOtp(payload);
