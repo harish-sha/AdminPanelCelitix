@@ -25,6 +25,7 @@ import {
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import axios from "axios";
+import { he } from "date-fns/locale";
 // import ca from "date-fns/esm/locale/ca/index.js";
 // import whatappDefaultImage from "/whatsapp_default.jpg";
 
@@ -77,8 +78,8 @@ const WhatsappCreateTemplate = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const[headerVariable, setHeaderVariable] = useState("");
-
+  const [headerVariable, setHeaderVariable] = useState("");
+  const [headerVariableValue, setHeaderVariableValue] = useState("");
 
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
@@ -344,25 +345,35 @@ const WhatsappCreateTemplate = () => {
       whatsappSrno: selectedWabaSno,
       components: [],
     };
-    data.components.push({
-      type: "HEADER",
-      format: "TEXT",
-      text: templateHeader,
-      // example: {
-      //   header_text: [templateHeader],
-      // },
-    });
 
-    if (selectedTemplateType === "text" && templateHeader) {
+    const allHeadersVariable = headerVariable.map((variable, index) => {
+      if (!variable.value) {
+        return toast.error(`Please enter value for header variable ${index + 1}`);
+      }
+      return variable.value;
+    })
+    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
-        // text: templateHeader,
+        text: templateHeader,
         example: {
-          header_text: [templateHeader],
+          header_text: allHeadersVariable,
         },
       });
+    } else {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        // example: {
+        //   header_text: [templateHeader],
+        // },
+      });
     }
+
+    // console.log(data);
+    // return;
 
     // insert data in component dynamicall
     if (varvalue.length > 0) {
@@ -951,6 +962,8 @@ const WhatsappCreateTemplate = () => {
                               setFileUploadUrl={setFileUploadUrl}
                               setHeaderVariable={setHeaderVariable}
                               headerVariable={headerVariable}
+                              headerVariableValue={headerVariableValue}
+                              setHeaderVariableValue={setHeaderVariableValue}
                             />
 
                             <InteractiveActions

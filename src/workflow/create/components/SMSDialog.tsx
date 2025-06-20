@@ -184,8 +184,8 @@ export const SMSNode = ({
                 />
                 {conditions[index]?.type !== "status" && (
                   <AnimatedDropdown
-                    id="value"
-                    name="value"
+                    id="interval"
+                    name="interval"
                     label={`Condition-${index + 1}-Interval`}
                     value={conditions[index]?.interval}
                     onChange={(e: string) => {

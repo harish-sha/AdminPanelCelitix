@@ -48,6 +48,8 @@ const TemplateTypes = ({
   setFileUploadUrl,
   setHeaderVariable,
   headerVariable,
+  headerVariableValue,
+  setHeaderVariableValue,
 }) => {
   const [lastUploadedFileName, setLastUploadedFileName] = useState("");
   const fileInputRef = useRef(null);
@@ -66,10 +68,13 @@ const TemplateTypes = ({
     setHeaderVariable(updatedVariables);
     const previewFormat = templateHeader.replace(/{#(.*?)#}/g, (match, id) => {
       const variable = updatedVariables.find((v) => v.id === id);
+
       return variable ? `[${variable.value || id}]` : match;
     });
-    // onPreviewUpdate(previewFormat);
+
+    setHeaderVariableValue(previewFormat);
   };
+
 
   const [isOpen, setIsOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState("");

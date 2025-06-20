@@ -197,13 +197,13 @@ export const WorkflowCreate = () => {
     "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
-    if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
+    // if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
 
-    const isNodeAlreadyAdded = nodes.some((node) => node.type === type);
+    // const isNodeAlreadyAdded = nodes.some((node) => node.type === type);
 
-    if (isNodeAlreadyAdded) {
-      return toast.error("You can add only one node per type");
-    }
+    // if (isNodeAlreadyAdded) {
+    //   return toast.error("You can add only one node per type");
+    // }
 
     const newNode = {
       id: `${nodeId}`,
