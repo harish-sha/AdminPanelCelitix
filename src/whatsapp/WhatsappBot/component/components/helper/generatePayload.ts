@@ -43,13 +43,13 @@ function generateBotPayload(
     };
 
     if (finalType === "START") {
-      entry["botName"] = botDetails?.botName.trim();
+      entry["botName"] = botDetails?.botName?.trim();
       entry["wabaNumber"] = botDetails?.wabaNumber;
       entry["wabaSrno"] = botDetails?.wabaSrno;
       entry["startKeyword"] = nodeInput?.startingKeyword;
     }
     if (finalType === "text") {
-      entry["textMessage"] = nodeInput?.message.trim();
+      entry["textMessage"] = nodeInput?.message?.trim();
     }
     if (finalType === "agent") {
       const data = {
@@ -70,11 +70,11 @@ function generateBotPayload(
     }
     if (finalType === "document") {
       entry["documentUrl"] = nodeInput?.fileUrl;
-      entry["documentCaption"] = nodeInput?.fileCaption.trim();
+      entry["documentCaption"] = nodeInput?.fileCaption?.trim();
     }
     if (finalType === "audio") {
       entry["audioUrl"] = nodeInput?.fileUrl;
-      entry["audioCaption"] = nodeInput?.fileCaption.trim();
+      entry["audioCaption"] = nodeInput?.fileCaption?.trim();
     }
     if (finalType === "button") {
       const options = {
@@ -84,31 +84,31 @@ function generateBotPayload(
         text: "text",
       };
 
-      entry["buttonUrl"] = nodeInput?.text.trim() || nodeInput?.fileUrl;
+      entry["buttonUrl"] = nodeInput?.text?.trim() || nodeInput?.fileUrl;
       entry["buttonType"] = nodeInput?.type;
 
-      entry["buttonBody"] = nodeInput?.message.trim();
+      entry["buttonBody"] = nodeInput?.message?.trim();
       entry["type"] = finalType;
       entry["buttonTexts"] = nodeInput?.buttonTexts;
       // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
-      entry["buttonFooter"] = nodeInput?.buttonFooter.trim();
+      entry["buttonFooter"] = nodeInput?.buttonFooter?.trim();
     }
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.text.trim();
-      entry["listUrl"] = nodeInput?.text.trim();
-      entry["listBody"] = nodeInput?.message.trim();
-      entry["listType"] = nodeInput?.type.trim();
-      entry["listFooter"] = nodeInput?.listFooter.trim();
+      entry["listHeading"] = nodeInput?.text?.trim();
+      entry["listUrl"] = nodeInput?.text?.trim();
+      entry["listBody"] = nodeInput?.message?.trim();
+      entry["listType"] = nodeInput?.type?.trim();
+      entry["listFooter"] = nodeInput?.listFooter?.trim();
 
       entry["type"] = finalType;
 
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
-          item.option.trim() || "",
-          item.value.trim() || "",
+          item.option?.trim() || "",
+          item.value?.trim() || "",
         ]);
       }
     }
