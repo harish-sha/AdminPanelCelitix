@@ -32,6 +32,8 @@ import {
   getWabaList,
   getWhatsappFlowTemplate,
   updateFlowStatus,
+  deleteFlow,
+  
 } from "@/apis/whatsapp/whatsapp";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -53,8 +55,81 @@ const WhatsappFlows = () => {
   const [selectedFlowDetails, setSelectedFlowDetails] = useState(null);
   const [selectCategories, setSelectCategories] = useState("");
   const [flowName, setFlowName] = useState("");
+  const [isFetching, setIsFetching] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+  const[flowId,setFlowId] = useState([])
   const navigate = useNavigate();
   const rowsPerPage = 4;
+
+  // deleteFlow
+  async function handleDeleteFlow() {
+    const flow = flowList.find((flow) => flow.flowId === currentRow.id);
+    console.log(flow);
+
+    const data = {
+      id: currentRow.id,
+    };
+    console.log("data", data)
+
+    try {
+      setIsFetching(true);
+      const res = await deleteFlow(data);
+      setFlowId(res)
+      console.log(res);
+
+      if (flow?.status === "Draft") {
+        toast.success("Flow deleted successfully");
+      }
+
+      await fetchWabaFlows();
+
+      setVisible(false);
+    } catch (error) {
+      console.log(error)
+      toast.error("Flow deletion failed");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
+//   async function handleDeleteFlow() {
+//    const flowId = currentRow?.flowId;
+
+//   if (!flowId) {
+//     toast.error("Invalid flow selected.");
+//     return;
+//   }
+
+//   const flow = flowList.find((f) => f.flowId === flowId);
+//   console.log(flow)
+
+//   try {
+//     setIsFetching(true);
+//     const res = await deleteFlow({ id: flowId });
+
+//     if (flow?.status === "DRAFT") {
+//       toast.success("Flow deleted successfully");
+//     } else {
+//       toast.success("Flow deleted");
+//     }
+
+//     await fetchWabaFlows();
+//     setVisible(false);
+//   } catch (error) {
+//     console.error("Delete error:", error);
+//     toast.error("Flow deletion failed");
+//   } finally {
+//     setIsFetching(false);
+//   }
+// }
+
+
+ const onDeleteClick = (flow) => {
+  setCurrentRow(flow);  // Send full flow object
+  setVisible(true);
+};
+
 
   // Fetch WABA List
   useEffect(() => {
@@ -143,15 +218,15 @@ const WhatsappFlows = () => {
   //   flow.flowName.toLowerCase().includes(search.toLowerCase())
   // );
 
-  const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter((flow) =>
-    (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
+  const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter(
+    (flow) =>
+      (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
   );
 
   const totalPages = Math.ceil(filteredFlows.length / rowsPerPage);
-  const paginatedFlows = filteredFlows?.reverse()?.slice(
-    (currentPage - 1) * rowsPerPage,
-    currentPage * rowsPerPage
-  );
+  const paginatedFlows = filteredFlows
+    ?.reverse()
+    ?.slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
@@ -356,7 +431,7 @@ const WhatsappFlows = () => {
               </ListItemIcon>
               <ListItemText>Edit</ListItemText>
             </MenuItem>
-            <MenuItem onClick={handleDelete}>
+            <MenuItem onClick={onDeleteClick}>
               <ListItemIcon>
                 <DeleteIcon fontSize="small" color="error" />
               </ListItemIcon>
@@ -611,6 +686,43 @@ const WhatsappFlows = () => {
             </form>
           </Dialog>
           {/* publish dialog end */}
+
+          {/* deleteFlow dialogbox strt */}
+          <Dialog
+            header="Confirm Delete"
+            visible={visible}
+            style={{ width: "27rem" }}
+            onHide={() => setVisible(false)}
+            draggable={false}
+          >
+            <div className="p-4 text-center">
+              <p className="text-[1.1rem] font-semibold text-gray-700">
+                Are you sure you want to delete the Flow <br />
+                <span className="text-green-500">
+                  "{currentRow?.flowId}"
+                </span>
+                ?
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-4 mt-2">
+              {!isFetching && (
+                <UniversalButton
+                  label="Cancel"
+                  style={{ backgroundColor: "#090909" }}
+                  onClick={() => setVisible(false)}
+                />
+              )}
+              <UniversalButton
+                label={isFetching ? "Deleting..." : "Delete"}
+                style={{ backgroundColor: "#dc2626" }}
+                onClick={handleDeleteFlow}
+                disabled={isFetching}
+              />
+            </div>
+          </Dialog>
+
+          {/* deleteFlow dialogbox end */}
         </div>
       </div>
     </>

@@ -572,3 +572,12 @@ export const saveFlow = async (params, data) => {
   );
 };
 
+
+export const deleteFlow = async(data) => {
+  return await fetchWithAuth(
+    `WhatsappFlow/deleteWorkflow?flowId=${data.id}`,
+    {
+      method: "DELETE",
+    }
+  )
+}

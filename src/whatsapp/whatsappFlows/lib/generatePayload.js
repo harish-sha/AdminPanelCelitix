@@ -332,6 +332,7 @@ export const generatePayload = (data) => {
       type: "SingleColumnLayout",
       children: [],
     };
+    console.log(screenData?.payload);
 
     screenData?.payload?.forEach((pay) => {
       console.log("pay", pay);
@@ -452,46 +453,64 @@ export const generatePayload = (data) => {
       //   };
       // }
 
-      if (type === "richText") {
-        let lines = pay.text;
-        console.log("generate payload lines", lines);
-
-        if (!lines && pay.content) {
-          const tempDiv = document.createElement("div");
-          tempDiv.innerHTML = pay.content;
-
-          lines = Array.from(tempDiv.childNodes)
-            .map(convertNodeToMarkdown)
-            .map((line) => line.trim())
-            .filter((line) => line !== "");
-        }
-
-        console.log("Payload received in generatePayload:", pay);
-
-        component = {
-          type: "RichText",
-          text: lines || [],
-        };
-      }
-
       // if (type === "richText") {
-      //   const html = pay.content || "<h1>Hello World</h1><p>This is a test</p>";
+      //   let lines = pay.text;
+      //   console.log("generate payload lines", lines);
 
-      //   const tempDiv = document.createElement("div");
-      //   tempDiv.innerHTML = html;
+      //   if (!lines && pay.content) {
+      //     const tempDiv = document.createElement("div");
+      //     tempDiv.innerHTML = pay.content;
 
-      //   const lines = Array.from(tempDiv.childNodes)
-      //     .map(convertNodeToMarkdown)
-      //     .map((line) => line.trim())
-      //     .filter((line) => line !== "");
+      //     lines = Array.from(tempDiv.childNodes)
+      //       .map(convertNodeToMarkdown)
+      //       .map((line) => line.trim())
+      //       .filter((line) => line !== "");
+      //   }
 
-      //   console.log("Converted Markdown lines:", lines);
+      //   console.log("Payload received in generatePayload:", pay);
 
       //   component = {
       //     type: "RichText",
-      //     text: lines,
+      //     text: lines || [],
       //   };
       // }
+
+      if (type === "richText") {
+        let lines = [];
+
+        console.log("Payload received in generatePayload:", pay);
+
+        // If `pay.text` is an array and contains content, use it directly
+        if (Array.isArray(pay.text) && pay.text.length > 0) {
+          lines = pay.text;
+        } else if (pay.content) {
+          // If pay.content exists, parse it into lines
+          try {
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = pay.content;
+
+            lines = Array.from(tempDiv.childNodes)
+              .map(convertNodeToMarkdown)
+              .map((line) => line.trim())
+              .filter((line) => line !== ""); // Filters out empty lines
+          } catch (error) {
+            console.error("Error parsing HTML content:", error);
+            lines = []; // In case of error, return empty array
+          }
+        } else {
+          // If neither pay.text nor pay.content exist, use a default fallback
+          lines = ["No content available"];
+        }
+
+        console.log("pay.content:", pay.content);
+        console.log("pay.text:", pay.text);
+        console.log("generate payload lines", lines);
+
+        component = {
+          type: "RichText",
+          text: lines,
+        };
+      }
 
       if (type === "dropDown") {
         component = {

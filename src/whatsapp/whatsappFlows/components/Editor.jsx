@@ -355,10 +355,8 @@
 
 // export default RichTextEditor;
 
-
-
 // RichTextEditor.jsx - Markdown-style payload generator without turndownService
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState,useCallback  } from "react";
 
 import toast from "react-hot-toast";
 import {
@@ -370,6 +368,7 @@ import {
   AddLinkOutlined,
   AddPhotoAlternateOutlined,
 } from "@mui/icons-material";
+import TableViewIcon from '@mui/icons-material/TableView';
 import UniversalButton from "../../components/UniversalButton";
 
 export const convertNodeToMarkdown = (node) => {
@@ -426,9 +425,7 @@ export const convertNodeToMarkdown = (node) => {
           );
           return (
             `| ${cells.join(" | ")} |` +
-            (i === 0
-              ? `\n| ${cells.map(() => "--------").join(" | ")} |`
-              : "")
+            (i === 0 ? `\n| ${cells.map(() => "--------").join(" | ")} |` : "")
           );
         })
         .join("\n");
@@ -444,7 +441,7 @@ export const convertNodeToMarkdown = (node) => {
   }
 };
 
-const RichTextEditor = ({ onPayloadChange }) => {
+const RichTextEditor = ({ onUpdate }) => {
   const editorRef = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState("");
@@ -453,8 +450,6 @@ const RichTextEditor = ({ onPayloadChange }) => {
     editorRef.current?.focus();
     document.execCommand(command, false, value);
   };
-
-
 
   const insertLink = () => {
     let inputValue = "";
@@ -576,100 +571,6 @@ const RichTextEditor = ({ onPayloadChange }) => {
     toast.success("Table inserted!");
   };
 
-  // export  const convertNodeToMarkdown = (node) => {
-  //   if (!node) return "";
-
-  //   if (node.nodeType === 3) return node.nodeValue; 
-  //   if (node.nodeType !== 1) return "";
-
-  //   const tag = node.tagName.toLowerCase();
-  //   const children = Array.from(node.childNodes)
-  //     .map(convertNodeToMarkdown)
-  //     .join("");
-
-  //   switch (tag) {
-  //     case "h1":
-  //       return `# ${children.trim()}`;
-  //     case "h2":
-  //       return `## ${children.trim()}`;
-  //     case "strong":
-  //     case "b":
-  //       return `**${children}**`;
-  //     case "em":
-  //     case "i":
-  //       return `*${children}*`;
-  //     case "s":
-  //     case "strike":
-  //       return `~~${children}~~`;
-  //     case "a":
-  //       return `[${children}](${node.getAttribute("href")})`;
-  //     case "img":
-  //       return `![${node.getAttribute("alt") || ""}](${node.getAttribute(
-  //         "src"
-  //       )})`;
-  //     case "ul":
-  //       return Array.from(node.children)
-  //         .map((li) => `+ ${convertNodeToMarkdown(li)}`)
-  //         .join("\n");
-  //     case "ol":
-  //       return Array.from(node.children)
-  //         .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
-  //         .join("\n");
-  //     case "li":
-  //       return children;
-  //     case "br":
-  //       return "\n";
-  //     case "p":
-  //       return children;
-  //     case "table": {
-  //       const rows = Array.from(node.querySelectorAll("tr"));
-  //       return rows
-  //         .map((row, i) => {
-  //           const cells = Array.from(row.children).map((cell) =>
-  //             convertNodeToMarkdown(cell)
-  //           );
-  //           return (
-  //             `| ${cells.join(" | ")} |` +
-  //             (i === 0
-  //               ? `\n| ${cells.map(() => "--------").join(" | ")} |`
-  //               : "")
-  //           );
-  //         })
-  //         .join("\n");
-  //     }
-  //     case "thead":
-  //     case "tbody":
-  //     case "tr":
-  //     case "th":
-  //     case "td":
-  //       return children;
-  //     default:
-  //       return children;
-  //   }
-  // };
-
-  // const handleSave = () => {
-  //   const html = editorRef.current?.innerHTML || "";
-  //   setContent(html);
-  //   toast.success("Changes saved!");
-
-
-
-  //   const lines = Array.from(editorRef.current.childNodes)
-  //     .map(convertNodeToMarkdown)
-  //     .map((line) => line.trim())
-  //     .filter((line) => line !== "");
-
-  //   const payload = {
-  //     // type: "RichText",
-  //     text: lines,
-  //   };
-
-  //   console.log("Generated RichText Payload:", payload);
-  //   if (onPayloadChange) onPayloadChange(payload);
-
-  // };
-
   const handleSave = () => {
     const html = editorRef.current?.innerHTML || "";
     setContent(html);
@@ -681,20 +582,20 @@ const RichTextEditor = ({ onPayloadChange }) => {
       .filter((line) => line !== "");
 
     const payload = {
-      type: "richText",
       content: html,
       text: lines,
     };
 
-    
-
     toast.success("Changes saved!");
     console.log("RichText Payload", payload);
 
-    if (onPayloadChange) onPayloadChange(payload);
+    // if (onPayloadChange) onPayloadChange(payload);
+    if (onUpdate) onUpdate(payload);
+
   };
 
   const handleComponentUpdate = (newPayload) => {
+    console.log(newPayload)
     if (selectedItem?.type === "richText") {
       setTabs((prevTabs) => {
         const updatedTabs = [...prevTabs];
@@ -719,58 +620,230 @@ const RichTextEditor = ({ onPayloadChange }) => {
     }
   };
 
-  return (
-    <div className="max-w-3xl mx-auto mt-10 p-4 border rounded shadow space-y-4">
-      <div className="flex flex-wrap gap-2">
-        <button onClick={() => exec("formatBlock", "<h1>")} className="btn">
-          H1
-        </button>
-        <button onClick={() => exec("formatBlock", "<h2>")} className="btn">
-          H2
-        </button>
 
-        <button onClick={() => exec("bold")} className="btn">
-          <FormatBoldOutlined />
-        </button>
-        <button onClick={() => exec("italic")} className="btn">
-          <FormatItalicOutlined />
-        </button>
-        <button onClick={() => exec("strikeThrough")} className="btn">
-          <StrikethroughSOutlined />
-        </button>
-        <button onClick={() => exec("normalParagraph")} className="btn">
-          <StrikethroughSOutlined />
-        </button>
-        <button onClick={() => exec("insertUnorderedList")} className="btn">
-          <ListAltOutlined />
-        </button>
-        <button onClick={() => exec("insertOrderedList")} className="btn">
-          <FormatListNumberedOutlined />
-        </button>
-        <button onClick={insertLink} className="btn">
-          <AddLinkOutlined />
-        </button>
-        <button onClick={insertImage} className="btn">
-          <AddPhotoAlternateOutlined />
-        </button>
-        <button onClick={insertTable} className="btn">Table</button>
-        <button
-          onClick={() => exec("removeFormat")}
-          className="btn text-red-700"
-        >
-          Clear
-        </button>
-        <button
-          onClick={() => setPreviewMode((p) => !p)}
-          className="btn bg-blue-100"
-        >
-          {previewMode ? "Edit" : "Preview"}
-        </button>
-      </div>
+
+
+  const [active, setActive] = useState({
+    h1: false,
+    h2: false,
+    p: false,
+    bold: false,
+    italic: false,
+    strikeThrough: false,
+    insertUnorderedList: false,
+    insertOrderedList: false,
+  });
+
+  // Helper to pull the latest command states from the browser
+  const updateActive = useCallback(() => {
+    const block = document.queryCommandValue("formatBlock")?.toLowerCase();
+    setActive({
+      h1: block === "h1",
+      h2: block === "h2",
+      p:  block === "p",
+      italic: document.queryCommandState("italic"),
+      bold: document.queryCommandState("bold"),
+      strikeThrough: document.queryCommandState("strikeThrough"),
+      insertUnorderedList: document.queryCommandState("insertUnorderedList"),
+      insertOrderedList: document.queryCommandState("insertOrderedList"),
+    });
+  }, []);
+
+  useEffect(() => {
+    document.addEventListener("selectionchange", updateActive);
+    return () => document.removeEventListener("selectionchange", updateActive);
+  }, [updateActive]);
+
+  const base     = "px-3 py-1 rounded transition-colors focus:outline-none";
+  const inactive = "bg-white text-gray-700 hover:bg-gray-100";
+  const activeBtn= "bg-blue-600 text-white";
+
+  // Wrapper for exec calls that also refresh state
+  const doExec = (cmd, arg) => {
+    exec(cmd, arg);
+    // slight delay to let the browser apply the change before reading state
+    setTimeout(updateActive, 0);
+  };
+
+  useEffect(() => {
+    const updateState = () => {
+      // get current block tag, e.g. "h1", "h2", "p", etc.
+      const block = document.queryCommandValue("formatBlock")?.toLowerCase();
+      setActive({
+        h1: block === "h1",
+        h2: block === "h2",
+        p: block === "p",
+        bold: document.queryCommandState("bold"),
+        italic: document.queryCommandState("italic"),
+        strikeThrough: document.queryCommandState("strikeThrough"),
+        insertUnorderedList: document.queryCommandState("insertUnorderedList"),
+        insertOrderedList: document.queryCommandState("insertOrderedList"),
+      });
+    };
+
+    document.addEventListener("selectionchange", updateState);
+    return () => document.removeEventListener("selectionchange", updateState);
+  }, []);
+
+  // const base = "px-3 py-1 rounded transition-colors focus:outline-none";
+  // const inactive = "bg-white text-gray-700 hover:bg-gray-100";
+  // const activeBtn = "bg-blue-600 text-white";
+
+  return (
+    <div className="max-w-3xl mx-auto p-4 border rounded shadow space-y-4">
+       <div className="flex flex-wrap gap-2">
+      {/* H1 */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("formatBlock", "<h1>")}
+        className={`${base} ${active.h1 ? activeBtn : inactive}`}
+        title="H1"
+      >
+        H1
+      </button>
+
+      {/* H2 */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("formatBlock", "<h2>")}
+        className={`${base} ${active.h2 ? activeBtn : inactive}`}
+        title="H2"
+      >
+        H2
+      </button>
+
+      {/* Paragraph */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("formatBlock", "<p>")}
+        className={`${base} ${active.p ? activeBtn : inactive}`}
+        title="Paragraph"
+      >
+        P
+      </button>
+
+      {/* Bold */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("bold")}
+        className={`${base} ${active.bold ? activeBtn : inactive}`}
+        title="Bold"
+      >
+        <FormatBoldOutlined />
+      </button>
+
+      {/* Italic */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("italic")}
+        className={`${base} ${active.italic ? activeBtn : inactive}`}
+        title="Italic"
+      >
+        <FormatItalicOutlined />
+      </button>
+
+      {/* Strikethrough */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("strikeThrough")}
+        className={`${base} ${active.strikeThrough ? activeBtn : inactive}`}
+        title="StrikeThrough"
+      >
+        <StrikethroughSOutlined />
+      </button>
+
+      {/* Unordered List */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("insertUnorderedList")}
+        className={`${base} ${
+          active.insertUnorderedList ? activeBtn : inactive
+        }`}
+        title="Bulleted List"
+      >
+        <ListAltOutlined />
+      </button>
+
+      {/* Ordered List */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("insertOrderedList")}
+        className={`${base} ${
+          active.insertOrderedList ? activeBtn : inactive
+        }`}
+        title="Number List"
+      >
+        <FormatListNumberedOutlined />
+      </button>
+
+      {/* Link */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => {
+          insertLink();
+          setTimeout(updateActive, 0);
+        }}
+        className={`${base} ${inactive}`}
+        title="Link"
+      >
+        <AddLinkOutlined />
+      </button>
+
+      {/* Image */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => {
+          insertImage();
+          setTimeout(updateActive, 0);
+        }}
+        className={`${base} ${inactive}`}
+        title="Image"
+      >
+        <AddPhotoAlternateOutlined />
+      </button>
+
+      {/* Table */}
+      <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => {
+          insertTable();
+          setTimeout(updateActive, 0);
+        }}
+        className={`${base} ${inactive}`}
+        title="Table"
+      >
+        <TableViewIcon/>
+      </button>
+
+      {/* Clear */}
+      {/* <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => doExec("removeFormat")}
+        className={`${base} text-red-700 ${inactive}`}
+      >
+        Clear
+      </button> */}
+
+      {/* Preview Toggle */}
+      {/* <button
+        onMouseDown={e => e.preventDefault()}
+        onClick={() => {
+          setPreviewMode(p => !p);
+          setTimeout(updateActive, 0);
+        }}
+        className={`${base} ${
+          previewMode
+            ? activeBtn
+            : "bg-blue-100 text-blue-800 hover:bg-blue-200"
+        }`}
+      >
+        {previewMode ? "Edit" : "Preview"}
+      </button> */}
+    </div>
 
       {previewMode ? (
         <div
-          className="prose prose-sm max-w-none min-h-[250px] p-4 border border-dashed rounded bg-gray-50"
+          className="preview prose prose-sm max-w-none min-h-[250px] p-4 border border-dashed rounded bg-gray-50"
           dangerouslySetInnerHTML={{
             __html: content || editorRef.current?.innerHTML,
           }}
@@ -780,7 +853,7 @@ const RichTextEditor = ({ onPayloadChange }) => {
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
-          className="prose prose-sm max-w-none min-h-[250px] border border-gray-300 p-4 rounded shadow focus:outline-none focus:ring"
+          className="editor prose prose-sm max-w-none min-h-[250px] border border-gray-300 p-4 rounded shadow focus:outline-none focus:ring "
         />
       )}
 

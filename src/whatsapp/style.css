@@ -167,3 +167,24 @@
   animation: fade-in 0.5s ease-in-out;
 } */
 
+
+
+
+
+
+
+
+.editor h1 {
+  font-size: 20px;
+}
+
+.preview h1 {
+  font-size: 20px;
+}
+.editor h2 {
+  font-size: 18px;
+}
+
+.preview h2 {
+  font-size: 18px;
+}
