@@ -770,7 +770,6 @@ const TemplateTypes = ({
     typing: false,
   });
 
-
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
 
@@ -828,8 +827,9 @@ const TemplateTypes = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
-              }`,
+            Authorization: `Bearer ${
+              import.meta.env.VITE_REACT_APP_OPENAI_API_KEY
+            }`,
           },
         }
       );
@@ -888,12 +888,18 @@ const TemplateTypes = ({
             </CustomTooltip>
           </div>
           <div className="relative">
-            <textarea
+            <input
               id="template-header-textarea"
               name="template-header-textarea"
               className="w-full p-2 break-words bg-white border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none sm:text-sm"
               value={templateHeader}
-              onChange={(e) => setTemplateHeader(e.target.value)}
+              onChange={(e) => {
+                const value = e.target.value;
+                const isValid = /^[a-zA-Z0-9\s]*$/.test(value);
+                if (isValid) {
+                  setTemplateHeader(value);
+                }
+              }}
               maxLength={60}
               placeholder="Enter template header"
             />
@@ -1264,7 +1270,6 @@ const TemplateTypes = ({
             setTemplateFormat={setTemplateFormat}
             onUpdateVariables={updateVariables}
           />
-
         </div>
 
         {/* <div className="w-full mb-4 relative">

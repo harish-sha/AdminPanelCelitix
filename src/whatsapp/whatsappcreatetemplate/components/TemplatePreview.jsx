@@ -91,7 +91,7 @@ const TemplatePreview = ({
       </div>
 
       <div className="p-4 bg-white shadow-inner rounded-b-md">
-        {/* {header && (
+        {header && (
           <div
             className="w-full px-3 py-2 mb-4 text-sm text-gray-900 break-words bg-green-100 rounded-md max-h-20"
             id="templateHeaderPreview"
@@ -99,7 +99,7 @@ const TemplatePreview = ({
           >
             <strong className="text-lg font-semibold">{header}</strong>
           </div>
-        )} */}
+        )} 
 
         {imageUrl && (
           <div className="mb-4">
