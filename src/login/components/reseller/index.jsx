@@ -13,7 +13,14 @@ import InputField from "@/components/layout/InputField";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { getIpAddress, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
+import {
+  forgotPassword,
+  getIpAddress,
+  login,
+  requestOtp,
+  verifyForgotPasswordOtp,
+  verifyOtp,
+} from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 import { InputOtp } from "primereact/inputotp";
@@ -53,6 +60,8 @@ const ResellerLogin = () => {
   useEffect(() => {
     generateCaptcha();
   }, []);
+
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Check if passwords match and update border color state
   useEffect(() => {
@@ -196,24 +205,24 @@ const ResellerLogin = () => {
       return;
     }
 
-    // if (!phoneRegex.test(verifyNumber)) {
-    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
-    //   return;
-    // }
-
     const payload = {
-      userId: username,
       password: password,
+      userId: username,
       mobileNo: verifyNumber,
 
       domain: "reseller.alertsnow.in",
     };
 
-    const res = await requestOtp(payload);
+    const res = isForgotPassword
+      ? await forgotPassword({
+          userId: username,
+          mobileNo: verifyNumber,
+        })
+      : await requestOtp(payload);
 
-    if (!res?.data?.status) {
-      return toast.error(res?.data?.msg || "Unable to send OTP");
-    }
+    // if (!res?.data?.status) {
+    //   return toast.error(res?.data?.msg || "Unable to send OTP");
+    // }
 
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
@@ -229,12 +238,21 @@ const ResellerLogin = () => {
         otp: numberOtp,
         ...basicDetails,
       };
-      const res = await verifyOtp(payload);
-     
+      const res = isForgotPassword
+        ? await verifyForgotPasswordOtp({
+            userId: username,
+            mobileNo: verifyNumber,
+            otp: numberOtp,
+          })
+        : await verifyOtp(payload);
+
       if (!res?.data?.token) {
         return toast.error("Invalid otp");
       }
-
+      if (isForgotPassword) {
+        setStep("login");
+        return;
+      }
       const { token, role, ttl } = res.data;
 
       // Set token (consider using localStorage if rememberMe is implemented)
@@ -510,7 +528,18 @@ const ResellerLogin = () => {
                   </button>
                 </div> */}
 
-                <h2 className="my-3 text-l">Solve Captcha</h2>
+                <div className="flex justify-between text-sm">
+                  <h2 className="my-3 text-l">Solve Captcha</h2>
+                  <button
+                    onClick={() => {
+                      setStep("verifyNumber");
+                      setIsForgotPassword(true);
+                    }}
+                    className="hover:underline"
+                  >
+                    Forgot Password
+                  </button>
+                </div>
                 <div className="flex justify-between items-center mt-2">
                   <span className="p-2 ">{captchaProblem}</span>
                   <input
@@ -541,18 +570,35 @@ const ResellerLogin = () => {
             {step === "verifyNumber" && (
               <div className="p-1 ">
                 <h1 className="text-4xl font-semibold text-center my-2 playf">
-                  Verify Number
+                  {isForgotPassword ? "Forgot Password" : "Verify Number"}
                 </h1>
-                <p className="text-centre font-medium sm:text-lg playf">
-                  Provide your mobile number for secure access.{" "}
-                </p>
-                <input
-                  type="text"
-                  placeholder="Mobile Number"
-                  className="w-full p-2 my-4 border border-gray-200 rounded"
-                  onChange={(e) => setVerifyNumber(e.target.value)}
-                  maxLength={13}
-                />
+                {!isForgotPassword && (
+                  <p className="text-centre font-medium sm:text-lg playf">
+                    Provide your mobile number for secure access.{" "}
+                  </p>
+                )}
+
+                <div className="mt-2 space-y-5">
+                  {isForgotPassword && (
+                    <InputField
+                      id="userId"
+                      label={"Enter userId Number"}
+                      name="userId"
+                      onChange={(e) => setUsername(e.target.value)}
+                      value={username}
+                      placeholder="Enter userId"
+                    />
+                  )}
+
+                  <InputField
+                    id="mobile"
+                    label={"Enter Mobile Number"}
+                    name="mobile"
+                    onChange={(e) => setVerifyNumber(e.target.value)}
+                    value={verifyNumber}
+                    placeholder="Enter Mobile Number"
+                  />
+                </div>
                 <button
                   className="w-full text-white bg-black p-2 rounded-lg mt-2"
                   onClick={handleVerifyNumberRequest}
