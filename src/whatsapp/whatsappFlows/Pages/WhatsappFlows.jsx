@@ -59,6 +59,7 @@ import {
   getWabaList,
   getWhatsappFlowTemplate,
   updateFlowStatus,
+  deleteFlow,
 } from "@/apis/whatsapp/whatsapp";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
@@ -87,6 +88,9 @@ const WhatsappFlows = () => {
   const dropdownButtonRefs = useRef({});
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [publishingId, setPublishingId] = useState(null);
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+  const [flowId, setFlowId] = useState([])
   const navigate = useNavigate();
   const rowsPerPage = 4;
 
@@ -221,9 +225,46 @@ const WhatsappFlows = () => {
   const handleEdit = (flow = selectedFlow) => {
     handleMenuClose();
   };
-  const handleDelete = (flow = selectedFlow) => {
+  const handleDelete = () => {
+    setCurrentRow(selectedFlow);
+    setVisible(true);
     handleMenuClose();
   };
+
+  // deleteFlow
+  async function handleDeleteFlow() {
+    if (!currentRow) {
+      return toast.error("No flow selected for deletion");
+    }
+
+    const { flowId } = currentRow;
+
+    console.log(flowId)
+
+    try {
+      setIsFetching(true);
+      const res = await deleteFlow(flowId);
+      console.log("Delete response:", res);
+
+      // if (flow?.status === "Draft") {
+      //   toast.success("Flow deleted successfully");
+      // }
+
+      // await fetchWabaFlows();
+
+      if (res?.success) {
+        toast.success("Flow deleted successfully");
+        setVisible(false);
+      } else {
+        toast.error(res?.error?.error_user_msg || "Flow deletion failed");
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Flow deletion failed");
+    } finally {
+      setIsFetching(false);
+    }
+  }
   const handleExport = (flow = selectedFlow) => {
     handleMenuClose();
   };
@@ -418,8 +459,8 @@ const WhatsappFlows = () => {
                       </div>
                       <span
                         className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
-                            ? "bg-orange-500 text-white"
-                            : "bg-blue-500 text-white"
+                          ? "bg-orange-500 text-white"
+                          : "bg-blue-500 text-white"
                           }`}
                       >
                         {flow.status}

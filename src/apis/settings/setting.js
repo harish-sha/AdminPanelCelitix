@@ -47,9 +47,12 @@ export const fetchTransactions = async (filterData) => {
 
 // Fetch Account Balance
 export const fetchBalance = async (userSrNo = null) => {
-  return await fetchWithAuth(`/user/getAccountBalanceByUser?userSrno=${userSrNo || ""}`, {
-    method: "POST",
-  });
+  return await fetchWithAuth(
+    `/user/getAccountBalanceByUser?userSrno=${userSrNo || ""}`,
+    {
+      method: "POST",
+    }
+  );
 };
 
 // Update Password

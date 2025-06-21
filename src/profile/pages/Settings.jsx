@@ -267,7 +267,7 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
-            // variant="fullWidth"
+          // variant="fullWidth"
           >
             {/* <Tab
               label={

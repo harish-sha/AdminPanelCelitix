@@ -28,6 +28,15 @@ export const forgotPassword = async (inputDetails) => {
   );
 };
 
+// Forgot Password
+export const verifyForgotPasswordOtp = async (data) => {
+  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 // Verify OTP
 export const verifyOtp = async (data) => {
   return await axios.post(`${apiUrl}/auth/validate-otp`, data, {
