@@ -14,7 +14,6 @@ import axios from "axios";
 import {
   forgotPassword,
   login,
-
   requestOtp,
   verifyForgotPasswordOtp,
   verifyOtp,
@@ -57,46 +56,48 @@ const Login = () => {
   });
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const[isLoading, setLoading] = useState(false);
 
-  // useEffect(() => {
-  //   let timer;
+  useEffect(() => {
+    let timer;
 
-  //   if (countdown > 0) {
-  //     timer = setInterval(() => {
-  //       setCountdown((prev) => prev - 1);
-  //     }, 1000);
-  //   } else if (countdown === 0) {
-  //     // Countdown reached zero, show button and trigger OTP resend
-  //     setIsBtnVisible(true);
+    if (countdown > 0) {
+      timer = setInterval(() => {
+        setCountdown((prev) => prev - 1);
+      }, 1000);
+    } else if (countdown === 0) {
+      setIsBtnVisible(true);
 
-  //     const handleResendOtp = async () => {
-  //       if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
-  //       try {
-  //         const res = await forgotPassword(forgotPassState);
-  //         console.log(res);
+      const handleResendOtp = async () => {
+        // if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
+        try {
+          const res = await forgotPassword({
+            userId: inputDetails.userId,
+            mobileNo: inputDetails.mobileNo,
+          });
 
-  //         if (!res?.data.status) {
-  //           return toast.error(res?.data?.msg || "Unable to send OTP");
-  //         }
-  //         toast.success(res?.data?.msg);
-  //       } catch (e) {
-  //         console.log(e);
-  //         toast.error("Unable to send OTP");
-  //       }
-  //     };
+          if (!res?.data.status) {
+            return toast.error(res?.data?.msg || "Unable to send OTP");
+          }
+          toast.success(res?.data?.msg);
+        } catch (e) {
+          console.log(e);
+          toast.error("Unable to send OTP");
+        }
+      };
 
-  //     handleResendOtp();
-  //   }
+      handleResendOtp();
+    }
 
-  //   return () => clearInterval(timer);
-  // }, [countdown]);
+    return () => clearInterval(timer);
+  }, [countdown]);
 
   async function handleLogin() {
     if (!inputDetails.userId || !inputDetails.password)
       return toast.error("Enter email and password");
 
     try {
-      // setLoading(true);
+      setLoading(true);
 
       const systemData = {
         browser: {
@@ -109,8 +110,8 @@ const Login = () => {
         },
       };
 
-      // const ipResponse = await getIpAddress();
-      const ipResponse = "0.0.0.0";
+      const ipResponse = await getIpAddress();
+      // const ipResponse = "0.0.0.0";
 
       setInputDetails((prev) => ({
         ...prev,
@@ -153,27 +154,10 @@ const Login = () => {
     } catch (e) {
       return toast.error("Login failed");
     } finally {
-      // setLoading(false);
+      setLoading(false);
     }
   }
 
-  async function handleSentForgotPasswordOtp() {
-    if (!forgotPassState.userId || !forgotPassState.mobileNo)
-      return toast.error("Enter email and phone number");
-
-    try {
-      const res = await forgotPassword(forgotPassState);
-
-      if (!res?.data.status) {
-        return toast.error("Either user id or mobile number is incorrect");
-      }
-      toast.success(res?.data?.msg);
-      setStep(3);
-    } catch (e) {
-      console.log(e);
-      return toast.error("Unable to send OTP");
-    }
-  }
   async function handleSendOtp() {
     delete inputDetails.rememberMe;
     let payload = {};
@@ -200,7 +184,6 @@ const Login = () => {
       return toast.error("Unable to send OTP");
     }
   }
-
 
   async function handleVerifyOtp() {
     if (!inputDetails.otp) {
@@ -236,7 +219,6 @@ const Login = () => {
       if (res?.data?.role !== "AGENT") {
         allowedServices = await getAllowedServices();
       }
-
 
       // toast.success("Login Successful!");
       authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
@@ -435,24 +417,31 @@ const Login = () => {
                   <div className="flex justify-center">
                     <button
                       className="w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2] text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                      onClick={()=>{handleVerifyOtp()}}
+                      onClick={() => {
+                        handleVerifyOtp();
+                      }}
                     >
                       Verify OTP
                     </button>
                   </div>
 
-                  <p className="text-md text-gray-800 mt-2 flex justify-center">
-                    Resend OTP in {countdown}s
-                  </p>
+                  {countdown != 0 && (
+                    <p className="text-md text-gray-800 mt-2 flex justify-center">
+                      Resend OTP in {countdown}s
+                    </p>
+                  )}
 
-                  <div className="flex justify-center">
-                    <button
-                      className="w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2] text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                      onClick={() => {}}
-                    >
-                      Resend OTP
-                    </button>
-                  </div>
+                  {isBtnVisible && (
+                    // <div className="mt-4">
+                    <div className="flex justify-center">
+                      <button
+                        className=" w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2]  text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
+                        onClick={handleResendOTP}
+                      >
+                        Resend OTP
+                      </button>
+                    </div>
+                  )}
                 </div>
               </>
             )}
