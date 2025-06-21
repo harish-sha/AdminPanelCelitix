@@ -24,6 +24,7 @@ import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
+import { marked } from "marked";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
@@ -32,6 +33,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     { title: "Option 2", description: "Description 2", image: "url2.png" },
   ]);
   const [selectedOption, setSelectedOption] = useState(null);
+
+ 
+
+
 
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
@@ -237,8 +242,61 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </div>
               );
 
+
+//Render RichText
+case "richText": {
+  let renderedHTML = "<p>No content available</p>";
+
+  try {
+    const markdown = Array.isArray(item?.text)
+      ? item.text.join("\n")
+      : item?.content || "";
+
+    renderedHTML = marked.parse(markdown);
+     
+    // renderedHTML = renderedHTML.replace(
+    //   /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
+    //   ''
+    // );
+
+  } catch (err) {
+    console.error("Markdown rendering error:", err);
+    renderedHTML = "<p>No content available</p>";
+  }
+
+  return (
+    <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-[90vh] flex flex-col">
+     
+      <div
+        className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+        dangerouslySetInnerHTML={{ __html: renderedHTML }}
+      />
+
+      <style>
+        {`
+          .prose h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+          }
+          .prose h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+          }
+        `}
+      </style>
+
+     
+    </div>
+  );
+}
+
+
+
+
+
+
             // Render Checkboxes
-            // anshu
+            
             case "checkBox":
               return (
                 <div key={index} className="">
@@ -347,7 +405,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   )}
                 </div>
               );
-            // anshu
+          
 
             // Render Radio Buttons
             case "radioButton":

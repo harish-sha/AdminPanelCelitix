@@ -434,47 +434,7 @@ export const generatePayload = (data) => {
         };
       }
 
-      // if (type === "richText") {
-      //   const html = pay.content || "";
-      //   console.log("RAW HTML for richText:", pay.content);
-
-      //   const tempDiv = document.createElement("div");
-      //   tempDiv.innerHTML = html;
-
-      //   const lines = Array.from(tempDiv.childNodes)
-      //     .map(convertNodeToMarkdown)
-      //     .map((line) => line.trim())
-      //     .filter((line) => line !== "");
-
-      //   component = {
-
-      //     type: "RichText",
-      //     text: lines,
-      //   };
-      // }
-
-      // if (type === "richText") {
-      //   let lines = pay.text;
-      //   console.log("generate payload lines", lines);
-
-      //   if (!lines && pay.content) {
-      //     const tempDiv = document.createElement("div");
-      //     tempDiv.innerHTML = pay.content;
-
-      //     lines = Array.from(tempDiv.childNodes)
-      //       .map(convertNodeToMarkdown)
-      //       .map((line) => line.trim())
-      //       .filter((line) => line !== "");
-      //   }
-
-      //   console.log("Payload received in generatePayload:", pay);
-
-      //   component = {
-      //     type: "RichText",
-      //     text: lines || [],
-      //   };
-      // }
-
+      
       if (type === "richText") {
         let lines = [];
 
@@ -483,6 +443,7 @@ export const generatePayload = (data) => {
         // If `pay.text` is an array and contains content, use it directly
         if (Array.isArray(pay.text) && pay.text.length > 0) {
           lines = pay.text;
+          console.log("lines",lines)
         } else if (pay.content) {
           // If pay.content exists, parse it into lines
           try {

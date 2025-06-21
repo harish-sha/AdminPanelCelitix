@@ -13,6 +13,8 @@ import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import { marked } from "marked";
+
 
 const Canvas = ({
   items,
@@ -225,11 +227,61 @@ const Canvas = ({
       );
     }
 
-    // For textInput and textArea: look under texts
-    // if (item.type === "textInput" || item.type === "textArea") {
-    //   const key = item.type === "textInput" ? "textInput_1" : "textArea_1";
-    //   return targetItem.texts?.[key]?.[field] || "";
-    // }
+
+    if (item.type === "richText") {
+      let renderedHTML = "<p>No content available</p>";
+
+      try {
+        const markdown = Array.isArray(targetItem?.text)
+          ? targetItem.text.join("\n")
+          : targetItem?.content || "";
+
+        renderedHTML = marked.parse(markdown);
+      } catch (err) {
+        console.error("Markdown rendering error:", err);
+        renderedHTML = "<p>No content available</p>";
+
+        renderedHTML = renderedHTML.replace(
+          /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
+          ''
+        );
+
+
+      }
+      return (
+        <>
+          {/* {targetItem.text && ( */}
+          <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-auto flex flex-col">
+
+            <div
+              className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+              dangerouslySetInnerHTML={{ __html: renderedHTML }}
+            />
+
+            <style>
+              {`
+          .prose h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+          }
+          .prose h2 {
+            font-size: 1.25rem;
+            font-weight: 500;
+          }
+        `}
+            </style>
+
+
+          </div>
+
+          {/* )} */}
+
+
+
+        </>
+      )
+    }
+
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
@@ -959,8 +1011,8 @@ const Canvas = ({
         return "TextInput";
       case "textArea":
         return "TextArea";
-      case "richText" :
-        return "RichText" ;
+      case "richText":
+        return "RichText";
       case "radioButton":
         return "RadioButton";
       case "checkBox":

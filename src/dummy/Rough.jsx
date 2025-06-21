@@ -1,75 +1,35 @@
-async function handleFlowBuild() {
-  if (!flowName) {
-    toast.error("Please enter a flow name");
-    return;
-  }
+// deleteFlow
+async function handleDeleteFlow() {
+  const { flowId } = currentRow; // Get the flowId from currentRow (which is set in handleDelete)
 
-  const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
-  if (!hasAtLeastOneComponent) {
-    toast.error("Please add at least one component before building the flow");
-    return;
-  }
+  console.log("flow id", flowId); // Log the flowId to verify
+
+  const data = {
+    selectedFlow: flowId, // Pass flowId directly
+  };
+
+  console.log("data", data);
 
   try {
-    const payload = generatePayload(tabs);
+    setIsFetching(true);
 
-    const params = {
-      category: state?.selectCategories,
-      waba: state?.selectedWaba,
-      id: "",
-      name: flowName,
-    };
+    // Make the API call to delete the flow
+    const res = await deleteFlow(data);
 
-    setIsLoading(true);
-    console.log("Calling saveFlow with:", params, payload);
+    setFlowId(res); // Set response data
 
-    const res = await saveFlow(params, payload);
-    console.log("Response from saveFlow:", res);
+    console.log(res);
 
-    // === 🔄 Handle Empty Response ===
-    if (!res || (typeof res === "object" && Object.keys(res).length === 0)) {
-      toast.error("Flow creation failed. Please try again.");
-      return;
+    // Check if the flow was in "Draft" status
+    if (currentRow?.status === "Draft") {
+      toast.success("Flow deleted successfully");
     }
 
-    // === ❌ Backend explicitly returned error ===
-    if (res.flag === false) {
-      const backendError =
-        res?.error_user_msg?.error?.error_user_msg ||
-        res?.msg?.validation_errors?.[0]?.message ||
-        "Something went wrong while creating the flow.";
-
-      toast.error(backendError);
-      return;
-    }
-
-    // === ✅ Flow created successfully ===
-    if (res.flag === true && typeof res.msg === "string") {
-      toast.success(res.msg);
-      // navigate("/wwhatsappflows"); // uncomment when navigation is needed
-      return;
-    }
-
-    // === ⚠️ JSON validation errors (not fatal) ===
-    if (res.flag === true && res.msg?.validation_errors?.length > 0) {
-      const firstError = res.msg.validation_errors[0]?.message;
-      toast.error(firstError || "Flow JSON is not valid.");
-      return;
-    }
-
-    // === 🛑 Fallback ===
-    toast.error("Unexpected response. Please try again.");
-  } catch (err) {
-    console.error("Unexpected API error:", err);
-
-    // Try to show user-friendly message if exists
-    const fallbackMessage =
-      err?.error_user_msg?.error?.error_user_msg ||
-      err?.message ||
-      "An unexpected error occurred. Please try again.";
-
-    toast.error(fallbackMessage);
+    setVisible(false); // Close the dialog/modal after successful deletion
+  } catch (error) {
+    console.log(error);
+    toast.error("Flow deletion failed");
   } finally {
-    setIsLoading(false);
+    setIsFetching(false); // Stop loading state
   }
 }

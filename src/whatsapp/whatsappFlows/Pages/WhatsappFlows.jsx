@@ -33,7 +33,7 @@ import {
   getWhatsappFlowTemplate,
   updateFlowStatus,
   deleteFlow,
-  
+
 } from "@/apis/whatsapp/whatsapp";
 import { FaWhatsapp } from "react-icons/fa";
 
@@ -58,77 +58,48 @@ const WhatsappFlows = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
-  const[flowId,setFlowId] = useState([])
+  const [flowId, setFlowId] = useState([])
   const navigate = useNavigate();
   const rowsPerPage = 4;
 
-  // deleteFlow
-  async function handleDeleteFlow() {
-    const flow = flowList.find((flow) => flow.flowId === currentRow.id);
-    console.log(flow);
-
-    const data = {
-      id: currentRow.id,
-    };
-    console.log("data", data)
-
-    try {
-      setIsFetching(true);
-      const res = await deleteFlow(data);
-      setFlowId(res)
-      console.log(res);
-
-      if (flow?.status === "Draft") {
-        toast.success("Flow deleted successfully");
-      }
-
-      await fetchWabaFlows();
-
-      setVisible(false);
-    } catch (error) {
-      console.log(error)
-      toast.error("Flow deletion failed");
-    } finally {
-      setIsFetching(false);
-    }
-  }
-
-//   async function handleDeleteFlow() {
-//    const flowId = currentRow?.flowId;
-
-//   if (!flowId) {
-//     toast.error("Invalid flow selected.");
-//     return;
-//   }
-
-//   const flow = flowList.find((f) => f.flowId === flowId);
-//   console.log(flow)
-
-//   try {
-//     setIsFetching(true);
-//     const res = await deleteFlow({ id: flowId });
-
-//     if (flow?.status === "DRAFT") {
-//       toast.success("Flow deleted successfully");
-//     } else {
-//       toast.success("Flow deleted");
-//     }
-
-//     await fetchWabaFlows();
-//     setVisible(false);
-//   } catch (error) {
-//     console.error("Delete error:", error);
-//     toast.error("Flow deletion failed");
-//   } finally {
-//     setIsFetching(false);
-//   }
-// }
 
 
- const onDeleteClick = (flow) => {
-  setCurrentRow(flow);  // Send full flow object
-  setVisible(true);
-};
+  //   async function handleDeleteFlow() {
+  //    const flowId = currentRow?.flowId;
+
+  //   if (!flowId) {
+  //     toast.error("Invalid flow selected.");
+  //     return;
+  //   }
+
+  //   const flow = flowList.find((f) => f.flowId === flowId);
+  //   console.log(flow)
+
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await deleteFlow({ id: flowId });
+
+  //     if (flow?.status === "DRAFT") {
+  //       toast.success("Flow deleted successfully");
+  //     } else {
+  //       toast.success("Flow deleted");
+  //     }
+
+  //     await fetchWabaFlows();
+  //     setVisible(false);
+  //   } catch (error) {
+  //     console.error("Delete error:", error);
+  //     toast.error("Flow deletion failed");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // }
+
+
+  // const onDeleteClick = (flow) => {
+  //   setCurrentRow(flow);  // Send full flow object
+  //   setVisible(true);
+  // };
 
 
   // Fetch WABA List
@@ -244,9 +215,45 @@ const WhatsappFlows = () => {
   };
 
   const handleDelete = () => {
-    console.log("Delete:", selectedFlow.name);
+    setCurrentRow(selectedFlow);
+    setVisible(true);
     handleMenuClose();
   };
+
+  // deleteFlow
+  async function handleDeleteFlow() {
+    if (!currentRow) {
+      return toast.error("No flow selected for deletion");
+    }
+
+    const { flowId } = currentRow;
+
+    console.log(flowId)
+
+    try {
+      setIsFetching(true);
+      const res = await deleteFlow(flowId);
+      console.log("Delete response:", res);
+
+      // if (flow?.status === "Draft") {
+      //   toast.success("Flow deleted successfully");
+      // }
+
+      // await fetchWabaFlows();
+
+      if (res?.success) {
+        toast.success("Flow deleted successfully");
+        setVisible(false); // Close the confirmation dialog
+      } else {
+        toast.error(res?.error?.error_user_msg || "Flow deletion failed");
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Flow deletion failed");
+    } finally {
+      setIsFetching(false);
+    }
+  }
 
   const handleExport = () => {
     console.log("Export:", selectedFlow.name);
@@ -431,7 +438,7 @@ const WhatsappFlows = () => {
               </ListItemIcon>
               <ListItemText>Edit</ListItemText>
             </MenuItem>
-            <MenuItem onClick={onDeleteClick}>
+            <MenuItem onClick={handleDelete}>
               <ListItemIcon>
                 <DeleteIcon fontSize="small" color="error" />
               </ListItemIcon>
@@ -699,7 +706,7 @@ const WhatsappFlows = () => {
               <p className="text-[1.1rem] font-semibold text-gray-700">
                 Are you sure you want to delete the Flow <br />
                 <span className="text-green-500">
-                  "{currentRow?.flowId}"
+                  "{currentRow?.flowName}"
                 </span>
                 ?
               </p>

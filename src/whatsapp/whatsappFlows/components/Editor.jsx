@@ -1,362 +1,5 @@
-// import React, { useRef, useState } from "react";
-// import TurndownService from "turndown";
-// import toast from "react-hot-toast";
-// import {
-//   FormatBoldOutlined,
-//   FormatItalicOutlined,
-//   StrikethroughSOutlined,
-//   FormatListNumberedOutlined,
-//   ListAltOutlined,
-//   AddLinkOutlined,
-//   AddPhotoAlternateOutlined,
-// } from "@mui/icons-material";
-// import UniversalButton from "../../components/UniversalButton";
-
-// const RichTextEditor = ({ onPayloadChange }) => {
-//   const editorRef = useRef(null);
-//   const [previewMode, setPreviewMode] = useState(false);
-//   const [content, setContent] = useState("");
-//   const [inputValue, setInputValue] = useState("");
-//   const turndownService = new TurndownService();
-
-//   const exec = (command, value = null) => {
-//     editorRef.current?.focus();
-//     document.execCommand(command, false, value);
-//   };
-
-//   const insertLink = () => {
-//     let inputValue = "";
-
-//     const handleConfirm = (url) => {
-//       if (url) exec("createLink", url);
-//     };
-
-//     toast(
-//       (t) => {
-//         const inputRef = React.createRef();
-
-//         const handleKeyDown = (e) => {
-//           if (e.key === "Enter") {
-//             toast.dismiss(t.id);
-//             handleConfirm(inputValue);
-//           } else if (e.key === "Escape") {
-//             toast.dismiss(t.id);
-//           }
-//         };
-
-//         return (
-//           <div
-//             className="p-4 bg-white rounded shadow-md space-y-3 w-[300px]"
-//             onKeyDown={handleKeyDown}
-//           >
-//             <p className="text-sm font-medium">Enter URL</p>
-//             <input
-//               ref={inputRef}
-//               type="text"
-//               autoFocus
-//               className="w-full border px-2 py-1 rounded"
-//               placeholder="https://example.com"
-//               onChange={(e) => (inputValue = e.target.value)}
-//               onPaste={(e) => {
-//                 inputValue = e.clipboardData.getData("text");
-//               }}
-//             />
-//             <div className="flex justify-end gap-2 text-sm">
-//               <button
-//                 onClick={() => toast.dismiss(t.id)}
-//                 className="px-2 py-1 bg-gray-200 rounded"
-//               >
-//                 Cancel
-//               </button>
-//               <button
-//                 onClick={() => {
-//                   toast.dismiss(t.id);
-//                   handleConfirm(inputValue);
-//                 }}
-//                 className="px-2 py-1 bg-blue-500 text-white rounded"
-//               >
-//                 Insert
-//               </button>
-//             </div>
-//           </div>
-//         );
-//       },
-//       {
-//         duration: Infinity,
-//         position: "top-center",
-//       }
-//     );
-//   };
-
-//   const insertImage = () => {
-//     toast.custom((t) => {
-//       let inputUrl = "";
-
-//       const insert = () => {
-//         if (inputUrl) {
-//           exec("insertImage", inputUrl);
-//           toast.dismiss(t.id);
-//           toast.success("Image inserted!");
-//         } else {
-//           toast.error("Please enter a valid URL");
-//         }
-//       };
-
-//       return (
-//         <div className="bg-white p-4 rounded shadow-md border w-[300px] flex flex-col gap-2">
-//           <h3 className="font-semibold text-sm">Insert Image URL</h3>
-//           <input
-//             type="text"
-//             placeholder="https://example.com/image.png"
-//             className="border px-2 py-1 rounded text-sm"
-//             onChange={(e) => (inputUrl = e.target.value)}
-//             onKeyDown={(e) => {
-//               if (e.key === "Enter") insert();
-//             }}
-//             autoFocus
-//           />
-//           <div className="flex justify-end gap-2 mt-2">
-//             <button
-//               className="text-sm px-2 py-1 bg-gray-200 rounded"
-//               onClick={() => toast.dismiss(t.id)}
-//             >
-//               Cancel
-//             </button>
-//             <button
-//               className="text-sm px-2 py-1 bg-blue-500 text-white rounded"
-//               onClick={insert}
-//             >
-//               Insert
-//             </button>
-//           </div>
-//         </div>
-//       );
-//     });
-//   };
-
-//   const insertTable = () => {
-//     const html = `
-//       <table border="1" style="width:100%; margin:10px 0;">
-//         <thead>
-//           <tr><th>H1</th><th>H2</th><th>H3</th></tr>
-//         </thead>
-//         <tbody>
-//           <tr><td>R1C1</td><td>R1C2</td><td>R1C3</td></tr>
-//           <tr><td>R2C1</td><td>R2C2</td><td>R2C3</td></tr>
-//         </tbody>
-//       </table>
-//     `;
-//     exec("insertHTML", html);
-//   };
-
-//   const handleCreate = () => {
-//     const html = editorRef.current?.innerHTML || "";
-//     setContent(html);
-//     toast.success("Content created!");
-//   };
-
-//   const handleSave = () => {
-//     const html = editorRef.current?.innerHTML || "";
-//     setContent(html);
-//     toast.success("Changes saved!");
-
-//     const markdown = turndownService.turndown(html);
-//     const lines =  markdown
-//       .split("\n")
-//       .map(line => line.trim())
-//       .filter(line => line !== "");
-
-//     const payload = {
-//       type: "RichText",
-//       text: lines,
-//     };
-
-//     console.log("Generated RichText Payload:", payload);
-
-//     if (onPayloadChange) {
-//       onPayloadChange(payload);
-//     }
-//   };
-
-//   // const handleSave = () => {
-//   //   const html = editorRef.current?.innerHTML || "";
-//   //   setContent(html);
-//   //   toast.success("Changes saved!");
-
-//   //   const markdown = turndownService.turndown(html);
-
-//   //   const lines = markdown
-//   //     .split("\n")
-//   //     .map((line) => line.trim())
-//   //     .filter((line) => line !== "");
-
-//   //   const formatted = lines.map((line) => {
-//   //     if (line.startsWith("###")) {
-//   //       return { "###": line.replace(/^###\s*/, "") };
-//   //     } else if (line.startsWith("##")) {
-//   //       return { "##": line.replace(/^##\s*/, "") };
-//   //     } else if (line.startsWith("#")) {
-//   //       return { "#": line.replace(/^#\s*/, "") };
-//   //     } else if (line.startsWith("~~") && line.endsWith("~~")) {
-//   //       return { "~~": line.slice(2, -2) };
-//   //     } else if (line.startsWith("**") && line.endsWith("**")) {
-//   //       return { "**": line.slice(2, -2) };
-//   //     } else if (line.startsWith("*") && line.endsWith("*")) {
-//   //       return { "*": line.slice(1, -1) };
-//   //     } else {
-//   //       return { "": line };
-//   //     }
-//   //   });
-
-//   //   const payload = {
-//   //     type: "RichText",
-//   //     text: formatted,
-//   //   };
-
-//   //   console.log("Generated RichText Payload:", payload);
-
-//   //   if (onPayloadChange) {
-//   //     onPayloadChange(payload);
-//   //   }
-//   // };
-
-// // const handleSave = () => {
-// //   const html = editorRef.current?.innerHTML || "";
-// //   setContent(html);
-// //   toast.success("Changes saved!");
-
-// //   const tempDiv = document.createElement("div");
-// //   tempDiv.innerHTML = html;
-
-// //   const textBlocks = Array.from(tempDiv.childNodes)
-// //     .map((node) => {
-// //       if (node.nodeType !== 1) return null; // Skip text nodes
-
-// //       const tag = node.tagName.toLowerCase();
-// //       const text = node.textContent.trim();
-
-// //       if (!text) return null;
-
-// //       switch (tag) {
-// //         case "h1":
-// //           return { "#": text };
-// //         case "h2":
-// //           return { "##": text };
-// //         case "h3":
-// //           return { "###": text };
-// //         case "strong":
-// //         case "b":
-// //           return { "**": text };
-// //         case "em":
-// //         case "i":
-// //           return { "*": text };
-// //         case "s":
-// //         case "del":
-// //           return { "~~": text };
-// //         case "p":
-// //           return { "": text };
-// //         default:
-// //           return { "": text };
-// //       }
-// //     })
-// //     .filter(Boolean); // remove nulls
-
-// //   const payload = {
-// //     type: "RichText",
-// //     text: textBlocks,
-// //   };
-
-// //   console.log("Generated RichText Payload:", payload);
-
-// //   if (onPayloadChange) {
-// //     onPayloadChange(payload);
-// //   }
-// // };
-
-//   const exportHTML = () => {
-//     const html = editorRef.current?.innerHTML || "";
-//     console.log("HTML Export:\n", html);
-//     alert("HTML copied to console!");
-//   };
-
-//   const exportMarkdown = () => {
-//     const html = editorRef.current?.innerHTML || "";
-//     const markdown = turndownService.turndown(html);
-//     console.log("Markdown Export:\n", markdown);
-//     alert("Markdown copied to console!");
-//   };
-
-//   const handleEditorFocus = () => {
-//     if (!editorRef.current?.innerHTML.trim()) {
-//       editorRef.current.innerHTML = "<p><br></p>";
-//     }
-//   };
-
-//   return (
-//     <div className="max-w-3xl mx-auto mt-10 p-4 border rounded shadow space-y-4">
-//       {/* Toolbar */}
-//       <div className="flex flex-wrap gap-2">
-//         <button onClick={() => exec("bold")} className="btn">
-//           <FormatBoldOutlined />
-//         </button>
-//         <button onClick={() => exec("italic")} className="btn">
-//           <FormatItalicOutlined />
-//         </button>
-//         <button onClick={() => exec("strikeThrough")} className="btn">
-//           <StrikethroughSOutlined />
-//         </button>
-//         <button onClick={() => exec("insertUnorderedList")} className="btn">
-//           <ListAltOutlined />
-//         </button>
-//         <button onClick={() => exec("insertOrderedList")} className="btn">
-//           <FormatListNumberedOutlined />
-//         </button>
-//         <button onClick={insertLink} className="btn">
-//           <AddLinkOutlined />
-//         </button>
-//         <button onClick={insertImage} className="btn">
-//           <AddPhotoAlternateOutlined />
-//         </button>
-//         <button onClick={insertTable} className="btn">
-//           Table
-//         </button>
-//         <button onClick={() => exec("removeFormat")} className="btn text-red-700">
-//           Clear
-//         </button>
-//         <button onClick={() => setPreviewMode((p) => !p)} className="btn bg-blue-100">
-//           {previewMode ? "Edit" : "Preview"}
-//         </button>
-//       </div>
-
-//       {/* Editor / Preview */}
-//       {previewMode ? (
-//         <div
-//           className="prose prose-sm max-w-none min-h-[250px] p-4 border border-dashed rounded bg-gray-50"
-//           dangerouslySetInnerHTML={{ __html: content || editorRef.current?.innerHTML }}
-//         />
-//       ) : (
-//         <div
-//           ref={editorRef}
-//           contentEditable
-//           suppressContentEditableWarning
-//           onFocus={handleEditorFocus}
-//           className="prose prose-sm max-w-none min-h-[250px] border border-gray-300 p-4 rounded shadow focus:outline-none focus:ring"
-//         />
-//       )}
-
-//       {/* Action Buttons */}
-//       <div className="flex justify-center gap-4 mt-4">
-//         <UniversalButton onClick={handleCreate} className="btn bg-purple-200 px-4 py-2 rounded" label="Create" />
-//         <UniversalButton onClick={handleSave} className="btn bg-purple-300 px-4 py-2 rounded" label="Save" />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default RichTextEditor;
-
 // RichTextEditor.jsx - Markdown-style payload generator without turndownService
-import React, { useEffect, useRef, useState,useCallback  } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 import toast from "react-hot-toast";
 import {
@@ -368,7 +11,7 @@ import {
   AddLinkOutlined,
   AddPhotoAlternateOutlined,
 } from "@mui/icons-material";
-import TableViewIcon from '@mui/icons-material/TableView';
+import TableViewIcon from "@mui/icons-material/TableView";
 import UniversalButton from "../../components/UniversalButton";
 
 export const convertNodeToMarkdown = (node) => {
@@ -441,7 +84,7 @@ export const convertNodeToMarkdown = (node) => {
   }
 };
 
-const RichTextEditor = ({ onUpdate }) => {
+const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   const editorRef = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState("");
@@ -537,39 +180,132 @@ const RichTextEditor = ({ onUpdate }) => {
     };
   };
 
+
+
+
+
   const insertTable = () => {
-    const tableHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Header 1</th>
-          <th>Header 2</th>
-          <th>Header 3</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Row 1</td>
-          <td>Data 1</td>
-          <td>More Data</td>
-        </tr>
-        <tr>
-          <td>Row 2</td>
-          <td>Data 2</td>
-          <td>More Data</td>
-        </tr>
-        <tr>
-          <td>Row 3</td>
-          <td>Data 3</td>
-          <td>More Data</td>
-        </tr>
-      </tbody>
-    </table><br/>
+    const rows = parseInt(window.prompt("How many rows?", ""), 10);
+    const cols = parseInt(window.prompt("How many columns?", ""), 10);
+    if (!rows || rows < 1 || !cols || cols < 1) {
+      toast.error("Invalid row/column count");
+      return;
+    }
+
+    // build header (cols + action column)
+    let tableHTML = `
+    <table class="generated-table" style="
+      width:100%;
+      margin:10px 0;
+      border-collapse: collapse;
+      border: 0.5px solid #000;
+    ">
+      <thead><tr>
   `;
+    for (let c = 1; c <= cols; c++) {
+      tableHTML += `<th style="border:0.5px solid #000;padding:4px;"></th>`;
+    }
+    // action TH: row controls go in each row; column controls here
+    tableHTML += `
+    <th style="border:0.5px solid #000;padding:1px;width: 0;">
+      <button class="table-add-col">➕C</button>
+      <button class="table-remove-col">❌C</button>
+    </th>
+  `;
+    tableHTML += `</tr></thead><tbody>`;
+
+    // build body rows
+    for (let r = 1; r <= rows; r++) {
+      tableHTML += `<tr>`;
+      for (let c = 1; c <= cols; c++) {
+        tableHTML += `<td style="border:0.5px solid #000;width:10px;height:30px;padding:4px;"></td>`;
+      }
+      tableHTML += `
+      <td style="border:0.5px solid #000;padding:4px;text-align:center;">
+        <button class="table-add-row">➕</button>
+        <button class="table-remove-row">❌</button>
+      </td>
+    `;
+      tableHTML += `</tr>`;
+    }
+    tableHTML += `</tbody></table><br/>`;
+
+    // insert into editor
     editorRef.current?.focus();
     document.execCommand("insertHTML", false, tableHTML);
-    toast.success("Table inserted!");
+    toast.success(`Inserted a ${rows}×${cols} table`);
+
+    // attach events to the newly inserted table
+    const editor = editorRef.current;
+    const tables = editor?.querySelectorAll("table.generated-table");
+    const table = tables?.[tables.length - 1];
+    if (table) attachTableEvents(table);
   };
+
+  // 2) Event delegation: handle all five buttons
+  function attachTableEvents(table) {
+    table.addEventListener("click", e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+
+      const header = table.tHead.rows[0];
+      const body = table.tBodies[0];
+
+      // —— Column controls (in header) ——
+      if (btn.classList.contains("table-add-col")) {
+        // insert new TH before the last TH
+        const th = document.createElement("th");
+        th.style.cssText = "border:0.5px solid #000;padding:4px;";
+        // th.textContent = `Col ${header.cells.length}`;
+        header.insertBefore(th, header.lastElementChild);
+
+        // in every body row, insert a new TD before action cell
+        Array.from(body.rows).forEach(row => {
+          const td = document.createElement("td");
+          td.style.cssText = "border:0.5px solid #000;width:10px;height:30px;padding:4px;";
+          row.insertBefore(td, row.lastElementChild);
+        });
+        return;
+      }
+
+      if (btn.classList.contains("table-remove-col")) {
+        const dataCols = header.cells.length - 1; // exclude action cell
+        if (dataCols > 1) {
+          // remove the TH just before the last one
+          header.removeChild(header.cells[dataCols - 1]);
+          // remove corresponding TD in each row
+          Array.from(body.rows).forEach(row => {
+            row.removeChild(row.cells[dataCols - 1]);
+          });
+        } else {
+          toast.error("Can't remove the last column");
+        }
+        return;
+      }
+
+      // —— Row & comment controls (in each row) ——
+      const row = btn.closest("tr");
+      if (!row) return;
+
+      if (btn.classList.contains("table-add-row")) {
+        const newRow = row.cloneNode(true);
+        // clear content of all data cells
+        Array.from(newRow.cells).slice(0, -1).forEach(td => td.innerHTML = "");
+        row.parentNode.insertBefore(newRow, row.nextSibling);
+        return;
+      }
+
+      if (btn.classList.contains("table-remove-row")) {
+        if (body.rows.length > 1) row.remove();
+        else toast.error("Can't remove the last row");
+        return;
+      }
+
+
+    });
+  }
+
+
 
   const handleSave = () => {
     const html = editorRef.current?.innerHTML || "";
@@ -586,42 +322,15 @@ const RichTextEditor = ({ onUpdate }) => {
       text: lines,
     };
 
+    const updatedData = {
+      ...selectedItem,
+      ...payload,
+    };
+
     toast.success("Changes saved!");
-    console.log("RichText Payload", payload);
-
     // if (onPayloadChange) onPayloadChange(payload);
-    if (onUpdate) onUpdate(payload);
-
+    onUpdate(updatedData);
   };
-
-  const handleComponentUpdate = (newPayload) => {
-    console.log(newPayload)
-    if (selectedItem?.type === "richText") {
-      setTabs((prevTabs) => {
-        const updatedTabs = [...prevTabs];
-        const currentScreen = updatedTabs[activeIndex];
-        const payload = [...currentScreen.payload];
-
-        if (selectedItem.index !== undefined && payload[selectedItem.index]) {
-          payload[selectedItem.index] = {
-            ...payload[selectedItem.index],
-            content: newPayload.content,
-            text: newPayload.text,
-          };
-        }
-
-        updatedTabs[activeIndex] = {
-          ...currentScreen,
-          payload,
-        };
-
-        return updatedTabs;
-      });
-    }
-  };
-
-
-
 
   const [active, setActive] = useState({
     h1: false,
@@ -640,7 +349,7 @@ const RichTextEditor = ({ onUpdate }) => {
     setActive({
       h1: block === "h1",
       h2: block === "h2",
-      p:  block === "p",
+      p: block === "p",
       italic: document.queryCommandState("italic"),
       bold: document.queryCommandState("bold"),
       strikeThrough: document.queryCommandState("strikeThrough"),
@@ -654,9 +363,9 @@ const RichTextEditor = ({ onUpdate }) => {
     return () => document.removeEventListener("selectionchange", updateActive);
   }, [updateActive]);
 
-  const base     = "px-3 py-1 rounded transition-colors focus:outline-none";
+  const base = "px-3 py-1 rounded transition-colors focus:outline-none";
   const inactive = "bg-white text-gray-700 hover:bg-gray-100";
-  const activeBtn= "bg-blue-600 text-white";
+  const activeBtn = "bg-blue-600 text-white";
 
   // Wrapper for exec calls that also refresh state
   const doExec = (cmd, arg) => {
@@ -691,132 +400,130 @@ const RichTextEditor = ({ onUpdate }) => {
 
   return (
     <div className="max-w-3xl mx-auto p-4 border rounded shadow space-y-4">
-       <div className="flex flex-wrap gap-2">
-      {/* H1 */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("formatBlock", "<h1>")}
-        className={`${base} ${active.h1 ? activeBtn : inactive}`}
-        title="H1"
-      >
-        H1
-      </button>
+      <div className="flex flex-wrap gap-2">
+        {/* H1 */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("formatBlock", "<h1>")}
+          className={`${base} ${active.h1 ? activeBtn : inactive}`}
+          title="H1"
+        >
+          H1
+        </button>
 
-      {/* H2 */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("formatBlock", "<h2>")}
-        className={`${base} ${active.h2 ? activeBtn : inactive}`}
-        title="H2"
-      >
-        H2
-      </button>
+        {/* H2 */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("formatBlock", "<h2>")}
+          className={`${base} ${active.h2 ? activeBtn : inactive}`}
+          title="H2"
+        >
+          H2
+        </button>
 
-      {/* Paragraph */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("formatBlock", "<p>")}
-        className={`${base} ${active.p ? activeBtn : inactive}`}
-        title="Paragraph"
-      >
-        P
-      </button>
+        {/* Paragraph */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("formatBlock", "<p>")}
+          className={`${base} ${active.p ? activeBtn : inactive}`}
+          title="Paragraph"
+        >
+          P
+        </button>
 
-      {/* Bold */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("bold")}
-        className={`${base} ${active.bold ? activeBtn : inactive}`}
-        title="Bold"
-      >
-        <FormatBoldOutlined />
-      </button>
+        {/* Bold */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("bold")}
+          className={`${base} ${active.bold ? activeBtn : inactive}`}
+          title="Bold"
+        >
+          <FormatBoldOutlined />
+        </button>
 
-      {/* Italic */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("italic")}
-        className={`${base} ${active.italic ? activeBtn : inactive}`}
-        title="Italic"
-      >
-        <FormatItalicOutlined />
-      </button>
+        {/* Italic */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("italic")}
+          className={`${base} ${active.italic ? activeBtn : inactive}`}
+          title="Italic"
+        >
+          <FormatItalicOutlined />
+        </button>
 
-      {/* Strikethrough */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("strikeThrough")}
-        className={`${base} ${active.strikeThrough ? activeBtn : inactive}`}
-        title="StrikeThrough"
-      >
-        <StrikethroughSOutlined />
-      </button>
+        {/* Strikethrough */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("strikeThrough")}
+          className={`${base} ${active.strikeThrough ? activeBtn : inactive}`}
+          title="StrikeThrough"
+        >
+          <StrikethroughSOutlined />
+        </button>
 
-      {/* Unordered List */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("insertUnorderedList")}
-        className={`${base} ${
-          active.insertUnorderedList ? activeBtn : inactive
-        }`}
-        title="Bulleted List"
-      >
-        <ListAltOutlined />
-      </button>
+        {/* Unordered List */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("insertUnorderedList")}
+          className={`${base} ${active.insertUnorderedList ? activeBtn : inactive
+            }`}
+          title="Bulleted List"
+        >
+          <ListAltOutlined />
+        </button>
 
-      {/* Ordered List */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("insertOrderedList")}
-        className={`${base} ${
-          active.insertOrderedList ? activeBtn : inactive
-        }`}
-        title="Number List"
-      >
-        <FormatListNumberedOutlined />
-      </button>
+        {/* Ordered List */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => doExec("insertOrderedList")}
+          className={`${base} ${active.insertOrderedList ? activeBtn : inactive
+            }`}
+          title="Number List"
+        >
+          <FormatListNumberedOutlined />
+        </button>
 
-      {/* Link */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => {
-          insertLink();
-          setTimeout(updateActive, 0);
-        }}
-        className={`${base} ${inactive}`}
-        title="Link"
-      >
-        <AddLinkOutlined />
-      </button>
+        {/* Link */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            insertLink();
+            setTimeout(updateActive, 0);
+          }}
+          className={`${base} ${inactive}`}
+          title="Link"
+        >
+          <AddLinkOutlined />
+        </button>
 
-      {/* Image */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => {
-          insertImage();
-          setTimeout(updateActive, 0);
-        }}
-        className={`${base} ${inactive}`}
-        title="Image"
-      >
-        <AddPhotoAlternateOutlined />
-      </button>
+        {/* Image */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            insertImage();
+            setTimeout(updateActive, 0);
+          }}
+          className={`${base} ${inactive}`}
+          title="Image"
+        >
+          <AddPhotoAlternateOutlined />
+        </button>
 
-      {/* Table */}
-      <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => {
-          insertTable();
-          setTimeout(updateActive, 0);
-        }}
-        className={`${base} ${inactive}`}
-        title="Table"
-      >
-        <TableViewIcon/>
-      </button>
+        {/* Table */}
+        <button
+          onMouseDown={(e) => e.preventDefault()}
+          onClick={() => {
+            insertTable();
+            setTimeout(updateActive, 0);
+          }}
+          className={`${base} ${inactive}`}
+          title="Table"
+        >
+          <TableViewIcon />
+        </button>
 
-      {/* Clear */}
-      {/* <button
+        {/* Clear */}
+        {/* <button
         onMouseDown={e => e.preventDefault()}
         onClick={() => doExec("removeFormat")}
         className={`${base} text-red-700 ${inactive}`}
@@ -824,8 +531,8 @@ const RichTextEditor = ({ onUpdate }) => {
         Clear
       </button> */}
 
-      {/* Preview Toggle */}
-      {/* <button
+        {/* Preview Toggle */}
+        {/* <button
         onMouseDown={e => e.preventDefault()}
         onClick={() => {
           setPreviewMode(p => !p);
@@ -839,7 +546,7 @@ const RichTextEditor = ({ onUpdate }) => {
       >
         {previewMode ? "Edit" : "Preview"}
       </button> */}
-    </div>
+      </div>
 
       {previewMode ? (
         <div

@@ -128,12 +128,7 @@ const FlowCreationPage = () => {
     //   "textcaption",
     // ];
 
-    const nonDuplicateTabs = [
-      "document",
-      "media",
-      "date",
-      "calendar"
-    ]
+    const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
     const onlyOneDateOrCalendar = ["date", "calendar"];
 
@@ -153,7 +148,8 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -174,7 +170,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -276,7 +273,6 @@ const FlowCreationPage = () => {
   };
 
   const handleSave = (updatedData) => {
-    // console.log("updatedData", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (
@@ -305,6 +301,44 @@ const FlowCreationPage = () => {
     setSelectedItem(null);
   };
 
+  const handleComponentUpdate = (updatedData) => {
+    if (selectedItem?.type !== "richText") return;
+
+    const { index, text, content, ...rest } = updatedData;
+
+    if (index === undefined) {
+      console.error("Invalid index in updatedData:", updatedData);
+      return;
+    }
+
+    setTabs((prevTabs) => {
+      const newTabs = [...prevTabs];
+      const currentPayload = newTabs[activeIndex].payload;
+
+      if (!Array.isArray(currentPayload) || index >= currentPayload.length) {
+        console.error(
+          "Invalid index or payload format:",
+          index,
+          currentPayload
+        );
+        return prevTabs;
+      }
+
+      currentPayload[index] = {
+        ...currentPayload[index],
+        value: text?.[0] ?? "",
+        content,
+        ...rest,
+      };
+
+      return newTabs;
+    });
+  };
+
+  useEffect(()=>{
+    console.log("tabbs",tabs)
+  },[tabs])
+
   async function handleFlowBuild() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
@@ -317,7 +351,6 @@ const FlowCreationPage = () => {
       toast.error("Please Enter FlowName");
       return;
     }
-
 
     try {
       const payload = generatePayload(tabs);
@@ -500,6 +533,8 @@ const FlowCreationPage = () => {
               setRadioOptions={setRadioOptions}
               draft={draft}
               setDraft={setDraft}
+              activeIndex={activeIndex}
+              handleComponentUpdate={handleComponentUpdate}
             />
           )}
         </div>

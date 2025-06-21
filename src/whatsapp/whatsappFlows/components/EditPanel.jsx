@@ -57,8 +57,8 @@ const EditPanel = ({
   switchChecked,
   setSwitchChecked,
   screens,
-  onPayloadChange,
   handleComponentUpdate,
+  onUpdate,
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -2247,6 +2247,10 @@ const EditPanel = ({
     onClose();
   };
 
+  useEffect(() => {
+    console.log("123", tabs);
+  }, [tabs]);
+
   // textArea
   const [textAreaLabel, setTextAreaLabel] = useState("");
   const [textAreaPlaceholder, setTextAreaPlaceholder] = useState("");
@@ -2711,17 +2715,15 @@ const EditPanel = ({
           )}
           {/* NEW */}
 
-          {/* {selectedItem.type === "richText" && (
-            <RichTextEditor
-              onPayloadChange={(payload) => setRichTextPayload(payload)}
-            />
-          )} */}
-
           {selectedItem?.type === "richText" && (
             <RichTextEditor
               content={selectedItem.content || ""}
-              text={selectedItem.text || [ ]}
-              onUpdate={handleComponentUpdate}
+              text={selectedItem.text || []}
+              onUpdate={(payload) => {
+                handleComponentUpdate(payload);
+                onClose();
+              }}
+              selectedItem={selectedItem}
             />
           )}
 
