@@ -59,6 +59,7 @@ import {
   getWabaList,
   getWhatsappFlowTemplate,
   updateFlowStatus,
+  deleteFlow,
 } from "@/apis/whatsapp/whatsapp";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
@@ -87,6 +88,10 @@ const WhatsappFlows = () => {
   const dropdownButtonRefs = useRef({});
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [publishingId, setPublishingId] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
+  const [flowId, setFlowId] = useState([])
   const navigate = useNavigate();
   const rowsPerPage = 4;
 
@@ -116,6 +121,7 @@ const WhatsappFlows = () => {
     }
     setIsLoading(false);
   };
+
   useEffect(() => {
     fetchWabaFlows();
   }, []);
@@ -211,6 +217,7 @@ const WhatsappFlows = () => {
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
     setDropdownOpenId(flow.flowId);
+    console.log(flow)
   };
 
   const handleMenuClose = () => {
@@ -221,9 +228,46 @@ const WhatsappFlows = () => {
   const handleEdit = (flow = selectedFlow) => {
     handleMenuClose();
   };
-  const handleDelete = (flow = selectedFlow) => {
+
+  const handleDelete = () => {
+    setCurrentRow(selectedFlow);
+    setVisible(true);
     handleMenuClose();
+    console.log(selectedFlow)
   };
+
+  // deleteFlow
+  async function handleDeleteFlow() {
+    if (!currentRow) {
+      return toast.error("No flow selected for deletion");
+    }
+
+    const { flowId } = currentRow;
+
+    console.log(flowId)
+
+    try {
+      setIsFetching(true);
+      const res = await deleteFlow(flowId);
+
+      if (res?.success) {
+        toast.success("Flow deleted successfully");
+        setVisible(false);
+        await fetchWabaFlows();
+      } else {
+        console.log("Error object in response:", res?.error);
+        const errorMsg = res?.error?.error_user_msg || "Flow deletion failed";
+        console.log("Error user message:", errorMsg);
+        toast.error(errorMsg);
+      }
+    } catch (error) {
+      console.log(error)
+      toast.error("Flow deletion failed");
+    } finally {
+      setIsFetching(false);
+    }
+  }
+
   const handleExport = (flow = selectedFlow) => {
     handleMenuClose();
   };
@@ -304,7 +348,6 @@ const WhatsappFlows = () => {
       </Card>
     </div>
   );
-
 
   return (
     <>
@@ -513,7 +556,7 @@ const WhatsappFlows = () => {
                         }}
                         onClose={handleMenuClose}
                       >
-                        {dropdownItems.map((item, idx) => (
+                        {/* {dropdownItems.map((item, idx) => (
                           <button
                             key={idx}
                             onClick={() => handleBtnClick(item, flow)}
@@ -522,7 +565,33 @@ const WhatsappFlows = () => {
                             {iconMap[item]}
                             {item}
                           </button>
-                        ))}
+                        ))} */}
+                        {/* Edit Button */}
+                        <button
+                          onClick={() => handleEdit(flow)}
+                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                        >
+                          <EditIcon fontSize="small" className="text-gray-600" />
+                          Edit
+                        </button>
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => handleDelete(flow)}
+                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                        >
+                          <DeleteIcon fontSize="small" className="text-red-600" />
+                          Delete
+                        </button>
+
+                        {/* Export Button */}
+                        <button
+                          onClick={() => handleExport(flow)}
+                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                        >
+                          <FileDownloadIcon fontSize="small" className="text-green-600" />
+                          Export
+                        </button>
                       </DropdownMenuPortal>
                     )}
                   </div>
@@ -800,8 +869,45 @@ const WhatsappFlows = () => {
             </form>
           </Dialog>
           {/* publish dialog end */}
+
+          {/* deleteFlow dialogbox strt */}
+          <Dialog
+            header="Confirm Delete"
+            visible={visible}
+            style={{ width: "27rem" }}
+            onHide={() => setVisible(false)}
+            draggable={false}
+          >
+            <div className="p-4 text-center">
+              <p className="text-[1.1rem] font-semibold text-gray-700">
+                Are you sure you want to delete the Flow <br />
+                <span className="text-green-500">
+                  "{currentRow?.flowName}"
+                </span>
+                ?
+              </p>
+            </div>
+
+            <div className="flex justify-center gap-4 mt-2">
+              {!isFetching && (
+                <UniversalButton
+                  label="Cancel"
+                  style={{ backgroundColor: "#090909" }}
+                  onClick={() => setVisible(false)}
+                />
+              )}
+              <UniversalButton
+                label={isFetching ? "Deleting..." : "Delete"}
+                style={{ backgroundColor: "#dc2626" }}
+                onClick={handleDeleteFlow}
+                disabled={isFetching}
+              />
+            </div>
+          </Dialog>
+
+          {/* deleteFlow dialogbox end */}
         </div>
-      </div>
+      </div >
     </>
   );
 };

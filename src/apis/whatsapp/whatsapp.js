@@ -584,16 +584,6 @@ export const updateFlowStatus = async (data) => {
   );
 };
 
-// fetch reply data (livechat)
-export const fetchReplyData = async (data) => {
-  return await fetchWithAuth(
-    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
-    {
-      method: "GET",
-    }
-  );
-};
-
 // save whatsapp flows
 export const saveFlow = async (params, data) => {
   return await fetchWithAuth(
@@ -606,6 +596,24 @@ export const saveFlow = async (params, data) => {
     }
   );
 };
+
+// delete flow
+export const deleteFlow = async (data) => {
+  return await fetchWithAuth(`/WhatsappFlow/deleteWorkflow?flowId=${data}`, {
+    method: "DELETE",
+  });
+};
+
+// fetch reply data (livechat)
+export const fetchReplyData = async (data) => {
+  return await fetchWithAuth(
+    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
 
 // cancel campaign
 export const cancelCampaign = async ({ srno }) => {

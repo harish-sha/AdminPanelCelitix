@@ -46,6 +46,15 @@ export const requestOtp = async (data) => {
   });
 };
 
+// Forgot Password
+export const verifyForgotPasswordOtp = async (data) => {
+  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 // get client ip address
 export const getIpAddress = async () => {
   return await axios.post(`${apiUrl}/auth/getClientIp`, "", {

@@ -1,30 +1,60 @@
-async function handleSendOtp() {
-  // Validate inputs: userId and mobileNo
-  if (!forgotPassState.userId || !forgotPassState.mobileNo) {
-    return toast.error("Enter email and phone number");
-  }
+const handleMenuOpen = (e, flow) => {
+  setDropdownOpenId(flow.flowId);
+};
 
-  try {
-    const res = await forgotPassword(forgotPassState);
+const handleMenuClose = () => {
+  setDropdownOpenId(null); 
+};
 
-    // Debugging: Check the response status
-    console.log("Backend Response:", res);
+return (
+  <div>
+    <CustomTooltip title="Settings" arrow>
+      <IconButton
+        ref={(el) => {
+          if (el) dropdownButtonRefs.current[flow.flowId] = el;
+        }}
+        onClick={(e) => handleMenuOpen(e, flow)}
+        size="small"
+      >
+        <SettingsOutlinedIcon className="text-gray-600" fontSize="small" />
+      </IconButton>
+    </CustomTooltip>
 
-    // Check if the response has status false (invalid userId or mobile number)
-    if (!res?.data?.status) {
-      // Display the error message from the backend (Invalid Mobile Number)
-      toast.error(res?.data?.msg || "Either user id or mobile number is incorrect");
-      return; // Prevent the rest of the code from running and stop further steps
-    }
+    {dropdownOpenId === flow.flowId && (
+      <DropdownMenuPortal
+        targetRef={{
+          current: dropdownButtonRefs.current[flow.flowId],
+        }}
+        onClose={handleMenuClose}
+      >
+        {/* Edit Button */}
+        <button
+          onClick={() => handleEdit(flow)}
+          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+        >
+          <EditIcon fontSize="small" className="text-gray-600" />
+          Edit
+        </button>
 
-    // If status is true, show success and move to the next step
-    toast.success(res?.data?.msg || "OTP has been sent successfully.");
-    
-    // Moving to step 3
-    setStep(3); // This should only be reached if status is true
+        {/* Delete Button */}
+        <button
+          onClick={() => handleDelete(flow)}
+          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+        >
+          <DeleteIcon fontSize="small" className="text-red-600" />
+          Delete
+        </button>
 
-  } catch (e) {
-    console.error(e);
-    toast.error("Unable to send OTP");
-  }
-}
+        {/* Export Button */}
+        <button
+          onClick={() => handleExport(flow)}
+          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+        >
+          <DownloadIcon fontSize="small" className="text-green-600" />
+          Export
+        </button>
+      </DropdownMenuPortal>
+    )}
+  </div>
+);
+

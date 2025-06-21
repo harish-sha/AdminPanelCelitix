@@ -23,6 +23,7 @@ import WhatsappLiveChatSettings from "@/whatsapp/whatsappLiveChatSetting/Whatsap
 import WhatsappManageWaba from "@/whatsapp/whatsappManageWaba/WhatsappManageWaba";
 import WhatsappConversation from "@/whatsapp/whatsappConversation/WhatsappConversation";
 import CampaignDetailsReport from "@/whatsapp/whatsappManageCampaign/CampaignDetailsReport";
+import DetailedLogsInsidersDetails from "@/sms/smsReports/components/DetailedLogsInsidersDetails";
 import ManageAgent from "@/whatsapp/manageagent/ManageAgent";
 import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
 import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
@@ -213,6 +214,10 @@ const Approutes = () => {
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
         />
+        <Route
+          path="smscampaigndetailsreport"
+          element={<DetailedLogsInsidersDetails/>}
+         />
         <Route
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}

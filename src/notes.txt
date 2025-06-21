@@ -12,7 +12,7 @@ pass: 7%3uShWk
 
 reseller user with otp enable
 user: demores
-pass: 9mNVybkc
+pass: QZ@5x4bC
 
 =================================== Merge file from main to reseller & admin ==================================
 

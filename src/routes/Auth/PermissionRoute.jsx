@@ -51,6 +51,7 @@ export const PermissionRoute = ({ children }) => {
         "/wwhatsappbot",
         "/createwhatsappbot",
         "/wcampaigndetailsreport",
+        "/smscampaigndetailsreport",
         "/createtemplate",
         "/wlcsetting",
         "/wwhatsappflows",

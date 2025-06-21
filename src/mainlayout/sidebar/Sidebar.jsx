@@ -213,6 +213,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+        { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
         { to: "/createtemplate", label: "Create Bot", isHide: true },
         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],

@@ -14,6 +14,7 @@ import { IoSearch } from "react-icons/io5";
 import { RadioButton } from "primereact/radiobutton";
 import AttachmentLogsTableSms from "./components/AttachmentLogsTableSms";
 import DayWiseSummaryTableSms from "./components/DayWiseSummaryTableSms";
+import DetailedLogsTable from "./components/DetailedLogsTable";
 import { Dialog } from "primereact/dialog";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel";
@@ -76,6 +77,9 @@ const SmsReports = () => {
   const [scheduleData, setScheduleData] = useState([])
   const [columns, setColumns] = useState([]);
 
+  console.log("rows", rows)
+  const [detailedLogsData, setDetailedLogsData] = useState([])
+
   //campaign State
   const [campaignDataToFilter, setCampaignDataToFilter] = useState({
     toDate: new Date(),
@@ -111,6 +115,7 @@ const SmsReports = () => {
   const [selectedColDetails, setSelectedColDetails] = useState("");
   const [previousDayColumn, setPreviousDayColumn] = useState([]);
   const [previousDayRows, setPreviousDayRows] = useState([]);
+  const [detailedLogsInsideData, setDetailedLogsInsideData] = useState([])
 
   //day wise State
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
@@ -151,9 +156,9 @@ const SmsReports = () => {
     customColumns: "",
     campaignType: "",
     status: "",
-    source:"",
+    source: "",
     // delStatus: {},
-    deliveryStatus:"",
+    deliveryStatus: "",
     type: "campaign",
   });
 
@@ -976,141 +981,142 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchPreviousDayReport(data);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        // {
-        //   field: "sending_user_id",
-        //   headerName: "User",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "TOTALSMS",
-          headerName: "Total SMS",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("TOTALSMS");
-                  handlePreviosDayDetailDisplay("TOTALSMS");
-                }}
-              >
-                {params.row.TOTALSMS}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Pending",
-          headerName: "Pending",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Pending} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Pending");
-                  handlePreviosDayDetailDisplay("Pending");
-                }}
-              >
-                {params.row.Pending}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "failed",
-          headerName: "Failed",
-          flex: 1,
-          minWidth: 70,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.failed} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("failed");
-                  handlePreviosDayDetailDisplay("failed");
-                }}
-              >
-                {params.row.failed}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Sent",
-          headerName: "Sent",
-          flex: 1,
-          minWidth: 60,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Sent} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Sent");
-                  handlePreviosDayDetailDisplay("Sent");
-                }}
-              >
-                {params.row.Sent}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "delivered",
-          headerName: "Delivered",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.delivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("delivered");
-                  handlePreviosDayDetailDisplay("delivered");
-                }}
-              >
-                {params.row.delivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "undelivered",
-          headerName: "Undelivered",
-          flex: 1,
-          minWidth: 110,
+      setDetailedLogsData(res)
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   // {
+      //   //   field: "sending_user_id",
+      //   //   headerName: "User",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "TOTALSMS",
+      //     headerName: "Total SMS",
+      //     flex: 1,
+      //     minWidth: 120,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("TOTALSMS");
+      //             handlePreviosDayDetailDisplay("TOTALSMS");
+      //           }}
+      //         >
+      //           {params.row.TOTALSMS}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "Pending",
+      //     headerName: "Pending",
+      //     flex: 1,
+      //     minWidth: 90,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.Pending} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("Pending");
+      //             handlePreviosDayDetailDisplay("Pending");
+      //           }}
+      //         >
+      //           {params.row.Pending}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "failed",
+      //     headerName: "Failed",
+      //     flex: 1,
+      //     minWidth: 70,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.failed} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("failed");
+      //             handlePreviosDayDetailDisplay("failed");
+      //           }}
+      //         >
+      //           {params.row.failed}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "Sent",
+      //     headerName: "Sent",
+      //     flex: 1,
+      //     minWidth: 60,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.Sent} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("Sent");
+      //             handlePreviosDayDetailDisplay("Sent");
+      //           }}
+      //         >
+      //           {params.row.Sent}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "delivered",
+      //     headerName: "Delivered",
+      //     flex: 1,
+      //     minWidth: 90,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.delivered} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("delivered");
+      //             handlePreviosDayDetailDisplay("delivered");
+      //           }}
+      //         >
+      //           {params.row.delivered}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "undelivered",
+      //     headerName: "Undelivered",
+      //     flex: 1,
+      //     minWidth: 110,
 
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.undelivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("undelivered");
-                  handlePreviosDayDetailDisplay("undelivered");
-                }}
-              >
-                {params.row.undelivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "drNotAvailable",
-          headerName: "Pending DR",
-          flex: 1,
-          minWidth: 110,
-        },
-        { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
-      ]);
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.undelivered} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("undelivered");
+      //             handlePreviosDayDetailDisplay("undelivered");
+      //           }}
+      //         >
+      //           {params.row.undelivered}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "drNotAvailable",
+      //     headerName: "Pending DR",
+      //     flex: 1,
+      //     minWidth: 110,
+      //   },
+      //   { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+      // ]);
 
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1136,7 +1142,7 @@ const SmsReports = () => {
       setIsFetching(true);
       const res = await getSummaryReport(data);
       setDaywiseTableData(res)
-      
+
       console.log("res", res);
       // setColumns([
       //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
@@ -1331,148 +1337,149 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
+      setDetailedLogsInsideData(res?.data)
       setTotalPage(res?.pages || 0);
 
-      setPreviousDayColumn([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        // {
-        //   field: "que_time",
-        //   headerName: "Created on",
-        //   flex: 1,
-        //   minWidth: 120,
-        //   renderCell: (params) => (
-        //     <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
-        //   ),
-        // },
-        // {
-        //   field: "smsunit",
-        //   headerName: "Sms Unit",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "status",
-          headerName: "Status",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "sent_time",
-          headerName: "Sent Time",
-          flex: 1,
-          minWidth: 120,
-        },
-        // {
-        //   field: "que_time",
-        //   headerName: "Created On",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "mobile_no",
-          headerName: "Mobile Number",
-          width: 140,
+      // setPreviousDayColumn([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   // {
+      //   //   field: "que_time",
+      //   //   headerName: "Created on",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   //   renderCell: (params) => (
+      //   //     <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
+      //   //   ),
+      //   // },
+      //   // {
+      //   //   field: "smsunit",
+      //   //   headerName: "Sms Unit",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "status",
+      //     headerName: "Status",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "sent_time",
+      //     headerName: "Sent Time",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   // {
+      //   //   field: "que_time",
+      //   //   headerName: "Created On",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "mobile_no",
+      //     headerName: "Mobile Number",
+      //     width: 140,
 
-        },
-        {
-          field: "message",
-          headerName: "Message",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "actual_status",
-          headerName: "Actual Status",
-          flex: 1,
-          minWidth: 120,
-        },
-        // {
-        //   field: "sent_time",
-        //   headerName: "Sent Time",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        // {
-        //   field: "source",
-        //   headerName: "Sms Source",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "senderid",
-          headerName: "SenderId",
-          flex: 1,
-          minWidth: 120,
-        },
-        // {
-        //   field: "total",
-        //   headerName: "Total",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <CustomTooltip title="Info" placement="top" arrow>
-              <span>
-                <IconButton
-                  type="button"
-                  ref={(el) => {
-                    if (el) dropdownButtonRefs.current[params.row.id] = el;
-                  }}
-                  onClick={() => handleInfo(params.row)}
-                  className="no-xs relative"
-                >
-                  <ImInfo size={18} className="text-green-500 " />
-                </IconButton>
+      //   },
+      //   {
+      //     field: "message",
+      //     headerName: "Message",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "actual_status",
+      //     headerName: "Actual Status",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   // {
+      //   //   field: "sent_time",
+      //   //   headerName: "Sent Time",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   // {
+      //   //   field: "source",
+      //   //   headerName: "Sms Source",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "senderid",
+      //     headerName: "SenderId",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   // {
+      //   //   field: "total",
+      //   //   headerName: "Total",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 120,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title="Info" placement="top" arrow>
+      //         <span>
+      //           <IconButton
+      //             type="button"
+      //             ref={(el) => {
+      //               if (el) dropdownButtonRefs.current[params.row.id] = el;
+      //             }}
+      //             onClick={() => handleInfo(params.row)}
+      //             className="no-xs relative"
+      //           >
+      //             <ImInfo size={18} className="text-green-500 " />
+      //           </IconButton>
 
-                <InfoPopover
-                  anchorEl={dropdownButtonRefs.current[params.row.id]}
-                  open={dropdownOpenId === params.row.id}
-                  onClose={closeDropdown}
-                >
-                  {clicked && Object.keys(clicked).length > 0 ? (
-                    <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-                      <tbody>
-                        {Object.entries(clicked).map(([key, value], index) => (
-                          <tr
-                            key={index}
-                            className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                          >
-                            <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-                              {key}
-                            </td>
-                            <td className="px-4 py-2 text-gray-800">
-                              {value || "N/A"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-sm text-gray-400 italic px-2 py-2">
-                      No data
-                    </div>
-                  )}
-                </InfoPopover>
-              </span>
-            </CustomTooltip>
-          ),
-        },
-      ]);
+      //           <InfoPopover
+      //             anchorEl={dropdownButtonRefs.current[params.row.id]}
+      //             open={dropdownOpenId === params.row.id}
+      //             onClose={closeDropdown}
+      //           >
+      //             {clicked && Object.keys(clicked).length > 0 ? (
+      //               <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
+      //                 <tbody>
+      //                   {Object.entries(clicked).map(([key, value], index) => (
+      //                     <tr
+      //                       key={index}
+      //                       className="hover:bg-gray-50 transition-colors border-b last:border-none"
+      //                     >
+      //                       <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
+      //                         {key}
+      //                       </td>
+      //                       <td className="px-4 py-2 text-gray-800">
+      //                         {value || "N/A"}
+      //                       </td>
+      //                     </tr>
+      //                   ))}
+      //                 </tbody>
+      //               </table>
+      //             ) : (
+      //               <div className="text-sm text-gray-400 italic px-2 py-2">
+      //                 No data
+      //               </div>
+      //             )}
+      //           </InfoPopover>
+      //         </span>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      // ]);
 
-      setPreviousDayRows(
-        Array.isArray(res?.data)
-          ? res?.data.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setPreviousDayRows(
+      //   Array.isArray(res?.data)
+      //     ? res?.data.map((item, index) => ({
+      //       sn: index + 1,
+      //       id: index + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
       setPreviousDayDetailsDialog(true);
     } catch (e) {
       // console.log(e);
@@ -1840,11 +1847,17 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="PreviousDaysTableSms"
               name="PreviousDaysTableSms"
               rows={rows}
               col={columns}
+            /> */}
+            <DetailedLogsTable
+              id="DetailedLogsTable"
+              name="DetailedLogsTable"
+              data={detailedLogsData}
+              handlePreviosDayDetailDisplay={handlePreviosDayDetailDisplay}
             />
           </div>
         </CustomTabPanel>
@@ -2085,49 +2098,49 @@ const SmsReports = () => {
       </Box>
 
       {/* cancel campaign Start */}
-              <Dialog
-                header={"Confirm Cancel"}
-                visible={visible}
-                style={{ width: "27rem" }}
-                onHide={() => setVisible(false)}
-                draggable={false}
-              >
-                <div className="flex items-center justify-center">
-                  <CancelOutlinedIcon
-                    sx={{
-                      fontSize: 64,
-                      color: "#ff3f3f",
-                    }}
-                  />
-                </div>
-                <div className="p-4 text-center">
-                  <p className="text-[1.1rem] font-semibold text-gray-700">
-                    Are you sure you want to cancel the campaign:
-                    <span className="text-green-500">"{currentRow?.campaignName}"</span>?
-                  </p>
-                  <p className="mt-2 text-sm text-gray-500">
-                    This action is irreversible.
-                  </p>
-                </div>
+      <Dialog
+        header={"Confirm Cancel"}
+        visible={visible}
+        style={{ width: "27rem" }}
+        onHide={() => setVisible(false)}
+        draggable={false}
+      >
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
+        </div>
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] font-semibold text-gray-700">
+            Are you sure you want to cancel the campaign:
+            <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
 
-                <div className="flex justify-center gap-4 mt-2">
-                  {!isFetching && (
-                    <UniversalButton
-                      label="Cancel"
-                      style={{
-                        backgroundColor: "#090909",
-                      }}
-                      onClick={() => setVisible(false)}
-                    />
-                  )}
-                  <UniversalButton
-                    label={isFetching ? "Deleting..." : "Delete"}
-                    style={{}}
-                    onClick={() => handleCancelConfirm(currentRow.srno)}
-                    disabled={isFetching}
-                  />
-                </div>
-              </Dialog>
+        <div className="flex justify-center gap-4 mt-2">
+          {!isFetching && (
+            <UniversalButton
+              label="Cancel"
+              style={{
+                backgroundColor: "#090909",
+              }}
+              onClick={() => setVisible(false)}
+            />
+          )}
+          <UniversalButton
+            label={isFetching ? "Deleting..." : "Delete"}
+            style={{}}
+            onClick={() => handleCancelConfirm(currentRow.srno)}
+            disabled={isFetching}
+          />
+        </div>
+      </Dialog>
       <Dialog
         header={selectedColDetails}
         visible={previousDayDetailsDialog}
@@ -2140,7 +2153,7 @@ const SmsReports = () => {
           setCurrentPage(1);
           setSelectedCol("");
         }}
-        className="w-fit "
+        className="w-fit"
         draggable={false}
       >
         {/* {isFetching ? (
@@ -2168,12 +2181,7 @@ const SmsReports = () => {
         <PreviousDaysTableSms
           id="previousdaydetailstable"
           name="previousdaydetailstable"
-          rows={previousDayRows}
-          col={previousDayColumn}
-          paginationModel={paginationModel}
-          setPaginationModel={setPaginationModel}
-          setCurrentPage={setCurrentPage}
-          totalPage={totalPage}
+          data={detailedLogsInsideData}
         />
       </Dialog>
 

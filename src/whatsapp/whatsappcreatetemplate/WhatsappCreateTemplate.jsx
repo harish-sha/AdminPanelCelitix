@@ -75,6 +75,9 @@ const WhatsappCreateTemplate = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
+  const [headerVariable, setHeaderVariable] = useState("");
+  const [headerVariableValue, setHeaderVariableValue] = useState("");
+
 
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
@@ -327,19 +330,41 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-    if (selectedTemplateType === "text" && templateHeader) {
+
+    // if (selectedTemplateType === "text" && templateHeader) {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: "TEXT",
+    //     // text: templateHeader,
+    //     example: {
+    //       header_text: [templateHeader],
+    //     },
+    //   });
+    // }
+
+    const allHeadersVariable = headerVariable.map((variable, index) => {
+      if (!variable.value) {
+        return toast.error(`Please enter value for header variable ${index + 1}`);
+      }
+      return variable.value;
+    })
+
+    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        example: {
+          header_text: allHeadersVariable,
+        },
+      });
+    } else {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
         text: templateHeader,
         // example: {
-        //   header_text: [
-        //     "variable one", "variable two"
-        //   ]
-        // },
-        // text: "text header value {{1}}",
-        // example: {
-        //   header_text: "variable value",
+        //   header_text: [templateHeader],
         // },
       });
     }
@@ -930,6 +955,10 @@ const WhatsappCreateTemplate = () => {
                               setvariables={setVariables}
                               uploadImageFile={uploadImageFile}
                               setFileUploadUrl={setFileUploadUrl}
+                              setHeaderVariable={setHeaderVariable}
+                              headerVariable={headerVariable}
+                              headerVariableValue={headerVariableValue}
+                              setHeaderVariableValue={setHeaderVariableValue}
                             />
 
                             <InteractiveActions
