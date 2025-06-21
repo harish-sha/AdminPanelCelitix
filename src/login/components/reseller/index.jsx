@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import { useUser } from "@/context/auth";
 import { UAParser } from "ua-parser-js";
 
-
 import UniversalButton from "@/components/common/UniversalButton";
 import celitixLogo from "@/assets/images/celitix-logo-white.svg";
 import InputField from "@/components/layout/InputField";
@@ -18,6 +17,7 @@ import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp } f
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 import { InputOtp } from "primereact/inputotp";
+// import { InputOtp } from "primereact/inputotp";
 
 const ResellerLogin = () => {
   const { authLogin } = useUser();
@@ -45,6 +45,8 @@ const ResellerLogin = () => {
 
   const [basicDetails, setBasicDetails] = useState({});
 
+  const [basicDetails, setBasicDetails] = useState({});
+
   const parser = new UAParser();
   const uaResult = parser.getResult();
 
@@ -54,6 +56,8 @@ const ResellerLogin = () => {
   useEffect(() => {
     generateCaptcha();
   }, []);
+
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
@@ -140,6 +144,12 @@ const ResellerLogin = () => {
       };
 
       const res = await login(payload);
+
+      if (res?.data?.validateOtp) {
+        // return toast.error(res?.data?.message);
+        setStep("verifyNumber");
+        return;
+      }
 
       if (res?.data?.validateOtp) {
         // return toast.error(res?.data?.message);
