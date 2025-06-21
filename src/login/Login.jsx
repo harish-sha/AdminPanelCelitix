@@ -11,7 +11,14 @@ import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import axios from "axios";
-import { forgotPassword, login, requestOtp, verifyOtp } from "@/apis/auth/auth";
+import {
+  forgotPassword,
+  login,
+
+  requestOtp,
+  verifyForgotPasswordOtp,
+  verifyOtp,
+} from "@/apis/auth/auth";
 import { useUser } from "@/context/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import { UAParser } from "ua-parser-js";
@@ -51,38 +58,38 @@ const Login = () => {
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  useEffect(() => {
-    let timer;
+  // useEffect(() => {
+  //   let timer;
 
-    if (countdown > 0) {
-      timer = setInterval(() => {
-        setCountdown((prev) => prev - 1);
-      }, 1000);
-    } else if (countdown === 0) {
-      // Countdown reached zero, show button and trigger OTP resend
-      setIsBtnVisible(true);
+  //   if (countdown > 0) {
+  //     timer = setInterval(() => {
+  //       setCountdown((prev) => prev - 1);
+  //     }, 1000);
+  //   } else if (countdown === 0) {
+  //     // Countdown reached zero, show button and trigger OTP resend
+  //     setIsBtnVisible(true);
 
-      const handleResendOtp = async () => {
-        if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
-        try {
-          const res = await forgotPassword(forgotPassState);
-          console.log(res);
+  //     const handleResendOtp = async () => {
+  //       if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
+  //       try {
+  //         const res = await forgotPassword(forgotPassState);
+  //         console.log(res);
 
-          if (!res?.data.status) {
-            return toast.error(res?.data?.msg || "Unable to send OTP");
-          }
-          toast.success(res?.data?.msg);
-        } catch (e) {
-          console.log(e);
-          toast.error("Unable to send OTP");
-        }
-      };
+  //         if (!res?.data.status) {
+  //           return toast.error(res?.data?.msg || "Unable to send OTP");
+  //         }
+  //         toast.success(res?.data?.msg);
+  //       } catch (e) {
+  //         console.log(e);
+  //         toast.error("Unable to send OTP");
+  //       }
+  //     };
 
-      handleResendOtp();
-    }
+  //     handleResendOtp();
+  //   }
 
-    return () => clearInterval(timer);
-  }, [countdown]);
+  //   return () => clearInterval(timer);
+  // }, [countdown]);
 
   async function handleLogin() {
     if (!inputDetails.userId || !inputDetails.password)
@@ -169,12 +176,23 @@ const Login = () => {
   }
   async function handleSendOtp() {
     delete inputDetails.rememberMe;
+    let payload = {};
+    if (isForgotPassword) {
+      payload = {
+        userId: inputDetails.userId,
+        mobileNo: inputDetails.mobileNo,
+      };
+    } else {
+      payload = { ...inputDetails };
+    }
     try {
+      const res = isForgotPassword
+        ? await forgotPassword(payload)
+        : await requestOtp(payload);
       if (!res?.data?.status) {
-        toast.error(res?.data?.msg);
+        toast.error(res?.data?.msg || "Unable to send OTP");
         return;
       }
-      const res = await requestOtp(inputDetails);
       toast.success(res?.data?.msg);
       setStep(3);
     } catch (e) {
@@ -183,52 +201,47 @@ const Login = () => {
     }
   }
 
-  async function handleVerifyForgotPasswordOtp() {
-    console.log(otp);
-    if (!otp?.mobileNo) {
-      return toast.error("Enter OTP");
-    }
 
-    const data = {
-      userId: forgotPassState.userId,
-      mobileNo: forgotPassState.mobileNo,
-      otp: otp?.mobileNo,
-    };
-    try {
-      const res = await verifyOtp(data);
-      if (!res?.data?.status) {
-        return toast.error(res?.data?.msg);
-      }
-      toast.success("OTP verified successfully");
-      setStep(1);
-    } catch (e) {
-      console.log(e);
-      return toast.error("Unable to verify OTP");
-    }
-  }
   async function handleVerifyOtp() {
-    if (!otp?.mobileNo) {
+    if (!inputDetails.otp) {
       return toast.error("Enter OTP");
     }
     delete inputDetails.rememberMe;
-
     try {
-      const res = await verifyOtp(inputDetails);
+      let payload = {};
+      if (isForgotPassword) {
+        payload = {
+          userId: inputDetails.userId,
+          mobileNo: inputDetails.mobileNo,
+          otp: inputDetails.otp,
+        };
+      } else {
+        payload = { ...inputDetails };
+      }
+
+      const res = isForgotPassword
+        ? await verifyForgotPasswordOtp(payload)
+        : await verifyOtp(payload);
+
       if (!res?.data?.status) {
-        return toast.error(res?.data?.msg);
+        return toast.error(res?.data?.msg || "Unable to verify OTP");
       }
       toast.success("OTP verified successfully");
-      // setStep(2);
+      if (isForgotPassword) {
+        setStep(1);
+        return;
+      }
+      sessionStorage.setItem("token", res?.data?.token);
       let allowedServices = null;
       if (res?.data?.role !== "AGENT") {
         allowedServices = await getAllowedServices();
       }
 
+
       // toast.success("Login Successful!");
       authLogin(res?.data?.role, allowedServices, res?.data?.ttl);
       navigate("/");
     } catch (e) {
-      console.log(e);
       return toast.error("Unable to verify OTP");
     }
   }
@@ -245,7 +258,9 @@ const Login = () => {
           <div className="p-8 flex flex-col space-y-3 justify-center">
             <h2 className="text-4xl font-bold text-[#6952d1] text-center font-poppins">
               {step === 1 && "Login"}
-              {step === 2 && "Forgot Password"}
+              {step === 2 &&
+                (isForgotPassword ? "Forgot Password" : "Verify Number")}
+
               {step === 3 && "Verify OTP"}
               {step === 4 && "Reset Password"}
             </h2>
@@ -306,14 +321,20 @@ const Login = () => {
                       />
                       Remember Me?
                     </label> */}
-                    <button onClick={() => {}} className="hover:underline">
+                    <button
+                      onClick={() => {
+                        setStep(2);
+                        setIsForgotPassword(true);
+                      }}
+                      className="hover:underline"
+                    >
                       Forgot Password?
                     </button>
                   </div>
                   <div className="flex justify-center">
                     <button
                       className="w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2] text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                      onClick={() => {}}
+                      onClick={handleLogin}
                     >
                       Log In
                     </button>
@@ -325,33 +346,47 @@ const Login = () => {
             {step === 2 && (
               <>
                 <div className="flex flex-col space-y-3 justify-center">
-                  <div>
-                    <label className="text-md font-medium text-gray-500">
-                      userId
-                    </label>
-                    <input
+                  {isForgotPassword && (
+                    <InputField
+                      id="userId"
+                      name={"userId"}
+                      label="Enter User Id"
                       type="text"
                       placeholder="Enter userId"
+                      value={inputDetails.userId}
+                      onChange={(e) => {
+                        setInputDetails({
+                          ...inputDetails,
+                          userId: e.target.value,
+                        });
+                      }}
                       className="w-full p-2 mb-4 rounded-lg bg-gray-100 text-md"
-                      value=""
-                      onChange={() => {}}
                     />
-                  </div>
+                  )}
 
-                  <label className="text-md font-medium text-gray-500">
-                    Enter MobileNo
-                  </label>
-                  <input
+                  <InputField
+                    id="mobileNo"
+                    name={"mobileNo"}
+                    label="Enter MobileNo"
+                    type="tel"
+                    placeholder="Enter Verified MobileNo"
+                    value={inputDetails.mobileNo}
+                    onChange={(e) => {
+                      setInputDetails({
+                        ...inputDetails,
+                        mobileNo: e.target.value,
+                      });
+                    }}
                     maxLength={13}
-                    placeholder="Enter Verified Phone Number"
                     className="w-full p-2 mb-4 rounded-lg bg-gray-100 text-md"
-                    value=""
-                    onChange={() => {}}
                   />
+
                   <div className="flex justify-center">
                     <button
                       className="w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2] text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                      onClick={() => {}}
+                      onClick={() => {
+                        handleSendOtp();
+                      }}
                     >
                       Send OTP
                     </button>
@@ -363,41 +398,51 @@ const Login = () => {
             {step === 3 && (
               <>
                 <div className="flex flex-col space-y-3 justify-center">
-                  <div>
-                    <label className="text-md font-medium text-gray-500">
-                      Enter Email Otp
-                    </label>
-                    <input
-                      placeholder="Enter Email OTP"
-                      className="w-full p-2 rounded-lg mb-3 bg-gray-100 text-center tracking-wide text-md"
-                      value=""
-                      maxLength={6}
-                      onChange={() => {}}
+                  {/* {isForgotPassword && (
+                    <InputField
+                      id="emailOtp"
+                      name={"emailOtp"}
+                      label=" Enter Email Otp"
+                      type="text"
+                      placeholder="Enter Email Otp"
+                      value={inputDetails.emailOtp}
+                      onChange={(e) => {
+                        setInputDetails({
+                          ...inputDetails,
+                          emailOtp: e.target.value,
+                        });
+                      }}
+                      className="w-full p-2 mb-4 rounded-lg bg-gray-100 text-md"
                     />
-                  </div>
+                  )} */}
 
-                  <label className="text-md font-medium text-gray-500">
-                    Enter Otp
-                  </label>
-                  <input
-                    placeholder="Enter OTP"
-                    className="w-full p-2 rounded-lg bg-gray-100 text-center tracking-wide text-md"
-                    value=""
-                    maxLength={6}
-                    onChange={() => {}}
+                  <InputField
+                    id="otp"
+                    name={"otp"}
+                    label="Enter Otp"
+                    type="text"
+                    placeholder="Enter Otp"
+                    value={inputDetails.otp}
+                    onChange={(e) => {
+                      setInputDetails({
+                        ...inputDetails,
+                        otp: e.target.value,
+                      });
+                    }}
+                    className="w-full p-2 mb-4 rounded-lg bg-gray-100 text-md"
                   />
 
                   <div className="flex justify-center">
                     <button
                       className="w-fit px-6 py-2 rounded-md bg-[#9b89eb] text-gray-800 font-semibold hover:bg-[#8180e2] text-xl transition-all shadow-[3px_3px_0px_black] hover:shadow-none hover:translate-x-[3px] hover:translate-y-[3px]"
-                      onClick={() => {}}
+                      onClick={()=>{handleVerifyOtp()}}
                     >
                       Verify OTP
                     </button>
                   </div>
 
                   <p className="text-md text-gray-800 mt-2 flex justify-center">
-                    Resend OTP in 0s
+                    Resend OTP in {countdown}s
                   </p>
 
                   <div className="flex justify-center">

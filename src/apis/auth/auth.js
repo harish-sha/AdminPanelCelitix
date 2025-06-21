@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const apiUrl = import.meta.env.VITE_API_BASE_URL;
-// const apiUrl = "/api";
+// const apiUrl = import.meta.env.VITE_API_BASE_URL;
+const apiUrl = "/api";
 
 // Login
 export const login = async (inputDetails) => {
@@ -39,6 +39,13 @@ export const verifyOtp = async (data) => {
 
 export const requestOtp = async (data) => {
   return await axios.post(`${apiUrl}/auth/request-otp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+export const verifyForgotPasswordOtp = async (data) => {
+  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
     headers: {
       "Content-Type": "application/json",
     },
