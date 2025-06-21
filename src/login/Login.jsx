@@ -69,7 +69,7 @@ const Login = () => {
       setIsBtnVisible(true);
 
       const handleResendOtp = async () => {
-        // if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
+        if (!inputDetails.userId || !inputDetails.mobileNo) return;
         try {
           const res = await forgotPassword({
             userId: inputDetails.userId,
