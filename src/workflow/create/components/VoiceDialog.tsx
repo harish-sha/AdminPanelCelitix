@@ -89,7 +89,7 @@ export const VoiceNode = ({
               <AddIcon />
             </button>
           </div>
-          <div className="flex  gap-2 mb-2">
+          <div className="flex gap-2 mb-2">
             <h1 className="text-lg font-semibold mb-2">Node Conditions</h1>
             <CustomTooltip
               title={
@@ -108,11 +108,11 @@ export const VoiceNode = ({
             {conditions?.map((option, index) => (
               <>
                 <div
-                  className="flex-col gap-2 justify-center items-center space-y-5 md:flex-row"
+                  className="flex flex-col gap-2 justify-center items-center md:flex-row"
                   key={index}
                 >
-                  <div className="w-full flex flex-row gap-2 md:flex-col space-y-2">
-                    <div className="flex-col gap-2 md:flex-row space-y-2">
+                  <div className="flex w-full flex-col gap-2">
+                    <div className="flex flex-col gap-2 md:flex-row">
                       <AnimatedDropdown
                         id="type"
                         name="type"
@@ -187,7 +187,7 @@ export const VoiceNode = ({
                         ]}
                       />
                     </div>
-                    <div className="flex-col gap-2 md:flex-row space-y-2">
+                    <div className="flex flex-col gap-2 md:flex-row">
                       <AnimatedDropdown
                         id="comparison"
                         name="comparison"
