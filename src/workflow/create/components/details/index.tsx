@@ -1,12 +1,13 @@
 import React from "react";
 import { Whatsapp } from "./whatsapp";
+import { RCS } from "./rcs";
 
 export const DetailsDialog = ({
   type,
   id,
   nodesInputData,
   setNodesInputData,
-  setDetailsDialogVisible
+  setDetailsDialogVisible,
 }: {
   type: string;
   id: number;
@@ -18,6 +19,14 @@ export const DetailsDialog = ({
     <>
       {type === "whatsapp" && (
         <Whatsapp
+          id={id}
+          nodesInputData={nodesInputData}
+          setNodesInputData={setNodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
+        />
+      )}
+      {type === "rcs" && (
+        <RCS
           id={id}
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}

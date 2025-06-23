@@ -107,7 +107,7 @@ function NodeComponent({
         <button
           className="absolute left-5 -top-2 p-0 text-xs"
           onClick={() => setDetailsDialogVisible(true)}
-          title="Add Node Details"
+          title={`Configure ${data.type} node`}
         >
           <HiOutlineDocument className="font-bold text-lg" />
         </button>
