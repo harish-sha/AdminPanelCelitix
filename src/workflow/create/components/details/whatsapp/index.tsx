@@ -9,6 +9,7 @@ import {
 import toast from "react-hot-toast";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import { Variables } from "./variable";
+import { Preview } from "./preview";
 export const Whatsapp = ({
   id,
   nodesInputData,
@@ -160,24 +161,26 @@ export const Whatsapp = ({
             disabled={false}
           />
         </div>
-        {specificTemplate && (
-          <Variables
-            variablesData={variablesData}
-            setVariablesData={setVariablesData}
-            specificTemplate={specificTemplate}
-            fileRef={fileRef}
-            setBasicDetails={setBasicDetails}
-            fileData={fileData}
-            setFileData={setFileData}
-          />
-        )}
+        {specificTemplate &&
+          (variablesData?.btn?.length > 0 ||
+            variablesData?.data?.length > 0) && (
+            <Variables
+              variablesData={variablesData}
+              setVariablesData={setVariablesData}
+              specificTemplate={specificTemplate}
+              fileRef={fileRef}
+              setBasicDetails={setBasicDetails}
+              fileData={fileData}
+              setFileData={setFileData}
+            />
+          )}
       </div>
       <div className="w-full">
-        {/* <Preview
-                    specificTemplate={specificTemplate}
-                    variablesData={variablesData}
-                    basicDetails={basicDetails}
-                  /> */}
+        <Preview
+          specificTemplate={specificTemplate}
+          variablesData={variablesData}
+          basicDetails={basicDetails}
+        />
       </div>
     </div>
   );
