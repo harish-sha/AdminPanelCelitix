@@ -6,11 +6,13 @@ export const DetailsDialog = ({
   id,
   nodesInputData,
   setNodesInputData,
+  setDetailsDialogVisible
 }: {
   type: string;
   id: number;
   nodesInputData: any;
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
+  setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
 }) => {
   return (
     <>
@@ -19,6 +21,7 @@ export const DetailsDialog = ({
           id={id}
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       )}
     </>

@@ -587,6 +587,7 @@ export const WorkflowCreate = () => {
           id={selectedNodeId}
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       </Dialog>
     </>
