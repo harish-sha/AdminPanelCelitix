@@ -45,7 +45,7 @@ const ResellerLogin = () => {
 
   const [basicDetails, setBasicDetails] = useState({});
 
-  const [basicDetails, setBasicDetails] = useState({});
+  // const [basicDetails, setBasicDetails] = useState({});
 
   const parser = new UAParser();
   const uaResult = parser.getResult();
@@ -59,7 +59,7 @@ const ResellerLogin = () => {
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
 
-  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  // const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Check if passwords match and update border color state
   useEffect(() => {
@@ -121,8 +121,8 @@ const ResellerLogin = () => {
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
       const ipResponse = await getIpAddress();
-      const domain = window.location.hostname;
-      // const domain = "reseller.alertsnow.in";
+      // const domain = window.location.hostname;
+      const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,

@@ -37,6 +37,7 @@ import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 // import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -327,6 +328,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
+    agentLimit: ""
   });
 
   const [petmDetails, setPetmDetails] = useState({
@@ -371,6 +373,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
           srno: userDetails.srno || "",
+          agentLimit: userDetails.agentLimit || ""
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -2151,6 +2154,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 setUpdateDetails({ ...updateDetails, pinCode: e.target.value })
               }
             />
+            <InputField
+              label="Agent Limit"
+              id="agentlimit"
+              name="agentlimit"
+              placeholder="Enter agent Limit in number"
+              value={updateDetails.agentLimit}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, agentLimit: e.target.value })
+              }
+            />
           </div>
           <div className="flex justify-center mt-3">
             <UniversalButton
@@ -2502,10 +2515,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <LockOutlinedIcon className="text-gray-600" />
+                <SupportAgentOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Virtual Balance : </strong>{" "}
-                  {selectedUserDetails.virtualBalance || "Not Available"}
+                  <strong>Agent Limit : </strong>{" "}
+                  {selectedUserDetails.agentLimit || "Not Available"}
                 </p>
               </div>
             </div>

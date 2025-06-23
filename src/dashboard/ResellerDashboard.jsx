@@ -19,6 +19,14 @@ import {
     Feedback,
 } from "@mui/icons-material";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import { Loop as LoopIcon } from "@mui/icons-material";
+import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import whatsappAnime from "../assets/animation/whatsappanimation.json";
 import whatsappAnime2 from "../assets/animation/whatsappanimation2.json";
 import smsAnime from "../assets/animation/smsanime.json";
@@ -34,11 +42,15 @@ import Animationobd from "../assets/animation/Animation-obd.json";
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
+import CountUp from 'react-countup';
 import toast from "react-hot-toast";
 
 import {
     BarChart, Bar, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
+import { fetchBalance } from "@/apis/settings/setting";
+import { useUser } from "@/context/auth";
+import CustomTooltip from "@/components/common/CustomTooltip";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -127,23 +139,33 @@ const services = [
     },
 ];
 
-const quickStats = [
-    {
-        icon: <TaskAlt className="text-green-600" />,
-        label: "Active Campaigns",
-        value: 32,
-    },
-    {
-        icon: <TrendingUp className="text-blue-600" />,
-        label: "Engagement Rate",
-        value: "78%",
-    },
-    {
-        icon: <Star className="text-yellow-500" />,
-        label: "Client Rating",
-        value: "4.8/5",
-    },
-];
+// const quickStats = [
+//     // {
+//     //     icon: <TaskAlt className="text-green-600" />,
+//     //     label: "Active Campaigns",
+//     //     value: 32,
+//     // },
+//     // {
+//     //     icon: <TrendingUp className="text-blue-600" />,
+//     //     label: "Engagement Rate",
+//     //     value: "78%",
+//     // },
+//     {
+//         icon: <span className="text-green-600">💰</span>, // Balance icon (custom icon)
+//         label: "Balance",
+//         value: <CountUp start={0} end={balance} separator="," decimals={2} duration={2.5} /> // Balance with counting animation
+//     },
+//     {
+//         icon: <span className="text-red-600">⚠️</span>, // Outstanding balance icon (custom icon)
+//         label: "Outstanding Balance",
+//         value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={2.5} /> // Rechargeable Credit with counting animation
+//     },
+//     {
+//         icon: <Star className="text-yellow-500" />,
+//         label: "Client Rating",
+//         value: "4.8/5",
+//     },
+// ];
 
 const bots = [
     {
@@ -164,11 +186,37 @@ const ResellerDashboard = () => {
     const [formData, setFormData] = useState({
         firstName: "",
     });
-    const [loading, setLoading] = useState(false);
+
+    const [balance, setBalance] = useState(0);
+    const [rechargableCredit, setRechargableCredit] = useState(0);
+    const [showRefresh, setShowRefresh] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const { user } = useUser();
+
+    const getBalance = async () => {
+        setIsLoading(true)
+        try {
+            const res = await fetchBalance();
+            console.log("balance", res)
+            setBalance(parseFloat(res.balance));
+            setRechargableCredit(parseFloat(res.rechargableCredit));
+            setRefreshKey(prevKey => prevKey + 1);
+        } catch (error) {
+            console.error("Error fetching balance:", error);
+        } finally {
+            setIsLoading(false)
+        }
+    };
+
+    useEffect(() => {
+        getBalance();
+    }, []);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const response = await getUserDetails();
             if (response && response.statusCode === 200) {
                 const user = response.data[0];
@@ -178,10 +226,49 @@ const ResellerDashboard = () => {
                 console.error("Failed to load user details.");
                 toast.error("Failed to load user details!");
             }
-            setLoading(false);
+            setIsLoading(false);
         };
         fetchUserDetails();
     }, []);
+
+    const quickStats = [
+        // {
+        //     icon: <TaskAlt className="text-green-600" />,
+        //     label: "Active Campaigns",
+        //     value: 32,
+        // },
+        {
+            icon: <AccountBalanceIcon className="text-green-900" />,
+            label: "Current Balance",
+            value: <CountUp start={0} end={balance} separator="," decimals={2} duration={1.5} key={refreshKey} />,
+            // onHover: () => setShowRefresh(true),
+            // onMouseLeave: () => setShowRefresh(false),
+            showRefreshIcon: true,
+        },
+        // {
+        //     icon: <GppMaybeIcon className="text-red-800" />,
+        //     label: "Outstanding Balance",
+        //     value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} />
+        // },
+        ...(user.role === "RESELLER" ? [
+            {
+                icon: <GppMaybeIcon className="text-red-800" />,
+                label: "Outstanding Balance",
+                value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} key={refreshKey} />,
+            }
+        ] : []),
+        {
+            icon: <TrendingUp className="text-blue-600" />,
+            label: "Engagement Rate",
+            value: "78%",
+        },
+        {
+            icon: <Star className="text-yellow-500" />,
+            label: "Client Rating",
+            value: "4.8/5",
+        },
+    ];
+
 
     return (
         <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
@@ -210,12 +297,56 @@ const ResellerDashboard = () => {
                         </p>
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1  items-center">
+                <div className="flex items-center justify-center gap-3">
                     {quickStats.map((stat, i) => (
                         <div
                             key={i}
-                            className="bg-white rounded-xl shadow p-3 px-5 flex flex-col items-start justify-center"
+                            className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
+                        // onMouseEnter={stat.onHover}
+                        // onMouseLeave={stat.onMouseLeave}
                         >
+                            {/* {stat.label === "Current Balance" && showRefresh && (
+                                <CustomTooltip
+                                    title="Refresh Balance"
+                                    placement="top"
+                                    arrow
+                                >
+                                    <div className="absolute top-2 right-2 cursor-pointer">
+
+                                        {isLoading ? (
+                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
+                                        ) : (
+                                            <button
+                                                onClick={getBalance}
+                                                className=""
+                                            >
+                                                <LoopIcon className="text-blue-400 cursor-pointer" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </CustomTooltip>
+                            )} */}
+                            {stat.showRefreshIcon && (
+                                <CustomTooltip
+                                    title="Refresh Balance"
+                                    placement="top"
+                                    arrow
+                                >
+                                    <div className="absolute top-2 right-2 cursor-pointer">
+
+                                        {isLoading ? (
+                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
+                                        ) : (
+                                            <button
+                                                onClick={getBalance}
+                                                className=""
+                                            >
+                                                <LoopIcon className="text-blue-400 cursor-pointer" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </CustomTooltip>
+                            )}
                             <div className="text-2xl">{stat.icon}</div>
                             <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
                             <div className="font-semibold text-lg">{stat.value}</div>
