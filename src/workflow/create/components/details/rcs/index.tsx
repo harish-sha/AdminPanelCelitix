@@ -134,16 +134,35 @@ export const RCS = ({
       (item) => item.srno === selectedTemplate
     )?.templateType;
 
+    const allVar = [];
+    Object.keys(inputVariables).map((key) => {
+      allVar.push(inputVariables[key]);
+    });
+    Object.keys(btninputVariables).map((key) => {
+      allVar.push(btninputVariables[key]);
+    });
+
+    let variables = [];
+    const content = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+    const btn = btnvarList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
+
+    variables = [...content, ...btn];
+
+    console.log("variable", variables);
+    console.log("allVar", allVar);
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
         ...prev[id],
         rcs_agent: campaignDetails?.agent,
         rcs_template: String(selectedTemplate),
-        variables: {},
+        variables: allVar,
         category: templateType,
       },
     }));
+
+    setDetailsDialogVisible(false)
   }
   return (
     <>

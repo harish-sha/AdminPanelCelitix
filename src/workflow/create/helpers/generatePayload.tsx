@@ -68,13 +68,21 @@ export const generatePayload = (
 
     if (originalType === "whatsapp") {
       entry[value].value = {
-        wabanumber: String(nodeInput?.wabaSrno),
-        whatsappTemplate: String(nodeInput?.whatsappTemplate),
+        wabanumber: String(nodeInput?.wabaSrno) || "",
+        whatsappTemplate: String(nodeInput?.whatsappTemplate) || "",
         whatsapp_category: nodeInput?.whatsapp_category,
         whatsapp_templateType: nodeInput?.whatsapp_templateType,
         variables: nodeInput?.variables,
         fileInput: nodeInput?.fileInput,
         urlValues: nodeInput?.urlValues,
+      };
+    }
+    if (originalType === "rcs") {
+      entry[value].value = {
+        rcs_agent: nodeInput?.rcs_agent,
+        rcs_template: String(nodeInput?.rcs_template),
+        variables: nodeInput?.variables,
+        category: nodeInput?.category,
       };
     }
 
