@@ -21,7 +21,7 @@ export const WhatsAppNode = ({
     {
       type: "",
       value: "",
-      interval: "",
+      time: "",
     },
   ]);
   function handleOptionAdd() {
@@ -33,7 +33,7 @@ export const WhatsAppNode = ({
       {
         type: "",
         value: "",
-        interval: "",
+        time: "",
       },
     ]);
   }
@@ -87,7 +87,7 @@ export const WhatsAppNode = ({
     },
     {
       label: "Single Tick",
-      value: "single-tick",
+      value: "singleTick",
     },
     {
       label: "Double Tick",
@@ -166,7 +166,7 @@ export const WhatsAppNode = ({
                     },
                     {
                       label: "Delivery Status",
-                      value: "deliveryStatus",
+                      value: "deliverystatus",
                     },
                     {
                       label: "Click Status",
@@ -185,18 +185,18 @@ export const WhatsAppNode = ({
                   options={
                     conditions[index]?.type === "status"
                       ? statusValue
-                      : conditions[index]?.type === "deliveryStatus"
+                      : conditions[index]?.type === "deliverystatus"
                       ? deliveryStatusValue
                       : ClickValue
                   }
                 />
-                {/* <AnimatedDropdown
+                <AnimatedDropdown
                   id="value"
                   name="value"
                   label={`Condition-${index + 1}-Interval`}
-                  value={conditions[index]?.interval}
+                  value={conditions[index]?.time}
                   onChange={(e: string) => {
-                    handleOptionInput(e, "interval", index);
+                    handleOptionInput(e, "time", index);
                   }}
                   options={[
                     {
@@ -216,7 +216,7 @@ export const WhatsAppNode = ({
                       value: "20",
                     },
                   ]}
-                /> */}
+                />
 
                 {conditions.length > 1 && (
                   <Button
