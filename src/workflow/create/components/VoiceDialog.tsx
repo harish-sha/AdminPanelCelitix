@@ -21,8 +21,9 @@ export const VoiceNode = ({
     {
       type: "",
       value: "",
-      interval: "",
-      comparison: "",
+      time: "",
+      ansPreFix: "",
+      callDurationTime: "",
     },
   ]);
   function handleOptionAdd() {
@@ -34,8 +35,9 @@ export const VoiceNode = ({
       {
         type: "",
         value: "",
-        interval: "",
-        comparison: "",
+        time: "",
+        ansPreFix: "",
+        callDurationTime: "",
       },
     ]);
   }
@@ -72,7 +74,7 @@ export const VoiceNode = ({
       {
         type: "",
         value: "",
-        interval: "",
+        time: "",
       },
     ];
     setConditions(options);
@@ -157,12 +159,12 @@ export const VoiceNode = ({
                       ]}
                     />
                     <AnimatedDropdown
-                      id="interval"
-                      name="interval"
+                      id="time"
+                      name="time"
                       label={`Condition-${index + 1}-Interval`}
-                      value={conditions[index]?.interval}
+                      value={conditions[index]?.time}
                       onChange={(e: string) => {
-                        handleOptionInput(e, "interval", index);
+                        handleOptionInput(e, "time", index);
                       }}
                       options={[
                         {
@@ -189,9 +191,9 @@ export const VoiceNode = ({
                       id="comparison"
                       name="comparison"
                       label={`Select Comparison Type`}
-                      value={conditions[index]?.comparison}
+                      value={conditions[index]?.ansPreFix}
                       onChange={(e: string) => {
-                        handleOptionInput(e, "comparison", index);
+                        handleOptionInput(e, "ansPreFix", index);
                       }}
                       options={[
                         {
@@ -212,9 +214,13 @@ export const VoiceNode = ({
                     <InputField
                       id="value"
                       name="value"
-                      value={conditions[index]?.value}
-                      onChange={(e: string) => {
-                        handleOptionInput(e, "value", index);
+                      value={conditions[index]?.callDurationTime}
+                      onChange={(e: any) => {
+                        handleOptionInput(
+                          e.target.value,
+                          "callDurationTime",
+                          index
+                        );
                       }}
                       label={`Call Duration (in seconds)`}
                       maxLength={50}
