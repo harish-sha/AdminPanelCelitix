@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { HandleCampaignDetails } from "./handleCampaignDetails";
 import { VariableManager } from "./variableManager";
 import { Preview } from "./preview";
+import UniversalButton from "@/components/common/UniversalButton";
 
 export const RCS = ({
   id,
@@ -127,6 +128,23 @@ export const RCS = ({
     handleFetchTemplateDetails();
   }, [selectedTemplate]);
 
+  function handleSave() {
+    if (!selectedTemplate) return;
+    const templateType = allTemplates.find(
+      (item) => item.srno === selectedTemplate
+    )?.templateType;
+
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        rcs_agent: campaignDetails?.agent,
+        rcs_template: String(selectedTemplate),
+        variables: {},
+        category: templateType,
+      },
+    }));
+  }
   return (
     <>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-5 w-full">
@@ -165,6 +183,17 @@ export const RCS = ({
             setBtnInputVariables={setBtnInputVariables}
             btninputVariables={btninputVariables}
           />
+
+          <div>
+            <UniversalButton
+              id="save-button"
+              name="save-button"
+              label="Save"
+              type="submit"
+              onClick={handleSave}
+              style={{}}
+            />
+          </div>
         </div>
 
         <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
