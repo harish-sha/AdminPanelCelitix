@@ -24,6 +24,8 @@ import { RCSNode } from "./components/RcsDialog";
 import { WhatsAppNode } from "./components/WhatsappDialog";
 import { generatePayload } from "./helpers/generatePayload";
 import { saveWorkflow } from "@/apis/workflow";
+import { HiOutlineDocument } from "react-icons/hi2";
+import { DetailsDialog } from "./components/details";
 
 function NodeComponent({
   id,
@@ -34,6 +36,7 @@ function NodeComponent({
   connectionType,
   setNodesInputData,
   nodesInputData,
+  setDetailsDialogVisible,
 }: {
   id: string;
   data: any;
@@ -43,6 +46,7 @@ function NodeComponent({
   connectionType: string;
   setNodesInputData: any;
   nodesInputData?: any;
+  setDetailsDialogVisible: any;
 }) {
   const options = nodesInputData?.[id]?.options || [];
   const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
@@ -94,9 +98,20 @@ function NodeComponent({
         onClick={() => {
           setIsVisible(true);
         }}
+        title="Settings"
       >
         <SettingsOutlinedIcon fontSize="small" />
       </button>
+
+      {id !== "1" && (
+        <button
+          className="absolute left-5 -top-2 p-0 text-xs"
+          onClick={() => setDetailsDialogVisible(true)}
+          title="Add Node Details"
+        >
+          <HiOutlineDocument className="font-bold text-lg" />
+        </button>
+      )}
 
       <div className="font-medium text-center">
         {data.type === "voice" && <p>Voice Node ({id})</p>}
@@ -160,6 +175,7 @@ export const WorkflowCreate = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [connectionType, setConnectionType] = useState("");
   const [selectedNodeId, setSelectedNodeId] = useState(null);
+  const [detailsDialogVisible, setDetailsDialogVisible] = useState(false);
 
   const onConnect = useCallback(
     (connection: { source: any; target: any }) => {
@@ -296,6 +312,7 @@ export const WorkflowCreate = () => {
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
           nodesInputData={nodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       ),
       whatsapp: (node: any) => (
@@ -308,6 +325,7 @@ export const WorkflowCreate = () => {
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
           nodesInputData={nodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       ),
       rcs: (node: any) => (
@@ -320,6 +338,7 @@ export const WorkflowCreate = () => {
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
           nodesInputData={nodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       ),
       sms: (node: any) => (
@@ -332,6 +351,7 @@ export const WorkflowCreate = () => {
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
           nodesInputData={nodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
         />
       ),
     }),
@@ -509,7 +529,7 @@ export const WorkflowCreate = () => {
           setSelectedNodeId("");
           setIsVisible(false);
         }}
-        style={{ width: "50vw" }}
+        style={{ width: "60vw" }}
         draggable={false}
       >
         <div className="flex flex-col gap-2">
@@ -549,6 +569,20 @@ export const WorkflowCreate = () => {
             </Button>
           </div>
         </div>
+      </Dialog>
+
+      <Dialog
+        header={"Add Conditions and details for the selected Channel"}
+        visible={detailsDialogVisible}
+        onHide={() => {
+          setType("");
+          setSelectedNodeId("");
+          setDetailsDialogVisible(false);
+        }}
+        style={{ width: "60vw" }}
+        draggable={false}
+      >
+        <DetailsDialog />
       </Dialog>
     </>
   );
