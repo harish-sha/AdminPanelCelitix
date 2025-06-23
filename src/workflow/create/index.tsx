@@ -23,6 +23,7 @@ import { VoiceNode } from "./components/VoiceDialog";
 import { RCSNode } from "./components/RcsDialog";
 import { WhatsAppNode } from "./components/WhatsappDialog";
 import { generatePayload } from "./helpers/generatePayload";
+import { saveWorkflow } from "@/apis/workflow";
 
 function NodeComponent({
   id,
@@ -339,7 +340,7 @@ export const WorkflowCreate = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
-    const payload = generatePayload(nodesInputData);
+    const payload = generatePayload(nodesInputData, nodes, edges);
     if (!payload) return toast.error("Error while saving workflow");
     console.log(payload);
 
@@ -349,6 +350,16 @@ export const WorkflowCreate = () => {
       srNo: 0,
       nodeJson: JSON.stringify(payload),
     };
+
+    try {
+      const res = await saveWorkflow(data);
+      console.log(res);
+      if (res?.statusCode !== 200) {
+        return toast.error(res.msg);
+      }
+    } catch (e) {
+      toast.error("Error while saving workflow");
+    }
     toast.success("Workflow saved successfully");
   }
 
