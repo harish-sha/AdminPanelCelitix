@@ -103,7 +103,7 @@ export const RCSNode = ({
           <div className="space-y-2 ">
             {conditions?.map((option, index) => (
               <div
-                className="flex gap-2 justify-center items-center"
+                className="flex flex-col gap-2 justify-center items-center md:flex-row"
                 key={index}
               >
                 <AnimatedDropdown
