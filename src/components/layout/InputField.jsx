@@ -19,6 +19,9 @@ const InputField = ({
   disabled = false,
   maxLength,
   onKeyDown = () => {},
+  ref = null,
+  sx = null,
+  className = "",
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -59,6 +62,7 @@ const InputField = ({
         readOnly={readOnly}
         disabled={disabled}
         maxLength={maxLength}
+        ref={ref}
         className={`block w-full p-1.5 border  rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${
           error ? "border-red-500" : "border-gray-300"
         } ${disabled ? "bg-gray-200 cursor-not-allowed" : "bg-white"}`}

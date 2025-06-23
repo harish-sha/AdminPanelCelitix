@@ -6,6 +6,7 @@ import {
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { HandleCampaignDetails } from "./handleCampaignDetails";
+import { VariableManager } from "./variableManager";
 
 export const RCS = ({
   id,
@@ -122,12 +123,13 @@ export const RCS = ({
         toast.error("Something went wrong.");
       }
     }
+    handleFetchTemplateDetails();
   }, [selectedTemplate]);
 
   return (
     <>
-      <div className="grid grid-cols-1 gap-2 md:grid-cols-3 mt-5">
-        <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
+      <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-5 w-full">
+        <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1 w-full">
           <HandleCampaignDetails
             setCampaignDetails={setCampaignDetails}
             campaignDetails={campaignDetails}
@@ -140,6 +142,27 @@ export const RCS = ({
             setCarVar={setCarVar}
             setSelectedTemplate={setSelectedTemplate}
             selectedTemplate={selectedTemplate}
+          />
+          <VariableManager
+            templateDetails={templateDetails}
+            varLength={varLength}
+            setVarList={setVarList}
+            varList={varList}
+            setInputVariables={setInputVariables}
+            inputVariables={inputVariables}
+            carVar={carVar}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            carVarInput={carVarInput}
+            setCarVarInput={setCarVarInput}
+            headers={headers}
+            // setHeaders={setHeaders}
+
+            btnvarLength={btnvarLength}
+            setBtnVarList={setBtnVarList}
+            btnvarList={btnvarList}
+            setBtnInputVariables={setBtnInputVariables}
+            btninputVariables={btninputVariables}
           />
         </div>
       </div>
