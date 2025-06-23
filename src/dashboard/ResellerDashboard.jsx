@@ -19,6 +19,10 @@ import {
     Feedback,
 } from "@mui/icons-material";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import { Loop as LoopIcon } from "@mui/icons-material";
 import whatsappAnime from "../assets/animation/whatsappanimation.json";
 import whatsappAnime2 from "../assets/animation/whatsappanimation2.json";
 import smsAnime from "../assets/animation/smsanime.json";
@@ -36,11 +40,17 @@ import twowaysms from "../assets/animation/twowaysms.json";
 import twowaysmsnew from "../assets/animation/twowaysmsnew.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
+import { useUser } from "@/context/auth";
+import CountUp from 'react-countup';
 import toast from "react-hot-toast";
 
 import {
     BarChart, Bar, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer
 } from "recharts";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { dailyWalletUsage, fetchBalance } from "@/apis/settings/setting";
+import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
+import moment from "moment";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -68,14 +78,6 @@ const targetRealityData = [
     { name: "Jun", reality: 9400, target: 12500 },
     { name: "Jul", reality: 9800, target: 13000 },
 ];
-
-
-
-
-
-
-
-
 
 
 const services = [
@@ -137,23 +139,23 @@ const services = [
     },
 ];
 
-const quickStats = [
-    {
-        icon: <TaskAlt className="text-green-600" />,
-        label: "Active Campaigns",
-        value: 32,
-    },
-    {
-        icon: <TrendingUp className="text-blue-600" />,
-        label: "Engagement Rate",
-        value: "78%",
-    },
-    {
-        icon: <Star className="text-yellow-500" />,
-        label: "Client Rating",
-        value: "4.8/5",
-    },
-];
+// const quickStats = [
+//     {
+//         icon: <TaskAlt className="text-green-600" />,
+//         label: "Active Campaigns",
+//         value: 32,
+//     },
+//     {
+//         icon: <TrendingUp className="text-blue-600" />,
+//         label: "Engagement Rate",
+//         value: "78%",
+//     },
+//     {
+//         icon: <Star className="text-yellow-500" />,
+//         label: "Client Rating",
+//         value: "4.8/5",
+//     },
+// ];
 
 const bots = [
     {
@@ -174,11 +176,87 @@ const ResellerDashboard = () => {
     const [formData, setFormData] = useState({
         firstName: "",
     });
-    const [loading, setLoading] = useState(false);
+    const [balance, setBalance] = useState(0);
+    const [rechargableCredit, setRechargableCredit] = useState(0);
+    const [showRefresh, setShowRefresh] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [refreshKey, setRefreshKey] = useState(0);
+
+    const { user } = useUser();
+
+    const getBalance = async () => {
+        setIsLoading(true)
+        try {
+            const res = await fetchBalance();
+            console.log("balance", res)
+            setBalance(parseFloat(res.balance));
+            setRechargableCredit(parseFloat(res.rechargableCredit));
+            setRefreshKey(prevKey => prevKey + 1);
+        } catch (error) {
+            console.error("Error fetching balance:", error);
+        } finally {
+            setIsLoading(false)
+        }
+    };
+
+    useEffect(() => {
+        getBalance();
+    }, []);
+
+    // ========================================================================================
+
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [walletUsageData, setWalletUsageData] = useState([]);
+
+
+    const dailyAmountUsage = async () => {
+        const payload = {
+            userSrno: 0,
+            // fromDate: moment(startDate).format("YYYY-MM-DD"),
+            date: moment(endDate).format("YYYY-MM-DD")
+        }
+        console.log("date payload", payload)
+        setIsLoading(true)
+        try {
+            const response = await dailyWalletUsage(payload);
+            console.log("daily wallet usage", response.data)
+            if (response.data && response.data.length > 0) {
+                setWalletUsageData(response.data);
+            } else {
+                setWalletUsageData([]);
+            }
+        } catch (error) {
+            console.error("Error daily wallet usage:", error);
+        } finally {
+            setIsLoading(false)
+        }
+    }
+
+    const chartData = {
+        labels: walletUsageData.map(item => item.date),
+        datasets: [
+            {
+                label: "Wallet Usage",
+                data: walletUsageData.map(item => item.walletUsage),
+                fill: false,
+                borderColor: "#4CAF50",
+                tension: 0.1,
+            },
+        ],
+    };
+
+    useEffect(() => {
+        dailyAmountUsage();
+    }, []);
+
+    useEffect(() => {
+        dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
+    }, [startDate, endDate]);
 
     useEffect(() => {
         const fetchUserDetails = async () => {
-            setLoading(true);
+            setIsLoading(true);
             const response = await getUserDetails();
             if (response && response.statusCode === 200) {
                 const user = response.data[0];
@@ -188,10 +266,48 @@ const ResellerDashboard = () => {
                 console.error("Failed to load user details.");
                 toast.error("Failed to load user details!");
             }
-            setLoading(false);
+            setIsLoading(false);
         };
         fetchUserDetails();
     }, []);
+
+    const quickStats = [
+        // {
+        //     icon: <TaskAlt className="text-green-600" />,
+        //     label: "Active Campaigns",
+        //     value: 32,
+        // },
+        {
+            icon: <AccountBalanceIcon className="text-green-900" />,
+            label: "Current Balance",
+            value: <CountUp start={0} end={balance} separator="," decimals={2} duration={1.5} key={refreshKey} />,
+            // onHover: () => setShowRefresh(true),
+            // onMouseLeave: () => setShowRefresh(false),
+            showRefreshIcon: true,
+        },
+        // {
+        //     icon: <GppMaybeIcon className="text-red-800" />,
+        //     label: "Outstanding Balance",
+        //     value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} />
+        // },
+        ...(user.role === "RESELLER" ? [
+            {
+                icon: <GppMaybeIcon className="text-red-800" />,
+                label: "Outstanding Balance",
+                value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} key={refreshKey} />,
+            }
+        ] : []),
+        {
+            icon: <TrendingUp className="text-blue-600" />,
+            label: "Engagement Rate",
+            value: "78%",
+        },
+        {
+            icon: <Star className="text-yellow-500" />,
+            label: "Client Rating",
+            value: "4.8/5",
+        },
+    ];
 
     return (
         <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
@@ -218,14 +334,70 @@ const ResellerDashboard = () => {
                         <p className="text-sm opacity-80">
                             You're doing great. Here's a quick overview of your dashboard.
                         </p>
+                        <button onClick={dailyAmountUsage} >daily usage</button>
                     </div>
                 </div>
-                <div className="grid lg:grid-cols-3 gap-4 grid-cols-1  items-center">
-                    {quickStats.map((stat, i) => (
+                <div className="flex items-center justify-center gap-3">
+                    {/* {quickStats.map((stat, i) => (
                         <div
                             key={i}
                             className="bg-white rounded-xl shadow p-3 px-5 flex flex-col items-start justify-center"
                         >
+                            <div className="text-2xl">{stat.icon}</div>
+                            <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
+                            <div className="font-semibold text-lg">{stat.value}</div>
+                        </div>
+                    ))} */}
+
+                    {quickStats.map((stat, i) => (
+                        <div
+                            key={i}
+                            className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
+                        // onMouseEnter={stat.onHover}
+                        // onMouseLeave={stat.onMouseLeave}
+                        >
+                            {/* {stat.label === "Current Balance" && showRefresh && (
+                                <CustomTooltip
+                                    title="Refresh Balance"
+                                    placement="top"
+                                    arrow
+                                >
+                                    <div className="absolute top-2 right-2 cursor-pointer">
+
+                                        {isLoading ? (
+                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
+                                        ) : (
+                                            <button
+                                                onClick={getBalance}
+                                                className=""
+                                            >
+                                                <LoopIcon className="text-blue-400 cursor-pointer" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </CustomTooltip>
+                            )} */}
+                            {stat.showRefreshIcon && (
+                                <CustomTooltip
+                                    title="Refresh Balance"
+                                    placement="top"
+                                    arrow
+                                >
+                                    <div className="absolute top-2 right-2 cursor-pointer">
+
+                                        {isLoading ? (
+                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
+                                        ) : (
+                                            <button
+                                                onClick={getBalance}
+                                                className=""
+                                            >
+                                                <LoopIcon className="text-blue-400 cursor-pointer" />
+                                            </button>
+                                        )}
+                                    </div>
+                                </CustomTooltip>
+                            )}
                             <div className="text-2xl">{stat.icon}</div>
                             <div className="text-sm text-gray-500 mt-1">{stat.label}</div>
                             <div className="font-semibold text-lg">{stat.value}</div>
@@ -275,7 +447,7 @@ const ResellerDashboard = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Total Revenue */}
-                <motion.div
+                {/* <motion.div
                     initial={{ opacity: 0, y: -20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
@@ -293,6 +465,75 @@ const ResellerDashboard = () => {
                             <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
                         </BarChart>
                     </ResponsiveContainer>
+                </motion.div> */}
+
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="bg-white p-4 rounded-2xl shadow-sm"
+                >
+                    <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
+                    <UniversalDatePicker
+                        id="dailyusagestartdate"
+                        name="dailyusagestartdate"
+                        label="From Date"
+                        value={startDate}
+                        onChange={(newValue) => setStartDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the starting date for your project"
+                        tooltipPlacement="right"
+                        errorText="Please select a valid date"
+                    // error={!selectedDateLogs}
+                    // minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    // maxDate={new Date()}
+                    />
+                    <UniversalDatePicker
+                        id="dailyusagestartdate"
+                        name="dailyusagestartdate"
+                        label="To Date"
+                        value={endDate}
+                        onChange={(newValue) => setEndDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the starting date for your project"
+                        tooltipPlacement="right"
+                        errorText="Please select a valid date"
+                    // error={!selectedDateLogs}
+                    // minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                    // maxDate={new Date()}
+                    />
+
+                    {/* <ResponsiveContainer width="100%" height={220}>
+                        <BarChart data={revenueData}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="name" />
+                            <YAxis />
+                            <Tooltip />
+                            <Legend />
+                            <Bar dataKey="online" fill="#3498db" name="Online Sales" />
+                            <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
+                        </BarChart>
+                    </ResponsiveContainer> */}
+                    {/* Loading Spinner */}
+                    {isLoading && (
+                        <div className="flex justify-center items-center">
+                            <div className="loader">Loading...</div>
+                        </div>
+                    )}
+
+                    {/* Render the chart only when data is available */}
+                    {!isLoading && walletUsageData.length > 0 && (
+                        <div className="mb-6">
+                            <Line data={chartData} options={{ responsive: true }} />
+                        </div>
+                    )}
+
+                    {/* Display message when no data is available */}
+                    {!isLoading && walletUsageData.length === 0 && (
+                        <div className="text-center text-gray-500">
+                            No data available for the selected date range.
+                        </div>
+                    )}
                 </motion.div>
 
                 {/* Customer Satisfaction */}

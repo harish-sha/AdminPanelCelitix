@@ -86,7 +86,6 @@ const DetailedLogsTable = ({
   data = [],
   handlePreviosDayDetailDisplay,
 }) => {
-  console.log("data", data);
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -112,7 +111,7 @@ const DetailedLogsTable = ({
   const closeDropdown = () => {
     setDropdownOpenId(null);
   };
-  
+
 
   const rows = data?.map((item, index) => ({
     id: index + 1,
@@ -147,7 +146,8 @@ const DetailedLogsTable = ({
     },
     // { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 100 },
     // { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 100 },
-    { field: "pending", headerName: "Pending", flex: 1, minWidth: 90,
+    {
+      field: "pending", headerName: "Pending", flex: 1, minWidth: 90,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -158,8 +158,9 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
-    { field: "failed", headerName: "Failed", flex: 1, minWidth: 70,
+    },
+    {
+      field: "failed", headerName: "Failed", flex: 1, minWidth: 70,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -170,9 +171,10 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
+    },
     // { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 70 },
-    { field: "sent", headerName: "Sent", flex: 1, minWidth: 60,
+    {
+      field: "sent", headerName: "Sent", flex: 1, minWidth: 60,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -183,8 +185,9 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
-    { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90,
+    },
+    {
+      field: "delivered", headerName: "Delivered", flex: 1, minWidth: 90,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -195,7 +198,7 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
+    },
     {
       field: "notdelivered",
       headerName: "Not delivered",
@@ -212,7 +215,8 @@ const DetailedLogsTable = ({
         </CustomTooltip>
       ),
     },
-    { field: "pendingdr", headerName: "Pending DR", flex: 1, minWidth: 110,
+    {
+      field: "pendingdr", headerName: "Pending DR", flex: 1, minWidth: 110,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -223,8 +227,9 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
-    { field: "ndnc", headerName: "NDNC", flex: 1, minWidth: 70,
+    },
+    {
+      field: "ndnc", headerName: "NDNC", flex: 1, minWidth: 70,
       renderCell: (params) => (
         <CustomTooltip title={params.value} placement="top" arrow>
           <button
@@ -235,7 +240,7 @@ const DetailedLogsTable = ({
           </button>
         </CustomTooltip>
       ),
-     },
+    },
     {
       field: "action",
       headerName: "Action",

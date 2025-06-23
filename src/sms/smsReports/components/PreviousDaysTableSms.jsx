@@ -106,7 +106,7 @@ const PreviousDaysTableSms = ({ id, name, data }) => {
     id: index + 1,
     sn: index + 1,
     status: item.status || "-",
-    sent_time: item.que_time?.split(" ")[1] || "-",
+    sent_time: item?.que_time?.split(" ")[1] || "-",
     mobile_no: item.mobile_no || "-",
     message: item.message || "-",
     actual_status: item.actual_status || "-",
@@ -122,14 +122,6 @@ const PreviousDaysTableSms = ({ id, name, data }) => {
     setTotalPage(Math.ceil(rows.length / paginationModel.pageSize));
   }, [rows, paginationModel.pageSize]);
 
-  const handleSummaryReport = (row) => {
-    navigate("/smscampaigndetailsreport", {
-      state: {
-        campaignSrno: row.campaignSrno,
-        campaignName: row.campaignName,
-      },
-    });
-  };
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },

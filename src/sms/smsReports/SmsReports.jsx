@@ -47,6 +47,7 @@ import ManageScheduleCampaignSmsTable from "./components/ManageScheduleCampaignS
 import moment from "moment";
 import InfoPopover from "@/components/common/InfoPopover";
 import { ImInfo } from "react-icons/im";
+import CampaignTableSms from "./components/CampaignTableSms"
 
 const SmsReports = () => {
   const navigate = useNavigate();
@@ -74,11 +75,10 @@ const SmsReports = () => {
 
   //common State
   const [rows, setRows] = useState([]);
-  const [scheduleData, setScheduleData] = useState([])
+  const [scheduleData, setScheduleData] = useState([]);
   const [columns, setColumns] = useState([]);
 
-  console.log("rows", rows)
-  const [detailedLogsData, setDetailedLogsData] = useState([])
+  const [detailedLogsData, setDetailedLogsData] = useState([]);
 
   //campaign State
   const [campaignDataToFilter, setCampaignDataToFilter] = useState({
@@ -110,12 +110,11 @@ const SmsReports = () => {
     searchUserId: "",
   });
   const [previousTableData, setPreviousTableData] = useState([]);
-  const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
-    useState(false);
+  // const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
+  //   useState(false);
   const [selectedColDetails, setSelectedColDetails] = useState("");
   const [previousDayColumn, setPreviousDayColumn] = useState([]);
   const [previousDayRows, setPreviousDayRows] = useState([]);
-  const [detailedLogsInsideData, setDetailedLogsInsideData] = useState([])
 
   //day wise State
   const [daywiseDataToFilter, setDaywiseDataToFilter] = useState({
@@ -126,9 +125,6 @@ const SmsReports = () => {
     selectOption: "daywise",
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
-
-  console.log("daywiseTableData", daywiseTableData)
-
   //attachment state
   const [attachmentDataToFilter, setAttachmentDataToFilter] = useState({
     startDate: new Date(),
@@ -162,7 +158,7 @@ const SmsReports = () => {
     type: "campaign",
   });
 
-  const [visible, setVisible] = useState(false)
+  const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
 
   const templatetypeOptions = [
@@ -320,167 +316,167 @@ const SmsReports = () => {
       const res = await fetchCampaignData(data);
 
       // Map account_usage_type_id to campaign types
-      const mappedData = Array.isArray(res)
-        ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
-          sn: i + 1,
-          ...item,
-          campaign_type:
-            item.account_usage_type_id === 1
-              ? "Transactional"
-              : item.account_usage_type_id === 2
-                ? "Promotional"
-                : item.account_usage_type_id === 3
-                  ? "International"
-                  : "Unknown",
+      // const mappedData = Array.isArray(res)
+      //   ? res.map((item, i) => ({
+      //     id: item.receipt_no_of_duplicate_message,
+      //     sn: i + 1,
+      //     ...item,
+      //     campaign_type:
+      //       item.account_usage_type_id === 1
+      //         ? "Transactional"
+      //         : item.account_usage_type_id === 2
+      //           ? "Promotional"
+      //           : item.account_usage_type_id === 3
+      //             ? "International"
+      //             : "Unknown",
 
-          insert_flag:
-            item.insert_flag === 1
-              ? "Pending"
-              : item.insert_flag === 2
-                ? "Processing"
-                : item.insert_flag === 3
-                  ? "Sent"
-                  : "Unknown",
-        }))
-        : [];
+      //     insert_flag:
+      //       item.insert_flag === 1
+      //         ? "Pending"
+      //         : item.insert_flag === 2
+      //           ? "Processing"
+      //           : item.insert_flag === 3
+      //             ? "Sent"
+      //             : "Unknown",
+      //   }))
+      //   : [];
 
-      setCampaignTableData(mappedData);
+      setCampaignTableData(res);
       // setCampaignTableData(res);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "que_time", headerName: "Created On", flex: 0, minWidth: 200 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "campaign_type",
-          headerName: "Campaign Type",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "templatename",
-          headerName: "Template Name",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "insert_flag",
-          headerName: "Status",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "smsCount",
-          headerName: "Total Audience",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              {/* <CustomTooltip title="View Campaign" placement="top" arrow>
-                <IconButton
-                  className="text-xs"
-                  ref={(el) => {
-                    if (el)
-                      dropdownButtonRefs.current[params.row.campaignSrno] = el;
-                  }}
-                  onClick={() => handleView(params.row)}
-                >
-                  <InfoOutlinedIcon
-                    sx={{ fontSize: "1.2rem", color: "green" }}
-                  />
-                </IconButton>
-              </CustomTooltip> */}
-              <InfoPopover
-                anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
-                open={dropdownOpenId == params.row.campaignSrno}
-                onClose={closeDropdown}
-              >
-                {campaignInfoMap[params.row.campaignSrno] ? (
-                  <div className="w-[280px] max-w-full">
-                    {/* <div className="text-base font-semibold mb-2 text-gray-800">
-                                Campaign Summary
-                              </div> */}
-                    <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
-                      {[
-                        { label: "Total", key: "TotalUnit" },
-                        { label: "TotalSMS", key: "TOTALSMS" },
-                        { label: "Pending", key: "Pending" },
-                        { label: "Failed", key: "failed" },
-                        { label: "Delivered", key: "delivered" },
-                        { label: "Un Delivered", key: "undelivered" },
-                        { label: "Pending DR", key: "drNotAvailable" },
-                        // { label: "QUE Time", key: "queTime" },
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   { field: "que_time", headerName: "Created On", flex: 0, minWidth: 200 },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "campaign_type",
+      //     headerName: "Campaign Type",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "templatename",
+      //     headerName: "Template Name",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "insert_flag",
+      //     headerName: "Status",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "smsCount",
+      //     headerName: "Total Audience",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         {/* <CustomTooltip title="View Campaign" placement="top" arrow>
+      //           <IconButton
+      //             className="text-xs"
+      //             ref={(el) => {
+      //               if (el)
+      //                 dropdownButtonRefs.current[params.row.campaignSrno] = el;
+      //             }}
+      //             onClick={() => handleView(params.row)}
+      //           >
+      //             <InfoOutlinedIcon
+      //               sx={{ fontSize: "1.2rem", color: "green" }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip> */}
+      //         <InfoPopover
+      //           anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
+      //           open={dropdownOpenId == params.row.campaignSrno}
+      //           onClose={closeDropdown}
+      //         >
+      //           {campaignInfoMap[params.row.campaignSrno] ? (
+      //             <div className="w-[280px] max-w-full">
+      //               {/* <div className="text-base font-semibold mb-2 text-gray-800">
+      //                           Campaign Summary
+      //                         </div> */}
+      //               <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+      //                 {[
+      //                   { label: "Total", key: "TotalUnit" },
+      //                   { label: "TotalSMS", key: "TOTALSMS" },
+      //                   { label: "Pending", key: "Pending" },
+      //                   { label: "Failed", key: "failed" },
+      //                   { label: "Delivered", key: "delivered" },
+      //                   { label: "Un Delivered", key: "undelivered" },
+      //                   { label: "Pending DR", key: "drNotAvailable" },
+      //                   // { label: "QUE Time", key: "queTime" },
 
-                        // "TotalUnit",
-                        // "TOTALSMS",
-                        // "Pending",
-                        // "failed",
-                        // // "failed",
-                        // "delivered",
-                        // "undelivered",
-                        // "drNotAvailable",
-                        // // "queTime",
-                      ].map(({ label, key }) => (
-                        <React.Fragment key={key}>
-                          <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
-                            {/* {key.replace(/([A-Z])/g, " $1")} */}
-                            {label}
-                          </div>
-                          <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
-                            {campaignInfoMap[params.row.campaignSrno][key] ??
-                              "N/A"}
-                          </div>
-                        </React.Fragment>
-                      ))}
-                    </div>
-                  </div>
-                ) : (
-                  <div className="text-sm text-gray-500">No Data Available</div>
-                )}
-              </InfoPopover>
+      //                   // "TotalUnit",
+      //                   // "TOTALSMS",
+      //                   // "Pending",
+      //                   // "failed",
+      //                   // // "failed",
+      //                   // "delivered",
+      //                   // "undelivered",
+      //                   // "drNotAvailable",
+      //                   // // "queTime",
+      //                 ].map(({ label, key }) => (
+      //                   <React.Fragment key={key}>
+      //                     <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+      //                       {/* {key.replace(/([A-Z])/g, " $1")} */}
+      //                       {label}
+      //                     </div>
+      //                     <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+      //                       {campaignInfoMap[params.row.campaignSrno][key] ??
+      //                         "N/A"}
+      //                     </div>
+      //                   </React.Fragment>
+      //                 ))}
+      //               </div>
+      //             </div>
+      //           ) : (
+      //             <div className="text-sm text-gray-500">No Data Available</div>
+      //           )}
+      //         </InfoPopover>
 
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smscampaigndetaillogs", {
-                      state: { id: params.row.receipt_no_of_duplicate_message },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              {/* <CustomTooltip title="Cancel" placement="top" arrow>
-                <IconButton onClick={() => handleCancel(params.row)}>
-                  <CancelOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip> */}
-            </>
-          ),
-        },
-      ]);
+      //         <CustomTooltip title="Detailed Log" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() =>
+      //               navigate("/smscampaigndetaillogs", {
+      //                 state: { id: params.row.receipt_no_of_duplicate_message },
+      //               })
+      //             }
+      //           >
+      //             <DescriptionOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //         {/* <CustomTooltip title="Cancel" placement="top" arrow>
+      //           <IconButton onClick={() => handleCancel(params.row)}>
+      //             <CancelOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip> */}
+      //       </>
+      //     ),
+      //   },
+      // ]);
       // setRows(
       //   Array.isArray(res)
       //     ? res?.map((item, i) => ({
@@ -492,10 +488,10 @@ const SmsReports = () => {
       //     }))
       //     : []
       // );
-      setRows(mappedData);
-      setScheduleData(mappedData)
+      // setRows(mappedData);
+      // setScheduleData(mappedData); 
     } catch (e) {
-      // console.log(e);
+      // console.log("e", e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
@@ -626,7 +622,7 @@ const SmsReports = () => {
   //       {
   //         field: "campaign_name",
   //         headerName: "Campaign Name",
-  //         flex: 1, 
+  //         flex: 1,
 
   //         minWidth: 150,
   //       },
@@ -704,8 +700,8 @@ const SmsReports = () => {
 
       if (result) {
         toast.success("Campaign cancelled successfully");
-        handleScheduleCampaignSearch()
-        setVisible(false)
+        handleScheduleCampaignSearch();
+        setVisible(false);
       } else {
         console.warn("Cancel request failed or returned empty response.");
         toast.error("Cancel request failed");
@@ -756,7 +752,7 @@ const SmsReports = () => {
       //     id: item.srno || `row-${i}`,
       //     sn: i + 1,
       //     campaign_date: item.campaignDate || "-",
-      //     campaign_name: item.campaignName || "-",          
+      //     campaign_name: item.campaignName || "-",
       //     sent_time: item.sentTime || "-",
       //     campaignSrno: item.srno,
       //   }))
@@ -794,7 +790,7 @@ const SmsReports = () => {
       // Step 4: Update table state
       // setCampaignTableData(mappedData);
       // setRows(mappedData);
-      setScheduleData(res)
+      setScheduleData(res);
       // Step 5: Setup columns
       // setColumns([
       //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
@@ -981,7 +977,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await fetchPreviousDayReport(data);
-      setDetailedLogsData(res)
+      setDetailedLogsData(res);
       // setColumns([
       //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
       //   // {
@@ -1141,9 +1137,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      setDaywiseTableData(res)
-
-      console.log("res", res);
+      setDaywiseTableData(res);
       // setColumns([
       //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
       //   { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
@@ -1227,8 +1221,7 @@ const SmsReports = () => {
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
-      setAttachmentTableData(res)
-      console.log("res", res)
+      setAttachmentTableData(res);
       // setColumns([
       //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
       //   {
@@ -1308,7 +1301,6 @@ const SmsReports = () => {
       //     }))
       //     : []
       // );
-
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1332,155 +1324,19 @@ const SmsReports = () => {
       source: "",
     };
 
-    setPreviousDayDetailsDialog(true);
     setSelectedColDetails(col);
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
-      setDetailedLogsInsideData(res?.data)
-      setTotalPage(res?.pages || 0);
 
-      // setPreviousDayColumn([
-      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-      //   // {
-      //   //   field: "que_time",
-      //   //   headerName: "Created on",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   //   renderCell: (params) => (
-      //   //     <>{moment(params.row.que_time).format("DD-MM-YYYY HH:mm")}</>
-      //   //   ),
-      //   // },
-      //   // {
-      //   //   field: "smsunit",
-      //   //   headerName: "Sms Unit",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   // },
-      //   {
-      //     field: "status",
-      //     headerName: "Status",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   {
-      //     field: "sent_time",
-      //     headerName: "Sent Time",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   // {
-      //   //   field: "que_time",
-      //   //   headerName: "Created On",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   // },
-      //   {
-      //     field: "mobile_no",
-      //     headerName: "Mobile Number",
-      //     width: 140,
-
-      //   },
-      //   {
-      //     field: "message",
-      //     headerName: "Message",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   {
-      //     field: "actual_status",
-      //     headerName: "Actual Status",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   // {
-      //   //   field: "sent_time",
-      //   //   headerName: "Sent Time",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   // },
-      //   // {
-      //   //   field: "source",
-      //   //   headerName: "Sms Source",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   // },
-      //   {
-      //     field: "senderid",
-      //     headerName: "SenderId",
-      //     flex: 1,
-      //     minWidth: 120,
-      //   },
-      //   // {
-      //   //   field: "total",
-      //   //   headerName: "Total",
-      //   //   flex: 1,
-      //   //   minWidth: 120,
-      //   // },
-      //   {
-      //     field: "action",
-      //     headerName: "Action",
-      //     flex: 1,
-      //     minWidth: 120,
-      //     renderCell: (params) => (
-      //       <CustomTooltip title="Info" placement="top" arrow>
-      //         <span>
-      //           <IconButton
-      //             type="button"
-      //             ref={(el) => {
-      //               if (el) dropdownButtonRefs.current[params.row.id] = el;
-      //             }}
-      //             onClick={() => handleInfo(params.row)}
-      //             className="no-xs relative"
-      //           >
-      //             <ImInfo size={18} className="text-green-500 " />
-      //           </IconButton>
-
-      //           <InfoPopover
-      //             anchorEl={dropdownButtonRefs.current[params.row.id]}
-      //             open={dropdownOpenId === params.row.id}
-      //             onClose={closeDropdown}
-      //           >
-      //             {clicked && Object.keys(clicked).length > 0 ? (
-      //               <table className="w-80 text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-      //                 <tbody>
-      //                   {Object.entries(clicked).map(([key, value], index) => (
-      //                     <tr
-      //                       key={index}
-      //                       className="hover:bg-gray-50 transition-colors border-b last:border-none"
-      //                     >
-      //                       <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-      //                         {key}
-      //                       </td>
-      //                       <td className="px-4 py-2 text-gray-800">
-      //                         {value || "N/A"}
-      //                       </td>
-      //                     </tr>
-      //                   ))}
-      //                 </tbody>
-      //               </table>
-      //             ) : (
-      //               <div className="text-sm text-gray-400 italic px-2 py-2">
-      //                 No data
-      //               </div>
-      //             )}
-      //           </InfoPopover>
-      //         </span>
-      //       </CustomTooltip>
-      //     ),
-      //   },
-      // ]);
-
-      // setPreviousDayRows(
-      //   Array.isArray(res?.data)
-      //     ? res?.data.map((item, index) => ({
-      //       sn: index + 1,
-      //       id: index + 1,
-      //       ...item,
-      //     }))
-      //     : []
-      // );
-      setPreviousDayDetailsDialog(true);
+      navigate("/smscampaigndetailsreport", {
+        state: {
+          campaignDetails: res?.data,
+          total: res?.total || 0,
+          campaignName: col,
+          data: data
+        },
+      });
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -1643,7 +1499,7 @@ const SmsReports = () => {
                   label="Mobile Number"
                   id="campaignnumber"
                   name="campaignnumber"
-                  placeholder="Enter Campaign Number"
+                  placeholder="Enter Mobile Number"
                   value={campaignDataToFilter.mobilesnodata}
                   onChange={(e) => {
                     setCampaignDataToFilter((prev) => ({
@@ -1695,11 +1551,16 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="CampaignTableSms"
               name="CampaignTableSms"
               rows={rows}
               col={columns}
+            /> */}
+            <CampaignTableSms
+              id="CampaignTableSms"
+              name="CampaignTableSms"
+              data={campaignTableData}
             />
           </div>
         </CustomTabPanel>
@@ -2116,7 +1977,8 @@ const SmsReports = () => {
         <div className="p-4 text-center">
           <p className="text-[1.1rem] font-semibold text-gray-700">
             Are you sure you want to cancel the campaign:
-            <span className="text-green-500">"{currentRow?.campaignName}"</span>?
+            <span className="text-green-500">"{currentRow?.campaignName}"</span>
+            ?
           </p>
           <p className="mt-2 text-sm text-gray-500">
             This action is irreversible.
@@ -2141,7 +2003,7 @@ const SmsReports = () => {
           />
         </div>
       </Dialog>
-      <Dialog
+      {/* <Dialog
         header={selectedColDetails}
         visible={previousDayDetailsDialog}
         onHide={() => {
@@ -2155,8 +2017,8 @@ const SmsReports = () => {
         }}
         className="w-fit"
         draggable={false}
-      >
-        {/* {isFetching ? (
+      > */}
+      {/* {isFetching ? (
           <div className="card flex justify-content-center">
             <ProgressSpinner strokeWidth="2" className="text-blue-500" />
           </div>
@@ -2178,12 +2040,12 @@ const SmsReports = () => {
             totalPage={totalPage}
           />
         )} */}
-        <PreviousDaysTableSms
+      {/* <PreviousDaysTableSms
           id="previousdaydetailstable"
           name="previousdaydetailstable"
           data={detailedLogsInsideData}
-        />
-      </Dialog>
+        /> */}
+      {/* </Dialog> */}
 
       {/* exportDialogStart */}
       {isExportDialogOpen && (

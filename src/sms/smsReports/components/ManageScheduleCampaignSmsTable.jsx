@@ -154,7 +154,7 @@ const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
       id: index + 1,
       sn: index + 1,
       srno: item.srno,
-      sentTime: item.sentTime.split(" ")[1] || "N/A",
+      sentTime: item?.sentTime?.split(" ")[1] || "N/A",
       campaignName: item.campaignName || "N/A",
       campaignDate: item.campaignDate || "N/A",
       count: item.count || "N/A",

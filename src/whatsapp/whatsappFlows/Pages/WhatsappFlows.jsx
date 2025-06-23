@@ -163,9 +163,11 @@ const WhatsappFlows = () => {
       bodyText: bodyText,
       butnText: btnText,
     };
+
+    const flowstatus = selectedFlowDetails?.status;
     try {
       setIsLoading(true);
-      const res = await getWhatsappFlowTemplate(reqbody, selectedWaba);
+      const res = await getWhatsappFlowTemplate(reqbody, selectedWaba, flowstatus);
       if (res?.flag === true) {
         toast.success("Flow Send  Succesfully");
         setPublicDialog(false);
@@ -445,7 +447,7 @@ const WhatsappFlows = () => {
               paginatedFlows.map((flow, index) => (
                 <div
                   key={index}
-                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-5 items-center justify-between flex-wrap sm:flex-nowrap"
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-6 items-center justify-between flex-wrap sm:flex-nowrap"
                 >
                   <div className="flex items-center gap-3 ">
                     <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
@@ -491,7 +493,7 @@ const WhatsappFlows = () => {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0">
+                  <div className="flex items-center justify-center gap-3 mt-3 sm:mt-0">
                     {flow.status === "DRAFT" && (
                       <button
                         className="bg-orange-400 cursor-pointer hover:bg-orange-500 text-white px-4 py-1.5 rounded-2xl text-sm flex items-center gap-2"
@@ -513,7 +515,7 @@ const WhatsappFlows = () => {
                         )}
                       </button>
                     )}
-                    {flow.status === "PUBLISHED" && (
+                    {/* {flow.status === "PUBLISHED" && (
                       <button
                         className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
                         onClick={() => {
@@ -523,18 +525,20 @@ const WhatsappFlows = () => {
                         <SendIcon sx={{ fontSize: "1rem" }} />
                         Send Flow
                       </button>
-                    )}
-                    {/* <CustomTooltip title="Settings" arrow>
-                    <IconButton
-                      onClick={(e) => handleMenuOpen(e, flow)}
-                      size="small"
+                    )} */}
+                  </div>
+
+                  <div className="flex items-center justify-center gap-3 mt-3 sm:mt-0" >
+                    <button
+                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
+                      onClick={() => {
+                        handlepublishBtn(flow);
+                      }}
                     >
-                      <SettingsOutlinedIcon
-                        className="text-gray-600"
-                        fontSize="small"
-                      />
-                    </IconButton>
-                  </CustomTooltip> */}
+                      <SendIcon sx={{ fontSize: "1rem" }} />
+                      Send Flow
+                    </button>
+
                     <CustomTooltip title="Settings" arrow>
                       <IconButton
                         ref={(el) => {

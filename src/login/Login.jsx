@@ -415,12 +415,12 @@ const Login = () => {
                         </div>
                       </div>
                     </div>
-                    <button onClick={() => {
+                    {/* <button onClick={() => {
                       setStep(2);
                       setIsForgotPassword(true);
                     }} className="hover:underline">
                       Forgot Password?
-                    </button>
+                    </button> */}
                     <div className="flex items-center justify-center ">
                       <button
                         className={`custom-signin-btn ${loading ? "loading" : ""}`}

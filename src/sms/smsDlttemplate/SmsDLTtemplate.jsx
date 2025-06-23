@@ -248,7 +248,7 @@ const SmsDLTtemplate = () => {
       field: "action",
       headerName: "Action",
       flex: 1,
-      minWidth: 120,
+      width: 120,
       renderCell: (params) => (
         <>
           <CustomTooltip title="more Info" placement="top" arrow>

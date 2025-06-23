@@ -563,9 +563,13 @@ export const getWhatsappFlow = async () => {
 };
 
 // whatsapp flow update status (Published and draft)
-export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
+export const getWhatsappFlowTemplate = async (
+  reqbody,
+  selectedWaba,
+  status
+) => {
   return await fetchWithAuth(
-    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
+    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=${status}`,
     {
       method: "POST",
       body: JSON.stringify(reqbody),
@@ -613,7 +617,6 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
-
 
 // cancel campaign
 export const cancelCampaign = async ({ srno }) => {
