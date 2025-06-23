@@ -7,6 +7,7 @@ import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { HandleCampaignDetails } from "./handleCampaignDetails";
 import { VariableManager } from "./variableManager";
+import { Preview } from "./preview";
 
 export const RCS = ({
   id,
@@ -163,6 +164,15 @@ export const RCS = ({
             btnvarList={btnvarList}
             setBtnInputVariables={setBtnInputVariables}
             btninputVariables={btninputVariables}
+          />
+        </div>
+
+        <div className=" p-3 bg-gray-100 rounded-lg shadow-md lg:flex-1">
+          <Preview
+            templateDetails={templateDetails}
+            selectedIndex={selectedIndex}
+            setSelectedIndex={setSelectedIndex}
+            inputVariables={inputVariables}
           />
         </div>
       </div>
