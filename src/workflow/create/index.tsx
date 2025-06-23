@@ -579,10 +579,15 @@ export const WorkflowCreate = () => {
           setSelectedNodeId("");
           setDetailsDialogVisible(false);
         }}
-        style={{ width: "60vw" }}
+        style={{ width: "60vw", height: "80vh" }}
         draggable={false}
       >
-        <DetailsDialog />
+        <DetailsDialog
+          type={type}
+          id={selectedNodeId}
+          nodesInputData={nodesInputData}
+          setNodesInputData={setNodesInputData}
+        />
       </Dialog>
     </>
   );
