@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { useDrop, useDrag } from "react-dnd";
 import { Box, Typography, Paper, TextField, IconButton } from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
@@ -14,7 +14,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import { marked } from "marked";
-
 
 const Canvas = ({
   items,
@@ -92,8 +91,6 @@ const Canvas = ({
       if (monitor.didDrop()) {
         return;
       }
-      // console.log("itemfffffffffff", item);
-      // console.log("monitor", monitor);
 
       const newItem = {
         id: Date.now(),
@@ -101,15 +98,10 @@ const Canvas = ({
         value: "",
       };
 
-      // console.log("newItem", tabs);
-
       const allTabs = [...tabs];
-      // console.log("allTabs", allTabs);
-      // console.log("activePayload", allTabs);
       const activePayload = allTabs[activeIndex].payload || [];
 
       activePayload.push(newItem);
-      // console.log("activePayload", allTabs);
 
       setTabs(allTabs);
     },
@@ -117,14 +109,15 @@ const Canvas = ({
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
     if (!tabs?.[activeIndex]?.payload) return "";
-    // const targetItem = tabs[activeIndex].payload.find(
-    //   (payloadItem) =>
-    //     payloadItem.type === item.type && payloadItem.index === item.index
-    // );
-
     const targetItem = tabs[activeIndex].payload.find(
-      (payloadItem) => payloadItem.type === item.type
+      (payloadItem) =>
+        payloadItem.type === item.type && payloadItem.index === item.index
     );
+
+    // const targetItem = tabs[activeIndex].payload.find(
+    //   (payloadItem) => payloadItem.type === item.type
+    // );
+  
 
     if (!targetItem) return "";
 
@@ -227,7 +220,6 @@ const Canvas = ({
       );
     }
 
-
     if (item.type === "richText") {
       let renderedHTML = "<p>No content available</p>";
 
@@ -243,16 +235,13 @@ const Canvas = ({
 
         renderedHTML = renderedHTML.replace(
           /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
-          ''
+          ""
         );
-
-
       }
       return (
         <>
           {/* {targetItem.text && ( */}
-          <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-auto flex flex-col">
-
+          <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden  h-auto flex flex-col p-3 space-y-2 bg-blue-50">
             <div
               className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
               dangerouslySetInnerHTML={{ __html: renderedHTML }}
@@ -270,18 +259,12 @@ const Canvas = ({
           }
         `}
             </style>
-
-
           </div>
 
           {/* )} */}
-
-
-
         </>
-      )
+      );
     }
-
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
@@ -334,7 +317,8 @@ const Canvas = ({
                 <span className="font-semibold">Title:</span> {opt.title}
               </p>
               <p className="mb-1">
-                <span className="font-semibold">Description:</span> {opt.description}
+                <span className="font-semibold">Description:</span>{" "}
+                {opt.description}
               </p>
               <p className="mb-1">
                 <span className="font-semibold">Metadata:</span> {opt.metadata}
@@ -637,7 +621,7 @@ const Canvas = ({
             </p> 
           )} */}
         </div>
-      )
+      );
     }
 
     if (item.type === "date") {
@@ -857,6 +841,14 @@ const Canvas = ({
       }),
     });
 
+    const [selectedItem, setSelectedItem] = useState(null);
+    const [editDialogVisible, setEditDialogVisible] = useState(false);
+
+    const handleEdit = (index, item) => {
+      setSelectedItem({ ...item }); // ✅ force a new reference
+      setEditDialogVisible(true); // ✅ show the edit panel/modal
+    };
+
     return (
       // <motion.div
       //   initial={{ opacity: 0, x: -100 }}
@@ -1034,7 +1026,7 @@ const Canvas = ({
       case "media":
         return "Media";
       case "imageCarousel":
-        return "ImageCarousel"
+        return "ImageCarousel";
       case "ifelse":
         return "IfElse";
       case "switch":

@@ -178,13 +178,28 @@
   font-size: 20px;
 }
 
-.preview h1 {
+.preview h2 {
   font-size: 20px;
 }
-.editor h2 {
+.editor h3 {
   font-size: 18px;
 }
 
 .preview h2 {
   font-size: 18px;
+}
+li{
+          /* makes each <li> a block‐level box */
+list-style-type: block !important;  
+}
+
+.editor ol > li {
+  list-style-type: decimal;
+  margin-left: 1.5em; /* optional indent */
+  list-style-type: block !important;  
+}
+
+.editor ul > li {
+  list-style-type: disc !important;
+  margin-left: 1.5em; /* optional indent */
 }

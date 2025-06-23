@@ -217,6 +217,7 @@ const FlowCreationPage = () => {
     console.log("itemmmmmmmmmmmmm", item);
     const type = item.type;
 
+
     // Extract prefill value based on type
     let prefillValue = "";
     let prefillValueOfTexts = "";
@@ -272,6 +273,17 @@ const FlowCreationPage = () => {
     // radioBtn
   };
 
+
+
+
+
+
+
+
+
+
+
+
   const handleSave = (updatedData) => {
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
@@ -295,6 +307,11 @@ const FlowCreationPage = () => {
     });
     setSelectedItem(null);
   };
+
+
+
+
+
 
   // Close the edit panel
   const handleCloseEditPanel = () => {
@@ -499,6 +516,7 @@ const FlowCreationPage = () => {
           />
           {selectedItem && (
             <EditPanel
+              // key={selectedItem.id}    
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}

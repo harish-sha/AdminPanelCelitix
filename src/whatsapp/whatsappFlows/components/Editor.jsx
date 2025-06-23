@@ -13,6 +13,7 @@ import {
 } from "@mui/icons-material";
 import TableViewIcon from "@mui/icons-material/TableView";
 import UniversalButton from "../../components/UniversalButton";
+import InputField from "@/whatsapp/components/InputField";
 
 export const convertNodeToMarkdown = (node) => {
   if (!node) return "";
@@ -26,9 +27,9 @@ export const convertNodeToMarkdown = (node) => {
     .join("");
 
   switch (tag) {
-    case "h1":
-      return `# ${children.trim()}`;
     case "h2":
+      return `# ${children.trim()}`;
+    case "h3":
       return `## ${children.trim()}`;
     case "strong":
     case "b":
@@ -42,17 +43,17 @@ export const convertNodeToMarkdown = (node) => {
     case "a":
       return `[${children}](${node.getAttribute("href")})`;
     case "img":
-      return `![${node.getAttribute("alt") || ""}](${node.getAttribute(
-        "src"
-      )})`;
+  const src = node.getAttribute("src") || "";
+  const altText = (node.getAttribute("alt") || "").trim();
+  return `![${altText}](${src})`;
     case "ul":
       return Array.from(node.children)
         .map((li) => `+ ${convertNodeToMarkdown(li)}`)
-        .join("\n");
+        .join(",");
     case "ol":
       return Array.from(node.children)
         .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
-        .join("\n");
+        .join(",");
     case "li":
       return children;
     case "br":
@@ -94,218 +95,130 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     document.execCommand(command, false, value);
   };
 
-  const insertLink = () => {
-    let inputValue = "";
-    toast(
-      (t) => {
-        const inputRef = React.createRef();
-        return (
-          <div className="p-4 bg-white rounded shadow-md space-y-3 w-[300px]">
-            <p className="text-sm font-medium">Enter URL</p>
-            <input
-              ref={inputRef}
-              type="text"
-              autoFocus
-              className="w-full border px-2 py-1 rounded"
-              placeholder="https://example.com"
-              onChange={(e) => (inputValue = e.target.value)}
-              onPaste={(e) => {
-                inputValue = e.clipboardData.getData("text");
-              }}
-            />
-            <div className="flex justify-end gap-2 text-sm">
-              <button
-                onClick={() => toast.dismiss(t.id)}
-                className="px-2 py-1 bg-gray-200 rounded"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => {
-                  toast.dismiss(t.id);
-                  if (inputValue) exec("createLink", inputValue);
-                }}
-                className="px-2 py-1 bg-blue-500 text-white rounded"
-              >
-                Insert
-              </button>
-            </div>
-          </div>
-        );
-      },
-      { duration: Infinity, position: "top-center" }
-    );
+  const [tableControlsVisible, setTableControlsVisible] = useState(false);
+
+  // helper to find the <table> the cursor is in (if any)
+  const findCurrentTable = () => {
+    let node = window.getSelection()?.anchorNode;
+    while (node && node.nodeName !== "TABLE") {
+      node = node.parentNode;
+    }
+    return node;
   };
 
   const insertImage = () => {
-    let inputUrl = "";
-    toast.custom((t) => (
-      <div className="bg-white p-4 rounded shadow-md border w-[300px] flex flex-col gap-2">
-        <h3 className="font-semibold text-sm">Insert Image URL</h3>
-        <input
-          type="text"
-          placeholder="https://example.com/image.png"
-          className="border px-2 py-1 rounded text-sm"
-          onChange={(e) => (inputUrl = e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") handleInsert();
-          }}
-          autoFocus
-        />
-        <div className="flex justify-end gap-2 mt-2">
-          <button
-            className="text-sm px-2 py-1 bg-gray-200 rounded"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Cancel
-          </button>
-          <button
-            className="text-sm px-2 py-1 bg-blue-500 text-white rounded"
-            onClick={handleInsert}
-          >
-            Insert
-          </button>
-        </div>
-      </div>
-    ));
+  let altText = "";
+  let srcFile; // local File
 
-    const handleInsert = () => {
-      if (inputUrl) {
-        exec("insertImage", inputUrl);
-        toast.dismiss();
-        toast.success("Image inserted!");
-      } else {
-        toast.error("Please enter a valid URL");
-      }
-    };
-  };
-
-
-
-
-
-  const insertTable = () => {
-    const rows = parseInt(window.prompt("How many rows?", ""), 10);
-    const cols = parseInt(window.prompt("How many columns?", ""), 10);
-    if (!rows || rows < 1 || !cols || cols < 1) {
-      toast.error("Invalid row/column count");
+  const handleInsert = () => {
+    if (!srcFile) {
+      toast.error("Please choose a file.");
       return;
     }
 
-    // build header (cols + action column)
-    let tableHTML = `
-    <table class="generated-table" style="
-      width:100%;
-      margin:10px 0;
-      border-collapse: collapse;
-      border: 0.5px solid #000;
-    ">
-      <thead><tr>
-  `;
-    for (let c = 1; c <= cols; c++) {
-      tableHTML += `<th style="border:0.5px solid #000;padding:4px;"></th>`;
-    }
-    // action TH: row controls go in each row; column controls here
-    tableHTML += `
-    <th style="border:0.5px solid #000;padding:1px;width: 0;">
-      <button class="table-add-col">➕C</button>
-      <button class="table-remove-col">❌C</button>
-    </th>
-  `;
-    tableHTML += `</tr></thead><tbody>`;
-
-    // build body rows
-    for (let r = 1; r <= rows; r++) {
-      tableHTML += `<tr>`;
-      for (let c = 1; c <= cols; c++) {
-        tableHTML += `<td style="border:0.5px solid #000;width:10px;height:30px;padding:4px;"></td>`;
-      }
-      tableHTML += `
-      <td style="border:0.5px solid #000;padding:4px;text-align:center;">
-        <button class="table-add-row">➕</button>
-        <button class="table-remove-row">❌</button>
-      </td>
-    `;
-      tableHTML += `</tr>`;
-    }
-    tableHTML += `</tbody></table><br/>`;
-
-    // insert into editor
-    editorRef.current?.focus();
-    document.execCommand("insertHTML", false, tableHTML);
-    toast.success(`Inserted a ${rows}×${cols} table`);
-
-    // attach events to the newly inserted table
-    const editor = editorRef.current;
-    const tables = editor?.querySelectorAll("table.generated-table");
-    const table = tables?.[tables.length - 1];
-    if (table) attachTableEvents(table);
+    const reader = new FileReader();
+    reader.onload = () => {
+      const src = reader.result;
+      editorRef.current?.focus();
+      document.execCommand(
+        "insertHTML",
+        false,
+        `<img src="${src}" alt="${altText}" />`
+      );
+      toast.dismiss();
+      toast.success("Image inserted!");
+      setTimeout(updateActive, 0);
+    };
+    reader.onerror = () => toast.error("Failed to read file.");
+    reader.readAsDataURL(srcFile);
   };
 
-  // 2) Event delegation: handle all five buttons
-  function attachTableEvents(table) {
-    table.addEventListener("click", e => {
-      const btn = e.target.closest("button");
-      if (!btn) return;
+  toast.custom((t) => (
+    <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
+      <h3 className="font-semibold">Insert Image</h3>
 
-      const header = table.tHead.rows[0];
-      const body = table.tBodies[0];
+      {/* ALT TEXT input */}
+      <InputField
+        type="text"
+        placeholder="Image alt text"
+        className="border px-2 py-1 rounded text-sm"
+        onChange={(e) => (altText = e.target.value.trim())}
+      />
 
-      // —— Column controls (in header) ——
-      if (btn.classList.contains("table-add-col")) {
-        // insert new TH before the last TH
-        const th = document.createElement("th");
-        th.style.cssText = "border:0.5px solid #000;padding:4px;";
-        // th.textContent = `Col ${header.cells.length}`;
-        header.insertBefore(th, header.lastElementChild);
+      {/* File input */}
+      <InputField
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        className="text-sm"
+        onChange={(e) => {
+          srcFile = e.target.files?.[0];
+        }}
+      />
 
-        // in every body row, insert a new TD before action cell
-        Array.from(body.rows).forEach(row => {
-          const td = document.createElement("td");
-          td.style.cssText = "border:0.5px solid #000;width:10px;height:30px;padding:4px;";
-          row.insertBefore(td, row.lastElementChild);
-        });
-        return;
-      }
-
-      if (btn.classList.contains("table-remove-col")) {
-        const dataCols = header.cells.length - 1; // exclude action cell
-        if (dataCols > 1) {
-          // remove the TH just before the last one
-          header.removeChild(header.cells[dataCols - 1]);
-          // remove corresponding TD in each row
-          Array.from(body.rows).forEach(row => {
-            row.removeChild(row.cells[dataCols - 1]);
-          });
-        } else {
-          toast.error("Can't remove the last column");
-        }
-        return;
-      }
-
-      // —— Row & comment controls (in each row) ——
-      const row = btn.closest("tr");
-      if (!row) return;
-
-      if (btn.classList.contains("table-add-row")) {
-        const newRow = row.cloneNode(true);
-        // clear content of all data cells
-        Array.from(newRow.cells).slice(0, -1).forEach(td => td.innerHTML = "");
-        row.parentNode.insertBefore(newRow, row.nextSibling);
-        return;
-      }
-
-      if (btn.classList.contains("table-remove-row")) {
-        if (body.rows.length > 1) row.remove();
-        else toast.error("Can't remove the last row");
-        return;
-      }
+      <div className="flex justify-end gap-2 mt-2">
+        <button
+          className="px-3 py-1 bg-gray-200 rounded text-sm"
+          onClick={() => toast.dismiss(t.id)}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+          onClick={handleInsert}
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  ));
+};
 
 
+
+
+
+  const addColumn = () => {
+    const table = findCurrentTable();
+    if (!table) return toast.error("Place cursor inside a table");
+    const header = table.tHead.rows[0];
+    const th = document.createElement("th");
+    th.style.cssText = "border:0.5px solid #000;padding:4px;";
+    header.appendChild(th);
+    Array.from(table.tBodies[0].rows).forEach((row) => {
+      const td = document.createElement("td");
+      td.style.cssText = "border:0.5px solid #000;padding:4px;";
+      row.appendChild(td);
     });
-  }
+  };
 
+  const removeColumn = () => {
+    const table = findCurrentTable();
+    if (!table) return toast.error("Place cursor inside a table");
+    const header = table.tHead.rows[0];
+    const count = header.cells.length;
+    if (count <= 1) return toast.error("Can't remove the last column");
+    header.removeChild(header.cells[count - 1]);
+    Array.from(table.tBodies[0].rows).forEach((row) =>
+      row.removeChild(row.cells[count - 1])
+    );
+  };
 
+  const addRow = () => {
+    const table = findCurrentTable();
+    if (!table) return toast.error("Place cursor inside a table");
+    const body = table.tBodies[0];
+    const clone = body.rows[0].cloneNode(true);
+    Array.from(clone.cells).forEach((td) => (td.innerHTML = ""));
+    body.appendChild(clone);
+  };
+
+  const removeRow = () => {
+    const table = findCurrentTable();
+    if (!table) return toast.error("Place cursor inside a table");
+    const body = table.tBodies[0];
+    if (body.rows.length <= 1) return toast.error("Can't remove the last row");
+    body.deleteRow(body.rows.length - 1);
+  };
 
   const handleSave = () => {
     const html = editorRef.current?.innerHTML || "";
@@ -333,7 +246,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   };
 
   const [active, setActive] = useState({
-    h1: false,
+    h3: false,
     h2: false,
     p: false,
     bold: false,
@@ -347,7 +260,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   const updateActive = useCallback(() => {
     const block = document.queryCommandValue("formatBlock")?.toLowerCase();
     setActive({
-      h1: block === "h1",
+      h3: block === "h3",
       h2: block === "h2",
       p: block === "p",
       italic: document.queryCommandState("italic"),
@@ -379,7 +292,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
       // get current block tag, e.g. "h1", "h2", "p", etc.
       const block = document.queryCommandValue("formatBlock")?.toLowerCase();
       setActive({
-        h1: block === "h1",
+        h3: block === "h3",
         h2: block === "h2",
         p: block === "p",
         bold: document.queryCommandState("bold"),
@@ -398,14 +311,94 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   // const inactive = "bg-white text-gray-700 hover:bg-gray-100";
   // const activeBtn = "bg-blue-600 text-white";
 
+  // const insertLink = () => {
+  //   // Simple prompt; swap for your toast.custom UI if you like
+  //   const url = toast.custom("Enter URL:", "https://");
+  //   if (!url) return;
+
+  //   editorRef.current?.focus();
+  //   // createLink will wrap the selection in <a href="...">...</a>
+  //   document.execCommand("createLink", false, url);
+  //   // setTimeout(updateActive, 0);
+  // };
+
+  const insertLink = () => {
+  let url = "";
+  let linkText = "";
+
+  toast.custom((t) => {
+    // Move handleInsert here so we have access to t.id
+    const handleInsert = () => {
+      if (!/^https?:\/\/.+/.test(url)) {
+        toast.error("Please enter a valid URL (must start with http/https)", { id: t.id });
+        return;
+      }
+
+      editorRef.current?.focus();
+      const selection = window.getSelection();
+      const selectedText = selection?.toString();
+      const finalText = selectedText || linkText || url;
+
+      document.execCommand(
+        "insertHTML",
+        false,
+        `<a href="${url}" target="_blank" rel="noopener noreferrer">${finalText}</a>`
+      );
+
+      toast.dismiss(t.id);
+      toast.success("Link inserted!");
+      setTimeout(updateActive, 0);
+    };
+
+    return (
+      <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
+        <h3 className="font-semibold">Insert Link</h3>
+
+        {/* URL Input */}
+        <InputField
+          type="text"
+          placeholder="https://example.com"
+          className="border px-2 py-1 rounded text-sm"
+          onChange={(e) => (url = e.target.value.trim())}
+        />
+
+        {/* Optional Link Text Input */}
+        <InputField
+          type="text"
+          placeholder="Link text (optional)"
+          className="border px-2 py-1 rounded text-sm"
+          onChange={(e) => (linkText = e.target.value)}
+        />
+
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            className="px-3 py-1 bg-gray-200 rounded text-sm"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+            onClick={handleInsert}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    );
+  });
+};
+
+
+
   return (
     <div className="max-w-3xl mx-auto p-4 border rounded shadow space-y-4">
       <div className="flex flex-wrap gap-2">
         {/* H1 */}
         <button
           onMouseDown={(e) => e.preventDefault()}
-          onClick={() => doExec("formatBlock", "<h1>")}
-          className={`${base} ${active.h1 ? activeBtn : inactive}`}
+          onClick={() => doExec("formatBlock", "<h2>")}
+          className={`${base} ${active.h2 ? activeBtn : inactive}`}
           title="H1"
         >
           H1
@@ -414,8 +407,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         {/* H2 */}
         <button
           onMouseDown={(e) => e.preventDefault()}
-          onClick={() => doExec("formatBlock", "<h2>")}
-          className={`${base} ${active.h2 ? activeBtn : inactive}`}
+          onClick={() => doExec("formatBlock", "<h3>")}
+          className={`${base} ${active.h3 ? activeBtn : inactive}`}
           title="H2"
         >
           H2
@@ -465,8 +458,9 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertUnorderedList")}
-          className={`${base} ${active.insertUnorderedList ? activeBtn : inactive
-            }`}
+          className={`${base} ${
+            active.insertUnorderedList ? activeBtn : inactive
+          }`}
           title="Bulleted List"
         >
           <ListAltOutlined />
@@ -476,8 +470,9 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertOrderedList")}
-          className={`${base} ${active.insertOrderedList ? activeBtn : inactive
-            }`}
+          className={`${base} ${
+            active.insertOrderedList ? activeBtn : inactive
+          }`}
           title="Number List"
         >
           <FormatListNumberedOutlined />
@@ -488,7 +483,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
             insertLink();
-            setTimeout(updateActive, 0);
+            // setTimeout(updateActive, 0);
           }}
           className={`${base} ${inactive}`}
           title="Link"
@@ -513,14 +508,39 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
-            insertTable();
-            setTimeout(updateActive, 0);
+            // first-time click: insert a table if none exists at cursor
+            // or toggle the visibility of the controls
+            const tbl = findCurrentTable();
+            if (!tbl) {
+              insertTable(); // your existing insertTable fn
+            }
+            setTableControlsVisible((vis) => !vis);
           }}
-          className={`${base} ${inactive}`}
           title="Table"
+          className="px-3 py-1 rounded hover:bg-gray-100"
         >
           <TableViewIcon />
         </button>
+
+        {/* New: only show when tableControlsVisible is true */}
+        <div>
+          {tableControlsVisible && (
+            <div className="flex">
+              <button onClick={addColumn} className="px-2 border">
+                Add Column
+              </button>
+              <button onClick={addRow} className="px-2 border">
+                Add Row
+              </button>
+              <button onClick={removeColumn} className="px-2 border">
+                Remove Column
+              </button>
+              <button onClick={removeRow} className="px-2 border">
+                Remove Row
+              </button>
+            </div>
+          )}
+        </div>
 
         {/* Clear */}
         {/* <button
@@ -560,7 +580,12 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
-          className="editor prose prose-sm max-w-none min-h-[250px] border border-gray-300 p-4 rounded shadow focus:outline-none focus:ring "
+          className=" editor prose prose-sm max-w-none
+    block
+    min-h-[250px] border border-gray-300 p-4 rounded shadow
+    focus:outline-none focus:ring
+    [&_ol]:list-decimal 
+    [&_ul]:list-disc    "
         />
       )}
 

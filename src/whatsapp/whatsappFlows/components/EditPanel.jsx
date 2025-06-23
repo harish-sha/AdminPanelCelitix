@@ -33,6 +33,7 @@ import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import IfElseBlock from "./IfElseBlock";
+import SwitchFlow from "./SwitchFlow"
 
 import RichTextEditor from "./Editor.jsx";
 
@@ -67,6 +68,8 @@ const EditPanel = ({
   const [isToggled, setIsToggled] = useState(false);
   // const [file, setFile] = useState("")
   const [uploadPhoto, setUploadPhoto] = useState("");
+
+    
 
   useEffect(() => {
     if (selectedItem) {
@@ -2300,6 +2303,9 @@ const EditPanel = ({
     onClose();
   };
 
+  // switch
+  const[addCases,setAddCases] = useState("")
+
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -2316,7 +2322,7 @@ const EditPanel = ({
           exit={{ opacity: 0, x: 30 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
-          className="bg-white z-10 p-3 absolute right-3 w-80 top-18 border-2 rounded-xl shadow-sm border-gray-200"
+          className="bg-white z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
         >
           {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
           <Typography variant="h6">Edit Item</Typography>
@@ -2403,6 +2409,26 @@ const EditPanel = ({
               </div>
             </div>
           )}
+
+          {/* {selectedItem?.type === "heading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+              <InputField
+                label="Heading"
+                placeholder="Enter Text for Heading"
+                variant="outlined"
+                tooltipContent="Enter Text for Heading"
+                tooltipPlacement="right"
+                fullWidth
+                value={headingInput}
+                type="text"
+                maxLength={80}
+                onChange={(e) => setHeadingInput(e.target.value)}
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={headingSave} />
+              </div>
+            </div>
+          )} */}
 
           {(selectedItem?.type === "subheading" ||
             selectedThenComponent === "subHeading" ||
@@ -4187,6 +4213,50 @@ const EditPanel = ({
               />
             </>
           )}
+
+
+
+          {selectedItem?.type === "switch" && (
+            <>
+            {/* <AnimatedDropdown 
+            label="Add Cases"
+              options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    {label:"richText", value:"richText"},
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "footer", value: "footerbutton" },
+            ]}
+            value={addCases}
+            onChange={(value)=> setAddCases(value)}
+            /> */}
+
+            <SwitchFlow
+            
+            />
+
+
+            </>
+          )}
+
+
+
+
+
+
+
+
 
           {/* Editable option for date In */}
           {(selectedItem?.type === "date" ||

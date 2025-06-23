@@ -119,11 +119,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   // imageCarousel
    const [currentIndex, setCurrentIndex] = useState(0);
 
-
-
-
- 
-
   // console.log("itemsssssss", items)
 
   return (
@@ -246,7 +241,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 //Render RichText
 case "richText": {
   let renderedHTML = "<p>No content available</p>";
-
+  
   try {
     const markdown = Array.isArray(item?.text)
       ? item.text.join("\n")
