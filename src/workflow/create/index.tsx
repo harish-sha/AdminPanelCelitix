@@ -499,7 +499,7 @@ export const WorkflowCreate = () => {
               id="workflowName"
               name="workflowName"
               label="WorkFlow Name"
-              tooltipContent="Enter WorkFlow Name"
+              tooltipContent="Enter WorkFlow Name. Name should be unique. Only Alphabets and numbers are allowed. Maximum 20 characters allowed."
               value={name}
               placeholder="Enter WorkFlow Name"
               onChange={(e: {
@@ -572,7 +572,7 @@ export const WorkflowCreate = () => {
       </Dialog>
 
       <Dialog
-        header={"Add Conditions and details for the selected Channel"}
+        header={"Configure details for the selected Channel"}
         visible={detailsDialogVisible}
         onHide={() => {
           setType("");
