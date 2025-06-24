@@ -26,6 +26,7 @@ import { generatePayload } from "./helpers/generatePayload";
 import { saveWorkflow } from "@/apis/workflow";
 import { HiOutlineDocument } from "react-icons/hi2";
 import { DetailsDialog } from "./components/details";
+import { useNavigate } from "react-router-dom";
 
 function NodeComponent({
   id,
@@ -160,6 +161,7 @@ function NodeComponent({
 }
 
 export const WorkflowCreate = () => {
+  const navigate = useNavigate();
   let node = [];
   let edge = [];
   // let data = {};
@@ -360,9 +362,9 @@ export const WorkflowCreate = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
+    if (!nodes.length) return toast.error("Please add at least one node");
     const payload = generatePayload(nodesInputData, nodes, edges);
     if (!payload) return toast.error("Error while saving workflow");
-    console.log(payload);
 
     const data = {
       workflowName: name,
@@ -375,12 +377,13 @@ export const WorkflowCreate = () => {
       const res = await saveWorkflow(data);
       console.log(res);
       if (res?.statusCode !== 200) {
-        return toast.error(res.msg);
+        return toast.error(res.msg || "Error while saving workflow");
       }
+      toast.success("Workflow saved successfully");
+      navigate("/workflow");
     } catch (e) {
       toast.error("Error while saving workflow");
     }
-    toast.success("Workflow saved successfully");
   }
 
   function handleSaveNodeData() {

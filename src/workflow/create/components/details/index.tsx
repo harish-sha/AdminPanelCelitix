@@ -2,6 +2,7 @@ import React from "react";
 import { Whatsapp } from "./whatsapp";
 import { RCS } from "./rcs";
 import { SMS } from "./sms";
+import { OBD } from "./obd";
 
 export const DetailsDialog = ({
   type,
@@ -36,6 +37,14 @@ export const DetailsDialog = ({
       )}
       {type === "sms" && (
         <SMS
+          id={id}
+          nodesInputData={nodesInputData}
+          setNodesInputData={setNodesInputData}
+          setDetailsDialogVisible={setDetailsDialogVisible}
+        />
+      )}
+      {type === "voice" && (
+        <OBD
           id={id}
           nodesInputData={nodesInputData}
           setNodesInputData={setNodesInputData}
