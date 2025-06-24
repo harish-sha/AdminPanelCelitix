@@ -59,7 +59,7 @@ export const OBD = ({
         campaignType: basicDetails.type,
         plan: "2",
         retryCount: basicDetails.retry,
-        obdType: "SB",
+        obdType: basicDetails.templateType,
         obdClip: basicDetails.simpleBroadcast,
         obdText: basicDetails.tts,
       },

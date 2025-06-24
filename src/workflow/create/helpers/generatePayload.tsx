@@ -94,6 +94,16 @@ export const generatePayload = (
         entityId: nodeInput?.entityId,
       };
     }
+    if (originalType === "voice") {
+      entry[value].value = {
+        campaignType: nodeInput.campaignType,
+        plan: "2",
+        retryCount: nodeInput.retryCount,
+        obdType: nodeInput.obdType,
+        obdClip: nodeInput.obdClip,
+        obdText: nodeInput.obdText,
+      };
+    }
 
     // entry[prevNode] = prevNode;
 
