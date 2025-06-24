@@ -375,7 +375,6 @@ export const WorkflowCreate = () => {
 
     try {
       const res = await saveWorkflow(data);
-      console.log(res);
       if (res?.statusCode !== 200) {
         return toast.error(res.msg || "Error while saving workflow");
       }
@@ -391,10 +390,6 @@ export const WorkflowCreate = () => {
     setType("");
     setIsVisible(false);
   }
-
-  useEffect(() => {
-    console.log(nodesInputData);
-  }, [nodesInputData]);
 
   return (
     <>
@@ -414,7 +409,6 @@ export const WorkflowCreate = () => {
             deleteKeyCode={"Backspace"}
             nodeTypes={nodeTypes}
             onConnectStart={(event, { handleType }) => {
-              console.log(event);
               setIsConnecting(true);
               setConnectionType(handleType);
             }}

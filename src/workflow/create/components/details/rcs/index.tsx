@@ -148,9 +148,6 @@ export const RCS = ({
 
     variables = [...content, ...btn];
 
-    console.log("variable", variables);
-    console.log("allVar", allVar);
-
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
