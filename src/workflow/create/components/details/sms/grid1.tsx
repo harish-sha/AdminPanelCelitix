@@ -2,6 +2,7 @@ import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import InputField from "@/whatsapp/components/InputField";
 import { RadioButton } from "primereact/radiobutton";
 import React from "react";
+import { Variable } from "./variable";
 
 export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
   function getSmsUnit(message: string, isUnicode = false) {
@@ -233,11 +234,10 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
         </div>
 
         <div className="relative">
-          {/* <Variable
-                setInputDetails={setInputDetails}
-                inputDetails={inputDetails?.message}
-                // headers={headers}
-              /> */}
+          <Variable
+            setInputDetails={setInputDetails}
+            inputDetails={inputDetails?.message}
+          />
         </div>
 
         <div className="grid grid-cols-2 gap-2">
