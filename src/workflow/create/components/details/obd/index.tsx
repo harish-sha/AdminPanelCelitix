@@ -71,7 +71,7 @@ export const OBD = ({
     <>
       <div className="container-fluid">
         <div className="flex flex-wrap bg-[#E5E7EB] rounded-2xl">
-          <div className="w-full  p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-6  min-h-[80vh]">
+          <div className="w-full p-3 rounded-xl flex lg:flex-nowrap flex-wrap gap-6">
             <div className="w-full rounded-xl bg-[#f9f9f9]">
               <div className="flex items-center justify-around gap-4 px-2 py-4 ">
                 <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
@@ -237,7 +237,7 @@ export const OBD = ({
                   />
                 </div>
               </div>
-              <div className="flex items-center justify-center mt-5">
+              <div className="flex items-center justify-center mt-5 mb-5">
                 <UniversalButton
                   id="save-obd"
                   name="save-obd"
