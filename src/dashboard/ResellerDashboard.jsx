@@ -334,7 +334,7 @@ const ResellerDashboard = () => {
                         <p className="text-sm opacity-80">
                             You're doing great. Here's a quick overview of your dashboard.
                         </p>
-                        <button onClick={dailyAmountUsage} >daily usage</button>
+                        {/* <button onClick={dailyAmountUsage} >daily usage</button> */}
                     </div>
                 </div>
                 <div className="flex items-center justify-center gap-3">
@@ -474,7 +474,7 @@ const ResellerDashboard = () => {
                     className="bg-white p-4 rounded-2xl shadow-sm"
                 >
                     <h2 className="text-lg font-semibold mb-2">Total Revenue</h2>
-                    <UniversalDatePicker
+                    {/* <UniversalDatePicker
                         id="dailyusagestartdate"
                         name="dailyusagestartdate"
                         label="From Date"
@@ -484,9 +484,6 @@ const ResellerDashboard = () => {
                         tooltipContent="Select the starting date for your project"
                         tooltipPlacement="right"
                         errorText="Please select a valid date"
-                    // error={!selectedDateLogs}
-                    // minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    // maxDate={new Date()}
                     />
                     <UniversalDatePicker
                         id="dailyusagestartdate"
@@ -498,12 +495,9 @@ const ResellerDashboard = () => {
                         tooltipContent="Select the starting date for your project"
                         tooltipPlacement="right"
                         errorText="Please select a valid date"
-                    // error={!selectedDateLogs}
-                    // minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    // maxDate={new Date()}
-                    />
+                    /> */}
 
-                    {/* <ResponsiveContainer width="100%" height={220}>
+                    <ResponsiveContainer width="100%" height={220}>
                         <BarChart data={revenueData}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="name" />
@@ -513,27 +507,26 @@ const ResellerDashboard = () => {
                             <Bar dataKey="online" fill="#3498db" name="Online Sales" />
                             <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
                         </BarChart>
-                    </ResponsiveContainer> */}
-                    {/* Loading Spinner */}
-                    {isLoading && (
+                    </ResponsiveContainer>
+
+                    {/* {isLoading && (
                         <div className="flex justify-center items-center">
                             <div className="loader">Loading...</div>
                         </div>
                     )}
 
-                    {/* Render the chart only when data is available */}
                     {!isLoading && walletUsageData.length > 0 && (
                         <div className="mb-6">
                             <Line data={chartData} options={{ responsive: true }} />
                         </div>
                     )}
 
-                    {/* Display message when no data is available */}
+
                     {!isLoading && walletUsageData.length === 0 && (
                         <div className="text-center text-gray-500">
                             No data available for the selected date range.
                         </div>
-                    )}
+                    )} */}
                 </motion.div>
 
                 {/* Customer Satisfaction */}
