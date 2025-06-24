@@ -7,6 +7,8 @@ import { TTS } from "./tts";
 import { Broadcast } from "./broadcast";
 import { fetchVoiceClips } from "@/apis/Obd/obd";
 import toast from "react-hot-toast";
+import { DynamicBroadcast } from "./dynamicBroadcast";
+import UniversalButton from "@/components/common/UniversalButton";
 
 export const OBD = ({
   id,
@@ -26,6 +28,9 @@ export const OBD = ({
     tts: "",
     simpleBroadcast: "",
     multiBroadcast: "",
+    dynamicBroadcast: "",
+    interval: "",
+    retry: "",
   });
   const [voiceList, setVoiceList] = useState([]);
 
@@ -45,13 +50,17 @@ export const OBD = ({
 
     getObdVoiceClipDetails();
   }, []);
-  
+
+  function handleSave() {
+    
+  }
+
   return (
     <>
       <div className="container-fluid">
         <div className="flex flex-wrap bg-[#E5E7EB] rounded-2xl">
-          <div className=" w-full  p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-6  min-h-[80vh]">
-            <div className="lg:w-1/2 w-full rounded-xl bg-[#f9f9f9]">
+          <div className="w-full  p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-6  min-h-[80vh]">
+            <div className="w-full rounded-xl bg-[#f9f9f9]">
               <div className="flex items-center justify-around gap-4 px-2 py-4 ">
                 <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
                   <RadioButton
@@ -120,14 +129,14 @@ export const OBD = ({
                     id="obdType"
                     name="obdType"
                     options={[
-                      { value: "texttospeech", label: "Text To Speech" },
+                      { value: "TTS", label: "Text To Speech" },
                       {
-                        value: "simplebroadcast",
+                        value: "SB",
                         label: "Simple Broadcast",
                       },
-                      { value: "multibroadcast", label: "Multi Broadcast" },
+                      { value: "MB", label: "Multi Broadcast" },
                       {
-                        value: "dynamicbroadcast",
+                        value: "DB",
                         label: "Dynamic Broadcast",
                       },
                     ]}
@@ -150,20 +159,82 @@ export const OBD = ({
                     disabled={false}
                   />
                 </div>
-                {basicDetails?.templateType === "texttospeech" && (
+                {basicDetails?.templateType === "TTS" && (
                   <TTS
                     setBasicDetails={setBasicDetails}
                     basicDetails={basicDetails}
                   />
                 )}
-                {(basicDetails?.templateType === "simplebroadcast" ||
-                  basicDetails?.templateType === "multibroadcast") && (
+                {(basicDetails?.templateType === "SB" ||
+                  basicDetails?.templateType === "MB") && (
                   <Broadcast
                     setBasicDetails={setBasicDetails}
                     basicDetails={basicDetails}
                     voiceListData={voiceList}
                   />
                 )}
+                {basicDetails?.templateType === "DB" && (
+                  <DynamicBroadcast
+                    setBasicDetails={setBasicDetails}
+                    basicDetails={basicDetails}
+                    voiceListData={voiceList}
+                  />
+                )}
+
+                <div className="flex flex-col md:flex-row gap-2">
+                  <AnimatedDropdown
+                    id="retry"
+                    name="retry"
+                    options={[
+                      { value: "1", label: "1" },
+                      { value: "2", label: "2" },
+                      { value: "3", label: "3" },
+                      { value: "4", label: "4" },
+                    ]}
+                    value={basicDetails.retry}
+                    onChange={(value) => {
+                      setBasicDetails((prev) => ({
+                        ...prev,
+                        retry: value,
+                      }));
+                    }}
+                    placeholder="Select Retry No."
+                    label="Retry"
+                    tooltipContent="Set the number of retry attempts for undelivered messages."
+                  />
+
+                  <AnimatedDropdown
+                    id="interval"
+                    name="interval"
+                    options={[
+                      { value: "1", label: "10s" },
+                      { value: "2", label: "20s" },
+                      { value: "3", label: "30s" },
+                      { value: "4", label: "40s" },
+                    ]}
+                    value={basicDetails.interval}
+                    onChange={(value) => {
+                      setBasicDetails((prev) => ({
+                        ...prev,
+                        interval: value,
+                      }));
+                    }}
+                    placeholder="Select Interval"
+                    label="Interval"
+                    tooltipContent="Select time interval"
+                  />
+                </div>
+              </div>
+              <div className="flex items-center justify-center mt-5">
+                <UniversalButton
+                  id="save-obd"
+                  name="save-obd"
+                  label="Save"
+                  type="submit"
+                  style={{ borderRadius: "40px", letterSpacing: "1px" }}
+                  onClick={handleSave}
+                  variant="primary"
+                />
               </div>
             </div>
           </div>
