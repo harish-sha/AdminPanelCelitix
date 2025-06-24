@@ -10,10 +10,14 @@ import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import { motion } from "framer-motion";
+import { Sparkles } from "lucide-react";
+import { TiFlowSwitch } from "react-icons/ti";
 import toast from "react-hot-toast";
 import { generatePayload } from "../lib/generatePayload";
 import { saveFlow } from "@/apis/whatsapp/whatsapp";
 import InputField from "@/components/layout/InputField";
+import ParticleBackground from "../components/ParticleBackground";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
@@ -128,12 +132,7 @@ const FlowCreationPage = () => {
     //   "textcaption",
     // ];
 
-    const nonDuplicateTabs = [
-      "document",
-      "media",
-      "date",
-      "calendar"
-    ]
+    const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
     const onlyOneDateOrCalendar = ["date", "calendar"];
 
@@ -153,7 +152,8 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -174,7 +174,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -318,7 +319,6 @@ const FlowCreationPage = () => {
       return;
     }
 
-
     try {
       const payload = generatePayload(tabs);
 
@@ -391,10 +391,10 @@ const FlowCreationPage = () => {
 
   return (
     <div className="">
-      <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
-        {/* <span className="text-md font-semibold text-gray-700">
+      {/* <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
+        <span className="text-md font-semibold text-gray-700">
           ChatFlow: {state?.flowName || "Untitled Flow"}
-        </span> */}
+        </span>
         <span className="text-md font-semibold text-gray-700">ChatFlow</span>
 
         <div className="flex items-end gap-3">
@@ -413,7 +413,7 @@ const FlowCreationPage = () => {
             className="min-w-[200px]"
           />
 
-          {/* <UniversalButton
+          <UniversalButton
             icon={<SaveOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
             label="Save"
             onClick={handleFlowSave}
@@ -422,7 +422,7 @@ const FlowCreationPage = () => {
           <UniversalButton
             icon={<SettingsOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
             label="Settings"
-          /> */}
+          />
 
           <UniversalButton
             icon={<ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
@@ -430,6 +430,69 @@ const FlowCreationPage = () => {
             onClick={handleFlowBuild}
             disabled={isLoading}
           />
+        </div>
+      </div> */}
+
+      <div className="relative rounded-xl overflow-hidden shadow-md ">
+        <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300">
+          <ParticleBackground />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-4"
+          >
+            <div className="bg-white shadow-md p-2 rounded-full">
+              <TiFlowSwitch className="text-indigo-600 text-xl" />
+              {/* <TiFlowSwitch /> */}
+            </div>
+            <div className="flex gap-5 items-center">
+              <h1 className="text-lg font-semibold text-indigo-900 tracking-tight">
+                Design Your WhatsApp Automation Flow
+              </h1>
+              <p className="text-xs text-gray-800">
+                Seamlessly create, preview, and publish dynamic conversational
+                journeys to engage your customers on WhatsApp.
+              </p>
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto"
+          >
+            <div className="flex flex-col w-full sm:w-auto">
+              <input
+                id="flowname"
+                name="flowname"
+                type="text"
+                placeholder="Enter a unique flow name"
+                value={flowName}
+                onChange={(e) => {
+                  const noSpaces = e.target.value.replace(/\s/g, "");
+                  setFlowName(noSpaces);
+                }}
+                className="px-3 py-1.5 border border-indigo-300 bg-white text-[0.82rem] rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:outline-none sm:min-w-[250px]"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.97 }}
+              onClick={handleFlowBuild}
+              disabled={isLoading}
+              className={`mt-1 sm:ml-3 px-5 py-2 rounded-md font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
+                isLoading
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+              }`}
+            >
+              <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
+              {isLoading ? "Building..." : "Build Flow"}
+            </motion.button>
+          </motion.div>
         </div>
       </div>
 

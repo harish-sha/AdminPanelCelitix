@@ -33,11 +33,16 @@ import InputField from "@/components/layout/InputField";
 import CustomTooltip from "@/components/common/CustomTooltip";
 
 import celifavicon from "../../../assets/icons/CELITIX FAVICON2.png";
+import officebuilding from "../../../assets/icons/office-building.png";
 
 import CardHoverEffect from "../components/CardHoverEffect";
 
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
+import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
+import { MdOutlinePublishedWithChanges } from "react-icons/md";
+import { FaCheckCircle } from "react-icons/fa";
+import { IoCloseCircle } from "react-icons/io5";
 // import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
 import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
@@ -45,15 +50,15 @@ import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
 // import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AnimatePresence, motion } from "framer-motion";
-import CardActions from '@mui/material/CardActions';
+import CardActions from "@mui/material/CardActions";
 
 import Animation_SignIn from "../../../assets/animation/Animation_SignIn.json";
 import Animation_SignUp from "../../../assets/animation/Animation_SignUp.json";
 import Animation_BookingAppointment from "../../../assets/animation/Animation_BookingAppointment.json";
 import Animation_LeadGeneration from "../../../assets/animation/Animation_LeadGeneration.json";
-import Animation_ContactUs from "../../../assets/animation/Animation_ContactUs.json"
-import Animation_CustomerSupport from "../../../assets/animation/Animation_CustomerSupport.json"
-import Animation_Survey from "../../../assets/animation/Animation_Survey.json"
+import Animation_ContactUs from "../../../assets/animation/Animation_ContactUs.json";
+import Animation_CustomerSupport from "../../../assets/animation/Animation_CustomerSupport.json";
+import Animation_Survey from "../../../assets/animation/Animation_Survey.json";
 import {
   getWhatsappFlow,
   getWabaList,
@@ -65,7 +70,7 @@ import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
 import moment from "moment";
 import DropdownMenuPortal from "@/utils/DropdownMenuPortal";
-import Card from '@mui/material/Card';
+import Card from "@mui/material/Card";
 import { cn } from "../lib/utils";
 const WhatsappFlows = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -88,10 +93,11 @@ const WhatsappFlows = () => {
   const dropdownButtonRefs = useRef({});
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [publishingId, setPublishingId] = useState(null);
+  const [isPublishingNow, setIsPublishingNow] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const [visible, setVisible] = useState(false);
   const [currentRow, setCurrentRow] = useState(null);
-  const [flowId, setFlowId] = useState([])
+  const [flowId, setFlowId] = useState([]);
   const navigate = useNavigate();
   const rowsPerPage = 4;
 
@@ -146,13 +152,16 @@ const WhatsappFlows = () => {
       toast.error("Mobile number is required.");
       return;
     }
-    if (!bodyText.trim()) {
-      toast.error("Body text is required.");
-      return;
-    }
-    if (!btnText.trim()) {
-      toast.error("Button text is required.");
-      return;
+    const isDraft = selectedFlowDetails?.status === "DRAFT";
+    if (!isDraft) {
+      if (!bodyText.trim()) {
+        toast.error("Body text is required.");
+        return;
+      }
+      if (!btnText.trim()) {
+        toast.error("Button text is required.");
+        return;
+      }
     }
 
     const reqbody = {
@@ -167,7 +176,11 @@ const WhatsappFlows = () => {
     const flowstatus = selectedFlowDetails?.status;
     try {
       setIsLoading(true);
-      const res = await getWhatsappFlowTemplate(reqbody, selectedWaba, flowstatus);
+      const res = await getWhatsappFlowTemplate(
+        reqbody,
+        selectedWaba,
+        flowstatus
+      );
       if (res?.flag === true) {
         toast.success("Flow Send  Succesfully");
         setPublicDialog(false);
@@ -219,7 +232,7 @@ const WhatsappFlows = () => {
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
     setDropdownOpenId(flow.flowId);
-    console.log(flow)
+    console.log(flow);
   };
 
   const handleMenuClose = () => {
@@ -235,7 +248,7 @@ const WhatsappFlows = () => {
     setCurrentRow(selectedFlow);
     setVisible(true);
     handleMenuClose();
-    console.log(selectedFlow)
+    console.log(selectedFlow);
   };
 
   // deleteFlow
@@ -246,7 +259,7 @@ const WhatsappFlows = () => {
 
     const { flowId } = currentRow;
 
-    console.log(flowId)
+    console.log(flowId);
 
     try {
       setIsFetching(true);
@@ -263,7 +276,7 @@ const WhatsappFlows = () => {
         toast.error(errorMsg);
       }
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Flow deletion failed");
     } finally {
       setIsFetching(false);
@@ -310,17 +323,29 @@ const WhatsappFlows = () => {
 
   // 1. Your data
   const templates = [
-    { name: "SignIn", animation: Animation_SignIn, button: "SignIn", },
-    { name: "SignUp", animation: Animation_SignUp, button: "SignUp", },
-    { name: "Appointment Booking", animation: Animation_BookingAppointment, button: "Book Appointment", },
-    { name: "Lead Generation", animation: Animation_LeadGeneration, button: "Lead Generation", },
-    { name: "Contact Us", animation: Animation_ContactUs, button: "Contact Us", },
+    { name: "SignIn", animation: Animation_SignIn, button: "SignIn" },
+    { name: "SignUp", animation: Animation_SignUp, button: "SignUp" },
+    {
+      name: "Appointment Booking",
+      animation: Animation_BookingAppointment,
+      button: "Book Appointment",
+    },
+    {
+      name: "Lead Generation",
+      animation: Animation_LeadGeneration,
+      button: "Lead Generation",
+    },
+    {
+      name: "Contact Us",
+      animation: Animation_ContactUs,
+      button: "Contact Us",
+    },
   ];
 
   // 2. Your itemTemplate
   const templateItem = (item) => (
     <div className="mx-2 group w-auto  rounded-2xl pt-2 my-2 overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg border border-gray-200 relative group transition-all duration-200  hover:-translate-y-1">
-      <Card sx={{ width: "auto", overflow: 'hidden' }}>
+      <Card sx={{ width: "auto", overflow: "hidden" }}>
         {/* Title */}
         <h4 className="text-center text-lg font-bold mt-4">{item.name}</h4>
 
@@ -333,18 +358,18 @@ const WhatsappFlows = () => {
         <CardActions className="justify-center pb-4">
           <button
             className={cn(
-              'transition-all duration-500 transform opacity-0 translate-y-8',
-              'group-hover:opacity-100 group-hover:translate-y-0',
-              'bg-gray-700 text-white font-semibold rounded-xl px-5 py-2 shadow-md',
-              'hover:bg-gray-800 hover:scale-105 hover:shadow-lg focus:outline-none'
+              "transition-all duration-500 transform opacity-0 translate-y-8",
+              "group-hover:opacity-100 group-hover:translate-y-0",
+              "bg-gray-700 text-white font-semibold rounded-xl px-5 py-2 shadow-md",
+              "hover:bg-gray-800 hover:scale-105 hover:shadow-lg focus:outline-none"
             )}
             style={{
-              boxShadow: '0 4px 24px rgba(55,65,81,0.10)',
-              border: 'none',
+              boxShadow: "0 4px 24px rgba(55,65,81,0.10)",
+              border: "none",
             }}
             onClick={() => console.log(`Clicked ${item.name}`)}
           >
-            {item.button || 'Select'}
+            {item.button || "Select"}
           </button>
         </CardActions>
       </Card>
@@ -450,22 +475,34 @@ const WhatsappFlows = () => {
                   className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-6 items-center justify-between flex-wrap sm:flex-nowrap"
                 >
                   <div className="flex items-center gap-3 ">
-                    <div className="bg-white flex items-center justify-center p-1 rounded-full shadow">
-                      {/* <div className="w-8 h-8 bg-gray-400 rounded"></div> */}
-                      <RadioButtonCheckedOutlinedIcon
-                        className="text-green-500"
-                        fontSize="small"
-                      />
+                    <div className="bg-white flex items-center justify-center p-0.5 rounded-full shadow">
+                      {flow.status === "DRAFT" && (
+                        <RadioButtonCheckedOutlinedIcon
+                          className="text-orange-500"
+                          sx={{
+                            fontSize: "22px",
+                          }}
+                        />
+                      )}
+                      {flow.status === "PUBLISHED" && (
+                        <RadioButtonCheckedOutlinedIcon
+                          className="text-green-500"
+                          sx={{
+                            fontSize: "22px",
+                          }}
+                        />
+                      )}
                     </div>
-                    <div>
+                    <div className="flex flex-col gap-1">
                       <div className="font-semibold text-sm">
                         {flow.flowName}
                       </div>
                       <span
-                        className={`text-xs font-semibold tracking-wide px-2 py-1 rounded ${flow.status === "Draft"
-                          ? "bg-orange-500 text-white"
-                          : "bg-blue-500 text-white"
-                          }`}
+                        className={`text-xs shadow-md tracking-wide px-2 py-1 rounded-md w-max  ${
+                          flow.status === "DRAFT"
+                            ? "bg-orange-500 text-white"
+                            : "bg-blue-500 text-white"
+                        }`}
                       >
                         {flow.status}
                       </span>
@@ -476,7 +513,7 @@ const WhatsappFlows = () => {
                     <div className="font-semibold text-sm mb-2">
                       Flow Category
                     </div>
-                    <span className="text-xs font-bold px-2 py-1 bg-blue-300 text-blue-900 rounded">
+                    <span className="text-xs font-semibold px-2 py-1 bg-blue-300 text-blue-900 rounded-md">
                       {flow.category || "STATIC"}
                     </span>
                   </div>
@@ -495,42 +532,108 @@ const WhatsappFlows = () => {
 
                   <div className="flex items-center justify-center gap-3 mt-3 sm:mt-0">
                     {flow.status === "DRAFT" && (
-                      <button
-                        className="bg-orange-400 cursor-pointer hover:bg-orange-500 text-white px-4 py-1.5 rounded-2xl text-sm flex items-center gap-2"
-                        onClick={async () => {
-                          setPublishingId(flow.flowId);
-                          await new Promise((res) => setTimeout(res, 1000));
-                          await updateStatus(flow.flowId, flow.mobileno);
-                          setPublishingId(null);
-                        }}
-                        disabled={publishingId === flow.flowId}
-                      >
-                        {publishingId === flow.flowId ? (
-                          <>
-                            <span className="inline-block align-middle w-4 h-4 border-2 border-solid rounded-full border-white border-t-blue-500 animate-spin"></span>
-                            Publishing...
-                          </>
-                        ) : (
-                          <>▶ Publish</>
-                        )}
+                      <div className="relative inline-block">
+                        <button
+                          className={`bg-orange-400 hover:bg-orange-500 text-white px-4 py-1.5 rounded-3xl border-2 border-white text-sm flex items-center gap-2 ${
+                            isPublishingNow === flow.flowId
+                              ? "cursor-not-allowed opacity-70"
+                              : "cursor-pointer"
+                          }`}
+                          onClick={() => {
+                            if (!isPublishingNow) {
+                              setPublishingId(
+                                publishingId === flow.flowId
+                                  ? null
+                                  : flow.flowId
+                              );
+                            }
+                          }}
+                          disabled={isPublishingNow === flow.flowId}
+                        >
+                          {isPublishingNow === flow.flowId ? (
+                            <>
+                              <span className="inline-block align-middle w-4 h-4 border-2 rounded-full border-white border-t-blue-500 animate-spin"></span>
+                              Publishing...
+                            </>
+                          ) : (
+                            <>
+                              <MdOutlinePublishedWithChanges className="text-xl" />{" "}
+                              Publish
+                            </>
+                          )}
+                        </button>
+                        <AnimatePresence>
+                          {publishingId === flow.flowId && (
+                            <motion.div
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              exit={{ opacity: 0, y: -10 }}
+                              className="absolute z-10 mt-2 left-0 w-80 bg-white rounded-xl shadow-xl border border-gray-200 p-4"
+                            >
+                              <p className="text-sm text-gray-800 font-semibold">
+                                Are you sure you want to publish?
+                              </p>
+                              <p className="text-xs mt-1 text-gray-600">
+                                Once published, you{" "}
+                                <strong>won’t be able to edit or delete</strong>{" "}
+                                this flow. It will be publicly available to
+                                users. <br />
+                                <div className="border-b border-dashed my-2 border-gray-900" ></div>
+                                You may also send this flow for testing purposes
+                                without publishing it.
+                              </p>
+
+                              <div className="flex justify-end gap-3 mt-4">
+                                <button
+                                  className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-900 transition"
+                                  onClick={() => setPublishingId(null)}
+                                >
+                                  <IoCloseCircle className="text-lg" />
+                                  Cancel
+                                </button>
+
+                                <button
+                                  className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full text-sm transition"
+                                  // onClick={async () => {
+                                  //   await updateStatus(
+                                  //     flow.flowId,
+                                  //     flow.mobileno
+                                  //   );
+                                  //   setPublishingId(null);
+                                  // }}
+                                  onClick={async () => {
+                                    setIsPublishingNow(flow.flowId);
+                                    await new Promise((res) =>
+                                      setTimeout(res, 1000)
+                                    );
+                                    await updateStatus(
+                                      flow.flowId,
+                                      flow.mobileno
+                                    );
+                                    setIsPublishingNow(null);
+                                    setPublishingId(null);
+                                  }}
+                                  disabled={isPublishingNow === flow.flowId}
+                                >
+                                  <FaCheckCircle className="text-sm" />
+                                  Yes, Publish
+                                </button>
+                              </div>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                    )}
+                    {flow.status === "PUBLISHED" && (
+                      <button className="bg-green-500 text-white px-4 py-2 rounded-full text-sm border-2 border-white tracking-wide">
+                        Published
                       </button>
                     )}
-                    {/* {flow.status === "PUBLISHED" && (
-                      <button
-                        className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
-                        onClick={() => {
-                          handlepublishBtn(flow);
-                        }}
-                      >
-                        <SendIcon sx={{ fontSize: "1rem" }} />
-                        Send Flow
-                      </button>
-                    )} */}
                   </div>
 
-                  <div className="flex items-center justify-center gap-3 mt-3 sm:mt-0" >
+                  <div className="flex items-center justify-end gap-3 mt-3 sm:mt-0">
                     <button
-                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 rounded-2xl text-sm flex items-center gap-2"
+                      className="bg-blue-500 cursor-pointer hover:bg-blue-600 text-white px-4 py-2 border-2 border-white rounded-3xl text-sm flex items-center gap-2"
                       onClick={() => {
                         handlepublishBtn(flow);
                       }}
@@ -539,7 +642,11 @@ const WhatsappFlows = () => {
                       Send Flow
                     </button>
 
-                    <CustomTooltip title="Settings" arrow>
+                    <CustomTooltip
+                      title="Settings"
+                      arrow
+                      tooltipPlacement="top"
+                    >
                       <IconButton
                         ref={(el) => {
                           if (el) dropdownButtonRefs.current[flow.flowId] = el;
@@ -560,22 +667,14 @@ const WhatsappFlows = () => {
                         }}
                         onClose={handleMenuClose}
                       >
-                        {/* {dropdownItems.map((item, idx) => (
-                          <button
-                            key={idx}
-                            onClick={() => handleBtnClick(item, flow)}
-                            className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
-                          >
-                            {iconMap[item]}
-                            {item}
-                          </button>
-                        ))} */}
-                        {/* Edit Button */}
                         <button
                           onClick={() => handleEdit(flow)}
                           className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
                         >
-                          <EditIcon fontSize="small" className="text-gray-600" />
+                          <EditIcon
+                            fontSize="small"
+                            className="text-gray-600"
+                          />
                           Edit
                         </button>
 
@@ -584,7 +683,10 @@ const WhatsappFlows = () => {
                           onClick={() => handleDelete(flow)}
                           className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
                         >
-                          <DeleteIcon fontSize="small" className="text-red-600" />
+                          <DeleteIcon
+                            fontSize="small"
+                            className="text-red-600"
+                          />
                           Delete
                         </button>
 
@@ -593,7 +695,10 @@ const WhatsappFlows = () => {
                           onClick={() => handleExport(flow)}
                           className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
                         >
-                          <FileDownloadIcon fontSize="small" className="text-green-600" />
+                          <FileDownloadIcon
+                            fontSize="small"
+                            className="text-green-600"
+                          />
                           Export
                         </button>
                       </DropdownMenuPortal>
@@ -603,42 +708,15 @@ const WhatsappFlows = () => {
               ))
             )}
           </div>
-          {/* Dropdown Menu */}
-
-          {/* <Menu
-            anchorEl={menuAnchor}
-            open={Boolean(menuAnchor)}
-            onClose={handleMenuClose}
-            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            transformOrigin={{ horizontal: "right", vertical: "top" }}
-          >
-            <MenuItem onClick={handleEdit}>
-              <ListItemIcon>
-                <EditIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Edit</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleDelete}>
-              <ListItemIcon>
-                <DeleteIcon fontSize="small" color="error" />
-              </ListItemIcon>
-              <ListItemText>Delete</ListItemText>
-            </MenuItem>
-            <MenuItem onClick={handleExport}>
-              <ListItemIcon>
-                <FileDownloadIcon fontSize="small" />
-              </ListItemIcon>
-              <ListItemText>Export Screen</ListItemText>
-            </MenuItem>
-          </Menu> */}
 
           {/* Pagination */}
           <div className="flex justify-end items-center mt-4 gap-2">
             {Array.from({ length: totalPages }, (_, i) => (
               <button
                 key={i + 1}
-                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${currentPage === i + 1 ? "bg-blue-500 text-white" : ""
-                  }`}
+                className={`text-sm px-3 py-1 border rounded-sm cursor-pointer   ${
+                  currentPage === i + 1 ? "bg-blue-500 text-white" : ""
+                }`}
                 onClick={() => setCurrentPage(i + 1)}
               >
                 {i + 1}
@@ -691,16 +769,16 @@ const WhatsappFlows = () => {
                   onChange={setSelectCategories}
                 />
                 {/* <AnimatedDropdown
-                label="Whatsapp integration"
-                id="whatsappintegration"
-                name="whatsappintegration"
-                options={[
-                  { value: 'static', label: 'Static' },
-                  { value: 'dynamic', label: 'Dynamic' },
-                ]}
-                placeholder='Select Whatsapp Integration'
-                onChange={(value) => console.log(value)}
-              /> */}
+                  label="Whatsapp integration"
+                  id="whatsappintegration"
+                  name="whatsappintegration"
+                  options={[
+                    { value: "static", label: "Static" },
+                    { value: "dynamic", label: "Dynamic" },
+                  ]}
+                  placeholder="Select Whatsapp Integration"
+                  onChange={(value) => console.log(value)}
+                /> */}
                 <AnimatedDropdown
                   id="manageTemplateWaba"
                   name="manageTemplateWaba"
@@ -739,129 +817,186 @@ const WhatsappFlows = () => {
             <form onSubmit={handleSubmitFlowTemp}>
               {Array.isArray(selectedFlowDetails)
                 ? selectedFlowDetails.map((flow, idx, name) => (
-                  <div
-                    className="flex flex-col gap-4"
-                    key={flow.flowId || idx}
-                  >
-                    <span>
-                      <strong>Flow Name:</strong>
-                      {flow.flowName}
-                    </span>
-                  </div>
-                ))
-                : selectedFlowDetails && (
-                  <div className="flex flex-col gap-4">
-                    <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
-                      <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
-                        <div className="flex items-center gap-3">
-                          <img
-                            // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                            src={celifavicon}
-                            className="w-10 h-10 rounded-full "
-                          />
-                          <div className=" text-md text-gray-50">
-                            {selectedWaba
-                              ? wabaList.find(
-                                (waba) => waba.mobileNo === selectedWaba
-                              )?.name || ""
-                              : ""}
-                          </div>
-                        </div>
-                        <div className="pr-3 cursor-pointer">
-                          <MoreVertIcon sx={{ color: "gray" }} />
-                        </div>
-                      </div>
-                      <div className="p-5">
-                        <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
-                          <div className="mb-2 text-sm break-words text-wrap">
-                            {bodyText}
-                          </div>
-                          <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
-                            <button
-                              className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
-                              type="button"
-                            >
-                              <svg
-                                width="20"
-                                height="20"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                              >
-                                <rect
-                                  x="4"
-                                  y="4"
-                                  width="16"
-                                  height="16"
-                                  rx="2"
-                                  fill="#bdbdbd"
-                                />
-                                <path
-                                  d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
-                                  fill="#757575"
-                                />
-                              </svg>
-                              <div className="break-words text-wrap">
-                                <div className="font-medium text-sm break-words text-wrap">
-                                  {btnText}
-                                </div>
-                              </div>
-                            </button>
-                          </div>
-                        </div>
-                      </div>
+                    <div
+                      className="flex flex-col gap-4"
+                      key={flow.flowId || idx}
+                    >
+                      <span>
+                        <strong>Flow Name:</strong>
+                        {flow.flowName}
+                      </span>
                     </div>
-                    <span className="flex justify-center items-center">
-                      Flow :&nbsp;
-                      <strong>{selectedFlowDetails.flowName}</strong>
-                    </span>
-                    <AnimatedDropdown
-                      id="whatsappflowWabaTemplate"
-                      name="whatsappflowWabaTemplate"
-                      label="Whatsapp Account"
-                      tooltipContent="Select your whatsapp business account"
-                      tooltipPlacement="right"
-                      options={wabaList.map((waba) => ({
-                        value: waba.mobileNo,
-                        label: waba.name,
-                      }))}
-                      value={selectedWaba}
-                      onChange={setSelectedWaba}
-                      placeholder="Select WABA"
-                    />
-                    <InputField
-                      label="Mobile No"
-                      id="mobileno"
-                      name="mobileno"
-                      type="phoneno"
-                      tooltipContent="Enter Mobile of whom to send the flow"
-                      placeholder="Enter MobileNo"
-                      value={mobileNo}
-                      onChange={(e) => setMobileNo(e.target.value)}
-                    />
-                    <InputField
-                      label="Body Text"
-                      id="bodytext"
-                      name="bodytext"
-                      type="text"
-                      tooltipContent="Enter body text"
-                      placeholder="Enter Body Text"
-                      value={bodyText}
-                      onChange={(e) => setBodyText(e.target.value)}
-                    // maxLength={50}
-                    />
-                    <InputField
-                      label="Button Text"
-                      id="buttontext"
-                      name="buttontext"
-                      type="text"
-                      placeholder="Enter Button Text"
-                      tooltipContent="Enter button text"
-                      value={btnText}
-                      maxLength={25}
-                      onChange={(e) => setBtnText(e.target.value)}
-                    />
-                  </div>
-                )}
+                  ))
+                : selectedFlowDetails && (
+                    <div className="flex flex-col gap-4">
+                      <div className="flex flex-col justify-start  items-start bg-gray-800 min-h-55 rounded-xl ">
+                        <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
+                          <div className="flex items-center gap-3">
+                            <img
+                              // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
+                              // src={celifavicon}
+                              src={officebuilding}
+                              className="w-10 h-10 rounded-full border object-fit border-gray-400 bg-gray-600"
+                            />
+                            <div className=" text-md text-gray-50">
+                              {selectedWaba
+                                ? wabaList.find(
+                                    (waba) => waba.mobileNo === selectedWaba
+                                  )?.name || ""
+                                : ""}
+                            </div>
+                          </div>
+                          <div className="pr-3 cursor-pointer">
+                            <MoreVertIcon sx={{ color: "gray" }} />
+                          </div>
+                        </div>
+
+                        {selectedFlowDetails?.status === "DRAFT" && (
+                          <div className="p-5">
+                            <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-80 shadow ">
+                              <pre className="mb-2 text-sm break-words text-nowrap">
+                                !Hello <br />
+                                This is a test message to try your flow. <br />.
+                                Team Whatsapp
+                              </pre>
+                              <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
+                                <button
+                                  className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
+                                  type="button"
+                                >
+                                  <svg
+                                    width="20"
+                                    height="20"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <rect
+                                      x="4"
+                                      y="4"
+                                      width="16"
+                                      height="16"
+                                      rx="2"
+                                      fill="#bdbdbd"
+                                    />
+                                    <path
+                                      d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
+                                      fill="#757575"
+                                    />
+                                  </svg>
+                                  <div className="break-words text-wrap">
+                                    <div className="font-medium text-sm break-words text-wrap">
+                                      [ Start testing your flow ]
+                                    </div>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                            <div className="text-center text-white text-xs mt-4">
+                              <strong>Note:</strong> This flow is currently in
+                              draft mode for testing. You will need to publish
+                              it to make it accessible to users.
+                            </div>
+                          </div>
+                        )}
+
+                        {selectedFlowDetails?.status === "PUBLISHED" && (
+                          <div className="p-5">
+                            <div className="bg-gray-700 rounded-tr-xl rounded-b-xl p-3 text-white w-60 shadow ">
+                              <div className="mb-2 text-sm break-words text-wrap">
+                                {bodyText}
+                              </div>
+                              <div className="flex items-center justify-between border-t border-gray-500 pt-2 mt-2 break-words text-wrap">
+                                <button
+                                  className="flex items-center gap-2 w-full justify-center py-2 rounded-lg text-gray-300 hover:bg-gray-800 transition cursor-pointer break-words text-wrap"
+                                  type="button"
+                                >
+                                  <svg
+                                    width="20"
+                                    height="20"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <rect
+                                      x="4"
+                                      y="4"
+                                      width="16"
+                                      height="16"
+                                      rx="2"
+                                      fill="#bdbdbd"
+                                    />
+                                    <path
+                                      d="M8 8h8v2H8V8zm0 4h8v2H8v-2z"
+                                      fill="#757575"
+                                    />
+                                  </svg>
+                                  <div className="break-words text-wrap">
+                                    <div className="font-medium text-sm break-words text-wrap">
+                                      {btnText}
+                                    </div>
+                                  </div>
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                      <span className="flex justify-center items-center">
+                        Flow :&nbsp;
+                        <strong>{selectedFlowDetails.flowName}</strong>
+                      </span>
+
+                      <AnimatedDropdown
+                        id="whatsappflowWabaTemplate"
+                        name="whatsappflowWabaTemplate"
+                        label="Whatsapp Account"
+                        tooltipContent="Select your whatsapp business account"
+                        tooltipPlacement="right"
+                        options={wabaList.map((waba) => ({
+                          value: waba.mobileNo,
+                          label: waba.name,
+                        }))}
+                        value={selectedWaba}
+                        onChange={setSelectedWaba}
+                        placeholder="Select WABA"
+                      />
+                      <InputField
+                        label="Mobile No"
+                        id="mobileno"
+                        name="mobileno"
+                        type="phoneno"
+                        tooltipContent="Enter Mobile of whom to send the flow"
+                        placeholder="Enter MobileNo"
+                        value={mobileNo}
+                        onChange={(e) => setMobileNo(e.target.value)}
+                      />
+                      {selectedFlowDetails?.status === "PUBLISHED" && (
+                        <>
+                          <InputField
+                            label="Body Text"
+                            id="bodytext"
+                            name="bodytext"
+                            type="text"
+                            tooltipContent="Enter body text"
+                            placeholder="Enter Body Text"
+                            value={bodyText}
+                            onChange={(e) => setBodyText(e.target.value)}
+                            // maxLength={50}
+                          />
+                          <InputField
+                            label="Button Text"
+                            id="buttontext"
+                            name="buttontext"
+                            type="text"
+                            placeholder="Enter Button Text"
+                            tooltipContent="Enter button text"
+                            value={btnText}
+                            maxLength={25}
+                            onChange={(e) => setBtnText(e.target.value)}
+                          />
+                        </>
+                      )}
+                    </div>
+                  )}
               <div className="flex justify-center items-center mt-5">
                 <UniversalButton
                   onClick={handleSubmitFlowTemp}
@@ -882,36 +1017,85 @@ const WhatsappFlows = () => {
             onHide={() => setVisible(false)}
             draggable={false}
           >
-            <div className="p-4 text-center">
-              <p className="text-[1.1rem] font-semibold text-gray-700">
-                Are you sure you want to delete the Flow <br />
-                <span className="text-green-500">
-                  "{currentRow?.flowName}"
-                </span>
-                ?
-              </p>
-            </div>
-
-            <div className="flex justify-center gap-4 mt-2">
-              {!isFetching && (
-                <UniversalButton
-                  label="Cancel"
-                  style={{ backgroundColor: "#090909" }}
-                  onClick={() => setVisible(false)}
+            <div className="flex items-center justify-center">
+              {currentRow?.status === "PUBLISHED" ? (
+                <WarningOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                    color: "#f59e0b",
+                  }}
+                />
+              ) : (
+                <CancelOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                    color: "#ef4444",
+                  }}
                 />
               )}
-              <UniversalButton
-                label={isFetching ? "Deleting..." : "Delete"}
-                style={{ backgroundColor: "#dc2626" }}
-                onClick={handleDeleteFlow}
-                disabled={isFetching}
-              />
             </div>
-          </Dialog>
 
+            <div className="p-4 text-center">
+              {currentRow?.status === "PUBLISHED" ? (
+                <>
+                  <p className="text-[1.1rem] font-semibold text-gray-800">
+                    The Flow&nbsp;
+                    <span className="text-green-800">
+                      "{currentRow?.flowName}"&nbsp;
+                    </span>
+                    is currently&nbsp; <br />
+                    <span className="text-yellow-600">PUBLISHED</span>.
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    This is a live WhatsApp flow deployed via Meta, and
+                    therefore, <strong>cannot be edited or deleted</strong>.
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    If changes are needed, create a new flow and publish it
+                    separately.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-[1.1rem] font-semibold text-gray-700">
+                    Are you sure you want to delete the Flow <br />
+                    <span className="text-green-800 text-xl">
+                      "{currentRow?.flowName}"
+                    </span>
+                    ?
+                  </p>
+                  <p className="mt-2 text-sm text-gray-600">
+                    This flow is currently in <strong>DRAFT</strong> mode. You
+                    can still make changes, or choose to delete it.
+                  </p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    Deletion is <strong>permanent</strong> and cannot be undone.
+                  </p>
+                </>
+              )}
+            </div>
+
+            {currentRow?.status === "DRAFT" && (
+              <div className="flex justify-center gap-4 mt-2">
+                {!isFetching && (
+                  <UniversalButton
+                    label="Cancel"
+                    style={{ backgroundColor: "#090909" }}
+                    onClick={() => setVisible(false)}
+                  />
+                )}
+                <UniversalButton
+                  label={isFetching ? "Deleting..." : "Delete"}
+                  style={{ backgroundColor: "#dc2626" }}
+                  onClick={handleDeleteFlow}
+                  disabled={isFetching}
+                />
+              </div>
+            )}
+          </Dialog>
           {/* deleteFlow dialogbox end */}
         </div>
-      </div >
+      </div>
     </>
   );
 };

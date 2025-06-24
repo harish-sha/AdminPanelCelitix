@@ -86,31 +86,40 @@ const Canvas = ({
       "chipSelector",
     ],
 
+    // drop: (item, monitor) => {
+    //   if (monitor.didDrop()) {
+    //     return;
+    //   }
+
+    //   const newItem = {
+    //     id: Date.now(),
+    //     type: item.type,
+    //     value: "",
+    //   };
+
+    //   const allTabs = [...tabs];
+    //   const activePayload = allTabs[activeIndex].payload || [];
+
+    //   activePayload.push(newItem);
+
+    //   setTabs(allTabs);
+    // },
     drop: (item, monitor) => {
-      if (monitor.didDrop()) {
-        return;
-      }
-      // console.log("itemfffffffffff", item);
-      // console.log("monitor", monitor);
+      if (monitor.didDrop()) return; // don’t handle nested drops
 
-      const newItem = {
-        id: Date.now(),
-        type: item.type,
-        value: "",
-      };
+      const newItem = { id: Date.now(), type: item.type, value: "" };
 
-      // console.log("newItem", tabs);
-
-      const allTabs = [...tabs];
-      // console.log("allTabs", allTabs);
-      // console.log("activePayload", allTabs);
-      const activePayload = allTabs[activeIndex].payload || [];
-
-      activePayload.push(newItem);
-      // console.log("activePayload", allTabs);
-
-      setTabs(allTabs);
+      setTabs((prev) =>
+        prev.map((tab, idx) => {
+          if (idx !== activeIndex) return tab;
+          return {
+            ...tab,
+            payload: [newItem, ...(tab.payload || [])],
+          };
+        })
+      );
     },
+    collect: (m) => ({ isOver: m.isOver({ shallow: true }) }),
   }));
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
@@ -282,7 +291,8 @@ const Canvas = ({
                 <span className="font-semibold">Title:</span> {opt.title}
               </p>
               <p className="mb-1">
-                <span className="font-semibold">Description:</span> {opt.description}
+                <span className="font-semibold">Description:</span>{" "}
+                {opt.description}
               </p>
               <p className="mb-1">
                 <span className="font-semibold">Metadata:</span> {opt.metadata}
@@ -585,7 +595,7 @@ const Canvas = ({
             </p> 
           )} */}
         </div>
-      )
+      );
     }
 
     if (item.type === "date") {
@@ -734,21 +744,11 @@ const Canvas = ({
       );
     }
 
-    // Fallback: return an empty string
     return "";
   };
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    // console.log("tabs", tabs);
-    // const newTabs = [...tabs];
-    // newTabs[activeIndex] = {
-    //   ...newTabs[activeIndex],
-    //   payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
-    // };
-
-    // setTabs(newTabs);
-
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -761,49 +761,58 @@ const Canvas = ({
     toast.success("Item deleted successfully");
   };
 
-  //   const handleDelete = (idToDelete) => {
-  //     console.log("idToDelete", idToDelete)
-  //   setTabs((prevTabs) => {
-  //     const newTabs = prevTabs.map((tab, i) => {
-  //       if (i === activeIndex) {
-  //         return {
-  //           ...tab,
-  //           payload: tab.payload.filter((item) => item.id !== idToDelete),
-  //         };
-  //       }
-  //       return tab;
-  //     });
+  const moveItem = (fromIndex, toIndex) => {
+    setTabs((prev) =>
+      prev.map((tab, tabIdx) => {
+        if (tabIdx !== activeIndex) return tab;
+        const newPayload = Array.from(tab.payload || []);
+        const [moved] = newPayload.splice(fromIndex, 1);
+        newPayload.splice(toIndex, 0, moved);
+        return { ...tab, payload: newPayload };
+      })
+    );
+  };
 
-  //     return newTabs;
-  //   });
-
-  //   toast.success("Item deleted successfully");
-  // };
-
-  // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    // console.log("itemddddd", item);
-    // console.log("indexdddd", index);
-    if (!item?.type) {
-      console.error("DraggableItem error: item.type is not defined");
-      return null;
-    }
+    // if (!item?.type) {
+    //   console.error("DraggableItem error: item.type is not defined");
+    //   return null;
+    // }
 
-    const itemType = item?.type;
-    // console.log("itemType", itemType);
-    // const [, drag] = useDrag({
-    //   type: item.type,
-    //   item: { index },
+    // const itemType = item?.type;
+
+    // const [{ isDragging }, drag] = useDrag({
+    //   type: item?.type,
+    //   // item: { id: item.id },
+    //   item: { type: item.type },
+    //   collect: (monitor) => ({
+    //     isDragging: monitor.isDragging(),
+    //   }),
     // });
 
-    const [{ isDragging }, drag] = useDrag({
-      type: item?.type,
-      // item: { id: item.id },
-      item: { type: item.type },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
+    const ref = useRef(null);
+
+    // 2a) drop — handle hover to reorder
+    const [, drop] = useDrop({
+      accept: "canvasItem",
+      hover(dragged) {
+        if (dragged.index === index) return;
+        // move in state
+        moveItem(dragged.index, index);
+        // update the dragged item's index so we don't continually reorder
+        dragged.index = index;
+      },
     });
+
+    // 2b) drag — expose your index & type
+    const [{ isDragging }, drag] = useDrag({
+      type: "canvasItem",
+      item: { type: item.type, index },
+      collect: (m) => ({ isDragging: m.isDragging() }),
+    });
+
+    // combine refs
+    drag(drop(ref));
 
     return (
       // <motion.div
@@ -813,7 +822,8 @@ const Canvas = ({
       //   transition={{ type: "spring", stiffness: 200, damping: 25 }}
       // >
       <Paper
-        ref={drag}
+        // ref={drag}
+        ref={ref}
         style={{
           opacity: isDragging ? 0.5 : 1,
           cursor: "move",
@@ -822,7 +832,7 @@ const Canvas = ({
           backgroundColor: getBackgroundColor(item.type),
         }}
         // className="fields"
-        className="w-110 p-2 mb-2 rounded-lg shadow-md mt-10"
+        className="w-110 p-1.5 mb-2 rounded-lg shadow-md mt-10"
       >
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-700 tracking-wider">
@@ -980,7 +990,7 @@ const Canvas = ({
       case "media":
         return "Media";
       case "imageCarousel":
-        return "ImageCarousel"
+        return "ImageCarousel";
       case "ifelse":
         return "IfElse";
       case "switch":
@@ -1014,7 +1024,7 @@ const Canvas = ({
     // </Box>
     <div
       ref={drop}
-      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-white pt-10"
+      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-[url(/WB.png)] pt-10"
     >
       {/* Tabs for multiple screens */}
       <TabView
