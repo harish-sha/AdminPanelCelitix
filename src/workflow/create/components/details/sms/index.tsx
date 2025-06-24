@@ -3,6 +3,7 @@ import UniversalButton from "@/components/common/UniversalButton";
 import { isEnglish } from "@/sms/smsSend/helper/isEnglish";
 import React, { useEffect, useState } from "react";
 import { Grid1 } from "./grid1";
+import { Preview } from "./preview";
 
 export const SMS = ({
   id,
@@ -68,13 +69,13 @@ export const SMS = ({
   }, [inputDetails?.message]);
   return (
     <>
-      <div className="flex flex-row md:flex-col gap-2">
+      <div className="flex flex-col md:flex-row gap-2">
         <Grid1
           setInputDetails={setInputDetails}
           inputDetails={inputDetails}
           allTemplates={allTemplates}
         />
-        {/* <Preview inputDetails={inputDetails} /> */}
+        <Preview inputDetails={inputDetails} />
       </div>
 
       <UniversalButton

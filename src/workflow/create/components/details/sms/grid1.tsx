@@ -22,7 +22,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
     return Math.ceil(length / (isUnicode ? 67 : 153));
   }
   return (
-    <div className="border p-2 space-y-2 rounded-lg shadow-md w-full">
+    <div className="border p-2 space-y-2 rounded-lg shadow-md w-2/3">
       <div className="grid md:grid-cols-3 grid-cols-1 gap-2">
         <div className="flex items-center gap-2 border border-gray-300 rounded-md p-2">
           <RadioButton
