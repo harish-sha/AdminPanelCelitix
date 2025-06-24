@@ -80,7 +80,7 @@ const WhatsappLaunchCampaign = () => {
 
   const [cardIndex, setCardIndex] = useState(0);
 
-  const [marketingType, setMarketingType] = useState("1");
+  const [marketingType, setMarketingType] = useState(1);
 
   const fileRef = useRef(null);
 
@@ -404,6 +404,8 @@ const WhatsappLaunchCampaign = () => {
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
+      // isMarketingMessage: marketingType || "",
+      ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -424,7 +426,7 @@ const WhatsappLaunchCampaign = () => {
       vendor: "jio",
     };
 
-    console.log(requestData)
+    // console.log(requestData)
 
     try {
       const response = await sendWhatsappCampaign(requestData);
@@ -699,11 +701,9 @@ const WhatsappLaunchCampaign = () => {
                             <RadioButton
                               inputId="radioOption1"
                               name="radioGroup"
-                              value="1"
-                              onChange={(e) => {
-                                setMarketingType(e.target.value);
-                              }}
-                              checked={marketingType === "1"}
+                              value="2"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 2}
                             />
                             <label
                               htmlFor="radioOption1"
@@ -720,11 +720,9 @@ const WhatsappLaunchCampaign = () => {
                             <RadioButton
                               inputId="radioOption2"
                               name="radioGroup"
-                              value="2"
-                              onChange={(e) => {
-                                setMarketingType(e.target.value);
-                              }}
-                              checked={marketingType === "2"}
+                              value="1"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 1}
                             />
                             <label
                               htmlFor="radioOption2"

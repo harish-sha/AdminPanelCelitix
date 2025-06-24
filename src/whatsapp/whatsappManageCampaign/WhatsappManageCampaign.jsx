@@ -152,7 +152,8 @@ const WhatsappManageCampaign = () => {
     customColumns: "",
     campaignType: 0,
     status: "" || "",
-    // delStatus: {},
+    deliveryStatus: "",
+    source:"",
     type: "campaign",
   });
 

@@ -121,8 +121,8 @@ const ResellerLogin = () => {
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
       const ipResponse = await getIpAddress();
-      // const domain = window.location.hostname;
-      const domain = "reseller.alertsnow.in";
+      const domain = window.location.hostname;
+      // const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
@@ -141,7 +141,7 @@ const ResellerLogin = () => {
         // domain: "reseller.alertsnow.in",
         // domain: "",
         domain: domain
-      };
+      };   
 
       const res = await login(payload);
 

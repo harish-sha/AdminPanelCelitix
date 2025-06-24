@@ -21,14 +21,18 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
   const [customdialognumber, setCustomdialognumber] = useState("");
   const [dtmfResponse, setDtmfResponse] = useState(null);
   const [campaignNames, setCampaignNames] = useState([]);
+
+  console.log("campaignNames", campaignNames);
   const [dataToExport, setDataToExport] = useState({
     campaignName: "",
-    fromDate: "",
-    toDate: "",
-    srno: 0,
+    fromDate: new Date(),
+    toDate: new Date(),
+    srno: "" || "",
     isCustomField: 0,
     customColumns: "",
     type: "campaign",
+    deliveryStatus: "",
+    source: "",
   });
 
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -65,16 +69,16 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
     source: false,
   });
 
-  const [deliverycheckbox, setDeliverycheckbox] = useState({
-    answered: false,
-    unanswered: false,
-    dialed: false,
-  });
+  // const [deliverycheckbox, setDeliverycheckbox] = useState({
+  //   answered: false,
+  //   unanswered: false,
+  //   dialed: false,
+  // });
 
   useEffect(() => {
     const fetchCampaignNames = async () => {
       try {
-        const res = await getAllCampaignNames(selectedUser || null);
+        const res = await getAllCampaignNames(selectedUser || "");
         setCampaignNames(res);
       } catch (error) {
         console.error("Failed to fetch campaign names", error);
@@ -103,12 +107,12 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
   };
 
   // Handle delivery checkbox
-  const handleDeliveryCheckboxChange = (e, name) => {
-    setDeliverycheckbox((prevState) => ({
-      ...prevState,
-      [name]: e.checked,
-    }));
-  };
+  // const handleDeliveryCheckboxChange = (e, name) => {
+  //   setDeliverycheckbox((prevState) => ({
+  //     ...prevState,
+  //     [name]: e.checked,
+  //   }));
+  // };
 
   const handleCustomDialogNumber = (e) => {
     setCustomdialognumber(e.target.value);
@@ -140,6 +144,18 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
     }));
   }, [campaigncheckboxStates]);
 
+  const initialExportState = {
+    campaignName: "",
+    fromDate: selectedOption === "option2" ? new Date() : "",
+    toDate: selectedOption === "option2" ? new Date() : "",
+    srno: "",
+    isCustomField: 0,
+    customColumns: "",
+    type: "campaign",
+    source: "",
+    deliveryStatus: "",
+  };
+
   async function handleCustomDialogSubmithBtn() {
     if (selectedOption === "option1" && !dataToExport?.srno) {
       toast.error("Please select campaign");
@@ -151,31 +167,76 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
     //   return;
     // }
 
+    // const name = campaignNames.find(
+    //   (c) => c.srno === dataToExport?.srno
+    // )?.campaignName;
+
+    // const payload = {
+    //   ...dataToExport,
+    //   fromDate: dataToExport.fromDate
+    //     ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
+    //     : "",
+    //   toDate: dataToExport.toDate
+    //     ? new Date(dataToExport.toDate).toISOString().split("T")[0]
+    //     : "",
+    //   type: selectedOption === "option1" ? 1 : 2,
+    //   ...(selectedOption === "option1"
+    //     ? { srno: dataToExport.srno, campaignName: name }
+    //     : {}),
+    //   selectedUser,
+    // };
+
+    const type = selectedOption === "option1" ? 1 : 2;
+
     const name = campaignNames.find(
       (c) => c.srno === dataToExport?.srno
     )?.campaignName;
 
-    const payload = {
+    let payload = {
       ...dataToExport,
-      fromDate: dataToExport.fromDate
-        ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
-        : "",
-      toDate: dataToExport.toDate
-        ? new Date(dataToExport.toDate).toISOString().split("T")[0]
-        : "",
-      type: selectedOption === "option1" ? 1 : 2,
-      ...(selectedOption === "option1"
-        ? { srno: dataToExport.srno, campaignName: name }
-        : {}),
+      type,
       selectedUser,
     };
 
+    // If option2, include fromDate and toDate
+    if (type === 2) {
+      payload = {
+        ...payload,
+        fromDate: dataToExport.fromDate
+          ? new Date(dataToExport.fromDate).toISOString().split("T")[0]
+          : "",
+        toDate: dataToExport.toDate
+          ? new Date(dataToExport.toDate).toISOString().split("T")[0]
+          : "",
+      };
+
+      // Optionally remove campaign fields if not needed
+      delete payload.srno;
+      delete payload.campaignName;
+    }
+
+    // If option1, include campaign info and remove date fields
+    if (type === 1) {
+      payload = {
+        ...payload,
+        srno: dataToExport.srno,
+        campaignName: name,
+      };
+
+      delete payload.fromDate;
+      delete payload.toDate;
+    }
+
     try {
       const res = await exportCampaignData(payload);
+      console.log("res", res);
       if (res.status && res.msg) {
         if (res.msg.toLowerCase().includes("wrong")) {
           toast.error(res.msg || "Something went wrong!");
           setVisibledialog(false);
+          // Reset
+          setDataToExport(initialExportState);
+
           return;
         }
 
@@ -185,18 +246,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
         return;
       }
 
-      // Reset
-      setDataToExport({
-        fromDate: "",
-        toDate: "",
-        campaignName: "",
-        srno: 0,
-        isCustomField: 0,
-        customColumns: "",
-        type: "campaign",
-      });
-      setCampaignCheckboxStates("")
-      setcustomCheckboxStates("")
+      setCampaignCheckboxStates("");
+      setcustomCheckboxStates("");
       setVisibledialog(false);
 
       triggerDownloadNotification();
@@ -266,7 +317,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
                 onChange={(e) =>
                   setDataToExport((prev) => ({
                     ...prev,
-                    srno: e,
+                    srno: e || "",
                   }))
                 }
                 value={dataToExport.srno || ""}
@@ -578,7 +629,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, fromDate: e })
                   }
-                  defaultValue={new Date()}
+                  // defaultValue={new Date()}
                 />
                 <UniversalDatePicker
                   label="To Date:"
@@ -586,7 +637,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, toDate: e })
                   }
-                  defaultValue={new Date()}
+                  // defaultValue={new Date()}
                 />
               </div>
 
@@ -620,7 +671,40 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
                 </div>
               </div>
 
-              <div className="flex flex-col mt-5">
+              <div className="flex justify-between gap-5 my-4">
+                <div className="flex-1">
+                  <AnimatedDropdown
+                    label="Select Source"
+                    options={[
+                      { value: "api", label: "Api" },
+                      { value: "gui", label: "Gui" },
+                    ]}
+                    value={dataToExport.source}
+                    onChange={(e) =>
+                      setDataToExport({ ...dataToExport, source: e })
+                    }
+                    placeholder="Select Source"
+                  />
+                </div>
+
+                <div className="flex-1">
+                  <AnimatedDropdown
+                    label="Select Delivery Status"
+                    options={[
+                      { value: "Answered", label: "Answered" },
+                      { value: "Unanswered", label: "Unanswered" },
+                      { value: "Dialed", label: "Dialed" },
+                    ]}
+                    value={dataToExport.deliveryStatus}
+                    onChange={(e) =>
+                      setDataToExport({ ...dataToExport, deliveryStatus: e })
+                    }
+                    placeholder="Select Delivery Status"
+                  />
+                </div>
+              </div>
+
+              {/* <div className="flex flex-col mt-5">
                 <UniversalLabel text="Delivery Status" />
                 <div className="flex gap-x-5 lg:gap-x-20">
                   <div className="flex items-center">
@@ -677,7 +761,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
                     </label>
                   </div>
                 </div>
-              </div>
+              </div> */}
 
               <div className="flex my-4 gap-4">
                 <InputField
