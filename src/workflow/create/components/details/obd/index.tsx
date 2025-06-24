@@ -2,8 +2,11 @@ import InputField from "@/components/layout/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import { RadioButton } from "primereact/radiobutton";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { TTS } from "./tts";
+import { Broadcast } from "./broadcast";
+import { fetchVoiceClips } from "@/apis/Obd/obd";
+import toast from "react-hot-toast";
 
 export const OBD = ({
   id,
@@ -21,7 +24,28 @@ export const OBD = ({
     name: "",
     templateType: "",
     tts: "",
+    simpleBroadcast: "",
+    multiBroadcast: "",
   });
+  const [voiceList, setVoiceList] = useState([]);
+
+  useEffect(() => {
+    const getObdVoiceClipDetails = async () => {
+      try {
+        const response = await fetchVoiceClips();
+        if (response) {
+          setVoiceList(response);
+        } else {
+          toast.error("Failed to load Voice Details!");
+        }
+      } catch (error) {
+        toast.error("Error in getting voice details.");
+      }
+    };
+
+    getObdVoiceClipDetails();
+  }, []);
+  
   return (
     <>
       <div className="container-fluid">
@@ -112,14 +136,11 @@ export const OBD = ({
                       setBasicDetails((prev) => ({
                         ...prev,
                         templateType: value,
+                        name: "",
+                        tts: "",
+                        simpleBroadcast: "",
+                        multiBroadcast: "",
                       }));
-                      // setTTSArea("");
-                      // setSelectedSBVoiceFile(null);
-
-                      // setSelectedMBFiletwo(null);
-                      // setVoiceDBClip(null);
-                      // setRetry(null);
-                      setInterval(null);
                     }}
                     placeholder="Select Template"
                     tooltipContent="Use a pre-defined template for your voice broadcast.
@@ -133,6 +154,14 @@ export const OBD = ({
                   <TTS
                     setBasicDetails={setBasicDetails}
                     basicDetails={basicDetails}
+                  />
+                )}
+                {(basicDetails?.templateType === "simplebroadcast" ||
+                  basicDetails?.templateType === "multibroadcast") && (
+                  <Broadcast
+                    setBasicDetails={setBasicDetails}
+                    basicDetails={basicDetails}
+                    voiceListData={voiceList}
                   />
                 )}
               </div>
