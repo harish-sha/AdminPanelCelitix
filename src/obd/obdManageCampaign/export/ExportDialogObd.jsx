@@ -584,7 +584,6 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, fromDate: e })
                   }
-                  defaultValue={new Date()}
                 />
                 <UniversalDatePicker
                   label="To Date:"

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import WavesurferPlayer from "@wavesurfer/react";
+// import WavesurferPlayer from "@wavesurfer/react";
 import { RadioButton } from "primereact/radiobutton";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoStop } from "react-icons/io5";
@@ -745,7 +745,7 @@ const ObdCreateCampaign = () => {
                       obdType === "multibroadcast") && (
                         <div>
                           <div className="mt-4">
-                            <WavesurferPlayer
+                            {/* <WavesurferPlayer
                               height={50}
                               waveColor="pink"
                               progressColor="violet"
@@ -769,12 +769,13 @@ const ObdCreateCampaign = () => {
                               >
                                 <IoStop />
                               </button>
-                            </div>
+                            </div> */}
+                            <audio src={voiceSBURLPath} controls ></audio>
                           </div>
 
                           {obdType === "multibroadcast" && (
                             <div className="mt-4">
-                              <WavesurferPlayer
+                              {/* <WavesurferPlayer
                                 height={50}
                                 waveColor="pink"
                                 progressColor="violet"
@@ -798,7 +799,8 @@ const ObdCreateCampaign = () => {
                                 >
                                   <IoStop />
                                 </button>
-                              </div>
+                              </div> */}
+                              <audio src={voiceMBURLPath} controls ></audio>
                             </div>
                           )}
                         </div>
