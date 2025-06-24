@@ -52,7 +52,19 @@ export const OBD = ({
   }, []);
 
   function handleSave() {
-    
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        campaignType: basicDetails.type,
+        plan: "2",
+        retryCount: basicDetails.retry,
+        obdType: "SB",
+        obdClip: basicDetails.simpleBroadcast,
+        obdText: basicDetails.tts,
+      },
+    }));
+    setDetailsDialogVisible(false);
   }
 
   return (
