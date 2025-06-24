@@ -634,7 +634,7 @@ export const ExportDialog = ({
         customColumns: "",
         campaignType: "",
         status: "",
-        delStatus: {},
+        deliveryStatus: "",
         type: "campaign",
       });
       setVisibledialog(false);
@@ -650,12 +650,12 @@ export const ExportDialog = ({
       [name]: e.target.checked,
     };
     if (selectedField[name] === false) {
-      delete dataToExport.delStatus[name];
+      delete dataToExport.deliveryStatus[name];
       delete selectedField[name];
     }
     setDataToExport((prev) => ({
       ...prev,
-      delStatus: { ...prev.delStatus, ...selectedField },
+      deliveryStatus: { ...prev.deliveryStatus, ...selectedField },
     }));
   }
 
@@ -706,7 +706,7 @@ export const ExportDialog = ({
                   customColumns: "",
                   campaignType: "",
                   status: "",
-                  delStatus: {},
+                  deliveryStatus: {},
                 }));
               }}
               checked={dataToExport.type === "campaign"}
@@ -738,7 +738,7 @@ export const ExportDialog = ({
                   customColumns: "",
                   campaignType: "",
                   status: "",
-                  delStatus: {},
+                  deliveryStatus: {},
                 }));
                 // setDataToExport({
                 //   campaignName: "",
@@ -912,24 +912,25 @@ export const ExportDialog = ({
                 />
               </div>
 
-              {/* <div className="flex-1">
+              <div className="flex-1">
                 <AnimatedDropdown
-                  label="Select Request"
+                  label="Select Delivery Status"
                   options={[
-                    { value: "Sent", label: "Sent" },
-                    { value: "Failed", label: "Failed" },
-                    { value: "Blocked", label: "Blocked" },
+                    { value: "DELIVERED", label: "Delivered" },
+                    { value: "FAILED", label: "Failed" },
+                    { value: "UNDELIVERED", label: "Undelivered" },
+                    { value: "BLOCKED", label: "Blocked" },
                   ]}
-                  value={dataToExport.status}
+                  value={dataToExport.deliveryStatus}
                   onChange={(e) =>
-                    setDataToExport({ ...dataToExport, status: e })
+                    setDataToExport({ ...dataToExport, deliveryStatus: e })
                   }
-                  placeholder="Select Status"
+                  placeholder="Select Delivery Status"
                 />
-              </div> */}
+              </div>
             </div>
 
-            <div className="flex flex-col mt-5">
+            {/* <div className="flex flex-col mt-5">
               <UniversalLabel text="Delivery Status" />
               <div className="flex gap-x-5 lg:gap-x-20">
                 <div className="flex items-center">
@@ -1002,7 +1003,7 @@ export const ExportDialog = ({
                   </label>
                 </div>
               </div>
-            </div>
+            </div> */}
 
             <div className="flex my-4 gap-4">
               {/* <InputField

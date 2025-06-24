@@ -160,7 +160,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   // console.log("itemsssssss", items)
 
   return (
-    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-3 border-black hide-scrollbar overflow-auto">
+    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-2 border-indigo-600 hide-scrollbar overflow-auto">
       <Typography variant="h6" sx={{ textAlign: "center" }}>
         Preview
       </Typography>
@@ -209,7 +209,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
+                // sx={{ whiteSpace: "pre-line" }}
                 >
                   {item.text || "Text Caption Placeholder"}
                 </Typography>
@@ -221,7 +221,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <div key={index} className="mb-4">
                   <Typography
                     variant="caption"
-                    // sx={{ whiteSpace: "pre-line" }}
+                  // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.label || "Label"}
                   </Typography>
@@ -281,7 +281,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <div key={index} className="">
                   {item?.checkboxGroups &&
-                  Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId} className="p-1">
@@ -359,7 +359,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                 <Checkbox
                                   checked={
                                     item.checked?.[
-                                      `${groupId}_${optionIndex}`
+                                    `${groupId}_${optionIndex}`
                                     ] || false
                                   }
                                   onChange={(e) =>
@@ -392,7 +392,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <div key={index} className="ml-3">
                   {item?.radioButton &&
-                  Object.keys(item.radioButton).length > 0 ? (
+                    Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId} className="">
@@ -583,11 +583,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
-                            isSelected
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
                               ? "bg-blue-600 text-white border-blue-600"
                               : "bg-white text-gray-800 border-gray-300"
-                          }`}
+                            }`}
                         >
                           {option.title}
                         </button>
@@ -679,9 +678,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         <img
                           src={item.src}
                           alt={item["alt-text"] || "Preview image"}
-                          className={`w-full h-auto rounded-md object-${
-                            item["scale-type"] || "contain"
-                          } mb-3`}
+                          className={`w-full h-auto rounded-md object-${item["scale-type"] || "contain"
+                            } mb-3`}
                           style={{ aspectRatio: item["aspect-ratio"] || "1" }}
                         />
                         {/* Alt Text */}
@@ -826,9 +824,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         key={idx}
                         src={img?.src}
                         alt={img?.["alt-text"] || `Image ${idx + 1}`}
-                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-700 ${
-                          idx === carouselIndex ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-700 ${idx === carouselIndex ? "opacity-100" : "opacity-0"
+                          }`}
                       />
                     ))}
 
@@ -871,9 +868,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     {images.map((_, i) => (
                       <div
                         key={i}
-                        className={`w-2 h-2 rounded-full ${
-                          i === carouselIndex ? "bg-blue-600" : "bg-gray-300"
-                        }`}
+                        className={`w-2 h-2 rounded-full ${i === carouselIndex ? "bg-blue-600" : "bg-gray-300"
+                          }`}
                       ></div>
                     ))}
                   </div>
@@ -926,8 +922,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"
@@ -975,8 +971,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"

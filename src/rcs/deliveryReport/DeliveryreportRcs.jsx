@@ -96,7 +96,7 @@ const DeliveryreportRcs = () => {
     campaignType: "",
     status: "",
     source:"",
-    delStatus: {},
+    deliveryStatus: "",
     type: "campaign",
   });
 

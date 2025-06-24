@@ -171,7 +171,7 @@ const ManageAgent = () => {
     const isDuplicate = departmentList.some(
       (dept) =>
         dept.departmentName.toLowerCase() ===
-          editedDepartmentName.toLowerCase() &&
+        editedDepartmentName.toLowerCase() &&
         dept.departmentId !== selectedDepartmentData?.departmentId
     );
 
@@ -307,8 +307,9 @@ const ManageAgent = () => {
     };
     const response = await addAgent(agentData);
 
-    if (response?.status === 400) {
-      return toast.error(response?.response?.data?.message);
+    if (response?.statusCode === 400) {
+      // return toast.error(response?.response?.data?.message);
+      return toast.error(response?.message);
     }
 
     if (response?.statusCode === 201) {
@@ -433,8 +434,8 @@ const ManageAgent = () => {
   const filteredDepartmentList =
     selectedadddepartment && selectedadddepartment !== "no-selection"
       ? departmentList.filter(
-          (dept) => dept.departmentId === selectedadddepartment
-        )
+        (dept) => dept.departmentId === selectedadddepartment
+      )
       : departmentList;
 
   const rows = filteredDepartmentList.map((item, index) => ({
@@ -764,9 +765,9 @@ const ManageAgent = () => {
                   options={
                     Array.isArray(departmentList)
                       ? departmentList.map((department) => ({
-                          value: department.departmentId,
-                          label: department.departmentName,
-                        }))
+                        value: department.departmentId,
+                        label: department.departmentName,
+                      }))
                       : []
                   }
                   placeholder="Select Department"

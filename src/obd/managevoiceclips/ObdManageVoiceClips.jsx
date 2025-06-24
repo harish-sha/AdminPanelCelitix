@@ -173,11 +173,11 @@ const ObdManageVoiceClips = () => {
   }
 
   const cols = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "srNo", headerName: "AudioId", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 60 },
+    // { field: "srNo", headerName: "AudioId", flex: 0, minWidth: 80 },
     {
       field: "fileName",
-      headerName: "File/Template Name",
+      headerName: "File Name",
       flex: 1,
       minWidth: 120,
     },
@@ -208,15 +208,15 @@ const ObdManageVoiceClips = () => {
         return params.row.type === 1 ? "Promotional" : "Transactional";
       },
     },
-    {
-      field: "adminStatus",
-      headerName: "Admin Status",
-      flex: 1,
-      minWidth: 120,
-    },
+    // {
+    //   field: "adminStatus",
+    //   headerName: "Admin Status",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
     {
       field: "status",
-      headerName: "User Status",
+      headerName: "Status",
       flex: 1,
       minWidth: 120,
       renderCell: (params) => (
@@ -240,8 +240,8 @@ const ObdManageVoiceClips = () => {
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
-      minWidth: 150,
+      flex: 0,
+      width: 140,
       renderCell: (params) => (
         <>
           <CustomTooltip title="Play" placement="top" arrow>

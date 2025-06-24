@@ -116,7 +116,7 @@ export const GenerateAiContent = ({
                 <button
                     onClick={() => setIsOpen(true)}
                     className={`absolute w-8 h-8 rounded-full flex items-center justify-center z-0 cursor-pointer`}
-                    style={{ right: `${right}rem`, bottom: `${bottom}rem` }}
+                    style={{ right: `${right}px`, bottom: `${bottom}px` }}
                 >
                     <Lottie
                         animationData={metaAiAnimation}

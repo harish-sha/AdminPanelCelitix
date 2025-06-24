@@ -92,7 +92,6 @@ const CustomPagination = ({
 };
 
 const ManageScheduleCampaignSmsTable = ({ id, name, data = [], onCancel }) => {
-  console.log("data", data)
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,

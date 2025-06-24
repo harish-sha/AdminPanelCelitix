@@ -65,7 +65,7 @@ export const Variable = ({ setInputDetails, inputDetails, headers }) => {
         />
       </div>
 
-      <div className="absolute top-6 -right-0 text-gray-400 cursor-pointer">
+      <div className="absolute top-7 -right-0 text-gray-400 cursor-pointer">
         <InputVariable
           onSelect={(e) => {
             handleAddVariable(e);
