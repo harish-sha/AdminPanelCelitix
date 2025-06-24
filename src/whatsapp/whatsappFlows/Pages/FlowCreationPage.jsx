@@ -148,8 +148,7 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -170,8 +169,7 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -352,9 +350,9 @@ const FlowCreationPage = () => {
     });
   };
 
-  useEffect(()=>{
-    console.log("tabbs",tabs)
-  },[tabs])
+  useEffect(() => {
+    console.log("tabbs", tabs)
+  }, [tabs])
 
   async function handleFlowBuild() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);

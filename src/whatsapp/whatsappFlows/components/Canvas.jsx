@@ -845,7 +845,7 @@ const Canvas = ({
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
     const handleEdit = (index, item) => {
-      setSelectedItem({ ...item }); // ✅ force a new reference
+      setSelectedItem({ ...item , index ,  caseKey: item.caseKey }); // ✅ force a new reference
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 

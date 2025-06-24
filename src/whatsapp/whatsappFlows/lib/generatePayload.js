@@ -296,6 +296,7 @@ export const generatePayload = (data) => {
     embaddedLink: 0,
     imageCarousel: 0,
     richText: 0,
+    switch: 0,
   };
 
   const numberToWord = (num) => {
@@ -347,16 +348,6 @@ export const generatePayload = (data) => {
       const name = `${type}_${countWord}`;
       let component = { type };
 
-      // if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
-      //   component.text = pay[type] || "";
-      //   component.type = {
-      //     heading: "TextHeading",
-      //     subheading: "TextSubheading",
-      //     textbody: "TextBody",
-      //     textcaption: "TextCaption",
-      //   }[type];
-      // }
-
       if (type === "heading") {
         component = {
           type: "TextHeading",
@@ -385,30 +376,6 @@ export const generatePayload = (data) => {
         };
       }
 
-      // if (["textInput", "textArea", "email", "phone"].includes(type)) {
-      //   const key = Object.keys(pay.texts || {})[0];
-      //   const field = pay.texts?.[key] || {};
-
-      //   component = {
-      //     name,
-      //     type:
-      //       type === "textInput"
-      //         ? "TextInput"
-      //         : type === "textArea"
-      //         ? "TextArea"
-      //         : type === "email"
-      //         ? "EmailInput"
-      //         : "PhoneInput",
-
-      //     label: field.label || "Label",
-      //     required: field.required ?? true,
-      //     // "error-message": field.error_message || "",
-      //     "helper-text": field.helper_text || "",
-      //     // "max-chars": field.max_chars || "",
-      //     // "min-chars": field.min_chars || "",
-      //   };
-      // }
-
       if (type === "textInput") {
         component = {
           name,
@@ -434,7 +401,6 @@ export const generatePayload = (data) => {
         };
       }
 
-      
       if (type === "richText") {
         let lines = [];
 
@@ -443,7 +409,7 @@ export const generatePayload = (data) => {
         // If `pay.text` is an array and contains content, use it directly
         if (Array.isArray(pay.text) && pay.text.length > 0) {
           lines = pay.text;
-          console.log("lines",lines)
+          console.log("lines", lines);
         } else if (pay.content) {
           // If pay.content exists, parse it into lines
           try {
@@ -579,6 +545,14 @@ export const generatePayload = (data) => {
           description: pay.description,
           "min-uploaded-photos": parseInt(pay["min-uploaded-photos"] ?? 0, 10),
           "max-uploaded-photos": parseInt(pay["max-uploaded-photos"] ?? 0, 10),
+        };
+      }
+
+      if (type === "switch") {
+        component = {
+          type: "Switch",
+          value: "",
+          cases: pay.cases,
         };
       }
 

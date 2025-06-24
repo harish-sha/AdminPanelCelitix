@@ -188,18 +188,3 @@
 .preview h2 {
   font-size: 18px;
 }
-li{
-          /* makes each <li> a block‐level box */
-list-style-type: block !important;  
-}
-
-.editor ol > li {
-  list-style-type: decimal;
-  margin-left: 1.5em; /* optional indent */
-  list-style-type: block !important;  
-}
-
-.editor ul > li {
-  list-style-type: disc !important;
-  margin-left: 1.5em; /* optional indent */
-}

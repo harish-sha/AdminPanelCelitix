@@ -16,7 +16,7 @@ import UniversalButton from "../../components/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
 
 export const convertNodeToMarkdown = (node) => {
-  if (!node) return "";
+  if (!node) return;
 
   if (node.nodeType === 3) return node.nodeValue;
   if (node.nodeType !== 1) return "";
@@ -24,7 +24,7 @@ export const convertNodeToMarkdown = (node) => {
   const tag = node.tagName.toLowerCase();
   const children = Array.from(node.childNodes)
     .map(convertNodeToMarkdown)
-    .join("");
+    
 
   switch (tag) {
     case "h2":
@@ -596,6 +596,18 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           label="Save"
         />
       </div>
+        <style jsx>{`
+        .editor ul li { 
+          display: list-item;
+          list-style-type: disc !important;
+          margin-left: 1.5em;
+        }
+        .editor ol li {
+          display: list-item;
+          list-style-type: decimal !important;
+          margin-left: 1.5em;
+        }
+      `}</style>
     </div>
   );
 };
