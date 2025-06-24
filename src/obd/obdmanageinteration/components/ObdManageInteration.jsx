@@ -40,9 +40,9 @@ const ObdManageIntegration = (id, data) => {
   const [template, setTemplate] = useState("");
   const [savebtn, setSaveBtn] = useState("");
   const [addIntegration, setAddIntegration] = useState([]);
-  const[addstatus,setAddStatus] = useState("");
-  const[addCta,setAddCta] = useState();
-  const[addtemplate,setAddTemplate] = useState("")
+  const [addstatus, setAddStatus] = useState("");
+  const [addCta, setAddCta] = useState();
+  const [addtemplate, setAddTemplate] = useState("")
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -76,7 +76,7 @@ const ObdManageIntegration = (id, data) => {
   };
 
   const handleIntegrationChange = (id, newValue) => {
-   
+
     setAddIntegration((prev) =>
       prev.map((integration) =>
         integration.id === id
@@ -91,7 +91,6 @@ const ObdManageIntegration = (id, data) => {
       prev.filter((integration) => integration.id !== id)
     );
     try {
-      // console.log(integrationName);
       toast.success("Integration deleted successfully");
     } catch (error) {
       toast.error("Something went wrong");
@@ -126,9 +125,9 @@ const ObdManageIntegration = (id, data) => {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -571,7 +570,7 @@ const ObdManageIntegration = (id, data) => {
               <div className=" flex w-full  ">
                 <InputField
                   label="Integration Name"
-                 readOnly = "false"
+                  readOnly="false"
                   placeholder="Integration name"
                 />
               </div>
@@ -604,28 +603,28 @@ const ObdManageIntegration = (id, data) => {
               </div>
               <div className="flex flex-wrap gap-4">
                 <div className="w-full sm:46">
-                  <InputField label="UserName" placeholder="UserName" readOnly = "false" />
+                  <InputField label="UserName" placeholder="UserName" readOnly="false" />
                 </div>
                 <div className="w-auto">
-                  <InputField label="ApiKey" placeholder="Api Key" readOnly = "false" />
+                  <InputField label="ApiKey" placeholder="Api Key" readOnly="false" />
                 </div>
                 <div className="w-auto">
-                  <InputField label="Temp Id" placeholder="Temp Id" readOnly = "false" />
+                  <InputField label="Temp Id" placeholder="Temp Id" readOnly="false" />
                 </div>
                 <div className="w-auto">
-                  <InputField label="Sender Id" placeholder="Sender Id" readOnly = "false" />
+                  <InputField label="Sender Id" placeholder="Sender Id" readOnly="false" />
                 </div>
                 <div className="w-auto ">
-                  <InputField label="Entity Id" placeholder="Entity Id" readOnly = "false" />
+                  <InputField label="Entity Id" placeholder="Entity Id" readOnly="false" />
                 </div>
 
                 <div className="w-full ">
                   <label className="text-xs">Insert PlaceHolder: Dear</label>
-                  <InputField placeholder="Message Content" readOnly = "false" />
+                  <InputField placeholder="Message Content" readOnly="false" />
                   <label className="mt-2 text-xs">Chars: 0+0+0 = 0/1000 </label>
                 </div>
 
-               
+
               </div>
             </div>
           </Dialog>
