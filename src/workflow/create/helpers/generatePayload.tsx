@@ -85,6 +85,15 @@ export const generatePayload = (
         category: nodeInput?.category,
       };
     }
+    if (originalType === "sms") {
+      entry[value].value = {
+        sms_sender_id: nodeInput?.sms_sender_id,
+        sms_template: nodeInput?.sms_template,
+        sms_message: nodeInput?.sms_message,
+        isunicode: nodeInput?.isunicode,
+        entityId: nodeInput?.entityId,
+      };
+    }
 
     // entry[prevNode] = prevNode;
 

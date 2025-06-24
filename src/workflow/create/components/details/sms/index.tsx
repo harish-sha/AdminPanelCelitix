@@ -67,6 +67,22 @@ export const SMS = ({
       unicode: isEnglishText ? 0 : 1,
     });
   }, [inputDetails?.message]);
+
+  function handleSave() {
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        sms_sender_id: inputDetails?.senderId,
+        sms_template: inputDetails?.templateId,
+        sms_message: inputDetails?.message,
+        isunicode: inputDetails?.unicode,
+        entityId: inputDetails?.entityId,
+      },
+    }));
+
+    setDetailsDialogVisible(false);
+  }
   return (
     <>
       <div className="flex flex-col md:flex-row gap-2">
@@ -82,7 +98,7 @@ export const SMS = ({
         id="save-sms"
         name="save-sms"
         label="Save"
-        onClick={() => {}}
+        onClick={handleSave}
         style={{
           width: "200px",
           marginLeft: "auto",
