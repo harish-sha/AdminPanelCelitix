@@ -2,7 +2,7 @@ import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
 import { SiGoogleauthenticator } from "react-icons/si";
 import { LuMessageSquareMore } from "react-icons/lu";
-
+import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -288,6 +288,19 @@ export const userItems = [
     type: "single",
     to: "/managecontacts",
     roles: ["ADMIN", "DIRECTUSER"],
+  },
+  {
+    id: "",
+    name: "Workflow",
+    icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+    label: "Workflow",
+    type: "single",
+    to: "/workflow",
+    // links: [
+    //   { to: "/workflow", label: "Manage Workflow" },
+    //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
+    // ],
+    roles: ["ADMIN"],
   },
   // {
   //   id: "",

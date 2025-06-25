@@ -466,7 +466,7 @@ const ObdCreateCampaign = () => {
       const msg = response?.msg?.toLowerCase() || "";
 
       if (msg.match(/\b(add|added|success|successfully)\b/)) {
-        // resetForm();
+        resetForm();
         setResetImportContact((prev) => !prev);
         setVisibledialog(false);
         toast.success(response.msg);

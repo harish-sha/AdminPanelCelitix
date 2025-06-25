@@ -405,7 +405,7 @@ const WhatsappLaunchCampaign = () => {
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
       // isMarketingMessage: marketingType || "",
-      ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,

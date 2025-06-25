@@ -16,10 +16,11 @@ export const login = async (inputDetails) => {
 export const forgotPassword = async (inputDetails) => {
   return await axios.post(
     `${apiUrl}/user/forgotpassword`,
-    {
-      userId: inputDetails.userId,
-      mobileNo: inputDetails.mobileNo,
-    },
+    inputDetails,
+    // {
+    //   userId: inputDetails.userId,
+    //   mobileNo: inputDetails.mobileNo,
+    // },
     {
       headers: {
         "Content-Type": "application/json",
@@ -54,7 +55,7 @@ export const requestOtp = async (data) => {
       // "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   });
-}
+};
 
 // get client ip address
 export const getIpAddress = async () => {
@@ -64,4 +65,3 @@ export const getIpAddress = async () => {
     },
   });
 };
-

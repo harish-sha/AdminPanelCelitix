@@ -135,6 +135,10 @@ import { EditCallback } from "@/callback/page/editCallback";
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
 
+//WorkFlow
+import { WorkflowDetails } from "@/workflow/details";
+import { WorkflowCreate } from "@/workflow/create";
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
@@ -295,6 +299,10 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Workflow */}
+        <Route path="/workflow" element={<WorkflowDetails />} />
+        <Route path="/workflow/create" element={<WorkflowCreate />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

@@ -13,7 +13,7 @@ import InputField from "@/components/layout/InputField";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp } from "@/apis/auth/auth";
+import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp, forgotPassword } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 import { InputOtp } from "primereact/inputotp";
@@ -141,7 +141,7 @@ const ResellerLogin = () => {
         // domain: "reseller.alertsnow.in",
         // domain: "",
         domain: domain
-      };   
+      };
 
       const res = await login(payload);
 
@@ -220,15 +220,26 @@ const ResellerLogin = () => {
     //   return;
     // }
 
-    const payload = {
+    let payload = {
       userId: username,
-      password: password,
+      // password: password,
       mobileNo: verifyNumber,
-      domain: window.location.hostname,
-      // domain: "reseller.alertsnow.in",
+      // domain: window.location.hostname,
+      domain: basicDetails.domain,
     };
 
-    const res = await requestOtp(payload);
+    // const res = await requestOtp(payload);
+
+    if (!isForgotPassword) {
+      payload = {
+        ...payload,
+        password: password,
+      };
+    }
+
+    const res = isForgotPassword
+      ? await forgotPassword(payload)
+      : await requestOtp(payload);
 
     // if (!res?.data?.status) {
     //   return toast.error(res?.data?.msg || "Unable to send OTP");
@@ -351,6 +362,7 @@ const ResellerLogin = () => {
   // back to login step button
   const handleBackToLogin = () => {
     setStep("login");
+    setIsForgotPassword(false)
   };
 
   return (
@@ -658,7 +670,18 @@ const ResellerLogin = () => {
                     >
                       Verify OTP
                     </button>
+                    {!isResendDisabled && (
+                      <button
+                        className="w-full bg-black text-white p-2 rounded-lg"
+                        onClick={handleVerifyNumberRequest}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
                   </div>
+                  <p className="text-center mt-3 text-gray-500">
+                    {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                  </p>
 
                   <div className="flex items-center justify-center">
                     <button
@@ -938,7 +961,7 @@ const ResellerLogin = () => {
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

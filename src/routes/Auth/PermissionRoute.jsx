@@ -31,6 +31,7 @@ export const PermissionRoute = ({ children }) => {
       "CallBack",
       "Manage Contacts",
       "openRoutes",
+      "WorkFlow"
     ];
 
     const allowedServices = [];
