@@ -130,13 +130,14 @@ const Login = () => {
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.0",
+        // ip: "0.0.0.8",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
-        // ip: "0.0.0.0",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // ip: "0.0.0.8",
       }
 
       delete payloadd.rememberMe;
@@ -265,10 +266,10 @@ const Login = () => {
       const res = isForgotPassword
         ? await verifyForgotPasswordOtp(payload)
         : await verifyOtp(payload);
-      if (!res?.data?.status) {
+      if (!res?.data?.status || !res?.data?.statusCode === 200) {
         return toast.error(res?.data?.msg || "Unable to verify OTP");
       }
-      toast.success("OTP verified successfully");
+      toast.success("OTP Verified Successfully");
       if (isForgotPassword) {
         setStep(1);
         return;
@@ -500,7 +501,7 @@ const Login = () => {
                       <UniversalButton
                         id="Send Otp"
                         name="Send Otp"
-                        label={"Send Otp"}
+                        label={"Send OTP"}
                         // onClick={sendOtp}
                         onClick={() => {
                           handleSendOtp();
@@ -567,7 +568,7 @@ const Login = () => {
                         <UniversalButton
                           id="Verify Otp"
                           name="Verify Otp"
-                          label={"Verify Otp"}
+                          label={"Verify OTP"}
                           onClick={handleVerifyOtp}
                         />
 
@@ -585,8 +586,9 @@ const Login = () => {
                           <UniversalButton
                             id="Resend Otp"
                             name="Resend Otp"
-                            label={"Resend Otp"}
-                            onClick={handleResendOTP}
+                            label={"Resend OTP"}
+                            // onClick={handleResendOTP}
+                            onClick={handleSendOtp}
                           />
                         )}
                       </div>

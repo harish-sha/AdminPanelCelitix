@@ -31,16 +31,14 @@ import ObdVariable from "./components/ObdVariable.jsx";
 import DynamicObdVariable from "./components/DynamicObdVariable.jsx";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 
-
 import { getAllGroups } from "@/apis/common/common.js";
 import {
   sendObdCampaign,
   fetchVoiceClips,
   fetchVoiceClipUrl,
   ObdVariableList,
-  ObdDynamicVoiceClip
+  ObdDynamicVoiceClip,
 } from "@/apis/Obd/obd.js";
-
 
 const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
 // const BASE_AUDIO_URL = "/voiceAudioUrl";
@@ -86,11 +84,10 @@ const ObdCreateCampaign = () => {
   const [slectedDynamicVoiceFile, setSelectedDynamicVoiceFile] = useState(null);
   const [voiceDynamicURLPath, setVoiceDynamicURLPath] = useState("");
   const [voiceVariables, setVoiceVariables] = useState([]);
-  console.log("voiceVariables", voiceVariables)
+  console.log("voiceVariables", voiceVariables);
   const [voiceDBClip, setVoiceDBClip] = useState(null);
 
   const [selectedMBFiletwo, setSelectedMBFiletwo] = useState("");
-
 
   const [mobilenums, setMobileNums] = useState("");
 
@@ -101,8 +98,7 @@ const ObdCreateCampaign = () => {
   const [variableValue, setVariableValue] = useState();
   const [voiceSBURLPath, setVoiceSBURLPath] = useState("");
   const [voiceMBURLPath, setVoiceMBURLPath] = useState("");
-
-
+  const [dynamicValueJson, setDynamicValueJson] = useState({});
 
   // ai content start
   const [isOpen, setIsOpen] = useState(false);
@@ -123,9 +119,9 @@ const ObdCreateCampaign = () => {
   // ai content end
 
   useEffect(() => {
-    ObdVariableList()
-    ObdDynamicVoiceClip(1)
-  }, [])
+    ObdVariableList();
+    ObdDynamicVoiceClip(1);
+  }, []);
 
   useEffect(() => {
     const isHeaderAvailable = fileHeaders?.length;
@@ -187,7 +183,11 @@ const ObdCreateCampaign = () => {
     setMobileNums("");
     setSchedule(false);
     setScheduledDateTime(new Date());
+
+    setDynamicValueJson({});
   };
+
+  console.log("dynamicValueJson", dynamicValueJson);
 
   // To change transactional and promotional
   const handleChangeOption = (event) => {
@@ -430,6 +430,14 @@ const ObdCreateCampaign = () => {
       .filter((grp) => selectedGroups.includes(grp.groupCode))
       .reduce((acc, curr) => acc + Number(curr.totalCount), 0);
 
+    const formattedObj = voiceVariables.reduce((acc, item) => {
+      acc[`sequence_${item.sequence}`] = item.variableSampleValue;
+      return acc;
+    }, {});
+
+    console.log("formattedObj", formattedObj);
+    setDynamicValueJson(formattedObj);
+
     const data = {
       mobilenos: mobilenums,
       campaignName: campaignName || "",
@@ -450,7 +458,7 @@ const ObdCreateCampaign = () => {
       scheduleDateTime:
         schedule && scheduledDateTime ? formatDateTime(scheduledDateTime) : "0",
       dynamicVoiceCallSrno: slectedDynamicVoiceFile || "",
-      dynamicValueJson: "",
+      dynamicValueJson: JSON.stringify(dynamicValueJson),
       voiceCallSrno:
         obdType === "simplebroadcast"
           ? slectedSBVoiceFile || ""
@@ -461,12 +469,14 @@ const ObdCreateCampaign = () => {
         obdType === "multibroadcast" ? selectedMBFiletwo || "" : "",
     };
 
+    console.log("data", data);
+
     try {
       const response = await sendObdCampaign(data);
       const msg = response?.msg?.toLowerCase() || "";
 
       if (msg.match(/\b(add|added|success|successfully)\b/)) {
-        // resetForm();
+        resetForm();
         setResetImportContact((prev) => !prev);
         setVisibledialog(false);
         toast.success(response.msg);
@@ -505,6 +515,11 @@ const ObdCreateCampaign = () => {
     setTTSArea((prev) => prev + `{{${variable}}}`);
   };
 
+  const handleDynamicVariableSelect = (variable) => {
+    setVariableValue(variable);
+    setTTSArea((prev) => prev + `{{${variable}}}`)
+  }
+
   const handleSelectSBVoice = async (value) => {
     const audioId = value;
 
@@ -512,7 +527,7 @@ const ObdCreateCampaign = () => {
       const res = await fetchVoiceClipUrl(audioId);
       if (!res.path) return toast.error("Something went wrong");
       const url = BASE_AUDIO_URL + res.path;
-      console.log(url)
+      console.log(url);
       setVoiceSBURLPath(url);
     } catch (error) {
       console.error("Error fetching Voice File:", error);
@@ -537,7 +552,7 @@ const ObdCreateCampaign = () => {
   const handleSelectDynamicVoice = async (srno) => {
     try {
       const res = await ObdVariableList(srno);
-      console.log("res", res)
+      console.log("res", res);
       if (!res?.data || !Array.isArray(res.data)) {
         toast.error("Invalid variable data received");
         return;
@@ -698,7 +713,6 @@ const ObdCreateCampaign = () => {
                       </div>
                     )}
 
-
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
                         <div>
@@ -770,7 +784,7 @@ const ObdCreateCampaign = () => {
                                 <IoStop />
                               </button>
                             </div> */}
-                            <audio src={voiceSBURLPath} controls ></audio>
+                            <audio src={voiceSBURLPath} controls></audio>
                           </div>
 
                           {obdType === "multibroadcast" && (
@@ -800,14 +814,14 @@ const ObdCreateCampaign = () => {
                                   <IoStop />
                                 </button>
                               </div> */}
-                              <audio src={voiceMBURLPath} controls ></audio>
+                              <audio src={voiceMBURLPath} controls></audio>
                             </div>
                           )}
                         </div>
                       )}
 
                     {obdType === "dynamicbroadcast" && (
-                      <div className="flex flex-col gap-3" >
+                      <div className="flex flex-col gap-3">
                         <AnimatedDropdown
                           label="Dynamic Voice Clip:"
                           id="dynamicvoiceClip"
@@ -827,25 +841,35 @@ const ObdCreateCampaign = () => {
                         {slectedDynamicVoiceFile && (
                           <div className="border-2 p-2 rounded-md relative">
                             {voiceVariables.map((item, index) => (
-                              <>
+                              <div
+                                key={`variable-${item.sequence}`}
+                                className="relative mt-4"
+                              >
                                 <InputField
-                                  key={`variable-${item.sequence}`}
                                   id={`variable-${item.sequence}`}
                                   name={`variable-${item.sequence}`}
                                   label={`Sequence Variable ${item.sequence}`}
                                   value={item.variableSampleValue}
-                                  onChange={(e) => handleVoiceVariableChange(index, e.target.value)}
+                                  onChange={(e) =>
+                                    handleVoiceVariableChange(
+                                      index,
+                                      e.target.value
+                                    )
+                                  }
                                   placeholder={`Enter value for variable ${item.sequence}`}
                                   tooltipContent={`Sequence: ${item.sequence}`}
-                                  divClassName="mt-1"
                                 />
-                                {/* <div className="absolute top-10 right-2 z-10">
+
+                                {/* Ensure this appears for every input */}
+                                <div className="absolute top-7 right-0 z-10">
                                   <DynamicObdVariable
                                     variables={allHeaders}
-                                    selectVariable={handleVariableSelect}
+                                    selectVariable={(selectedValue) =>
+                                      handleDynamicVariableSelect(selectedValue)
+                                    }
                                   />
-                                </div> */}
-                              </>
+                                </div>
+                              </div>
                             ))}
                           </div>
                         )}
@@ -926,7 +950,9 @@ const ObdCreateCampaign = () => {
                           <User size={72} className="text-white/80" />
                         </div>
                         <h2 className="text-xl font-semibold">John Doe</h2>
-                        <p className="text-sm text-gray-300 mt-1">Incoming Call...</p>
+                        <p className="text-sm text-gray-300 mt-1">
+                          Incoming Call...
+                        </p>
 
                         <div className="grid grid-cols-3 gap-4 mt-6">
                           <div className="flex flex-col items-center text-sm">
@@ -955,11 +981,9 @@ const ObdCreateCampaign = () => {
                           </button>
                         </div>
                       </div>
-
                     </div>
                   </motion.div>
                 </div>
-
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">

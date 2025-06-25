@@ -257,11 +257,19 @@ const SendRcs = () => {
       allVar.push(btninputVariables[key]);
     });
 
+    // Clean up curly braces in allVar → {#name#} → #name#
+    for (let i = 0; i < allVar.length; i++) {
+      if (typeof allVar[i] === "string") {
+        allVar[i] = allVar[i].replace(/{#(.*?)#}/g, "#$1#");
+      }
+    }
+
     let variables = [];
     const content = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
     const btn = btnvarList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
 
-    variables = [...content, ...btn];
+    // variables = [...content, ...btn];
+    variables = [...content, ...btn].filter(Boolean); // remove undefined
 
     // let grp = "";
     // if (selectedGrp) {

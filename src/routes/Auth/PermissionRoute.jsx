@@ -176,6 +176,11 @@ export const PermissionRoute = ({ children }) => {
       links: "/dummy",
       roles: ["ADMIN"],
     },
+    {
+      name: "WorkFlow",
+      links: ["/workflow", "/workflow/create"],
+      roles: ["ADMIN"],
+    },
   ];
 
   const currentPath = location.pathname;
@@ -228,6 +233,10 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "Manage Contacts") {
         allowedServices.push(item);
       }
+      if (item.name === "WorkFlow") {
+        allowedServices.push(item);
+      }
+
       // if (item.name === "Admin") {
       //   allowedServices.push(item);
       // }

@@ -9,7 +9,7 @@ import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
 
 // canned message
-
+import CannedMessage from "@/cannedmessage/CannedMessage";
 
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
@@ -31,6 +31,8 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
+// MMLite
+import MmLite from "@/whatsapp/mmlite/MmLite";
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -107,6 +109,7 @@ import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
 import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
 import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
 import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
+import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
@@ -130,17 +133,21 @@ import { AddCallback } from "@/callback/page/addCallback";
 import { EditCallback } from "@/callback/page/editCallback";
 
 // Tag Manager
+import TagManager from "@/tagmanager/TagManager";
 
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
 
+//WorkFlow
+import { WorkflowDetails } from "@/workflow/details";
+import { WorkflowCreate } from "@/workflow/create";
+
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import TagManager from "@/tagmanager/TagManager";
-import MmLite from "@/whatsapp/mmlite/MmLite";
-import CannedMessage from "@/cannedmessage/CannedMessage";
-import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
+
+
 
 const Approutes = () => {
   return (
@@ -216,8 +223,8 @@ const Approutes = () => {
         />
         <Route
           path="smscampaigndetailsreport"
-          element={<DetailedLogsInsidersDetails/>}
-         />
+          element={<DetailedLogsInsidersDetails />}
+        />
         <Route
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
@@ -304,6 +311,10 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Workflow */}
+        <Route path="/workflow" element={<WorkflowDetails />} />
+        <Route path="/workflow/create" element={<WorkflowCreate />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

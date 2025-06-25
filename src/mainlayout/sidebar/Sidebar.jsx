@@ -17,6 +17,7 @@ import toast from "react-hot-toast";
 import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
 
+import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -377,6 +378,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/managecontacts",
       roles: ["ADMIN", "DIRECTUSER"],
     },
+    {
+      id: "",
+      name: "Workflow",
+      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Workflow",
+      type: "single",
+      to: "/workflow",
+      // links: [
+      //   { to: "/workflow", label: "Manage Workflow" },
+      //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
+      // ],
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "Wishmanagement",
@@ -448,6 +462,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "Workflow",
     ];
 
     // menuItems.forEach((item) => {
