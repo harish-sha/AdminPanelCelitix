@@ -82,11 +82,11 @@ const Smscampaigndetaillogs = () => {
       setRows(
         Array.isArray(res.data)
           ? res.data.map((item, i) => ({
-              sn: i + 1,
-              id: i + 1,
-              ...item,
-              actual_status: item.actual_status === " " ? "-" : "-",
-            }))
+            sn: i + 1,
+            id: i + 1,
+            ...item,
+            actual_status: item.actual_status === " " ? "-" : "-",
+          }))
           : []
       );
     } catch (e) {

@@ -216,7 +216,7 @@ const TransactionsUser = () => {
     { value: "Credit", label: "Credit" },
     { value: "Debit", label: "Debit" },
   ];
-  
+
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
@@ -325,7 +325,6 @@ const TransactionsUser = () => {
                 name="manageCampaignExportBtn"
                 label="Export"
                 // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
-
                 variant="primary"
                 onClick={handleExport}
               />

@@ -153,7 +153,7 @@ const WhatsappManageCampaign = () => {
     campaignType: 0,
     status: "" || "",
     deliveryStatus: "",
-    source:"",
+    source: "",
     type: "campaign",
   });
 
