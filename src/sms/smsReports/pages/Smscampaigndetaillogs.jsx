@@ -43,7 +43,7 @@ const Smscampaigndetaillogs = () => {
           minWidth: 120,
         },
         { field: "que_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
-        { field: "message", headerName: "Message", flex: 1, minWidth: 120},
+        { field: "message", headerName: "Message", flex: 1, minWidth: 120 },
         { field: "status", headerName: "Status", flex: 1, minWidth: 90 },
         {
           field: "actual_status",

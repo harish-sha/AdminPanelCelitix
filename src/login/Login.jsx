@@ -130,14 +130,14 @@ const Login = () => {
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.8",
+        // ip: "0.0.5.8",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.8",
+        // ip: "0.0.5.8",
       }
 
       delete payloadd.rememberMe;
@@ -331,7 +331,7 @@ const Login = () => {
 
       <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
         {/* main content */}
-        <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff]">
+        <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff] relative">
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
@@ -639,7 +639,7 @@ const Login = () => {
           </motion.div>
         </div>
         {/* main content */}
-        <Footer />
+        {/* <Footer /> */}
       </div>
     </>
   );

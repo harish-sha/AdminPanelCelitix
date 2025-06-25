@@ -3,7 +3,6 @@ import { PiBracketsCurlyBold } from "react-icons/pi";
 import { Divider } from '@mui/material';
 
 const DynamicObdVariable = ({ variables = [], selectVariable }) => {
-    console.log("variables from dynamic", selectVariable)
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 

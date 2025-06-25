@@ -128,9 +128,16 @@ const CampaignDetailsReport = () => {
             page: currentPage,
             delStatus: deliveryStatus || "",
         };
-        const data = await getWhatsappCampaignDetailsReport(body);
-        setCampaignDetails(data.data);
-        setTotalPage(data.total);
+        setIsFetching(true)
+        try {
+            const data = await getWhatsappCampaignDetailsReport(body);
+            setCampaignDetails(data.data);
+            setTotalPage(data.total);
+        } catch (error) {
+            toast.error("failed to laod details!")
+        } finally {
+            setIsFetching(false)
+        }
     };
 
     useEffect(() => {

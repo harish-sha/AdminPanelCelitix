@@ -18,6 +18,7 @@ import {
     SupportAgent,
     Feedback,
 } from "@mui/icons-material";
+import StarHalfOutlinedIcon from '@mui/icons-material/StarHalfOutlined';
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -51,6 +52,7 @@ import CustomTooltip from "@/components/common/CustomTooltip";
 import { dailyWalletUsage, fetchBalance } from "@/apis/settings/setting";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import moment from "moment";
+import ClockCard from "./components/ClockCard";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -303,7 +305,13 @@ const ResellerDashboard = () => {
             value: "78%",
         },
         {
-            icon: <Star className="text-yellow-500" />,
+            icon: [
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <StarHalfOutlinedIcon className="text-yellow-500" />,
+            ],
             label: "Client Rating",
             value: "4.8/5",
         },
@@ -353,30 +361,7 @@ const ResellerDashboard = () => {
                         <div
                             key={i}
                             className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
-                        // onMouseEnter={stat.onHover}
-                        // onMouseLeave={stat.onMouseLeave}
                         >
-                            {/* {stat.label === "Current Balance" && showRefresh && (
-                                <CustomTooltip
-                                    title="Refresh Balance"
-                                    placement="top"
-                                    arrow
-                                >
-                                    <div className="absolute top-2 right-2 cursor-pointer">
-
-                                        {isLoading ? (
-                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
-                                        ) : (
-                                            <button
-                                                onClick={getBalance}
-                                                className=""
-                                            >
-                                                <LoopIcon className="text-blue-400 cursor-pointer" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </CustomTooltip>
-                            )} */}
                             {stat.showRefreshIcon && (
                                 <CustomTooltip
                                     title="Refresh Balance"
@@ -403,6 +388,8 @@ const ResellerDashboard = () => {
                             <div className="font-semibold text-lg">{stat.value}</div>
                         </div>
                     ))}
+                    <ClockCard />
+
                 </div>
             </motion.div>
 

@@ -147,7 +147,7 @@ const WhatsappManageCampaign = () => {
     customColumns: "",
     campaignType: 0,
     status: "" || "",
-    source:"",
+    source: "",
     deliveryStatus: "",
     type: "campaign",
   });
