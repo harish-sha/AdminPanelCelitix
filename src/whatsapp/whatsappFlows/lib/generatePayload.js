@@ -548,10 +548,28 @@ export const generatePayload = (data) => {
         };
       }
 
+      // if (type === "switch") {
+      //   component = {
+      //     type: "Switch",
+      //     value:`${data.component?.textInput.name}`,
+      //     cases: pay.cases,
+      //   };
+      // }
+
       if (type === "switch") {
+        // Look for the last component already pushed to layout that has a name
+        let valueName = "";
+        for (let i = layout.children.length - 1; i >= 0; i--) {
+          const prev = layout.children[i];
+          if (prev.name) {
+            valueName = prev.name;
+            break;
+          }
+        }
+
         component = {
           type: "Switch",
-          value: "",
+          value: valueName ? `\${form.${valueName}}` : "", // ✅ dynamic format required by schema
           cases: pay.cases,
         };
       }
@@ -700,6 +718,7 @@ export const generatePayload = (data) => {
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     payload.screens.push({
+      // data: {},
       id: capitalize(screenId),
       title: screenData.title || `Screen ${index + 1}`,
       layout,

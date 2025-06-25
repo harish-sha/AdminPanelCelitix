@@ -117,7 +117,6 @@ const Canvas = ({
     // const targetItem = tabs[activeIndex].payload.find(
     //   (payloadItem) => payloadItem.type === item.type
     // );
-  
 
     if (!targetItem) return "";
 
@@ -303,7 +302,7 @@ const Canvas = ({
 
     if (item.type === "radioButton") {
       return (
-        <div className="p-3  rounded-md bg-blue-50 border shadow-sm">
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
           {targetItem.label && (
             <div className="mb-1">
               <span className="font-semibold">Label: </span>
@@ -312,23 +311,36 @@ const Canvas = ({
           )}
 
           {(targetItem["data-source"] || []).map((opt, i) => (
-            <div key={i} className="mt-2 p-2 border rounded bg-white shadow-sm">
-              <p className="mb-1">
-                <span className="font-semibold">Title:</span> {opt.title}
-              </p>
-              <p className="mb-1">
-                <span className="font-semibold">Description:</span>{" "}
-                {opt.description}
-              </p>
-              <p className="mb-1">
-                <span className="font-semibold">Metadata:</span> {opt.metadata}
-              </p>
+            <div
+              key={i}
+              className="mt-2 p-2 border rounded-md bg-blue-50 shadow-sm flex items-center justify-between"
+            >
+              <div>
+                <p className="mb-1">
+                  <span className="font-semibold">Title:</span> {opt.title}
+                </p>
+                <p className="mb-1">
+                  <span className="font-semibold">Description:</span>{" "}
+                  {opt.description}
+                </p>
+                <p className="mb-1">
+                  <span className="font-semibold">Metadata:</span>{" "}
+                  {opt.metadata}
+                </p>
+              </div>
               {opt.image && (
-                <img
-                  src={opt.image}
-                  alt={opt.title || "option image"}
-                  className="mt-1 w-20 h-20 object-contain rounded"
-                />
+                <div className="flex justify-end items-center mt-0">
+                  <img
+                    src={
+                      opt.image?.startsWith("data:")
+                        ? opt.image
+                        : `data:image/jpeg;base64,${opt.image}`
+                    }
+                    alt={opt.title || "option image"}
+                    className="w-10 h-10 rounded-full object-cover border"
+                    onError={(e) => (e.currentTarget.style.display = "none")}
+                  />
+                </div>
               )}
             </div>
           ))}
@@ -375,11 +387,17 @@ const Canvas = ({
                   </div>
                 )}
                 {opt.image && (
+                  <div className="flex justify-end items-center mt-0">
                   <img
-                    src={opt.image}
-                    alt="Option"
-                    className="w-12 h-12 mt-1 object-cover rounded"
+                    src={
+                      opt.image?.startsWith("data:")
+                        ? opt.image
+                        : `data:image/jpeg;base64,${opt.image}`
+                    }
+                    alt={opt.title || "option image"}
+                    className="w-10 h-10 rounded-full object-cover border"
                   />
+                   </div>
                 )}
               </li>
             ))}
@@ -845,7 +863,7 @@ const Canvas = ({
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
     const handleEdit = (index, item) => {
-      setSelectedItem({ ...item , index ,  caseKey: item.caseKey }); // ✅ force a new reference
+      setSelectedItem({ ...item, index, caseKey: item.caseKey }); // ✅ force a new reference
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 
@@ -888,6 +906,7 @@ const Canvas = ({
             </IconButton>
           </Box>
         </div>
+
         <div
           className="text-sm p-2 rounded-md bg-white border border-gray-300 text-wrap"
           style={{

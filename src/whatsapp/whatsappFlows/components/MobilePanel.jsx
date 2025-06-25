@@ -34,10 +34,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   ]);
   const [selectedOption, setSelectedOption] = useState(null);
 
- 
-
-
-
   const handleCheckboxChange = (index, optionIndex, checked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
@@ -115,9 +111,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
-
   // imageCarousel
-   const [currentIndex, setCurrentIndex] = useState(0);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   // console.log("itemsssssss", items)
 
@@ -237,38 +232,35 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </div>
               );
 
+            //Render RichText
+            case "richText": {
+              let renderedHTML = "<p>No content available</p>";
 
-//Render RichText
-case "richText": {
-  let renderedHTML = "<p>No content available</p>";
-  
-  try {
-    const markdown = Array.isArray(item?.text)
-      ? item.text.join("\n")
-      : item?.content || "";
+              try {
+                const markdown = Array.isArray(item?.text)
+                  ? item.text.join("\n")
+                  : item?.content || "";
 
-    renderedHTML = marked.parse(markdown);
-     
-    // renderedHTML = renderedHTML.replace(
-    //   /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
-    //   ''
-    // );
+                renderedHTML = marked.parse(markdown);
 
-  } catch (err) {
-    console.error("Markdown rendering error:", err);
-    renderedHTML = "<p>No content available</p>";
-  }
+                // renderedHTML = renderedHTML.replace(
+                //   /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
+                //   ''
+                // );
+              } catch (err) {
+                console.error("Markdown rendering error:", err);
+                renderedHTML = "<p>No content available</p>";
+              }
 
-  return (
-    <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-[90vh] flex flex-col">
-     
-      <div
-        className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
-        dangerouslySetInnerHTML={{ __html: renderedHTML }}
-      />
+              return (
+                <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-[90vh] flex flex-col">
+                  <div
+                    className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+                    dangerouslySetInnerHTML={{ __html: renderedHTML }}
+                  />
 
-      <style>
-        {`
+                  <style>
+                    {`
           .prose h1 {
             font-size: 1.5rem;
             font-weight: 700;
@@ -278,20 +270,13 @@ case "richText": {
             font-weight: 500;
           }
         `}
-      </style>
-
-     
-    </div>
-  );
-}
-
-
-
-
-
+                  </style>
+                </div>
+              );
+            }
 
             // Render Checkboxes
-            
+
             case "checkBox":
               return (
                 <div key={index} className="">
@@ -400,9 +385,9 @@ case "richText": {
                   )}
                 </div>
               );
-          
 
             // Render Radio Buttons
+
             case "radioButton":
               return (
                 <div key={index} className="ml-3">
@@ -410,7 +395,7 @@ case "richText": {
                   Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
-                        <div key={groupId} className="">
+                        <div key={groupId}>
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: 600, mb: 1 }}
@@ -441,7 +426,11 @@ case "richText": {
                                       {option.image && (
                                         <Box
                                           component="img"
-                                          src={option.image}
+                                          src={
+                                            option.image?.startsWith("data:")
+                                              ? option.image
+                                              : `data:image/jpeg;base64,${option.image}`
+                                          }
                                           alt={
                                             option.title ||
                                             `Option ${optionIndex + 1}`
@@ -452,6 +441,10 @@ case "richText": {
                                             borderRadius: "50%",
                                             mr: 1,
                                             border: "1px solid #ccc",
+                                          }}
+                                          onError={(e) => {
+                                            e.currentTarget.style.display =
+                                              "none";
                                           }}
                                         />
                                       )}
@@ -684,8 +677,56 @@ case "richText": {
                 />
               );
 
-          
-            
+            case "image":
+              return (
+                <>
+                  {item?.src ? (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <div
+                        style={{
+                          width: "100%",
+                          position: "relative",
+                          paddingTop: `${100 / (item["aspect-ratio"] || 1)}%`,
+                          backgroundColor: "#f5f5f5",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                        }}
+                      >
+                        <img
+                          src={item.src}
+                          alt={item["alt-text"] || "Uploaded image"}
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: item["scale-type"] || "contain",
+                          }}
+                        />
+                      </div>
+
+                      <p
+                        style={{
+                          marginTop: "0.5rem",
+                          fontSize: "14px",
+                          color: "#333",
+                        }}
+                      >
+                        <strong>Alt Text:</strong> {item["alt-text"] || "-"}
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#333" }}>
+                        <strong>Scale Type:</strong>{" "}
+                        {item["scale-type"] || "contain"}
+                      </p>
+                    </div>
+                  ) : (
+                    <Typography color="text.secondary">
+                      No image selected
+                    </Typography>
+                  )}
+                </>
+              );
 
             case "document":
               return (
@@ -738,63 +779,66 @@ case "richText": {
                 </>
               );
 
-           case "imageCarousel":
-  const images = [
-    item?.["image-1"] || {},
-    item?.["image-2"] || {},
-    item?.["image-3"] || {},
-  ].filter((img) => img?.src); // filter out empty slots
+            case "imageCarousel": {
+              const images = [
+                item?.["image-1"],
+                item?.["image-2"],
+                item?.["image-3"],
+              ].filter((img) => img?.src); // Only non-empty images
 
-  const scaleType = item?.["scale-type"] || "contain";
+              const scaleType = item?.["scale-type"] || "contain";
 
-  return (
-    <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white relative">
-      <div className="relative h-[200px]">
-        {images.map((img, idx) => (
-          <img
-            key={idx}
-            src={`${img?.src}`} // use full src format for <img>
-            alt={img?.["alt-text"] || `Image ${idx + 1}`}
-            className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
-              }`}
-          />
-        ))}
+              return (
+                <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white relative">
+                  <div className="relative h-[200px] bg-gray-100">
+                    {images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={`data:image/jpeg;base64,${img.src}`} // <-- fix is here
+                        alt={img["alt-text"] || `Image ${idx + 1}`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${
+                          idx === currentIndex ? "opacity-100" : "opacity-0"
+                        }`}
+                        onError={(e) =>
+                          (e.currentTarget.style.display = "none")
+                        }
+                      />
+                    ))}
 
-        {images.length > 1 && (
-          <>
-            <button
-              className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-              onClick={() =>
-                setCurrentIndex(
-                  (prev) => (prev - 1 + images.length) % images.length
-                )
-              }
-            >
-              ‹
-            </button>
-            <button
-              className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-              onClick={() =>
-                setCurrentIndex((prev) => (prev + 1) % images.length)
-              }
-            >
-              ›
-            </button>
-          </>
-        )}
-      </div>
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                          onClick={() =>
+                            setCurrentIndex(
+                              (prev) =>
+                                (prev - 1 + images.length) % images.length
+                            )
+                          }
+                        >
+                          ‹
+                        </button>
+                        <button
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                          onClick={() =>
+                            setCurrentIndex(
+                              (prev) => (prev + 1) % images.length
+                            )
+                          }
+                        >
+                          ›
+                        </button>
+                      </>
+                    )}
+                  </div>
 
-      <div className="text-center py-2 text-sm text-gray-500">
-        {images[currentIndex]?.["alt-text"] || `Image ${currentIndex + 1}`}
-      </div>
-    </div>
-  );
-
-
-
-
-
-         
+                  <div className="text-center py-2 text-sm text-gray-500">
+                    {images[currentIndex]?.["alt-text"] ||
+                      `Image ${currentIndex + 1}`}
+                  </div>
+                </div>
+              );
+            }
 
             case "ifelse":
               return <InputField value={item.value || ""} />;

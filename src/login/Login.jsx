@@ -1062,16 +1062,18 @@ const Login = () => {
 
       setInputDetails((prev) => ({
         ...prev,
-        systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.0",
+        // systemInfo: uaResult.browser.name || "Unknown",
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        systemInfo: "Chrome",
+        ip: "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
-        systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.0",
+        // systemInfo: uaResult.browser.name || "Unknown",
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        systemInfo: "Chrome",
+        ip: "0.0.0.0",
       }
 
       delete payloadd.rememberMe;

@@ -54,7 +54,8 @@ export const PermissionRoute = ({ children }) => {
         "/wlcsetting",
         "/wwhatsappflows",
         "/wflowcreation",
-        "/selfrecharge"
+        "/selfrecharge",
+        "/wflowedit"
       ],
       roles: ["ADMIN"],
     },

@@ -34,9 +34,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import IfElseBlock from "./IfElseBlock";
 import SwitchFlow from "./SwitchFlow";
-
 import RichTextEditor from "./Editor.jsx";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 
 const EditPanel = ({
   selectedItem,
@@ -61,7 +61,7 @@ const EditPanel = ({
   screens,
   handleComponentUpdate,
   onUpdate,
-  handleSwitchSave,
+
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -472,24 +472,6 @@ const EditPanel = ({
     });
   }
 
-  const handlePhotoUpload = async () => {
-    if (!imageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    // if (!imageFile?.image) {
-    //   toast.error(
-    //     "Image already uploaded. Delete it before uploading a new one."
-    //   );
-    //   return;
-    // }
-    const src = await getBase64(imageFile);
-    toast.success("Image Uploaded Successfully");
-    console.log(src);
-    setImageSrc(src);
-  };
-
   const handleImageDelete = async () => {
     if (!imageFile) {
       toast.error("File not exist");
@@ -509,28 +491,37 @@ const EditPanel = ({
     }
   };
 
-  const handleImageChange = (e) => {
-    console.log(e);
-    const file = e.target.files?.[0];
-    if (!file) return;
+const handleImageChange = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) {
+    toast.error("No file selected");
+    return;
+  }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
-      return;
-    }
+  if (!file.type.match(/^image\/(png|jpeg)$/)) {
+    toast.error("Please select a .png or .jpeg file");
+    e.target.value = ""; 
+    return;
+  }
+  setImageFile(file); 
 
-    setImageFile(file);
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageSrc(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onload = () => {
+    setImageSrc(reader.result); 
   };
+  reader.readAsDataURL(file);
 
-  // const base64HeaderRemoved = imageSrc.split(",")[1];
-  // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
+  try {
+    const base64String = await getBase64(file);
+    setDraft((prev) => ({ ...prev, image: base64String })); 
+    toast.success("Image loaded successfully!");
+  } catch {
+    toast.error("Failed to convert image to base64");
+  }
+};
 
+
+ 
   const handleImageSave = (e) => {
     if (!imageFile) {
       toast.error("Image Required");
@@ -1250,22 +1241,37 @@ const EditPanel = ({
 
   const radioImageInputRef = useRef(null);
 
-  const handleRadioImageChange = (e) => {
+  const handleRadioImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
+    if (!file) {
+      toast.error("No file selected");
       return;
     }
 
-    setRadioImageFile(file);
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
+      toast.error("Please select a .png or .jpeg file");
+      e.target.value = "";
+      return;
+    }
+
+    // if (file.size > MAX_IMAGE_SIZE) {
+    //   toast.error("Image must be under 100 KB");
+    //   e.target.value = "";
+    //   return;
+    // }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      setRadioImageSrc(reader.result);
-    };
+    reader.onload = () => setRadioImageSrc(reader.result);
     reader.readAsDataURL(file);
+    setRadioImageFile(file);
+
+    try {
+      const base64String = await getBase64(file);
+      setDraft((prev) => ({ ...prev, image: base64String }));
+      toast.success("Image loaded and ready!");
+    } catch {
+      toast.error("Failed to encode image");
+    }
   };
 
   const handleRadioBtnEdit = (idx) => {
@@ -1333,32 +1339,32 @@ const EditPanel = ({
     ]);
   };
 
-  const handleRadioUploadFile = async () => {
-    if (!radioImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
+  // const handleRadioUploadFile = async () => {
+  //   if (!radioImageFile) {
+  //     toast.error("Please select an image first before uploading");
+  //     return;
+  //   }
 
-    if (draft?.image) {
-      toast.error("Image already Uploaded");
-      return;
-    }
+  //   if (draft?.image) {
+  //     toast.error("Image already Uploaded");
+  //     return;
+  //   }
 
-    try {
-      const base64String = await getBase64(radioImageFile);
-      console.log("base64String", base64String);
+  //   try {
+  //     const base64String = await getBase64(radioImageFile);
+  //     console.log("base64String", base64String);
 
-      // Instead of setting global state, update the draft
-      setDraft((prev) => ({
-        ...prev,
-        image: base64String,
-      }));
+  //     // Instead of setting global state, update the draft
+  //     setDraft((prev) => ({
+  //       ...prev,
+  //       image: base64String,
+  //     }));
 
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
-    }
-  };
+  //     toast.success("File uploaded successfully!");
+  //   } catch (error) {
+  //     toast.error("Failed to upload file.");
+  //   }
+  // };
 
   const handleDeleteRadioFile = async () => {
     if (!draft.image) {
@@ -1526,58 +1532,53 @@ const EditPanel = ({
 
   const checkboxImageInputRef = useRef(null);
 
-  const Max_Image_Size = 100 * 1024; // 100 KB
+  // const Max_Image_Size = 100 * 1024; // 100 KB
 
-  const handleCheckboxImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+const handleCheckboxImageChange = async (e) => {
+  const file = e.target.files?.[0];
+  if (!file) {
+    toast.error("No file selected");
+    return;
+  }
 
-    if (checkboxImageFile?.image) {
-      toast.error("Image already uploaded");
-      return;
-    }
+  if (checkboxImageFile?.image) {
+    toast.error("Image already uploaded");
+    e.target.value = ""; // reset input
+    return;
+  }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
-      return;
-    }
+  if (!file.type.match(/^image\/(png|jpeg)$/)) {
+    toast.error("Please select a .png or .jpeg file");
+    e.target.value = "";
+    return;
+  }
 
-    // const src = await getBase64(file);
-    // setCheckboxImageFile(src);
+  // if (file.size > MAX_IMAGE_SIZE) {
+  //   toast.error("Image must be under 100 KB");
+  //   e.target.value = "";
+  //   return;
+  // }
 
-    setCheckboxImageFile(file);
+  setCheckboxImageFile(file); // save raw file object
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCheckboxImageSrc(reader.result);
-    };
-    reader.readAsDataURL(file);
+  const reader = new FileReader();
+  reader.onload = () => {
+    setCheckboxImageSrc(reader.result); // preview
   };
+  reader.readAsDataURL(file);
 
-  const handleCheckboxUploadFile = async () => {
-    if (!checkboxImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
+  try {
+    const base64String = await getBase64(file);
+    setDraft((prev) => ({
+      ...prev,
+      checkboxImage: base64String, // or customize based on structure
+    }));
+    toast.success("Image loaded successfully!");
+  } catch {
+    toast.error("Failed to convert image to base64");
+  }
+};
 
-    if (draftCheckbox?.image) {
-      toast.error("Image already uploaded");
-      return;
-    }
-
-    try {
-      const base64String = await getBase64(checkboxImageFile);
-      console.log("base64String", base64String);
-
-      setDraftCheckbox((prev) => ({
-        ...prev,
-        image: base64String,
-      }));
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
-    }
-  };
 
   const handleCheckboxFileDelete = async () => {
     if (!checkboxImageFile) {
@@ -1728,54 +1729,48 @@ const EditPanel = ({
     setDropdownRequired((prev) => !prev);
   };
 
-  const handleDropdownImageChange = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+//  const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
-      return;
-    }
+const handleDropdownImageChange = async (event) => {
+  const file = event.target.files?.[0];
+  if (!file) {
+    toast.error("No file selected");
+    return;
+  }
 
-    setDropImageFile(file);
+  if (!file.type.match(/^image\/(png|jpeg)$/)) {
+    toast.error("Please select a .png or .jpeg file");
+    event.target.value = ""; 
+    return;
+  }
 
-    const reader = new FileReader();
+  // if (file.size > MAX_IMAGE_SIZE) {
+  //   toast.error("Image must be under 100 KB");
+  //   event.target.value = ""; 
+  //   return;
+  // }
 
-    reader.onload = () => {
-      setDropImageSrc(reader.result);
-    };
-    reader.readAsDataURL(file);
+  setDropImageFile(file); 
+  const reader = new FileReader();
+  reader.onload = () => {
+    setDropImageSrc(reader.result); 
   };
+  reader.readAsDataURL(file);
 
-  const handleDropdownUploadFile = async () => {
-    const currentOption = options[editingIdx];
+  try {
+    const base64String = await getBase64(file);
+    setDraft((prev) => ({
+      ...prev,
+      dropdownImage: base64String,
+    }));
+    toast.success("Image uploaded successfully!");
+  } catch {
+    toast.error("Failed to convert image to base64");
+  }
+};
 
-    if (!dropImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
 
-    if (currentOption?.image) {
-      toast.error("Image already uploaded.");
-      return;
-    }
-
-    try {
-      // const response = await uploadImageFile(dropImageFile, 1);
-      const base64String = await getBase64(dropImageFile);
-      console.log("base64String", base64String);
-      setOptions((prev) =>
-        prev.map((o, i) =>
-          i === editingIdx ? { ...o, image: base64String } : o
-        )
-      );
-      // setDropdownUploadedId(base64String);
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload file.");
-    }
-  };
+  
 
   const handleDropdownFileDelete = async () => {
     if (!dropImageFile && !dropImageSrc) {
@@ -2023,6 +2018,29 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+const textRef = useRef(null);
+
+  const handleEmojiSelect = (setState, emoji, maxLength) => {
+    if (!textRef.current) return;
+
+    const text = textRef.current;
+    const start = text.selectionStart;
+    const end = text.selectionEnd;
+    const current = text.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        text.focus();
+        text.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
+
+
   const headingSave = () => {
     if (!headingInput) {
       toast.error("Heading Required");
@@ -2044,6 +2062,7 @@ const EditPanel = ({
 
   // sub-heading
   const [subheadingInput, setSubheadingInput] = useState("");
+
   useEffect(() => {
     if (selectedItem) {
       setSubheadingInput(selectedItem.text || "");
@@ -2051,6 +2070,29 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+
+ const subheadingRef = useRef(null);
+
+ const handleSubheadingEmojiSelect = (setState, emoji, maxLength) => {
+
+   if (!subheadingRef.current) return;
+
+    const subheading = subheadingRef.current;
+    const start = subheading.selectionStart;
+    const end = subheading.selectionEnd;
+    const current = subheading.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        subheading.focus();
+        subheading.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+ }
 
   const handleSubheadingSave = () => {
     if (!subheadingInput) {
@@ -2082,6 +2124,28 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+  const textBodyRef = useRef(null)
+
+  const handleTextBodyEmojiSelect = (setState, emoji, maxLength) => {
+   if (!textBodyRef.current) return;
+
+    const textBody = textBodyRef.current;
+    const start = textBody.selectionStart;
+    const end = textBody.selectionEnd;
+    const current = textBody.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textBody.focus();
+        textBody.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  }
+
   const handleTextbodySave = () => {
     if (!textbodyInput.trim()) {
       toast.error("Textbody Required");
@@ -2111,6 +2175,29 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+  
+  const textCaptionRef = useRef(null);
+
+  const handleTextCaptionSelectEmoji = (setState, emoji, maxLength) => {
+    if(!textCaptionRef.current) return;
+
+    const textCaption = textCaptionRef.current;
+    const start = textCaption.selectionStart;
+    const end = textCaption.selectionEnd;
+    const current = textCaption.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textCaption.focus();
+        textCaption.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+
+  }
 
   const handleTextCaptionSave = () => {
     if (!textcaptionInput.trim()) {
@@ -2147,7 +2234,7 @@ const EditPanel = ({
       setInputPlaceholder(selectedItem["helper-text"] || "");
       setInputError(selectedItem["error-message"] || "");
       setInputRequired(selectedItem.required ?? false);
-      setInputName(selectedItem.name || "");
+
       setInputMin(
         typeof selectedItem["min-chars"] === "number"
           ? selectedItem["min-chars"]
@@ -2312,9 +2399,12 @@ const EditPanel = ({
     textcaption: 409,
   };
 
+
+
+
   return (
     <Box>
-      <AnimatePresence>
+      <AnimatePresence mode="wait" >
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
@@ -2323,13 +2413,6 @@ const EditPanel = ({
           // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
           className="bg-white z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
         >
-          {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <Typography variant="h6">Edit Item</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon fontSize="small" />
-            </IconButton>
-            </Box> */}
-
           <div className="flex items-center justify-between border-b-2">
             <label className="text-sm font-semibold text-gray-700 tracking-wide">
               Edit Item
@@ -2378,15 +2461,9 @@ const EditPanel = ({
         )} */}
 
           {/* new */}
-          {(selectedItem?.type === "heading" ||
-            selectedThenComponent === "heading" ||
-            selectedElseComponent === "heading") && (
+          {selectedItem?.type === "heading" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "heading"
-                  ? "Then Component"
-                  : selectedElseComponent === "heading"
-                    ? "Else Component"
-                    : ""}
+                
                 {/* <InputField
                   label="Heading"
                   placeholder="Enter Text for  Heading"
@@ -2399,19 +2476,32 @@ const EditPanel = ({
                   maxLength={80}
                   onChange={(e) => setHeadingInput(e.target.value)}
                 /> */}
-                <UniversalTextArea
-                  label="Heading"
-                  placeholder="Enter Text for  Heading"
-                  variant="outlined"
-                  tooltipContent="Max 80 character allowed"
-                  tooltipPlacement="right"
-                  fullWidth
-                  value={headingInput}
-                  type="text"
-                  maxLength={80}
-                  onChange={(e) => setHeadingInput(e.target.value)}
-                  textareaClassName="font-semibold h-40"
-                />
+                <div className="relative">
+                  <UniversalTextArea
+                    label="Heading"
+                    placeholder="Enter Text for  Heading"
+                    variant="outlined"
+                    tooltipContent="Max 80 character allowed"
+                    tooltipPlacement="right"
+                    fullWidth
+                    value={headingInput}
+                    type="text"
+                    maxLength={80}
+                    onChange={(e) => setHeadingInput(e.target.value)}
+                    textareaClassName="font-semibold h-40"
+                    ref={textRef}
+                  />
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleEmojiSelect(setHeadingInput, emoji, 80)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-center">
                   {selectedItem?.type === "heading" ? (
                     <UniversalButton label="Save" onClick={headingSave} />
@@ -2442,15 +2532,8 @@ const EditPanel = ({
             </div>
           )} */}
 
-          {(selectedItem?.type === "subheading" ||
-            selectedThenComponent === "subHeading" ||
-            selectedElseComponent === "subHeading") && (
+          {selectedItem?.type === "subheading"  && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "subHeading"
-                  ? "Then Component"
-                  : selectedElseComponent === "subHeading"
-                    ? "Else Component"
-                    : ""}
                 {/* <InputField
                   label="Sub-Heading"
                   placeholder="Enter Text for Sub-Heading "
@@ -2462,18 +2545,31 @@ const EditPanel = ({
                   onChange={(e) => setSubheadingInput(e.target.value)}
                   fullWidth
                 /> */}
-                <UniversalTextArea
-                  label="Sub-Heading"
-                  placeholder="Enter Text for Sub-Heading "
-                  tooltipContent="Max 80 character allowed"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={80}
-                  value={subheadingInput}
-                  onChange={(e) => setSubheadingInput(e.target.value)}
-                  fullWidth
-                  textareaClassName="font-semibold h-40"
-                />
+
+                <div className="relative">
+                  <UniversalTextArea
+                    label="Sub-Heading"
+                    placeholder="Enter Text for Sub-Heading "
+                    tooltipContent="Max 80 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={80}
+                    value={subheadingInput}
+                    onChange={(e) => setSubheadingInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={subheadingRef}
+                  />
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleSubheadingEmojiSelect(setSubheadingInput, emoji, 80)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
                 <div className="flex justify-center">
                   {selectedItem?.type === "subheading" ? (
                     <UniversalButton
@@ -2487,15 +2583,9 @@ const EditPanel = ({
               </div>
             )}
 
-          {(selectedItem?.type === "textbody" ||
-            selectedThenComponent === "textBody" ||
-            selectedElseComponent === "textBody") && (
+          {selectedItem?.type === "textbody"  && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "textBody"
-                  ? "Then Component"
-                  : selectedElseComponent === "textBody"
-                    ? "Else Component"
-                    : ""}
+               
                 {/* <InputField
                   label="TextBody"
                   placeholder="Enter Text for TextBody "
@@ -2507,18 +2597,32 @@ const EditPanel = ({
                   onChange={(e) => setTextbodyInput(e.target.value)}
                   fullWidth
                 /> */}
-                <UniversalTextArea
-                  label="TextBody"
-                  placeholder="Enter Text for TextBody "
-                  tooltipContent="Max 4096 character allowed"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={4096}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
-                  fullWidth
-                  textareaClassName="font-semibold h-40"
-                />
+
+                <div className="relative">
+                  <UniversalTextArea
+                    label="TextBody"
+                    placeholder="Enter Text for TextBody "
+                    tooltipContent="Max 4096 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={4096}
+                    value={textbodyInput}
+                    onChange={(e) => setTextbodyInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={textBodyRef}
+                  />
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleTextBodyEmojiSelect(setTextbodyInput, emoji, 4096)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-center">
                   {selectedItem?.type === "textbody" ? (
                     <UniversalButton label="Save" onClick={handleTextbodySave} />
@@ -2529,15 +2633,9 @@ const EditPanel = ({
               </div>
             )}
 
-          {(selectedItem?.type === "textcaption" ||
-            selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "textcaption"
-                  ? "Then Component"
-                  : selectedElseComponent === "textcaption"
-                    ? "Else Component"
-                    : ""}
+          {selectedItem?.type === "textcaption"  && (
+              <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+                
                 {/* <InputField
                   label="TextCaption"
                   placeholder="Enter Text for text caption"
@@ -2545,25 +2643,37 @@ const EditPanel = ({
                   tooltipPlacement="right"
                   type="text"
                   maxLength={409}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
+                  value={textcaptionInput}
+                  onChange={(e) => setTextcaptionInput(e.target.value)}
                   fullWidth
                 /> */}
-                <UniversalTextArea
-                  label="TextCaption"
-                  placeholder="Enter Text for text caption"
-                  tooltipContent="Max 409 character allowed"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={409}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
-                  fullWidth
-                  textareaClassName="font-semibold h-40"
-                />
+                <div className="relative">
+                  <UniversalTextArea
+                    label="TextCaption"
+                    placeholder="Enter Text for text caption"
+                    tooltipContent="Max 409 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={409}
+                    value={textcaptionInput}
+                    onChange={(e) => setTextcaptionInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={textCaptionRef}
+                  />
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleTextCaptionSelectEmoji(setTextcaptionInput, emoji, 409)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
                 <div className="flex justify-center">
                   {selectedItem?.type === "textcaption" ? (
-                    <UniversalButton label="Save" onClick={handleTextbodySave} />
+                    <UniversalButton label="Save" onClick={handleTextCaptionSave} />
                   ) : (
                     ""
                   )}
@@ -2571,9 +2681,7 @@ const EditPanel = ({
               </div>
             )}
 
-          {(selectedItem?.type === "textInput" ||
-            selectedThenComponent === "textInput" ||
-            selectedElseComponent === "textInput") && (
+          {selectedItem?.type === "textInput" && (
               <div className="mb-2 text-lg space-y-2 mt-3">
                 {selectedThenComponent === "textInput"
                   ? "Then Component"
@@ -2676,15 +2784,9 @@ const EditPanel = ({
               </div>
             )}
 
-          {(selectedItem?.type === "textArea" ||
-            selectedThenComponent === "textArea" ||
-            selectedElseComponent === "textArea") && (
+          {selectedItem?.type === "textArea"  && (
               <div className="mb-2 text-lg space-y-2 mt-3">
-                {selectedThenComponent === "textArea"
-                  ? "Then Component"
-                  : selectedElseComponent === "textArea"
-                    ? "Else Component"
-                    : ""}
+                
                 <InputField
                   label="Edit TextArea"
                   id="textarea_label"
@@ -2793,16 +2895,10 @@ const EditPanel = ({
           )}
 
           {/* Editable Options for Checkboxes */}
-          {(selectedItem?.type === "checkBox" ||
-            selectedThenComponent === "checkBox" ||
-            selectedElseComponent === "checkBox") && (
+          {selectedItem?.type === "checkBox"  && (
               <FormControl fullWidth>
                 <div className="mb-2 mt-3 space-y-3">
-                  {selectedThenComponent === "checkBox"
-                    ? "Then Component"
-                    : selectedElseComponent === "checkBox"
-                      ? "Else Component"
-                      : ""}
+                
                   <InputField
                     label="Checkbox Group Label"
                     tooltipContent="Enter Checkbox Group Label "
@@ -2906,11 +3002,11 @@ const EditPanel = ({
                                 onChange={handleCheckboxImageChange}
                                 ref={checkboxImageInputRef}
                               />
-                              <button onClick={handleCheckboxUploadFile}>
+                              {/* <button onClick={handleCheckboxUploadFile}>
                                 <FileUploadOutlinedIcon
                                   sx={{ fontSize: "23px", marginTop: 3 }}
                                 />
-                              </button>
+                              </button> */}
 
                               <button onClick={handleCheckboxFileDelete}>
                                 <DeleteOutlineIcon
@@ -2985,9 +3081,7 @@ const EditPanel = ({
             )}
 
           {/* Editable Options for Radio Buttons */}
-          {(selectedItem?.type === "radioButton" ||
-            selectedThenComponent === "radioButton" ||
-            selectedElseComponent === "radioButton") && (
+          {selectedItem?.type === "radioButton"  && (
               <FormControl fullWidth>
                 <div className="mb-2 mt-3">
                   {selectedThenComponent === "radioButton"
@@ -3102,11 +3196,11 @@ const EditPanel = ({
                                 onChange={handleRadioImageChange}
                                 ref={radioImageInputRef}
                               />
-                              <button onClick={handleRadioUploadFile}>
-                                <FileUploadOutlinedIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
+                              {/* <button onClick={handleRadioUploadFile}>
+                              <FileUploadOutlinedIcon
+                                sx={{ fontSize: "23px", marginTop: 3 }}
+                              />
+                            </button> */}
                               <button onClick={handleDeleteRadioFile}>
                                 <DeleteOutlineIcon
                                   sx={{ fontSize: "23px", marginTop: 3 }}
@@ -3183,9 +3277,7 @@ const EditPanel = ({
             )}
 
           {/* Editable Options for Dropdown */}
-          {(selectedItem?.type === "dropDown" ||
-            selectedThenComponent === "dropDown" ||
-            selectedElseComponent === "dropDown") && (
+          {selectedItem?.type === "dropDown"  && (
               <FormControl fullWidth>
                 {/* ── Dropdown Label Input ── */}
                 <div className=" mb-2, mt-3 space-y-3">
@@ -3300,11 +3392,11 @@ const EditPanel = ({
                               onChange={handleDropdownImageChange}
                               ref={dropImageInputRef}
                             />
-                            <button onClick={handleDropdownUploadFile}>
+                            {/* <button onClick={handleDropdownUploadFile}>
                               <FileUploadOutlinedIcon
                                 sx={{ fontSize: "23px", marginTop: 3 }}
                               />
-                            </button>
+                            </button> */}
 
                             <button onClick={handleDropdownFileDelete}>
                               <DeleteOutlineIcon
@@ -3394,9 +3486,7 @@ const EditPanel = ({
             )}
 
           {/* Editable option for chipselector In */}
-          {(selectedItem?.type === "chipSelector" ||
-            selectedThenComponent === "chipSelector" ||
-            selectedElseComponent === "chipSelector") && (
+          {selectedItem?.type === "chipSelector"  && (
               <FormControl fullWidth>
                 <div className="mt-3 space-y-3 mb-3">
                   {selectedThenComponent === "chipSelector"
@@ -3533,9 +3623,7 @@ const EditPanel = ({
             )}
 
           {/* Editable option for FooterButton  */}
-          {(selectedItem?.type === "footerbutton" ||
-            selectedThenComponent === "footerbutton" ||
-            selectedElseComponent === "footerbutton") && (
+          {selectedItem?.type === "footerbutton"  && (
               <div className="mb-2 text-lg space-y-3 mt-3">
                 <InputField
                   label="Footer Button Label"
@@ -3647,9 +3735,7 @@ const EditPanel = ({
           </>
         )} */}
 
-          {(selectedItem?.type === "embeddedlink" ||
-            selectedThenComponent === "embeddedlink" ||
-            selectedElseComponent === "embeddedlink") && (
+          {selectedItem?.type === "embeddedlink"  && (
               <>
                 <div className="mt-3 space-y-3">
                   <InputField
@@ -3702,9 +3788,7 @@ const EditPanel = ({
             )}
 
           {/* Editable option for Opt In */}
-          {(selectedItem?.type === "optin" ||
-            selectedThenComponent === "optin" ||
-            selectedElseComponent === "optin") && (
+          {selectedItem?.type === "optin"  && (
               <>
                 <div className="space-y-3 mt-3">
                   <InputField
@@ -3765,9 +3849,7 @@ const EditPanel = ({
             )}
 
           {/* Editable option for Image In */}
-          {(selectedItem?.type === "image" ||
-            selectedThenComponent === "image" ||
-            selectedElseComponent === "image") && (
+          {selectedItem?.type === "image" && (
               <>
                 <div className="space-y-3 mt-3">
                   <div className="flex justify-center items-center gap-2 ">
@@ -3782,12 +3864,12 @@ const EditPanel = ({
                       onChange={handleImageChange}
                       ref={imageInputRef}
                     />
-                    <button onClick={handlePhotoUpload}>
+                    {/* <button onClick={handlePhotoUpload}>
                       <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-                    </button>
+                    </button> */}
 
                     <button onClick={handleImageDelete}>
-                      <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
+                      <DeleteOutlineIcon sx={{ fontSize: "23px", marginTop:3 }} />
                     </button>
                   </div>
 
@@ -4256,18 +4338,22 @@ const EditPanel = ({
 
           {selectedItem?.type === "switch" && (
             <>
-              {console.log("🪵 selectedItem in EditPanel:", selectedItem)}
               <SwitchFlow
                 selectedItem={selectedItem}
-                handleSwitchSave={handleSwitchSave}
+                onSave={(payload) => {
+                  const updatedItem = {
+                    ...selectedItem,
+                    ...payload,
+                  };
+                  onSave(updatedItem);
+                  console.log("✅ Final Switch Payload", updatedItem);
+                }}
               />
             </>
           )}
 
           {/* Editable option for date In */}
-          {(selectedItem?.type === "date" ||
-            selectedThenComponent === "date" ||
-            selectedElseComponent === "date") && (
+          {selectedItem?.type === "date" && (
               <div className="space-y-3 mt-3">
                 <InputField
                   label="Date Label"

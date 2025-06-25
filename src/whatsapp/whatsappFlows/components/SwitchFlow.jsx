@@ -53,24 +53,9 @@ export default function SwitchFlow({ selectedItem, onSave }) {
 
   const [caseKey] = useState(selectedItem?.caseKey);
 
-  // const handleSwitchSave = () => {
-  //   Object.entries(cases).forEach(([caseKey, comps]) => {
-  //     console.log("Saving case:", caseKey, comps);
-  //   });
-
-  //   const payload = {
-  //     // value: `\${form.${variableName}}`,
-  //     cases,
-  //   };
-
-
-
-  //   console.log("✅ Final Switch Payload", payload);
-  // };
-
   const handleSwitchSave = () => {
     const payload = {
-      value: `\${form.${variableName}}`,
+    
       cases,
 
     };
@@ -84,10 +69,6 @@ export default function SwitchFlow({ selectedItem, onSave }) {
 
     console.log("✅ Final Switch Payload", updatedItem);
   };
-
-
-
-
 
   const addCase = () => {
     const name = prompt("Enter new case key:");

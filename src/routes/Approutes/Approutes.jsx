@@ -27,6 +27,7 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import SelfRecharge from "@/whatsapp/SelfRecharge/SelfRecharge";
+import {EditFlow} from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 
 
 // manage funds
@@ -218,6 +219,7 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wflowedit" element={<EditFlow />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
