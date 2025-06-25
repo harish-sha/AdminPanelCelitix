@@ -13,7 +13,14 @@ import InputField from "@/components/layout/InputField";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp } from "@/apis/auth/auth";
+import {
+  getIpAddress,
+  login,
+  requestOtp,
+  verifyOtp,
+  verifyForgotPasswordOtp,
+  forgotPassword,
+} from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
 import { InputOtp } from "primereact/inputotp";
@@ -120,28 +127,29 @@ const ResellerLogin = () => {
 
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
+      // const ipResponse = await getIpAddress();
       const ipResponse = await getIpAddress();
-      const domain = window.location.hostname;
-      // const domain = "reseller.alertsnow.in";
+      // const domain = window.location.hostname;
+      const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
-        ip: ipResponse?.data?.clientIp,
-        // ip: "0.0.0.7",
-        domain
+        // ip: ipResponse?.data?.clientIp,
+        ip: "0.0.0.7",
+        domain,
       });
 
       const payload = {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.0.5",
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        ip: "0.0.0.7",
         // domain: domain !== "celitix.alertsnow.in" ? domain : "",
         // domain: "reseller.alertsnow.in",
         // domain: "",
-        domain: domain
-      };   
+        domain,
+      };
 
       const res = await login(payload);
 
@@ -215,25 +223,23 @@ const ResellerLogin = () => {
       return;
     }
 
-    // if (!phoneRegex.test(verifyNumber)) {
-    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
-    //   return;
-    // }
-
-    const payload = {
+    let payload = {
       userId: username,
-      password: password,
       mobileNo: verifyNumber,
-      domain: window.location.hostname,
-      // domain: "reseller.alertsnow.in",
+      domain: basicDetails.domain,
     };
-
-    const res = await requestOtp(payload);
-
+    if (!isForgotPassword) {
+      payload = {
+        ...payload,
+        password: password,
+      };
+    }
+    const res = isForgotPassword
+      ? await forgotPassword(payload)
+      : await requestOtp(payload);
     // if (!res?.data?.status) {
-    //   return toast.error(res?.data?.msg || "Unable to send OTP");
+    //   return toast.error(res?.msg || "Unable to send OTP");
     // }
-
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
   }
@@ -261,10 +267,10 @@ const ResellerLogin = () => {
       // const res = await verifyOtp(payload);
       const res = isForgotPassword
         ? await verifyForgotPasswordOtp({
-          userId: username,
-          mobileNo: verifyNumber,
-          otp: numberOtp,
-        })
+            userId: username,
+            mobileNo: verifyNumber,
+            otp: numberOtp,
+          })
         : await verifyOtp(payload);
       if (!res?.data?.token) {
         return toast.error("Invalid otp");
@@ -351,6 +357,7 @@ const ResellerLogin = () => {
   // back to login step button
   const handleBackToLogin = () => {
     setStep("login");
+    setIsForgotPassword(false)
   };
 
   return (
@@ -365,9 +372,7 @@ const ResellerLogin = () => {
 
           {step === "login" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -384,9 +389,7 @@ const ResellerLogin = () => {
           )}
           {step === "verifyNumber" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -403,9 +406,7 @@ const ResellerLogin = () => {
           )}
           {step === "verifynumberotp" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -453,7 +454,7 @@ const ResellerLogin = () => {
         </div>
 
         <div className="flex items-center justify-center rounded-2xl p-6 w-full lg:w-1/2 lg:p-12 border-2 border-cyan-600 m-4 bg-gray-50 shadow-2xl">
-          <div className="" >
+          <div className="">
             {step === "login" && (
               <>
                 <motion.div
@@ -482,7 +483,7 @@ const ResellerLogin = () => {
                       placeholder="Enter Username"
                       className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
                       onChange={(e) => setUsername(e.target.value)}
-                    // maxLength={8}
+                      // maxLength={8}
                     />
                   </div>
 
@@ -498,7 +499,7 @@ const ResellerLogin = () => {
                       className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
                       onChange={(e) => setPassword(e.target.value)}
                       value={password}
-                    // maxLength={8}
+                      // maxLength={8}
                     />
                     <button
                       type="button"
@@ -533,7 +534,6 @@ const ResellerLogin = () => {
                     >
                       Forgot Password
                     </button>
-
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <span className="p-2 ">{captchaProblem}</span>
@@ -567,8 +567,8 @@ const ResellerLogin = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5 }}
-
-                className="p-1 ">
+                className="p-1 "
+              >
                 <h1 className="text-4xl font-semibold text-center my-2 playf">
                   {/* Verify Number */}
                   {isForgotPassword ? "Forgot Password" : "Verify Number"}
@@ -579,9 +579,9 @@ const ResellerLogin = () => {
                   </p>
                 )}
                 <p className="text-center font-medium sm:text-lg playf">
-                  Provide your mobile number & userId  for <br /> secure access.{" "}
+                  Provide your mobile number & userId for <br /> secure access.{" "}
                 </p>
-                <div lassName="space-y-2" >
+                <div lassName="space-y-2">
                   {isForgotPassword && (
                     // <InputField
                     //   id="userId"
@@ -596,7 +596,7 @@ const ResellerLogin = () => {
                       placeholder="Enter UserId"
                       className="w-full p-2 my-4 border border-gray-300 rounded-xl"
                       onChange={(e) => setUsername(e.target.value)}
-                    // maxLength={13}
+                      // maxLength={13}
                     />
                   )}
                   <input
@@ -633,7 +633,6 @@ const ResellerLogin = () => {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ duration: 0.5 }}
                 >
-
                   <h2 className="text-4xl font-bold mb-4 text-center playf">
                     Enter OTP
                   </h2>
@@ -658,7 +657,18 @@ const ResellerLogin = () => {
                     >
                       Verify OTP
                     </button>
+                    {!isResendDisabled && (
+                      <button
+                        className="w-full bg-black text-white p-2 rounded-lg"
+                        onClick={handleVerifyNumberRequest}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
                   </div>
+                  <p className="text-center mt-3 text-gray-500">
+                    {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                  </p>
 
                   <div className="flex items-center justify-center">
                     <button
@@ -679,7 +689,6 @@ const ResellerLogin = () => {
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5 }}
               >
-
                 <div className="flex flex-col ">
                   <h1 className="lg:text-3xl text-2xl font-medium text-center playf">
                     Enter Your Registered{" "}
@@ -726,7 +735,6 @@ const ResellerLogin = () => {
                   exit={{ opacity: 0, x: -100 }}
                   transition={{ duration: 0.5 }}
                 >
-
                   <h2 className="text-xl font-medium mb-4 text-center playf">
                     Enter the mobile OTP
                   </h2>
@@ -797,12 +805,13 @@ const ResellerLogin = () => {
                       <input
                         id="new-password"
                         placeholder="New Password"
-                        className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
-                          ? "border-gray-400"
-                          : passwordsMatch === true
+                        className={`p-2 my-1 border rounded-lg w-full pr-10 ${
+                          newPassword === ""
+                            ? "border-gray-400"
+                            : passwordsMatch === true
                             ? "border-green-500"
                             : "border-red-500"
-                          }`}
+                        }`}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         type={showNewPassword ? "text" : "password"}
@@ -859,12 +868,13 @@ const ResellerLogin = () => {
                     <div className="relative w-full max-w-xs">
                       <input
                         placeholder="Confirm New Password"
-                        className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
-                          ? "border-gray-400"
-                          : passwordsMatch === true
+                        className={`p-2 my-2 border rounded-lg w-full pr-10 ${
+                          confirmPassword === ""
+                            ? "border-gray-400"
+                            : passwordsMatch === true
                             ? "border-green-500"
                             : "border-red-500"
-                          }`}
+                        }`}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         type={showConfirmPassword ? "text" : "password"}

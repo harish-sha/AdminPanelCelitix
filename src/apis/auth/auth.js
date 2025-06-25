@@ -14,18 +14,11 @@ export const login = async (inputDetails) => {
 
 // Forgot Password
 export const forgotPassword = async (inputDetails) => {
-  return await axios.post(
-    `${apiUrl}/user/forgotpassword`,
-    {
-      userId: inputDetails.userId,
-      mobileNo: inputDetails.mobileNo,
+  return await axios.post(`${apiUrl}/user/forgotpassword`, inputDetails, {
+    headers: {
+      "Content-Type": "application/json",
     },
-    {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }
-  );
+  });
 };
 
 // Forgot Password
@@ -54,7 +47,7 @@ export const requestOtp = async (data) => {
       // "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
     },
   });
-}
+};
 
 // get client ip address
 export const getIpAddress = async () => {
@@ -64,4 +57,3 @@ export const getIpAddress = async () => {
     },
   });
 };
-
