@@ -142,6 +142,9 @@ import PageNotFound from "@/NotFound/PageNotFound";
 import { WorkflowDetails } from "@/workflow/details";
 import { WorkflowCreate } from "@/workflow/create";
 
+// GPT
+import GptConfiguration from "@/gpt/GptConfiguration";
+
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -315,6 +318,10 @@ const Approutes = () => {
         {/* Workflow */}
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
+
+        {/* Ai Configuration */}
+        <Route path="/aiconfiguration" element={<GptConfiguration />} />
+
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

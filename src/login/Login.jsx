@@ -128,15 +128,17 @@ const Login = () => {
 
       setInputDetails((prev) => ({
         ...prev,
-        systemInfo: uaResult.browser.name || "Unknown",
+        // systemInfo: uaResult.browser.name || "Unknown",
         // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        systemInfo: "chrome",
         ip: "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
-        systemInfo: uaResult.browser.name || "Unknown",
+        // systemInfo: uaResult.browser.name || "Unknown",
         // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        systemInfo: "chrome",
         ip: "0.0.0.0",
       };
 
@@ -333,12 +335,11 @@ const Login = () => {
         {/* main content */}
         <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff] relative">
           {/* Top Left Circle */}
-          <motion.div
+          {/* <motion.div
             initial={{ x: -500, y: -500, opacity: 0 }}
             animate={{ x: 0, y: 0, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0 }}
             className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            // from-[#2b40b0] to-[#8447c6]
             style={{
               animation: "spin 35s linear infinite",
             }}
@@ -348,7 +349,6 @@ const Login = () => {
             animate={{ x: 0, y: 0, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
             className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            // from-[#2b40b0] to-[#8447c6]
             style={{
               animation: "spin 35s linear infinite",
             }}
@@ -358,7 +358,6 @@ const Login = () => {
             animate={{ x: 0, y: 0, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
             className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            // from-[#2b40b0] to-[#8447c6]
             style={{
               animation: "spin 35s linear infinite",
             }}
@@ -368,7 +367,6 @@ const Login = () => {
             animate={{ x: 0, y: 0, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
             className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            // from-[#2b40b0] to-[#8447c6]
             style={{
               animation: "spin 35s linear infinite",
             }}
@@ -378,13 +376,12 @@ const Login = () => {
             animate={{ x: 0, y: 0, opacity: 1 }}
             transition={{ duration: 1.5, ease: "easeOut", delay: 0.4 }}
             className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            // from-[#2b40b0] to-[#8447c6]
             style={{
               animation: "spin 35s linear infinite",
             }}
           ></motion.div>
 
-          {/* Bottom Right Circle */}
+
           <motion.div
             initial={{ x: 500, y: 500, opacity: 0 }}
             animate={{ x: 0, y: 0, opacity: 1 }}
@@ -438,7 +435,7 @@ const Login = () => {
             style={{
               animation: "spin 35s linear infinite",
             }}
-          ></motion.div>
+          ></motion.div> */}
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
@@ -532,9 +529,8 @@ const Login = () => {
                     </button> */}
                     <div className="flex items-center justify-center ">
                       <button
-                        className={`custom-signin-btn ${
-                          loading ? "loading" : ""
-                        }`}
+                        className={`custom-signin-btn ${loading ? "loading" : ""
+                          }`}
                         disabled={loading}
                         onClick={handleLogin}
                       >

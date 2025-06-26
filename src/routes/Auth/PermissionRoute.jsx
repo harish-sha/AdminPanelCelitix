@@ -181,6 +181,11 @@ export const PermissionRoute = ({ children }) => {
       links: ["/workflow", "/workflow/create"],
       roles: ["ADMIN"],
     },
+    {
+      name: "WorkFlow",
+      links: "/aiconfiguration",
+      roles: ["ADMIN"],
+    },
   ];
 
   const currentPath = location.pathname;

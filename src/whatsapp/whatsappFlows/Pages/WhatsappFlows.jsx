@@ -9,7 +9,6 @@ import {
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Carousel } from "primereact/carousel";
-// import { Player } from "@lottiefiles/react-lottie-player";
 import Lottie from "lottie-react";
 import nothinganimation from "@/assets/animation/nothinganimation.json";
 
@@ -43,11 +42,9 @@ import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoCloseCircle } from "react-icons/io5";
-// import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
 import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AnimatePresence, motion } from "framer-motion";
 import CardActions from "@mui/material/CardActions";
@@ -194,9 +191,6 @@ const WhatsappFlows = () => {
     }
   };
 
-  // const filteredFlows = flowList.filter((flow) =>
-  //   flow.flowName.toLowerCase().includes(search.toLowerCase())
-  // );
 
   const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter(
     (flow) =>
@@ -208,26 +202,6 @@ const WhatsappFlows = () => {
   const paginatedFlows = filteredFlows
     .reverse()
     .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
-
-  const dropdownItems = ["Edit", "Delete", "Export"];
-
-  const iconMap = {
-    Edit: <EditNoteIcon fontSize="small" />,
-    Delete: (
-      <MdOutlineDeleteForever
-        className="text-red-500 cursor-pointer hover:text-red-600"
-        size={20}
-      />
-    ),
-    Export: <FileDownloadIcon fontSize="small" />,
-  };
-
-  const handleBtnClick = (item, flow) => {
-    setDropdownOpenId(null);
-    if (item === "Edit") handleEdit(flow);
-    else if (item === "Delete") handleDelete(flow);
-    else if (item === "Export") handleExport(flow);
-  };
 
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
@@ -248,7 +222,6 @@ const WhatsappFlows = () => {
     setCurrentRow(selectedFlow);
     setVisible(true);
     handleMenuClose();
-    console.log(selectedFlow);
   };
 
   // deleteFlow
@@ -264,12 +237,6 @@ const WhatsappFlows = () => {
     try {
       setIsFetching(true);
       const res = await deleteFlow(flowId);
-
-      // if (res?.status === 400) {
-      //   toast.success("status code 400", res);
-      //   console.log("status code 400", res);
-      //   return
-      // }
 
       if (res?.success) {
         toast.success("Flow deleted successfully");
@@ -353,15 +320,12 @@ const WhatsappFlows = () => {
   const templateItem = (item) => (
     <div className="mx-2 group w-auto  rounded-2xl pt-2 my-2 overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg border border-gray-200 relative group transition-all duration-200  hover:-translate-y-1">
       <Card sx={{ width: "auto", overflow: "hidden" }}>
-        {/* Title */}
         <h4 className="text-center text-lg font-bold mt-4">{item.name}</h4>
 
-        {/* Icon / Animation */}
         <div className="m-auto h-45 w-45 flex items-center justify-center mt-4">
           <Lottie animationData={item.animation} loop={true} />
         </div>
 
-        {/* Button */}
         <CardActions className="justify-center pb-4">
           <button
             className={cn(
@@ -404,9 +368,6 @@ const WhatsappFlows = () => {
           {/* <CardHoverEffect/> */}
 
           <div className="">
-            {/* <h2 className="text-lg font-semibold mb-2 text-gray-800">
-              Templates
-            </h2> */}
             <Carousel
               value={templates}
               numVisible={4}
@@ -599,13 +560,6 @@ const WhatsappFlows = () => {
 
                                 <button
                                   className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full text-sm transition"
-                                  // onClick={async () => {
-                                  //   await updateStatus(
-                                  //     flow.flowId,
-                                  //     flow.mobileno
-                                  //   );
-                                  //   setPublishingId(null);
-                                  // }}
                                   onClick={async () => {
                                     setIsPublishingNow(flow.flowId);
                                     await new Promise((res) =>
@@ -738,17 +692,6 @@ const WhatsappFlows = () => {
           >
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-4">
-                {/* <InputField
-                  tooltipContent="Enter flow name"
-                  tooltipPlacement="right"
-                  label="Flow Name"
-                  id="flowname"
-                  name="flowname"
-                  type="text"
-                  placeholder="Enter Flow Name"
-                  value={flowName}
-                  onChange={(e) => setFlowName(e.target.value)}
-                /> */}
                 <AnimatedDropdown
                   label="Select Categories"
                   id="flowcategories"
@@ -772,17 +715,6 @@ const WhatsappFlows = () => {
                   value={selectCategories}
                   onChange={setSelectCategories}
                 />
-                {/* <AnimatedDropdown
-                  label="Whatsapp integration"
-                  id="whatsappintegration"
-                  name="whatsappintegration"
-                  options={[
-                    { value: "static", label: "Static" },
-                    { value: "dynamic", label: "Dynamic" },
-                  ]}
-                  placeholder="Select Whatsapp Integration"
-                  onChange={(value) => console.log(value)}
-                /> */}
                 <AnimatedDropdown
                   id="manageTemplateWaba"
                   name="manageTemplateWaba"
@@ -837,8 +769,6 @@ const WhatsappFlows = () => {
                       <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
                         <div className="flex items-center gap-3">
                           <img
-                            // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                            // src={celifavicon}
                             src={officebuilding}
                             className="w-10 h-10 rounded-full border object-fit border-gray-400 bg-gray-600"
                           />

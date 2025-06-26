@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 // import WavesurferPlayer from "@wavesurfer/react";
 import { RadioButton } from "primereact/radiobutton";
 import { FaPlay, FaPause } from "react-icons/fa";
@@ -56,9 +56,7 @@ const ObdCreateCampaign = () => {
   const [obdType, setObdType] = useState(null);
 
   const [ttsArea, setTTSArea] = useState("");
-  console.log("ttsArea", ttsArea);
   const [dynamicTtsArea, setDynamicTtsArea] = useState({});
-  console.log("dynamicTtsArea", dynamicTtsArea);
 
   const [retry, setRetry] = useState(null);
   const [interval, setInterval] = useState(null);
@@ -87,7 +85,7 @@ const ObdCreateCampaign = () => {
   const [slectedDynamicVoiceFile, setSelectedDynamicVoiceFile] = useState(null);
   const [voiceDynamicURLPath, setVoiceDynamicURLPath] = useState("");
   const [voiceVariables, setVoiceVariables] = useState([]);
-  console.log("voiceVariables", voiceVariables);
+
   const [voiceDBClip, setVoiceDBClip] = useState(null);
 
   const [selectedMBFiletwo, setSelectedMBFiletwo] = useState("");
@@ -104,7 +102,6 @@ const ObdCreateCampaign = () => {
   const [voiceSBURLPath, setVoiceSBURLPath] = useState("");
   const [voiceMBURLPath, setVoiceMBURLPath] = useState("");
   const [dynamicValueJson, setDynamicValueJson] = useState({});
-  console.log("dynamicValueJson", dynamicValueJson);
 
   // ai content start
   const [isOpen, setIsOpen] = useState(false);
@@ -115,6 +112,8 @@ const ObdCreateCampaign = () => {
   const [hasInserted, setHasInserted] = useState(false);
   const [typingKey, setTypingKey] = useState(0);
   const [generationCount, setGenerationCount] = useState(0);
+
+  const variableRef = useRef([]);
 
   const [ai, setAi] = useState({
     isGenerating: false,
@@ -130,14 +129,22 @@ const ObdCreateCampaign = () => {
   }, []);
 
   useEffect(() => {
-    const isHeaderAvailable = fileHeaders?.length;
+    // const isHeaderAvailable = fileHeaders?.length;
+    // console.log("isHeaderAvailable", isHeaderAvailable);
 
-    if (isHeaderAvailable) {
-      setAllHeaders(fileHeaders);
-    } else {
+    // setAllHeaders(fileHeaders);
+
+    // // if (isHeaderAvailable) {
+    // //   setAllHeaders(fileHeaders);
+    // // } else {
+    // //   setAllHeaders(["firstName", "lastName", "mobile"]);
+    // // }
+    if (selectedOption === "option1") {
       setAllHeaders(["firstName", "lastName", "mobile"]);
+    } else {
+      setAllHeaders(fileHeaders);
     }
-  }, [fileHeaders]);
+  }, [fileHeaders, selectedOption]);
 
   const onReady = (ws) => {
     setWavesurfer(ws);
@@ -191,7 +198,34 @@ const ObdCreateCampaign = () => {
     setMobileNums("");
     setSchedule(false);
     setScheduledDateTime(new Date());
+    fileInputRef && (fileInputRef.current.value = null)
+    setIsUploaded(false)
+    setIsUploading(false)
+    setColumns([])
+    setSelectedCountryName("")
+    setCountryList([])
+    setFileData([])
   };
+
+  const fileInputRef = useRef(null);
+  // // const [selectedOption, setSelectedOption] = useState("option1");
+  // // const [selectedGroups, setSelectedGroups] = useState([]);
+  // const [uploadedFile, setUploadedFile] = useState(null);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  // const [totalRecords, setTotalRecords] = useState("");
+  const [columns, setColumns] = useState([]);
+
+  // const [selectedCountryCode, setSelectedCountryCode] = useState("");
+  const [selectedCountryName, setSelectedCountryName] = useState("");
+  // const [addCountryCode, setAddCountryCode] = useState(false);
+  const [countryList, setCountryList] = useState([]);
+  // const [xlsxPath, setXlsxPath] = useState("");
+  const [fileData, setFileData] = useState([]);
+  // const [selectedMobileColumn, setSelectedMobileColumn] = useState("");
+  // const [fileHeaders, setFileHeaders] = useState([]);
+
+  // const [isLoading, setIsLoading] = useState(true);
 
   // To change transactional and promotional
   const handleChangeOption = (event) => {
@@ -516,11 +550,32 @@ const ObdCreateCampaign = () => {
     setTTSArea((prev) => prev + `{{${variable}}}`);
   };
 
-  const handleDynamicVariableSelect = (variable) => {
-    setDynamicVariableValue(variable);
-    setDynamicTtsArea((prev) => prev + `{{${variable}}}`);
-  };
+  const handleDynamicVariableSelect = (variable, index) => {
+    if (!variableRef.current[index]) return;
+    const input = variableRef.current[index];
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
 
+    const tag = `#${variable}#`;
+
+    setDynamicVariableValue(variable);
+    setDynamicTtsArea((prev) => prev + `#${variable}#`);
+
+    const text = voiceVariables[index].variableSampleValue || "";
+    const updatedTag = text.substring(0, start) + tag + text.substring(end);
+
+    setVoiceVariables((prev) => {
+      const updated = [...prev];
+      updated[index].variableSampleValue = updatedTag;
+      return updated;
+    });
+
+    requestAnimationFrame(() => {
+      const pos = end + updatedTag.length;
+      input.setSelectionRange(pos, pos);
+      input.focus();
+    });
+  };
 
   const handleSelectSBVoice = async (value) => {
     const audioId = value;
@@ -844,9 +899,11 @@ const ObdCreateCampaign = () => {
 
                         {slectedDynamicVoiceFile && (
                           <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative">
-                            <div className="text-red-800 text-xs font-medium text-center">Please fill all the variable fields! (remaining sequence are the voice clips)</div>
+                            <div className="text-red-800 text-xs font-medium text-center">
+                              Please fill all the variable fields! (remaining
+                              sequence are the voice clips)
+                            </div>
                             {voiceVariables.map((item, index) => {
-                              console.log("item", item);
                               return (
                                 <div
                                   key={`variable-${item.sequence}`}
@@ -858,22 +915,25 @@ const ObdCreateCampaign = () => {
                                     label={`Sequence Variable ${item.sequence}`}
                                     value={item.variableSampleValue}
                                     onChange={(e) =>
-                                    handleVoiceVariableChange(
-                                      index,
-                                      e.target.value
-                                    )}
-                                    
+                                      handleVoiceVariableChange(
+                                        index,
+                                        e.target.value
+                                      )
+                                    }
                                     placeholder={`Enter value for variable ${item.sequence}`}
                                     tooltipContent={`Sequence: ${item.sequence}`}
+                                    ref={(el) => {
+                                      if (el) variableRef.current[index] = el;
+                                    }}
                                   />
 
                                   {/* Ensure this appears for every input */}
                                   <div className="absolute top-7 right-0 z-10">
                                     <DynamicObdVariable
                                       variables={allHeaders}
-                                      selectVariable={
-                                        handleDynamicVariableSelect
-                                      }
+                                      selectVariable={(e) => {
+                                        handleDynamicVariableSelect(e, index);
+                                      }}
                                     />
                                   </div>
                                 </div>
@@ -933,6 +993,35 @@ const ObdCreateCampaign = () => {
                     resetImportContact={resetImportContact}
                     countryCode={handleCountryCheckBox}
                     onMobileDropdown={handleSelectMobilecolumn}
+                    fileInputRef={fileInputRef}
+                    uploadedFile={uploadedFile}
+                    setUploadedFile={setUploadedFile}
+                    isUploaded={isUploaded}
+                    setIsUploaded={setIsUploaded}
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                    totalRecords={totalRecords}
+                    setTotalRecords={setTotalRecords}
+                    columns={columns}
+                    setColumns={setColumns}
+                    selectedCountryCode={selectedCountryCode}
+                    setSelectedCountryCode={setSelectedCountryCode}
+                    selectedCountryName={selectedCountryName}
+                    setSelectedCountryName={setSelectedCountryName}
+                    addCountryCode={addCountryCode}
+                    setAddCountryCode={setAddCountryCode}
+                    countryList={countryList}
+                    setCountryList={setCountryList}
+                    xlsxPath={xlsxPath}
+                    setXlsxPath={setXlsxPath}
+                    fileData={fileData}
+                    setFileData={setFileData}
+                    selectedMobileColumn={selectedMobileColumn}
+                    setSelectedMobileColumn={setSelectedMobileColumn}
+                    fileHeaders={fileHeaders}
+                    setFileHeaders={setFileHeaders}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
                   />
                 </div>
 

@@ -391,6 +391,19 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       // ],
       roles: ["ADMIN"],
     },
+    {
+      id: "",
+      name: "Aiconfiguration",
+      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Ai Configuration",
+      type: "single",
+      to: "/aiconfiguration",
+      // links: [
+      //   { to: "/workflow", label: "Manage Workflow" },
+      //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
+      // ],
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "Wishmanagement",

@@ -404,7 +404,7 @@ const ResellerDashboard = () => {
                                 transition={{ type: "spring", stiffness: 300 }}
                                 className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
                             >
-                                <div className="font-semibold text-lg text-gray-800">
+                                <div className="font-semibold text-lg text-gray-900">
                                     {service.name}
                                 </div>
                                 <motion.div className="flex items-center justify-end z-10">

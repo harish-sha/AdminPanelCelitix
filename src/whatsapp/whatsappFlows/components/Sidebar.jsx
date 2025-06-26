@@ -23,6 +23,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import DeveloperBoardOutlinedIcon from '@mui/icons-material/DeveloperBoardOutlined';
 import SwitchLeftOutlinedIcon from '@mui/icons-material/SwitchLeftOutlined';
 import ViewCarouselSharpIcon from '@mui/icons-material/ViewCarouselSharp';
+import BorderColorOutlinedIcon from '@mui/icons-material/BorderColorOutlined';
 import "./sidebar.css";
 
 const items = [
@@ -45,6 +46,7 @@ const items = [
 const items2 = [
   { id: 1, type: "textInput", label: "Text Input", icon: <KeyboardIcon /> },
   { id: 2, type: "textArea", label: "Text Area", icon: <TextFieldsIcon /> },
+  { id: 3, type: "richText", label: "Rich Text", icon: <BorderColorOutlinedIcon /> }
 ];
 
 const items3 = [
@@ -94,7 +96,7 @@ const items5 = [
   { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
   { id: 2, type: "document", label: "Document", icon: <InsertDriveFileIcon /> },
   { id: 3, type: "media", label: "Media", icon: <PermMediaOutlinedIcon /> },
-  {id: 4, type: "imageCarousel", label: "ImageCarousel", icon: <ViewCarouselSharpIcon/>}
+  { id: 4, type: "imageCarousel", label: "ImageCarousel", icon: <ViewCarouselSharpIcon /> }
 ];
 
 const items6 = [
