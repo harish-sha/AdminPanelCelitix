@@ -9,6 +9,7 @@ import DeleteForeverOutlinedIcon from "@mui/icons-material/DeleteForeverOutlined
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import UniversalButton from "../../components/UniversalButton";
 import toast from "react-hot-toast";
+import InputField from "@/whatsapp/components/InputField";
 
 export default function CustomTabView({
   tabs,
@@ -104,6 +105,8 @@ export default function CustomTabView({
     setScreenID("");
   };
 
+  const [openMenuIndex, setOpenMenuIndex] = useState(null);
+
   const menuItems = (index) => [
     {
       label: "Edit",
@@ -165,51 +168,40 @@ export default function CustomTabView({
   };
 
   return (
-    <div className="card ">
-      <div className="flex items-center gap-2 px-2 py-2 border-b-2 border-gray-300 overflow-x-auto absolute top-0 bg-blue-50 z-50 w-full  rounded-md">
+    <div className="card">
+      <div className="flex items-center gap-2 px-3 py-2 border-b  bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100  shadow-sm absolute rounded-t-2xl top-0 z-50 w-full overflow-x-auto">
         {tabs.map((tab, index) => (
           <div
             key={index}
-            className="flex items-center justify-between px-2 py-2 cursor-pointer rounded-md"
-            style={{
-              backgroundColor: activeIndex === index ? "#e5e7eb" : "#fff",
-              transition: "background-color 0.3s ease",
-            }}
+            className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${activeIndex === index
+              ? "bg-blue-100 border-blue-400 text-blue-700"
+              : "bg-gray-100 border text-gray-700 hover:bg-gray-200"
+              }`}
             onClick={() => setActiveIndex(index)}
-            onMouseEnter={(e) =>
-              (e.currentTarget.style.backgroundColor = "#f3f4f6")
-            }
-            onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor =
-              activeIndex === index ? "#e5e7eb" : "#fff")
-            }
           >
-            <span>{tab.title}</span>
-            <Menu
-              model={menuItems(index)}
-              popup
-              ref={menuRefs[index]}
+            <span className="pr-1 font-medium">{tab.title}</span>
+
+            <Menu model={menuItems(index)} popup ref={menuRefs[index]}
               className="mt-50"
             />
+
             <MoreVertOutlinedIcon
-              className="p-button-text p-button-sm text-[#4b5563] hover:text-[#2563eb]"
               onClick={(e) => menuRefs[index].current.toggle(e)}
+              className="ml-1 text-gray-500 hover:text-blue-500"
+              style={{ fontSize: "1rem" }}
             />
           </div>
         ))}
 
+        {/* Add New Tab Button */}
         <div
-          className="flex items-center justify-center cursor-pointer rounded-md px-2 py-2 bg-[#f3f4f6]"
+          className="flex items-center justify-center px-3 py-1.5 bg-blue-100 text-blue-600 border border-blue-300 rounded-full cursor-pointer hover:bg-blue-200 transition-all"
           onClick={handleTabClick}
         >
-          <AddIcon className="text-blue-600" />
+          <AddIcon fontSize="small" />
+          <span className="ml-1 text-sm font-medium text-nowrap">Add Screen</span>
         </div>
       </div>
-      {/* Tab Content */}
-      {/* <div style={{ padding: '20px' }}>
-                {tabs.length > 0 && tabs[activeIndex]?.content}
-                {tabs.length > 0 && tabs[activeIndex]?.payload}
-            </div> */}
 
       <Dialog
         visible={dialogVisible}
@@ -225,30 +217,32 @@ export default function CustomTabView({
         </p>
         <div>
           <div className="flex flex-row mt-5 w-full gap-5">
-            <div className="">
-              <TextField
-                label="Enter screen name"
+            <div className="w-80">
+              <InputField
+                label="Screen title"
+                tooltipContent="this is your screen title which display top of the screen"
                 value={screenName}
                 onChange={(e) => {
                   const value = e.target.value;
                   setScreenName(value);
-
                   if (!value) {
                     setScreenID("");
                     return;
                   }
-
                   const sanitized = value.replace(/\s+/g, "_").toLowerCase();
-                  const randomLetters = generateRandomLetters(); // e.g., 'abcde'
+                  const randomLetters = generateRandomLetters();
                   const id = `${sanitized}_${randomLetters}`.toUpperCase();
                   setScreenID(id);
                 }}
+                placeholder="Screen Name"
+                className="py-2 border-2 rounded-md px-2"
                 required
               />
             </div>
-            <div className="">
-              <TextField
-                label="Enter screen ID (Optional)"
+            <div className="w-80">
+              <InputField
+                label="Screen ID"
+                tooltipContent="It's scren ID of the screen it's unique and auto generate"
                 value={screenID}
                 onChange={(e) => {
                   const inputValue = e.target.value.trim();
@@ -258,16 +252,11 @@ export default function CustomTabView({
                   setScreenID(formattedID);
                 }}
                 required
+                readOnly
+                placeholder="Screen ID"
+                className="readonly py-2 border-2 rounded-md px-2 cursor-not-allowed"
               />
             </div>
-            {/* <div className='mt-5'>
-                         <TextField
-                             label="Import File"
-                             value={importFile}
-                            onClick={(e) => setImportFile(e.target.value)}
-                             required
-                         />
-                     </div> */}
           </div>
           <div className="flex flex-col ml-2 mt-5">
             <h2 className="text-gray-500 font-medium text-lg">Instructions:</h2>
@@ -277,6 +266,7 @@ export default function CustomTabView({
                 used as its screen name.
               </li>
               <li>Screen ID must be unique.</li>
+              <li>SUCCESS is a reserved keyword and should not be used as a screen id.</li>
               <li>Screen ID allows only alphabets and underscores("_").</li>
               <li>
                 Provide a separate Screen ID, if the screen title includes
@@ -318,7 +308,7 @@ export default function CustomTabView({
         <div>
           <div className="flex flex-row mt-5 w-full gap-5">
             <div className="">
-              <TextField
+              <InputField
                 label="Enter screen name"
                 value={screenEditName}
                 onChange={(e) => {
@@ -326,10 +316,20 @@ export default function CustomTabView({
                   setScreenEditName(value);
                 }}
                 required
+                placeholder="Screen Name"
+                className="py-2 border-2 rounded-md px-2"
               />
             </div>
             <div className="">
-              <TextField label="Enter screen ID (Optional)" value={screenID} />
+              <InputField
+                tooltipContent="It's scren ID of the screen it's unique and auto generate"
+                label="Screen ID"
+                value={screenID}
+                required
+                readOnly
+                placeholder="Screen ID"
+                className="readonly py-2 border-2 rounded-md px-2 cursor-not-allowed"
+              />
             </div>
           </div>
           <div className="flex flex-col ml-2 mt-5">
@@ -340,6 +340,7 @@ export default function CustomTabView({
                 used as its screen name.
               </li>
               <li>Screen ID must be unique.</li>
+              <li>SUCCESS is a reserved keyword and should not be used as a screen id.</li>
               <li>Screen ID allows only alphabets and underscores("_").</li>
               <li>
                 Provide a separate Screen ID, if the screen title includes

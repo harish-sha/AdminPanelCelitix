@@ -577,8 +577,8 @@ export const generatePayload = (data) => {
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
-          "scale-type": String(pay["scale-type"] || " "),
-          // "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
+          "scale-type": String(pay["scale-type"] || "contain"),
+          //  "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
           images: [
             {
               src: pay["image-1"]?.src || "",

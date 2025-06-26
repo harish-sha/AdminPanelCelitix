@@ -48,11 +48,11 @@ export const convertNodeToMarkdown = (node) => {
   return `![${altText}](${src})`;
     case "ul":
       return Array.from(node.children)
-        .map((li) => `+ ${convertNodeToMarkdown(li)}`)
+        .map((li) => `"+ ${convertNodeToMarkdown(li)}"`)
         .join(",");
     case "ol":
       return Array.from(node.children)
-        .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+        .map((li, i) => `"${i + 1}. ${convertNodeToMarkdown(li)}"`)
         .join(",");
     case "li":
       return children;

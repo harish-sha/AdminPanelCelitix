@@ -5,15 +5,23 @@ import Canvas from "../components/Canvas";
 import MobilePanel from "../components/MobilePanel";
 import EditPanel from "../components/EditPanel";
 import UniversalButton from "../../components/UniversalButton";
-import { Box, Typography } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
+import { motion } from "framer-motion";
+import { TiFlowSwitch } from "react-icons/ti";
 import SaveOutlinedIcon from "@mui/icons-material/SaveOutlined";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import ConstructionOutlinedIcon from "@mui/icons-material/ConstructionOutlined";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toast from "react-hot-toast";
 import { generatePayload } from "../lib/generatePayload";
 import { saveFlow } from "@/apis/whatsapp/whatsapp";
 import InputField from "@/components/layout/InputField";
+import ParticleBackground from "../components/ParticleBackground";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
@@ -148,7 +156,8 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -169,7 +178,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -214,7 +224,6 @@ const FlowCreationPage = () => {
   const handleEdit = (index, item) => {
     console.log("itemmmmmmmmmmmmm", item);
     const type = item.type;
-
 
     // Extract prefill value based on type
     let prefillValue = "";
@@ -271,17 +280,6 @@ const FlowCreationPage = () => {
     // radioBtn
   };
 
-
-
-
-
-
-
-
-
-
-
-
   const handleSave = (updatedData) => {
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
@@ -305,11 +303,6 @@ const FlowCreationPage = () => {
     });
     setSelectedItem(null);
   };
-
-
-
-
-
 
   // Close the edit panel
   const handleCloseEditPanel = () => {
@@ -351,8 +344,8 @@ const FlowCreationPage = () => {
   };
 
   useEffect(() => {
-    console.log("tabbs", tabs)
-  }, [tabs])
+    console.log("tabs", tabs);
+  }, [tabs]);
 
   async function handleFlowBuild() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
@@ -433,53 +426,250 @@ const FlowCreationPage = () => {
     }
   }
 
-  // async function handleFlowSave() {
-  //   toast.success("Flow Saved Successfully");
-  // }
+  async function handleFlowSave() {
+    toast.success("Flow Saved Successfully");
+  }
+
+  const [savedLocalFlows, setSavedLocalFlows] = useState([]);
+  const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
+  const [errors, setErrors] = useState([]);
+  const [showErrors, setShowErrors] = useState(false);
+  const hasErrors = errors.length > 0;
+
+  function handleLocalSave() {
+    const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
+    if (!hasAtLeastOneComponent)
+      return toast.error("Add at least one component.");
+    if (!flowName) return toast.error("Enter flow name.");
+
+    const payload = generatePayload(tabs);
+    const localFlow = {
+      id: crypto.randomUUID(),
+      name: flowName,
+      category: state?.selectCategories,
+      waba: state?.selectedWaba,
+      payload,
+      savedAt: new Date().toISOString(),
+    };
+
+    setSavedLocalFlows((prev) => [...prev, localFlow]);
+    toast.success("Flow saved locally. Ready to export.");
+  }
+
+  function exportFlowAsJson(flow) {
+    const blob = new Blob([JSON.stringify(flow.payload, null, 2)], {
+      type: "application/json",
+    });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = `${flow.name}_${flow.savedAt}.json`;
+    link.click();
+  }
 
   return (
     <div className="">
-      <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
-        {/* <span className="text-md font-semibold text-gray-700">
-          ChatFlow: {state?.flowName || "Untitled Flow"}
-        </span> */}
-        <span className="text-md font-semibold text-gray-700">ChatFlow</span>
+      <div className="relative rounded-xl overflow-hidden shadow-md z-50">
+        <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-3 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300">
+          <ParticleBackground />
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4 }}
+            className="flex items-center gap-2"
+          >
+            <div className="bg-white shadow-md p-2 rounded-full">
+              <TiFlowSwitch className="text-indigo-600 text-xl" />
+            </div>
+            <div className="flex gap-5 items-center">
+              <h1 className="text-lg font-semibold text-indigo-900 tracking-tight">
+                Design Your WhatsApp Automation Flow
+              </h1>
+              {/* <p className="text-xs text-gray-800">
+                Seamlessly create, preview, and publish dynamic conversational
+                journeys to engage your customers on WhatsApp.
+              </p> */}
+            </div>
+          </motion.div>
 
-        <div className="flex items-end gap-3">
-          <InputField
-            id="flowname"
-            name="flowname"
-            type="text"
-            placeholder="Enter Flow Name"
-            label="Enter Flow Name"
-            tooltipContent="Enter a unique flow name one waba cannot contain same flow name"
-            value={flowName}
-            onChange={(e) => {
-              const noSpaces = e.target.value.replace(/\s/g, "");
-              setFlowName(noSpaces);
-            }}
-            className="min-w-[200px]"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+            className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto"
+          >
+            <div className="flex flex-col w-full sm:w-auto">
+              <input
+                id="flowname"
+                name="flowname"
+                type="text"
+                placeholder="Enter a unique flow name"
+                value={flowName}
+                onChange={(e) => {
+                  const noSpaces = e.target.value.replace(/\s/g, "");
+                  setFlowName(noSpaces);
+                }}
+                className="px-3 py-1.5 border border-indigo-300 bg-white text-[0.82rem] rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:outline-none sm:min-w-[250px]"
+              />
+            </div>
 
-          {/* <UniversalButton
-            icon={<SaveOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
-            label="Save"
-            onClick={handleFlowSave}
-          />
+            <div className="flex items-center gap-3 justify-between relative">
+              {/* Error Dialog Box Button */}
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={() => setShowErrors((prev) => !prev)}
+                className="px-4 py-2 rounded-md font-medium text-sm shadow-sm transition duration-300 flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 relative cursor-pointer justify-center"
+              >
+                <ErrorOutlineOutlinedIcon sx={{ fontSize: "1.2rem" }} />
+                Errors
+                <span className="bg-red-600 text-white text-xs font-medium h-4 w-4 flex items-center justify-center  rounded-full">
+                  {errors.length}
+                </span>
+                <ExpandMoreIcon
+                  className={`transform transition ${
+                    showErrors ? "rotate-180" : "rotate-0"
+                  }`}
+                />
+              </motion.button>
 
-          <UniversalButton
-            icon={<SettingsOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
-            label="Settings"
-          /> */}
+              {/* Build Flow Button */}
+              <motion.button
+                whileHover={{ scale: 1.03 }}
+                whileTap={{ scale: 0.97 }}
+                onClick={handleFlowBuild}
+                // disabled={isLoading}
+                disabled={isLoading || hasErrors}
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
+                  isLoading || hasErrors
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                }`}
+              >
+                <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
+                {isLoading ? "Building..." : "Build Flow"}
+              </motion.button>
 
-          <UniversalButton
-            icon={<ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />}
-            label={isLoading ? "Building..." : "BuildFlow"}
-            onClick={handleFlowBuild}
-            disabled={isLoading}
-          />
+              {/* Save flow Button */}
+              <CustomTooltip
+                title="Save the current flow configuration. This will validate inputs and prepare the flow for export."
+                placement="top"
+                arrow
+              >
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={handleLocalSave}
+                  className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
+                >
+                  <SettingsOutlinedIcon sx={{ fontSize: "1.2rem" }} />
+                  Save (Offline)
+                </motion.button>
+              </CustomTooltip>
+
+              {/* Export button */}
+              <CustomTooltip
+                title="Export the flow in JSON format. Ensure all configuration errors are resolved before exporting. [Save flow first!]"
+                placement="top"
+                arrow
+              >
+                <motion.button
+                  whileHover={{ scale: 1.03 }}
+                  whileTap={{ scale: 0.97 }}
+                  onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
+                  className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
+                >
+                  <FileUploadOutlinedIcon sx={{ fontSize: "1.2rem" }} />
+                  Export
+                </motion.button>
+              </CustomTooltip>
+            </div>
+          </motion.div>
         </div>
       </div>
+
+      {showErrors && (
+        <Paper
+          elevation={4}
+          sx={{
+            zIndex: 1500,
+            borderRadius: 3,
+            boxShadow: "0px 4px 20px rgba(0,0,0,0.2)",
+          }}
+          className="absolute top-35 right-82 w-72 bg-white overflow-scroll min-w-[280px] max-w-full  z-100"
+        >
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            transition={{ duration: 0.2 }}
+            style={{ userSelect: "text" }}
+          >
+            <div className="px-3 py-2 border-b text-sm font-semibold text-red-700">
+              Configuration Errors
+            </div>
+            <div className="max-h-60 overflow-y-auto divide-y">
+              {hasErrors ? (
+                errors.map((err, idx) => (
+                  <div
+                    key={idx}
+                    className="px-3 py-2 text-sm text-gray-700 flex items-start gap-2"
+                  >
+                    <ErrorOutlineOutlinedIcon
+                      className="text-red-500 mt-0.5"
+                      fontSize="small"
+                    />
+                    {err}
+                  </div>
+                ))
+              ) : (
+                <div className="p-4 text-sm text-green-600 flex items-center gap-2">
+                  <CheckCircleOutlineIcon
+                    className="text-green-500"
+                    fontSize="small"
+                  />
+                  No configuration issues found.
+                </div>
+              )}
+            </div>
+          </motion.div>
+        </Paper>
+      )}
+
+      {exportDropdownOpen && (
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -10 }}
+          className="absolute top-37 right-7 z-50 bg-white shadow-md border rounded-md w-76 max-h-72 overflow-y-auto"
+        >
+          {savedLocalFlows.length > 0 ? (
+            savedLocalFlows.map((flow) => (
+              <div
+                key={flow.id}
+                className="px-4 py-2 flex items-center gap-2 hover:bg-gray-100 cursor-pointer text-sm text-gray-800 font-medium border-b"
+                onClick={() => exportFlowAsJson(flow)}
+              >
+                {flow.name} – {new Date(flow.savedAt).toLocaleString()}{" "}
+                <DownloadForOfflineOutlinedIcon
+                  sx={{ fontSize: "1.2rem", color: "green" }}
+                />
+              </div>
+            ))
+          ) : (
+            <div className="p-4 text-center text-sm text-gray-500">
+              <p className="font-medium text-gray-700 mb-1">
+                No saved flows yet
+              </p>
+              <p className="text-xs">
+                First, create and save a flow. Your saved flows will appear here
+                and can be downloaded as{" "}
+                <span className="font-semibold text-blue-600">JSON Format</span>
+                .
+              </p>
+            </div>
+          )}
+        </motion.div>
+      )}
 
       <div className="flex gap-3 items-start mt-4">
         {/* Siddebar */}
@@ -514,7 +704,7 @@ const FlowCreationPage = () => {
           />
           {selectedItem && (
             <EditPanel
-              // key={selectedItem.id}    
+              // key={selectedItem.id}
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}
@@ -558,7 +748,12 @@ const FlowCreationPage = () => {
         <div className="flex-1 ">
           {/* Mobile Panel Preview*/}
           <MobilePanel
-            items={tabs[activeIndex].payload}
+            tabs={tabs}
+            // items={tabs[activeIndex].payload}
+            items={tabs[activeIndex].payload.map((item) => ({
+              ...item,
+              screenTitle: tabs[activeIndex].title,
+            }))}
             onUpdateItem={(index, updater) => {
               setTabs((prevTabs) => {
                 const newTabs = [...prevTabs];

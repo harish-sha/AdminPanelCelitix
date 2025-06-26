@@ -39,40 +39,6 @@ const Canvas = ({
   setCreateTab,
   menuRefs,
 }) => {
-  // const [{ isOver }, drop] = useDrop(() => ({
-  //   accept: [
-  //     "heading",
-  //     "subheading",
-  //     "textbody",
-  //     "textcaption",
-  //     "textInput",
-  //     "textArea",
-  //     "radioButton",
-  //     "checkBox",
-  //     "dropDown",
-  //     "chipSelector"
-  //   ],
-
-  //   drop: (item) => {
-  //     console.log("itemvvvvvvvvvv", item)
-  //     const newItem = {
-  //       id: Date.now(),
-  //       type: item.type,
-  //     };
-
-  //     console.log("newItem", newItem)
-
-  //     setTabs((prevTabs) => {
-  //       const newTabs = [...prevTabs];
-  //       const activePayload = newTabs[activeIndex].payload || [];
-  //       activePayload.push(newItem);
-  //       newTabs[activeIndex].payload = activePayload;
-  //       return newTabs;
-  //     });
-  //   }
-
-  // }));
-
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [
       "heading",
@@ -105,6 +71,24 @@ const Canvas = ({
 
       setTabs(allTabs);
     },
+
+    // new drop code as per the drag and drop working functionality
+    // drop: (item, monitor) => {
+    //   if (monitor.didDrop()) return;
+
+    //   const newItem = { id: Date.now(), type: item.type, value: "" };
+
+    //   setTabs((prev) =>
+    //     prev.map((tab, idx) => {
+    //       if (idx !== activeIndex) return tab;
+    //       return {
+    //         ...tab,
+    //         payload: [newItem, ...(tab.payload || [])],
+    //       };
+    //     })
+    //   );
+    // },
+    // collect: (m) => ({ isOver: m.isOver({ shallow: true }) }),
   }));
 
   const getDynamicFieldValue = (tabs, activeIndex, item, field = "label") => {
@@ -194,7 +178,7 @@ const Canvas = ({
 
     if (item.type === "textArea") {
       return (
-        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm ">
           {targetItem.label && (
             <div>
               <span className="font-semibold">Label: </span>
@@ -242,7 +226,7 @@ const Canvas = ({
           {/* {targetItem.text && ( */}
           <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden  h-auto flex flex-col p-3 space-y-2 bg-blue-50">
             <div
-              className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+              className="flex-1 overflow-y-auto  prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
               dangerouslySetInnerHTML={{ __html: renderedHTML }}
             />
 
@@ -266,39 +250,52 @@ const Canvas = ({
     }
 
     // For footerbutton: look under footer
-    if (item.type === "footerbutton") {
-      return (
-        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div>
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
+   
 
-          {targetItem["left-caption"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Left-caption: </span>
-              {targetItem["left-caption"] || " "}
-            </div>
-          )}
+  if (item.type === "footerbutton") {
+  const footer = targetItem.footer?.["footer_1"];
 
-          {targetItem["right-caption"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Right-caption: </span>
-              {targetItem["right-caption"] || " "}
-            </div>
-          )}
-
-          {targetItem["center-caption"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Center-caption: </span>
-              {targetItem["center-caption"] || " "}
-            </div>
-          )}
+  return (
+    <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+      {footer?.label && (
+        <div>
+          <span className="font-semibold">Label: </span>
+          {footer.label}
         </div>
-      );
-    }
+      )}
+
+      {footer?.left_caption && (
+        <div className="mt-1">
+          <span className="font-semibold">Left-caption: </span>
+          {footer.left_caption}
+        </div>
+      )}
+
+      {footer?.right_caption && (
+        <div className="mt-1">
+          <span className="font-semibold">Right-caption: </span>
+          {footer.right_caption}
+        </div>
+      )}
+
+      {footer?.center_caption && (
+        <div className="mt-1">
+          <span className="font-semibold">Center-caption: </span>
+          {footer.center_caption}
+        </div>
+      )}
+
+      {footer?.on_click_action && (
+        <div className="mt-1">
+          <span className="font-semibold">Next Action: </span>
+          {footer.on_click_action}
+        </div>
+      )}
+    </div>
+  );
+}
+
+
 
     if (item.type === "radioButton") {
       return (
@@ -313,7 +310,7 @@ const Canvas = ({
           {(targetItem["data-source"] || []).map((opt, i) => (
             <div
               key={i}
-              className="mt-2 p-2 border rounded-md bg-blue-50 shadow-sm flex items-center justify-between"
+              className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between"
             >
               <div>
                 <p className="mb-1">
@@ -365,43 +362,45 @@ const Canvas = ({
             </div>
           )}
 
-          <ul className="mt-2 space-y-2">
+          <div className="mt-2 space-y-2">
             {(targetItem["data-source"] || []).map((opt, idx) => (
-              <li key={idx} className="border p-2 rounded bg-white">
-                {opt.title && (
-                  <div className="mb-1">
-                    <span className="font-semibold"> Title: </span>
-                    {opt.title || "Option"}
-                  </div>
-                )}
-                {opt.description && (
-                  <div className="mb-1">
-                    <span className="font-semibold"> Description: </span>
-                    {opt.description}
-                  </div>
-                )}
-                {opt.metadata && (
-                  <div className="mb-1">
-                    <span className="font-semibold"> Meta: </span>
-                    {opt.metadata}
-                  </div>
-                )}
+              <div key={idx} className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between ">
+                <div>
+                  {opt.title && (
+                    <div className="mb-1">
+                      <span className="font-semibold"> Title: </span>
+                      {opt.title || "Option"}
+                    </div>
+                  )}
+                  {opt.description && (
+                    <div className="mb-1">
+                      <span className="font-semibold"> Description: </span>
+                      {opt.description}
+                    </div>
+                  )}
+                  {opt.metadata && (
+                    <div className="mb-1">
+                      <span className="font-semibold">Metadata: </span>
+                      {opt.metadata}
+                    </div>
+                  )}
+                </div>
                 {opt.image && (
                   <div className="flex justify-end items-center mt-0">
-                  <img
-                    src={
-                      opt.image?.startsWith("data:")
-                        ? opt.image
-                        : `data:image/jpeg;base64,${opt.image}`
-                    }
-                    alt={opt.title || "option image"}
-                    className="w-10 h-10 rounded-full object-cover border"
-                  />
-                   </div>
+                    <img
+                      src={
+                        opt.image?.startsWith("data:")
+                          ? opt.image
+                          : `data:image/jpeg;base64,${opt.image}`
+                      }
+                      alt={opt.title || "option image"}
+                      className="w-10 h-10 rounded-full object-cover border"
+                    />
+                  </div>
                 )}
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
 
           {targetItem.required && (
             <div className="mt-1">
@@ -427,31 +426,41 @@ const Canvas = ({
             {(targetItem["data-source"] || []).map((opt, index) => (
               <div
                 key={index}
-                className="border border-gray-300 p-2 rounded bg-white"
+                className="border border-gray-300 p-2 rounded bg-white flex  items-center justify-between"
               >
-                <div className="mb-1">
-                  <span className="font-semibold"> Title: </span>
-                  {opt.title || "Untitled Option"}
+                <div>
+                  <div className="mb-1">
+                    <span className="font-semibold"> Title: </span>
+                    {opt.title || "Untitled Option"}
+                  </div>
+                  {opt.description && (
+                    <div className="mb-1">
+                      <span className="font-semibold"> Description: </span>
+                      {opt.description}
+                    </div>
+                  )}
+                  {opt.metadata && (
+                    <div className="mb-1">
+                      <span className="font-semibold"> Metadata: </span>
+                      {opt.metadata}
+                    </div>
+                  )}
                 </div>
-                {opt.description && (
-                  <div className="mb-1">
-                    <span className="font-semibold"> Description: </span>
-                    {opt.description}
-                  </div>
-                )}
-                {opt.metadata && (
-                  <div className="mb-1">
-                    <span className="font-semibold"> Metadata: </span>
-                    {opt.metadata}
-                  </div>
-                )}
+
                 {opt.image && (
-                  <img
-                    src={opt.image}
-                    alt={opt.title}
-                    className="mt-1 h-10 object-contain"
-                  />
+                  <div className="flex justify-end items-center mt-0">
+                    <img
+                      src={
+                        opt.image?.startsWith("data:")
+                          ? opt.image
+                          : `data:image/jpeg;base64,${opt.image}`
+                      }
+                      alt={opt.title || "option image"}
+                      className="w-10 h-10 rounded-full object-cover border"
+                    />
+                  </div>
                 )}
+
               </div>
             ))}
           </div>
@@ -794,15 +803,6 @@ const Canvas = ({
 
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
-    // console.log("tabs", tabs);
-    // const newTabs = [...tabs];
-    // newTabs[activeIndex] = {
-    //   ...newTabs[activeIndex],
-    //   payload: newTabs[activeIndex].payload.filter((_, i) => i !== index),
-    // };
-
-    // setTabs(newTabs);
-
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -815,49 +815,57 @@ const Canvas = ({
     toast.success("Item deleted successfully");
   };
 
-  //   const handleDelete = (idToDelete) => {
-  //     console.log("idToDelete", idToDelete)
-  //   setTabs((prevTabs) => {
-  //     const newTabs = prevTabs.map((tab, i) => {
-  //       if (i === activeIndex) {
-  //         return {
-  //           ...tab,
-  //           payload: tab.payload.filter((item) => item.id !== idToDelete),
-  //         };
-  //       }
-  //       return tab;
-  //     });
-
-  //     return newTabs;
-  //   });
-
-  //   toast.success("Item deleted successfully");
-  // };
+  const moveItem = (fromIndex, toIndex) => {
+    setTabs((prev) =>
+      prev.map((tab, tabIdx) => {
+        if (tabIdx !== activeIndex) return tab;
+        const newPayload = Array.from(tab.payload || []);
+        const [moved] = newPayload.splice(fromIndex, 1);
+        newPayload.splice(toIndex, 0, moved);
+        return { ...tab, payload: newPayload };
+      })
+    );
+  };
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    // console.log("itemddddd", item);
-    // console.log("indexdddd", index);
     if (!item?.type) {
       console.error("DraggableItem error: item.type is not defined");
       return null;
     }
 
     const itemType = item?.type;
-    // console.log("itemType", itemType);
-    // const [, drag] = useDrag({
-    //   type: item.type,
-    //   item: { index },
+
+    // const [{ isDragging }, drag] = useDrag({
+    //   type: item?.type,
+    //   // item: { id: item.id },
+    //   item: { type: item.type },
+    //   collect: (monitor) => ({
+    //     isDragging: monitor.isDragging(),
+    //   }),
     // });
 
-    const [{ isDragging }, drag] = useDrag({
-      type: item?.type,
-      // item: { id: item.id },
-      item: { type: item.type },
-      collect: (monitor) => ({
-        isDragging: monitor.isDragging(),
-      }),
+    const ref = useRef(null);
+
+    // 2a) drop — handle hover to reorder
+    const [, drop] = useDrop({
+      accept: "canvasItem",
+      hover(dragged) {
+        if (dragged.index === index) return;
+        moveItem(dragged.index, index);
+        dragged.index = index;
+      },
     });
+
+    // 2b) drag — expose your index & type
+    const [{ isDragging }, drag] = useDrag({
+      type: "canvasItem",
+      item: { type: item.type, index },
+      collect: (m) => ({ isDragging: m.isDragging() }),
+    });
+
+    drag(drop(ref));
+
 
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
@@ -875,7 +883,8 @@ const Canvas = ({
       //   transition={{ type: "spring", stiffness: 200, damping: 25 }}
       // >
       <Paper
-        ref={drag}
+        // ref={drag}
+        ref={ref}
         style={{
           opacity: isDragging ? 0.5 : 1,
           cursor: "move",
@@ -883,7 +892,6 @@ const Canvas = ({
         sx={{
           backgroundColor: getBackgroundColor(item.type),
         }}
-        // className="fields"
         className="w-110 p-2 mb-2 rounded-lg shadow-md mt-10"
       >
         <div className="flex items-center justify-between">
@@ -921,66 +929,6 @@ const Canvas = ({
       // {/* </motion.div> */}
     );
   });
-
-  // const DraggableItem = React.memo(({ item, index, onEdit, handleDelete, tabs, activeIndex }) => {
-  //   if (!item?.type) {
-  //     console.error(" error: item.type is not defined");
-  //     return null;
-  //   }
-
-  //   const [{ isDragging }, drag] = useDrag({
-  //     type: item.type,
-  //     item: { type: item.type },
-  //     collect: (monitor) => ({
-  //       isDragging: monitor.isDragging(),
-  //     }),
-  //   });
-
-  //   const dynamicValue = getDynamicFieldValue(tabs, activeIndex, item, "helper_text");
-  //   const isTextArea = item.type === "textArea";
-
-  //   return (
-  //     <Paper
-  //       ref={drag}
-  //       style={{
-  //         opacity: isDragging ? 0.5 : 1,
-  //         cursor: "move",
-  //       }}
-  //       sx={{
-  //         backgroundColor: getBackgroundColor(item.type),
-  //       }}
-  //       className="w-[450px] p-2 mb-2 rounded-lg shadow-md mt-10"
-  //     >
-  //       <Box
-  //         sx={{
-  //           display: "flex",
-  //           alignItems: "center",
-  //           justifyContent: "space-between",
-  //           position: "relative",
-  //         }}
-  //       >
-  //         <Typography variant="subtitle1" ml={1}>
-  //           {getLabel(item.type)}
-  //         </Typography>
-  //         <Box>
-  //           <IconButton size="small" onClick={() => onEdit(index, item)}>
-  //             <EditOutlinedIcon fontSize="small" />
-  //           </IconButton>
-  //           <IconButton size="small" onClick={() => handleDelete(index)}>
-  //             <DeleteForeverOutlinedIcon fontSize="small" className="text-red-400" />
-  //           </IconButton>
-  //         </Box>
-  //       </Box>
-
-  //       <InputField
-  //         value={dynamicValue}
-  //         multiline={isTextArea}
-  //         rows={isTextArea ? 4 : undefined}
-  //         readOnly
-  //       />
-  //     </Paper>
-  //   );
-  // });
 
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
@@ -1062,24 +1010,9 @@ const Canvas = ({
   };
 
   return (
-    // <Box
-    //   ref={drop}
-    //   className="relative flex-1 p-2 shadow-xl overflow-auto rounded-xl bg-white mt-2 mr-3 h-[900px] w-[500px]"
-    // >
-    //   <div className="text-md tracking-wide font-semibold mb-2 text-center shadow-md rounded-md h-full">
-    //     <div><TabView /></div>
-    //     <div className="w-2/3">
-    //       {items.map((item, index) => (
-    //         <DraggableItem key={item.id} item={item} index={index} />
-    //       ))}
-
-    //     </div>
-    //     <div className="w-1/3"><EditPanel onClick={() => onEdit(index)} /></div>
-    //   </div>
-    // </Box>
     <div
       ref={drop}
-      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-white pt-10"
+      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-[url(/WB.png)] pt-10"
     >
       {/* Tabs for multiple screens */}
       <TabView
@@ -1105,12 +1038,6 @@ const Canvas = ({
       />
       {/* Render all items on the canvas */}
       <div className="w-1/3 ml-5 ">
-        {/* {tabs[activeIndex]?.payload?.map((item, index) => (
-          <div key={index}>
-            <DraggableItem key={item.id} item={item} index={index} itemKey={item.id} />
-          </div>
-        ))} */}
-
         <AnimatePresence>
           {tabs[activeIndex]?.payload
             ?.filter((item) => item.type !== undefined)

@@ -27,6 +27,7 @@ import AnimatedDropdown from "../../components/AnimatedDropdown";
 import { marked } from "marked";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
+  console.log("tabs", items);
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
   const [radioButtonOptions, setRadioButtonOptions] = useState([
     { title: "Option 1", description: "Description 1", image: "url1.png" },
@@ -34,12 +35,25 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   ]);
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleCheckboxChange = (index, optionIndex, checked) => {
+  const handleCheckboxChange = (index, groupId, optionId, isChecked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
-        const updatedChecked = [...(prevItem.checked || [])];
-        updatedChecked[optionIndex] = checked;
-        return { ...prevItem, checked: updatedChecked };
+        const prevChecked = { ...(prevItem.checked || {}) };
+        const groupChecked = new Set(prevChecked[groupId] || []);
+
+        if (isChecked) {
+          groupChecked.add(optionId);
+        } else {
+          groupChecked.delete(optionId);
+        }
+
+        return {
+          ...prevItem,
+          checked: {
+            ...prevChecked,
+            [groupId]: Array.from(groupChecked),
+          },
+        };
       });
     }
   };
@@ -114,13 +128,15 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   // imageCarousel
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // console.log("itemsssssss", items)
-
+  console.log("items", items);
   return (
     <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-3 border-black hide-scrollbar overflow-auto">
-      <Typography variant="h6" sx={{ textAlign: "center" }}>
-        Preview
-      </Typography>
+      {items[0]?.screenTitle && (
+  <h2 className="text-xl font-semibold text-center mb-2">
+    {items[0].screenTitle}
+  </h2>
+)}
+
       <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
         {items.map((item, index) => {
           // console.log("item", item);
@@ -284,8 +300,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
-                        <div key={groupId} className="p-1">
-                          {/* Group Label */}
+                        <div key={groupId}>
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: 600, mb: 1 }}
@@ -294,55 +309,45 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               `Checkbox Group ${groupIdx + 1}`}
                           </Typography>
 
-                          {/* Options List */}
                           {(groupData["data-source"] || []).map(
-                            (option, optionIndex) => (
-                              <Box
-                                key={optionIndex}
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  px: 0.5,
-                                  py: 0.4,
-                                  mb: 1,
-                                  borderRadius: 1,
-                                  border: "1px solid #e0e0e0",
-                                }}
-                              >
-                                {/* Left: Image + Title/Desc */}
+                            (option, optionIndex) => {
+                              const checkboxKey = `${groupId}_${optionIndex}`;
+
+                              return (
                                 <Box
+                                  key={checkboxKey}
                                   sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    marginLeft: 1,
+                                    mb: 1,
                                   }}
                                 >
                                   {option.image && (
                                     <Box
                                       component="img"
-                                      src={option.image}
-                                      alt={
-                                        option.title ||
-                                        `Option ${optionIndex + 1}`
+                                      src={
+                                        option.image?.startsWith("data:")
+                                          ? option.image
+                                          : `data:image/jpeg;base64,${option.image}`
                                       }
+                                      alt={option.title}
                                       sx={{
                                         width: 40,
                                         height: 40,
                                         borderRadius: "50%",
                                         mr: 1,
                                         border: "1px solid #ccc",
+                                        objectFit: "cover",
                                       }}
+                                      onError={(e) =>
+                                        (e.currentTarget.style.display = "none")
+                                      }
                                     />
                                   )}
 
-                                  <Box>
-                                    <Typography
-                                      variant="body2"
-                                      fontWeight={600}
-                                    >
-                                      {option.title ||
-                                        `Option ${optionIndex + 1}`}
+                                  <Box sx={{ flexGrow: 1 }}>
+                                    <Typography fontWeight={600}>
+                                      {option.title}
                                     </Typography>
                                     {option.description && (
                                       <Typography
@@ -353,27 +358,23 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                       </Typography>
                                     )}
                                   </Box>
-                                </Box>
 
-                                {/* Right: Checkbox */}
-                                <Checkbox
-                                  checked={
-                                    item.checked?.[
-                                      `${groupId}_${optionIndex}`
-                                    ] || false
-                                  }
-                                  onChange={(e) =>
-                                    handleCheckboxChange(
-                                      index,
-                                      `${groupId}_${optionIndex}`,
-                                      e.target.checked
-                                    )
-                                  }
-                                  icon={<CheckBoxOutlineBlankIcon />}
-                                  checkedIcon={<CheckBoxIcon />}
-                                />
-                              </Box>
-                            )
+                                  <Checkbox
+                                    checked={(
+                                      item.checked?.[groupId] || []
+                                    ).includes(option.id)}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        index,
+                                        groupId,
+                                        option.id,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                </Box>
+                              );
+                            }
                           )}
                         </div>
                       )
@@ -508,7 +509,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   {option.image && (
                                     <Box
                                       component="img"
-                                      src={option.image}
+                                      src={
+                                        option.image.startsWith("data:")
+                                          ? option.image
+                                          : `data:image/jpeg;base64,${option.image}`
+                                      }
                                       alt={
                                         option.title || `Option ${optIdx + 1}`
                                       }
@@ -520,8 +525,12 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                         border: "1px solid #ccc",
                                         objectFit: "cover",
                                       }}
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                      }}
                                     />
                                   )}
+
                                   <Box>
                                     <Typography
                                       variant="body2"

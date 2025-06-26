@@ -210,26 +210,6 @@ const WhatsappFlows = () => {
     .reverse()
     .slice((currentPage - 1) * rowsPerPage, currentPage * rowsPerPage);
 
-  const dropdownItems = ["Edit", "Delete", "Export"];
-
-  const iconMap = {
-    Edit: <EditNoteIcon fontSize="small" />,
-    Delete: (
-      <MdOutlineDeleteForever
-        className="text-red-500 cursor-pointer hover:text-red-600"
-        size={20}
-      />
-    ),
-    Export: <FileDownloadIcon fontSize="small" />,
-  };
-
-  const handleBtnClick = (item, flow) => {
-    setDropdownOpenId(null);
-    if (item === "Edit") handleEdit(flow);
-    else if (item === "Delete") handleDelete(flow);
-    else if (item === "Export") handleExport(flow);
-  };
-
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
     setDropdownOpenId(flow.flowId);
@@ -353,15 +333,12 @@ const WhatsappFlows = () => {
   const templateItem = (item) => (
     <div className="mx-2 group w-auto  rounded-2xl pt-2 my-2 overflow-hidden bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 shadow-lg border border-gray-200 relative group transition-all duration-200  hover:-translate-y-1">
       <Card sx={{ width: "auto", overflow: "hidden" }}>
-        {/* Title */}
         <h4 className="text-center text-lg font-bold mt-4">{item.name}</h4>
 
-        {/* Icon / Animation */}
         <div className="m-auto h-45 w-45 flex items-center justify-center mt-4">
           <Lottie animationData={item.animation} loop={true} />
         </div>
 
-        {/* Button */}
         <CardActions className="justify-center pb-4">
           <button
             className={cn(
@@ -404,9 +381,6 @@ const WhatsappFlows = () => {
           {/* <CardHoverEffect/> */}
 
           <div className="">
-            {/* <h2 className="text-lg font-semibold mb-2 text-gray-800">
-              Templates
-            </h2> */}
             <Carousel
               value={templates}
               numVisible={4}
@@ -601,13 +575,6 @@ const WhatsappFlows = () => {
 
                                 <button
                                   className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded-full text-sm transition"
-                                  // onClick={async () => {
-                                  //   await updateStatus(
-                                  //     flow.flowId,
-                                  //     flow.mobileno
-                                  //   );
-                                  //   setPublishingId(null);
-                                  // }}
                                   onClick={async () => {
                                     setIsPublishingNow(flow.flowId);
                                     await new Promise((res) =>
@@ -741,17 +708,6 @@ const WhatsappFlows = () => {
           >
             <form onSubmit={handleSubmit}>
               <div className="flex flex-col gap-4">
-                {/* <InputField
-                  tooltipContent="Enter flow name"
-                  tooltipPlacement="right"
-                  label="Flow Name"
-                  id="flowname"
-                  name="flowname"
-                  type="text"
-                  placeholder="Enter Flow Name"
-                  value={flowName}
-                  onChange={(e) => setFlowName(e.target.value)}
-                /> */}
                 <AnimatedDropdown
                   label="Select Categories"
                   id="flowcategories"
@@ -775,17 +731,6 @@ const WhatsappFlows = () => {
                   value={selectCategories}
                   onChange={setSelectCategories}
                 />
-                {/* <AnimatedDropdown
-                  label="Whatsapp integration"
-                  id="whatsappintegration"
-                  name="whatsappintegration"
-                  options={[
-                    { value: "static", label: "Static" },
-                    { value: "dynamic", label: "Dynamic" },
-                  ]}
-                  placeholder="Select Whatsapp Integration"
-                  onChange={(value) => console.log(value)}
-                /> */}
                 <AnimatedDropdown
                   id="manageTemplateWaba"
                   name="manageTemplateWaba"
