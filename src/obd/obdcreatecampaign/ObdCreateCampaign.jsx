@@ -843,7 +843,8 @@ const ObdCreateCampaign = () => {
                         />
 
                         {slectedDynamicVoiceFile && (
-                          <div className="border-2 p-2 rounded-md relative">
+                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative">
+                            <div className="text-red-800 text-xs font-medium text-center">Please fill all the variable fields! (remaining sequence are the voice clips)</div>
                             {voiceVariables.map((item, index) => {
                               console.log("item", item);
                               return (
@@ -935,7 +936,7 @@ const ObdCreateCampaign = () => {
                   />
                 </div>
 
-                {/* <div className="lg:w-1/4 w-full rounded-xl bg-[#f9f9f9] p-4">
+                <div className="lg:w-1/4 w-full rounded-xl bg-[#f9f9f9] p-4">
                   <motion.div
                     initial={{ opacity: 0, y: 50 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -990,7 +991,7 @@ const ObdCreateCampaign = () => {
                       </div>
                     </div>
                   </motion.div>
-                </div> */}
+                </div>
               </div>
             </div>
             <div className="flex items-center justify-center mt-5">

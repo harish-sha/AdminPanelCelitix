@@ -3,7 +3,7 @@ import { UAParser } from "ua-parser-js";
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import KeyboardBackspaceOutlinedIcon from '@mui/icons-material/KeyboardBackspaceOutlined';
+import KeyboardBackspaceOutlinedIcon from "@mui/icons-material/KeyboardBackspaceOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import { motion } from "framer-motion";
@@ -24,7 +24,7 @@ import {
   login,
   verifyOtp,
   requestOtp,
-  verifyForgotPasswordOtp
+  verifyForgotPasswordOtp,
 } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 
@@ -106,7 +106,7 @@ const Login = () => {
 
   async function handleLogin() {
     if (!inputDetails.userId || !inputDetails.password) {
-      return toast.error("Enter email and password");
+      return toast.error("Enter userID and password");
     }
 
     setLoading(true);
@@ -129,16 +129,16 @@ const Login = () => {
       setInputDetails((prev) => ({
         ...prev,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.5.8",
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        ip: "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // ip: "0.0.5.8",
-      }
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        ip: "0.0.0.0",
+      };
 
       delete payloadd.rememberMe;
       const res = await login(payloadd);
@@ -329,15 +329,123 @@ const Login = () => {
     <>
       <Header />
 
-      <div className="flex flex-col h-screen overflow-y-auto scroll-smooth">
+      <div className="flex flex-col h-screen overflow-none scroll-smooth">
         {/* main content */}
         <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff] relative">
+          {/* Top Left Circle */}
+          <motion.div
+            initial={{ x: -500, y: -500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0 }}
+            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
+            // from-[#2b40b0] to-[#8447c6]
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: -500, y: -500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
+            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            // from-[#2b40b0] to-[#8447c6]
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: -500, y: -500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
+            // from-[#2b40b0] to-[#8447c6]
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: -500, y: -500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            // from-[#2b40b0] to-[#8447c6]
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: -500, y: -500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.4 }}
+            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            // from-[#2b40b0] to-[#8447c6]
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+
+          {/* Bottom Right Circle */}
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.4 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
+          <motion.div
+            initial={{ x: 500, y: 500, opacity: 0 }}
+            animate={{ x: 0, y: 0, opacity: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
+            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
+            style={{
+              animation: "spin 35s linear infinite",
+            }}
+          ></motion.div>
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.5 }}
-            className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120">
+            className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120"
+          >
             <div className="grid grid-cols-1 md:grid-cols-2 h-full">
               {step === 1 && (
                 <motion.div
@@ -386,7 +494,7 @@ const Login = () => {
                       <div className="text-[0.95rem] font-medium text-gray-700 mb-2">
                         Password
                       </div>
-                      <div className="relative z-0" >
+                      <div className="relative z-0">
                         <input
                           type={showPassword ? "text" : "password"}
                           placeholder="Enter password"
@@ -424,7 +532,9 @@ const Login = () => {
                     </button> */}
                     <div className="flex items-center justify-center ">
                       <button
-                        className={`custom-signin-btn ${loading ? "loading" : ""}`}
+                        className={`custom-signin-btn ${
+                          loading ? "loading" : ""
+                        }`}
                         disabled={loading}
                         onClick={handleLogin}
                       >
@@ -453,7 +563,8 @@ const Login = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
-                    className="w-full flex items-center justify-center" >
+                    className="w-full flex items-center justify-center"
+                  >
                     <div className="flex flex-col items-center justify-center space-y-3 w-90 min-h-100 p-5 rounded-2xl shadow-xl ">
                       <div>
                         <h1 className="text-[2.8rem] text-center font-semibold bluetxt playf">
@@ -479,8 +590,6 @@ const Login = () => {
                             });
                           }}
                           className="w-full p-2 mb-4 rounded-lg bg-gray-100 text-md"
-
-
                         />
                       )}
                       <InputField
@@ -507,7 +616,8 @@ const Login = () => {
                           handleSendOtp();
                         }}
                       />
-                      <p className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
+                      <p
+                        className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
                         onClick={handleBackToOne}
                       >
                         <KeyboardBackspaceOutlinedIcon />
@@ -531,15 +641,16 @@ const Login = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
-
-                    className="w-full flex items-center justify-center" >
+                    className="w-full flex items-center justify-center"
+                  >
                     <div className="flex flex-col items-center space-y-3 justify-center w-90 min-h-100 p-5 rounded-2xl shadow-xl">
                       <div>
                         <h1 className="text-[2.8rem] text-center font-semibold bluetxt playf">
                           Enter OTP
                         </h1>
                         <p className="text-base sm:text-sm text-center ">
-                          We've sent a 6-digit code to your mobile. Enter it below
+                          We've sent a 6-digit code to your mobile. Enter it
+                          below
                         </p>
                       </div>
                       <InputField
@@ -563,8 +674,10 @@ const Login = () => {
                         }}
                       />
 
-                      {error && <p className="text-red-500 text-sm mb-2">{error}</p>}
-                      <div className="flex items-center gap-4" >
+                      {error && (
+                        <p className="text-red-500 text-sm mb-2">{error}</p>
+                      )}
+                      <div className="flex items-center gap-4">
                         <UniversalButton
                           id="Verify Otp"
                           name="Verify Otp"
@@ -593,7 +706,8 @@ const Login = () => {
                         )}
                       </div>
 
-                      <p className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
+                      <p
+                        className="text-sm text-gray-800 flex justify-center items-center  hover:underline hover:font-semibold transition-all cursor-pointer"
                         onClick={handleBackToTwo}
                       >
                         <KeyboardBackspaceOutlinedIcon />
@@ -645,4 +759,3 @@ const Login = () => {
   );
 };
 export default Login;
-
