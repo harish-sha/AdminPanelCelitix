@@ -1,7 +1,9 @@
+import { parse } from "date-fns"
+
 export const convertPaylaod = (data: string) => {
     const parsedData = JSON.parse(data)
 
-    console.log("data", parsedData);
+    // console.log("data", parsedData);
 
     //     [
     //     {
@@ -58,6 +60,15 @@ export const convertPaylaod = (data: string) => {
     let edges = []
     let nodedata = {}
 
+    let idMap = {}
+
+    parsedData?.map((item, index) => {
+        const id = item?.nodeId
+        const formattedId = `${item?.nodeType}_${index + 1}`
+        item.formattedId = formattedId
+        idMap[id] = formattedId
+    })
+
     parsedData?.map((item: any, index: number) => {
 
         const id = item?.nodeId
@@ -74,15 +85,14 @@ export const convertPaylaod = (data: string) => {
         });
 
         Object.entries(item[id]?.conditionList || {}).map(([key, condition]: any) => {
+            const targetNode = parsedData?.find((i) => idMap[i?.nodeId] == condition?.nextNode)?.nodeIndex
             edges.push({
                 id: `${item?.nodeIndex}-to-${item?.nodeIndex + 1}`,
                 source: item?.nodeIndex,
-                target: String(Number(item?.nodeIndex) + 1),
+                target: targetNode,
                 type: "smoothstep",
                 sourceHandle: `opt-${index}`,
             });
-
-            console.log(condition.value)
 
             let data = {
                 options: [{
@@ -97,5 +107,6 @@ export const convertPaylaod = (data: string) => {
             nodedata[index + 1] = data
         })
     })
+
     return { nodes, edges, nodedata }
 }

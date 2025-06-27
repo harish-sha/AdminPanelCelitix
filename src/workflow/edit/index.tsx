@@ -168,7 +168,6 @@ export const UpdateWorkflow = () => {
   const { data } = location.state;
 
   const formattedData = convertPaylaod(data);
-  console.log("formattedData", formattedData);
   let node = [];
   let edge = [];
 
