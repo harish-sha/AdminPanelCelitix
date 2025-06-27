@@ -24,7 +24,7 @@ export const RCS = ({
   //basic Details
   const [allAgents, setAllAgents] = useState([]);
   const [allTemplates, setAllTemplates] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState<number>();
   const [campaignDetails, setCampaignDetails] = useState({
     agent: "",
     campaignName: "",
@@ -93,6 +93,17 @@ export const RCS = ({
       try {
         const res = await fetchAllAgents();
         setAllAgents(res);
+
+        //to persist data after agent fetching
+        const data = nodesInputData[id];
+        setCampaignDetails({
+          agent: data?.rcs_agent,
+          campaignName: "",
+        });
+        setSelectedTemplate(Number(data?.rcs_template));
+
+        setInputVariables(data?.variables || {});
+        setBtnInputVariables(data?.variables || {});
       } catch (e) {
         toast.error("Something went wrong.");
       }
@@ -159,8 +170,10 @@ export const RCS = ({
       },
     }));
 
-    setDetailsDialogVisible(false)
+    setDetailsDialogVisible(false);
   }
+
+  
   return (
     <>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-5 w-full">

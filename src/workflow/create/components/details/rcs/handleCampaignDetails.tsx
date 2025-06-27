@@ -50,7 +50,7 @@ export const HandleCampaignDetails = ({
           />
         </div>
 
-        <div className="mb-3">
+        {/* <div className="mb-3">
           <InputField
             id="createCampaign"
             name="createCampaign"
@@ -67,7 +67,7 @@ export const HandleCampaignDetails = ({
             tooltipPlacement="right"
             maxLength={50}
           />
-        </div>
+        </div> */}
         <div className="mb-3">
           <DropdownWithSearch
             id="selectRcsTemplate"
