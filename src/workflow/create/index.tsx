@@ -186,17 +186,10 @@ export const WorkflowCreate = () => {
       let isSourceAlreadyConnected = false;
       let isTargetAlreadyConnected = false;
 
-      if (type === "list" || type === "button") {
-        isSourceAlreadyConnected = edges.some(
-          (edge) => edge.sourceHandle === source
-        );
-        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      } else {
-        isSourceAlreadyConnected = edges.some(
-          (edge) => edge.sourceHandle === source
-        );
-        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      }
+      isSourceAlreadyConnected = edges.some(
+        (edge) => edge.sourceHandle === source
+      );
+      isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
 
       if (isSourceAlreadyConnected || isTargetAlreadyConnected) {
         toast.error("This connection is not allowed!");
