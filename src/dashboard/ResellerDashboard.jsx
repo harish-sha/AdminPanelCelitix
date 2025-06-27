@@ -26,6 +26,7 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import GppMaybeIcon from '@mui/icons-material/GppMaybe';
 import { Loop as LoopIcon } from "@mui/icons-material";
 import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
+import StarHalfOutlinedIcon from '@mui/icons-material/StarHalfOutlined';
 import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
 import whatsappAnime from "../assets/animation/whatsappanimation.json";
 import whatsappAnime2 from "../assets/animation/whatsappanimation2.json";
@@ -40,6 +41,7 @@ import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
 import Animationobd from "../assets/animation/Animation-obd.json";
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
+import twowaysms from "../assets/animation/twowaysms.json";
 import Lottie from "lottie-react";
 import { getUserDetails } from "@/apis/user/user";
 import CountUp from 'react-countup';
@@ -51,6 +53,7 @@ import {
 import { fetchBalance } from "@/apis/settings/setting";
 import { useUser } from "@/context/auth";
 import CustomTooltip from "@/components/common/CustomTooltip";
+import ClockCard from "./components/ClockCard";
 
 const revenueData = [
     { name: "Mon", online: 14000, offline: 11000 },
@@ -81,63 +84,63 @@ const targetRealityData = [
 
 
 
-const services = [
-    {
-        name: "WhatsApp",
-        icon: WhatsApp,
-        animation: Animationwhatsapp2,
-        desc: "Send real-time notifications",
-        color: "from-green-100 to-green-300",
-    },
-    {
-        name: "RCS",
-        icon: Message,
-        animation: Animationrcs,
-        desc: "Interactive messaging solution",
-        color: "from-purple-100 to-purple-300",
-    },
-    {
-        name: "OBD",
-        icon: Call,
-        animation: Animationobd,
-        desc: "Automated outbound dialer",
-        color: "from-yellow-100 to-yellow-300",
-    },
-    {
-        name: "IBD",
-        icon: Call,
-        animation: Animationibd,
-        desc: "Track inbound communications",
-        color: "from-indigo-100 to-indigo-300",
-    },
-    {
-        name: "SMS",
-        icon: PhoneAndroid,
-        animation: Animationsms,
-        desc: "Send and receive SMS",
-        color: "from-pink-100 to-pink-300",
-    },
-    {
-        name: "Email",
-        icon: Email,
-        animation: email2,
-        desc: "Campaign and transactional email",
-        color: "from-blue-100 to-blue-300",
-    },
-    {
-        name: "App Authenticator",
-        icon: Lock,
-        animation: auth,
-        desc: "Secure 2FA login solutions",
-        color: "from-gray-100 to-gray-300",
-    },
-    {
-        name: "Two-Way SMS",
-        icon: SyncAlt,
-        desc: "Bi-directional messaging",
-        color: "from-red-100 to-red-300",
-    },
-];
+// const services = [
+//     {
+//         name: "WhatsApp",
+//         icon: WhatsApp,
+//         animation: Animationwhatsapp2,
+//         desc: "Send real-time notifications",
+//         color: "from-green-100 to-green-300",
+//     },
+//     {
+//         name: "RCS",
+//         icon: Message,
+//         animation: Animationrcs,
+//         desc: "Interactive messaging solution",
+//         color: "from-purple-100 to-purple-300",
+//     },
+//     {
+//         name: "OBD",
+//         icon: Call,
+//         animation: Animationobd,
+//         desc: "Automated outbound dialer",
+//         color: "from-yellow-100 to-yellow-300",
+//     },
+//     {
+//         name: "IBD",
+//         icon: Call,
+//         animation: Animationibd,
+//         desc: "Track inbound communications",
+//         color: "from-indigo-100 to-indigo-300",
+//     },
+//     {
+//         name: "SMS",
+//         icon: PhoneAndroid,
+//         animation: Animationsms,
+//         desc: "Send and receive SMS",
+//         color: "from-pink-100 to-pink-300",
+//     },
+//     {
+//         name: "Email",
+//         icon: Email,
+//         animation: email2,
+//         desc: "Campaign and transactional email",
+//         color: "from-blue-100 to-blue-300",
+//     },
+//     {
+//         name: "App Authenticator",
+//         icon: Lock,
+//         animation: auth,
+//         desc: "Secure 2FA login solutions",
+//         color: "from-gray-100 to-gray-300",
+//     },
+//     {
+//         name: "Two-Way SMS",
+//         icon: SyncAlt,
+//         desc: "Bi-directional messaging",
+//         color: "from-red-100 to-red-300",
+//     },
+// ];
 
 // const quickStats = [
 //     // {
@@ -256,16 +259,92 @@ const ResellerDashboard = () => {
                 label: "Outstanding Balance",
                 value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} key={refreshKey} />,
             }
-        ] : []),
+        ] : [
+
+            {
+                icon: <TrendingUp className="text-blue-600" />,
+                label: "Engagement Rate",
+                value: "78%",
+            },
+
+        ]),
         {
-            icon: <TrendingUp className="text-blue-600" />,
-            label: "Engagement Rate",
-            value: "78%",
-        },
-        {
-            icon: <Star className="text-yellow-500" />,
+            icon: [
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <Star className="text-yellow-500" />,
+                <StarHalfOutlinedIcon className="text-yellow-500" />,
+            ],
             label: "Client Rating",
             value: "4.8/5",
+        },
+    ];
+
+    const services = [
+        {
+            name: "WHATSAPP",
+            icon: WhatsApp,
+            displayName: "Whatsapp",
+            animation: Animationwhatsapp2,
+            desc: "Send real-time notifications",
+            color: "from-green-100 to-green-300",
+        },
+        {
+            name: "RCS",
+            icon: Message,
+            displayName: "RCS",
+            animation: Animationrcs,
+            desc: "Interactive messaging solution",
+            color: "from-purple-100 to-purple-300",
+        },
+        {
+            name: "OBD",
+            icon: Call,
+            displayName: "OBD",
+            animation: Animationobd,
+            desc: "Automated outbound dialer",
+            color: "from-yellow-100 to-yellow-300",
+        },
+        {
+            name: "IBD",
+            icon: Call,
+            displayName: "IBD",
+            animation: Animationibd,
+            desc: "Track inbound communications",
+            color: "from-indigo-100 to-indigo-300",
+        },
+        {
+            name: "SMS",
+            icon: PhoneAndroid,
+            displayName: "SMS",
+            animation: Animationsms,
+            desc: "Send and receive SMS",
+            color: "from-pink-100 to-pink-300",
+        },
+        {
+            name: "EMAIL",
+            icon: Email,
+            displayName: "Email",
+            animation: email2,
+            desc: "Campaign and transactional email",
+            color: "from-blue-100 to-blue-300",
+        },
+        {
+            name: "APP_AUTHENTICATOR",
+            icon: Lock,
+            displayName: "App Authenticator",
+            animation: auth,
+            desc: "Secure 2FA login solutions",
+            color: "from-gray-100 to-gray-300",
+        },
+        {
+            name: "Two-WAY-SMS",
+            icon: SyncAlt,
+            displayName: "Two-Way SMS",
+            animation: twowaysms,
+            desc: "Bi-directional messaging",
+            color: "from-red-100 to-red-300",
         },
     ];
 
@@ -279,21 +358,24 @@ const ResellerDashboard = () => {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
             >
-                <div className="flex items-center flex-wrap justify-center gap-4">
-                    <div className="bg-blue-200 border-2 border-blue-400 h-20 w-20 flex items-center justify-center rounded-full shadow-2xl">
-                        <Person
+                <div className="flex items-center flex-wrap justify-center gap-3">
+                    <div className="bg-blue-200 border-2 border-indigo-400 h-16 w-16 flex items-center justify-center rounded-full shadow-2xl">
+                        {/* <Person
                             className="text-blue-600"
                             sx={{
                                 fontSize: 30,
                             }}
-                        />
+                        /> */}
+                        <span className="text-indigo-600 text-2xl font-semibold">
+                            {(formData.firstName || "U").charAt(0).toUpperCase()}
+                        </span>
                     </div>
-                    <div>
-                        <h2 className="text-xl font-semibold">
-                            Welcome back, {formData.firstName || "User"}{" "}
+                    <div className="">
+                        <h2 className="text-3xl font-semibold playf">
+                            Welcome back, {formData.firstName || "User"}
                         </h2>
-                        <p className="text-sm opacity-80">
-                            You're doing great. Here's a quick overview of your dashboard.
+                        <p className="text-xs opacity-80">
+                            You're doing great. Here's a  quick overview of your dashboard.
                         </p>
                     </div>
                 </div>
@@ -302,30 +384,7 @@ const ResellerDashboard = () => {
                         <div
                             key={i}
                             className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
-                        // onMouseEnter={stat.onHover}
-                        // onMouseLeave={stat.onMouseLeave}
                         >
-                            {/* {stat.label === "Current Balance" && showRefresh && (
-                                <CustomTooltip
-                                    title="Refresh Balance"
-                                    placement="top"
-                                    arrow
-                                >
-                                    <div className="absolute top-2 right-2 cursor-pointer">
-
-                                        {isLoading ? (
-                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
-                                        ) : (
-                                            <button
-                                                onClick={getBalance}
-                                                className=""
-                                            >
-                                                <LoopIcon className="text-blue-400 cursor-pointer" />
-                                            </button>
-                                        )}
-                                    </div>
-                                </CustomTooltip>
-                            )} */}
                             {stat.showRefreshIcon && (
                                 <CustomTooltip
                                     title="Refresh Balance"
@@ -352,6 +411,7 @@ const ResellerDashboard = () => {
                             <div className="font-semibold text-lg">{stat.value}</div>
                         </div>
                     ))}
+                    <ClockCard />
                 </div>
             </motion.div>
 
@@ -359,15 +419,25 @@ const ResellerDashboard = () => {
             <Grid container spacing={3}>
                 {services.map((service, index) => {
                     const IconComponent = service.icon;
+                    const hasService = user.services?.some(
+                        (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
+                    );
                     return (
                         <Grid item xs={12} sm={6} md={3} key={index}>
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 300 }}
-                                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300`}
+                                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"}`}
                             >
+                                {hasService && (
+                                    <>
+                                        <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white">
+                                        </div>
+                                        <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm" >Active</div>
+                                    </>
+                                )}
                                 <div className="font-semibold text-lg text-gray-800">
-                                    {service.name}
+                                    {service.displayName}
                                 </div>
                                 <motion.div className="flex items-center justify-end z-10">
                                     <div className="flex justify-end">

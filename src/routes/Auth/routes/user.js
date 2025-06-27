@@ -70,7 +70,7 @@ export const userItems = [
     roles: ["ADMIN"],
   },
   {
-    name: "VOICE",
+    name: "OBD",
     links: [
       "/obdcreatecampaign",
       "/obdmanagecampaign",

@@ -120,15 +120,14 @@ const ResellerLogin = () => {
 
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
-      // const ipResponse = await getIpAddress();
       const ipResponse = await getIpAddress();
       // const domain = window.location.hostname;
       const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
-        // ip: ipResponse?.data?.clientIp,
-        ip: "0.0.0.7",
+        ip: ipResponse?.data?.clientIp,
+        // ip: "0.0.0.7",
         domain,
       });
 
@@ -136,11 +135,8 @@ const ResellerLogin = () => {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        ip: "0.0.0.7",
-        // domain: domain !== "celitix.alertsnow.in" ? domain : "",
-        // domain: "reseller.alertsnow.in",
-        // domain: "",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // ip: "0.0.0.7",
         domain: domain
       };
 
@@ -272,10 +268,10 @@ const ResellerLogin = () => {
       // const res = await verifyOtp(payload);
       const res = isForgotPassword
         ? await verifyForgotPasswordOtp({
-            userId: username,
-            mobileNo: verifyNumber,
-            otp: numberOtp,
-          })
+          userId: username,
+          mobileNo: verifyNumber,
+          otp: numberOtp,
+        })
         : await verifyOtp(payload);
       if (!res?.data?.token) {
         return toast.error("Invalid otp");
@@ -489,7 +485,7 @@ const ResellerLogin = () => {
                       placeholder="Enter Username"
                       className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
                       onChange={(e) => setUsername(e.target.value)}
-                      // maxLength={8}
+                    // maxLength={8}
                     />
                   </div>
 
@@ -505,7 +501,7 @@ const ResellerLogin = () => {
                       className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
                       onChange={(e) => setPassword(e.target.value)}
                       value={password}
-                      // maxLength={8}
+                    // maxLength={8}
                     />
                     <button
                       type="button"
@@ -602,7 +598,7 @@ const ResellerLogin = () => {
                       placeholder="Enter UserId"
                       className="w-full p-2 my-4 border border-gray-300 rounded-xl"
                       onChange={(e) => setUsername(e.target.value)}
-                      // maxLength={13}
+                    // maxLength={13}
                     />
                   )}
                   <input
@@ -822,13 +818,12 @@ const ResellerLogin = () => {
                       <input
                         id="new-password"
                         placeholder="New Password"
-                        className={`p-2 my-1 border rounded-lg w-full pr-10 ${
-                          newPassword === ""
+                        className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
                             ? "border-gray-400"
                             : passwordsMatch === true
-                            ? "border-green-500"
-                            : "border-red-500"
-                        }`}
+                              ? "border-green-500"
+                              : "border-red-500"
+                          }`}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
                         type={showNewPassword ? "text" : "password"}
@@ -885,13 +880,12 @@ const ResellerLogin = () => {
                     <div className="relative w-full max-w-xs">
                       <input
                         placeholder="Confirm New Password"
-                        className={`p-2 my-2 border rounded-lg w-full pr-10 ${
-                          confirmPassword === ""
+                        className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
                             ? "border-gray-400"
                             : passwordsMatch === true
-                            ? "border-green-500"
-                            : "border-red-500"
-                        }`}
+                              ? "border-green-500"
+                              : "border-red-500"
+                          }`}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}
                         type={showConfirmPassword ? "text" : "password"}
