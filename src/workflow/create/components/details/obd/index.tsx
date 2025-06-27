@@ -121,6 +121,22 @@ export const OBD = ({
     setDetailsDialogVisible(false);
   }
 
+  //persist data on reopen
+  useEffect(() => {
+    const data = nodesInputData[id];
+    setBasicDetails({
+      type: data?.type || "transactional",
+      name: "",
+      templateType: data?.obdType,
+      tts: data?.obdText,
+      simpleBroadcast: data?.obdClip,
+      multiBroadcast: "",
+      dynamicBroadcast: "",
+      interval: "",
+      retry: data?.retryCount,
+    });
+  }, []);
+
   return (
     <>
       <div className="container-fluid">
@@ -171,7 +187,7 @@ export const OBD = ({
               </div>
 
               <div className="p-3">
-                <div>
+                {/* <div>
                   <InputField
                     label="Campaign Name"
                     id="campaignName"
@@ -187,7 +203,7 @@ export const OBD = ({
                     tooltipContent="Enter a name for your campaign to easily identify it later"
                     maxLength={20}
                   />
-                </div>
+                </div> */}
 
                 <div className="my-4">
                   <AnimatedDropdown
