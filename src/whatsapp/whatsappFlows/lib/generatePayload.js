@@ -404,40 +404,46 @@ export const generatePayload = (data) => {
       if (type === "richText") {
         let lines = [];
 
-        console.log("Payload received in generatePayload:", pay);
-
-        // If `pay.text` is an array and contains content, use it directly
         if (Array.isArray(pay.text) && pay.text.length > 0) {
-          lines = pay.text;
-          console.log("lines", lines);
+          lines = pay.text 
         } else if (pay.content) {
-          // If pay.content exists, parse it into lines
           try {
             const tempDiv = document.createElement("div");
             tempDiv.innerHTML = pay.content;
 
-            lines = Array.from(tempDiv.childNodes)
-              .map(convertNodeToMarkdown)
-              .map((line) => line.trim())
-              .filter((line) => line !== ""); // Filters out empty lines
+            // lines = Array.from(tempDiv.childNodes)
+            //   .map(convertNodeToMarkdown)
+            //   .flat()
+            //   // .map((line) => (typeof line === "string" ? line : String(line)))
+            //   // .map((line) => line);
+            //   .filter((line) => line.trim() !== "");
+
+  //           lines = Array.from(tempDiv.childNodes)
+  // .map(convertNodeToMarkdown)
+  // .flat()   
+  // .map(line => (typeof line === "string" ? line : String(line)))
+  // .filter(line => line.trim() !== "");
+
+  lines = Array.from(tempDiv.childNodes)
+  .map(convertNodeToMarkdown)
+  .flat()
+  .map(line => String(line).trim())
+  .filter(line => line !== "");
+
+
           } catch (error) {
             console.error("Error parsing HTML content:", error);
-            lines = []; // In case of error, return empty array
+            lines = ["No content available"];
           }
-        } else {
-          // If neither pay.text nor pay.content exist, use a default fallback
-          lines = ["No content available"];
-        }
-
-        console.log("pay.content:", pay.content);
-        console.log("pay.text:", pay.text);
-        console.log("generate payload lines", lines);
+        } 
 
         component = {
           type: "RichText",
           text: lines,
         };
       }
+
+     
 
       if (type === "dropDown") {
         component = {

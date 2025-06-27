@@ -12,8 +12,11 @@ import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import { motion, AnimatePresence } from "framer-motion";
 import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import { marked } from "marked";
+import { useDispatch } from "react-redux";
+import { deleteFlowItem } from "../redux/features/FlowSlice";
 
 const Canvas = ({
   items,
@@ -52,7 +55,6 @@ const Canvas = ({
       "dropDown",
       "chipSelector",
     ],
-
     drop: (item, monitor) => {
       if (monitor.didDrop()) {
         return;
@@ -106,19 +108,35 @@ const Canvas = ({
 
     // For Headings
     if (item.type === "heading") {
-      return targetItem.text;
+      return (
+        <div className="break-words whitespace-pre-wrap w-full max-w-full">
+          {targetItem.text}
+        </div>
+      );
     }
 
     if (item.type === "subheading") {
-      return targetItem.text;
+      return (
+        <div className="break-words whitespace-pre-wrap w-full max-w-full">
+          {targetItem.text}
+        </div>
+      );
     }
 
     if (item.type === "textcaption") {
-      return targetItem.text;
+      return (
+        <div className="break-words whitespace-pre-wrap w-full max-w-full">
+          {targetItem.text}
+        </div>
+      );
     }
 
     if (item.type === "textbody") {
-      return targetItem.text;
+      return (
+        <div className="break-words whitespace-pre-wrap w-full max-w-full">
+          {targetItem.text}
+        </div>
+      );
     }
 
     if (item.type === "textInput") {
@@ -217,14 +235,15 @@ const Canvas = ({
         renderedHTML = "<p>No content available</p>";
 
         renderedHTML = renderedHTML.replace(
-          /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
-          ""
+          /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]* style="width-10px" >/g,
+          `<img$1 class="w-10 h-10 rounded-full object-cover border">`
+
         );
       }
       return (
         <>
           {/* {targetItem.text && ( */}
-          <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden  h-auto flex flex-col p-3 space-y-2 bg-blue-50">
+          <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden  h-auto flex flex-col p-3 space-y-2 bg-blue-50 break-words whitespace-pre-wrap max-w-full">
             <div
               className="flex-1 overflow-y-auto  prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
               dangerouslySetInnerHTML={{ __html: renderedHTML }}
@@ -232,70 +251,76 @@ const Canvas = ({
 
             <style>
               {`
-          .prose h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-          }
-          .prose h2 {
-            font-size: 1.25rem;
-            font-weight: 500;
-          }
-        `}
+    .prose h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .prose h2 {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+    .prose img {
+      width: 2.5rem; 
+      height: 2.5rem; 
+      border-radius: 9999px; 
+      object-fit: cover; 
+      border: 1px solid #d1d5db; 
+      display: inline-block; 
+    }
+  `}
             </style>
+
           </div>
 
-          {/* )} */}
+
         </>
       );
     }
 
     // For footerbutton: look under footer
-   
 
-  if (item.type === "footerbutton") {
-  const footer = targetItem.footer?.["footer_1"];
+    if (item.type === "footerbutton") {
+      const footer = targetItem.footer?.["footer_1"];
 
-  return (
-    <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-      {footer?.label && (
-        <div>
-          <span className="font-semibold">Label: </span>
-          {footer.label}
+      return (
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+          {footer?.label && (
+            <div>
+              <span className="font-semibold">Label: </span>
+              {footer.label}
+            </div>
+          )}
+
+          {footer?.left_caption && (
+            <div className="mt-1">
+              <span className="font-semibold">Left-caption: </span>
+              {footer.left_caption}
+            </div>
+          )}
+
+          {footer?.right_caption && (
+            <div className="mt-1">
+              <span className="font-semibold">Right-caption: </span>
+              {footer.right_caption}
+            </div>
+          )}
+
+          {footer?.center_caption && (
+            <div className="mt-1">
+              <span className="font-semibold">Center-caption: </span>
+              {footer.center_caption}
+            </div>
+          )}
+
+          {footer?.on_click_action && (
+            <div className="mt-1">
+              <span className="font-semibold">Next Action: </span>
+              {footer.on_click_action}
+            </div>
+          )}
         </div>
-      )}
-
-      {footer?.left_caption && (
-        <div className="mt-1">
-          <span className="font-semibold">Left-caption: </span>
-          {footer.left_caption}
-        </div>
-      )}
-
-      {footer?.right_caption && (
-        <div className="mt-1">
-          <span className="font-semibold">Right-caption: </span>
-          {footer.right_caption}
-        </div>
-      )}
-
-      {footer?.center_caption && (
-        <div className="mt-1">
-          <span className="font-semibold">Center-caption: </span>
-          {footer.center_caption}
-        </div>
-      )}
-
-      {footer?.on_click_action && (
-        <div className="mt-1">
-          <span className="font-semibold">Next Action: </span>
-          {footer.on_click_action}
-        </div>
-      )}
-    </div>
-  );
-}
-
-
+      );
+    }
 
     if (item.type === "radioButton") {
       return (
@@ -364,7 +389,10 @@ const Canvas = ({
 
           <div className="mt-2 space-y-2">
             {(targetItem["data-source"] || []).map((opt, idx) => (
-              <div key={idx} className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between ">
+              <div
+                key={idx}
+                className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between "
+              >
                 <div>
                   {opt.title && (
                     <div className="mb-1">
@@ -460,7 +488,6 @@ const Canvas = ({
                     />
                   </div>
                 )}
-
               </div>
             ))}
           </div>
@@ -801,8 +828,10 @@ const Canvas = ({
     return "";
   };
 
+  const dispatch = useDispatch()
   // Handle deleting items from the canvas
   const handleDelete = (index) => {
+    console.log("index", index)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -829,6 +858,7 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
+    console.log("item", item);
     if (!item?.type) {
       console.error("DraggableItem error: item.type is not defined");
       return null;
@@ -866,7 +896,6 @@ const Canvas = ({
 
     drag(drop(ref));
 
-
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
@@ -875,6 +904,7 @@ const Canvas = ({
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 
+    console.log("item", item)
     return (
       // <motion.div
       //   initial={{ opacity: 0, x: -100 }}
@@ -891,8 +921,9 @@ const Canvas = ({
         }}
         sx={{
           backgroundColor: getBackgroundColor(item.type),
+          borderRadius: "10px"
         }}
-        className="w-110 p-2 mb-2 rounded-lg shadow-md mt-10"
+        className={`w-110 p-2 mb-2 rounded-lg shadow-md mt-10 ${item.status === 0 ? 'border-2 border-red-300' : 'border-2 border-green-300'}`}
       >
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-700 tracking-wider">
@@ -905,7 +936,7 @@ const Canvas = ({
                 fontSize="small"
               />
             </IconButton>
-            <IconButton onClick={() => handleDelete(index)} size="small">
+            <IconButton onClick={() => handleDelete(index, item)} size="small">
               <DeleteForeverOutlinedIcon
                 fontSize="small"
                 className="text-red-400"
@@ -933,23 +964,68 @@ const Canvas = ({
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
     switch (type) {
+      // case "heading":
+      //   return "#e3f2fd";
+      // case "subheading":
+      //   return "#ffebee";
+      // case "textbody":
+      //   return "#fff3cd";
+      // case "textcaption":
+      //   return "#f8bbd0";
+      // case "textInput":
+      //   return "#E0F7FA";
+      // case "textArea":
+      //   return "#E0F7FA";
+      // case "radioButton":
+      // case "checkBox":
+      // case "dropDown":
+      //   return "#c5e1f5";
+      // case "chipSelector":
+
       case "heading":
-        return "#e3f2fd";
+        return "#E0F7FA";
       case "subheading":
-        return "#ffebee";
+        return "#E0F7FA";
       case "textbody":
-        return "#fff3cd";
+        return "#E0F7FA";
       case "textcaption":
-        return "#f8bbd0";
+        return "#E0F7FA";
       case "textInput":
-        return "#E0F7FA";
-      case "textArea":
-        return "#E0F7FA";
-      case "radioButton":
-      case "checkBox":
-      case "dropDown":
         return "#c5e1f5";
+      case "textArea":
+        return "#c5e1f5";
+      case "richText":
+        return "#c5e1f5";
+      case "radioButton":
+        return "#ADABD7";
+      case "checkBox":
+        return "#ADABD7";
+      case "dropDown":
+        return "#ADABD7";
       case "chipSelector":
+        return "#ADABD7";
+      case "footerbutton":
+        return "#A091C5";
+      case "embeddedlink":
+        return "#A091C5";
+      case "optin":
+        return "#A091C5";
+      case "image":
+        return "#A4E3E6";
+      case "document":
+        return "#A4E3E6";
+      case "media":
+        return "#A4E3E6";
+      case "imageCarousel":
+        return "#A4E3E6";
+      case "ifelse":
+        return "#96C7C8";
+      case "switch":
+        return "#96C7C8";
+      case "date":
+        return "#7FC1C5";
+      case "calendar":
+        return "#7FC1C5";
       default:
         return "#c5e1f5";
     }
@@ -959,49 +1035,224 @@ const Canvas = ({
   const getLabel = (type) => {
     switch (type) {
       case "heading":
-        return "Heading";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Heading
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "subheading":
-        return "Subheading";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Subheading
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "textbody":
-        return "Textbody";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Textbody
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "textcaption":
-        return "Textcaption";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Textcaption
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "textInput":
-        return "TextInput";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            TextInput
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "textArea":
-        return "TextArea";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            TextArea
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "richText":
-        return "RichText";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            RichText
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "radioButton":
-        return "RadioButton";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            RadioButton
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "checkBox":
-        return "CheckBox";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            CheckBox
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "dropDown":
-        return "DropDown";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            DropDown
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "chipSelector":
-        return "ChipSelector";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            ChipSelector
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "footerbutton":
-        return "FooterButton";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            FooterButton
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "embeddedlink":
-        return "EmbeddedLink";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            EmbeddedLink
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "optin":
-        return "OptIn";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            OptIn
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "image":
-        return "Image";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Image
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "document":
-        return "Document";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Document
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "media":
-        return "Media";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Media
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "imageCarousel":
-        return "ImageCarousel";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            ImageCarousel
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "ifelse":
-        return "IfElse";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            IfElse
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "switch":
-        return "Switch";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Switch
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "date":
-        return "Date";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Date
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
+
       case "calendar":
-        return "Calendar";
+        return (
+          <div className="flex items-center gap-1 text-md text-gray-700">
+            Calendar
+            <CustomTooltip title="View Account details" placement="top" arrow>
+              <AiOutlineInfoCircle fontSize="medium" />
+            </CustomTooltip>
+          </div>
+        );
       // case "userdetail":
       //   return "UserDetail";
       default:

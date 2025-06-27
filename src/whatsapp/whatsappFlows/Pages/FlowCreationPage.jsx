@@ -22,10 +22,15 @@ import ParticleBackground from "../components/ParticleBackground";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
+import { useDispatch, useSelector } from "react-redux";
+import { addFlowItem } from "../redux/features/FlowSlice";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const flowItems = useSelector((state) => state.flows.flowItems);
+  console.log("Current flowItems:", flowItems);
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
@@ -77,7 +82,7 @@ const FlowCreationPage = () => {
     altText: "",
   });
 
-  // console.log("labelValueeeeeeeeee", labelValue)
+  // console.log("labelValue", labelValue)
 
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
@@ -128,7 +133,10 @@ const FlowCreationPage = () => {
 
   const handleAddItem = (item) => {
     const newTabs = [...tabs];
-    console.log("newTabs", newTabs);
+    console.log("Triggered");
+    console.log("newTabsssssssssssss", newTabs);
+    console.log("itemmmmmmmmmmmmmmmmmm", item);
+
     // const nonDuplicateTabs = [
     //   "heading",
     //   "subheading",
@@ -136,6 +144,19 @@ const FlowCreationPage = () => {
     //   "textcaption",
     // ];
 
+    const dataToStore = newTabs.map((tab) => ({
+    screenId: tab.id,
+    items: tab.payload.map((p) => ({
+      type: p.type,
+      status: p.status,
+    })),
+  }));
+
+  console.log("dataToStore", dataToStore)
+
+    dispatch(
+    addFlowItem(dataToStore)
+  );
     const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
     const onlyOneDateOrCalendar = ["date", "calendar"];
@@ -203,7 +224,7 @@ const FlowCreationPage = () => {
     // ✅ Add the item
     newTabs[activeIndex] = {
       ...newTabs[activeIndex],
-      payload: [...currentPayload, { type: item.type, value: "" }],
+      payload: [...currentPayload, { type: item.type, value: "", status: 0 }],
     };
 
     setTabs(newTabs);
@@ -263,7 +284,7 @@ const FlowCreationPage = () => {
       prefillValue = item.footer?.footer_1?.center_caption || "";
     }
 
-    setSelectedItem({ ...item, index });
+    setSelectedItem({ ...item, index, status: 1 });
 
     // heading
     setHeadingValue(prefillValue);
@@ -347,6 +368,7 @@ const FlowCreationPage = () => {
     console.log("tabs", tabs);
   }, [tabs]);
 
+  // ==================================Main Flow Build start===========================
   async function handleFlowBuild() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
@@ -425,17 +447,16 @@ const FlowCreationPage = () => {
       setIsLoading(false);
     }
   }
+  // ==================================Main Flow Build End===========================
 
-  async function handleFlowSave() {
-    toast.success("Flow Saved Successfully");
-  }
-
+  // ========================================Localsave and export start=====================
   const [savedLocalFlows, setSavedLocalFlows] = useState([]);
   const [exportDropdownOpen, setExportDropdownOpen] = useState(false);
   const [errors, setErrors] = useState([]);
   const [showErrors, setShowErrors] = useState(false);
   const hasErrors = errors.length > 0;
 
+  // Local Save function
   function handleLocalSave() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
     if (!hasAtLeastOneComponent)
@@ -456,6 +477,7 @@ const FlowCreationPage = () => {
     toast.success("Flow saved locally. Ready to export.");
   }
 
+  // Export Function
   function exportFlowAsJson(flow) {
     const blob = new Blob([JSON.stringify(flow.payload, null, 2)], {
       type: "application/json",
@@ -465,6 +487,8 @@ const FlowCreationPage = () => {
     link.download = `${flow.name}_${flow.savedAt}.json`;
     link.click();
   }
+
+  // ========================================Localsave and export end=====================
 
   return (
     <div className="">
@@ -484,10 +508,6 @@ const FlowCreationPage = () => {
               <h1 className="text-lg font-semibold text-indigo-900 tracking-tight">
                 Design Your WhatsApp Automation Flow
               </h1>
-              {/* <p className="text-xs text-gray-800">
-                Seamlessly create, preview, and publish dynamic conversational
-                journeys to engage your customers on WhatsApp.
-              </p> */}
             </div>
           </motion.div>
 
@@ -523,7 +543,7 @@ const FlowCreationPage = () => {
                 <ErrorOutlineOutlinedIcon sx={{ fontSize: "1.2rem" }} />
                 Errors
                 <span className="bg-red-600 text-white text-xs font-medium h-4 w-4 flex items-center justify-center  rounded-full">
-                  {errors.length}
+                  {Object.keys(flowItems || {}).length}
                 </span>
                 <ExpandMoreIcon
                   className={`transform transition ${
@@ -608,8 +628,8 @@ const FlowCreationPage = () => {
               Configuration Errors
             </div>
             <div className="max-h-60 overflow-y-auto divide-y">
-              {hasErrors ? (
-                errors.map((err, idx) => (
+              {flowItems ? (
+                Object.values(flowItems).map((item, idx) => (
                   <div
                     key={idx}
                     className="px-3 py-2 text-sm text-gray-700 flex items-start gap-2"
@@ -618,7 +638,7 @@ const FlowCreationPage = () => {
                       className="text-red-500 mt-0.5"
                       fontSize="small"
                     />
-                    {err}
+                    <p>{item.type} with status {item.status}</p> 
                   </div>
                 ))
               ) : (
@@ -748,12 +768,8 @@ const FlowCreationPage = () => {
         <div className="flex-1 ">
           {/* Mobile Panel Preview*/}
           <MobilePanel
-            tabs={tabs}
-            // items={tabs[activeIndex].payload}
-            items={tabs[activeIndex].payload.map((item) => ({
-              ...item,
-              screenTitle: tabs[activeIndex].title,
-            }))}
+            items={tabs[activeIndex].payload}
+            screenTitle={tabs[activeIndex].title}
             onUpdateItem={(index, updater) => {
               setTabs((prevTabs) => {
                 const newTabs = [...prevTabs];

@@ -601,8 +601,7 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${
-          index + 1
+        `Please delete the existing image before uploading a new one in slot ${index + 1
         }`
       );
       return;
@@ -878,8 +877,8 @@ const EditPanel = ({
       setUnavailableCalendarDates(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"].map(
-              (dateStr) => new Date(dateStr)
-            )
+            (dateStr) => new Date(dateStr)
+          )
           : []
       );
 
@@ -976,36 +975,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-            mode: "single",
-            label: dateCalendarLable,
-            "helper-text": dateCalendarPlaceholder,
-            required: startCalenderRequired,
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          }
+          mode: "single",
+          label: dateCalendarLable,
+          "helper-text": dateCalendarPlaceholder,
+          required: startCalenderRequired,
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        }
         : {
-            mode: "range",
-            label: {
-              "start-date": dateCalendarLable || "",
-              "end-date": endCalendarLabel || "",
-            },
-            "helper-text": {
-              "start-date": dateCalendarPlaceholder || "",
-              "end-date": endCalendarHelperText || "",
-            },
-            required: {
-              "start-date": startCalenderRequired,
-              "end-date": endCalendarRequired,
-            },
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          };
+          mode: "range",
+          label: {
+            "start-date": dateCalendarLable || "",
+            "end-date": endCalendarLabel || "",
+          },
+          "helper-text": {
+            "start-date": dateCalendarPlaceholder || "",
+            "end-date": endCalendarHelperText || "",
+          },
+          required: {
+            "start-date": startCalenderRequired,
+            "end-date": endCalendarRequired,
+          },
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        };
 
     const updatedData = {
       ...selectedItem,
@@ -1528,7 +1527,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1970,12 +1969,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-              ...o,
-              title: draftTitle.trim(),
-              description: draftDescription.trim(),
-              metadata: draftMetadata.trim(),
-              image: dropImageSrc || o.image || "",
-            }
+            ...o,
+            title: draftTitle.trim(),
+            description: draftDescription.trim(),
+            metadata: draftMetadata.trim(),
+            image: dropImageSrc || o.image || "",
+          }
           : o
       )
     );
@@ -2158,10 +2157,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-              ...o,
-              // name: chipName.trim(),
-              title: chipTitle.trim(),
-            }
+            ...o,
+            // name: chipName.trim(),
+            title: chipTitle.trim(),
+          }
           : o
       )
     );
@@ -2911,8 +2910,8 @@ const EditPanel = ({
               {selectedThenComponent === "textInput"
                 ? "Then Component"
                 : selectedElseComponent === "textInput"
-                ? "Else Component"
-                : ""}
+                  ? "Else Component"
+                  : ""}
               <InputField
                 label="Input Label"
                 id="mainlabel"
@@ -3294,7 +3293,7 @@ const EditPanel = ({
 
                 {selectedItem?.type === "checkBox" && (
                   <UniversalButton
-                    label="Save Checkboxxxx"
+                    label="Save Checkbox"
                     onClick={handleCheckBoxSave}
                   />
                 )}
@@ -3309,8 +3308,8 @@ const EditPanel = ({
                 {selectedThenComponent === "radioButton"
                   ? "Then Component"
                   : selectedElseComponent === "radioButton"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Radio Group Label"
                   tooltipContent="Enter Radio Group Label"
@@ -3507,8 +3506,8 @@ const EditPanel = ({
                 {selectedThenComponent === "dropDown"
                   ? "Then Component"
                   : selectedElseComponent === "dropDown"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Label"
                   id="mainlabel"
@@ -3714,8 +3713,8 @@ const EditPanel = ({
                 {selectedThenComponent === "chipSelector"
                   ? "Then Component"
                   : selectedElseComponent === "chipSelector"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Label"
                   placeholder="Enter label"

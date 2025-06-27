@@ -26,8 +26,7 @@ import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
 import { marked } from "marked";
 
-const MobilePanel = ({ items, onUpdateItem }) => {
-  console.log("tabs", items);
+const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
   const [radioButtonOptions, setRadioButtonOptions] = useState([
     { title: "Option 1", description: "Description 1", image: "url1.png" },
@@ -127,16 +126,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
   // imageCarousel
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  console.log("items", items);
   return (
-    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-3 border-black hide-scrollbar overflow-auto">
-      {items[0]?.screenTitle && (
-  <h2 className="text-xl font-semibold text-center mb-2">
-    {items[0].screenTitle}
-  </h2>
-)}
-
+    <div className="relative h-[830px] w-[340px] rounded-3xl shadow-md bg-white border-3 border-indigo-300 hide-scrollbar overflow-auto">
+      <h2 className="text-xl font-semibold text-center mb-2">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
         {items.map((item, index) => {
           // console.log("item", item);
@@ -147,7 +139,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="h5"
-                  className="text-lg font-semibold mb-1"
+                  className="text-lg font-semibold mb-1 break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Heading Placeholder"}
                 </Typography>
@@ -159,7 +151,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="h8"
-                  className="text-md font-medium  mb-1"
+                  className="text-md font-medium mb-1 break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Subheading Placeholder"}
                 </Typography>
@@ -171,7 +163,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="h8"
-                  sx={{ whiteSpace: "pre-line" }}
+                  sx={{ whiteSpace: "pre-line", wordBreak: "break-words" }}
+                  className="text-md font-medium mb-1 break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Text Body "}
                 </Typography>
@@ -182,7 +175,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
+                  className="text-xs mb-1 break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Text Caption Placeholder"}
                 </Typography>
@@ -194,7 +187,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <div key={index} className="mb-4">
                   <Typography
                     variant="caption"
-                    // sx={{ whiteSpace: "pre-line" }}
+                  // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.label || "Label"}
                   </Typography>
@@ -259,33 +252,73 @@ const MobilePanel = ({ items, onUpdateItem }) => {
 
                 renderedHTML = marked.parse(markdown);
 
-                // renderedHTML = renderedHTML.replace(
-                //   /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
-                //   ''
-                // );
+                renderedHTML = renderedHTML.replace(
+                  /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
+                  `<img$1 class="w-30 h-30 rounded-full object-cover border">`
+                );
               } catch (err) {
                 console.error("Markdown rendering error:", err);
                 renderedHTML = "<p>No content available</p>";
               }
 
               return (
-                <div className="w-full max-w-xs mx-auto border rounded-md shadow-md overflow-hidden bg-white h-[90vh] flex flex-col">
+                <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden bg-white h-auto flex flex-col break-words whitespace-pre-wrap max-w-full">
                   <div
-                    className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+                    className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none 
+                      prose-img:rounded 
+                      // prose-a:text-blue-500 prose-a:underline 
+                      prose-ul:list-disc prose-ul:ml-6 prose-ol:list-decimal prose-ol:ml-6 
+                      prose-li:marker:text-gray-500 prose-li:pl-1 
+                      prose-strong:font-bold 
+                      prose-table:border prose-table:border-collapse prose-th:border prose-th:border-gray-300 prose-td:border prose-td:border-gray-300 prose-th:px-2 prose-th:py-1 prose-td:px-2 prose-td:py-1"
                     dangerouslySetInnerHTML={{ __html: renderedHTML }}
                   />
 
                   <style>
                     {`
-          .prose h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-          }
-          .prose h2 {
-            font-size: 1.25rem;
-            font-weight: 500;
-          }
-        `}
+    .prose h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .prose h2 {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .prose th, .prose td {
+      border: 1px solid #ddd;
+      padding: 4px 8px;
+    }
+    .prose thead {
+      background-color: #f3f4f6;
+    }
+    .prose ul {
+      list-style-type: disc;
+      margin-left: 1.5rem;
+    }
+    .prose ol {
+      list-style-type: decimal;
+      margin-left: 1.5rem;
+    }
+    // .prose a {
+    //  text-color: blue-500;
+    // }
+    .prose li {
+      color: #6b7280
+      margin: 0.25rem 0;
+    }
+    .prose img {
+      width: 2.5rem; 
+      height: 2.5rem; 
+      border-radius: 9999px; 
+      object-fit: cover; 
+      border: 1px solid #d1d5db; 
+      display: inline-block; 
+    }
+  `}
                   </style>
                 </div>
               );
@@ -297,7 +330,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <div key={index} className="">
                   {item?.checkboxGroups &&
-                  Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId}>
@@ -393,7 +426,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <div key={index} className="ml-3">
                   {item?.radioButton &&
-                  Object.keys(item.radioButton).length > 0 ? (
+                    Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId}>
@@ -600,11 +633,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
-                            isSelected
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-800 border-gray-300"
-                          }`}
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-800 border-gray-300"
+                            }`}
                         >
                           {option.title}
                         </button>
@@ -805,9 +837,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         key={idx}
                         src={`data:image/jpeg;base64,${img.src}`} // <-- fix is here
                         alt={img["alt-text"] || `Image ${idx + 1}`}
-                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${
-                          idx === currentIndex ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
+                          }`}
                         onError={(e) =>
                           (e.currentTarget.style.display = "none")
                         }
@@ -894,8 +925,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"
@@ -943,8 +974,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"

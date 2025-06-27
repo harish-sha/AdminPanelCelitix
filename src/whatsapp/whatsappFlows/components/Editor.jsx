@@ -22,15 +22,13 @@ export const convertNodeToMarkdown = (node) => {
   if (node.nodeType !== 1) return "";
 
   const tag = node.tagName.toLowerCase();
-  const children = Array.from(node.childNodes)
-    .map(convertNodeToMarkdown)
-    
+  const children = Array.from(node.childNodes).map(convertNodeToMarkdown);
 
   switch (tag) {
     case "h2":
-      return `# ${children.trim()}`;
+      return `# ${children}`;
     case "h3":
-      return `## ${children.trim()}`;
+      return `## ${children}`;
     case "strong":
     case "b":
       return `**${children}**`;
@@ -43,19 +41,112 @@ export const convertNodeToMarkdown = (node) => {
     case "a":
       return `[${children}](${node.getAttribute("href")})`;
     case "img":
-  const src = node.getAttribute("src") || "";
-  const altText = (node.getAttribute("alt") || "").trim();
-  return `![${altText}](${src})`;
-    case "ul":
-      return Array.from(node.children)
-        .map((li) => `"+ ${convertNodeToMarkdown(li)}"`)
-        .join(",");
+      const src = node.getAttribute("src") || "";
+      const altText = (node.getAttribute("alt") || "").trim();
+      return `![${altText}](${src})`;
+    //  case "ul":
+    //   return Array.from(node.children)
+    //     .map((li) => `+ ${convertNodeToMarkdown(li)}`);
+
+    //  case "ul":
+    //   return Array.from(node.children)
+    //     .map((li) => {
+    //       const content = convertNodeToMarkdown(li);
+    //       if (Array.isArray(content)) {
+    //         return content.map(c => `+ ${c}`);
+    //       } else {
+    //         return `+ ${content}`;
+    //       }
+    //     })
+    //     .flat();
+
+    // case "ol":
+    //   return Array.from(node.children)
+    //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+
+
+    // case "ol":
+    //   return Array.from(node.children)
+    //     .map((li, i) => {
+    //       const content = convertNodeToMarkdown(li);
+    //       if (Array.isArray(content)) {
+    //         return content.map(c => `${i + 1}. ${c}`);
+
+    //       } else {
+    //         return `${i + 1}. ${content}`;
+    //       }
+    //     })
+    //     .flat();
+
+
+
+    // case "li":
+    //   return children;
+
+    // case "li":
+    //   return Array.from(node.childNodes)
+    //     .map(convertNodeToMarkdown)
+    //     .flat()
+    //     // .join("")  // join content of li itself
+    //     .trim();
+
+
+    // case "ul":
+    //   return Array.from(node.children)
+    //     .map((li) => {
+    //       const content = convertNodeToMarkdown(li);
+    //       if (Array.isArray(content)) {
+    //         return content.map(c => `+ ${c}`);
+    //       } else {
+    //         return `+ ${content}`;
+    //       }
+    //     })
+    //     .flat();
+
+    // case "ol":
+    //   return Array.from(node.children)
+    //     .map((li, i) => {
+    //       const content = convertNodeToMarkdown(li);
+    //       if (Array.isArray(content)) {
+    //         return content.map(c => `${i + 1}. ${c}`);
+    //       } else {
+    //         return `${i + 1}. ${content}`;
+    //       }
+    //     })
+    //     .flat();
+
+    // case "li":
+    //   return children.flat();
+
+    // case "ul":
+    //   return Array.from(node.children)
+    //     .map((li) => `+ ${convertNodeToMarkdown(li)}`);
+
+    // case "ol":
+    //   return Array.from(node.children)
+    //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`);
+
     case "ol":
-      return Array.from(node.children)
-        .map((li, i) => `"${i + 1}. ${convertNodeToMarkdown(li)}"`)
-        .join(",");
-    case "li":
-      return children;
+      return Array.from(node.children).flatMap((li, i) => {
+        const content = convertNodeToMarkdown(li);
+        return Array.isArray(content)
+          ? content.map((line) => `${i + 1}. ${line}`)
+          : [`${i + 1}. ${content}`];
+      });
+
+    case "ul":
+      return Array.from(node.children).flatMap((li) => {
+        const content = convertNodeToMarkdown(li);
+        return Array.isArray(content)
+          ? content.map((line) => `+ ${line}`)
+          : [`+ ${content}`];
+      });
+
+    // case "li":
+    //   return [children.flat().join("")];
+
+
+
     case "br":
       return "\n";
     case "p":
@@ -107,75 +198,111 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   };
 
   const insertImage = () => {
-  let altText = "";
-  let srcFile; // local File
+    let altText = "";
+    let srcFile; // local File
 
-  const handleInsert = () => {
-    if (!srcFile) {
-      toast.error("Please choose a file.");
-      return;
-    }
+    const handleInsert = () => {
+      if (!srcFile) {
+        toast.error("Please choose a file.");
+        return;
+      }
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      const src = reader.result;
-      editorRef.current?.focus();
-      document.execCommand(
-        "insertHTML",
-        false,
-        `<img src="${src}" alt="${altText}" />`
-      );
-      toast.dismiss();
-      toast.success("Image inserted!");
-      setTimeout(updateActive, 0);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const src = reader.result;
+        editorRef.current?.focus();
+        document.execCommand(
+          "insertHTML",
+          false,
+          `<img src="${src}" alt="${altText}" />`
+        );
+        toast.dismiss();
+        toast.success("Image inserted!");
+        setTimeout(updateActive, 0);
+      };
+      reader.onerror = () => toast.error("Failed to read file.");
+      reader.readAsDataURL(srcFile);
     };
-    reader.onerror = () => toast.error("Failed to read file.");
-    reader.readAsDataURL(srcFile);
+
+    toast.custom((t) => (
+      <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
+        <h3 className="font-semibold">Insert Image</h3>
+
+        {/* ALT TEXT input */}
+        <InputField
+          type="text"
+          placeholder="Image alt text"
+          className="border px-2 py-1 rounded text-sm"
+          onChange={(e) => (altText = e.target.value.trim())}
+        />
+
+        {/* File input */}
+        <InputField
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          className="text-sm"
+          onChange={(e) => {
+            srcFile = e.target.files?.[0];
+          }}
+        />
+
+        <div className="flex justify-end gap-2 mt-2">
+          <button
+            className="px-3 py-1 bg-gray-200 rounded text-sm"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancel
+          </button>
+          <button
+            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+            onClick={handleInsert}
+          >
+            Save
+          </button>
+        </div>
+      </div>
+    ));
   };
 
-  toast.custom((t) => (
-    <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
-      <h3 className="font-semibold">Insert Image</h3>
 
-      {/* ALT TEXT input */}
-      <InputField
-        type="text"
-        placeholder="Image alt text"
-        className="border px-2 py-1 rounded text-sm"
-        onChange={(e) => (altText = e.target.value.trim())}
-      />
+  const insertTable = () => {
+    editorRef.current?.focus();
 
-      {/* File input */}
-      <InputField
-        type="file"
-        accept="image/png,image/jpeg,image/webp"
-        className="text-sm"
-        onChange={(e) => {
-          srcFile = e.target.files?.[0];
-        }}
-      />
+    const tableHTML = `
+    <table style="border-collapse: collapse; width: 100%;">
+      <thead>
+        <tr>
+          <th style="border: 0.5px solid #000; padding: 4px;">Header 1</th>
+          <th style="border: 0.5px solid #000; padding: 4px;">Header 2</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="border: 0.5px solid #000; padding: 4px;">Cell 1</td>
+          <td style="border: 0.5px solid #000; padding: 4px;">Cell 2</td>
+        </tr>
+      </tbody>
+    </table>
+  `;
 
-      <div className="flex justify-end gap-2 mt-2">
-        <button
-          className="px-3 py-1 bg-gray-200 rounded text-sm"
-          onClick={() => toast.dismiss(t.id)}
-        >
-          Cancel
-        </button>
-        <button
-          className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-          onClick={handleInsert}
-        >
-          Save
-        </button>
-      </div>
-    </div>
-  ));
-};
+    document.execCommand("insertHTML", false, tableHTML);
+    setTimeout(updateActive, 0);
+  };
 
 
+  // const insertImage = () => {
+  //   editorRef.current?.focus();
+  //   const src = "https://via.placeholder.com/150"; // default image source or base64 string
+  //   const alt = "Image";
 
+  //   document.execCommand(
+  //     "insertHTML",
+  //     false,
+  //     `<img src="${src}" alt="${alt}" />`
+  //   );
 
+  //   setTimeout(updateActive, 0);
+  // };
 
   const addColumn = () => {
     const table = findCurrentTable();
@@ -226,8 +353,10 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
 
     // Convert to markdown
     const lines = Array.from(editorRef.current?.childNodes || [])
-      .map(convertNodeToMarkdown)
-      .map((line) => line.trim())
+      // .map(convertNodeToMarkdown)
+      // .map((line) => line)
+      // .filter((line) => line !== "");
+      .flatMap(convertNodeToMarkdown)
       .filter((line) => line !== "");
 
     const payload = {
@@ -323,73 +452,86 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   // };
 
   const insertLink = () => {
-  let url = "";
-  let linkText = "";
+    let url = "";
+    let linkText = "";
 
-  toast.custom((t) => {
-    // Move handleInsert here so we have access to t.id
-    const handleInsert = () => {
-      if (!/^https?:\/\/.+/.test(url)) {
-        toast.error("Please enter a valid URL (must start with http/https)", { id: t.id });
-        return;
-      }
+    toast.custom((t) => {
+      // Move handleInsert here so we have access to t.id
+      const handleInsert = () => {
+        if (!/^https?:\/\/.+/.test(url)) {
+          toast.error("Please enter a valid URL (must start with http/https)", { id: t.id });
+          return;
+        }
 
-      editorRef.current?.focus();
-      const selection = window.getSelection();
-      const selectedText = selection?.toString();
-      const finalText = selectedText || linkText || url;
+        editorRef.current?.focus();
+        const selection = window.getSelection();
+        const selectedText = selection?.toString();
+        const finalText = selectedText || linkText || url;
 
-      document.execCommand(
-        "insertHTML",
-        false,
-        `<a href="${url}" target="_blank" rel="noopener noreferrer">${finalText}</a>`
-      );
+        document.execCommand(
+          "insertHTML",
+          false,
+          `<a href="${url}" target="_blank" rel="noopener noreferrer">${finalText}</a>`
+        );
 
-      toast.dismiss(t.id);
-      toast.success("Link inserted!");
-      setTimeout(updateActive, 0);
-    };
+        toast.dismiss(t.id);
+        toast.success("Link inserted!");
+        setTimeout(updateActive, 0);
+      };
 
-    return (
-      <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
-        <h3 className="font-semibold">Insert Link</h3>
+      return (
+        <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
+          <h3 className="font-semibold">Insert Link</h3>
 
-        {/* URL Input */}
-        <InputField
-          type="text"
-          placeholder="https://example.com"
-          className="border px-2 py-1 rounded text-sm"
-          onChange={(e) => (url = e.target.value.trim())}
-        />
+          {/* URL Input */}
+          <InputField
+            type="text"
+            placeholder="https://example.com"
+            className="border px-2 py-1 rounded text-sm"
+            onChange={(e) => (url = e.target.value.trim())}
+          />
 
-        {/* Optional Link Text Input */}
-        <InputField
-          type="text"
-          placeholder="Link text (optional)"
-          className="border px-2 py-1 rounded text-sm"
-          onChange={(e) => (linkText = e.target.value)}
-        />
+          {/* Optional Link Text Input */}
+          <InputField
+            type="text"
+            placeholder="Link text (optional)"
+            className="border px-2 py-1 rounded text-sm"
+            onChange={(e) => (linkText = e.target.value)}
+          />
 
-        <div className="flex justify-end gap-2 mt-2">
-          <button
-            className="px-3 py-1 bg-gray-200 rounded text-sm"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Cancel
-          </button>
-          <button
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
-            onClick={handleInsert}
-          >
-            Save
-          </button>
+          <div className="flex justify-end gap-2 mt-2">
+            <button
+              className="px-3 py-1 bg-gray-200 rounded text-sm"
+              onClick={() => toast.dismiss(t.id)}
+            >
+              Cancel
+            </button>
+            <button
+              className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+              onClick={handleInsert}
+            >
+              Save
+            </button>
+          </div>
         </div>
-      </div>
-    );
-  });
-};
+      );
+    });
+  };
 
+  // const insertLink = () => {
+  //   editorRef.current?.focus();
+  //   const url = "https://example.com"; // default or you can generate dynamically
+  //   const selection = window.getSelection();
+  //   const selectedText = selection?.toString() || url;
 
+  //   document.execCommand(
+  //     "insertHTML",
+  //     false,
+  //     `<a href="${url}" target="_blank" rel="noopener noreferrer">${selectedText}</a>`
+  //   );
+
+  //   setTimeout(updateActive, 0);
+  // };
 
   return (
     <div className="max-w-3xl mx-auto p-4 border rounded shadow space-y-4">
@@ -458,9 +600,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertUnorderedList")}
-          className={`${base} ${
-            active.insertUnorderedList ? activeBtn : inactive
-          }`}
+          className={`${base} ${active.insertUnorderedList ? activeBtn : inactive
+            }`}
           title="Bulleted List"
         >
           <ListAltOutlined />
@@ -470,9 +611,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertOrderedList")}
-          className={`${base} ${
-            active.insertOrderedList ? activeBtn : inactive
-          }`}
+          className={`${base} ${active.insertOrderedList ? activeBtn : inactive
+            }`}
           title="Number List"
         >
           <FormatListNumberedOutlined />
@@ -490,6 +630,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         >
           <AddLinkOutlined />
         </button>
+
+
 
         {/* Image */}
         <button
@@ -596,8 +738,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           label="Save"
         />
       </div>
-        <style jsx>{`
-        .editor ul li { 
+      <style jsx>{`
+        .editor ul li {
           display: list-item;
           list-style-type: disc !important;
           margin-left: 1.5em;
