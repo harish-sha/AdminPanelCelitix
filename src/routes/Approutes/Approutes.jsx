@@ -129,6 +129,7 @@ import { EditCallback } from "@/callback/page/editCallback";
 
 import { WorkflowDetails } from "@/workflow/details";
 import { WorkflowCreate } from "@/workflow/create";
+import { UpdateWorkflow } from "@/workflow/edit";
 
 // Tag Manager
 
@@ -294,6 +295,7 @@ const Approutes = () => {
         {/* Workflow */}
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
+        <Route path="/workflow/edit" element={<UpdateWorkflow />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />
