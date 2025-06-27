@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import WavesurferPlayer from "@wavesurfer/react";
+import { useState, useEffect, useRef } from "react";
+// import WavesurferPlayer from "@wavesurfer/react";
 import { RadioButton } from "primereact/radiobutton";
 import { FaPlay, FaPause } from "react-icons/fa";
 import { IoStop } from "react-icons/io5";
@@ -7,27 +7,41 @@ import { Dialog } from "primereact/dialog";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
+import { motion } from "framer-motion";
+import {
+  Wifi,
+  BatteryFull,
+  Signal,
+  PhoneOff,
+  PhoneCall,
+  BellOff,
+  MessageCircle,
+  Clock,
+  User,
+} from "lucide-react";
 
 import Loader from "@/whatsapp/components/Loader.jsx";
 import InputField from "@/whatsapp/components/InputField.jsx";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown.jsx";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea.jsx";
-
+import UniversalButton from "@/whatsapp/components/UniversalButton.jsx";
+import DynamicValueBox from "./components/DynamicValueBox.jsx";
+import RadioButtonLaunchCampaignObd from "./components/RadioButtonLaunchCampaignObd.jsx";
+import ObdVariable from "./components/ObdVariable.jsx";
+import DynamicObdVariable from "./components/DynamicObdVariable.jsx";
+import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
 
 import { getAllGroups } from "@/apis/common/common.js";
 import {
   sendObdCampaign,
   fetchVoiceClips,
   fetchVoiceClipUrl,
+  ObdVariableList,
+  ObdDynamicVoiceClip,
 } from "@/apis/Obd/obd.js";
 
-import UniversalButton from "@/whatsapp/components/UniversalButton.jsx";
-
-import DynamicValueBox from "./components/DynamicValueBox.jsx";
-import RadioButtonLaunchCampaignObd from "./components/RadioButtonLaunchCampaignObd.jsx";
-import ObdVariable from "./components/ObdVariable.jsx";
-
 const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
+// const BASE_AUDIO_URL = "/voiceAudioUrl";
 
 const ObdCreateCampaign = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -42,6 +56,7 @@ const ObdCreateCampaign = () => {
   const [obdType, setObdType] = useState(null);
 
   const [ttsArea, setTTSArea] = useState("");
+  const [dynamicTtsArea, setDynamicTtsArea] = useState({});
 
   const [retry, setRetry] = useState(null);
   const [interval, setInterval] = useState(null);
@@ -66,9 +81,14 @@ const ObdCreateCampaign = () => {
   const [voiceListData, setVoiceListData] = useState([]);
   const [slectedSBVoiceFile, setSelectedSBVoiceFile] = useState("");
 
-  const [selectedMBFiletwo, setSelectedMBFiletwo] = useState("");
+  const [dynamicVoiceListData, setDynamicVoiceListData] = useState([]);
+  const [slectedDynamicVoiceFile, setSelectedDynamicVoiceFile] = useState(null);
+  const [voiceDynamicURLPath, setVoiceDynamicURLPath] = useState("");
+  const [voiceVariables, setVoiceVariables] = useState([]);
 
   const [voiceDBClip, setVoiceDBClip] = useState(null);
+
+  const [selectedMBFiletwo, setSelectedMBFiletwo] = useState("");
 
   const [mobilenums, setMobileNums] = useState("");
 
@@ -77,18 +97,54 @@ const ObdCreateCampaign = () => {
 
   const [allHeaders, setAllHeaders] = useState([]);
   const [variableValue, setVariableValue] = useState();
+  const [dynamicVariableValue, setDynamicVariableValue] = useState();
+
   const [voiceSBURLPath, setVoiceSBURLPath] = useState("");
   const [voiceMBURLPath, setVoiceMBURLPath] = useState("");
+  const [dynamicValueJson, setDynamicValueJson] = useState({});
+
+  // ai content start
+  const [isOpen, setIsOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiSuggestion, setAiSuggestion] = useState("");
+  const [isTypingDone, setIsTypingDone] = useState(true);
+  const [hasInserted, setHasInserted] = useState(false);
+  const [typingKey, setTypingKey] = useState(0);
+  const [generationCount, setGenerationCount] = useState(0);
+
+  const variableRef = useRef([]);
+
+  const [ai, setAi] = useState({
+    isGenerating: false,
+    text: "",
+    response: "",
+    typing: false,
+  });
+  // ai content end
 
   useEffect(() => {
-    const isHeaderAvailable = fileHeaders?.length;
+    ObdVariableList();
+    ObdDynamicVoiceClip(1);
+  }, []);
 
-    if (isHeaderAvailable) {
-      setAllHeaders(fileHeaders);
-    } else {
+  useEffect(() => {
+    // const isHeaderAvailable = fileHeaders?.length;
+    // console.log("isHeaderAvailable", isHeaderAvailable);
+
+    // setAllHeaders(fileHeaders);
+
+    // // if (isHeaderAvailable) {
+    // //   setAllHeaders(fileHeaders);
+    // // } else {
+    // //   setAllHeaders(["firstName", "lastName", "mobile"]);
+    // // }
+    if (selectedOption === "option1") {
       setAllHeaders(["firstName", "lastName", "mobile"]);
+    } else {
+      setAllHeaders(fileHeaders);
     }
-  }, [fileHeaders]);
+  }, [fileHeaders, selectedOption]);
 
   const onReady = (ws) => {
     setWavesurfer(ws);
@@ -117,9 +173,11 @@ const ObdCreateCampaign = () => {
     setCampaignName("");
     setObdType(null);
     setTTSArea("");
-    setSelectedSBVoiceFile(null);
-    setSelectedMBFiletwo(null);
+    setDynamicTtsArea("");
+    setSelectedSBVoiceFile("");
+    setSelectedMBFiletwo("");
     setVoiceDBClip(null);
+    setVoiceVariables([]);
 
     // retry and interval
     setRetry(null);
@@ -140,7 +198,34 @@ const ObdCreateCampaign = () => {
     setMobileNums("");
     setSchedule(false);
     setScheduledDateTime(new Date());
+    fileInputRef && (fileInputRef.current.value = null)
+    setIsUploaded(false)
+    setIsUploading(false)
+    setColumns([])
+    setSelectedCountryName("")
+    setCountryList([])
+    setFileData([])
   };
+
+  const fileInputRef = useRef(null);
+  // // const [selectedOption, setSelectedOption] = useState("option1");
+  // // const [selectedGroups, setSelectedGroups] = useState([]);
+  // const [uploadedFile, setUploadedFile] = useState(null);
+  const [isUploaded, setIsUploaded] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  // const [totalRecords, setTotalRecords] = useState("");
+  const [columns, setColumns] = useState([]);
+
+  // const [selectedCountryCode, setSelectedCountryCode] = useState("");
+  const [selectedCountryName, setSelectedCountryName] = useState("");
+  // const [addCountryCode, setAddCountryCode] = useState(false);
+  const [countryList, setCountryList] = useState([]);
+  // const [xlsxPath, setXlsxPath] = useState("");
+  const [fileData, setFileData] = useState([]);
+  // const [selectedMobileColumn, setSelectedMobileColumn] = useState("");
+  // const [fileHeaders, setFileHeaders] = useState([]);
+
+  // const [isLoading, setIsLoading] = useState(true);
 
   // To change transactional and promotional
   const handleChangeOption = (event) => {
@@ -186,6 +271,13 @@ const ObdCreateCampaign = () => {
     if (obdType === "multibroadcast") {
       if (!slectedSBVoiceFile || !selectedMBFiletwo) {
         toast.error("Please select voice clips from both dropdowns.");
+        return;
+      }
+    }
+
+    if (obdType === "dynamicbroadcast") {
+      if (!slectedDynamicVoiceFile) {
+        toast.error("Please select Dynamic voice clip!");
         return;
       }
     }
@@ -300,7 +392,9 @@ const ObdCreateCampaign = () => {
       try {
         const response = await fetchVoiceClips();
         if (response) {
-          setVoiceListData(response);
+          const filtered = response.filter((item) => item.isDynamic === 0);
+          setVoiceListData(filtered);
+          // setVoiceListData(response);
         } else {
           toast.error("Failed to load Voice Details!");
         }
@@ -310,6 +404,23 @@ const ObdCreateCampaign = () => {
     };
 
     getObdVoiceClipDetails();
+  }, []);
+
+  useEffect(() => {
+    const getObdDynamicVoiceClipDetails = async () => {
+      try {
+        const response = await ObdDynamicVoiceClip(1);
+        if (response && Array.isArray(response)) {
+          setDynamicVoiceListData(response);
+        } else {
+          toast.error("Failed to load Dynamic Voice Details!");
+        }
+      } catch (error) {
+        toast.error("Error in getting dynamic voice details.");
+      }
+    };
+
+    getObdDynamicVoiceClipDetails();
   }, []);
 
   const formatDateTime = (dateObj) => {
@@ -334,8 +445,8 @@ const ObdCreateCampaign = () => {
       selectedOptionCampaign === "transactional"
         ? "1"
         : selectedOptionCampaign === "promotional"
-          ? "2"
-          : "";
+        ? "2"
+        : "";
     const retryCount = retry;
     const intervalValue = interval;
     const getCampaignType = () => {
@@ -357,6 +468,13 @@ const ObdCreateCampaign = () => {
       .filter((grp) => selectedGroups.includes(grp.groupCode))
       .reduce((acc, curr) => acc + Number(curr.totalCount), 0);
 
+    const formattedObj = voiceVariables.reduce((acc, item) => {
+      acc[`sequence_${item.sequence}`] = item.variableSampleValue;
+      return acc;
+    }, {});
+
+    setDynamicValueJson(formattedObj);
+
     const data = {
       mobilenos: mobilenums,
       campaignName: campaignName || "",
@@ -376,12 +494,14 @@ const ObdCreateCampaign = () => {
       isSchedule: schedule && scheduledDateTime ? "1" : "0",
       scheduleDateTime:
         schedule && scheduledDateTime ? formatDateTime(scheduledDateTime) : "0",
+      dynamicVoiceCallSrno: slectedDynamicVoiceFile || "",
+      dynamicValueJson: JSON.stringify(formattedObj),
       voiceCallSrno:
         obdType === "simplebroadcast"
           ? slectedSBVoiceFile || ""
           : obdType === "multibroadcast"
-            ? slectedSBVoiceFile || ""
-            : "",
+          ? slectedSBVoiceFile || ""
+          : "",
       voiceCallSrno2:
         obdType === "multibroadcast" ? selectedMBFiletwo || "" : "",
     };
@@ -430,13 +550,41 @@ const ObdCreateCampaign = () => {
     setTTSArea((prev) => prev + `{{${variable}}}`);
   };
 
+  const handleDynamicVariableSelect = (variable, index) => {
+    if (!variableRef.current[index]) return;
+    const input = variableRef.current[index];
+    const start = input.selectionStart;
+    const end = input.selectionEnd;
+
+    const tag = `#${variable}#`;
+
+    setDynamicVariableValue(variable);
+    setDynamicTtsArea((prev) => prev + `#${variable}#`);
+
+    const text = voiceVariables[index].variableSampleValue || "";
+    const updatedTag = text.substring(0, start) + tag + text.substring(end);
+
+    setVoiceVariables((prev) => {
+      const updated = [...prev];
+      updated[index].variableSampleValue = updatedTag;
+      return updated;
+    });
+
+    requestAnimationFrame(() => {
+      const pos = end + updatedTag.length;
+      input.setSelectionRange(pos, pos);
+      input.focus();
+    });
+  };
+
   const handleSelectSBVoice = async (value) => {
     const audioId = value;
 
     try {
       const res = await fetchVoiceClipUrl(audioId);
-      if (!res.path) return toast.error("Something went wrong");
+      // if (!res.path) return toast.error("Something went wrong");
       const url = BASE_AUDIO_URL + res.path;
+      console.log(url);
       setVoiceSBURLPath(url);
     } catch (error) {
       console.error("Error fetching Voice File:", error);
@@ -448,7 +596,7 @@ const ObdCreateCampaign = () => {
     const audioId = value;
     try {
       const res = await fetchVoiceClipUrl(audioId);
-      if (!res.path) return toast.error("Something went wrong");
+      // if (!res.path) return toast.error("Something went wrong");
 
       const url = BASE_AUDIO_URL + res.path;
       setVoiceMBURLPath(url);
@@ -456,6 +604,40 @@ const ObdCreateCampaign = () => {
       console.error("Error fetching Voice File:", error);
       toast.error("Error fetching Voice File.");
     }
+  };
+
+  const handleSelectDynamicVoice = async (srno) => {
+    try {
+      const res = await ObdVariableList(srno);
+      console.log("res", res);
+      if (!res?.data || !Array.isArray(res.data)) {
+        toast.error("Invalid variable data received");
+        return;
+      }
+
+      const enrichedVariables = res.data.map((item) => ({
+        sequence: item.sequence,
+        variableSampleValue: item.variableSampleValue || "",
+      }));
+
+      setVoiceVariables(enrichedVariables);
+
+      const audioURL = BASE_AUDIO_URL + (res?.path || "");
+      setVoiceDynamicURLPath(audioURL);
+    } catch (error) {
+      console.error("Error fetching Voice File:", error);
+      toast.error("Error fetching Voice File.");
+    }
+  };
+
+  const handleVoiceVariableChange = (index, newValue, dynamicTtsArea) => {
+    console.log("newValue", newValue);
+    console.log("index", index);
+    setVoiceVariables((prev) => {
+      const updated = [...prev];
+      updated[index].variableSampleValue = newValue;
+      return updated;
+    });
   };
 
   return (
@@ -468,9 +650,9 @@ const ObdCreateCampaign = () => {
         <>
           <div className="container-fluid ">
             <div className="flex flex-wrap bg-[#E5E7EB] rounded-2xl">
-              <div className=" w-full  p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-6  min-h-[80vh]">
+              <div className=" w-full p-3  rounded-xl flex lg:flex-nowrap flex-wrap gap-3  min-h-[80vh]">
                 <div className="lg:w-1/2 w-full rounded-xl bg-[#f9f9f9]">
-                  <div className="flex items-center justify-around gap-4 px-2 py-4 ">
+                  <div className="flex items-center justify-around gap-4 px-2 pb-0 pt-4 ">
                     <div className="flex gap-2 border border-gray-300 rounded-lg w-1/2 px-3 py-2">
                       <RadioButton
                         inputId="radioOptionTransactional"
@@ -503,7 +685,7 @@ const ObdCreateCampaign = () => {
                     </div>
                   </div>
 
-                  <div className="p-3">
+                  <div className="p-2">
                     <div>
                       <InputField
                         label="Campaign Name"
@@ -516,7 +698,7 @@ const ObdCreateCampaign = () => {
                       />
                     </div>
 
-                    <div className="my-4">
+                    <div className="my-3">
                       <AnimatedDropdown
                         label="OBD Type:"
                         id="obdType"
@@ -537,9 +719,9 @@ const ObdCreateCampaign = () => {
                         onChange={(value) => {
                           setObdType(value);
                           setTTSArea("");
-                          setSelectedSBVoiceFile(null);
-
-                          setSelectedMBFiletwo(null);
+                          setSelectedSBVoiceFile("");
+                          setSelectedDynamicVoiceFile(null);
+                          setSelectedMBFiletwo("");
                           setVoiceDBClip(null);
                           setRetry(null);
                           setInterval(null);
@@ -553,78 +735,90 @@ const ObdCreateCampaign = () => {
                     </div>
 
                     {obdType === "texttospeech" && (
-                      <div className="my-2">
-                        <div className="relative">
-                          <UniversalTextArea
-                            value={ttsArea}
-                            onChange={(e) => {
-                              const value = e.target.value;
-                              if (value.length <= 1000) setTTSArea(value);
-                            }}
-                            className="w-full p-2 border border-gray-300 rounded-md"
-                            placeholder="Enter text..."
-                            label="Voice Text"
+                      <div className="relative">
+                        <UniversalTextArea
+                          value={ttsArea}
+                          onChange={(e) => {
+                            const value = e.target.value;
+                            if (value.length <= 1000) setTTSArea(value);
+                          }}
+                          className="w-full p-2 border h-40 border-gray-300 rounded-md"
+                          placeholder="Enter text..."
+                          label="Voice Text"
+                          tooltipContent="enter voice text"
 
                           // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
+                        />
+                        <div className="absolute top-7 right-0 z-10">
+                          <ObdVariable
+                            variables={allHeaders}
+                            selectVariable={handleVariableSelect}
                           />
-                          <div className="absolute top-6 right-0 z-10">
-                            <ObdVariable
-                              variables={allHeaders}
-                              selectVariable={handleVariableSelect}
-                            />
-                          </div>
                         </div>
-                        <div className="text-gray-600">
+                        <div className="text-gray-600 text-sm">
                           Chars: {ttsArea.length}/1000
                         </div>
+                        <GenerateAiContent
+                          ai={ai}
+                          setAi={setAi}
+                          setIsOpen={setIsOpen}
+                          isOpen={isOpen}
+                          right={5}
+                          bottom={40}
+                          setMessageContent={setTTSArea}
+                          messageContent={ttsArea}
+                          length={2500}
+                        />
                       </div>
                     )}
 
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                        <div>
+                      <div>
+                        <div className="w-full mt-4">
+                          <AnimatedDropdown
+                            options={voiceListData?.map((data) => ({
+                              value: data.srNo,
+                              label: data.fileName,
+                            }))}
+                            value={slectedSBVoiceFile}
+                            onChange={(value) => {
+                              setSelectedSBVoiceFile(value);
+                              handleSelectSBVoice(value);
+                            }}
+                            placeholder="Select Voice Clip 1"
+                            id="voiceClipOne"
+                            label="Voice Clip 1"
+                            tooltipContent="First vocie clip"
+                          />
+                        </div>
+                        {obdType === "multibroadcast" && (
                           <div className="w-full mt-4">
                             <AnimatedDropdown
                               options={voiceListData?.map((data) => ({
                                 value: data.srNo,
                                 label: data.fileName,
                               }))}
-                              value={slectedSBVoiceFile}
+                              value={selectedMBFiletwo}
                               onChange={(value) => {
-                                setSelectedSBVoiceFile(value);
-                                handleSelectSBVoice(value);
+                                setSelectedMBFiletwo(value);
+                                handleSelectMBVoice(value);
                               }}
-                              placeholder="Select Voice Clip 1"
-                              id="voiceClipOne"
-                              label="Voice Clip 1"
+                              placeholder="Select Voice Clip 2"
+                              id="voiceClipTwo"
+                              label="Voice Clip 2"
+                              tooltipContent="Second vocie clip"
                             />
                           </div>
-                          {obdType === "multibroadcast" && (
-                            <div className="w-full mt-4">
-                              <AnimatedDropdown
-                                options={voiceListData?.map((data) => ({
-                                  value: data.srNo,
-                                  label: data.fileName,
-                                }))}
-                                value={selectedMBFiletwo}
-                                onChange={(value) => {
-                                  setSelectedMBFiletwo(value);
-                                  handleSelectMBVoice(value);
-                                }}
-                                placeholder="Select Voice Clip 2"
-                                id="voiceClipTwo"
-                                label="Voice Clip 2"
-                              />
-                            </div>
-                          )}
-                        </div>
-                      )}
+                        )}
+                      </div>
+                    )}
 
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                        <div>
-                          <div className="mt-4">
-                            <WavesurferPlayer
+                      <div>
+                        <div className="mt-4">
+                          {/* <WavesurferPlayer
                               height={50}
                               waveColor="pink"
                               progressColor="violet"
@@ -648,12 +842,13 @@ const ObdCreateCampaign = () => {
                               >
                                 <IoStop />
                               </button>
-                            </div>
-                          </div>
+                            </div> */}
+                          <audio src={voiceSBURLPath} controls></audio>
+                        </div>
 
-                          {obdType === "multibroadcast" && (
-                            <div className="mt-4">
-                              <WavesurferPlayer
+                        {obdType === "multibroadcast" && (
+                          <div className="mt-4">
+                            {/* <WavesurferPlayer
                                 height={50}
                                 waveColor="pink"
                                 progressColor="violet"
@@ -677,36 +872,80 @@ const ObdCreateCampaign = () => {
                                 >
                                   <IoStop />
                                 </button>
-                              </div>
-                            </div>
-                          )}
-                        </div>
-                      )}
+                              </div> */}
+                            <audio src={voiceMBURLPath} controls></audio>
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {obdType === "dynamicbroadcast" && (
-                      <div>
+                      <div className="flex flex-col gap-3">
                         <AnimatedDropdown
-                          label="Voice Clip:"
-                          id="voiceClip"
-                          name="voiceClip"
-                          options={[
-                            { value: "voiceclip1", label: "Voice Clip 1" },
-                            { value: "voiceclip2", label: "Voice Clip 2" },
-                            { value: "voiceclip3", label: "Voice Clip 3" },
-                            { value: "voiceclip4", label: "Voice Clip 4" },
-                          ]}
-                          value={voiceDBClip}
-                          onChange={(value) => setVoiceDBClip(value)}
-                          placeholder="Select Voice Clip"
+                          label="Dynamic Voice Clip:"
+                          id="dynamicvoiceClip"
+                          name="dynamicvoiceClip"
+                          options={dynamicVoiceListData.map((data) => ({
+                            value: data.srno,
+                            label: data.fileName,
+                          }))}
+                          value={slectedDynamicVoiceFile}
+                          onChange={(optionValue) => {
+                            setSelectedDynamicVoiceFile(optionValue);
+                            handleSelectDynamicVoice(optionValue);
+                          }}
+                          placeholder="Select Dynamic Voice Clip"
                         />
-                        <div className="mt-2">
-                          <DynamicValueBox />
-                        </div>
+
+                        {slectedDynamicVoiceFile && (
+                          <div className="border-2 p-2 rounded-md border-dashed border-gray-500 relative">
+                            <div className="text-red-800 text-xs font-medium text-center">
+                              Please fill all the variable fields! (remaining
+                              sequence are the voice clips)
+                            </div>
+                            {voiceVariables.map((item, index) => {
+                              return (
+                                <div
+                                  key={`variable-${item.sequence}`}
+                                  className="relative mt-4"
+                                >
+                                  <InputField
+                                    id={`variable-${item.sequence}`}
+                                    name={`variable-${item.sequence}`}
+                                    label={`Sequence Variable ${item.sequence}`}
+                                    value={item.variableSampleValue}
+                                    onChange={(e) =>
+                                      handleVoiceVariableChange(
+                                        index,
+                                        e.target.value
+                                      )
+                                    }
+                                    placeholder={`Enter value for variable ${item.sequence}`}
+                                    tooltipContent={`Sequence: ${item.sequence}`}
+                                    ref={(el) => {
+                                      if (el) variableRef.current[index] = el;
+                                    }}
+                                  />
+
+                                  {/* Ensure this appears for every input */}
+                                  <div className="absolute top-7 right-0 z-10">
+                                    <DynamicObdVariable
+                                      variables={allHeaders}
+                                      selectVariable={(e) => {
+                                        handleDynamicVariableSelect(e, index);
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
 
-                  <div className="flex flex-col md:flex-row gap-2 p-3">
+                  <div className="flex flex-col md:flex-row gap-2 pt-0 pb-3 px-3">
                     <AnimatedDropdown
                       options={[
                         { value: "1", label: "1" },
@@ -754,7 +993,93 @@ const ObdCreateCampaign = () => {
                     resetImportContact={resetImportContact}
                     countryCode={handleCountryCheckBox}
                     onMobileDropdown={handleSelectMobilecolumn}
+                    fileInputRef={fileInputRef}
+                    uploadedFile={uploadedFile}
+                    setUploadedFile={setUploadedFile}
+                    isUploaded={isUploaded}
+                    setIsUploaded={setIsUploaded}
+                    isUploading={isUploading}
+                    setIsUploading={setIsUploading}
+                    totalRecords={totalRecords}
+                    setTotalRecords={setTotalRecords}
+                    columns={columns}
+                    setColumns={setColumns}
+                    selectedCountryCode={selectedCountryCode}
+                    setSelectedCountryCode={setSelectedCountryCode}
+                    selectedCountryName={selectedCountryName}
+                    setSelectedCountryName={setSelectedCountryName}
+                    addCountryCode={addCountryCode}
+                    setAddCountryCode={setAddCountryCode}
+                    countryList={countryList}
+                    setCountryList={setCountryList}
+                    xlsxPath={xlsxPath}
+                    setXlsxPath={setXlsxPath}
+                    fileData={fileData}
+                    setFileData={setFileData}
+                    selectedMobileColumn={selectedMobileColumn}
+                    setSelectedMobileColumn={setSelectedMobileColumn}
+                    fileHeaders={fileHeaders}
+                    setFileHeaders={setFileHeaders}
+                    isLoading={isLoading}
+                    setIsLoading={setIsLoading}
                   />
+                </div>
+
+                <div className="lg:w-1/4 w-full rounded-xl bg-[#f9f9f9] p-4">
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex justify-center items-center p-2"
+                  >
+                    <div className="w-72 h-150 rounded-[2.5rem] bg-[#f9f9f9] border border-gray-300 shadow-2xl p-2.5 flex flex-col gap-2">
+                      <div className="flex justify-between items-center px-4 py-0 text-gray-500 text-sm">
+                        <span>9:41</span>
+                        <div className="flex items-center gap-1">
+                          <Signal size={16} />
+                          <Wifi size={16} />
+                          <BatteryFull size={16} />
+                        </div>
+                      </div>
+
+                      <div className="flex-1 flex flex-col items-center justify-center bg-gradient-to-br from-gray-400 to-gray-400 text-white rounded-4xl px-4 py-4">
+                        <div className="mb-4 border-2 rounded-full p-2 border-gray-500">
+                          <User size={72} className="text-white/80" />
+                        </div>
+                        <h2 className="text-xl font-semibold">John Doe</h2>
+                        <p className="text-sm text-gray-300 mt-1">
+                          Incoming Call...
+                        </p>
+
+                        <div className="grid grid-cols-3 gap-4 mt-6">
+                          <div className="flex flex-col items-center text-sm">
+                            <Clock className="w-6 h-6 mb-1 text-white/70" />
+                            <span>Remind</span>
+                          </div>
+                          <div className="flex flex-col items-center text-sm">
+                            <MessageCircle className="w-6 h-6 mb-1 text-white/70" />
+                            <span>Message</span>
+                          </div>
+                          <div className="flex flex-col items-center text-sm">
+                            <BellOff className="w-6 h-6 mb-1 text-white/70" />
+                            <span>Silent</span>
+                          </div>
+                          <div className="flex flex-col items-center text-sm opacity-0">
+                            <span> </span>
+                          </div>
+                        </div>
+
+                        <div className="flex justify-between items-center gap-12 mt-8">
+                          <button className="bg-red-600 hover:bg-red-700 rounded-full p-4 shadow-md">
+                            <PhoneOff className="text-white w-6 h-6 rotate-[135deg]" />
+                          </button>
+                          <button className="bg-green-500 hover:bg-green-600 rounded-full p-4 shadow-md">
+                            <PhoneCall className="text-white w-6 h-6 -rotate-45" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
                 </div>
               </div>
             </div>
@@ -786,8 +1111,8 @@ const ObdCreateCampaign = () => {
                   {selectedOptionCampaign === "transactional"
                     ? obdType || "N/A"
                     : selectedOptionCampaign === "promotional"
-                      ? obdType || "N/A"
-                      : "N/A"}
+                    ? obdType || "N/A"
+                    : "N/A"}
                 </p>
                 <span className="font-semibold font-m">Campaign Name : </span>
                 <p className="">{campaignName || "N/A"}</p>

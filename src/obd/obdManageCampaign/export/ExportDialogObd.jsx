@@ -30,9 +30,11 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
     customColumns: "",
     type: "campaign",
     source: "",
-    deliveryStatus:""
+    deliveryStatus: "",
   });
 
+
+  console.log("dataToExport", dataToExport)
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
     campaignName: false,
     mobileNo: false,
@@ -195,6 +197,8 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
         isCustomField: 0,
         customColumns: "",
         type: "campaign",
+        deliveryStatus: "",
+        source: "",
       });
       setCampaignCheckboxStates("");
       setcustomCheckboxStates("");
@@ -575,19 +579,19 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog }) => {
               <div className="flex justify-between gap-x-4">
                 <UniversalDatePicker
                   label="From Date:"
+                  defaultValue={new Date()}
                   value={dataToExport.fromDate}
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, fromDate: e })
                   }
-                  defaultValue={new Date()}
                 />
                 <UniversalDatePicker
                   label="To Date:"
+                  defaultValue={new Date()}
                   value={dataToExport.toDate}
                   onChange={(e) =>
                     setDataToExport({ ...dataToExport, toDate: e })
                   }
-                  defaultValue={new Date()}
                 />
               </div>
 

@@ -23,33 +23,44 @@ const RadioButtonLaunchCampaignObd = ({
   fileUpload,
   resetImportContact,
   countryCode,
-  onMobileDropdown
+  onMobileDropdown,
+  fileInputRef,
+  selectedOption,
+  setSelectedOption,
+  uploadedFile,
+  setUploadedFile,
+  isUploaded,
+  setIsUploaded,
+  isUploading,
+  setIsUploading,
+  totalRecords,
+  setTotalRecords,
+  columns,
+  setColumns,
+  selectedCountryCode,
+  setSelectedCountryCode,
+  selectedCountryName,
+  setSelectedCountryName,
+  addCountryCode,
+  setAddCountryCode,
+  countryList,
+  setCountryList,
+  xlsxPath,
+  setXlsxPath,
+  fileData,
+  setFileData,
+  selectedMobileColumn,
+  setSelectedMobileColumn,
+  fileHeaders,
+  setFileHeaders,
+  isLoading,
+  setIsLoading,
 }) => {
-  const fileInputRef = useRef(null);
-  const [selectedOption, setSelectedOption] = useState("option1");
-  // const [selectedGroups, setSelectedGroups] = useState([]);
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [isUploaded, setIsUploaded] = useState(false);
-  const [isUploading, setIsUploading] = useState(false);
-  const [totalRecords, setTotalRecords] = useState("");
-  const [columns, setColumns] = useState([]);
-
-  const [selectedCountryCode, setSelectedCountryCode] = useState("");
-  const [selectedCountryName, setSelectedCountryName] = useState("");
-  const [addCountryCode, setAddCountryCode] = useState(false);
-  const [countryList, setCountryList] = useState([]);
-  const [xlsxPath, setXlsxPath] = useState("");
-  const [fileData, setFileData] = useState([]);
-  const [selectedMobileColumn, setSelectedMobileColumn] = useState("");
-  const [fileHeaders, setFileHeaders] = useState([]);
-
-  const [isLoading, setIsLoading] = useState(true);
-
   // Get country list
   useEffect(() => {
     const fetchCountryList = async () => {
       try {
-        setIsLoading(true);
+        // setIsLoading(true);
 
         const response = await getCountryList();
         if (response) {
@@ -63,17 +74,15 @@ const RadioButtonLaunchCampaignObd = ({
         console.error("Error fetching country List:", error);
         toast.error("Error fetching country List.");
       } finally {
-        setIsLoading(false);
+        // setIsLoading(false);
       }
     };
     fetchCountryList();
   }, []);
 
-
   useEffect(() => {
     handleRemoveFile();
-  }, [resetImportContact]);
-
+  }, []);
 
   const handleChange = (event) => {
     const value = event.target.value;
@@ -121,7 +130,6 @@ const RadioButtonLaunchCampaignObd = ({
           setUploadedFile(file);
           setIsUploaded(false);
           parseFile(file);
-
         } else {
           toast.error(
             "File name can only contain alphanumeric characters, underscores, or hyphens."
@@ -145,7 +153,6 @@ const RadioButtonLaunchCampaignObd = ({
           setUploadedFile(file);
           setIsUploaded(false);
           parseFile(file);
-
         } else {
           toast.error(
             "File name can only contain alphanumeric characters, underscores, or hyphens."
@@ -200,7 +207,7 @@ const RadioButtonLaunchCampaignObd = ({
         setColumns(response.headers || []);
         setFileHeaders(response.headers || []);
         setTotalRecords(response.totalRecords || "");
-        fileUpload(uploadedFile)
+        fileUpload(uploadedFile);
         onFileUpload(
           response.filepath,
           response.headers || [],
@@ -225,11 +232,11 @@ const RadioButtonLaunchCampaignObd = ({
     setAddCountryCode(false);
     setSelectedCountryCode("");
     setSelectedMobileColumn("");
-    setAddCountryCode(false)
+    setAddCountryCode(false);
     setFileData([]);
     setTotalRecords("");
     setXlsxPath("");
-    setFileHeaders([])
+    setFileHeaders([]);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
@@ -239,7 +246,7 @@ const RadioButtonLaunchCampaignObd = ({
   const handleAddCountryCodeChange = (e) => {
     const isChecked = e.target.checked;
     setAddCountryCode(isChecked);
-    countryCode(isChecked)
+    countryCode(isChecked);
 
     if (!isChecked) {
       setSelectedCountryCode("");
@@ -247,10 +254,9 @@ const RadioButtonLaunchCampaignObd = ({
     }
   };
 
-
   const handleMobileColumnChange = (value) => {
     setSelectedMobileColumn(value);
-    onMobileDropdown(value)
+    onMobileDropdown(value);
   };
 
   return (
@@ -344,8 +350,9 @@ const RadioButtonLaunchCampaignObd = ({
                 <button
                   onClick={handleFileUpload}
                   disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
-                    }`}
+                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
+                    isUploading ? "disabled" : ""
+                  }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}

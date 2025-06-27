@@ -2,8 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { PiBracketsCurlyBold } from "react-icons/pi";
 import { Divider } from '@mui/material';
 
-const ObdVariable = ({ variables = [], selectVariable }) => {
-    
+const DynamicObdVariable = ({ variables = [], selectVariable }) => {
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -28,7 +27,7 @@ const ObdVariable = ({ variables = [], selectVariable }) => {
     return (
         <div className="relative" ref={dropdownRef}>
             <button
-                className="px-1 border-1 border-gray-300 rounded-r-sm h-8.5 text-sm bg-gray-200 cursor-pointer focus:outline-none"
+                className="px-1 border-1 border-gray-300 rounded-r-sm h-[36px] text-sm bg-gray-200 cursor-pointer focus:outline-none"
                 onClick={() => setShowDropdown(!showDropdown)}
             >
                 <PiBracketsCurlyBold />
@@ -57,4 +56,4 @@ const ObdVariable = ({ variables = [], selectVariable }) => {
     );
 };
 
-export default ObdVariable;
+export default DynamicObdVariable;
