@@ -2,10 +2,14 @@ import InputField from "@/components/layout/InputField";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import { RadioButton } from "primereact/radiobutton";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { TTS } from "./tts";
 import { Broadcast } from "./broadcast";
-import { fetchVoiceClips } from "@/apis/Obd/obd";
+import {
+  fetchVoiceClips,
+  ObdDynamicVoiceClip,
+  ObdVariableList,
+} from "@/apis/Obd/obd";
 import toast from "react-hot-toast";
 import { DynamicBroadcast } from "./dynamicBroadcast";
 import UniversalButton from "@/components/common/UniversalButton";
@@ -21,6 +25,8 @@ export const OBD = ({
   setNodesInputData: React.Dispatch<React.SetStateAction<{}>>;
   setDetailsDialogVisible: React.Dispatch<React.SetStateAction<{}>>;
 }) => {
+  const variableRef = useRef([]);
+
   const [basicDetails, setBasicDetails] = useState({
     type: "transactional",
     name: "",
@@ -33,6 +39,9 @@ export const OBD = ({
     retry: "",
   });
   const [voiceList, setVoiceList] = useState([]);
+  const [dynamicVoiceList, setDynamicVoiceList] = useState([]);
+  const [dynamicvoiceVariables, setDynamicVoiceVariables] = useState([]);
+  // const [dynamicVoiceURL, setVoiceDynamicURLPath] = useState("");
 
   useEffect(() => {
     const getObdVoiceClipDetails = async () => {
@@ -48,8 +57,53 @@ export const OBD = ({
       }
     };
 
+    const getObdDynamicVoiceClipDetails = async () => {
+      try {
+        const response = await ObdDynamicVoiceClip("1");
+        if (response && Array.isArray(response)) {
+          setDynamicVoiceList(response);
+        } else {
+          toast.error("Failed to load Dynamic Voice Details!");
+        }
+      } catch (error) {
+        toast.error("Error in getting dynamic voice details.");
+      }
+    };
+
     getObdVoiceClipDetails();
+    getObdDynamicVoiceClipDetails();
   }, []);
+
+  async function handleFetchDynamicVoiceVar(value) {
+    try {
+      const res = await ObdVariableList(value);
+      if (!res?.data || !Array.isArray(res.data)) {
+        toast.error("Invalid variable data received");
+        return;
+      }
+
+      const enrichedVariables = res.data.map((item) => ({
+        sequence: item.sequence,
+        variableSampleValue: item.variableSampleValue || "",
+      }));
+
+      setDynamicVoiceVariables(enrichedVariables);
+
+      // const audioURL = import.meta.env.VITE_AUDIO_URL + (res?.path || "");
+      // setVoiceDynamicURLPath(audioURL);
+    } catch (error) {
+      console.error("Error fetching Voice File:", error);
+      toast.error("Error fetching Voice File.");
+    }
+  }
+
+  const handleVoiceVariableChange = (index, newValue, dynamicTtsArea) => {
+    setDynamicVoiceVariables((prev) => {
+      const updated = [...prev];
+      updated[index].variableSampleValue = newValue;
+      return updated;
+    });
+  };
 
   function handleSave() {
     setNodesInputData((prev) => ({
@@ -189,7 +243,11 @@ export const OBD = ({
                   <DynamicBroadcast
                     setBasicDetails={setBasicDetails}
                     basicDetails={basicDetails}
-                    voiceListData={voiceList}
+                    dynamicVoiceList={dynamicVoiceList}
+                    dynamicvoiceVariables={dynamicvoiceVariables}
+                    handleFetchDynamicVoiceVar={handleFetchDynamicVoiceVar}
+                    variableRef={variableRef}
+                    handleVoiceVariableChange={handleVoiceVariableChange}
                   />
                 )}
 
