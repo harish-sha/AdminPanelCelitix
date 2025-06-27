@@ -28,6 +28,7 @@ import { HiOutlineDocument } from "react-icons/hi2";
 import { DetailsDialog } from "../create/components/details";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
+import { convertPaylaod } from "./helpers/convertPaylaod";
 
 function NodeComponent({
   id,
@@ -165,16 +166,21 @@ export const UpdateWorkflow = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { data } = location.state;
-  console.log("state", data);
+
+  const formattedData = convertPaylaod(data);
+  console.log("formattedData", formattedData);
   let node = [];
   let edge = [];
-  // let data = {};
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(node);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(edge);
-  const [nodeId, setNodeId] = useState(1);
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    formattedData?.nodes || node
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    formattedData?.edges || edge
+  );
+  const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
   const [name, setName] = useState("");
-  const [nodesInputData, setNodesInputData] = useState({});
+  const [nodesInputData, setNodesInputData] = useState(formattedData?.nodedata || {});
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
   const [type, setType] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
@@ -190,17 +196,22 @@ export const UpdateWorkflow = () => {
       let isSourceAlreadyConnected = false;
       let isTargetAlreadyConnected = false;
 
-      if (type === "list" || type === "button") {
-        isSourceAlreadyConnected = edges.some(
-          (edge) => edge.sourceHandle === source
-        );
-        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      } else {
-        isSourceAlreadyConnected = edges.some(
-          (edge) => edge.sourceHandle === source
-        );
-        isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
-      }
+      //   if (type === "list" || type === "button") {
+      //     isSourceAlreadyConnected = edges.some(
+      //       (edge) => edge.sourceHandle === source
+      //     );
+      //     isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      //   } else {
+      //     isSourceAlreadyConnected = edges.some(
+      //       (edge) => edge.sourceHandle === source
+      //     );
+      //     isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      //   }
+
+      isSourceAlreadyConnected = edges.some(
+        (edge) => edge.sourceHandle === source
+      );
+      isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
 
       if (isSourceAlreadyConnected || isTargetAlreadyConnected) {
         toast.error("This connection is not allowed!");
@@ -220,14 +231,6 @@ export const UpdateWorkflow = () => {
     "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
-    // if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
-
-    // const isNodeAlreadyAdded = nodes.some((node) => node.type === type);
-
-    // if (isNodeAlreadyAdded) {
-    //   return toast.error("You can add only one node per type");
-    // }
-
     const newNode = {
       id: `${nodeId}`,
       position: position || { ...lastPosition },
