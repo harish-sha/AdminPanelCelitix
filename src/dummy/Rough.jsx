@@ -1,95 +1,149 @@
-import React, { useState, useEffect } from "react";
-import Chart from "chart.js/auto";
-import { Line } from "react-chartjs-2"; // For Line chart
-import DatePicker from "react-datepicker"; // For date range picker
-import "react-datepicker/dist/react-datepicker.css"; // Import the styles for date picker
-import { Tailwind } from "tailwindcss"; // Tailwind for styling
+// {
+//     "message": "User Details",
+//     "data": [
+//         {
+//             "firstName": "Dev",
+//             "lastName": "OPS",
+//             "address": "Jaipur",
+//             "allowedServices": [
+//                 {
+//                     "service_type_id": 1,
+//                     "display_name": "SMS"
+//                 },
+//                 {
+//                     "service_type_id": 2,
+//                     "display_name": "WHATSAPP"
+//                 },
+//                 {
+//                     "service_type_id": 3,
+//                     "display_name": "RCS"
+//                 },
+//                 {
+//                     "service_type_id": 7,
+//                     "display_name": "OBD"
+//                 }
+//             ],
+//             "userSrno": 2925,
+//             "companyName": "Proactive",
+//             "mobileNo": "919680006460",
+//             "userType": 3,
+//             "userId": "demoUser",
+//             "email": "devs@celitix.com"
+//         }
+//     ],
+//     "statusCode": 200,
+//     "jsonObject": null
+// }
 
-// Simulating API response for usage data
-const getWalletUsageData = async (startDate, endDate) => {
-  const response = await fetch(`/api/usage?startDate=${startDate}&endDate=${endDate}`);
-  const data = await response.json();
-  return data;
-};
 
-const Dashboard = () => {
-  const [walletUsageData, setWalletUsageData] = useState([]);
-  const [startDate, setStartDate] = useState(new Date("2025-01-01"));
-  const [endDate, setEndDate] = useState(new Date("2025-06-19"));
-  const [loading, setLoading] = useState(false);
+const services = [
+  {
+    name: "WHATSAPP",
+    icon: WhatsApp,
+    animation: Animationwhatsapp2,
+    desc: "Send real-time notifications",
+    color: "from-green-100 to-green-300",
+  },
+  {
+    name: "RCS",
+    icon: Message,
+    animation: Animationrcs,
+    desc: "Interactive messaging solution",
+    color: "from-purple-100 to-purple-300",
+  },
+  {
+    name: "OBD",
+    icon: Call,
+    animation: Animationobd,
+    desc: "Automated outbound dialer",
+    color: "from-yellow-100 to-yellow-300",
+  },
+  {
+    name: "IBD",
+    icon: Call,
+    animation: Animationibd,
+    desc: "Track inbound communications",
+    color: "from-indigo-100 to-indigo-300",
+  },
+  {
+    name: "SMS",
+    icon: PhoneAndroid,
+    animation: Animationsms,
+    desc: "Send and receive SMS",
+    color: "from-pink-100 to-pink-300",
+  },
+  {
+    name: "EMAIL",
+    icon: Email,
+    animation: email2,
+    desc: "Campaign and transactional email",
+    color: "from-blue-100 to-blue-300",
+  },
+  {
+    name: "APP AUTHENTICATOR",
+    icon: Lock,
+    animation: auth,
+    desc: "Secure 2FA login solutions",
+    color: "from-gray-100 to-gray-300",
+  },
+  {
+    name: "TWO-WAY SMS",
+    icon: SyncAlt,
+    animation: twowaysms,
+    desc: "Bi-directional messaging",
+    color: "from-red-100 to-red-300",
+  },
+];
 
-  // Fetch usage data on component load or when dates change
-  const fetchUsageData = async () => {
-    setLoading(true);
-    try {
-      const data = await getWalletUsageData(startDate, endDate);
-      setWalletUsageData(data);
-    } catch (error) {
-      console.error("Error fetching usage data:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
-  useEffect(() => {
-    fetchUsageData();
-  }, [startDate, endDate]);
+import { useUser } from "@/context/UserContext";
 
-  // Prepare data for the graph
-  const chartData = {
-    labels: walletUsageData.map(item => item.date), // Dates on x-axis
-    datasets: [
-      {
-        label: "Wallet Usage",
-        data: walletUsageData.map(item => item.walletUsage), // Wallet usage on y-axis
-        fill: false,
-        borderColor: "#4CAF50", // Green line
-        tension: 0.1,
-      },
-    ],
-  };
+<Grid container spacing={3}>
+  {services.map((service, index) => {
+    const IconComponent = service.icon;
 
-  return (
-    <div className="p-8">
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Wallet Usage Statistics</h2>
-      <div className="mb-6">
-        <label className="text-gray-600">Select Date Range</label>
-        <div className="flex gap-4 items-center">
-          <DatePicker
-            selected={startDate}
-            onChange={(date) => setStartDate(date)}
-            dateFormat="yyyy-MM-dd"
-            className="p-2 border border-gray-300 rounded"
-            selectsStart
-            startDate={startDate}
-            endDate={endDate}
-            placeholderText="Start Date"
-          />
-          <DatePicker
-            selected={endDate}
-            onChange={(date) => setEndDate(date)}
-            dateFormat="yyyy-MM-dd"
-            className="p-2 border border-gray-300 rounded"
-            selectsEnd
-            startDate={startDate}
-            endDate={endDate}
-            minDate={startDate}
-            placeholderText="End Date"
-          />
-        </div>
-      </div>
+    // ✅ Check if the user has access to this service
+    const hasService = user.services?.some(
+      (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
+    );
 
-      <div className="mb-6">
-        {loading ? (
-          <div className="flex justify-center items-center">
-            <div className="loader" /> {/* You can use a spinner here */}
+    return (
+      <Grid item xs={12} sm={6} md={3} key={index}>
+        <motion.div
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          className={`relative rounded-xl bg-gradient-to-br ${service.color} p-5 h-52 shadow-md flex flex-col justify-between group cursor-pointer transition-all duration-300 
+            ${hasService ? "ring-2 ring-blue-400" : "grayscale opacity-70"}`}
+        >
+          {/* ✅ Optional badge */}
+          {hasService && (
+            <div className="absolute top-2 right-2 bg-blue-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase">
+              Active
+            </div>
+          )}
+
+          <div className="font-semibold text-lg text-gray-900">
+            {service.name}
           </div>
-        ) : (
-          <Line data={chartData} options={{ responsive: true }} />
-        )}
-      </div>
-    </div>
-  );
-};
 
-export default Dashboard;
+          <div className="flex justify-end">
+            {service.animation ? (
+              <div className="w-full h-auto text-left">
+                <Lottie
+                  animationData={service.animation}
+                  loop
+                  autoplay
+                  className="w-20 h-auto"
+                />
+              </div>
+            ) : (
+              <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
+            )}
+          </div>
+
+          <p className="text-sm opacity-80 mt-3">{service.desc}</p>
+        </motion.div>
+      </Grid>
+    );
+  })}
+</Grid>

@@ -445,8 +445,8 @@ const ObdCreateCampaign = () => {
       selectedOptionCampaign === "transactional"
         ? "1"
         : selectedOptionCampaign === "promotional"
-        ? "2"
-        : "";
+          ? "2"
+          : "";
     const retryCount = retry;
     const intervalValue = interval;
     const getCampaignType = () => {
@@ -500,8 +500,8 @@ const ObdCreateCampaign = () => {
         obdType === "simplebroadcast"
           ? slectedSBVoiceFile || ""
           : obdType === "multibroadcast"
-          ? slectedSBVoiceFile || ""
-          : "",
+            ? slectedSBVoiceFile || ""
+            : "",
       voiceCallSrno2:
         obdType === "multibroadcast" ? selectedMBFiletwo || "" : "",
     };
@@ -747,7 +747,7 @@ const ObdCreateCampaign = () => {
                           label="Voice Text"
                           tooltipContent="enter voice text"
 
-                          // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
+                        // tooltipContent="Enter Value which you want to convert in (TTS) on select variable either convert the text dynamic"
                         />
                         <div className="absolute top-7 right-0 z-10">
                           <ObdVariable
@@ -774,51 +774,51 @@ const ObdCreateCampaign = () => {
 
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                      <div>
-                        <div className="w-full mt-4">
-                          <AnimatedDropdown
-                            options={voiceListData?.map((data) => ({
-                              value: data.srNo,
-                              label: data.fileName,
-                            }))}
-                            value={slectedSBVoiceFile}
-                            onChange={(value) => {
-                              setSelectedSBVoiceFile(value);
-                              handleSelectSBVoice(value);
-                            }}
-                            placeholder="Select Voice Clip 1"
-                            id="voiceClipOne"
-                            label="Voice Clip 1"
-                            tooltipContent="First vocie clip"
-                          />
-                        </div>
-                        {obdType === "multibroadcast" && (
+                        <div>
                           <div className="w-full mt-4">
                             <AnimatedDropdown
                               options={voiceListData?.map((data) => ({
                                 value: data.srNo,
                                 label: data.fileName,
                               }))}
-                              value={selectedMBFiletwo}
+                              value={slectedSBVoiceFile}
                               onChange={(value) => {
-                                setSelectedMBFiletwo(value);
-                                handleSelectMBVoice(value);
+                                setSelectedSBVoiceFile(value);
+                                handleSelectSBVoice(value);
                               }}
-                              placeholder="Select Voice Clip 2"
-                              id="voiceClipTwo"
-                              label="Voice Clip 2"
-                              tooltipContent="Second vocie clip"
+                              placeholder="Select Voice Clip 1"
+                              id="voiceClipOne"
+                              label="Voice Clip 1"
+                              tooltipContent="First vocie clip"
                             />
                           </div>
-                        )}
-                      </div>
-                    )}
+                          {obdType === "multibroadcast" && (
+                            <div className="w-full mt-4">
+                              <AnimatedDropdown
+                                options={voiceListData?.map((data) => ({
+                                  value: data.srNo,
+                                  label: data.fileName,
+                                }))}
+                                value={selectedMBFiletwo}
+                                onChange={(value) => {
+                                  setSelectedMBFiletwo(value);
+                                  handleSelectMBVoice(value);
+                                }}
+                                placeholder="Select Voice Clip 2"
+                                id="voiceClipTwo"
+                                label="Voice Clip 2"
+                                tooltipContent="Second vocie clip"
+                              />
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                      <div>
-                        <div className="mt-4">
-                          {/* <WavesurferPlayer
+                        <div>
+                          <div className="mt-4">
+                            {/* <WavesurferPlayer
                               height={50}
                               waveColor="pink"
                               progressColor="violet"
@@ -843,12 +843,12 @@ const ObdCreateCampaign = () => {
                                 <IoStop />
                               </button>
                             </div> */}
-                          <audio src={voiceSBURLPath} controls></audio>
-                        </div>
+                            <audio src={voiceSBURLPath} controls></audio>
+                          </div>
 
-                        {obdType === "multibroadcast" && (
-                          <div className="mt-4">
-                            {/* <WavesurferPlayer
+                          {obdType === "multibroadcast" && (
+                            <div className="mt-4">
+                              {/* <WavesurferPlayer
                                 height={50}
                                 waveColor="pink"
                                 progressColor="violet"
@@ -873,11 +873,11 @@ const ObdCreateCampaign = () => {
                                   <IoStop />
                                 </button>
                               </div> */}
-                            <audio src={voiceMBURLPath} controls></audio>
-                          </div>
-                        )}
-                      </div>
-                    )}
+                              <audio src={voiceMBURLPath} controls></audio>
+                            </div>
+                          )}
+                        </div>
+                      )}
 
                     {obdType === "dynamicbroadcast" && (
                       <div className="flex flex-col gap-3">
@@ -1111,8 +1111,8 @@ const ObdCreateCampaign = () => {
                   {selectedOptionCampaign === "transactional"
                     ? obdType || "N/A"
                     : selectedOptionCampaign === "promotional"
-                    ? obdType || "N/A"
-                    : "N/A"}
+                      ? obdType || "N/A"
+                      : "N/A"}
                 </p>
                 <span className="font-semibold font-m">Campaign Name : </span>
                 <p className="">{campaignName || "N/A"}</p>

@@ -30,7 +30,7 @@ OBD > CreateCampaign > components > DynamicValueBox.jsx
 OBD > CreateCampaign > components > ObdVariable.jsx
 OBD > CreateCampaign > components > RadioButtonLaunchCampaignObd.jsx
 
-OBD > ObdManageCampaign > ObdCampaignReports.jsx
+OBD > ObdManageCampaign > ObdCampaignReports.jsxu
 OBD > ObdManageCampaign > component > ObdCampaignTable.jsx
 OBD > ObdManageCampaign > component > CampaignDetailReports.jsx
 OBD > ObdManageCampaign > component > ObdDaySummaryTable.jsx
@@ -43,5 +43,4 @@ OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
 
 ===================
 
-1. export dialog - RCS - Delivery status
 

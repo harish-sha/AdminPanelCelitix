@@ -26,7 +26,11 @@ import obd from "../../assets/icons/OBD02.svg";
 import ibd from "../../assets/icons/IBD02.svg";
 import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
+import aigenerate from "../../assets/icons/ai-generate.webp";
+import aigenerate2 from "../../assets/icons/aigenerate2.jpg";
 import { LuWandSparkles } from "react-icons/lu";
+import { RiAiGenerate2 } from "react-icons/ri";
+import { HiOutlineSparkles } from "react-icons/hi2";
 
 import { useUser } from "@/context/auth";
 import { all } from "axios";
@@ -103,7 +107,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       id: "",
       name: "Home",
       icon: <FaHome />,
-      label: "Home",
+      label: "Dashboard",
       type: "single",
       to: "/",
       roles: ["ADMIN", "AGENT"],
@@ -209,7 +213,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
         { to: "/wwhatsappflows", label: "Manage Flows" },
-        { to: "/wblockuser", label: "Block User" },
+        // { to: "/wblockuser", label: "Block User" },
         { to: "/cannedmessagemanager", label: "Canned Message" },
         { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
@@ -380,11 +384,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       id: "",
-      name: "Workflow",
-      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
-      label: "Workflow",
+      name: "Aiconfiguration",
+      icon: <HiOutlineSparkles className="text-indigo-700 rounded-full h-6 w-6" />,
+      label: "Ai Configuration",
       type: "single",
-      to: "/workflow",
+      to: "/aiconfiguration",
       // links: [
       //   { to: "/workflow", label: "Manage Workflow" },
       //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
@@ -393,11 +397,11 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     },
     {
       id: "",
-      name: "Aiconfiguration",
+      name: "Workflow",
       icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
-      label: "Ai Configuration",
+      label: "Workflow",
       type: "single",
-      to: "/aiconfiguration",
+      to: "/workflow",
       // links: [
       //   { to: "/workflow", label: "Manage Workflow" },
       //   { to: "/workflow/create", label: "Add Workflow", isHide: true },

@@ -493,7 +493,8 @@ const WhatsappFlows = () => {
                   <div className="text-sm text-center">
                     <div className="font-semibold">Created At</div>
                     <div className="text-gray-700">
-                      {moment(flow.insertTime).format("DD-MM-YYYY")}
+                      {/* {moment(flow.insertTime).format("DD-MM-YYYY")} */}
+                      {flow.insertTime}
                     </div>
                   </div>
 
