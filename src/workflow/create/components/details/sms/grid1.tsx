@@ -105,7 +105,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
       </div>
 
       <div className="flex flex-col gap-2">
-        <InputField
+        {/* <InputField
           label="Campaign Name"
           id="campaignName"
           name="campaignName"
@@ -117,7 +117,7 @@ export const Grid1 = ({ inputDetails, setInputDetails, allTemplates }) => {
             }));
           }}
           placeholder="Enter campaign name"
-        />
+        /> */}
         {(inputDetails.templateType === 1 ||
           inputDetails.templateType === 2) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
