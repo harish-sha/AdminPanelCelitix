@@ -83,6 +83,14 @@ export const convertPaylaod = (data: string) => {
                 type: item?.nodeType,
             },
         });
+       
+
+        Object.entries(item[id]).map(([key, value]: any) => {
+            nodedata[index + 1] = {
+                ...nodedata[index + 1],
+                ...value
+            }
+        })
 
         Object.entries(item[id]?.conditionList || {}).map(([key, condition]: any) => {
             const targetNode = parsedData?.find((i) => idMap[i?.nodeId] == condition?.nextNode)?.nodeIndex
@@ -94,7 +102,7 @@ export const convertPaylaod = (data: string) => {
                 sourceHandle: `opt-${index}`,
             });
 
-            let data = {
+            let data: any = {
                 options: [{
                     type: condition?.value?.type,
                     time: condition?.value?.time,
@@ -104,9 +112,15 @@ export const convertPaylaod = (data: string) => {
                 }]
             }
 
-            nodedata[index + 1] = data
+            nodedata[index + 1] = {
+                ...nodedata[index + 1],
+                ...data
+            }
         })
+
+        // console.log("nodedata", nodedata)
     })
+
 
     return { nodes, edges, nodedata }
 }
