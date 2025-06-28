@@ -136,7 +136,5 @@ export const convertPaylaod = (data: string) => {
         });
     });
 
-    console.log("nodedata", nodedata)
-
     return { nodes, edges, nodedata };
 };

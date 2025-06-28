@@ -95,8 +95,9 @@ export const Whatsapp = ({
     try {
       const res = await getWabaTemplateDetails(wabaState.selected);
       const approvedTemplates = res.filter(
-        (item) => item.status === "APPROVED"
+        (item) => item.status === "APPROVED" && item.type !== "carousel"
       );
+
       setAllTemplates(approvedTemplates);
       setSelectedTemplate(Number(data?.whatsappTemplate));
     } catch (e) {
