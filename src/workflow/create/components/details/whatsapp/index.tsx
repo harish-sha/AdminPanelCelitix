@@ -134,12 +134,31 @@ export const Whatsapp = ({
   }, [selectedTemplate]);
 
   function handleSave() {
+    if (!wabaState.selected) return toast.error("Please select WABA");
+    if (!selectedTemplate) return toast.error("Select template");
     const template = allTemplates.find(
       (item) => item.templateSrno === selectedTemplate
     );
     const wabaSrno = wabaState.waba.find(
       (item) => item.mobileNo === wabaState.selected
     )?.wabaSrno;
+
+    const variables = variablesData.input.filter((item) => item !== "");
+    const btnVar = variablesData.btnInput.filter((item) => item !== "");
+
+    if (
+      variablesData.btn.length > 0 &&
+      btnVar.length !== variablesData.btn.length
+    ) {
+      return toast.error("Please enter URL Variable Value");
+    }
+
+    if (
+      variablesData.data.length > 0 &&
+      variables.length !== variablesData.data.length
+    ) {
+      return toast.error("Please enter Variable Value");
+    }
 
     setNodesInputData((prev) => ({
       ...prev,
