@@ -31,7 +31,7 @@ import UniversalButton from "@/components/common/UniversalButton";
 import InputField from "@/components/layout/InputField";
 import CustomTooltip from "@/components/common/CustomTooltip";
 
-import celifavicon from "../../../assets/icons/CELITIX FAVICON2.png";
+import celifavicon from "../../../assets/icons/Celitixfavicon.png";
 import officebuilding from "../../../assets/icons/office-building.png";
 
 import CardHoverEffect from "../components/CardHoverEffect";
@@ -605,7 +605,7 @@ const WhatsappFlows = () => {
                     <CustomTooltip
                       title="Settings"
                       arrow
-                      tooltipPlacement="top"
+                    // tooltipPlacement="top"
                     >
                       <IconButton
                         ref={(el) => {

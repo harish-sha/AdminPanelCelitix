@@ -1418,7 +1418,6 @@ const WhatsappLiveChatSettings = () => {
           </div>;
         case 'data':
           return <div className="p-4 bg-white rounded-lg shadow">
-            Chat analytics and data insights panel goes here.
             <Datasource/>
             </div>;
         default:

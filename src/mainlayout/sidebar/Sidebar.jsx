@@ -27,6 +27,9 @@ import ibd from "../../assets/icons/IBD02.svg";
 import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
 import aigenerate from "../../assets/icons/ai-generate.webp";
+import dash1 from "../../assets/icons/business.png";
+import dash2 from "../../assets/icons/dashboard.png";
+import dash3 from "../../assets/icons/layout.png";
 import aigenerate2 from "../../assets/icons/aigenerate2.jpg";
 import { LuWandSparkles } from "react-icons/lu";
 import { RiAiGenerate2 } from "react-icons/ri";
@@ -106,7 +109,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "Home",
-      icon: <FaHome />,
+      // icon: <FaHome />,
+      icon: <img src={dash3} className="w-4 h-4" />,
       label: "Dashboard",
       type: "single",
       to: "/",

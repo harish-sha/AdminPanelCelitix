@@ -128,18 +128,18 @@ const Login = () => {
 
       setInputDetails((prev) => ({
         ...prev,
-        // systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        systemInfo: "chrome",
-        ip: "0.0.0.0",
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // systemInfo: "chrome",
+        // ip: "0.0.0.0",
       }));
 
       const payloadd = {
         ...inputDetails,
-        // systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        systemInfo: "chrome",
-        ip: "0.0.0.0",
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // systemInfo: "chrome",
+        // ip: "0.0.0.0",
       };
 
       delete payloadd.rememberMe;
@@ -268,10 +268,18 @@ const Login = () => {
       const res = isForgotPassword
         ? await verifyForgotPasswordOtp(payload)
         : await verifyOtp(payload);
-      if (!res?.data?.status || !res?.data?.statusCode === 200) {
+
+      // if (!res?.data?.status || res?.data?.statusCode !== 200) {
+      //   return toast.error(res?.data?.msg || "Unable to verify OTP");
+      // }
+      // toast.success("OTP Verified Successfully");
+      
+      if (res?.data?.statusCode !== 200) {
         return toast.error(res?.data?.msg || "Unable to verify OTP");
       }
-      toast.success("OTP Verified Successfully");
+      
+      toast.success(res?.data?.message || "OTP verified successfully");
+      
       if (isForgotPassword) {
         setStep(1);
         return;

@@ -255,28 +255,40 @@ const WhatsappManageWaba = ({ id, name }) => {
     loadFacebookSDK();
   }, []);
 
-
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // const API_BASE_URL = "/api";
 
-  async function onboardUser(accessToken) {
-    const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
-      }
-    });
+  // async function onboardUser(accessToken) {
+  //   const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
+  //     method: "POST",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+  //     }
+  //   });
 
-    const data = await res.json();
-    // console.log(data)
-    if (!data.ok) {
-      toast.error(data.message || "Something went wrong")
-    } else {
-      toast.success(data.message || "Something went wrong")
-    }
-    // return data;
-  }
+  //   // pass accesstoken via formdata
+  //   // const formData = new FormData();
+  //   // formData.append("code", accessToken);
+
+  //   // const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess`, {
+  //   //   method: "POST",
+  //   //   headers: {
+  //   //     "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+  //   //     // Don't set Content-Type manually when using FormData
+  //   //   },
+  //   //   body: formData,
+  //   // });
+
+  //   const data = await res.json();
+  //   console.log(data)
+  //   if (!res.ok) {
+  //     toast.error(data.message || "Something went wrong")
+  //   } else {
+  //     toast.success(data.message || "Onboarding successful")
+  //   }
+  //   // return data;
+  // }
 
   const handleFacebookLogin = () => {
     window.FB.login(
@@ -284,8 +296,8 @@ const WhatsappManageWaba = ({ id, name }) => {
         // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          // console.log('Access Token:', accessToken);
-          onboardUser(accessToken)
+          console.log('Access Token:', accessToken);
+          // onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
@@ -296,7 +308,8 @@ const WhatsappManageWaba = ({ id, name }) => {
         }
       },
       {
-        config_id: "827520649332611",
+        // config_id: "827520649332611",
+        config_id: "1058536032491055",
         response_type: 'code',
         override_default_response_type: true,
         extras: {
@@ -317,7 +330,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
           // console.log('Access Token:', accessToken);
-          onboardUser(accessToken)
+          // onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
