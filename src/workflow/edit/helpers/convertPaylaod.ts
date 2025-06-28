@@ -1,7 +1,11 @@
-import { parse } from "date-fns"
-
 export const convertPaylaod = (data: string) => {
-    const parsedData = JSON.parse(data)
+    let parsedData: any[];
+    try {
+        parsedData = JSON.parse(data);
+    } catch (error) {
+        console.error("Failed to parse JSON data:", error);
+        return { nodes: [], edges: [], nodedata: {} };
+    }
 
     // console.log("data", parsedData);
 
@@ -56,35 +60,40 @@ export const convertPaylaod = (data: string) => {
     //     }
     // ]
 
-    let nodes = []
-    let edges = []
-    let nodedata = {}
+    const nodes: any[] = [];
+    const edges: any[] = [];
+    const nodedata: { [key: string]: any } = {};
+    const idMap: { [key: string]: string } = {};
 
-    let idMap = {}
+    // Create idMap in a single pass
+    parsedData.forEach((item, index) => {
+        const id = item?.nodeId;
+        if (id) {
+            const formattedId = `${item?.nodeType}_${index + 1}`;
+            item.formattedId = formattedId;
+            idMap[id] = formattedId;
+        }
+    });
 
-    parsedData?.map((item, index) => {
-        const id = item?.nodeId
-        const formattedId = `${item?.nodeType}_${index + 1}`
-        item.formattedId = formattedId
-        idMap[id] = formattedId
-    })
+    // Process nodes and edges in a single pass
+    parsedData.forEach((item, index) => {
+        const id = item?.nodeId;
+        if (!id) return;
 
-    parsedData?.map((item: any, index: number) => {
-
-        const id = item?.nodeId
+        // Create node
         nodes.push({
-            id: item?.nodeIndex,
-            type: item?.nodeType,
+            id: item.nodeIndex,
+            type: item.nodeType,
             position: {
                 x: parseFloat(item.position_left) || Math.random() * 300,
                 y: parseFloat(item.position_top) || Math.random() * 300,
             },
             data: {
-                type: item?.nodeType,
+                type: item.nodeType,
             },
         });
-       
 
+        // Original commented code
         Object.entries(item[id]).map(([key, value]: any) => {
             nodedata[index + 1] = {
                 ...nodedata[index + 1],
@@ -92,35 +101,42 @@ export const convertPaylaod = (data: string) => {
             }
         })
 
-        Object.entries(item[id]?.conditionList || {}).map(([key, condition]: any) => {
-            const targetNode = parsedData?.find((i) => idMap[i?.nodeId] == condition?.nextNode)?.nodeIndex
-            edges.push({
-                id: `${item?.nodeIndex}-to-${item?.nodeIndex + 1}`,
-                source: item?.nodeIndex,
-                target: targetNode,
-                type: "smoothstep",
-                sourceHandle: `opt-${index}`,
-            });
+        // Process conditions and edges
+        const conditionList = item[id]?.conditionList || {};
+        Object.entries(conditionList).forEach(([key, condition]: [string, any], conditionIndex) => {
+            const targetNode = parsedData.find((i) => idMap[i?.nodeId] === condition?.nextNode)?.nodeIndex;
+            if (targetNode) {
+                edges.push({
+                    id: `${item.nodeIndex}-to-${targetNode}`, // Fixed edge ID to use targetNode
+                    source: item.nodeIndex,
+                    target: targetNode,
+                    type: "smoothstep",
+                    sourceHandle: `opt-${conditionIndex}`,
+                });
+            }
 
-            let data: any = {
+            // console.log("condition", condition);
+
+            const data = {
                 options: [{
                     type: condition?.value?.type,
                     time: condition?.value?.time,
                     callDurationTime: condition?.value?.callDurationTime,
                     ansPreFix: condition?.value?.ansPreFix,
-                    value: condition?.value?.value
-                }]
-            }
+                    value: condition?.value?.value,
+                }],
+            };
+
+            // console.log("data", data)
 
             nodedata[index + 1] = {
                 ...nodedata[index + 1],
-                ...data
-            }
-        })
+                ...data,
+            };
+        });
+    });
 
-        // console.log("nodedata", nodedata)
-    })
+    console.log("nodedata", nodedata)
 
-
-    return { nodes, edges, nodedata }
-}
+    return { nodes, edges, nodedata };
+};
