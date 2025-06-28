@@ -127,9 +127,9 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
   // imageCarousel
   const [currentIndex, setCurrentIndex] = useState(0);
   return (
-    <div className="relative h-[830px] w-[340px] rounded-3xl shadow-md bg-white border-3 border-indigo-300 hide-scrollbar overflow-auto">
-      <h2 className="text-xl font-semibold text-center mb-2">{screenTitle}</h2>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
+    <div className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto">
+      <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
           // console.log("item", item);
           switch (item.type) {
@@ -138,8 +138,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h5"
-                  className="text-lg font-semibold mb-1 break-words whitespace-pre-wrap w-full max-w-full "
+                  variant="h6"
+                  className="text-lg font-semibold break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Heading Placeholder"}
                 </Typography>
@@ -150,8 +150,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h8"
-                  className="text-md font-medium mb-1 break-words whitespace-pre-wrap w-full max-w-full "
+                  variant="h7"
+                  className="text-md font-medium break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Subheading Placeholder"}
                 </Typography>
@@ -162,9 +162,9 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h8"
+                  variant="h7"
                   sx={{ whiteSpace: "pre-line", wordBreak: "break-words" }}
-                  className="text-md font-medium mb-1 break-words whitespace-pre-wrap w-full max-w-full "
+                  className="text-sm font-normal break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Text Body "}
                 </Typography>
@@ -184,7 +184,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
             // Render Text Input
             case "textInput":
               return (
-                <div key={index} className="mb-4">
+                <div key={index} className="">
                   <Typography
                     variant="caption"
                   // sx={{ whiteSpace: "pre-line" }}
@@ -217,7 +217,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
             // Render Text Area
             case "textArea":
               return (
-                <div key={index} className="mb-0">
+                <div key={index} className="">
                   <Typography variant="caption">
                     {item.label || "Label"}
                   </Typography>
@@ -424,7 +424,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
 
             case "radioButton":
               return (
-                <div key={index} className="ml-3">
+                <div key={index} className="">
                   {item?.radioButton &&
                     Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(

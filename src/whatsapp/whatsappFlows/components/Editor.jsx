@@ -44,39 +44,39 @@ export const convertNodeToMarkdown = (node) => {
       const src = node.getAttribute("src") || "";
       const altText = (node.getAttribute("alt") || "").trim();
       return `![${altText}](${src})`;
-    //  case "ul":
-    //   return Array.from(node.children)
-    //     .map((li) => `+ ${convertNodeToMarkdown(li)}`);
+     case "ul":
+      return Array.from(node.children)
+        .map((li) => `+ ${convertNodeToMarkdown(li)}`);
 
-    //  case "ul":
-    //   return Array.from(node.children)
-    //     .map((li) => {
-    //       const content = convertNodeToMarkdown(li);
-    //       if (Array.isArray(content)) {
-    //         return content.map(c => `+ ${c}`);
-    //       } else {
-    //         return `+ ${content}`;
-    //       }
-    //     })
-    //     .flat();
+     case "ul":
+      return Array.from(node.children)
+        .map((li) => {
+          const content = convertNodeToMarkdown(li);
+          if (Array.isArray(content)) {
+            return content.map(c => `+ ${c}`);
+          } else {
+            return `+ ${content}`;
+          }
+        })
+        .flat();
 
-    // case "ol":
-    //   return Array.from(node.children)
-    //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+    case "ol":
+      return Array.from(node.children)
+        .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
 
 
-    // case "ol":
-    //   return Array.from(node.children)
-    //     .map((li, i) => {
-    //       const content = convertNodeToMarkdown(li);
-    //       if (Array.isArray(content)) {
-    //         return content.map(c => `${i + 1}. ${c}`);
+    case "ol":
+      return Array.from(node.children)
+        .map((li, i) => {
+          const content = convertNodeToMarkdown(li);
+          if (Array.isArray(content)) {
+            return content.map(c => `${i + 1}. ${c}`);
 
-    //       } else {
-    //         return `${i + 1}. ${content}`;
-    //       }
-    //     })
-    //     .flat();
+          } else {
+            return `${i + 1}. ${content}`;
+          }
+        })
+        .flat();
 
 
 
@@ -126,25 +126,24 @@ export const convertNodeToMarkdown = (node) => {
     //   return Array.from(node.children)
     //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`);
 
-    case "ol":
-      return Array.from(node.children).flatMap((li, i) => {
-        const content = convertNodeToMarkdown(li);
-        return Array.isArray(content)
-          ? content.map((line) => `${i + 1}. ${line}`)
-          : [`${i + 1}. ${content}`];
-      });
+    // case "ol":
+    //   return Array.from(node.children).flatMap((li, i) => {
+    //     const content = convertNodeToMarkdown(li);
+    //     return Array.isArray(content)
+    //       ? content.map((line) => `${i + 1}. ${line}`)
+    //       : [`${i + 1}. ${content}`];
+    //   });
 
-    case "ul":
-      return Array.from(node.children).flatMap((li) => {
-        const content = convertNodeToMarkdown(li);
-        return Array.isArray(content)
-          ? content.map((line) => `+ ${line}`)
-          : [`+ ${content}`];
-      });
+    // case "ul":
+    //   return Array.from(node.children).flatMap((li) => {
+    //     const content = convertNodeToMarkdown(li);
+    //     return Array.isArray(content)
+    //       ? content.map((line) => `+ ${line}`)
+    //       : [`+ ${content}`];
+    //   });
 
     // case "li":
     //   return [children.flat().join("")];
-
 
 
     case "br":
@@ -174,6 +173,20 @@ export const convertNodeToMarkdown = (node) => {
     default:
       return children;
   }
+};
+
+
+const walkNodes = (node) => {
+  if (!node) return [];
+  if (node.nodeType === 3) return [node];
+  if (node.nodeType !== 1) return [];
+
+  const tag = node.tagName.toUpperCase();
+  if (["OL", "UL", "P", "H2", "H3", "TABLE"].includes(tag)) {
+    return [node];
+  }
+
+  return Array.from(node.childNodes).flatMap(walkNodes);
 };
 
 const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
@@ -353,11 +366,9 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
 
     // Convert to markdown
     const lines = Array.from(editorRef.current?.childNodes || [])
-      // .map(convertNodeToMarkdown)
-      // .map((line) => line)
-      // .filter((line) => line !== "");
-      .flatMap(convertNodeToMarkdown)
-      .filter((line) => line !== "");
+    .flatMap(convertNodeToMarkdown)
+    .map(line => String(line).trim())
+    .filter(line => line !== "");
 
     const payload = {
       content: html,
@@ -373,6 +384,11 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     // if (onPayloadChange) onPayloadChange(payload);
     onUpdate(updatedData);
   };
+
+
+ 
+  
+
 
   const [active, setActive] = useState({
     h3: false,

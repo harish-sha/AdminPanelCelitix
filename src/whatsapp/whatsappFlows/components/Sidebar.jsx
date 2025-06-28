@@ -141,7 +141,7 @@ const items7 = [
 
 const Sidebar = ({ onAdd }) => {
   return (
-    <Box className="h-[830px] w-[350px] bg-white py-2 px-2 rounded-2xl sidebar hide-scrollbar shadow-xl overflow-y-scroll">
+    <Box className="h-[83vh] w-[350px] bg-white py-2 px-2 rounded-2xl sidebar hide-scrollbar shadow-xl overflow-y-scroll">
       <span className="text-sm tracking-wide font-semibold">
         Basic Text
       </span>

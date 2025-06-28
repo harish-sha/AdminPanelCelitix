@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  flowItems: [],
+  flowItems: {},
 };
 
 const flowSlice = createSlice({
@@ -9,13 +9,13 @@ const flowSlice = createSlice({
   initialState,
   reducers: {
     addFlowItem: (state, action) => {
-      console.log("state", state);
-      console.log("action", action)
-      const { data } = action.payload;
-      state.flowItems = data;
+      console.log("action.payload addedflowitem", action.payload);
+      const { id, data } = action.payload;
+      state.flowItems[id] = data;
     },
     deleteFlowItem: (state, action) => {
       const { type } = action.payload;
+      console.log("action.payload deleteflowitem", action.payload)
       delete state.flowItems[type];
     },
   },

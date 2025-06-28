@@ -133,35 +133,43 @@ const FlowCreationPage = () => {
 
   const handleAddItem = (item) => {
     const newTabs = [...tabs];
-    console.log("Triggered");
-    console.log("newTabsssssssssssss", newTabs);
-    console.log("itemmmmmmmmmmmmmmmmmm", item);
+    // console.log("newTabs", newTabs);
+    // console.log("itemmmmmmmmmmmmmmm", item);
 
-    // const nonDuplicateTabs = [
-    //   "heading",
-    //   "subheading",
-    //   "textbody",
-    //   "textcaption",
-    // ];
-
-    const dataToStore = newTabs.map((tab) => ({
-    screenId: tab.id,
-    items: tab.payload.map((p) => ({
-      type: p.type,
-      status: p.status,
-    })),
-  }));
-
-  console.log("dataToStore", dataToStore)
-
+    const uniqueId = `flow-${item.id}-${Date.now()}`; // safer than just +new Date()
+    const screenId = newTabs[newTabs.length - 1]?.id;
     dispatch(
-    addFlowItem(dataToStore)
-  );
+      addFlowItem({
+        id: uniqueId,
+        data: {
+          screenId: screenId,
+          type: item.type,
+          value: item.label,
+          status: 0,
+        },
+      })
+    );
+
     const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
     const onlyOneDateOrCalendar = ["date", "calendar"];
 
     const currentPayload = newTabs[activeIndex]?.payload || [];
+
+
+// 🛑 Check max 3 images per screen  adding
+  const imageCount = currentPayload.filter((payloadItem) => payloadItem.type === "image").length;
+  if (item.type === "image" && imageCount >= 3) {
+    toast.error("You can add only 3 images per screen.");
+    return;
+  }
+
+  // 🛑 Check max 2  ImageCarousel per screen  adding
+  const imageCarouselCount = currentPayload.filter((payloadItem) => payloadItem.type === "imageCarousel").length;
+  if(item.type === "imageCarousel" && imageCarouselCount >= 2){
+     toast.error("You can add only 2 imageCarousel per screen.");
+     return;
+  }
 
     // 🛑 Check for media/document conflict
     if (onlyOneMediaItem.includes(item.type)) {
@@ -177,8 +185,7 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -199,8 +206,7 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -229,6 +235,9 @@ const FlowCreationPage = () => {
 
     setTabs(newTabs);
     toast.success(`"${item.type}" added successfully`);
+
+  
+
   };
 
   // useEffect(() => {
@@ -491,7 +500,7 @@ const FlowCreationPage = () => {
   // ========================================Localsave and export end=====================
 
   return (
-    <div className="">
+    <div className="p rounded-2xl shadow-lg">
       <div className="relative rounded-xl overflow-hidden shadow-md z-50">
         <div className="relative z-10 bg-gradient-to-tr from-indigo-100 via-blue-50 to-purple-100 px-3 py-3 flex flex-col sm:flex-row items-center justify-between gap-4 transition-all duration-300">
           <ParticleBackground />
@@ -514,10 +523,15 @@ const FlowCreationPage = () => {
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
+            // transition={{ duration: 0.4, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-3 items-center w-full sm:w-auto"
           >
-            <div className="flex flex-col w-full sm:w-auto">
+            <motion.div
+              transition={{ duration: 0.1, delay: 0.1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="flex flex-col w-full sm:w-auto"
+            >
               <input
                 id="flowname"
                 name="flowname"
@@ -530,25 +544,27 @@ const FlowCreationPage = () => {
                 }}
                 className="px-3 py-1.5 border border-indigo-300 bg-white text-[0.82rem] rounded-md shadow-sm focus:ring-1 focus:ring-indigo-300 focus:outline-none sm:min-w-[250px]"
               />
-            </div>
+            </motion.div>
 
             <div className="flex items-center gap-3 justify-between relative">
               {/* Error Dialog Box Button */}
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.1, delay: 0.2 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 onClick={() => setShowErrors((prev) => !prev)}
                 className="px-4 py-2 rounded-md font-medium text-sm shadow-sm transition duration-300 flex items-center gap-1 bg-red-100 text-red-700 hover:bg-red-200 relative cursor-pointer justify-center"
               >
                 <ErrorOutlineOutlinedIcon sx={{ fontSize: "1.2rem" }} />
                 Errors
-                <span className="bg-red-600 text-white text-xs font-medium h-4 w-4 flex items-center justify-center  rounded-full">
+                <span className="bg-red-600 text-white text-xs font-medium h-5 w-5 flex items-center justify-center  rounded-full">
                   {Object.keys(flowItems || {}).length}
                 </span>
                 <ExpandMoreIcon
-                  className={`transform transition ${
-                    showErrors ? "rotate-180" : "rotate-0"
-                  }`}
+                  className={`transform transition ${showErrors ? "rotate-180" : "rotate-0"
+                    }`}
                 />
               </motion.button>
 
@@ -556,14 +572,16 @@ const FlowCreationPage = () => {
               <motion.button
                 whileHover={{ scale: 1.03 }}
                 whileTap={{ scale: 0.97 }}
+                transition={{ duration: 0.1, delay: 0.3 }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
                 onClick={handleFlowBuild}
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
-                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
-                  isLoading || hasErrors
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
-                }`}
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                  }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
                 {isLoading ? "Building..." : "Build Flow"}
@@ -579,6 +597,9 @@ const FlowCreationPage = () => {
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
                   onClick={handleLocalSave}
+                  transition={{ duration: 0.1, delay: 0.4 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
                 >
                   <SettingsOutlinedIcon sx={{ fontSize: "1.2rem" }} />
@@ -595,6 +616,9 @@ const FlowCreationPage = () => {
                 <motion.button
                   whileHover={{ scale: 1.03 }}
                   whileTap={{ scale: 0.97 }}
+                  transition={{ duration: 0.1, delay: 0.5 }}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
                   onClick={() => setExportDropdownOpen(!exportDropdownOpen)}
                   className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer`}
                 >
@@ -615,7 +639,7 @@ const FlowCreationPage = () => {
             borderRadius: 3,
             boxShadow: "0px 4px 20px rgba(0,0,0,0.2)",
           }}
-          className="absolute top-35 right-82 w-72 bg-white overflow-scroll min-w-[280px] max-w-full  z-100"
+          className="absolute top-35 right-82 w-86 bg-white overflow-scroll min-w-[280px] max-w-full  z-100"
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -624,23 +648,33 @@ const FlowCreationPage = () => {
             transition={{ duration: 0.2 }}
             style={{ userSelect: "text" }}
           >
-            <div className="px-3 py-2 border-b text-sm font-semibold text-red-700">
+            <div className="px-3 py-2 border-b text-sm text-center font-semibold text-red-700">
               Configuration Errors
             </div>
             <div className="max-h-60 overflow-y-auto divide-y">
               {flowItems ? (
-                Object.values(flowItems).map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="px-3 py-2 text-sm text-gray-700 flex items-start gap-2"
-                  >
-                    <ErrorOutlineOutlinedIcon
-                      className="text-red-500 mt-0.5"
-                      fontSize="small"
-                    />
-                    <p>{item.type} with status {item.status}</p> 
-                  </div>
-                ))
+                <table className="min-w-full border border-gray-300 text-sm">
+                  <thead className="bg-gray-100">
+                    <tr>
+                      <th className="border px-4 py-2 text-left w-35">Screen Name</th>
+                      <th className="border px-4 py-2 text-left">Items</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.values(flowItems || {}).map((flow, idx) => (
+                      <tr key={idx}>
+                        <td className="border px-4 py-2 font-medium">{flow.screenId}</td>
+                        <td className="border px-4 py-2">
+                          <div className="flex flex-col gap-1">
+                            <span>
+                              {flow.type} with status {flow.status}
+                            </span>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               ) : (
                 <div className="p-4 text-sm text-green-600 flex items-center gap-2">
                   <CheckCircleOutlineIcon
@@ -691,7 +725,7 @@ const FlowCreationPage = () => {
         </motion.div>
       )}
 
-      <div className="flex gap-3 items-start mt-4">
+      <div className="flex gap-2 items-start mt-3">
         {/* Siddebar */}
         <div className="flex-1">
           <Sidebar onAdd={handleAddItem} flexGrow={1} />

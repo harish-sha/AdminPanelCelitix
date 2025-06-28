@@ -141,7 +141,7 @@ const Canvas = ({
 
     if (item.type === "textInput") {
       return (
-        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
+        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm ">
           {targetItem.label && (
             <div>
               <span className="font-semibold">Label: </span>
@@ -150,14 +150,14 @@ const Canvas = ({
           )}
 
           {targetItem["helper-text"] && (
-            <div>
-              <span className="font-semibold">Helper Text: </span>
+            <div className="break-words whitespace-pre-wrap w-full max-w-full" >
+              <span className="font-semibold ">Helper Text: </span>
               {targetItem["helper-text"]}
             </div>
           )}
 
           {targetItem["error-message"] && (
-            <div>
+            <div className="break-words whitespace-pre-wrap w-full max-w-full" >
               <span className="font-semibold">Error Message: </span>
               {targetItem["error-message"]}
             </div>
@@ -198,14 +198,14 @@ const Canvas = ({
       return (
         <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm ">
           {targetItem.label && (
-            <div>
+            <div className="break-words whitespace-pre-wrap w-full max-w-full" >
               <span className="font-semibold">Label: </span>
               {targetItem.label}
             </div>
           )}
 
           {targetItem["helper-text"] && (
-            <div>
+            <div className="break-words whitespace-pre-wrap w-full max-w-full" >
               <span className="font-semibold">Helper Text: </span>
               {targetItem["helper-text"]}
             </div>
@@ -830,8 +830,9 @@ const Canvas = ({
 
   const dispatch = useDispatch()
   // Handle deleting items from the canvas
-  const handleDelete = (index) => {
+  const handleDelete = (index, item) => {
     console.log("index", index)
+    console.log("item", item)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -840,6 +841,7 @@ const Canvas = ({
       };
       return newTabs;
     });
+    dispatch(deleteFlowItem(item.type))
 
     toast.success("Item deleted successfully");
   };
@@ -904,9 +906,10 @@ const Canvas = ({
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 
-    console.log("item", item)
     return (
       // <motion.div
+      //   key={item.id}
+      //   layout
       //   initial={{ opacity: 0, x: -100 }}
       //   animate={{ opacity: 1, x: 0 }}
       //   exit={{ opacity: 0, x: -100 }}
@@ -957,7 +960,7 @@ const Canvas = ({
           {getDynamicFieldValue(tabs, activeIndex, item, "helper_text")}
         </div>
       </Paper>
-      // {/* </motion.div> */}
+      // </motion.div>
     );
   });
 
@@ -1038,7 +1041,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Heading
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Heading: Provide a meaningful title or remove this block." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1048,7 +1051,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Subheading
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Subheading: Add context to the heading or remove this block." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1058,7 +1061,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Textbody
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Text body: Add your main message here. Leave blank only if not needed. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1068,7 +1071,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Textcaption
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Caption: Add a short label or note. Optional but helpful. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1078,7 +1081,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             TextInput
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Text input: Add a field label and placeholder for user entry. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1088,7 +1091,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             TextArea
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Text area: Add longer input guidance or remove if not required. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1098,7 +1101,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             RichText
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Rich Text: Format your content. Fill or remove as needed. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1108,7 +1111,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             RadioButton
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Radio button: Add options and question label. Leave empty only if not required. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1118,7 +1121,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             CheckBox
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Checkbox: Useful for multi-select. Provide label and choices. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1128,7 +1131,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             DropDown
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Dropdown: Add question and dropdown choices or remove this. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1138,7 +1141,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             ChipSelector
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Chip Selector: Show choices in pill form. Add or remove. or remove the block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1148,7 +1151,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             FooterButton
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Footer Button: Label your call-to-action clearly." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1158,7 +1161,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             EmbeddedLink
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Embedded Link: Add URL and label text." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1168,7 +1171,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             OptIn
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Opt-in: Label this clearly for consent actions." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1178,7 +1181,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Image
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Image: Add an image or remove this block." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1188,7 +1191,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Document
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Document: Upload a file or remove this." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1198,7 +1201,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Media
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Media: Add audio/video or remove this block." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1208,7 +1211,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             ImageCarousel
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Image Carousel: Add multiple images to display." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1218,7 +1221,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             IfElse
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="If-Else: Add logic conditions for screen branching." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1228,7 +1231,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Switch
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Switch: Toggle logic based on user selection." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1238,7 +1241,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Date
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Date Picker: single date selection from user - or remove this block" placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1248,7 +1251,7 @@ const Canvas = ({
         return (
           <div className="flex items-center gap-1 text-md text-gray-700">
             Calendar
-            <CustomTooltip title="View Account details" placement="top" arrow>
+            <CustomTooltip title="Calendar: Embed date-related input or scheduling." placement="top" arrow>
               <AiOutlineInfoCircle fontSize="medium" />
             </CustomTooltip>
           </div>
@@ -1263,7 +1266,7 @@ const Canvas = ({
   return (
     <div
       ref={drop}
-      className=" shadow-xl overflow-auto rounded-xl h-[830px] w-full hide-scrollbar bg-[url(/WB.png)] pt-10"
+      className=" shadow-xl overflow-auto rounded-xl h-[83vh] w-full hide-scrollbar bg-[url(/WB.png)] pt-10"
     >
       {/* Tabs for multiple screens */}
       <TabView
@@ -1289,7 +1292,7 @@ const Canvas = ({
       />
       {/* Render all items on the canvas */}
       <div className="w-1/3 ml-5 ">
-        <AnimatePresence>
+        <AnimatePresence >
           {tabs[activeIndex]?.payload
             ?.filter((item) => item.type !== undefined)
             .map((item, index) => (

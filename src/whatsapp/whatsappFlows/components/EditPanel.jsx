@@ -490,6 +490,35 @@ const EditPanel = ({
     }
   };
 
+  // const handleImageChange = async (e) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) {
+  //     toast.error("No file selected");
+  //     return;
+  //   }
+
+  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
+  //     toast.error("Please select a .png or .jpeg file");
+  //     e.target.value = "";
+  //     return;
+  //   }
+  //   setImageFile(file);
+
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     setImageSrc(reader.result);
+  //   };
+  //   reader.readAsDataURL(file);
+
+  //   try {
+  //     const base64String = await getBase64(file);
+  //     setDraft((prev) => ({ ...prev, image: base64String }));
+  //     toast.success("Image loaded successfully!");
+  //   } catch {
+  //     toast.error("Failed to convert image to base64");
+  //   }
+  // };
+
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
     if (!file) {
@@ -498,11 +527,27 @@ const EditPanel = ({
     }
 
     if (!file.type.match(/^image\/(png|jpeg)$/)) {
-      toast.error("Please select a .png or .jpeg file");
+      toast.error("Only JPEG and PNG images are supported.");
       e.target.value = "";
       return;
     }
-    setImageFile(file);
+
+    if (file.size > 300 * 1024) {
+      // 300KB
+      toast.error("Recommended image size is up to 300KB.");
+      e.target.value = "";
+      return;
+    }
+
+    // Check max image count
+    if (Array.isArray(imageFile) && imageFile.length >= 3) {
+      toast.error("Maximum 3 images allowed per screen.");
+      e.target.value = "";
+      return;
+    }
+
+    // Set file
+    setImageFile((prev) => [...(Array.isArray(prev) ? prev : []), file]);
 
     const reader = new FileReader();
     reader.onload = () => {
@@ -512,7 +557,11 @@ const EditPanel = ({
 
     try {
       const base64String = await getBase64(file);
-      setDraft((prev) => ({ ...prev, image: base64String }));
+      // Could check total payload size here if tracking
+      setDraft((prev) => ({
+        ...prev,
+        image: base64String,
+      }));
       toast.success("Image loaded successfully!");
     } catch {
       toast.error("Failed to convert image to base64");
@@ -539,6 +588,12 @@ const EditPanel = ({
       ...selectedItem,
       ...payload,
     };
+
+    const totalPayloadSizeKB = JSON.stringify(updatedData).length / 1024;
+    if (totalPayloadSizeKB > 1024) {
+      toast.error("Total payload size exceeds 1 MB.");
+      return;
+    }
 
     onSave(updatedData);
     onClose();
@@ -601,7 +656,8 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${index + 1
+        `Please delete the existing image before uploading a new one in slot ${
+          index + 1
         }`
       );
       return;
@@ -747,8 +803,12 @@ const EditPanel = ({
     if (selectedItem) {
       setDateLabel(selectedItem.label || "");
       setDatePlaceholder(selectedItem["helper-text"]);
-      setMinDate(selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null);
-      setMaxDate(selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null);
+      setMinDate(
+        selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null
+      );
+      setMaxDate(
+        selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null
+      );
       setUnavailableDate(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"]
@@ -877,8 +937,8 @@ const EditPanel = ({
       setUnavailableCalendarDates(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"].map(
-            (dateStr) => new Date(dateStr)
-          )
+              (dateStr) => new Date(dateStr)
+            )
           : []
       );
 
@@ -975,36 +1035,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-          mode: "single",
-          label: dateCalendarLable,
-          "helper-text": dateCalendarPlaceholder,
-          required: startCalenderRequired,
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        }
+            mode: "single",
+            label: dateCalendarLable,
+            "helper-text": dateCalendarPlaceholder,
+            required: startCalenderRequired,
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          }
         : {
-          mode: "range",
-          label: {
-            "start-date": dateCalendarLable || "",
-            "end-date": endCalendarLabel || "",
-          },
-          "helper-text": {
-            "start-date": dateCalendarPlaceholder || "",
-            "end-date": endCalendarHelperText || "",
-          },
-          required: {
-            "start-date": startCalenderRequired,
-            "end-date": endCalendarRequired,
-          },
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        };
+            mode: "range",
+            label: {
+              "start-date": dateCalendarLable || "",
+              "end-date": endCalendarLabel || "",
+            },
+            "helper-text": {
+              "start-date": dateCalendarPlaceholder || "",
+              "end-date": endCalendarHelperText || "",
+            },
+            required: {
+              "start-date": startCalenderRequired,
+              "end-date": endCalendarRequired,
+            },
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          };
 
     const updatedData = {
       ...selectedItem,
@@ -1420,6 +1480,11 @@ const EditPanel = ({
   };
 
   const handleRadioBtnAddNew = () => {
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
+
     const newId = (radioButtonOptions.length + 1).toString();
     setRadioButtonOptions((prev) => [
       ...prev,
@@ -1527,7 +1592,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1733,6 +1798,11 @@ const EditPanel = ({
 
   const handleCheckboxAddNew = () => {
     const newId = (checkBoxes.length + 1).toString();
+
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setCheckBoxes((prev) => [
       ...prev,
       {
@@ -1969,12 +2039,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-            image: dropImageSrc || o.image || "",
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+              image: dropImageSrc || o.image || "",
+            }
           : o
       )
     );
@@ -2005,6 +2075,15 @@ const EditPanel = ({
   };
 
   const handleAddNew = () => {
+    const hasImage = options.some((opt) => opt.image && opt.image !== "");
+
+    const maxOptions = hasImage ? 100 : 200;
+
+    if (options.length >= maxOptions) {
+      toast.error(`Maximum ${maxOptions} dropdown options allowed.`);
+      return;
+    }
+
     setOptions((prev) => [
       ...prev,
       {
@@ -2157,10 +2236,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-            ...o,
-            // name: chipName.trim(),
-            title: chipTitle.trim(),
-          }
+              ...o,
+              // name: chipName.trim(),
+              title: chipTitle.trim(),
+            }
           : o
       )
     );
@@ -2185,6 +2264,10 @@ const EditPanel = ({
   };
 
   const handleAddNewChipSelector = () => {
+    if (chipSelectorOptions.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setChipSelectorOptions((prev) => [
       ...prev,
       {
@@ -2631,7 +2714,7 @@ const EditPanel = ({
           exit={{ opacity: 0, x: 30 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
-          className="bg-white z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
+          className="bg-gray-100 z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
         >
           <div className="flex items-center justify-between border-b-2">
             <label className="text-sm font-semibold text-gray-700 tracking-wide">
@@ -2910,8 +2993,8 @@ const EditPanel = ({
               {selectedThenComponent === "textInput"
                 ? "Then Component"
                 : selectedElseComponent === "textInput"
-                  ? "Else Component"
-                  : ""}
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Input Label"
                 id="mainlabel"
@@ -3047,7 +3130,6 @@ const EditPanel = ({
                 tooltipContent="Enter Error for TextArea"
                 tooltipPlacement="right"
                 value={textAreaError}
-                maxLength={30}
                 onChange={(e) => setTextAreaError(e.target.value)}
               />
 
@@ -3126,6 +3208,7 @@ const EditPanel = ({
                   tooltipContent="Enter Checkbox Group Label "
                   tooltipPlacement="right"
                   value={mainLabelCheckbox}
+                  maxLength={30}
                   onChange={(e) => setMainLabelCheckbox(e.target.value)}
                   placeholder="Enter label"
                   fullWidth
@@ -3171,6 +3254,7 @@ const EditPanel = ({
                             tooltipContent="Enter Title"
                             tooltipPlacement="right"
                             value={draftCheckbox.title}
+                            maxLength={30}
                             onChange={(e) =>
                               setDraftCheckbox((d) => ({
                                 ...d,
@@ -3185,6 +3269,7 @@ const EditPanel = ({
                             placeholder="Enter Description"
                             tooltipContent="Enter Description"
                             tooltipPlacement="right"
+                            maxLength={300}
                             value={draftCheckbox.description}
                             onChange={(e) =>
                               setDraftCheckbox((d) => ({
@@ -3201,6 +3286,7 @@ const EditPanel = ({
                             tooltipContent="Enter MetaData"
                             tooltipPlacement="right"
                             required={true}
+                            maxLength={20}
                             value={draftCheckbox.metadata}
                             onChange={(e) =>
                               setDraftCheckbox((d) => ({
@@ -3264,13 +3350,19 @@ const EditPanel = ({
                         }}
                       >
                         <Box
-                          sx={{ flexGrow: 1 }}
+                          sx={{ flexGrow: 1, minWidth: 0 }}
                           onClick={() => handleCheckboxEdit(idx)}
                         >
                           <Typography variant="subtitle1">
                             {opt.title}
                           </Typography>
-                          <Typography variant="body2">
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              wordWrap: "break-word",
+                              overflowWrap: "break-word",
+                            }}
+                          >
                             {opt.description}
                           </Typography>
                         </Box>
@@ -3308,12 +3400,13 @@ const EditPanel = ({
                 {selectedThenComponent === "radioButton"
                   ? "Then Component"
                   : selectedElseComponent === "radioButton"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Radio Group Label"
                   tooltipContent="Enter Radio Group Label"
                   tooltipPlacement="right"
+                  maxLength={30}
                   value={radioBtnLabel}
                   onChange={(e) => setRadioBtnLabel(e.target.value)}
                   placeholder="Enter label"
@@ -3360,6 +3453,7 @@ const EditPanel = ({
                             placeholder="Enter Title"
                             tooltipContent="Enter Title"
                             tooltipPlacement="right"
+                            maxLength={30}
                             value={draft.title}
                             onChange={(e) =>
                               setDraft((d) => ({ ...d, title: e.target.value }))
@@ -3372,6 +3466,7 @@ const EditPanel = ({
                             placeholder="Enter Description"
                             tooltipContent="Enter Description"
                             tooltipPlacement="right"
+                            maxLength={300}
                             value={draft.description}
                             onChange={(e) =>
                               setDraft((d) => ({
@@ -3388,6 +3483,7 @@ const EditPanel = ({
                             tooltipContent="Enter MetaData"
                             tooltipPlacement="right"
                             required={true}
+                            maxLength={20}
                             value={draft.metadata.trim()}
                             onChange={(e) =>
                               setDraft((d) => ({
@@ -3458,13 +3554,19 @@ const EditPanel = ({
                         }}
                       >
                         <Box
-                          sx={{ flexGrow: 1 }}
+                          sx={{ flexGrow: 1, minWidth: 0 }}
                           onClick={() => handleRadioBtnEdit(idx)}
                         >
                           <Typography variant="subtitle1">
                             {opt.title}
                           </Typography>
-                          <Typography variant="body2">
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              wordWrap: "break-word",
+                              overflowWrap: "break-word",
+                            }}
+                          >
                             {opt.description}
                           </Typography>
                         </Box>
@@ -3506,13 +3608,14 @@ const EditPanel = ({
                 {selectedThenComponent === "dropDown"
                   ? "Then Component"
                   : selectedElseComponent === "dropDown"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Label"
                   id="mainlabel"
                   tooltipContent="Enter MainLabel"
                   tooltipPlacement="right"
+                  maxLength={20}
                   value={mainLabelDropdown}
                   onChange={(e) => setMainLabelDropdown(e.target.value)}
                   placeholder="Enter label"
@@ -3565,6 +3668,7 @@ const EditPanel = ({
                             id={`edit-title-${idx}`}
                             tooltipContent="Enter Title"
                             tooltipPlacement="right"
+                            maxLength={30}
                             value={draftTitle}
                             onChange={(e) => setDraftTitle(e.target.value)}
                             placeholder="Enter title"
@@ -3579,6 +3683,7 @@ const EditPanel = ({
                             id={`edit-desc-${idx}`}
                             tooltipContent="Enter Description"
                             tooltipPlacement="right"
+                            maxLength={300}
                             value={draftDescription}
                             onChange={(e) =>
                               setDraftDescription(e.target.value)
@@ -3594,6 +3699,7 @@ const EditPanel = ({
                             id={`edit-meta-${idx}`}
                             tooltipContent="Enter MetaData"
                             tooltipPlacement="right"
+                            maxLength={20}
                             value={draftMetadata}
                             required={true}
                             onChange={(e) => setDraftMetaData(e.target.value)}
@@ -3651,14 +3757,20 @@ const EditPanel = ({
                       // ── Static View with Edit & Remove Icons ──
                       <>
                         <Box
-                          sx={{ flexGrow: 1, cursor: "pointer" }}
+                          sx={{ flexGrow: 1, cursor: "pointer", minWidth: 0 }}
                           onClick={() => handleStartEdit(idx)}
                         >
                           <Typography variant="subtitle1">
                             {opt.title}
                           </Typography>
                           {opt.description && (
-                            <Typography variant="body2" color="textSecondary">
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                              }}
+                            >
                               {opt.description}
                             </Typography>
                           )}
@@ -3684,11 +3796,7 @@ const EditPanel = ({
               {/* ── “Add” Button: Appends a New Option X ── */}
               <div className="flex justify-center items-center gap-2">
                 <Box sx={{ mt: 1 }}>
-                  <UniversalButton
-                    label="Add Option"
-                    onClick={handleAddNew}
-                    disabled={options.length >= 200}
-                  />
+                  <UniversalButton label="Add Option" onClick={handleAddNew} />
                 </Box>
 
                 <Box sx={{ mt: 1 }}>
@@ -3713,13 +3821,14 @@ const EditPanel = ({
                 {selectedThenComponent === "chipSelector"
                   ? "Then Component"
                   : selectedElseComponent === "chipSelector"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Label"
                   placeholder="Enter label"
                   tooltipContent="Enter MainLabel"
                   tooltipPlacement="right"
+                  maxLength={80}
                   value={chipSelectorLabel}
                   onChange={(e) => setChipSelectorLabel(e.target.value)}
                 />
@@ -3728,6 +3837,7 @@ const EditPanel = ({
                   placeholder="Enter Description"
                   tooltipContent="Enter Description for ChipSelector"
                   tooltipPlacement="right"
+                  maxLength={300}
                   value={chipDescription}
                   onChange={(e) => setChipDescription(e.target.value)}
                 />
@@ -3827,7 +3937,6 @@ const EditPanel = ({
                 <UniversalButton
                   label="Add Option"
                   onClick={handleAddNewChipSelector}
-                  disabled={chipSelectorOptions.length >= 200}
                 />
 
                 {selectedItem?.type === "chipSelector" ? (
@@ -3851,6 +3960,7 @@ const EditPanel = ({
                 placeholder="Enter Footer Button Label"
                 tooltipContent="Enter Label"
                 tooltipPlacement="right"
+                maxLength={35}
                 id="footer-button-label"
                 value={footerButtonLabel}
                 onChange={(e) => setFooterButtonLabel(e.target.value)}
@@ -3881,6 +3991,7 @@ const EditPanel = ({
                 placeholder="Enter Center Caption"
                 tooltipContent="Enter Center Caption"
                 tooltipPlacement="right"
+                maxLength={15}
                 id="center-caption"
                 value={centerCaption}
                 onChange={(e) => setCenterCaption(e.target.value)}
