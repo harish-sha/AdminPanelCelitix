@@ -167,6 +167,11 @@ export const UpdateWorkflow = () => {
   const location = useLocation();
   const { data } = location.state;
 
+  if (!data) {
+    toast.error("Workflow not found");
+    navigate("/workflow");
+  }
+
   const formattedData = convertPaylaod(data);
   let node = [];
   let edge = [];
@@ -179,7 +184,9 @@ export const UpdateWorkflow = () => {
   );
   const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
   const [name, setName] = useState("");
-  const [nodesInputData, setNodesInputData] = useState(formattedData?.nodedata || {});
+  const [nodesInputData, setNodesInputData] = useState(
+    formattedData?.nodedata || {}
+  );
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
   const [type, setType] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
