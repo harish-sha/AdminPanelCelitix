@@ -165,7 +165,7 @@ function NodeComponent({
 export const UpdateWorkflow = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data, workflow_name } = location.state;
+  const { data, workflow_meta_data } = location.state;
 
   if (!data) {
     toast.error("Workflow not found");
@@ -176,6 +176,7 @@ export const UpdateWorkflow = () => {
   let node = [];
   let edge = [];
 
+
   const [nodes, setNodes, onNodesChange] = useNodesState(
     formattedData?.nodes || node
   );
@@ -183,7 +184,7 @@ export const UpdateWorkflow = () => {
     formattedData?.edges || edge
   );
   const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
-  const [name, setName] = useState(workflow_name);
+  const [name, setName] = useState(workflow_meta_data?.workflow_name || "");
   const [nodesInputData, setNodesInputData] = useState(
     formattedData?.nodedata || {}
   );
@@ -381,8 +382,8 @@ export const UpdateWorkflow = () => {
 
     const data = {
       workflowName: name,
-      isEditWorkflow: 0,
-      srNo: 0,
+      isEditWorkflow: 1,
+      srNo: workflow_meta_data?.sr_no,
       nodeJson: JSON.stringify(payload),
     };
 
@@ -391,7 +392,7 @@ export const UpdateWorkflow = () => {
       if (res?.statusCode !== 200) {
         return toast.error(res.msg || "Error while saving workflow");
       }
-      toast.success("Workflow saved successfully");
+      toast.success("Workflow updated successfully");
       navigate("/workflow");
     } catch (e) {
       toast.error("Error while saving workflow");

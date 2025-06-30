@@ -103,7 +103,7 @@ export const WorkflowDetails = () => {
                 navigate("/workflow/edit", {
                   state: {
                     data: params?.row?.node_json || "[]",
-                    workflow_name: params?.row?.workflow_name || "Workflow",
+                    workflow_meta_data: params?.row,
                   },
                 });
               }}
