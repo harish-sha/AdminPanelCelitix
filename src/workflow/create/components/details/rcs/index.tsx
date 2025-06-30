@@ -140,20 +140,38 @@ export const RCS = ({
   }, [selectedTemplate]);
 
   function handleSave() {
-    if (!selectedTemplate) return;
+    if (!campaignDetails.agent) return toast.error("Please Select an Agent");
+    if (!selectedTemplate) return toast.error("Please Select template");
     const templateType = allTemplates.find(
       (item) => item.srno === selectedTemplate
     )?.templateType;
 
-    const allVar = [];
+    let isError = false;
+
+    let inputVar = [];
+    let btnVar = [];
+
     Object.keys(inputVariables).map((key) => {
-      allVar.push(inputVariables[key]);
-    });
-    Object.keys(btninputVariables).map((key) => {
-      allVar.push(btninputVariables[key]);
+      inputVar.push(inputVariables[key]);
     });
 
+    if (varList.length !== inputVar.length) {
+      return toast.error("Please fill all the variables");
+      // isError = true;
+    }
+
+    Object.keys(btninputVariables).map((key) => {
+      btnVar.push(btninputVariables[key]);
+    });
+
+    if (btnvarList.length !== btnVar.length) {
+      return toast.error("Please fill all the button variables");
+      // isError = true;
+    }
+
+    let allVar = [...inputVar, ...btnVar];
     let variables = [];
+
     const content = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
     const btn = btnvarList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
 
@@ -170,10 +188,11 @@ export const RCS = ({
       },
     }));
 
+    allVar = [];
+
     setDetailsDialogVisible(false);
   }
 
-  
   return (
     <>
       <div className="grid grid-cols-1 gap-2 md:grid-cols-2 mt-5 w-full">
