@@ -106,6 +106,27 @@ export const OBD = ({
   };
 
   function handleSave() {
+    if (!basicDetails.type) return toast.error("Please Select Type");
+    if (!basicDetails.templateType)
+      return toast.error("Please Select Template Type");
+
+    if (basicDetails.templateType === "TTS" && !basicDetails.tts)
+      return toast.error("Please Select TTS Text");
+
+    if (basicDetails.templateType === "SB" && !basicDetails.simpleBroadcast)
+      return toast.error("Please Select Simple Broadcast Voice Clip");
+
+    if (basicDetails.templateType === "MB" && !basicDetails.simpleBroadcast)
+      return toast.error("Please Select Multi Broadcast Voice Clip 1");
+
+    if (basicDetails.templateType === "MB" && !basicDetails.multiBroadcast)
+      return toast.error("Please Select Multi Broadcast Voice Clip 2");
+
+    if (basicDetails.templateType === "DB" && !basicDetails.dynamicBroadcast)
+      return toast.error("Please Select Dynamic Broadcast Voice Clip");
+
+    if (!basicDetails.retry) return toast.error("Please Select Retry Count");
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
