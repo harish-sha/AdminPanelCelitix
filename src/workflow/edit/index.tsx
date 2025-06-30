@@ -176,7 +176,6 @@ export const UpdateWorkflow = () => {
   let node = [];
   let edge = [];
 
-
   const [nodes, setNodes, onNodesChange] = useNodesState(
     formattedData?.nodes || node
   );
@@ -376,7 +375,9 @@ export const UpdateWorkflow = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
-    if (!nodes.length) return toast.error("Please add at least one node");
+    if (nodes.length < 2) return toast.error("Please add at least two nodes");
+    if (nodes.length !== edges.length)
+      return toast.error("Please connect all the nodes");
     const payload = generatePayload(nodesInputData, nodes, edges);
     if (!payload) return toast.error("Error while saving workflow");
 
