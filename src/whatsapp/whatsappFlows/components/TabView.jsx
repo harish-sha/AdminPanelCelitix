@@ -10,6 +10,8 @@ import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import UniversalButton from "../../components/UniversalButton";
 import toast from "react-hot-toast";
 import InputField from "@/whatsapp/components/InputField";
+import { useDispatch, useSelector } from "react-redux";
+import { addScreenName, deleteScreen } from "../redux/features/FlowSlice";
 
 export default function CustomTabView({
   tabs,
@@ -45,7 +47,9 @@ export default function CustomTabView({
   // const [randomNumber, setRandomNumber] = useState(
   //   Math.floor(Math.random() * 1000)
   // );
-
+  
+  const screenNameStore = useSelector((state) => state.flows.screenName);
+  const dispatch = useDispatch();
   const addTab = () => {
     setTabs([
       ...tabs,
@@ -57,15 +61,26 @@ export default function CustomTabView({
       },
     ]);
     setActiveIndex(tabs.length);
+    dispatch(
+      addScreenName({
+        id: screenID,
+        data: {
+          screenName: screenName,
+        },
+      })
+    );
   };
 
+
   const removeTab = (index) => {
+    const screenDetails = tabs[index]
     if (tabs.length === 1) return;
     const updatedTabs = tabs.filter((_, i) => i !== index);
     setTabs(updatedTabs);
     if (activeIndex >= updatedTabs.length) {
       setActiveIndex(updatedTabs.length - 1);
     }
+    dispatch(deleteScreen({id:screenDetails.id}))
   };
 
   const handleTabClick = () => {
@@ -173,15 +188,19 @@ export default function CustomTabView({
         {tabs.map((tab, index) => (
           <div
             key={index}
-            className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${activeIndex === index
-              ? "bg-blue-100 border-blue-400 text-blue-700"
-              : "bg-gray-100 border text-gray-700 hover:bg-gray-200"
-              }`}
+            className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${
+              activeIndex === index
+                ? "bg-blue-100 border-blue-400 text-blue-700"
+                : "bg-gray-100 border text-gray-700 hover:bg-gray-200"
+            }`}
             onClick={() => setActiveIndex(index)}
           >
             <span className="pr-1 font-medium">{tab.title}</span>
 
-            <Menu model={menuItems(index)} popup ref={menuRefs[index]}
+            <Menu
+              model={menuItems(index)}
+              popup
+              ref={menuRefs[index]}
               className="mt-50"
             />
 
@@ -199,7 +218,9 @@ export default function CustomTabView({
           onClick={handleTabClick}
         >
           <AddIcon fontSize="small" />
-          <span className="ml-1 text-sm font-medium text-nowrap">Add Screen</span>
+          <span className="ml-1 text-sm font-medium text-nowrap">
+            Add Screen
+          </span>
         </div>
       </div>
 
@@ -266,7 +287,10 @@ export default function CustomTabView({
                 used as its screen name.
               </li>
               <li>Screen ID must be unique.</li>
-              <li>SUCCESS is a reserved keyword and should not be used as a screen id.</li>
+              <li>
+                SUCCESS is a reserved keyword and should not be used as a screen
+                id.
+              </li>
               <li>Screen ID allows only alphabets and underscores("_").</li>
               <li>
                 Provide a separate Screen ID, if the screen title includes
@@ -340,7 +364,10 @@ export default function CustomTabView({
                 used as its screen name.
               </li>
               <li>Screen ID must be unique.</li>
-              <li>SUCCESS is a reserved keyword and should not be used as a screen id.</li>
+              <li>
+                SUCCESS is a reserved keyword and should not be used as a screen
+                id.
+              </li>
               <li>Screen ID allows only alphabets and underscores("_").</li>
               <li>
                 Provide a separate Screen ID, if the screen title includes

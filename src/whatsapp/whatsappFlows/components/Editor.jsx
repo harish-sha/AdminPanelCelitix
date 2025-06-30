@@ -44,11 +44,11 @@ export const convertNodeToMarkdown = (node) => {
       const src = node.getAttribute("src") || "";
       const altText = (node.getAttribute("alt") || "").trim();
       return `![${altText}](${src})`;
-     case "ul":
-      return Array.from(node.children)
-        .map((li) => `+ ${convertNodeToMarkdown(li)}`);
+    // case "ul":
+    //   return Array.from(node.children)
+    //     .map((li) => `+ ${convertNodeToMarkdown(li)}`);
 
-     case "ul":
+    case "ul":
       return Array.from(node.children)
         .map((li) => {
           const content = convertNodeToMarkdown(li);
@@ -60,9 +60,9 @@ export const convertNodeToMarkdown = (node) => {
         })
         .flat();
 
-    case "ol":
-      return Array.from(node.children)
-        .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
+    // case "ol":
+    //   return Array.from(node.children)
+    //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
 
 
     case "ol":
@@ -366,9 +366,9 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
 
     // Convert to markdown
     const lines = Array.from(editorRef.current?.childNodes || [])
-    .flatMap(convertNodeToMarkdown)
-    .map(line => String(line).trim())
-    .filter(line => line !== "");
+      .flatMap(convertNodeToMarkdown)
+      .map(line => String(line).trim())
+      .filter(line => line !== "");
 
     const payload = {
       content: html,
@@ -386,8 +386,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   };
 
 
- 
-  
+
+
 
 
   const [active, setActive] = useState({

@@ -405,7 +405,7 @@ export const generatePayload = (data) => {
         let lines = [];
 
         if (Array.isArray(pay.text) && pay.text.length > 0) {
-          lines = pay.text 
+          lines = pay.text;
         } else if (pay.content) {
           try {
             const tempDiv = document.createElement("div");
@@ -418,32 +418,28 @@ export const generatePayload = (data) => {
             //   // .map((line) => line);
             //   .filter((line) => line.trim() !== "");
 
-  //           lines = Array.from(tempDiv.childNodes)
-  // .map(convertNodeToMarkdown)
-  // .flat()   
-  // .map(line => (typeof line === "string" ? line : String(line)))
-  // .filter(line => line.trim() !== "");
+            //           lines = Array.from(tempDiv.childNodes)
+            // .map(convertNodeToMarkdown)
+            // .flat()
+            // .map(line => (typeof line === "string" ? line : String(line)))
+            // .filter(line => line.trim() !== "");
 
-  lines = Array.from(tempDiv.childNodes)
-  .map(convertNodeToMarkdown)
-  .flat()
-  .map(line => String(line).trim())
-  .filter(line => line !== "");
-
-
+            lines = Array.from(tempDiv.childNodes)
+              .map(convertNodeToMarkdown)
+              .flat()
+              .map((line) => String(line).trim())
+              .filter((line) => line !== "");
           } catch (error) {
             console.error("Error parsing HTML content:", error);
             lines = ["No content available"];
           }
-        } 
+        }
 
         component = {
           type: "RichText",
           text: lines,
         };
       }
-
-     
 
       if (type === "dropDown") {
         component = {
@@ -649,11 +645,26 @@ export const generatePayload = (data) => {
       }
 
       if (type === "optin") {
+        const optActionName = pay["on-click-action"] || "";
+        const nextScreenId = data[index + 1]?.id || null;
+
         component = {
           name,
           type: "OptIn",
           label: pay.label,
           required: true,
+          "on-click-action": {
+            name: optActionName,
+            ...(index !== data.length - 1 && {
+              next: {
+                type: "screen",
+                name: nextScreenId,
+              },
+            }),
+            ...(optActionName === "open_url" && {
+              url: pay.url, // take url from payload
+            }),
+          },
         };
       }
 
@@ -679,19 +690,25 @@ export const generatePayload = (data) => {
         };
       }
 
-      if (type === "embeddedLink") {
+      if (type === "embeddedlink") {
+        const onClickActionName = pay["on-click-action"] || "";
+        const nextScreenId = data[index + 1]?.id || null;
+
         component = {
-          name,
           type: "EmbeddedLink",
-          text: pay.text,
-          "on-click-action": onClickAction,
-          ...(onClickAction === "navigate" &&
-            index !== data.length - 1 && {
+          text: pay?.text,
+          "on-click-action": {
+            name: onClickActionName,
+            ...(index !== data.length - 1 && {
               next: {
                 type: "screen",
                 name: nextScreenId,
               },
             }),
+             ...(onClickActionName === "open_url" && {
+              url: pay.url, // take url from payload
+            }),
+          },
         };
       }
 

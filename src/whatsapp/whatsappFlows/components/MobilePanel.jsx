@@ -24,6 +24,7 @@ import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
+import { motion, AnimatePresence } from "framer-motion";
 import { marked } from "marked";
 
 const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
@@ -127,7 +128,12 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
   // imageCarousel
   const [currentIndex, setCurrentIndex] = useState(0);
   return (
-    <div className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto">
+    <motion.div
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ type: "spring", stiffness: 200, damping: 25 }}
+      className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto">
       <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
@@ -634,8 +640,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                             handleChipOptionClick(index, option.title)
                           }
                           className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
-                            ? "bg-blue-600 text-white border-blue-600"
-                            : "bg-white text-gray-800 border-gray-300"
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-white text-gray-800 border-gray-300"
                             }`}
                         >
                           {option.title}
@@ -688,34 +694,30 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
 
             case "embeddedlink":
               return (
-                <InputField
-                  type="url"
-                  placeholder="Enter a valid URL"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
+                <div className="text-green-500">
+                  {item.text || ""}
+                </div>
               );
 
             case "optin":
               return (
-                <InputField
-                  placeholder="Opt-In"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={item.checked || false}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        checked: e.target.checked,
+                      }))
+                    }
+                    className="w-4 h-4 text-green-600 border-green-300 rounded focus:ring-green-500"
+                  />
+                  <p className="text-sm text-gray-700">
+                    {item.label || ""}  <span className="text-green-500">Read More</span>
+                  </p>
+                </div>
               );
 
             case "image":
@@ -1068,7 +1070,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
           }
         })}
       </Box>
-    </div>
+    </motion.div>
   );
 };
 export default MobilePanel;

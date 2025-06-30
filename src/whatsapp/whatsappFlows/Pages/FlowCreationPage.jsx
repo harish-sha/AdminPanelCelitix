@@ -23,14 +23,13 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { addFlowItem } from "../redux/features/FlowSlice";
+import { addFlowItem, updateFlowItem } from "../redux/features/FlowSlice";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const flowItems = useSelector((state) => state.flows.flowItems);
-  console.log("Current flowItems:", flowItems);
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
@@ -133,11 +132,16 @@ const FlowCreationPage = () => {
 
   const handleAddItem = (item) => {
     const newTabs = [...tabs];
-    // console.log("newTabs", newTabs);
-    // console.log("itemmmmmmmmmmmmmmm", item);
+
+    if (activeIndex < 0 || activeIndex >= newTabs.length) {
+    console.error("No active tab selected!");
+    return;
+    }
+
+    const screenId = newTabs[activeIndex]?.title; // ✅ Just get screenId from active tab
 
     const uniqueId = `flow-${item.id}-${Date.now()}`; // safer than just +new Date()
-    const screenId = newTabs[newTabs.length - 1]?.id;
+
     dispatch(
       addFlowItem({
         id: uniqueId,
@@ -156,20 +160,41 @@ const FlowCreationPage = () => {
 
     const currentPayload = newTabs[activeIndex]?.payload || [];
 
+    // 🛑 Check max 3 images per screen  adding
+    const imageCount = currentPayload.filter(
+      (payloadItem) => payloadItem.type === "image"
+    ).length;
+    if (item.type === "image" && imageCount >= 3) {
+      toast.error("You can add only 3 images per screen.");
+      return;
+    }
 
-// 🛑 Check max 3 images per screen  adding
-  const imageCount = currentPayload.filter((payloadItem) => payloadItem.type === "image").length;
-  if (item.type === "image" && imageCount >= 3) {
-    toast.error("You can add only 3 images per screen.");
-    return;
-  }
+    // 🛑 Check max 2  ImageCarousel per screen  adding
+    const imageCarouselCount = currentPayload.filter(
+      (payloadItem) => payloadItem.type === "imageCarousel"
+    ).length;
+    if (item.type === "imageCarousel" && imageCarouselCount >= 2) {
+      toast.error("You can add only 2 imageCarousel per screen.");
+      return;
+    }
 
-  // 🛑 Check max 2  ImageCarousel per screen  adding
-  const imageCarouselCount = currentPayload.filter((payloadItem) => payloadItem.type === "imageCarousel").length;
-  if(item.type === "imageCarousel" && imageCarouselCount >= 2){
-     toast.error("You can add only 2 imageCarousel per screen.");
-     return;
-  }
+    // 🛑 Check max 5  opt-in per screen  adding
+    const opt_inCount = currentPayload.filter(
+      (payloadItem) => payloadItem.type === "optin"
+    ).length;
+    if (item.type === "optin" && opt_inCount >= 5) {
+      toast.error("You can add only 5 optin per screen.");
+      return;
+    }
+
+    // 🛑 Check max 2  embeddedLink per screen  adding
+    const embeddedlinkCount = currentPayload.filter(
+      (payloadItem) => payloadItem.type === "embeddedlink"
+    ).length;
+    if (item.type === "embeddedlink" && embeddedlinkCount >= 2) {
+      toast.error("You can add only 2 embeddedlink per screen.");
+      return;
+    }
 
     // 🛑 Check for media/document conflict
     if (onlyOneMediaItem.includes(item.type)) {
@@ -185,7 +210,8 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -206,7 +232,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -230,14 +257,14 @@ const FlowCreationPage = () => {
     // ✅ Add the item
     newTabs[activeIndex] = {
       ...newTabs[activeIndex],
-      payload: [...currentPayload, { type: item.type, value: "", status: 0 }],
+      payload: [
+        ...currentPayload,
+        { type: item.type, value: "", status: 0, storeId: uniqueId },
+      ],
     };
 
     setTabs(newTabs);
     toast.success(`"${item.type}" added successfully`);
-
-  
-
   };
 
   // useEffect(() => {
@@ -252,7 +279,6 @@ const FlowCreationPage = () => {
   // };
 
   const handleEdit = (index, item) => {
-    console.log("itemmmmmmmmmmmmm", item);
     const type = item.type;
 
     // Extract prefill value based on type
@@ -263,7 +289,6 @@ const FlowCreationPage = () => {
     if (type === "textInput" || type === "textArea") {
       const key = type === "textInput" ? "textInput_1" : "textArea_1";
       prefillValueOfTexts = item.texts?.[key] || "";
-      console.log("prefillValueOfTexts", prefillValueOfTexts);
     } else if (
       type === "heading" ||
       type === "subheading" ||
@@ -279,7 +304,7 @@ const FlowCreationPage = () => {
       const key = radioKeys[0];
       const radioOptions =
         item?.radioButton?.radioButton_1?.["data-source"] || [];
-      console.log("radioOptions", radioOptions);
+
       radioOptions.forEach((option, index) => {
         setDraft({
           title: option.title || "",
@@ -332,6 +357,22 @@ const FlowCreationPage = () => {
       return newTabs;
     });
     setSelectedItem(null);
+
+    if (
+      updatedData.text ||
+      updatedData.label ||
+      updatedData.footer.footer_1.label ||
+      updatedData.src
+    ) {
+      dispatch(
+        updateFlowItem({
+          id: updatedData.storeId,
+          data: {
+            status: 1,
+          },
+        })
+      );
+    }
   };
 
   // Close the edit panel
@@ -377,6 +418,10 @@ const FlowCreationPage = () => {
     console.log("tabs", tabs);
   }, [tabs]);
 
+  const hasActiveFlows = Object.values(flowItems || {}).some(
+    (flow) => flow.status === 0
+  );
+
   // ==================================Main Flow Build start===========================
   async function handleFlowBuild() {
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
@@ -390,6 +435,11 @@ const FlowCreationPage = () => {
       toast.error("Please Enter FlowName");
       return;
     }
+
+    // if (hasActiveFlows) {
+    //   toast.error("Please fill all items or all errors should be resolved!");
+    //   return;
+    // }
 
     try {
       const payload = generatePayload(tabs);
@@ -560,11 +610,16 @@ const FlowCreationPage = () => {
                 <ErrorOutlineOutlinedIcon sx={{ fontSize: "1.2rem" }} />
                 Errors
                 <span className="bg-red-600 text-white text-xs font-medium h-5 w-5 flex items-center justify-center  rounded-full">
-                  {Object.keys(flowItems || {}).length}
+                  {
+                    Object.values(flowItems || {}).filter(
+                      (flow) => flow.status === 0
+                    ).length
+                  }
                 </span>
                 <ExpandMoreIcon
-                  className={`transform transition ${showErrors ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`transform transition ${
+                    showErrors ? "rotate-180" : "rotate-0"
+                  }`}
                 />
               </motion.button>
 
@@ -578,10 +633,11 @@ const FlowCreationPage = () => {
                 onClick={handleFlowBuild}
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
-                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
-                  }`}
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
+                  isLoading || hasErrors
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
                 {isLoading ? "Building..." : "Build Flow"}
@@ -652,27 +708,33 @@ const FlowCreationPage = () => {
               Configuration Errors
             </div>
             <div className="max-h-60 overflow-y-auto divide-y">
-              {flowItems ? (
+              {Object.values(flowItems || {}).filter(
+                (flow) => flow.status === 0
+              ).length > 0 ? (
                 <table className="min-w-full border border-gray-300 text-sm">
                   <thead className="bg-gray-100">
                     <tr>
-                      <th className="border px-4 py-2 text-left w-35">Screen Name</th>
+                      <th className="border px-4 py-2 text-left w-35">
+                        Screen Name
+                      </th>
                       <th className="border px-4 py-2 text-left">Items</th>
                     </tr>
                   </thead>
                   <tbody>
-                    {Object.values(flowItems || {}).map((flow, idx) => (
-                      <tr key={idx}>
-                        <td className="border px-4 py-2 font-medium">{flow.screenId}</td>
-                        <td className="border px-4 py-2">
-                          <div className="flex flex-col gap-1">
-                            <span>
-                              {flow.type} with status {flow.status}
-                            </span>
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
+                    {Object.values(flowItems || {})
+                      .filter((flow) => flow.status === 0)
+                      .map((flow, idx) => (
+                        <tr key={flow.id || idx}>
+                          <td className="border px-4 py-2 font-medium">
+                            {flow.screenId}
+                          </td>
+                          <td className="border px-4 py-2">
+                            <div className="flex flex-col gap-1">
+                              <span>{flow.type} is empty.</span>
+                            </div>
+                          </td>
+                        </tr>
+                      ))}
                   </tbody>
                 </table>
               ) : (

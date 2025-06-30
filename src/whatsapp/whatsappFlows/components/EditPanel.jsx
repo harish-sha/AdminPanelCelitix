@@ -37,6 +37,7 @@ import SwitchFlow from "./SwitchFlow";
 import RichTextEditor from "./Editor.jsx";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import { useSelector } from "react-redux";
 
 const EditPanel = ({
   selectedItem,
@@ -316,55 +317,38 @@ const EditPanel = ({
   // }
 
   // EmbeddedLink
+  const screenName = useSelector((state) => state.flows.screenName);
+  // console.log("screenNameedtred:", screenName);
+
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
-  const [screenNameList, setScreenNameList] = useState([]);
   const [selectedScreenName, setSelectedScreenName] = useState("");
+  const  [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("")
 
-  const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
-  ]);
+  // Get list of screens from screenName
+  const screenNameOptions = Object.values(screenName).map((screen, index) => ({
+    label: screen.screenName || `Screen ${index + 1}`,
+    value: screen.screenName || `Screen ${index + 1}`,
+  }));
 
-  useEffect(() => {
-    if (tabs && Array.isArray(tabs)) {
-      const options = tabs
-        .filter((tab) => {
-          if (tab.id === selectedItem?.id) return false;
-
-          const hasEmbeddedLink = tab.payload?.some(
-            (item) => item.type === "EmbeddedLink"
-          );
-          return !hasEmbeddedLink;
-        })
-        .map((tab) => ({
-          value: tab.id,
-          label: tab.title || tab.id,
-        }));
-
-      setScreenNameList(options);
-    }
-  }, [tabs, selectedItem]);
+  //  console.log("screenNameOptions:", screenNameOptions);
 
   useEffect(() => {
     if (onClickAction !== "navigate") {
       setSelectedScreenName("");
+      setEmbeddedlinktUrl(selectedItem.url || "");
     }
   }, [onClickAction]);
 
   useEffect(() => {
     if (selectedItem?.type === "embeddedlink") {
-      if (selectedItem?.text?.startsWith("text ")) {
-        setText(selectedItem.text.replace("text ", ""));
-      }
-
+      setText(selectedItem.text || "");
       const action = selectedItem["on-click-action"] || "complete";
       setOnClickAction(action);
 
       if (action === "navigate") {
-        const screenName = selectedItem["screen-name"];
-        const screenExists = tabs.some(
-          (tab) => tab.id === screenName && tab.id !== selectedItem.id
-        );
+        const screenName = selectedItem.name;
+        const screenExists = screenNameOptions.includes(screenName);
 
         if (screenName && screenExists) {
           setSelectedScreenName(screenName);
@@ -376,21 +360,26 @@ const EditPanel = ({
         setSelectedScreenName("");
       }
     }
-  }, [selectedItem, tabs]);
+  }, [screenName, selectedItem]);
 
   const handleEmbeddedLinkSave = () => {
+    if(!text){
+      toast.error("Text is required")
+      return;
+    }
     const payload = {
-      text: `text `,
+      text: text,
       "on-click-action": onClickAction,
-      ...(onClickAction === "navigate" && {
-        name: selectedScreenName,
-      }),
+       ...(onClickAction === "open_url" && { url: embeddedlinktUrl }),
+      ...(onClickAction === "navigate" && { screen: optSelectedScreenName }),
     };
 
     const updatedData = {
       ...selectedItem,
       ...payload,
     };
+
+    console.log("payloadlink:", payload);
 
     onSave(updatedData);
     onClose();
@@ -400,25 +389,55 @@ const EditPanel = ({
   const [richTextPayload, setRichTextPayload] = useState();
 
   // // opt-in
-
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-  const [optRequired, setOptRequired] = useState(false);
+  const [optUrl, setOptUrl] = useState("");
+  const [optInRequired, setOptInRequired] = useState(false)
 
-  // const handleChecked = (e) => {
-  //   setCheckbox(e.target.checked);
-  // };
+  const handleOptInRequiredChange = () => {
+    setOptInRequired((prev) => !prev)
+  }
 
-  const handleOptRequiredChange = (e) => {
-    setOptRequired((prev) => !prev);
-  };
+  const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
+
+  useEffect(() => {
+    if (selectedItem) {
+      setOptLabel(selectedItem.label || "");
+      setOPTAction(selectedItem["on-click-action"]);
+      setOptUrl(selectedItem.url || "");
+      setOptInRequired(selectedItem.required ?? true);
+    }
+  }, [selectedItem]);
+
+  const allscreenName = useSelector((state) => state.flows.screenName) || {};
+  console.log("allflowItems:", allscreenName);
+
+  const optScreenNameOptions = Object.values(allscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
+  console.log("optScreenNameOptions", optScreenNameOptions);
+
+  useEffect(() => {
+    if (optAction !== "navigate") {
+      setOptSelectedScreenName("");
+    }
+  }, [optAction]);
 
   const handleOPTSave = () => {
+    if(!optLabel){
+     toast.error("Label is reuired")
+     return;
+    }
     const payload = {
       label: optLabel,
-      required: true,
+      required: optInRequired,
       "on-click-action": optAction,
+      ...(optAction === "open_url" && { url: optUrl }),
+      ...(optAction === "navigate" && { screen: optSelectedScreenName }),
     };
 
     const updatedData = {
@@ -656,8 +675,7 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${
-          index + 1
+        `Please delete the existing image before uploading a new one in slot ${index + 1
         }`
       );
       return;
@@ -937,8 +955,8 @@ const EditPanel = ({
       setUnavailableCalendarDates(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"].map(
-              (dateStr) => new Date(dateStr)
-            )
+            (dateStr) => new Date(dateStr)
+          )
           : []
       );
 
@@ -1035,36 +1053,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-            mode: "single",
-            label: dateCalendarLable,
-            "helper-text": dateCalendarPlaceholder,
-            required: startCalenderRequired,
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          }
+          mode: "single",
+          label: dateCalendarLable,
+          "helper-text": dateCalendarPlaceholder,
+          required: startCalenderRequired,
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        }
         : {
-            mode: "range",
-            label: {
-              "start-date": dateCalendarLable || "",
-              "end-date": endCalendarLabel || "",
-            },
-            "helper-text": {
-              "start-date": dateCalendarPlaceholder || "",
-              "end-date": endCalendarHelperText || "",
-            },
-            required: {
-              "start-date": startCalenderRequired,
-              "end-date": endCalendarRequired,
-            },
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          };
+          mode: "range",
+          label: {
+            "start-date": dateCalendarLable || "",
+            "end-date": endCalendarLabel || "",
+          },
+          "helper-text": {
+            "start-date": dateCalendarPlaceholder || "",
+            "end-date": endCalendarHelperText || "",
+          },
+          required: {
+            "start-date": startCalenderRequired,
+            "end-date": endCalendarRequired,
+          },
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        };
 
     const updatedData = {
       ...selectedItem,
@@ -1592,7 +1610,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -2039,12 +2057,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-              ...o,
-              title: draftTitle.trim(),
-              description: draftDescription.trim(),
-              metadata: draftMetadata.trim(),
-              image: dropImageSrc || o.image || "",
-            }
+            ...o,
+            title: draftTitle.trim(),
+            description: draftDescription.trim(),
+            metadata: draftMetadata.trim(),
+            image: dropImageSrc || o.image || "",
+          }
           : o
       )
     );
@@ -2236,10 +2254,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-              ...o,
-              // name: chipName.trim(),
-              title: chipTitle.trim(),
-            }
+            ...o,
+            // name: chipName.trim(),
+            title: chipTitle.trim(),
+          }
           : o
       )
     );
@@ -2642,9 +2660,9 @@ const EditPanel = ({
     onClose();
   };
 
-  useEffect(() => {
-    console.log("123", tabs);
-  }, [tabs]);
+  // useEffect(() => {
+  //   console.log("123", tabs);
+  // }, [tabs]);
 
   // textArea
   const [textAreaLabel, setTextAreaLabel] = useState("");
@@ -2793,6 +2811,9 @@ const EditPanel = ({
                   textareaClassName="font-semibold h-40"
                   ref={textRef}
                 />
+                <p className="text-gray-600 text-xs">
+                  Chars: {headingInput.length}/80
+                </p>
 
                 <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
                   <CustomEmojiPicker
@@ -2805,11 +2826,7 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center">
-                {selectedItem?.type === "heading" ? (
-                  <UniversalButton label="Save" onClick={headingSave} />
-                ) : (
-                  ""
-                )}
+                <UniversalButton label="Save" onClick={headingSave} />
               </div>
             </div>
           )}
@@ -2862,8 +2879,10 @@ const EditPanel = ({
                   textareaClassName="font-semibold h-40"
                   ref={subheadingRef}
                 />
-
-                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                <p className="text-gray-600 text-xs">
+                  Chars: {subheadingInput.length}/80
+                </p>
+                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2">
                   <CustomEmojiPicker
                     onSelect={(emoji) =>
                       handleSubheadingEmojiSelect(setSubheadingInput, emoji, 80)
@@ -2873,14 +2892,7 @@ const EditPanel = ({
                 </div>
               </div>
               <div className="flex justify-center">
-                {selectedItem?.type === "subheading" ? (
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleSubheadingSave}
-                  />
-                ) : (
-                  ""
-                )}
+                <UniversalButton label="Save" onClick={handleSubheadingSave} />
               </div>
             </div>
           )}
@@ -2913,6 +2925,9 @@ const EditPanel = ({
                   textareaClassName="font-semibold h-40"
                   ref={textBodyRef}
                 />
+                <p className="text-gray-600 text-xs">
+                  Chars: {textbodyInput.length}/4096
+                </p>
 
                 <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
                   <CustomEmojiPicker
@@ -2925,11 +2940,7 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center">
-                {selectedItem?.type === "textbody" ? (
-                  <UniversalButton label="Save" onClick={handleTextbodySave} />
-                ) : (
-                  ""
-                )}
+                <UniversalButton label="Save" onClick={handleTextbodySave} />
               </div>
             </div>
           )}
@@ -2961,6 +2972,9 @@ const EditPanel = ({
                   textareaClassName="font-semibold h-40"
                   ref={textCaptionRef}
                 />
+                <p className="text-gray-600 text-xs">
+                  Chars: {textcaptionInput.length}/409
+                </p>
 
                 <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
                   <CustomEmojiPicker
@@ -2976,14 +2990,7 @@ const EditPanel = ({
                 </div>
               </div>
               <div className="flex justify-center">
-                {selectedItem?.type === "textcaption" ? (
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleTextCaptionSave}
-                  />
-                ) : (
-                  ""
-                )}
+                <UniversalButton label="Save" onClick={handleTextCaptionSave} />
               </div>
             </div>
           )}
@@ -2993,8 +3000,8 @@ const EditPanel = ({
               {selectedThenComponent === "textInput"
                 ? "Then Component"
                 : selectedElseComponent === "textInput"
-                ? "Else Component"
-                : ""}
+                  ? "Else Component"
+                  : ""}
               <InputField
                 label="Input Label"
                 id="mainlabel"
@@ -3084,9 +3091,7 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center items-center">
-                {selectedItem?.type === "textInput" && (
-                  <UniversalButton label="Save" onClick={handleInputSave} />
-                )}
+                <UniversalButton label="Save" onClick={handleInputSave} />
               </div>
             </div>
           )}
@@ -3179,9 +3184,7 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center items-center">
-                {selectedItem?.type === "textArea" && (
-                  <UniversalButton label="SAVE" onClick={handleTextSave} />
-                )}
+                <UniversalButton label="SAVE" onClick={handleTextSave} />
               </div>
             </div>
           )}
@@ -3383,12 +3386,10 @@ const EditPanel = ({
                   onClick={handleCheckboxAddNew}
                 />
 
-                {selectedItem?.type === "checkBox" && (
-                  <UniversalButton
-                    label="Save Checkbox"
-                    onClick={handleCheckBoxSave}
-                  />
-                )}
+                <UniversalButton
+                  label="Save Checkbox"
+                  onClick={handleCheckBoxSave}
+                />
               </div>
             </FormControl>
           )}
@@ -3400,8 +3401,8 @@ const EditPanel = ({
                 {selectedThenComponent === "radioButton"
                   ? "Then Component"
                   : selectedElseComponent === "radioButton"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Radio Group Label"
                   tooltipContent="Enter Radio Group Label"
@@ -3588,14 +3589,10 @@ const EditPanel = ({
                   onClick={handleRadioBtnAddNew}
                 />
 
-                {selectedItem?.type === "radioButton" ? (
-                  <UniversalButton
-                    label="SaveRadioButton"
-                    onClick={handleSaveRadioButton}
-                  />
-                ) : (
-                  ""
-                )}
+                <UniversalButton
+                  label="SaveRadioButton"
+                  onClick={handleSaveRadioButton}
+                />
               </div>
             </FormControl>
           )}
@@ -3608,8 +3605,8 @@ const EditPanel = ({
                 {selectedThenComponent === "dropDown"
                   ? "Then Component"
                   : selectedElseComponent === "dropDown"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Label"
                   id="mainlabel"
@@ -3800,15 +3797,11 @@ const EditPanel = ({
                 </Box>
 
                 <Box sx={{ mt: 1 }}>
-                  {selectedItem?.type === "dropDown" ? (
-                    <UniversalButton
-                      id="save-dropdown-options"
-                      label="Save Dropdown"
-                      onClick={handleSaveDropdown}
-                    />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton
+                    id="save-dropdown-options"
+                    label="Save Dropdown"
+                    onClick={handleSaveDropdown}
+                  />
                 </Box>
               </div>
             </FormControl>
@@ -3821,8 +3814,8 @@ const EditPanel = ({
                 {selectedThenComponent === "chipSelector"
                   ? "Then Component"
                   : selectedElseComponent === "chipSelector"
-                  ? "Else Component"
-                  : ""}
+                    ? "Else Component"
+                    : ""}
                 <InputField
                   label="Label"
                   placeholder="Enter label"
@@ -3939,15 +3932,11 @@ const EditPanel = ({
                   onClick={handleAddNewChipSelector}
                 />
 
-                {selectedItem?.type === "chipSelector" ? (
-                  <UniversalButton
-                    id="save-chip-selector"
-                    label="Save ChipSelector"
-                    onClick={handleChipSelectorSave}
-                  />
-                ) : (
-                  ""
-                )}
+                <UniversalButton
+                  id="save-chip-selector"
+                  label="Save ChipSelector"
+                  onClick={handleChipSelectorSave}
+                />
               </div>
             </FormControl>
           )}
@@ -4020,103 +4009,68 @@ const EditPanel = ({
             </div>
           )}
 
-          {/* Editable option for Embedded link */}
-          {/* {selectedItem?.type === "embeddedlink" && (
-          <>
-            <div className="mt-3 space-y-3">
-              <InputField
-                label="Text"
-                type="url"
-                value={link}
-                tooltipContent="Enter Url Link"
-                tooltipPlacement="right"
-                placeholder="Button Embedded Link"
-                onChange={handleChange}
-              />
-              <AnimatedDropdown
-                id="next-action"
-                label="Next Action"
-                tooltipContent="Next-Action"
-                tooltipPlacement="right"
-                options={[
-                  { value: "complete", label: "Complete" },
-                  { value: "navigate", label: "Navigate" },
-                ]}
-                value={onClickAction}
-                onChange={(value) => setOnClickAction(value)}
-              />
-               <AnimatedDropdown 
-              id='screen-name'
-              label='List Of Screen Name'
-              tooltipContent="List Of Screen Name"
-              tooltipPlacement="right"
-              value={}
-              onChange={()=> }
+          {selectedItem.type === "embeddedlink" && (
+            <div className="mt-5">
+              <div className="mb-2">
+                <InputField
+                  label="Text"
+                  type="url"
+                  maxLength={25}
+                  value={text}
+                  tooltipContent="Enter label which display in the screen"
+                  tooltipPlacement="right"
+                  placeholder="Button Embedded Link"
+                  onChange={(e) => setText(e.target.value)}
+                />
+              </div>
 
-              />  
+              <div className="mb-2">
+                <AnimatedDropdown
+                  id="next-action"
+                  label="Next Action"
+                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: "data_exchange", label: "Data_exchange" },
+                    { value: "navigate", label: "Navigate" },
+                    { value: "open_url", label: "Open_url" },
+                  ]}
+                  value={onClickAction}
+                  onChange={(value) => setOnClickAction(value)}
+                />
+              </div>
 
-              <div className=" flex justify-center">
+              {onClickAction === "navigate" && (
+                <AnimatedDropdown
+                  id="screen-name"
+                  label="List Of Screen Name"
+                  tooltipContent="List Of Screen Name"
+                  tooltipPlacement="right"
+                  options={screenNameOptions}
+                  value={selectedScreenName}
+                  onChange={(value) => setSelectedScreenName(value)}
+                />
+              )}
+
+              {onClickAction === "open_url" && (
+                  <InputField
+                    label="URL"
+                    placeholder="Enter the URL to open"
+                    type="text"
+                    tooltipContent="Provide the URL to open when user clicks Read more"
+                    value={embeddedlinktUrl}
+                    onChange={(e) => setEmbeddedlinktUrl(e.target.value)}
+                  />
+                )}
+
+
+              <div className="flex justify-center mt-5">
                 <UniversalButton
                   label="Save"
                   onClick={handleEmbeddedLinkSave}
                 />
               </div>
             </div>
-
-           
-          </>
-        )} */}
-
-          {selectedItem?.type === "embeddedlink" && (
-            <>
-              <div className="mt-3 space-y-3">
-                <InputField
-                  label="Text"
-                  type="url"
-                  value={text}
-                  tooltipContent="Enter Url Link"
-                  tooltipPlacement="right"
-                  placeholder="Button Embedded Link"
-                  onChange={(e) => setText(e.target.value)}
-                />
-
-                <AnimatedDropdown
-                  id="next-action"
-                  label="Next Action"
-                  tooltipContent="Next-Action"
-                  tooltipPlacement="right"
-                  options={[
-                    { value: "complete", label: "Complete" },
-                    { value: "navigate", label: "Navigate" },
-                  ]}
-                  value={onClickAction}
-                  onChange={(value) => setOnClickAction(value)}
-                />
-
-                {onClickAction === "navigate" && (
-                  <AnimatedDropdown
-                    id="screen-name"
-                    label="List Of Screen Name"
-                    tooltipContent="List Of Screen Name"
-                    tooltipPlacement="right"
-                    options={screenNameList}
-                    value={selectedScreenName}
-                    onChange={(value) => setSelectedScreenName(value)}
-                  />
-                )}
-
-                <div className="flex justify-center">
-                  {selectedItem?.type === "embeddedlink" ? (
-                    <UniversalButton
-                      label="Save"
-                      onClick={handleEmbeddedLinkSave}
-                    />
-                  ) : (
-                    ""
-                  )}
-                </div>
-              </div>
-            </>
           )}
 
           {/* Editable option for Opt In */}
@@ -4125,13 +4079,17 @@ const EditPanel = ({
               <div className="space-y-3 mt-3">
                 <InputField
                   label="OPT-In Label"
+                  placeholder="Enter Lable"
                   type="text"
+                  maxLength={120}
+                  tooltipContent="Enter label which display in the screen"
                   value={optLabel}
                   onChange={(e) => setOptLabel(e.target.value)}
                 />
 
-                <div className="mt-2">
+                <div className="mt-2 flex">
                   <UniversalLabel
+                    label=" Required"
                     htmlFor="required"
                     className="text-sm font-medium text-gray-700"
                     tooltipcontent="Select an option which required for you."
@@ -4140,41 +4098,56 @@ const EditPanel = ({
                   ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
-                      checked={optRequired}
-                      onChange={handleOptRequiredChange}
+                      checked={optInRequired}
+                      onChange={handleOptInRequiredChange}
                       id="required"
                     />
-                    <span>{optRequired ? "True" : "False"}</span>
+                    <span>{optInRequired ? "True" : "False"}</span>
                   </div>
                 </div>
-
-                {/* <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
-              /> */}
 
                 <AnimatedDropdown
                   id="next-action"
                   label="Action"
                   options={[
-                    { value: "data-exchage", label: "Data Exchange" },
+                    { value: "data_exchange", label: "Data_exchange" },
                     { value: "navigate", label: "Navigate" },
-                    { value: "open-url", label: "Open URL" },
+                    { value: "open_url", label: "Open_url" },
                   ]}
+                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
                   value={optAction}
                   onChange={(value) => setOPTAction(value)}
                 />
+
+                {optAction === "navigate" && (
+                  <AnimatedDropdown
+                    id="screen-name"
+                    label="List Of Screen Name"
+                    tooltipContent="List Of Screen Name"
+                    tooltipPlacement="right"
+                    options={optScreenNameOptions}
+                    value={optSelectedScreenName}
+                    onChange={(value) => setOptSelectedScreenName(value)}
+                  />
+                )}
+
+                {optAction === "open_url" && (
+                  <InputField
+                    label="URL"
+                    placeholder="Enter the URL to open"
+                    type="text"
+                    tooltipContent="Provide the URL to open when user clicks Read more"
+                    value={optUrl}
+                    onChange={(e) => setOptUrl(e.target.value)}
+                  />
+                )}
+
                 <div className="flex justify-center ">
-                  {selectedItem?.type === "optin" ? (
-                    <UniversalButton
-                      label="Save"
-                      onClick={handleOPTSave}
-                      className="text-blue-600 underline text-sm w-fit"
-                    />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleOPTSave}
+                    className="text-blue-600 underline text-sm w-fit"
+                  />
                 </div>
               </div>
             </>
@@ -4255,11 +4228,7 @@ const EditPanel = ({
                   onChange={(e) => setImgAltText(e.target.value)}
                 />
                 <div className="flex justify-center">
-                  {selectedItem?.type === "image" ? (
-                    <UniversalButton label="Save" onClick={handleImageSave} />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton label="Save" onClick={handleImageSave} />
                 </div>
               </div>
             </>
@@ -4678,7 +4647,7 @@ const EditPanel = ({
                     ...payload,
                   };
                   onSave(updatedItem);
-                  console.log("✅ Final Switch Payload", updatedItem);
+                  console.log("Final Switch Payload", updatedItem);
                 }}
               />
             </>
@@ -4747,11 +4716,7 @@ const EditPanel = ({
               </div>
 
               <div className="flex justify-center">
-                {selectedItem?.type === "date" ? (
-                  <UniversalButton label="Save" onClick={handleDateSave} />
-                ) : (
-                  ""
-                )}
+                <UniversalButton label="Save" onClick={handleDateSave} />
               </div>
             </div>
           )}
