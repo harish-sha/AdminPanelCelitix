@@ -887,11 +887,11 @@ const tabs = [
 
 const chatSubOptions = [
   { key: 'ai', label: 'AI Assist', icon: <AiOutlineRobot size={18} /> },
-  { key: 'data', label: 'Data source', icon: <StorageIcon size={18} />},
+  { key: 'data', label: 'Data source', icon: <StorageIcon size={18} /> },
 ];
 
 const WhatsappLiveChatSettings = () => {
- 
+
 
   const [blockedUsers, setBlockedUsers] = useState([]);
   const [allWaba, setAllWaba] = useState([]);
@@ -1002,7 +1002,7 @@ const WhatsappLiveChatSettings = () => {
   }
   // bloackuser
   // chat setting
- const [selectedName, setSelectedName] = useState("");
+  const [selectedName, setSelectedName] = useState("");
   const [selectedAgentName, setSelectedAgentName] = useState("");
   const [selectedAgentId, setSelectedAgentId] = useState(null);
   const [workingHoursDialog, setWorkingHoursDialog] = useState(false);
@@ -1414,25 +1414,26 @@ const WhatsappLiveChatSettings = () => {
       switch (activeSub) {
         case 'ai':
           return <div className="p-4 bg-white rounded-lg shadow">
-            <Ai/>
+            <Ai />
           </div>;
         case 'data':
           return <div className="p-4 bg-white rounded-lg shadow">
-            <Datasource/>
-            </div>;
+            <Datasource />
+          </div>;
         default:
           return null;
       }
     }
     if (activeTab === 'settings') return <div className="p-2 bg-white rounded-lg shadow">
       <>
-        <Box
-          sx={{
-            background: "linear-gradient(to bottom right, #f0f4ff, #ffffff)",
-            py: 2,
-            px: 2,
-            borderRadius: "20px",
-          }}
+        <div
+          // sx={{
+          //   background: "linear-gradient(to bottom right, #f0f4ff, #ffffff)",
+          //   py: 2,
+          //   px: 2,
+          //   borderRadius: "20px",
+          // }}
+          className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg"
         >
           {/* <CannedMessageManager /> */}
 
@@ -1447,11 +1448,11 @@ const WhatsappLiveChatSettings = () => {
             </span>
           </div>
           <div className="flex justify-end w-full items-center mb-2">
-            <div className="w-56">
+            <div className="w-96 mb-5 mx-auto mt-2">
               <AnimatedDropdown
                 id="waba"
                 name="waba"
-                label="Select WABA"
+                label="Select WABA Account"
                 tooltipContent="Select your whatsapp business account"
                 tooltipPlacement="right"
                 options={wabaState?.waba?.map((waba) => ({
@@ -1467,7 +1468,6 @@ const WhatsappLiveChatSettings = () => {
                   setCardDetails({});
                 }}
               />
-
             </div>
           </div>
 
@@ -1667,8 +1667,7 @@ const WhatsappLiveChatSettings = () => {
               })}
             </div>
             ) : (
-
-              <div className="flex flex-col items-center justify-center my-30">
+              <div className="flex flex-col items-center justify-center h-138">
                 <AnimatePresence>
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
@@ -1699,7 +1698,7 @@ const WhatsappLiveChatSettings = () => {
               </div>
             )}
           </div>
-        </Box>
+        </div>
 
         <Dialog
           header={`Working Hours - ${selectedAgentName}`}
@@ -1836,8 +1835,9 @@ const WhatsappLiveChatSettings = () => {
         )}
       </>
     </div>;
+
     if (activeTab === 'users') return <div className="p-2 bg-white rounded-lg shadow">
-      <div className="min-h-[90vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg">
+      <div className="min-h-[89.4vh] bg-gradient-to-br from-indigo-50 via-white to-purple-50 rounded-xl py-6 px-4 shadow-lg">
         <div className=" mx-auto">
           <div className="text-center mb-4 ">
             <h1 className="text-2xl font-bold text-gray-700 mb-2">

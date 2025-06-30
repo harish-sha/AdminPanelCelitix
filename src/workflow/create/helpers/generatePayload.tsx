@@ -30,7 +30,7 @@ export const generatePayload = (
       .map((edge) => {
         const target = nodes.find((n) => n.id === edge.target);
         if (!target) return null;
-        const tType = target.type === "starting" ? "START" : target.type;
+        const tType = target.type;
         return `${tType}_${target.id}`;
       })
       .filter(Boolean);

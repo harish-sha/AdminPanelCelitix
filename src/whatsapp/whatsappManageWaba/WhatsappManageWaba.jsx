@@ -151,22 +151,8 @@ const WhatsappManageWaba = ({ id, name }) => {
   });
 
   const [isCelebrating, setIsCelebrating] = useState(false);
-
-  // Show toast and trigger confetti
   const handleCelebration = () => {
-    // Trigger toast notification
-    // toast.success('🎉 Congratulations! 🎉', {
-    //   position: "top-center",
-    //   autoClose: 3000,
-    //   hideProgressBar: true,
-    //   pauseOnHover: false,
-    //   draggable: false,
-    // });
-
-    // Trigger confetti animation
     setIsCelebrating(true);
-
-    // Stop confetti after 5 seconds
     setTimeout(() => setIsCelebrating(false), 5000);
   };
 
@@ -308,7 +294,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         }
       },
       {
+        // old config id
         // config_id: "827520649332611",
+        // new config id
         config_id: "1058536032491055",
         response_type: 'code',
         override_default_response_type: true,
@@ -981,7 +969,7 @@ const WhatsappManageWaba = ({ id, name }) => {
           </div>
         </>
       ) : (
-        <div className="relative h-[90vh] w-full border-2 flex items-center justify-center rounded-4xl border-green-600 shadow-2xl bg-gradient-to-tr from-blue-50 to-green-50">
+        <div className="relative h-[91vh] w-full border-2 flex items-center justify-center rounded-4xl border-green-600 shadow-2xl bg-gradient-to-tr from-blue-50 to-green-50">
           <FloatingIcons />
           <div className="flex justify-center items-center z-50">
             {/* <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">

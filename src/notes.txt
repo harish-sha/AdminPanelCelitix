@@ -22,13 +22,13 @@ apis > Obd > Obd.js
 
 OBD > ManageVoiceClips > component > DynamicFile.jsx
 OBD > ManageVoiceClips > component > ObdAudioPlayer.jsx
-OBD > ManageVoiceClips > component > ObdManageCampaign.jsx
 OBD > ManageVoiceClips >  ObdManageCampaignVoiceClips.jsx
 
 OBD > CreateCampaign > ObdCreateCampaign.jsx
 OBD > CreateCampaign > components > DynamicValueBox.jsx
 OBD > CreateCampaign > components > ObdVariable.jsx
 OBD > CreateCampaign > components > RadioButtonLaunchCampaignObd.jsx
+OBD > CreateCampaign > components > DynamicObdVariable.jsx
 
 OBD > ObdManageCampaign > ObdCampaignReports.jsxu
 OBD > ObdManageCampaign > component > ObdCampaignTable.jsx
@@ -42,5 +42,6 @@ OBD > ObdManageIntegration > ObdIntegration.jsx
 OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
 
 ===================
+
 
 

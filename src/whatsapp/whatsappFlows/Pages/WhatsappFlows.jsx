@@ -440,9 +440,9 @@ const WhatsappFlows = () => {
               paginatedFlows.map((flow, index) => (
                 <div
                   key={index}
-                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-6 items-center justify-between flex-wrap sm:flex-nowrap"
+                  className="bg-blue-100 border border-blue-200 rounded-xl px-4 py-5 grid grid-cols-7 items-center justify-between flex-wrap sm:flex-nowrap"
                 >
-                  <div className="flex items-center gap-3 ">
+                  <div className="flex items-center gap-3">
                     <div className="bg-white flex items-center justify-center p-0.5 rounded-full shadow">
                       {flow.status === "DRAFT" && (
                         <RadioButtonCheckedOutlinedIcon
@@ -474,6 +474,15 @@ const WhatsappFlows = () => {
                         {flow.status}
                       </span>
                     </div>
+                  </div>
+
+                  <div className="text-sm text-center">
+                    <div className="font-semibold text-sm mb-2">
+                      Flow ID
+                    </div>
+                    <span className="text-[0.79rem] font-semibold border p-1 border-gray-400 text-gray-900 rounded-md tracking-widest">
+                      {flow.flowId || "N/A"}
+                    </span>
                   </div>
 
                   <div className="text-sm text-center ">
@@ -605,7 +614,8 @@ const WhatsappFlows = () => {
                     <CustomTooltip
                       title="Settings"
                       arrow
-                    // tooltipPlacement="top"
+                      // tooltipPlacement="top"
+                      
                     >
                       <IconButton
                         ref={(el) => {
@@ -627,7 +637,7 @@ const WhatsappFlows = () => {
                         }}
                         onClose={handleMenuClose}
                       >
-                        <button
+                        {/* <button
                           onClick={() => handleEdit(flow)}
                           className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
                         >
@@ -636,12 +646,12 @@ const WhatsappFlows = () => {
                             className="text-gray-600"
                           />
                           Edit
-                        </button>
+                        </button> */}
 
                         {/* Delete Button */}
                         <button
                           onClick={() => handleDelete(flow)}
-                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2 cursor-pointer"
                         >
                           <DeleteIcon
                             fontSize="small"
@@ -653,7 +663,7 @@ const WhatsappFlows = () => {
                         {/* Export Button */}
                         <button
                           onClick={() => handleExport(flow)}
-                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2 cursor-pointer"
                         >
                           <FileDownloadIcon
                             fontSize="small"

@@ -80,11 +80,11 @@ export const RCSNode = ({
     <>
       <div>
         <div className="w-full mt-2">
-          <div className="flex justify-end">
+          {/* <div className="flex justify-end">
             <button onClick={handleOptionAdd}>
               <AddIcon />
             </button>
-          </div>
+          </div> */}
           <div className="flex  gap-2 mb-2">
             <h1 className="text-lg font-semibold mb-2">Node Conditions</h1>
             <CustomTooltip

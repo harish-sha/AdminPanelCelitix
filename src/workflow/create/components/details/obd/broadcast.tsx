@@ -4,7 +4,7 @@ import React from "react";
 export const Broadcast = ({ setBasicDetails, basicDetails, voiceListData }) => {
   return (
     <>
-      <div>
+      <div className="space-y-2">
         <div className="w-full mt-4">
           <AnimatedDropdown
             id="sb"
@@ -26,8 +26,8 @@ export const Broadcast = ({ setBasicDetails, basicDetails, voiceListData }) => {
             disabled={false}
           />
         </div>
-        {basicDetails.templateType === "multibroadcast" && (
-          <div className="w-full mt-4">
+        {basicDetails.templateType === "MB" && (
+          <div className="w-full mt-4 mb-2">
             <AnimatedDropdown
               id="mb"
               name={"mb"}

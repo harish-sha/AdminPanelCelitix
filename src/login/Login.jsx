@@ -273,13 +273,13 @@ const Login = () => {
       //   return toast.error(res?.data?.msg || "Unable to verify OTP");
       // }
       // toast.success("OTP Verified Successfully");
-      
+
       if (res?.data?.statusCode !== 200) {
         return toast.error(res?.data?.msg || "Unable to verify OTP");
       }
-      
+
       toast.success(res?.data?.message || "OTP verified successfully");
-      
+
       if (isForgotPassword) {
         setStep(1);
         return;
