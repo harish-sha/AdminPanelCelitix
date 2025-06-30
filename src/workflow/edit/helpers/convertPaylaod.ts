@@ -123,7 +123,7 @@ export const convertPaylaod = (data: string) => {
                     time: condition?.value?.time,
                     callDurationTime: condition?.value?.callDurationTime,
                     ansPreFix: condition?.value?.ansPreFix,
-                    value: condition?.value?.value,
+                    value: condition?.value?.val,
                 }],
             };
 
