@@ -165,7 +165,7 @@ function NodeComponent({
 export const UpdateWorkflow = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = location.state;
+  const { data, workflow_name } = location.state;
 
   if (!data) {
     toast.error("Workflow not found");
@@ -183,7 +183,7 @@ export const UpdateWorkflow = () => {
     formattedData?.edges || edge
   );
   const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(workflow_name);
   const [nodesInputData, setNodesInputData] = useState(
     formattedData?.nodedata || {}
   );
