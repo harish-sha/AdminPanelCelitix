@@ -647,7 +647,7 @@ const SmsReports = () => {
   };
 
   useEffect(() => {
-    console.log("clicked", clicked);
+    // console.log("clicked", clicked);
   }, [clicked]);
 
   // const handleScheduleCampaignSearch = async () => {

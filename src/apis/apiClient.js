@@ -53,7 +53,7 @@ export const fetchWithAuth = async (endpoint, options = {}) => {
       return null;
     }
     if (error?.status === 400) {
-      // console.log(error);
+      console.log(error);
       return error;
     }
     console.error("Network Error:", error);

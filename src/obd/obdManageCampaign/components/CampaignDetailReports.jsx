@@ -120,7 +120,7 @@ const CampaignDetailsReports = ({
         if (!campaignSrNo) return;
         const fetchCampaignData = async () => {
             const data = await fetchDetailsbySrNo(campaignSrNo, user);
-            console.log("campaign details report data", data)
+            // console.log("campaign details report data", data)
             setCampaignDetails(data?.data);
         };
         fetchCampaignData();

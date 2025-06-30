@@ -22,7 +22,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
   const [dtmfResponse, setDtmfResponse] = useState(null);
   const [campaignNames, setCampaignNames] = useState([]);
 
-  console.log("campaignNames", campaignNames);
+  // console.log("campaignNames", campaignNames);
   const [dataToExport, setDataToExport] = useState({
     campaignName: "",
     fromDate: new Date(),
@@ -229,7 +229,7 @@ const ExportDialogObd = ({ visibledialog, setVisibledialog, selectedUser }) => {
 
     try {
       const res = await exportCampaignData(payload);
-      console.log("res", res);
+      // console.log("res", res);
       if (res.status && res.msg) {
         if (res.msg.toLowerCase().includes("wrong")) {
           toast.error(res.msg || "Something went wrong!");

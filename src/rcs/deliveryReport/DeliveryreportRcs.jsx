@@ -256,8 +256,8 @@ const DeliveryreportRcs = () => {
   };
 
   const handleCancel = (srno, campaignName) => {
-    console.log("srno", srno)
-    console.log("campaignName", campaignName)
+    // console.log("srno", srno)
+    // console.log("campaignName", campaignName)
     // if (!srno || !campaignName) {
     //   console.error("SRNO is undefined. Cannot cancel campaign.");
     //   toast.error("Failed to cancel campaign. SRNO is missing.");

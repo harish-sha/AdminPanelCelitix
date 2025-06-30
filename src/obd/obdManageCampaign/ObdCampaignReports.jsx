@@ -103,7 +103,7 @@ const ObdCampaignReports = () => {
   }, []);
 
 
-  console.log("obdCampaignData", obdCampaignData);
+  // console.log("obdCampaignData", obdCampaignData);
   const formatDateToYYYYMMDD = (dateStr) => {
     const date = new Date(dateStr);
     const day = String(date.getDate()).padStart(2, "0");

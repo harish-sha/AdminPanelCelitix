@@ -18,7 +18,7 @@ export const fetchSummaryLogsObd = async (data) => {
 
 // get details log report
 export const fetchDayWiseSummaryObd = async (data) => {
-return await fetchWithAuth("/obd/report/getDayWiseSummary", {
+  return await fetchWithAuth("/obd/report/getDayWiseSummary", {
     method: "POST",
     body: JSON.stringify(data),
   });
