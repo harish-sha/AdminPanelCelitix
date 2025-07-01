@@ -24,8 +24,10 @@ import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
+import { motion, AnimatePresence } from "framer-motion";
+import { marked } from "marked";
 
-const MobilePanel = ({ items, onUpdateItem }) => {
+const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
   const [radioButtonOptions, setRadioButtonOptions] = useState([
     { title: "Option 1", description: "Description 1", image: "url1.png" },
@@ -33,12 +35,25 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   ]);
   const [selectedOption, setSelectedOption] = useState(null);
 
-  const handleCheckboxChange = (index, optionIndex, checked) => {
+  const handleCheckboxChange = (index, groupId, optionId, isChecked) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
-        const updatedChecked = [...(prevItem.checked || [])];
-        updatedChecked[optionIndex] = checked;
-        return { ...prevItem, checked: updatedChecked };
+        const prevChecked = { ...(prevItem.checked || {}) };
+        const groupChecked = new Set(prevChecked[groupId] || []);
+
+        if (isChecked) {
+          groupChecked.add(optionId);
+        } else {
+          groupChecked.delete(optionId);
+        }
+
+        return {
+          ...prevItem,
+          checked: {
+            ...prevChecked,
+            [groupId]: Array.from(groupChecked),
+          },
+        };
       });
     }
   };
@@ -111,60 +126,17 @@ const MobilePanel = ({ items, onUpdateItem }) => {
   };
 
   // imageCarousel
-
-  const imageCarousel = () => {
-    const images = items?.images || [];
-    const scaleType = items?.["scale-type"] || "contain";
-
-    const [carouselIndex, setCarouselIndex] = useState(0);
-    const touchStartRef = useRef(null);
-
-    useEffect(() => {
-      if (images.length > 1) {
-        const interval = setInterval(() => {
-          setCarouselIndex((prev) => (prev + 1) % images.length);
-        }, 3000);
-        return () => clearInterval(interval);
-      }
-    }, [images]);
-
-    const handleSwipeStart = (e) => {
-      touchStartRef.current = e.touches[0].clientX;
-    };
-
-    const handleSwipeEnd = (e) => {
-      const touchEnd = e.changedTouches[0].clientX;
-      const diff = touchStartRef.current - touchEnd;
-
-      if (diff > 50) {
-        // swipe left
-        setCarouselIndex((prev) => (prev + 1) % images.length);
-      } else if (diff < -50) {
-        // swipe right
-        setCarouselIndex((prev) => (prev - 1 + images.length) % images.length);
-      }
-    };
-  };
-
-  // const [carouselIndex, setCarouselIndex] = useState(0);
-
-  // useEffect(() => {
-  //   if (items?.type === "imageCarousel" && Array.isArray(items.images)) {
-  //     const interval = setInterval(() => {
-  //       setCarouselIndex((prev) => (prev + 1) % items.images.length);
-  //     }, 3000);
-  //     return () => clearInterval(interval);
-  //   }
-  // }, [items]);
-
-  // console.log("itemsssssss", items)
-
+  const [currentIndex, setCurrentIndex] = useState(0);
   return (
-    <div className="relative h-[830px] w-[370px] rounded-3xl shadow-md bg-white p-2  border-2 border-indigo-600 hide-scrollbar overflow-auto">
-      <Typography variant="h6" sx={{ textAlign: "center" }}>
-        Preview
-      </Typography>
-      <Box sx={{ display: "flex", flexDirection: "column", gap: "10px", p: 2 }}>
+    <motion.div
+      initial={{ opacity: 0, x: 100 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 100 }}
+      transition={{ type: "spring", stiffness: 200, damping: 25 }}
+      className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto"
+    >
+      <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
           // console.log("item", item);
           switch (item.type) {
@@ -173,8 +145,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h5"
-                  className="text-lg font-semibold mb-1"
+                  variant="h6"
+                  className="text-lg font-semibold break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Heading Placeholder"}
                 </Typography>
@@ -185,8 +157,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h8"
-                  className="text-md font-medium  mb-1"
+                  variant="h7"
+                  className="text-md font-medium break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Subheading Placeholder"}
                 </Typography>
@@ -197,8 +169,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               return (
                 <Typography
                   key={index}
-                  variant="h8"
-                  sx={{ whiteSpace: "pre-line" }}
+                  variant="h7"
+                  sx={{ whiteSpace: "pre-line", wordBreak: "break-words" }}
+                  className="text-sm font-normal break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Text Body "}
                 </Typography>
@@ -209,7 +182,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 <Typography
                   key={index}
                   variant="caption"
-                // sx={{ whiteSpace: "pre-line" }}
+                  className="text-xs mb-1 break-words whitespace-pre-wrap w-full max-w-full "
                 >
                   {item.text || "Text Caption Placeholder"}
                 </Typography>
@@ -218,10 +191,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Text Input
             case "textInput":
               return (
-                <div key={index} className="mb-4">
+                <div key={index} className="">
                   <Typography
                     variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
+                    // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.label || "Label"}
                   </Typography>
@@ -251,7 +224,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
             // Render Text Area
             case "textArea":
               return (
-                <div key={index} className="mb-0">
+                <div key={index} className="">
                   <Typography variant="caption">
                     {item.label || "Label"}
                   </Typography>
@@ -275,17 +248,99 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </div>
               );
 
+            //Render RichText
+            case "richText": {
+              let renderedHTML = "<p>No content available</p>";
+
+              try {
+                const markdown = Array.isArray(item?.text)
+                  ? item.text.join("\n")
+                  : item?.content || "";
+
+                renderedHTML = marked.parse(markdown);
+
+                renderedHTML = renderedHTML.replace(
+                  /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]*>/g,
+                  `<img$1 class="w-30 h-30 rounded-full object-cover border">`
+                );
+              } catch (err) {
+                console.error("Markdown rendering error:", err);
+                renderedHTML = "<p>No content available</p>";
+              }
+
+              return (
+                <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden bg-white h-auto flex flex-col break-words whitespace-pre-wrap max-w-full">
+                  <div
+                    className="flex-1 overflow-y-auto p-4 prose prose-sm max-w-none 
+                      prose-img:rounded 
+                      // prose-a:text-blue-500 prose-a:underline 
+                      prose-ul:list-disc prose-ul:ml-6 prose-ol:list-decimal prose-ol:ml-6 
+                      prose-li:marker:text-gray-500 prose-li:pl-1 
+                      prose-strong:font-bold 
+                      prose-table:border prose-table:border-collapse prose-th:border prose-th:border-gray-300 prose-td:border prose-td:border-gray-300 prose-th:px-2 prose-th:py-1 prose-td:px-2 prose-td:py-1"
+                    dangerouslySetInnerHTML={{ __html: renderedHTML }}
+                  />
+
+                  <style>
+                    {`
+    .prose h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+    .prose h2 {
+      font-size: 1.25rem;
+      font-weight: 500;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .prose th, .prose td {
+      border: 1px solid #ddd;
+      padding: 4px 8px;
+    }
+    .prose thead {
+      background-color: #f3f4f6;
+    }
+    .prose ul {
+      list-style-type: disc;
+      margin-left: 1.5rem;
+    }
+    .prose ol {
+      list-style-type: decimal;
+      margin-left: 1.5rem;
+    }
+    // .prose a {
+    //  text-color: blue-500;
+    // }
+    .prose li {
+      color: #6b7280
+      margin: 0.25rem 0;
+    }
+    .prose img {
+      width: 2.5rem; 
+      height: 2.5rem; 
+      border-radius: 9999px; 
+      object-fit: cover; 
+      border: 1px solid #d1d5db; 
+      display: inline-block; 
+    }
+  `}
+                  </style>
+                </div>
+              );
+            }
+
             // Render Checkboxes
-            // anshu
+
             case "checkBox":
               return (
                 <div key={index} className="">
                   {item?.checkboxGroups &&
-                    Object.keys(item.checkboxGroups).length > 0 ? (
+                  Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
-                        <div key={groupId} className="p-1">
-                          {/* Group Label */}
+                        <div key={groupId}>
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: 600, mb: 1 }}
@@ -294,55 +349,45 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                               `Checkbox Group ${groupIdx + 1}`}
                           </Typography>
 
-                          {/* Options List */}
                           {(groupData["data-source"] || []).map(
-                            (option, optionIndex) => (
-                              <Box
-                                key={optionIndex}
-                                sx={{
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "space-between",
-                                  px: 0.5,
-                                  py: 0.4,
-                                  mb: 1,
-                                  borderRadius: 1,
-                                  border: "1px solid #e0e0e0",
-                                }}
-                              >
-                                {/* Left: Image + Title/Desc */}
+                            (option, optionIndex) => {
+                              const checkboxKey = `${groupId}_${optionIndex}`;
+
+                              return (
                                 <Box
+                                  key={checkboxKey}
                                   sx={{
                                     display: "flex",
                                     alignItems: "center",
-                                    marginLeft: 1,
+                                    mb: 1,
                                   }}
                                 >
                                   {option.image && (
                                     <Box
                                       component="img"
-                                      src={option.image}
-                                      alt={
-                                        option.title ||
-                                        `Option ${optionIndex + 1}`
+                                      src={
+                                        option.image?.startsWith("data:")
+                                          ? option.image
+                                          : `data:image/jpeg;base64,${option.image}`
                                       }
+                                      alt={option.title}
                                       sx={{
                                         width: 40,
                                         height: 40,
                                         borderRadius: "50%",
                                         mr: 1,
                                         border: "1px solid #ccc",
+                                        objectFit: "cover",
                                       }}
+                                      onError={(e) =>
+                                        (e.currentTarget.style.display = "none")
+                                      }
                                     />
                                   )}
 
-                                  <Box>
-                                    <Typography
-                                      variant="body2"
-                                      fontWeight={600}
-                                    >
-                                      {option.title ||
-                                        `Option ${optionIndex + 1}`}
+                                  <Box sx={{ flexGrow: 1 }}>
+                                    <Typography fontWeight={600}>
+                                      {option.title}
                                     </Typography>
                                     {option.description && (
                                       <Typography
@@ -353,27 +398,23 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                       </Typography>
                                     )}
                                   </Box>
-                                </Box>
 
-                                {/* Right: Checkbox */}
-                                <Checkbox
-                                  checked={
-                                    item.checked?.[
-                                    `${groupId}_${optionIndex}`
-                                    ] || false
-                                  }
-                                  onChange={(e) =>
-                                    handleCheckboxChange(
-                                      index,
-                                      `${groupId}_${optionIndex}`,
-                                      e.target.checked
-                                    )
-                                  }
-                                  icon={<CheckBoxOutlineBlankIcon />}
-                                  checkedIcon={<CheckBoxIcon />}
-                                />
-                              </Box>
-                            )
+                                  <Checkbox
+                                    checked={(
+                                      item.checked?.[groupId] || []
+                                    ).includes(option.id)}
+                                    onChange={(e) =>
+                                      handleCheckboxChange(
+                                        index,
+                                        groupId,
+                                        option.id,
+                                        e.target.checked
+                                      )
+                                    }
+                                  />
+                                </Box>
+                              );
+                            }
                           )}
                         </div>
                       )
@@ -385,17 +426,17 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   )}
                 </div>
               );
-            // anshu
 
             // Render Radio Buttons
+
             case "radioButton":
               return (
-                <div key={index} className="ml-3">
+                <div key={index} className="">
                   {item?.radioButton &&
-                    Object.keys(item.radioButton).length > 0 ? (
+                  Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
-                        <div key={groupId} className="">
+                        <div key={groupId}>
                           <Typography
                             variant="subtitle1"
                             sx={{ fontWeight: 600, mb: 1 }}
@@ -426,7 +467,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                       {option.image && (
                                         <Box
                                           component="img"
-                                          src={option.image}
+                                          src={
+                                            option.image?.startsWith("data:")
+                                              ? option.image
+                                              : `data:image/jpeg;base64,${option.image}`
+                                          }
                                           alt={
                                             option.title ||
                                             `Option ${optionIndex + 1}`
@@ -437,6 +482,10 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                             borderRadius: "50%",
                                             mr: 1,
                                             border: "1px solid #ccc",
+                                          }}
+                                          onError={(e) => {
+                                            e.currentTarget.style.display =
+                                              "none";
                                           }}
                                         />
                                       )}
@@ -500,7 +549,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                   {option.image && (
                                     <Box
                                       component="img"
-                                      src={option.image}
+                                      src={
+                                        option.image.startsWith("data:")
+                                          ? option.image
+                                          : `data:image/jpeg;base64,${option.image}`
+                                      }
                                       alt={
                                         option.title || `Option ${optIdx + 1}`
                                       }
@@ -512,8 +565,12 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                                         border: "1px solid #ccc",
                                         objectFit: "cover",
                                       }}
+                                      onError={(e) => {
+                                        e.currentTarget.style.display = "none";
+                                      }}
                                     />
                                   )}
+
                                   <Box>
                                     <Typography
                                       variant="body2"
@@ -583,10 +640,11 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
+                            isSelected
                               ? "bg-blue-600 text-white border-blue-600"
                               : "bg-white text-gray-800 border-gray-300"
-                            }`}
+                          }`}
                         >
                           {option.title}
                         </button>
@@ -637,74 +695,79 @@ const MobilePanel = ({ items, onUpdateItem }) => {
               );
 
             case "embeddedlink":
-              return (
-                <InputField
-                  type="url"
-                  placeholder="Enter a valid URL"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              );
+              return <div className="text-green-500">{item.text || ""}</div>;
 
             case "optin":
               return (
-                <InputField
-                  placeholder="Opt-In"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    checked={item.checked || false}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        checked: e.target.checked,
+                      }))
+                    }
+                    className="w-4 h-4 text-green-600 border-green-300 rounded focus:ring-green-500"
+                  />
+                  <p className="text-sm text-gray-700">
+                    {item.label || ""}{" "}
+                    <span className="text-green-500">Read More</span>
+                  </p>
+                </div>
               );
 
             case "image":
               return (
-                <div className="mt-6 p-4 border rounded-xl shadow-sm bg-white max-w-xs mx-auto">
-                  <div className="w-full px-4 py-2">
-                    {/* Image Preview */}
-                    {item.src ? (
-                      <>
+                <>
+                  {item?.src ? (
+                    <div style={{ marginBottom: "1rem" }}>
+                      <div
+                        style={{
+                          width: "100%",
+                          position: "relative",
+                          paddingTop: `${100 / (item["aspect-ratio"] || 1)}%`,
+                          backgroundColor: "#f5f5f5",
+                          borderRadius: "8px",
+                          overflow: "hidden",
+                        }}
+                      >
                         <img
                           src={item.src}
-                          alt={item["alt-text"] || "Preview image"}
-                          className={`w-full h-auto rounded-md object-${item["scale-type"] || "contain"
-                            } mb-3`}
-                          style={{ aspectRatio: item["aspect-ratio"] || "1" }}
+                          alt={item["alt-text"] || "Uploaded image"}
+                          style={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: item["scale-type"] || "contain",
+                          }}
                         />
-                        {/* Alt Text */}
-                        {item["alt-text"] && (
-                          <p className="text-center text-sm text-gray-600 italic">
-                            Alt: {item["alt-text"]}
-                          </p>
-                        )}
-                        {/* Scale Type */}
-                        {item["scale-type"] && (
-                          <p className="text-center text-sm text-gray-500 mt-1">
-                            Scale Type:{" "}
-                            <span className="font-medium">
-                              {item["scale-type"]}
-                            </span>
-                          </p>
-                        )}
-                      </>
-                    ) : (
-                      <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
-                        No image uploaded
                       </div>
-                    )}
-                  </div>
-                </div>
+
+                      <p
+                        style={{
+                          marginTop: "0.5rem",
+                          fontSize: "14px",
+                          color: "#333",
+                        }}
+                      >
+                        <strong>Alt Text:</strong> {item["alt-text"] || "-"}
+                      </p>
+                      <p style={{ fontSize: "14px", color: "#333" }}>
+                        <strong>Scale Type:</strong>{" "}
+                        {item["scale-type"] || "contain"}
+                      </p>
+                    </div>
+                  ) : (
+                    <Typography color="text.secondary">
+                      No image selected
+                    </Typography>
+                  )}
+                </>
               );
 
             case "document":
@@ -758,84 +821,38 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                 </>
               );
 
-            // case "imageCarousel":
-            //   const images = item?.images || [];
-            //   const scaleType = item?.["scale-type"] || "contain";
-            //   return (
-            //     <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white">
-            //       <div
-            //         className=""
-            //       >
-            //         {images.map((img, idx) => (
-            //           <img
-            //             key={idx}
-            //             src={img?.src || ""}
-            //             alt={img?.["alt-text"] || `Image ${idx + 1}`}
-            //             className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
-            //               }`}
-            //           />
-            //         ))}
-
-            //         {images.length > 1 && (
-            //           <>
-            //             <button
-            //               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-            //               onClick={() =>
-            //                 setCurrentIndex(
-            //                   (prev) =>
-            //                     (prev - 1 + images.length) % images.length
-            //                 )
-            //               }
-            //             >
-            //               ‹
-            //             </button>
-            //             <button
-            //               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
-            //               onClick={() =>
-            //                 setCurrentIndex(
-            //                   (prev) => (prev + 1) % images.length
-            //                 )
-            //               }
-            //             >
-            //               ›
-            //             </button>
-            //           </>
-            //         )}
-            //       </div>
-
-            //       <div className="text-center py-2 text-sm text-gray-500">
-            //         {images[currentIndex]?.["alt-text"] ||
-            //           `Image ${currentIndex + 1}`}
-            //       </div>
-            //     </div>
-
-            //   );
-
             case "imageCarousel": {
+              const images = [
+                item?.["image-1"],
+                item?.["image-2"],
+                item?.["image-3"],
+              ].filter((img) => img?.src); // Only non-empty images
+
+              const scaleType = item?.["scale-type"] || "contain";
+
               return (
-                <div className="mt-6 border rounded-xl shadow-sm bg-white max-w-xs mx-auto overflow-hidden">
-                  <div
-                    className="relative w-full h-[200px]"
-                    onTouchStart={handleSwipeStart}
-                    onTouchEnd={handleSwipeEnd}
-                  >
+                <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white relative">
+                  <div className="relative h-[200px] bg-gray-100">
                     {images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={img?.src}
-                        alt={img?.["alt-text"] || `Image ${idx + 1}`}
-                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-700 ${idx === carouselIndex ? "opacity-100" : "opacity-0"
-                          }`}
+                        src={`data:image/jpeg;base64,${img.src}`} // <-- fix is here
+                        alt={img["alt-text"] || `Image ${idx + 1}`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${
+                          idx === currentIndex ? "opacity-100" : "opacity-0"
+                        }`}
+                        onError={(e) =>
+                          (e.currentTarget.style.display = "none")
+                        }
                       />
                     ))}
 
-                    {/* Arrows */}
                     {images.length > 1 && (
                       <>
                         <button
                           className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
                           onClick={() =>
-                            setCarouselIndex(
+                            setCurrentIndex(
                               (prev) =>
                                 (prev - 1 + images.length) % images.length
                             )
@@ -846,7 +863,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                         <button
                           className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
                           onClick={() =>
-                            setCarouselIndex(
+                            setCurrentIndex(
                               (prev) => (prev + 1) % images.length
                             )
                           }
@@ -857,21 +874,9 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     )}
                   </div>
 
-                  {/* Alt Text */}
                   <div className="text-center py-2 text-sm text-gray-500">
-                    {images[carouselIndex]?.["alt-text"] ||
-                      `Image ${carouselIndex + 1}`}
-                  </div>
-
-                  {/* Dot Indicators */}
-                  <div className="flex justify-center gap-1 pb-2">
-                    {images.map((_, i) => (
-                      <div
-                        key={i}
-                        className={`w-2 h-2 rounded-full ${i === carouselIndex ? "bg-blue-600" : "bg-gray-300"
-                          }`}
-                      ></div>
-                    ))}
+                    {images[currentIndex]?.["alt-text"] ||
+                      `Image ${currentIndex + 1}`}
                   </div>
                 </div>
               );
@@ -922,8 +927,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                (d) => new Date(d)
-                              )
+                                  (d) => new Date(d)
+                                )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"
@@ -971,8 +976,8 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                (d) => new Date(d)
-                              )
+                                  (d) => new Date(d)
+                                )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"
@@ -1065,7 +1070,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
           }
         })}
       </Box>
-    </div>
+    </motion.div>
   );
 };
 export default MobilePanel;

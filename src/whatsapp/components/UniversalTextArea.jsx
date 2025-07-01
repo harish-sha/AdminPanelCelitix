@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import PropTypes from "prop-types";
-import CustomTooltip from "@/components/common/CustomTooltip";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-
+import PropTypes from "prop-types";
+import CustomTooltip from "./CustomTooltip";
 
 const UniversalTextArea = ({
   label,
@@ -18,9 +17,11 @@ const UniversalTextArea = ({
   readOnly = false,
   className = "",
   ref = null,
+  maxLength = "",
+  minLength = "",
   tooltipContent = "",
   tooltipPlacement = "top",
-
+  textareaClassName = "",
 }) => {
   const [text, setText] = useState("");
 
@@ -43,10 +44,10 @@ const UniversalTextArea = ({
   };
 
   return (
-    <div className="w-full mb-2">
+    <div className="w-full">
       {label && (
         <div className="flex items-center gap-2 mb-2">
-          <label htmlFor={id} className="text-sm font-medium text-gray-700">
+          <label htmlFor={id} className="text-sm font-semibold text-gray-700">
             {label}
           </label>
           {tooltipContent && (
@@ -72,7 +73,9 @@ const UniversalTextArea = ({
         cols={col}
         rows={row}
         readOnly={readOnly}
-        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm ${className} ${
+        maxLength={maxLength}
+        minLength={minLength}
+        className={`w-full p-1.5 border bg-white rounded-md shadow-sm focus:ring-0 focus:shadow focus:ring-gray-300 focus:outline-none sm:text-sm  ${textareaClassName} ${className} ${
           error ? "border-red-500" : "border-gray-300"
         }`}
       ></textarea>
@@ -91,11 +94,13 @@ UniversalTextArea.propTypes = {
   placeholder: PropTypes.string,
   error: PropTypes.bool,
   onChange: PropTypes.func,
+  textareaClassName: PropTypes.string,
 };
 
 UniversalTextArea.defaultProps = {
   placeholder: "Type something...",
   error: false,
+  textareaClassName: "",
   onChange: () => {},
 };
 

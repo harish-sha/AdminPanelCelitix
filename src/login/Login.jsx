@@ -341,130 +341,29 @@ const Login = () => {
 
       <div className="flex flex-col h-screen overflow-none scroll-smooth">
         {/* main content */}
-        <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff] relative">
-          {/* Top Left Circle */}
-          {/* <motion.div
-            initial={{ x: -500, y: -500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0 }}
-            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: -500, y: -500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
-            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: -500, y: -500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: -500, y: -500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: -500, y: -500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.4 }}
-            className="absolute -top-28 -left-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-
-
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.1 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.2 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.3 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.4 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#2b40b0] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div>
-          <motion.div
-            initial={{ x: 500, y: 500, opacity: 0 }}
-            animate={{ x: 0, y: 0, opacity: 1 }}
-            transition={{ duration: 1.5, ease: "easeOut", delay: 0.5 }}
-            className="absolute -bottom-25 -right-30 w-100 h-100 rounded-full border-3 border-dashed border-[#8447c6] z-0"
-            style={{
-              animation: "spin 35s linear infinite",
-            }}
-          ></motion.div> */}
+        <div className="flex-1 flex items-center justify-center min-h-screen bg-[#edf5ff]">
           <motion.div
             initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -100 }}
             transition={{ duration: 0.5 }}
-            className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120"
+            className="bg-[#ffffff] rounded-xl shadow-lg w-[830px] h-120 relative overflow-hidden"
           >
             <div className="grid grid-cols-1 md:grid-cols-2 h-full">
               {step === 1 && (
                 <motion.div
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
+                  initial={{ opacity: 0, y: 100 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -100 }}
                   transition={{ duration: 0.5 }}
+                  className="h-full"
                 >
                   <form
                     onSubmit={(e) => {
                       e.preventDefault();
                       handleLogin();
                     }}
-                    className="h-full flex flex-col md:p-6 mt-7 space-y-4 p-2 "
+                    className="h-full flex flex-col md:p-6 mt-7 space-y-4 p-2"
                   >
                     <div>
                       <h1 className="text-[2.8rem] text-center font-semibold bluetxt playf">
@@ -537,8 +436,9 @@ const Login = () => {
                     </button> */}
                     <div className="flex items-center justify-center ">
                       <button
-                        className={`custom-signin-btn ${loading ? "loading" : ""
-                          }`}
+                        className={`custom-signin-btn ${
+                          loading ? "loading" : ""
+                        }`}
                         disabled={loading}
                         onClick={handleLogin}
                       >
@@ -563,11 +463,12 @@ const Login = () => {
               {step === 2 && (
                 <>
                   <motion.div
-                    initial={{ opacity: 0, x: 100 }}
+                    initial={{ opacity: 0, x: -100 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
-                    className="w-full flex items-center justify-center"
+                    // className="w-full flex items-center justify-center"
+                    className="p-8 flex flex-col justify-center col-start-2"
                   >
                     <div className="flex flex-col items-center justify-center space-y-3 w-90 min-h-100 p-5 rounded-2xl shadow-xl ">
                       <div>
@@ -578,7 +479,6 @@ const Login = () => {
                           Provide your mobile number for secure access.{" "}
                         </p>
                       </div>
-                      {/* bg-gradient-to-r from-[#2b40b0] to-[#8447c6] */}
                       {isForgotPassword && (
                         <InputField
                           id="userId"
@@ -645,7 +545,8 @@ const Login = () => {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5 }}
-                    className="w-full flex items-center justify-center"
+                    // className="w-full flex items-center justify-center"
+                    className="p-8 flex flex-col justify-center col-start-2"
                   >
                     <div className="flex flex-col items-center space-y-3 justify-center w-90 min-h-100 p-5 rounded-2xl shadow-xl">
                       <div>
@@ -728,7 +629,8 @@ const Login = () => {
                 </>
               )}
 
-              <div
+              {/* <motion.div
+                key={step}
                 className="hidden md:flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6"
                 style={{
                   borderRadius: "150px 10px 10px 100px",
@@ -752,7 +654,62 @@ const Login = () => {
                   Welcome to the Future of Customer Communication - Your
                   Engagement Journey Begins Here.
                 </p>
-              </div>
+              </motion.div> */}
+
+              <motion.div
+                className="absolute top-0 left-1/2 w-1/2 h-full overflow-hidden"
+                initial={{
+                  x: 0,
+                  borderTopLeftRadius: "150px",
+                  borderTopRightRadius: "0px",
+                  borderBottomLeftRadius: "100px",
+                  borderBottomRightRadius: "0px",
+                }}
+                animate={{
+                  x: step === 1 ? 0 : "-100%",
+                  borderTopLeftRadius: step === 1 ? "150px" : "0px",
+                  borderTopRightRadius: step === 1 ? "0px" : "150px",
+                  borderBottomLeftRadius: step === 1 ? "130px" : "0px",
+                  borderBottomRightRadius: step === 1 ? "0px" : "100px",
+                }}
+                transition={{
+                  x: {
+                    type: "tween",
+                    ease: "easeInOut",
+                    duration: 0.6,
+                  },
+                  borderTopLeftRadius: { duration: 0.6, ease: "easeInOut" },
+                  borderTopRightRadius: { duration: 0.6, ease: "easeInOut" },
+                  borderBottomLeftRadius: { duration: 0.6, ease: "easeInOut" },
+                  borderBottomRightRadius: { duration: 0.6, ease: "easeInOut" },
+                }}
+              >
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.2, duration: 0.6, ease: "easeOut" }}
+                  className="h-full flex flex-col items-center justify-center bg-gradient-to-r from-[#2b40b0] to-[#8447c6] text-white p-6"
+                >
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                    className="mb-5"
+                  >
+                    <Link to="https://celitix.com">
+                      <img
+                        src={celitixLogo}
+                        alt="Celitix"
+                        style={{ width: "220px" }}
+                      />
+                    </Link>
+                  </motion.div>
+                  <p className="text-center text-md">
+                    Welcome to the Future of Customer Communication - Your
+                    Engagement Journey Begins Here.
+                  </p>
+                </motion.div>
+              </motion.div>
             </div>
           </motion.div>
         </div>

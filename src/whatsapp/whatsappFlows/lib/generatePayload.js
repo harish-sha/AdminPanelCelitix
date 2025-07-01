@@ -265,6 +265,7 @@
 // };
 
 // new generatepayload start here
+import { convertNodeToMarkdown } from "../components/Editor";
 export const generatePayload = (data) => {
   console.log("data", data);
   const payload = {
@@ -294,6 +295,8 @@ export const generatePayload = (data) => {
     optin: 0,
     embaddedLink: 0,
     imageCarousel: 0,
+    richText: 0,
+    switch: 0,
   };
 
   const numberToWord = (num) => {
@@ -330,6 +333,7 @@ export const generatePayload = (data) => {
       type: "SingleColumnLayout",
       children: [],
     };
+    console.log(screenData?.payload);
 
     screenData?.payload?.forEach((pay) => {
       console.log("pay", pay);
@@ -343,16 +347,6 @@ export const generatePayload = (data) => {
       const countWord = numberToWord(typeCounters[type]);
       const name = `${type}_${countWord}`;
       let component = { type };
-
-      // if (["heading", "subheading", "textbody", "textcaption"].includes(type)) {
-      //   component.text = pay[type] || "";
-      //   component.type = {
-      //     heading: "TextHeading",
-      //     subheading: "TextSubheading",
-      //     textbody: "TextBody",
-      //     textcaption: "TextCaption",
-      //   }[type];
-      // }
 
       if (type === "heading") {
         component = {
@@ -382,30 +376,6 @@ export const generatePayload = (data) => {
         };
       }
 
-      // if (["textInput", "textArea", "email", "phone"].includes(type)) {
-      //   const key = Object.keys(pay.texts || {})[0];
-      //   const field = pay.texts?.[key] || {};
-
-      //   component = {
-      //     name,
-      //     type:
-      //       type === "textInput"
-      //         ? "TextInput"
-      //         : type === "textArea"
-      //         ? "TextArea"
-      //         : type === "email"
-      //         ? "EmailInput"
-      //         : "PhoneInput",
-
-      //     label: field.label || "Label",
-      //     required: field.required ?? true,
-      //     // "error-message": field.error_message || "",
-      //     "helper-text": field.helper_text || "",
-      //     // "max-chars": field.max_chars || "",
-      //     // "min-chars": field.min_chars || "",
-      //   };
-      // }
-
       if (type === "textInput") {
         component = {
           name,
@@ -428,6 +398,46 @@ export const generatePayload = (data) => {
           required: pay.required ?? true,
           "helper-text": pay["helper-text"],
           "error-message": pay["error-message"],
+        };
+      }
+
+      if (type === "richText") {
+        let lines = [];
+
+        if (Array.isArray(pay.text) && pay.text.length > 0) {
+          lines = pay.text;
+        } else if (pay.content) {
+          try {
+            const tempDiv = document.createElement("div");
+            tempDiv.innerHTML = pay.content;
+
+            // lines = Array.from(tempDiv.childNodes)
+            //   .map(convertNodeToMarkdown)
+            //   .flat()
+            //   // .map((line) => (typeof line === "string" ? line : String(line)))
+            //   // .map((line) => line);
+            //   .filter((line) => line.trim() !== "");
+
+            //           lines = Array.from(tempDiv.childNodes)
+            // .map(convertNodeToMarkdown)
+            // .flat()
+            // .map(line => (typeof line === "string" ? line : String(line)))
+            // .filter(line => line.trim() !== "");
+
+            lines = Array.from(tempDiv.childNodes)
+              .map(convertNodeToMarkdown)
+              .flat()
+              .map((line) => String(line).trim())
+              .filter((line) => line !== "");
+          } catch (error) {
+            console.error("Error parsing HTML content:", error);
+            lines = ["No content available"];
+          }
+        }
+
+        component = {
+          type: "RichText",
+          text: lines,
         };
       }
 
@@ -540,11 +550,37 @@ export const generatePayload = (data) => {
         };
       }
 
+      // if (type === "switch") {
+      //   component = {
+      //     type: "Switch",
+      //     value:`${data.component?.textInput.name}`,
+      //     cases: pay.cases,
+      //   };
+      // }
+
+      if (type === "switch") {
+        // Look for the last component already pushed to layout that has a name
+        let valueName = "";
+        for (let i = layout.children.length - 1; i >= 0; i--) {
+          const prev = layout.children[i];
+          if (prev.name) {
+            valueName = prev.name;
+            break;
+          }
+        }
+
+        component = {
+          type: "Switch",
+          value: valueName ? `\${form.${valueName}}` : "", // ✅ dynamic format required by schema
+          cases: pay.cases,
+        };
+      }
+
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
           "scale-type": String(pay["scale-type"] || "contain"),
-          // "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
+          //  "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
           images: [
             {
               src: pay["image-1"]?.src || "",
@@ -609,11 +645,26 @@ export const generatePayload = (data) => {
       }
 
       if (type === "optin") {
+        const optActionName = pay["on-click-action"] || "";
+        const nextScreenId = data[index + 1]?.id || null;
+
         component = {
           name,
           type: "OptIn",
           label: pay.label,
           required: true,
+          "on-click-action": {
+            name: optActionName,
+            ...(index !== data.length - 1 && {
+              next: {
+                type: "screen",
+                name: nextScreenId,
+              },
+            }),
+            ...(optActionName === "open_url" && {
+              url: pay.url, // take url from payload
+            }),
+          },
         };
       }
 
@@ -621,7 +672,7 @@ export const generatePayload = (data) => {
         console.log("pay", pay);
 
         component = {
-          type: pay.type,
+          type: "If",
           condition: pay.condition,
           then: [
             {
@@ -635,23 +686,29 @@ export const generatePayload = (data) => {
               text: "It is not a cat",
             },
           ],
-          required: true,
+          // required: true,
         };
       }
 
-      if (type === "embeddedLink") {
+      if (type === "embeddedlink") {
+        const onClickActionName = pay["on-click-action"] || "";
+        const nextScreenId = data[index + 1]?.id || null;
+
         component = {
-          name,
           type: "EmbeddedLink",
-          text: pay.text,
-          "on-click-action": onClickAction,
-          ...(onClickAction === "navigate" &&
-            index !== data.length - 1 && {
+          text: pay?.text,
+          "on-click-action": {
+            name: onClickActionName,
+            ...(index !== data.length - 1 && {
               next: {
                 type: "screen",
                 name: nextScreenId,
               },
             }),
+            ...(onClickActionName === "open_url" && {
+              url: pay.url, // take url from payload
+            }),
+          },
         };
       }
 
@@ -684,6 +741,7 @@ export const generatePayload = (data) => {
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     payload.screens.push({
+      // data: {},
       id: capitalize(screenId),
       title: screenData.title || `Screen ${index + 1}`,
       layout,

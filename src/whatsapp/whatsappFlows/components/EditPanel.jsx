@@ -32,6 +32,12 @@ import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import IfElseBlock from "./IfElseBlock";
+import SwitchFlow from "./SwitchFlow";
+import RichTextEditor from "./Editor.jsx";
+import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import { useSelector } from "react-redux";
 
 const EditPanel = ({
   selectedItem,
@@ -54,6 +60,8 @@ const EditPanel = ({
   switchChecked,
   setSwitchChecked,
   screens,
+  handleComponentUpdate,
+  onUpdate,
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -84,34 +92,6 @@ const EditPanel = ({
   const handerRequired = () => {
     confirm.log(handerRequired);
   };
-
-  // const handleSave = () => {
-  //   if (
-  //     !value.trim() &&
-  //     [
-  //       "heading",
-  //       "subheading",
-  //       "textbody",
-  //       "textcaption",
-  //       "textInput",
-  //       "textArea",
-  //     ].includes(selectedItem.type)
-  //   ) {
-  //     toast.error("Input cannot be empty!");
-  //     return;
-  //   }
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     value,
-  //     options,
-  //     checked,
-  //     selectedOption,
-  //   };
-
-  //   onSave(updatedData);
-  //   onClose();
-  // };
 
   const handleOptionChange = (index, newValue) => {
     setOptions((prev) => {
@@ -337,55 +317,38 @@ const EditPanel = ({
   // }
 
   // EmbeddedLink
+  const screenName = useSelector((state) => state.flows.screenName);
+  // console.log("screenNameedtred:", screenName);
+
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
-  const [screenNameList, setScreenNameList] = useState([]);
   const [selectedScreenName, setSelectedScreenName] = useState("");
+  const [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("");
 
-  const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
-  ]);
+  // Get list of screens from screenName
+  const screenNameOptions = Object.values(screenName).map((screen, index) => ({
+    label: screen.screenName || `Screen ${index + 1}`,
+    value: screen.screenName || `Screen ${index + 1}`,
+  }));
 
-  useEffect(() => {
-    if (tabs && Array.isArray(tabs)) {
-      const options = tabs
-        .filter((tab) => {
-          if (tab.id === selectedItem?.id) return false;
-
-          const hasEmbeddedLink = tab.payload?.some(
-            (item) => item.type === "EmbeddedLink"
-          );
-          return !hasEmbeddedLink;
-        })
-        .map((tab) => ({
-          value: tab.id,
-          label: tab.title || tab.id,
-        }));
-
-      setScreenNameList(options);
-    }
-  }, [tabs, selectedItem]);
+  //  console.log("screenNameOptions:", screenNameOptions);
 
   useEffect(() => {
     if (onClickAction !== "navigate") {
       setSelectedScreenName("");
+      setEmbeddedlinktUrl(selectedItem.url || "");
     }
   }, [onClickAction]);
 
   useEffect(() => {
     if (selectedItem?.type === "embeddedlink") {
-      if (selectedItem?.text?.startsWith("text ")) {
-        setText(selectedItem.text.replace("text ", ""));
-      }
-
+      setText(selectedItem.text || "");
       const action = selectedItem["on-click-action"] || "complete";
       setOnClickAction(action);
 
       if (action === "navigate") {
-        const screenName = selectedItem["screen-name"];
-        const screenExists = tabs.some(
-          (tab) => tab.id === screenName && tab.id !== selectedItem.id
-        );
+        const screenName = selectedItem.name;
+        const screenExists = screenNameOptions.includes(screenName);
 
         if (screenName && screenExists) {
           setSelectedScreenName(screenName);
@@ -397,15 +360,18 @@ const EditPanel = ({
         setSelectedScreenName("");
       }
     }
-  }, [selectedItem, tabs]);
+  }, [screenName, selectedItem]);
 
   const handleEmbeddedLinkSave = () => {
+    if (!text) {
+      toast.error("Text is required");
+      return;
+    }
     const payload = {
-      text: `text `,
+      text: text,
       "on-click-action": onClickAction,
-      ...(onClickAction === "navigate" && {
-        name: selectedScreenName,
-      }),
+      ...(onClickAction === "open_url" && { url: embeddedlinktUrl }),
+      ...(onClickAction === "navigate" && { screen: optSelectedScreenName }),
     };
 
     const updatedData = {
@@ -413,32 +379,65 @@ const EditPanel = ({
       ...payload,
     };
 
+    console.log("payloadlink:", payload);
+
     onSave(updatedData);
     onClose();
   };
 
-  // if (selectedItem?.type !== "embeddedlink") return null;
+  // richtextPayload
+  const [richTextPayload, setRichTextPayload] = useState();
 
   // // opt-in
-
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-  const [optRequired, setOptRequired] = useState(false);
+  const [optUrl, setOptUrl] = useState("");
+  const [optInRequired, setOptInRequired] = useState(false);
 
-  // const handleChecked = (e) => {
-  //   setCheckbox(e.target.checked);
-  // };
-
-  const handleOptRequiredChange = (e) => {
-    setOptRequired((prev) => !prev);
+  const handleOptInRequiredChange = () => {
+    setOptInRequired((prev) => !prev);
   };
 
+  const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
+
+  useEffect(() => {
+    if (selectedItem) {
+      setOptLabel(selectedItem.label || "");
+      setOPTAction(selectedItem["on-click-action"]);
+      setOptUrl(selectedItem.url || "");
+      setOptInRequired(selectedItem.required ?? true);
+    }
+  }, [selectedItem]);
+
+  const allscreenName = useSelector((state) => state.flows.screenName) || {};
+  console.log("allflowItems:", allscreenName);
+
+  const optScreenNameOptions = Object.values(allscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
+  console.log("optScreenNameOptions", optScreenNameOptions);
+
+  useEffect(() => {
+    if (optAction !== "navigate") {
+      setOptSelectedScreenName("");
+    }
+  }, [optAction]);
+
   const handleOPTSave = () => {
+    if (!optLabel) {
+      toast.error("Label is reuired");
+      return;
+    }
     const payload = {
       label: optLabel,
-      required: true,
+      required: optInRequired,
       "on-click-action": optAction,
+      ...(optAction === "open_url" && { url: optUrl }),
+      ...(optAction === "navigate" && { screen: optSelectedScreenName }),
     };
 
     const updatedData = {
@@ -491,24 +490,6 @@ const EditPanel = ({
     });
   }
 
-  const handlePhotoUpload = async () => {
-    if (!imageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    // if (!imageFile?.image) {
-    //   toast.error(
-    //     "Image already uploaded. Delete it before uploading a new one."
-    //   );
-    //   return;
-    // }
-    const src = await getBase64(imageFile);
-    toast.success("Image Uploaded Successfully");
-    console.log(src);
-    setImageSrc(src);
-  };
-
   const handleImageDelete = async () => {
     if (!imageFile) {
       toast.error("File not exist");
@@ -528,27 +509,83 @@ const EditPanel = ({
     }
   };
 
-  const handleImageChange = (e) => {
-    console.log(e);
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // const handleImageChange = async (e) => {
+  //   const file = e.target.files?.[0];
+  //   if (!file) {
+  //     toast.error("No file selected");
+  //     return;
+  //   }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
+  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
+  //     toast.error("Please select a .png or .jpeg file");
+  //     e.target.value = "";
+  //     return;
+  //   }
+  //   setImageFile(file);
+
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     setImageSrc(reader.result);
+  //   };
+  //   reader.readAsDataURL(file);
+
+  //   try {
+  //     const base64String = await getBase64(file);
+  //     setDraft((prev) => ({ ...prev, image: base64String }));
+  //     toast.success("Image loaded successfully!");
+  //   } catch {
+  //     toast.error("Failed to convert image to base64");
+  //   }
+  // };
+
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected");
       return;
     }
 
-    setImageFile(file);
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
+      toast.error("Only JPEG and PNG images are supported.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 300 * 1024) {
+      // 300KB
+      toast.error("Recommended image size is up to 300KB.");
+      e.target.value = "";
+      return;
+    }
+
+    // Check max image count
+    if (Array.isArray(imageFile) && imageFile.length >= 3) {
+      toast.error("Maximum 3 images allowed per screen.");
+      e.target.value = "";
+      return;
+    }
+
+    // Set file
+    setImageFile((prev) => [...(Array.isArray(prev) ? prev : []), file]);
 
     const reader = new FileReader();
     reader.onload = () => {
       setImageSrc(reader.result);
     };
     reader.readAsDataURL(file);
-  };
 
-  // const base64HeaderRemoved = imageSrc.split(",")[1];
-  // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
+    try {
+      const base64String = await getBase64(file);
+      // Could check total payload size here if tracking
+      setDraft((prev) => ({
+        ...prev,
+        image: base64String,
+      }));
+      toast.success("Image loaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
+    }
+  };
 
   const handleImageSave = (e) => {
     if (!imageFile) {
@@ -571,6 +608,12 @@ const EditPanel = ({
       ...payload,
     };
 
+    const totalPayloadSizeKB = JSON.stringify(updatedData).length / 1024;
+    if (totalPayloadSizeKB > 1024) {
+      toast.error("Total payload size exceeds 1 MB.");
+      return;
+    }
+
     onSave(updatedData);
     onClose();
     console.log(payload);
@@ -583,18 +626,17 @@ const EditPanel = ({
     { src: "", file: null },
   ]);
 
-  const [imageCarouselScaleType, setImageCarouselScaleType] =
-    useState("contain");
-  const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
-    useState("4:3");
+  const [imageCarouselScaleType, setImageCarouselScaleType] = useState("");
+  // const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
+  //   useState("4:3");
   const [imageCarouselAltText, setImageCarouselAltText] = useState("");
   const imageCarouselInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
     if (selectedItem) {
-      setImageCarouselAltText(selectedItem["alt-text"] || "");
-      setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
-      setImageCarouselScaleType(selectedItem["scale-type"] || "contain");
+      setImageCarouselAltText(selectedItem?.["image-1"]?.["alt-text"] || "");
+      // setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
+      setImageCarouselScaleType(selectedItem["scale-type"] || "");
 
       if (Array.isArray(selectedItem.images)) {
         const mappedImages = selectedItem.images.map((img) => ({
@@ -608,15 +650,14 @@ const EditPanel = ({
 
   const imageCarouselInputRef = useRef(null);
 
-
-
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
       reader.readAsDataURL(file);
-      reader.onload = () => {
+      reader.onloadend = () => {
         const base64String = reader.result.split(",")[1];
+
         resolve(base64String);
       };
       reader.onerror = (error) => reject(error);
@@ -634,16 +675,18 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${index + 1
+        `Please delete the existing image before uploading a new one in slot ${
+          index + 1
         }`
       );
       return;
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onloadend = () => {
+      const base64 = reader.result.split(",")[1];
       const updated = [...imageCarouselImages];
-      updated[index] = { file, src: reader.result };
+      updated[index] = { src: base64, file };
       setImageCarouselImages(updated);
       toast.success(`Image ${index + 1} uploaded successfully`);
     };
@@ -651,14 +694,14 @@ const EditPanel = ({
   };
 
   const handleImageUpload = async () => {
-    if (!imageCarouselFile) {
+    if (!imageCarouselImages) {
       toast.error("Please select an image first before uploading");
       return;
     }
-    const src = await getBase64(imageCarouselFile);
+    const src = await getBase64(imageCarouselImages);
     toast.success("Image Uploaded Successfully");
     console.log(src);
-    setImageCarouselSrc(src);
+    setImageCarouselImages(src);
   };
 
   const handleImageCarouselDelete = (index) => {
@@ -677,7 +720,6 @@ const EditPanel = ({
   };
 
   const handleImageCarouselSave = async () => {
-
     if (imageCarouselImages.some((img) => !img)) {
       toast.error("Please upload all three images");
       return;
@@ -685,17 +727,17 @@ const EditPanel = ({
 
     const payload = {
       "scale-type": imageCarouselScaleType,
-      // "aspect-ratio": imageCarouselAspectRatio,
+      //  "aspect-ratio": imageCarouselAspectRatio,
       "image-1": {
-        src: imageCarouselImages[0]?.src || "",
+        src: imageCarouselImages[0].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-2": {
-        src: imageCarouselImages[1]?.src || "",
+        src: imageCarouselImages[1].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-3": {
-        src: imageCarouselImages[2]?.src || "",
+        src: imageCarouselImages[2].src || "",
         "alt-text": imageCarouselAltText || "",
       },
     };
@@ -717,10 +759,7 @@ const EditPanel = ({
   const [elseComponents, setElseComponents] = useState();
   const [selectedElseComponent, setSelectedElseComponent] = useState();
   const [selectedCondition, setSelectedCondition] = useState();
-  console.log("value", value);
-  console.log("selectedThenComponent", selectedThenComponent);
-  console.log("selectedElseComponent", selectedElseComponent);
-  console.log("condition", condition)
+  const [componentTree, setComponentTree] = useState({});
 
   const handleIfElseSave = () => {
     if (!selectedCondition) {
@@ -752,7 +791,24 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("payload", payload);
+  };
+
+  const handleUpdateTree = (path, data) => {
+    setComponentTree((prev) => {
+      const updated = { ...prev };
+      let node = updated;
+
+      path.forEach((key, index) => {
+        if (!node[key]) node[key] = {};
+        if (index === path.length - 1) {
+          node[key] = data;
+        } else {
+          node = node[key];
+        }
+      });
+
+      return { ...updated };
+    });
   };
 
   // date
@@ -765,8 +821,13 @@ const EditPanel = ({
   useEffect(() => {
     if (selectedItem) {
       setDateLabel(selectedItem.label || "");
-      setMinDate(selectedItem["min-date"] || "");
-      setMaxDate(selectedItem["max-date"] || "");
+      setDatePlaceholder(selectedItem["helper-text"]);
+      setMinDate(
+        selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null
+      );
+      setMaxDate(
+        selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null
+      );
       setUnavailableDate(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"]
@@ -808,15 +869,11 @@ const EditPanel = ({
 
     if (
       formatted &&
-      !unavailableDates.some((d) => formatDateToString(d) === formatted)
+      !unavailableDate.some((d) => formatDateToString(d) === formatted)
     ) {
-      setUnavailableDates((prev) => [...prev, date]);
+      setUnavailableDate((prev) => [...prev, date]);
     }
   };
-
-  // useEffect(() => {
-  //   console.log("unavailableDate state:", unavailableDate);
-  // }, [unavailableDate]);
 
   // Handle removing a selected date
   const handleRemoveUnavailableDate = (indexToRemove) => {
@@ -834,7 +891,11 @@ const EditPanel = ({
     const minDates = moment(minDate);
     const maxDates = moment(maxDate);
 
-    if (minDates.isValid() && maxDates.isValid() && maxDates.isBefore(minDates)) {
+    if (
+      minDates.isValid() &&
+      maxDates.isValid() &&
+      maxDates.isBefore(minDates)
+    ) {
       toast.error("Max date cannot be earlier than Min date");
       return;
     }
@@ -866,10 +927,10 @@ const EditPanel = ({
     console.log(payload);
   };
 
-
   // Calendar
   const [dateCalendarLable, setDateCalendarLabel] = useState("");
   const [minCalendarDate, setMinCalendarDate] = useState("");
+  console.log("minCalendarDate", minCalendarDate);
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
   const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
@@ -881,12 +942,30 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setDateCalendarLabel(selectedItem.label || "");
-      setMinCalendarDate(selectedItem["min-date"] || "");
-      setMaxCalendarDate(selectedItem["max-date"] || "");
-      setUnavailableCalendarDates(selectedItem["unavailable-dates"] || []);
-      setDateCalendarPlaceholder(selectedItem["helper-text"] || "");
+      setDateCalendarLabel(selectedItem.label?.["start-date"] || "");
+      // setEndCalendarLabel(selcetedItem.label["end-date"] || "")
+      setCalendarMode(selectedItem.mode);
+      setEndCalendarLabel(selectedItem.label?.["end-date"]);
+      setEndCalendarHelperText(selectedItem["helper-text"]?.["end-date"]);
+      setMinCalendarDate(
+        selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null
+      );
+      setMaxCalendarDate(
+        selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null
+      );
+      setUnavailableCalendarDates(
+        Array.isArray(selectedItem["unavailable-dates"])
+          ? selectedItem["unavailable-dates"].map(
+              (dateStr) => new Date(dateStr)
+            )
+          : []
+      );
+
+      setDateCalendarPlaceholder(
+        selectedItem["helper-text"]?.["start-date"] || ""
+      );
       setStartCalendarRequired(selectedItem.required || "");
+      setEndCalendarRequired(selectedItem.required?.["end-date"]);
     }
   }, [selectedItem]);
 
@@ -975,36 +1054,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-          mode: "single",
-          label: dateCalendarLable,
-          "helper-text": dateCalendarPlaceholder,
-          required: startCalenderRequired,
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        }
+            mode: "single",
+            label: dateCalendarLable,
+            "helper-text": dateCalendarPlaceholder,
+            required: startCalenderRequired,
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          }
         : {
-          mode: "range",
-          label: {
-            "start-date": dateCalendarLable || "",
-            "end-date": endCalendarLabel || "",
-          },
-          "helper-text": {
-            "start-date": dateCalendarPlaceholder || "",
-            "end-date": endCalendarHelperText || "",
-          },
-          required: {
-            "start-date": startCalenderRequired,
-            "end-date": endCalendarRequired,
-          },
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        };
+            mode: "range",
+            label: {
+              "start-date": dateCalendarLable || "",
+              "end-date": endCalendarLabel || "",
+            },
+            "helper-text": {
+              "start-date": dateCalendarPlaceholder || "",
+              "end-date": endCalendarHelperText || "",
+            },
+            required: {
+              "start-date": startCalenderRequired,
+              "end-date": endCalendarRequired,
+            },
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          };
 
     const updatedData = {
       ...selectedItem,
@@ -1215,6 +1294,7 @@ const EditPanel = ({
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
   const [radioBtnLabel, setRadioBtnLabel] = useState("");
+  console.log("radioBtnLabel", radioBtnLabel);
   const [radioButtonOptions, setRadioButtonOptions] = useState([]);
   const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
   const [radioImageFile, setRadioImageFile] = useState(null);
@@ -1231,20 +1311,98 @@ const EditPanel = ({
     altText: "",
   });
 
+  console.log("selectedItem", selectedItem);
+  console.log("draft", draft);
+  // useEffect(() => {
+  //   if (selectedItem?.type === "radioButton") {
+  //     setRadioBtnLabel(selectedItem.label || "");
+  //     setDraft(
+  //       (selectedItem =
+  //         {
+  //           title: selectedItem.title || "",
+  //           description: selectedItem.description || "",
+  //           metadata: selectedItem.label || "",
+  //           image: selectedItem.metadata || "",
+  //           altText: selectedItem.altText || "",
+  //         } || "")
+  //     );
+  //     setRadioRequired(selectedItem.required ?? false);
+  //   }
+  // }, [selectedItem]);
+
   useEffect(() => {
     if (selectedItem?.type === "radioButton") {
+      // Set group label
       setRadioBtnLabel(selectedItem.label || "");
-      setDraft(
-        (selectedItem =
-          {
-            title: "",
-            description: "",
-            metadata: "",
-            image: "",
-            altText: "",
-          } || "")
-      );
+
+      // Set required field
       setRadioRequired(selectedItem.required ?? false);
+
+      // Set options
+      const radioOptions = selectedItem["data-source"] || [];
+      setRadioButtonOptions(radioOptions);
+
+      // Prefill draft with first option (optional)
+      if (radioOptions.length > 0) {
+        const first = radioOptions[0];
+        setDraft({
+          title: first.title || "",
+          description: first.description || "",
+          metadata: first.metadata || "",
+          image: first.image || "",
+          altText: first.altText || "",
+        });
+
+        // const base64Image = first.image;
+        // const objectURL = base64ToObjectURL(base64Image, "image/png");
+
+        setRadiobtnEditIdx(0); // if you want to open first in edit mode, otherwise remove this line
+      } else {
+        setDraft({
+          title: "",
+          description: "",
+          metadata: "",
+          image: "",
+          altText: "",
+        });
+        setRadiobtnEditIdx(null);
+      }
+    }
+  }, [selectedItem]);
+
+  console.log("selectedItem", selectedItem);
+
+  useEffect(() => {
+    if (selectedItem?.type === "checkBox") {
+      // Set group label
+      setMainLabelCheckbox(selectedItem.label || "");
+
+      // Set required field
+      setCheckboxRequired(selectedItem.required ?? false);
+
+      // Set options
+      const checkboxOptions = selectedItem["data-source"] || [];
+      setCheckBoxes(checkboxOptions);
+
+      // Prefill draft with first option (optional)
+      if (checkBoxes.length > 0) {
+        const first = checkboxOptions[0];
+        setDraftCheckbox({
+          title: first.title || "",
+          description: first.description || "",
+          metadata: first.metadata || "",
+          image: first.image || "",
+        });
+        setRadiobtnEditIdx(0);
+      } else {
+        setDraftCheckbox({
+          title: "",
+          description: "",
+          metadata: "",
+          image: "",
+        });
+        setEditCheckBoxId(null);
+      }
     }
   }, [selectedItem]);
 
@@ -1254,22 +1412,39 @@ const EditPanel = ({
 
   const radioImageInputRef = useRef(null);
 
-  const handleRadioImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  console.log("radioImageInputRef", radioImageInputRef);
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
+  const handleRadioImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected");
       return;
     }
 
-    setRadioImageFile(file);
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
+      toast.error("Please select a .png or .jpeg file");
+      e.target.value = "";
+      return;
+    }
+
+    // if (file.size > MAX_IMAGE_SIZE) {
+    //   toast.error("Image must be under 100 KB");
+    //   e.target.value = "";
+    //   return;
+    // }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      setRadioImageSrc(reader.result);
-    };
+    reader.onload = () => setRadioImageSrc(reader.result);
     reader.readAsDataURL(file);
+    setRadioImageFile(file);
+
+    try {
+      const base64String = await getBase64(file);
+      setDraft((prev) => ({ ...prev, image: base64String }));
+      toast.success("Image loaded and ready!");
+    } catch {
+      toast.error("Failed to encode image");
+    }
   };
 
   const handleRadioBtnEdit = (idx) => {
@@ -1324,6 +1499,11 @@ const EditPanel = ({
   };
 
   const handleRadioBtnAddNew = () => {
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
+
     const newId = (radioButtonOptions.length + 1).toString();
     setRadioButtonOptions((prev) => [
       ...prev,
@@ -1337,32 +1517,32 @@ const EditPanel = ({
     ]);
   };
 
-  const handleRadioUploadFile = async () => {
-    if (!radioImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
+  // const handleRadioUploadFile = async () => {
+  //   if (!radioImageFile) {
+  //     toast.error("Please select an image first before uploading");
+  //     return;
+  //   }
 
-    if (draft?.image) {
-      toast.error("Image already Uploaded");
-      return;
-    }
+  //   if (draft?.image) {
+  //     toast.error("Image already Uploaded");
+  //     return;
+  //   }
 
-    try {
-      const base64String = await getBase64(radioImageFile);
-      console.log("base64String", base64String);
+  //   try {
+  //     const base64String = await getBase64(radioImageFile);
+  //     console.log("base64String", base64String);
 
-      // Instead of setting global state, update the draft
-      setDraft((prev) => ({
-        ...prev,
-        image: base64String,
-      }));
+  //     // Instead of setting global state, update the draft
+  //     setDraft((prev) => ({
+  //       ...prev,
+  //       image: base64String,
+  //     }));
 
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
-    }
-  };
+  //     toast.success("File uploaded successfully!");
+  //   } catch (error) {
+  //     toast.error("Failed to upload file.");
+  //   }
+  // };
 
   const handleDeleteRadioFile = async () => {
     if (!draft.image) {
@@ -1431,7 +1611,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1461,7 +1641,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.radioButton).length
       : 0;
 
-    const id = `radioButton_${existingCount + 1}`;
+    // const id = `radioButton_${existingCount + 1}`;
+    const id = existingCount[0] || "radioButton_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1530,56 +1711,54 @@ const EditPanel = ({
 
   const checkboxImageInputRef = useRef(null);
 
-  const Max_Image_Size = 100 * 1024; // 100 KB
+  // const Max_Image_Size = 100 * 1024; // 100 KB
 
-  const handleCheckboxImageChange = (e) => {
+  const handleCheckboxImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
 
     if (checkboxImageFile?.image) {
       toast.error("Image already uploaded");
+      e.target.value = ""; // reset input
       return;
     }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
       toast.error("Please select a .png or .jpeg file");
+      e.target.value = "";
       return;
     }
 
-    // const src = await getBase64(file);
-    // setCheckboxImageFile(src);
+    // if (file.size > MAX_IMAGE_SIZE) {
+    //   toast.error("Image must be under 100 KB");
+    //   e.target.value = "";
+    //   return;
+    // }
 
-    setCheckboxImageFile(file);
+    setCheckboxImageFile(file); // save raw file object
 
     const reader = new FileReader();
     reader.onload = () => {
-      setCheckboxImageSrc(reader.result);
+      setCheckboxImageSrc(reader.result); // preview
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleCheckboxUploadFile = async () => {
-    if (!checkboxImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    if (draftCheckbox?.image) {
-      toast.error("Image already uploaded");
-      return;
-    }
 
     try {
-      const base64String = await getBase64(checkboxImageFile);
-      console.log("base64String", base64String);
-
+      const base64String = await getBase64(file);
+      setDraft((prev) => ({
+        ...prev,
+        checkboxImage: base64String, // if needed
+      }));
       setDraftCheckbox((prev) => ({
         ...prev,
-        image: base64String,
+        image: `${base64String}`, // ✅ this is what checkbox preview uses
       }));
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
+      toast.success("Image loaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
     }
   };
 
@@ -1616,7 +1795,7 @@ const EditPanel = ({
 
   const handleCancelInlineCheckbox = () => {
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", description: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "", image: "" });
   };
 
   const handleSaveInlineCheckbox = () => {
@@ -1624,11 +1803,11 @@ const EditPanel = ({
     updated[checkboxEditIdx] = {
       ...updated[checkboxEditIdx],
       ...draftCheckbox,
-      image: draftCheckbox.image || updated[checkboxEditIdx].image || "",
+      image: draftCheckbox.image || updated[checkboxEditIdx].image || "", // ✅ make sure image is carried
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", description: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "", image: "" });
   };
 
   const handleRemoveCheckbox = (idx) => {
@@ -1638,6 +1817,11 @@ const EditPanel = ({
 
   const handleCheckboxAddNew = () => {
     const newId = (checkBoxes.length + 1).toString();
+
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setCheckBoxes((prev) => [
       ...prev,
       {
@@ -1684,7 +1868,10 @@ const EditPanel = ({
       ? Object.keys(selectedItem.checkboxGroups).length
       : 0;
 
-    const id = `checkbox_${existingCount + 1}`;
+    // const id = `checkbox_${existingCount + 1}`;
+
+    const id =
+      Object.keys(selectedItem?.checkboxGroups || {})[0] || "checkbox_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1717,14 +1904,43 @@ const EditPanel = ({
 
   const dropImageInputRef = useRef(null);
 
+  // useEffect(() => {
+  //   if (selectedItem) {
+  //     console.log("selectedItem", selectedItem)
+  //     setMainLabelDropdown(selectedItem.label || "");
+  //     setDraftTitle(selectedItem.title || "");
+  //     setDraftDescription(selectedItem.description || "");
+  //     setDraftMetaData(selectedItem.metadata || "");
+  //     setDropImageFile(selectedItem.image || "");
+  //     setDropdownRequired(selectedItem.required ?? false);
+  //   }
+  // }, [selectedItem]);
+
   useEffect(() => {
-    if (selectedItem) {
+    if (selectedItem?.type === "dropDown") {
+      // Set main label and required flag
       setMainLabelDropdown(selectedItem.label || "");
-      setDraftTitle(selectedItem.title || "");
-      setDraftDescription(selectedItem.description || "");
-      setDraftMetaData(selectedItem.metadata || "");
-      setDropImageFile(selectedItem.image || "");
       setDropdownRequired(selectedItem.required ?? false);
+
+      // Get dropdown options
+      const dropdownOptions = selectedItem["data-source"] || [];
+      setOptions(dropdownOptions);
+
+      // Prefill draft with first option (optional)
+      if (dropdownOptions.length > 0) {
+        const first = dropdownOptions[0];
+        setEditingIdx(0);
+        setDraftTitle(first.title || "");
+        setDraftDescription(first.description || "");
+        setDraftMetaData(first.metadata || "");
+        setDropImageFile(first.image || "");
+      } else {
+        setEditingIdx(null);
+        setDraftTitle("");
+        setDraftDescription("");
+        setDraftMetaData("");
+        setDropImageFile("");
+      }
     }
   }, [selectedItem]);
 
@@ -1732,52 +1948,79 @@ const EditPanel = ({
     setDropdownRequired((prev) => !prev);
   };
 
-  const handleDropdownImageChange = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  //  const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
+  // const handleDropdownImageChange = async (event) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) {
+  //     toast.error("No file selected");
+  //     return;
+  //   }
+
+  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
+  //     toast.error("Please select a .png or .jpeg file");
+  //     event.target.value = "";
+  //     return;
+  //   }
+
+  //   // if (file.size > MAX_IMAGE_SIZE) {
+  //   //   toast.error("Image must be under 100 KB");
+  //   //   event.target.value = "";
+  //   //   return;
+  //   // }
+
+  //   setDropImageFile(file);
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     setDropImageSrc(reader.result);
+  //   };
+  //   reader.readAsDataURL(file);
+
+  //   try {
+  //     const base64String = await getBase64(file);
+  //     setDraft((prev) => ({
+  //       ...prev,
+  //       // dropdownImage: base64String,
+  //     }));
+  //     toast.success("Image uploaded successfully!");
+  //   } catch {
+  //     toast.error("Failed to convert image to base64");
+  //   }
+  // };
+
+  const handleDropdownImageChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
+
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
       toast.error("Please select a .png or .jpeg file");
+      event.target.value = "";
       return;
     }
 
     setDropImageFile(file);
 
     const reader = new FileReader();
-
     reader.onload = () => {
-      setDropImageSrc(reader.result);
+      setDropImageSrc(reader.result); // still use full base64 for preview
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleDropdownUploadFile = async () => {
-    const currentOption = options[editingIdx];
-
-    if (!dropImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    if (currentOption?.image) {
-      toast.error("Image already uploaded.");
-      return;
-    }
 
     try {
-      // const response = await uploadImageFile(dropImageFile, 1);
-      const base64String = await getBase64(dropImageFile);
-      console.log("base64String", base64String);
-      setOptions((prev) =>
-        prev.map((o, i) =>
-          i === editingIdx ? { ...o, image: base64String } : o
-        )
-      );
-      // setDropdownUploadedId(base64String);
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload file.");
+      const base64String = await getBase64(file);
+      setDropImageSrc(`${base64String}`);
+
+      setDraft((prev) => ({
+        ...prev,
+        // image: base64String, // ✅ No prefix stored in payload
+      }));
+
+      toast.success("Image uploaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
     }
   };
 
@@ -1815,11 +2058,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+              image: dropImageSrc || o.image || "",
+            }
           : o
       )
     );
@@ -1828,6 +2072,7 @@ const EditPanel = ({
     setDraftTitle("");
     setDraftDescription("");
     setDraftMetaData("");
+    setDropImageSrc(null);
   };
 
   const handleCancelInline = () => {
@@ -1849,6 +2094,15 @@ const EditPanel = ({
   };
 
   const handleAddNew = () => {
+    const hasImage = options.some((opt) => opt.image && opt.image !== "");
+
+    const maxOptions = hasImage ? 100 : 200;
+
+    if (options.length >= maxOptions) {
+      toast.error(`Maximum ${maxOptions} dropdown options allowed.`);
+      return;
+    }
+
     setOptions((prev) => [
       ...prev,
       {
@@ -1856,8 +2110,10 @@ const EditPanel = ({
         title: `Option ${prev.length + 1}`,
         description: "",
         metadata: "",
+        image: dropImageSrc || "",
       },
     ]);
+    setDropImageSrc(null);
   };
 
   const handleSaveDropdown = () => {
@@ -1888,7 +2144,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.dropdown).length
       : 0;
 
-    const id = `dropdown_${existingCount + 1}`;
+    // const id = `dropdown_${existingCount + 1}`;
+    const id = existingCount[0] || "dropdown_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1906,6 +2163,60 @@ const EditPanel = ({
       updatedData
     );
   };
+
+  // const handleSaveDropdown = async () => {
+  //   const filteredOptions = options.filter((o) => o.title.trim());
+
+  //   if (filteredOptions.length < 2) {
+  //     toast.error("At least two Dropdown options are required!");
+  //     return;
+  //   }
+
+  //   const payloadOptions = await Promise.all(
+  //     filteredOptions.map(async (opt, idx) => {
+  //       let imagePath = opt.image; // default is already string (url)
+
+  //       // If image is a File, upload it
+  //       if (opt.image instanceof File) {
+  //         const uploadedUrl = await uploadImageToServer(opt.image);
+  //         imagePath = uploadedUrl || "";
+  //       }
+
+  //       return {
+  //         id: idx + 1,
+  //         title: opt.title.trim(),
+  //         description: opt.description?.trim() || "",
+  //         metadata: opt.metadata?.trim() || "",
+  //         image: imagePath,
+  //       };
+  //     })
+  //   );
+
+  //   const payload = {
+  //     label: mainLabelDropdown.trim(),
+  //     required: dropdownRequired,
+  //     "data-source": payloadOptions,
+  //   };
+
+  //   const existingCount = selectedItem?.dropdown
+  //     ? Object.keys(selectedItem.dropdown).length
+  //     : 0;
+
+  //   const id = `dropdown_${existingCount + 1}`;
+
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //     dropdown: {
+  //       ...(selectedItem?.dropdown || {}),
+  //       [id]: payload,
+  //     },
+  //   };
+
+  //   onSave(updatedData);
+  //   onClose();
+  // };
+
   // dropdown
   // akhil
 
@@ -1923,7 +2234,10 @@ const EditPanel = ({
       setChipSelectorLabel(selectedItem.label || "");
       setChipTitle(selectedItem.title || "");
       setChipDescription(selectedItem.description || "");
-      setValueSelection(selectedItem["min-selected-items"] || "");
+      setValueSelection(selectedItem["max-selected-items"] || ""); // correct key
+
+      // If you want to prefill the options (data-source)
+      setChipSelectorOptions(selectedItem["data-source"] || []);
     }
   }, [selectedItem]);
 
@@ -1941,10 +2255,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-            ...o,
-            // name: chipName.trim(),
-            title: chipTitle.trim(),
-          }
+              ...o,
+              // name: chipName.trim(),
+              title: chipTitle.trim(),
+            }
           : o
       )
     );
@@ -1969,6 +2283,10 @@ const EditPanel = ({
   };
 
   const handleAddNewChipSelector = () => {
+    if (chipSelectorOptions.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setChipSelectorOptions((prev) => [
       ...prev,
       {
@@ -2002,7 +2320,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.chipSelector).length
       : 0;
 
-    const id = `chipSelector_${existingCount + 1}`;
+    // const id = `chipSelector_${existingCount + 1}`;
+    const id = existingCount[0] || `chipSelector_${existingCount + 1}`;
 
     const updatedData = {
       ...selectedItem,
@@ -2027,6 +2346,28 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+  const textRef = useRef(null);
+
+  const handleEmojiSelect = (setState, emoji, maxLength) => {
+    if (!textRef.current) return;
+
+    const text = textRef.current;
+    const start = text.selectionStart;
+    const end = text.selectionEnd;
+    const current = text.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        text.focus();
+        text.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
+
   const headingSave = () => {
     if (!headingInput) {
       toast.error("Heading Required");
@@ -2048,6 +2389,7 @@ const EditPanel = ({
 
   // sub-heading
   const [subheadingInput, setSubheadingInput] = useState("");
+
   useEffect(() => {
     if (selectedItem) {
       setSubheadingInput(selectedItem.text || "");
@@ -2055,6 +2397,28 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+
+  const subheadingRef = useRef(null);
+
+  const handleSubheadingEmojiSelect = (setState, emoji, maxLength) => {
+    if (!subheadingRef.current) return;
+
+    const subheading = subheadingRef.current;
+    const start = subheading.selectionStart;
+    const end = subheading.selectionEnd;
+    const current = subheading.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        subheading.focus();
+        subheading.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
 
   const handleSubheadingSave = () => {
     if (!subheadingInput) {
@@ -2086,6 +2450,28 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+  const textBodyRef = useRef(null);
+
+  const handleTextBodyEmojiSelect = (setState, emoji, maxLength) => {
+    if (!textBodyRef.current) return;
+
+    const textBody = textBodyRef.current;
+    const start = textBody.selectionStart;
+    const end = textBody.selectionEnd;
+    const current = textBody.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textBody.focus();
+        textBody.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
+
   const handleTextbodySave = () => {
     if (!textbodyInput.trim()) {
       toast.error("Textbody Required");
@@ -2115,6 +2501,28 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+
+  const textCaptionRef = useRef(null);
+
+  const handleTextCaptionSelectEmoji = (setState, emoji, maxLength) => {
+    if (!textCaptionRef.current) return;
+
+    const textCaption = textCaptionRef.current;
+    const start = textCaption.selectionStart;
+    const end = textCaption.selectionEnd;
+    const current = textCaption.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textCaption.focus();
+        textCaption.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
 
   const handleTextCaptionSave = () => {
     if (!textcaptionInput.trim()) {
@@ -2151,7 +2559,7 @@ const EditPanel = ({
       setInputPlaceholder(selectedItem["helper-text"] || "");
       setInputError(selectedItem["error-message"] || "");
       setInputRequired(selectedItem.required ?? false);
-      setInputName(selectedItem.name || "");
+
       setInputMin(
         typeof selectedItem["min-chars"] === "number"
           ? selectedItem["min-chars"]
@@ -2253,6 +2661,10 @@ const EditPanel = ({
     onClose();
   };
 
+  // useEffect(() => {
+  //   console.log("123", tabs);
+  // }, [tabs]);
+
   // textArea
   const [textAreaLabel, setTextAreaLabel] = useState("");
   const [textAreaPlaceholder, setTextAreaPlaceholder] = useState("");
@@ -2302,6 +2714,9 @@ const EditPanel = ({
     onClose();
   };
 
+  // // switch
+  // const [addCases, setAddCases] = useState("")
+
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -2311,22 +2726,15 @@ const EditPanel = ({
 
   return (
     <Box>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         <motion.div
           initial={{ opacity: 0, x: 30 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: 30 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
-          className="bg-white z-10 p-3 absolute right-3 w-80 top-18 border-2 rounded-xl shadow-sm border-gray-200"
+          className="bg-gray-100 z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
         >
-          {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <Typography variant="h6">Edit Item</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon fontSize="small" />
-            </IconButton>
-            </Box> */}
-
           <div className="flex items-center justify-between border-b-2">
             <label className="text-sm font-semibold text-gray-700 tracking-wide">
               Edit Item
@@ -2336,6 +2744,13 @@ const EditPanel = ({
             </IconButton>
           </div>
 
+          {/* if-else condition */}
+          {selectedCondition && (
+            <h2 className="text-xl font-semibold mb-2 top-0">
+              {selectedCondition}
+            </h2>
+          )}
+          {/* if-else condition */}
           {/* Input Fields for Text-Based Items */}
           {/* {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
@@ -2368,16 +2783,9 @@ const EditPanel = ({
         )} */}
 
           {/* new */}
-          {(selectedItem?.type === "heading" ||
-            selectedThenComponent === "heading" ||
-            selectedElseComponent === "heading") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "heading"
-                  ? "Then Component"
-                  : selectedElseComponent === "heading"
-                    ? "Else Component" : ""
-                }
-                <InputField
+          {selectedItem?.type === "heading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              {/* <InputField
                   label="Heading"
                   placeholder="Enter Text for  Heading"
                   variant="outlined"
@@ -2388,22 +2796,65 @@ const EditPanel = ({
                   type="text"
                   maxLength={80}
                   onChange={(e) => setHeadingInput(e.target.value)}
+                /> */}
+              <div className="relative">
+                <UniversalTextArea
+                  label="Heading"
+                  placeholder="Enter Text for Heading"
+                  variant="outlined"
+                  tooltipContent="Max 80 character allowed"
+                  tooltipPlacement="right"
+                  fullWidth
+                  value={headingInput}
+                  type="text"
+                  maxLength={80}
+                  onChange={(e) => setHeadingInput(e.target.value)}
+                  textareaClassName="font-semibold h-40"
+                  ref={textRef}
                 />
-                <div className="flex justify-center">
-                  {selectedItem?.type === "heading" ? (
-                    <UniversalButton label="Save" onClick={headingSave} />
-                  ) : (
-                    ""
-                  )}
+                <p className="text-gray-600 text-xs">
+                  Chars: {headingInput.length}/80
+                </p>
+
+                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                  <CustomEmojiPicker
+                    onSelect={(emoji) =>
+                      handleEmojiSelect(setHeadingInput, emoji, 80)
+                    }
+                    position="right"
+                  />
                 </div>
               </div>
-            )}
 
-          {(selectedItem?.type === "subheading" ||
-            selectedThenComponent === "subHeading" ||
-            selectedElseComponent === "subHeading") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={headingSave} />
+              </div>
+            </div>
+          )}
+
+          {/* {selectedItem?.type === "heading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+              <InputField
+                label="Heading"
+                placeholder="Enter Text for Heading"
+                variant="outlined"
+                tooltipContent="Enter Text for Heading"
+                tooltipPlacement="right"
+                fullWidth
+                value={headingInput}
+                type="text"
+                maxLength={80}
+                onChange={(e) => setHeadingInput(e.target.value)}
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={headingSave} />
+              </div>
+            </div>
+          )} */}
+
+          {selectedItem?.type === "subheading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              {/* <InputField
                   label="Sub-Heading"
                   placeholder="Enter Text for Sub-Heading "
                   tooltipContent="Enter Text for  Sub-Heading"
@@ -2413,25 +2864,43 @@ const EditPanel = ({
                   value={subheadingInput}
                   onChange={(e) => setSubheadingInput(e.target.value)}
                   fullWidth
+                /> */}
+
+              <div className="relative">
+                <UniversalTextArea
+                  label="Sub-Heading"
+                  placeholder="Enter Text for Sub-Heading "
+                  tooltipContent="Max 80 character allowed"
+                  tooltipPlacement="right"
+                  type="text"
+                  maxLength={80}
+                  value={subheadingInput}
+                  onChange={(e) => setSubheadingInput(e.target.value)}
+                  fullWidth
+                  textareaClassName="font-semibold h-40"
+                  ref={subheadingRef}
                 />
-                <div className="flex justify-center">
-                  {selectedItem?.type === "subheading" ? (
-                    <UniversalButton
-                      label="Save"
-                      onClick={handleSubheadingSave}
-                    />
-                  ) : (
-                    ""
-                  )}
+                <p className="text-gray-600 text-xs">
+                  Chars: {subheadingInput.length}/80
+                </p>
+                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2">
+                  <CustomEmojiPicker
+                    onSelect={(emoji) =>
+                      handleSubheadingEmojiSelect(setSubheadingInput, emoji, 80)
+                    }
+                    position="right"
+                  />
                 </div>
               </div>
-            )}
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleSubheadingSave} />
+              </div>
+            </div>
+          )}
 
-          {(selectedItem?.type === "textbody" ||
-            selectedThenComponent === "textBody" ||
-            selectedElseComponent === "textBody") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+          {selectedItem?.type === "textbody" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
+              {/* <InputField
                   label="TextBody"
                   placeholder="Enter Text for TextBody "
                   tooltipContent="Enter Text for  TextBody"
@@ -2441,173 +2910,217 @@ const EditPanel = ({
                   value={textbodyInput}
                   onChange={(e) => setTextbodyInput(e.target.value)}
                   fullWidth
+                /> */}
+
+              <div className="relative">
+                <UniversalTextArea
+                  label="TextBody"
+                  placeholder="Enter Text for TextBody "
+                  tooltipContent="Max 4096 character allowed"
+                  tooltipPlacement="right"
+                  type="text"
+                  maxLength={4096}
+                  value={textbodyInput}
+                  onChange={(e) => setTextbodyInput(e.target.value)}
+                  fullWidth
+                  textareaClassName="font-semibold h-40"
+                  ref={textBodyRef}
                 />
-                <div className="flex justify-center">
-                  {selectedItem?.type === "textbody" ? (
-                    <UniversalButton label="Save" onClick={handleTextbodySave} />
-                  ) : (
-                    ""
-                  )}
+                <p className="text-gray-600 text-xs">
+                  Chars: {textbodyInput.length}/4096
+                </p>
+
+                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                  <CustomEmojiPicker
+                    onSelect={(emoji) =>
+                      handleTextBodyEmojiSelect(setTextbodyInput, emoji, 4096)
+                    }
+                    position="right"
+                  />
                 </div>
               </div>
-            )}
 
-          {(selectedItem?.type === "textcaption" ||
-            selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleTextbodySave} />
+              </div>
+            </div>
+          )}
+
+          {selectedItem?.type === "textcaption" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+              {/* <InputField
                   label="TextCaption"
                   placeholder="Enter Text for text caption"
                   tooltipContent="Enter Text for text caption"
                   tooltipPlacement="right"
                   type="text"
                   maxLength={409}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
+                  value={textcaptionInput}
+                  onChange={(e) => setTextcaptionInput(e.target.value)}
                   fullWidth
+                /> */}
+              <div className="relative">
+                <UniversalTextArea
+                  label="TextCaption"
+                  placeholder="Enter Text for text caption"
+                  tooltipContent="Max 409 character allowed"
+                  tooltipPlacement="right"
+                  type="text"
+                  maxLength={409}
+                  value={textcaptionInput}
+                  onChange={(e) => setTextcaptionInput(e.target.value)}
+                  fullWidth
+                  textareaClassName="font-semibold h-40"
+                  ref={textCaptionRef}
                 />
-                <div className="flex justify-center">
-                  {selectedItem?.type === "textcaption" ? (
-                    <UniversalButton label="Save" onClick={handleTextbodySave} />
-                  ) : (
-                    ""
-                  )}
+                <p className="text-gray-600 text-xs">
+                  Chars: {textcaptionInput.length}/409
+                </p>
+
+                <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                  <CustomEmojiPicker
+                    onSelect={(emoji) =>
+                      handleTextCaptionSelectEmoji(
+                        setTextcaptionInput,
+                        emoji,
+                        409
+                      )
+                    }
+                    position="right"
+                  />
                 </div>
               </div>
-            )}
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={handleTextCaptionSave} />
+              </div>
+            </div>
+          )}
 
-          {(selectedItem?.type === "textInput" || selectedThenComponent === "textInput" ||
-            selectedElseComponent === "textInput") && (
-              <div className="mb-2 text-lg space-y-2 mt-3">
-                <InputField
-                  label="Input Label"
-                  id="mainlabel"
-                  placeholder="Enter Input label"
-                  tooltipContent="Enter Input label"
-                  tooltipPlacement="right"
-                  value={inputLabel}
-                  onChange={(e) => setInputLabel(e.target.value)}
-                  maxLength={20}
-                />
-
-                <AnimatedDropdown
-                  label="Select Input Type"
-                  tooltipContent="Select input type (select text for default)"
-                  tooltipPlacement="right"
-                  options={OptionsTypeOptions}
-                  value={selectedOptionsType?.value || ""}
-                  onChange={handleDropdownChange}
-                  placeholder="Select Type"
-                />
-
-                <InputField
-                  label="Helper-Text"
-                  type="text"
-                  placeholder="Enter helper text"
-                  tooltipContent="Enter placeholder for helper-text"
-                  tooltipPlacement="right"
-                  value={inputPlaceholder}
-                  maxLength={80}
-                  onChange={(e) => setInputPlaceholder(e.target.value)}
-                />
-
-                {/* <InputField
-                label="Name"
-                placeholder="Enter Name"
-                tooltipContent="Enter name for input field"
+          {selectedItem?.type === "textInput" && (
+            <div className="mb-2 text-lg space-y-2 mt-3">
+              {selectedThenComponent === "textInput"
+                ? "Then Component"
+                : selectedElseComponent === "textInput"
+                ? "Else Component"
+                : ""}
+              <InputField
+                label="Input Label"
+                id="mainlabel"
+                placeholder="Enter Input label"
+                tooltipContent="Enter Input label"
                 tooltipPlacement="right"
-                value={inputName}
-                onChange={handleInputChange}
-              /> */}
+                value={inputLabel}
+                onChange={(e) => setInputLabel(e.target.value)}
+                maxLength={20}
+              />
 
+              <AnimatedDropdown
+                label="Select Input Type"
+                tooltipContent="Select input type (select text for default)"
+                tooltipPlacement="right"
+                options={OptionsTypeOptions}
+                value={selectedOptionsType?.value || ""}
+                onChange={handleDropdownChange}
+                placeholder="Select Type"
+              />
+
+              <InputField
+                label="Helper-Text"
+                type="text"
+                placeholder="Enter helper text"
+                tooltipContent="Enter placeholder for helper-text"
+                tooltipPlacement="right"
+                value={inputPlaceholder}
+                maxLength={80}
+                onChange={(e) => setInputPlaceholder(e.target.value)}
+              />
+
+              <InputField
+                label="Enter error to display"
+                id="mainerror"
+                placeholder="Enter Error"
+                tooltipContent="Enter error for input"
+                tooltipPlacement="right"
+                value={inputError}
+                maxLength={30}
+                onChange={(e) => setInputError(e.target.value)}
+              />
+
+              <div className="flex gap-2">
                 <InputField
-                  label="Enter error to display"
-                  id="mainerror"
-                  placeholder="Enter Error"
-                  tooltipContent="Enter error for input"
+                  label="Min Length"
+                  id="min"
+                  type="number"
+                  placeholder="Min Length"
+                  tooltipContent="Enter minimum length"
                   tooltipPlacement="right"
-                  value={inputError}
-                  maxLength={30}
-                  onChange={(e) => setInputError(e.target.value)}
+                  value={inputMin}
+                  onChange={handleMinChange}
+                  autoComplete="off"
                 />
+                <InputField
+                  label="Max Length"
+                  id="max"
+                  type="number"
+                  placeholder="Max Length"
+                  tooltipContent="Enter maximum length"
+                  tooltipPlacement="right"
+                  value={inputMax}
+                  onChange={handleMaxChange}
+                  autoComplete="off"
+                />
+              </div>
 
-                <div className="flex gap-2">
-                  <InputField
-                    label="Min Length"
-                    id="min"
-                    type="number"
-                    placeholder="Min Length"
-                    tooltipContent="Enter minimum length"
-                    tooltipPlacement="right"
-                    value={inputMin}
-                    onChange={handleMinChange}
-                    autoComplete="off"
+              <div className="flex items-center gap-2">
+                <UniversalLabel
+                  htmlFor="required"
+                  className="text-sm font-medium text-gray-700"
+                  text=" Required?"
+                  tooltipContent="Set required field for TextArea"
+                  tooltipPlacement="top"
+                ></UniversalLabel>
+                <div className="flex items-center">
+                  <Switch
+                    checked={inputRequired}
+                    onChange={handleInputReqChange}
+                    id="required"
                   />
-                  <InputField
-                    label="Max Length"
-                    id="max"
-                    type="number"
-                    placeholder="Max Length"
-                    tooltipContent="Enter maximum length"
-                    tooltipPlacement="right"
-                    value={inputMax}
-                    onChange={handleMaxChange}
-                    autoComplete="off"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <UniversalLabel
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    text=" Required?"
-                    tooltipContent="Set required field for TextArea"
-                    tooltipPlacement="top"
-                  ></UniversalLabel>
-                  <div className="flex items-center">
-                    <Switch
-                      checked={inputRequired}
-                      onChange={handleInputReqChange}
-                      id="required"
-                    />
-                    <span className="text-sm">
-                      {inputRequired ? "True" : "False"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex justify-center items-center">
-                  {selectedItem?.type === "textInput" && <UniversalButton label="Save" onClick={handleInputSave} />}
+                  <span className="text-sm">
+                    {inputRequired ? "True" : "False"}
+                  </span>
                 </div>
               </div>
-            )}
 
-          {(selectedItem?.type === "textArea" || selectedThenComponent === "textArea" ||
-            selectedElseComponent === "textArea") && (
-              <div className="mb-2 text-lg space-y-2 mt-3">
-                <InputField
-                  label="Edit TextArea"
-                  id="textarea_label"
-                  placeholder="Enter TextArea Label"
-                  tooltipContent="Edit TextArea Label"
-                  tooltipPlacement="right"
-                  value={textAreaLabel}
-                  maxLength={20}
-                  onChange={(e) => setTextAreaLabel(e.target.value)}
-                />
+              <div className="flex justify-center items-center">
+                <UniversalButton label="Save" onClick={handleInputSave} />
+              </div>
+            </div>
+          )}
 
-                <InputField
-                  label="Helper-Text"
-                  type="text"
-                  placeholder="Enter placeholder for TextArea"
-                  tooltipContent="Enter placeholder"
-                  tooltipPlacement="right"
-                  value={textAreaPlaceholder}
-                  maxLength={80}
-                  onChange={(e) => setTextAreaPlaceholder(e.target.value)}
-                />
-                {/* <InputField
+          {selectedItem?.type === "textArea" && (
+            <div className="mb-2 text-lg space-y-2 mt-3">
+              <InputField
+                label="Edit TextArea"
+                id="textarea_label"
+                placeholder="Enter TextArea Label"
+                tooltipContent="Edit TextArea Label"
+                tooltipPlacement="right"
+                value={textAreaLabel}
+                maxLength={20}
+                onChange={(e) => setTextAreaLabel(e.target.value)}
+              />
+
+              <InputField
+                label="Helper-Text"
+                type="text"
+                placeholder="Enter placeholder for TextArea"
+                tooltipContent="Enter placeholder"
+                tooltipPlacement="right"
+                value={textAreaPlaceholder}
+                maxLength={80}
+                onChange={(e) => setTextAreaPlaceholder(e.target.value)}
+              />
+              {/* <InputField
                 label="Name"
                 placeholder="Enter Name"
                 tooltipContent="Enter name for TextArea"
@@ -2616,18 +3129,17 @@ const EditPanel = ({
                 onChange={(e) => setTextAreaName(e.target.value)}
               /> */}
 
-                <InputField
-                  label="Enter error to display"
-                  id="textarea_error"
-                  placeholder="Enter Error"
-                  tooltipContent="Enter Error for TextArea"
-                  tooltipPlacement="right"
-                  value={textAreaError}
-                  maxLength={30}
-                  onChange={(e) => setTextAreaError(e.target.value)}
-                />
+              <InputField
+                label="Enter error to display"
+                id="textarea_error"
+                placeholder="Enter Error"
+                tooltipContent="Enter Error for TextArea"
+                tooltipPlacement="right"
+                value={textAreaError}
+                onChange={(e) => setTextAreaError(e.target.value)}
+              />
 
-                {/* <div className="flex gap-8">
+              {/* <div className="flex gap-8">
               <InputField
                 label="Min Length"
                 id="textarea_min"
@@ -2652,506 +3164,346 @@ const EditPanel = ({
               />
             </div> */}
 
-                <div className="flex items-end">
-                  <UniversalLabel
-                    htmlFor="textarea_required"
-                    className="text-sm font-medium text-gray-700"
-                    tooltipContent="Set required field for TextArea"
-                    tooltipPlacement="top"
-                    text="Required?"
-                  ></UniversalLabel>
-                  <div className="flex items-center">
-                    <Switch
-                      checked={textAreaRequired}
-                      onChange={(e) => handleTextAreaChange(e.target.checked)}
-                      id="textarea_required"
-                    />
-                    <span className="text-sm">
-                      {textAreaRequired ? "True" : "False"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex justify-center items-center">
-                  {selectedItem?.type === "textArea" && <UniversalButton label="SAVE" onClick={handleTextSave} />}
+              <div className="flex items-end">
+                <UniversalLabel
+                  htmlFor="textarea_required"
+                  className="text-sm font-medium text-gray-700"
+                  tooltipContent="Set required field for TextArea"
+                  tooltipPlacement="top"
+                  text="Required?"
+                ></UniversalLabel>
+                <div className="flex items-center">
+                  <Switch
+                    checked={textAreaRequired}
+                    onChange={(e) => handleTextAreaChange(e.target.checked)}
+                    id="textarea_required"
+                  />
+                  <span className="text-sm">
+                    {textAreaRequired ? "True" : "False"}
+                  </span>
                 </div>
               </div>
-            )}
 
+              <div className="flex justify-center items-center">
+                <UniversalButton label="SAVE" onClick={handleTextSave} />
+              </div>
+            </div>
+          )}
           {/* NEW */}
 
+          {selectedItem?.type === "richText" && (
+            <RichTextEditor
+              content={selectedItem.content || ""}
+              text={selectedItem.text || []}
+              onUpdate={(payload) => {
+                handleComponentUpdate(payload);
+                onClose();
+              }}
+              selectedItem={selectedItem}
+            />
+          )}
+
           {/* Editable Options for Checkboxes */}
-          {(selectedItem?.type === "checkBox" || selectedThenComponent === "checkBox" ||
-            selectedElseComponent === "checkBox") && (
-              <FormControl fullWidth>
-                <div className="mb-2, mt-3, space-y-3 ">
-                  <InputField
-                    label="Checkbox Group Label"
-                    tooltipContent="Enter Checkbox Group Label "
-                    tooltipPlacement="right"
-                    value={mainLabelCheckbox}
-                    onChange={(e) => setMainLabelCheckbox(e.target.value)}
-                    placeholder="Enter label"
-                    fullWidth
-                  />
-                  <div className="mt-2">
-                    <UniversalLabel
-                      htmlFor="checkbox_required"
-                      className="text-sm font-medium text-gray-700"
-                      tooltipContent="Set required field for Checkbox"
-                      tooltipPlacement="top"
-                      text="Required"
-                    ></UniversalLabel>
-                    <div className="flex items-center gap-2 ">
-                      <Switch
-                        checked={checkboxRequired}
-                        onChange={handleCheckboxRequiredChange}
-                        id="required"
-                      />
-                      <span>{checkboxRequired ? "True" : "False"}</span>
-                    </div>
+          {selectedItem?.type === "checkBox" && (
+            <FormControl fullWidth>
+              <div className="mb-2 mt-3 space-y-3">
+                <InputField
+                  label="Checkbox Group Label"
+                  tooltipContent="Enter Checkbox Group Label "
+                  tooltipPlacement="right"
+                  value={mainLabelCheckbox}
+                  maxLength={30}
+                  onChange={(e) => setMainLabelCheckbox(e.target.value)}
+                  placeholder="Enter label"
+                  fullWidth
+                />
+                <div className="mt-2">
+                  <UniversalLabel
+                    htmlFor="checkbox_required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipContent="Set required field for Checkbox"
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={checkboxRequired}
+                      onChange={handleCheckboxRequiredChange}
+                      id="required"
+                    />
+                    <span>{checkboxRequired ? "True" : "False"}</span>
                   </div>
                 </div>
+              </div>
 
-                {checkBoxes.map((opt, idx) => {
-                  const isEditing = idx === checkboxEditIdx;
-                  return (
-                    <Box
-                      key={opt.id}
-                      sx={{
-                        mb: 1,
-                        p: 1,
-                        border: "1px solid #ccc",
-                        borderRadius: 1,
-                        bgcolor: isEditing ? "#f5f5f5" : "white",
-                      }}
-                    >
-                      {isEditing ? (
-                        <>
-                          <div className="space-y-3">
+              {checkBoxes.map((opt, idx) => {
+                const isEditing = idx === checkboxEditIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ccc",
+                      borderRadius: 1,
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <>
+                        <div className="space-y-3">
+                          <InputField
+                            label="Title"
+                            placeholder="Enter Title"
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            value={draftCheckbox.title}
+                            maxLength={30}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                title: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Description"
+                            placeholder="Enter Description"
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            maxLength={300}
+                            value={draftCheckbox.description}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                description: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Metadata"
+                            placeholder="Enter MetaData"
+                            tooltipContent="Enter MetaData"
+                            tooltipPlacement="right"
+                            required={true}
+                            maxLength={20}
+                            value={draftCheckbox.metadata}
+                            onChange={(e) =>
+                              setDraftCheckbox((d) => ({
+                                ...d,
+                                metadata: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+
+                          <Box sx={{ display: "flex", mb: 1 }}>
                             <InputField
-                              label="Title"
-                              placeholder="Enter Title"
-                              tooltipContent="Enter Title"
-                              tooltipPlacement="right"
-                              value={draftCheckbox.title}
-                              onChange={(e) =>
-                                setDraftCheckbox((d) => ({
-                                  ...d,
-                                  title: e.target.value,
-                                }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
-                            />
-                            <InputField
-                              label="Description"
-                              placeholder="Enter Description"
-                              tooltipContent="Enter Description"
-                              tooltipPlacement="right"
-                              value={draftCheckbox.description}
-                              onChange={(e) =>
-                                setDraftCheckbox((d) => ({
-                                  ...d,
-                                  description: e.target.value,
-                                }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
-                            />
-                            <InputField
-                              label="Metadata"
-                              placeholder="Enter MetaData"
-                              tooltipContent="Enter MetaData"
+                              label="Upload Image"
+                              type="file"
+                              id="checkbox-file-upload"
+                              accept=".png, .jpeg"
+                              tooltipContent="Upload Image"
                               tooltipPlacement="right"
                               required={true}
-                              value={draftCheckbox.metadata}
-                              onChange={(e) =>
-                                setDraftCheckbox((d) => ({
-                                  ...d,
-                                  metadata: e.target.value,
-                                }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
+                              onChange={handleCheckboxImageChange}
+                              ref={checkboxImageInputRef}
                             />
 
-                            <Box sx={{ display: "flex", mb: 1 }}>
-                              <InputField
-                                label="Upload Image"
-                                type="file"
-                                id="checkbox-file-upload"
-                                accept=".png, .jpeg"
-                                tooltipContent="Upload Image"
-                                tooltipPlacement="right"
-                                required={true}
-                                onChange={handleCheckboxImageChange}
-                                ref={checkboxImageInputRef}
+                            <button onClick={handleCheckboxFileDelete}>
+                              <DeleteOutlineIcon
+                                sx={{
+                                  fontSize: "23px",
+                                  marginTop: 3,
+                                  color: "#ef4444",
+                                }}
                               />
-                              <button onClick={handleCheckboxUploadFile}>
-                                <FileUploadOutlinedIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
-
-                              <button onClick={handleCheckboxFileDelete}>
-                                <DeleteOutlineIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
-                            </Box>
-
-                            <Box
-                              sx={{
-                                display: "flex",
-                                gap: 2,
-                                mt: 2,
-                                justifyContent: "center",
-                              }}
-                            >
-                              <UniversalButton
-                                label="Save"
-                                disabled={!draftCheckbox.metadata.trim()}
-                                onClick={handleSaveInlineCheckbox}
-                              />
-                              <UniversalButton
-                                label="Cancel"
-                                onClick={handleCancelInlineCheckbox}
-                              />
-                            </Box>
-                          </div>
-                        </>
-                      ) : (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Box
-                            sx={{ flexGrow: 1 }}
-                            onClick={() => handleCheckboxEdit(idx)}
-                          >
-                            <Typography variant="subtitle1">
-                              {opt.title}
-                            </Typography>
-                            <Typography variant="body2">
-                              {opt.description}
-                            </Typography>
+                            </button>
                           </Box>
-                          <IconButton onClick={() => handleCheckboxEdit(idx)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton onClick={() => handleRemoveCheckbox(idx)}>
-                            <CloseIcon />
-                          </IconButton>
+
+                          <Box
+                            sx={{
+                              display: "flex",
+                              gap: 2,
+                              mt: 2,
+                              justifyContent: "center",
+                            }}
+                          >
+                            <UniversalButton
+                              label="Save"
+                              disabled={!draftCheckbox.metadata.trim()}
+                              onClick={handleSaveInlineCheckbox}
+                            />
+                            <UniversalButton
+                              label="Cancel"
+                              onClick={handleCancelInlineCheckbox}
+                            />
+                          </Box>
+                        </div>
+                      </>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Box
+                          sx={{ flexGrow: 1, minWidth: 0 }}
+                          onClick={() => handleCheckboxEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              wordWrap: "break-word",
+                              overflowWrap: "break-word",
+                            }}
+                          >
+                            {opt.description}
+                          </Typography>
                         </Box>
-                      )}
-                    </Box>
-                  );
-                })}
-                <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
-                  <UniversalButton
-                    label="AddOptions"
-                    onClick={handleCheckboxAddNew}
-                  />
+                        <IconButton onClick={() => handleCheckboxEdit(idx)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleRemoveCheckbox(idx)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Box>
+                    )}
+                  </Box>
+                );
+              })}
+              <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+                <UniversalButton
+                  label="AddOptions"
+                  onClick={handleCheckboxAddNew}
+                />
 
-                  {selectedItem?.type === "checkBox" && <UniversalButton
-                    label="Save Checkbox"
-                    onClick={handleCheckBoxSave}
-                  />}
-
-                </div>
-              </FormControl>
-            )}
+                <UniversalButton
+                  label="Save Checkbox"
+                  onClick={handleCheckBoxSave}
+                />
+              </div>
+            </FormControl>
+          )}
 
           {/* Editable Options for Radio Buttons */}
-          {(selectedItem?.type === "radioButton" || selectedThenComponent === "radioButton" ||
-            selectedElseComponent === "radioButton") && (
-              <FormControl fullWidth>
-                <div className="mb-2, mt-3">
-                  <InputField
-                    label="Radio Group Label"
-                    tooltipContent="Enter Radio Group Label"
-                    tooltipPlacement="right"
-                    value={radioBtnLabel}
-                    onChange={(e) => setRadioBtnLabel(e.target.value)}
-                    placeholder="Enter label"
-                    fullWidth
-                  />
+          {selectedItem?.type === "radioButton" && (
+            <FormControl fullWidth>
+              <div className="mb-2 mt-3">
+                {selectedThenComponent === "radioButton"
+                  ? "Then Component"
+                  : selectedElseComponent === "radioButton"
+                  ? "Else Component"
+                  : ""}
+                <InputField
+                  label="Radio Group Label"
+                  tooltipContent="Enter Radio Group Label"
+                  tooltipPlacement="right"
+                  maxLength={30}
+                  value={radioBtnLabel}
+                  onChange={(e) => setRadioBtnLabel(e.target.value)}
+                  placeholder="Enter label"
+                  fullWidth
+                />
 
-                  <div className="mt-2">
-                    <UniversalLabel
-                      htmlFor="radio_required"
-                      className="text-sm font-medium text-gray-700"
-                      tooltipContent="Select an option which required for you."
-                      tooltipPlacement="top"
-                      text="Required"
-                    ></UniversalLabel>
-                    <div className="flex items-center gap-2 ">
-                      <Switch
-                        checked={radioRequired}
-                        onChange={handleRadioRequiredChange}
-                        id="required"
-                      />
-                      <span>{radioRequired ? "True" : "False"}</span>
-                    </div>
+                <div className="mt-2">
+                  <UniversalLabel
+                    htmlFor="radio_required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipContent="Select an option which required for you."
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={radioRequired}
+                      onChange={handleRadioRequiredChange}
+                      id="required"
+                    />
+                    <span>{radioRequired ? "True" : "False"}</span>
                   </div>
                 </div>
+              </div>
 
-                {radioButtonOptions.map((opt, idx) => {
-                  const isEditing = idx === radiobtnEditIdx;
-                  return (
-                    <Box
-                      key={opt.id}
-                      sx={{
-                        mb: 1,
-                        p: 1,
-                        border: "1px solid #ccc",
-                        borderRadius: 1,
-                        bgcolor: isEditing ? "#f5f5f5" : "white",
-                      }}
-                    >
-                      {isEditing ? (
-                        <>
-                          <div className="space-y-3">
-                            <InputField
-                              label="Title"
-                              placeholder="Enter Title"
-                              tooltipContent="Enter Title"
-                              tooltipPlacement="right"
-                              value={draft.title}
-                              onChange={(e) =>
-                                setDraft((d) => ({ ...d, title: e.target.value }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
-                            />
-                            <InputField
-                              label="Description"
-                              placeholder="Enter Description"
-                              tooltipContent="Enter Description"
-                              tooltipPlacement="right"
-                              value={draft.description}
-                              onChange={(e) =>
-                                setDraft((d) => ({
-                                  ...d,
-                                  description: e.target.value,
-                                }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
-                            />
-                            <InputField
-                              label="Metadata"
-                              placeholder="Enter MetaData"
-                              tooltipContent="Enter MetaData"
-                              tooltipPlacement="right"
-                              required={true}
-                              value={draft.metadata.trim()}
-                              onChange={(e) =>
-                                setDraft((d) => ({
-                                  ...d,
-                                  metadata: e.target.value,
-                                }))
-                              }
-                              fullWidth
-                              sx={{ mb: 1 }}
-                            />
-                            {/* <InputField
+              {radioButtonOptions.map((opt, idx) => {
+                const isEditing = idx === radiobtnEditIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ccc",
+                      borderRadius: 1,
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <>
+                        <div className="space-y-3">
+                          <InputField
+                            label="Title"
+                            placeholder="Enter Title"
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            maxLength={30}
+                            value={draft.title}
+                            onChange={(e) =>
+                              setDraft((d) => ({ ...d, title: e.target.value }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Description"
+                            placeholder="Enter Description"
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            maxLength={300}
+                            value={draft.description}
+                            onChange={(e) =>
+                              setDraft((d) => ({
+                                ...d,
+                                description: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          <InputField
+                            label="Metadata"
+                            placeholder="Enter MetaData"
+                            tooltipContent="Enter MetaData"
+                            tooltipPlacement="right"
+                            required={true}
+                            maxLength={20}
+                            value={draft.metadata.trim()}
+                            onChange={(e) =>
+                              setDraft((d) => ({
+                                ...d,
+                                metadata: e.target.value,
+                              }))
+                            }
+                            fullWidth
+                            sx={{ mb: 1 }}
+                          />
+                          {/* <InputField
                         label="Alt Text"
                         value={draft.altText}
                         onChange={(e) => setDraft((d) => ({ ...d, altText: e.target.value }))}
                         fullWidth
                         sx={{ mb: 1 }}
                        /> */}
-                            <Box sx={{ display: "flex", mb: 1 }}>
-                              <InputField
-                                label="Upload Image"
-                                type="file"
-                                id="file-upload"
-                                accept=".png, .jpeg"
-                                tooltipContent="Upload Image"
-                                tooltipPlacement="right"
-                                required
-                                onChange={handleRadioImageChange}
-                                ref={radioImageInputRef}
-                              />
-                              <button onClick={handleRadioUploadFile}>
-                                <FileUploadOutlinedIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
-                              <button onClick={handleDeleteRadioFile}>
-                                <DeleteOutlineIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
-                            </Box>
 
-                            <Box
-                              sx={{
-                                display: "flex",
-                                gap: 2,
-                                marginTop: 2,
-                                justifyContent: "center",
-                              }}
-                            >
-                              <UniversalButton
-                                label="Save"
-                                disabled={!draft.metadata.trim()}
-                                onClick={handleSaveInlineRadio}
-                              />
-                              <UniversalButton
-                                label="Cancel"
-                                onClick={handleCancelInlineRadio}
-                              />
-                            </Box>
-                          </div>
-                        </>
-                      ) : (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Box
-                            sx={{ flexGrow: 1 }}
-                            onClick={() => handleRadioBtnEdit(idx)}
-                          >
-                            <Typography variant="subtitle1">
-                              {opt.title}
-                            </Typography>
-                            <Typography variant="body2">
-                              {opt.description}
-                            </Typography>
-                          </Box>
-                          <IconButton onClick={() => handleRadioBtnEdit(idx)}>
-                            <EditIcon />
-                          </IconButton>
-                          <IconButton onClick={() => handleRemoveRadio(idx)}>
-                            <CloseIcon />
-                          </IconButton>
-                        </Box>
-                      )}
-                    </Box>
-                  );
-                })}
-                <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
-                  <UniversalButton
-                    label="AddOptions"
-                    onClick={handleRadioBtnAddNew}
-                  />
-
-                  <UniversalButton
-                    label="SaveRadioButton"
-                    onClick={handleSaveRadioButton}
-                  />
-                </div>
-              </FormControl>
-            )}
-
-          {/* Editable Options for Dropdown */}
-          {(selectedItem?.type === "dropDown" || selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
-              <FormControl fullWidth>
-                {/* ── Dropdown Label Input ── */}
-                <div className=" mb-2, mt-3 space-y-3">
-                  <InputField
-                    label="Label"
-                    id="mainlabel"
-                    tooltipContent="Enter MainLabel"
-                    tooltipPlacement="right"
-                    value={mainLabelDropdown}
-                    onChange={(e) => setMainLabelDropdown(e.target.value)}
-                    placeholder="Enter label"
-                    type="text"
-                    fullWidth
-                  />
-
-                  <div>
-                    <UniversalLabel
-                      htmlFor="dropDown_required"
-                      className="text-sm font-medium text-gray-700"
-                      tooltipContent="Select an option which required for you."
-                      tooltipPlacement="top"
-                      text="Required"
-                    ></UniversalLabel>
-                    <div className="flex items-center gap-2 ">
-                      <Switch
-                        checked={dropdownRequired}
-                        onChange={handleDropdownRequiredChange}
-                        id="required"
-                      />
-                      <span>{dropdownRequired ? "True" : "False"}</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* ── Render Each Option ── */}
-                {options.map((opt, idx) => {
-                  const isEditing = idx === editingIdx;
-
-                  return (
-                    <Box
-                      key={opt.id}
-                      sx={{
-                        mb: 1,
-                        p: 1,
-                        border: "1px solid #ddd",
-                        borderRadius: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        bgcolor: isEditing ? "#f5f5f5" : "white",
-                      }}
-                    >
-                      {isEditing ? (
-                        // ── Inline Editing Mode ──
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Box sx={{ mb: 1 }}>
-                            <InputField
-                              label="Title"
-                              id={`edit-title-${idx}`}
-                              tooltipContent="Enter Title"
-                              tooltipPlacement="right"
-                              value={draftTitle}
-                              onChange={(e) => setDraftTitle(e.target.value)}
-                              placeholder="Enter title"
-                              type="text"
-                              fullWidth
-                              autoFocus
-                            />
-                          </Box>
-                          <Box sx={{ mb: 1 }}>
-                            <InputField
-                              label="Description"
-                              id={`edit-desc-${idx}`}
-                              tooltipContent="Enter Description"
-                              tooltipPlacement="right"
-                              value={draftDescription}
-                              onChange={(e) =>
-                                setDraftDescription(e.target.value)
-                              }
-                              placeholder="Enter description"
-                              type="text"
-                              fullWidth
-                            />
-                          </Box>
-                          <Box sx={{ mb: 1 }}>
-                            <InputField
-                              label="Metadata"
-                              id={`edit-meta-${idx}`}
-                              tooltipContent="Enter MetaData"
-                              tooltipPlacement="right"
-                              value={draftMetadata}
-                              required={true}
-                              onChange={(e) => setDraftMetaData(e.target.value)}
-                              placeholder="Enter Metadata"
-                              type="text"
-                              fullWidth
-                            />
-                          </Box>
                           <Box sx={{ display: "flex", mb: 1 }}>
                             <InputField
                               label="Upload Image"
@@ -3161,225 +3513,434 @@ const EditPanel = ({
                               tooltipContent="Upload Image"
                               tooltipPlacement="right"
                               required
-                              onChange={handleDropdownImageChange}
-                              ref={dropImageInputRef}
+                              onChange={handleRadioImageChange}
+                              ref={radioImageInputRef}
                             />
-                            <button onClick={handleDropdownUploadFile}>
-                              <FileUploadOutlinedIcon
-                                sx={{ fontSize: "23px", marginTop: 3 }}
-                              />
-                            </button>
 
-                            <button onClick={handleDropdownFileDelete}>
+                            <button onClick={handleDeleteRadioFile}>
                               <DeleteOutlineIcon
-                                sx={{ fontSize: "23px", marginTop: 3 }}
+                                sx={{
+                                  fontSize: "23px",
+                                  marginTop: 3,
+                                  color: "#ef4444",
+                                }}
                               />
                             </button>
                           </Box>
+
                           <Box
                             sx={{
                               display: "flex",
-                              gap: 1,
-                              mt: 2,
+                              gap: 2,
+                              marginTop: 2,
                               justifyContent: "center",
                             }}
                           >
                             <UniversalButton
-                              label="Save Option"
-                              onClick={handleSaveInline}
-                              disabled={
-                                !draftTitle.trim() || !draftMetadata.trim()
-                              }
+                              label="Save"
+                              disabled={!draft.metadata.trim()}
+                              onClick={handleSaveInlineRadio}
                             />
                             <UniversalButton
                               label="Cancel"
-                              className="p-button-text"
-                              onClick={handleCancelInline}
+                              onClick={handleCancelInlineRadio}
                             />
                           </Box>
+                        </div>
+                      </>
+                    ) : (
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Box
+                          sx={{ flexGrow: 1, minWidth: 0 }}
+                          onClick={() => handleRadioBtnEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{
+                              wordWrap: "break-word",
+                              overflowWrap: "break-word",
+                            }}
+                          >
+                            {opt.description}
+                          </Typography>
                         </Box>
-                      ) : (
-                        // ── Static View with Edit & Remove Icons ──
-                        <>
-                          <Box
-                            sx={{ flexGrow: 1, cursor: "pointer" }}
-                            onClick={() => handleStartEdit(idx)}
-                          >
-                            <Typography variant="subtitle1">
-                              {opt.title}
-                            </Typography>
-                            {opt.description && (
-                              <Typography variant="body2" color="textSecondary">
-                                {opt.description}
-                              </Typography>
-                            )}
-                          </Box>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleStartEdit(idx)}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            size="small"
-                            onClick={() => handleRemove(idx)}
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </>
-                      )}
-                    </Box>
-                  );
-                })}
-
-                {/* ── “Add” Button: Appends a New Option X ── */}
-                <div className="flex justify-center items-center gap-2">
-                  <Box sx={{ mt: 1 }}>
-                    <UniversalButton
-                      label="Add Option"
-                      onClick={handleAddNew}
-                      disabled={options.length >= 200}
-                    />
+                        <IconButton onClick={() => handleRadioBtnEdit(idx)}>
+                          <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleRemoveRadio(idx)}>
+                          <CloseIcon />
+                        </IconButton>
+                      </Box>
+                    )}
                   </Box>
+                );
+              })}
 
-                  <Box sx={{ mt: 1 }}>
-                    <UniversalButton
-                      id="save-dropdown-options"
-                      label="Save Dropdown"
-                      onClick={handleSaveDropdown}
+              <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
+                <UniversalButton
+                  label="AddOptions"
+                  onClick={handleRadioBtnAddNew}
+                />
+
+                <UniversalButton
+                  label="SaveRadioButton"
+                  onClick={handleSaveRadioButton}
+                />
+              </div>
+            </FormControl>
+          )}
+
+          {/* Editable Options for Dropdown */}
+          {selectedItem?.type === "dropDown" && (
+            <FormControl fullWidth>
+              {/* ── Dropdown Label Input ── */}
+              <div className=" mb-2, mt-3 space-y-3">
+                {selectedThenComponent === "dropDown"
+                  ? "Then Component"
+                  : selectedElseComponent === "dropDown"
+                  ? "Else Component"
+                  : ""}
+                <InputField
+                  label="Label"
+                  id="mainlabel"
+                  tooltipContent="Enter MainLabel"
+                  tooltipPlacement="right"
+                  maxLength={20}
+                  value={mainLabelDropdown}
+                  onChange={(e) => setMainLabelDropdown(e.target.value)}
+                  placeholder="Enter label"
+                  type="text"
+                  fullWidth
+                />
+
+                <div>
+                  <UniversalLabel
+                    htmlFor="dropDown_required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipContent="Select an option which required for you."
+                    tooltipPlacement="top"
+                    text="Required"
+                  ></UniversalLabel>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={dropdownRequired}
+                      onChange={handleDropdownRequiredChange}
+                      id="required"
                     />
-                  </Box>
+                    <span>{dropdownRequired ? "True" : "False"}</span>
+                  </div>
                 </div>
-              </FormControl>
-            )}
+              </div>
+
+              {/* ── Render Each Option ── */}
+              {options.map((opt, idx) => {
+                const isEditing = idx === editingIdx;
+
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      // ── Inline Editing Mode ──
+                      <Box sx={{ flexGrow: 1 }}>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Title"
+                            id={`edit-title-${idx}`}
+                            tooltipContent="Enter Title"
+                            tooltipPlacement="right"
+                            maxLength={30}
+                            value={draftTitle}
+                            onChange={(e) => setDraftTitle(e.target.value)}
+                            placeholder="Enter title"
+                            type="text"
+                            fullWidth
+                            autoFocus
+                          />
+                        </Box>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Description"
+                            id={`edit-desc-${idx}`}
+                            tooltipContent="Enter Description"
+                            tooltipPlacement="right"
+                            maxLength={300}
+                            value={draftDescription}
+                            onChange={(e) =>
+                              setDraftDescription(e.target.value)
+                            }
+                            placeholder="Enter description"
+                            type="text"
+                            fullWidth
+                          />
+                        </Box>
+                        <Box sx={{ mb: 1 }}>
+                          <InputField
+                            label="Metadata"
+                            id={`edit-meta-${idx}`}
+                            tooltipContent="Enter MetaData"
+                            tooltipPlacement="right"
+                            maxLength={20}
+                            value={draftMetadata}
+                            required={true}
+                            onChange={(e) => setDraftMetaData(e.target.value)}
+                            placeholder="Enter Metadata"
+                            type="text"
+                            fullWidth
+                          />
+                        </Box>
+                        <Box sx={{ display: "flex", mb: 1 }}>
+                          <InputField
+                            label="Upload Image"
+                            type="file"
+                            id="file-upload"
+                            accept=".png, .jpeg"
+                            tooltipContent="Upload Image"
+                            tooltipPlacement="right"
+                            required
+                            onChange={handleDropdownImageChange}
+                            ref={dropImageInputRef}
+                          />
+
+                          <button onClick={handleDropdownFileDelete}>
+                            <DeleteOutlineIcon
+                              sx={{
+                                fontSize: "23px",
+                                marginTop: 3,
+                                color: "#ef4444",
+                              }}
+                            />
+                          </button>
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            mt: 2,
+                            justifyContent: "center",
+                          }}
+                        >
+                          <UniversalButton
+                            label="Save Option"
+                            onClick={handleSaveInline}
+                            disabled={
+                              !draftTitle.trim() || !draftMetadata.trim()
+                            }
+                          />
+                          <UniversalButton
+                            label="Cancel"
+                            className="p-button-text"
+                            onClick={handleCancelInline}
+                          />
+                        </Box>
+                      </Box>
+                    ) : (
+                      // ── Static View with Edit & Remove Icons ──
+                      <>
+                        <Box
+                          sx={{ flexGrow: 1, cursor: "pointer", minWidth: 0 }}
+                          onClick={() => handleStartEdit(idx)}
+                        >
+                          <Typography variant="subtitle1">
+                            {opt.title}
+                          </Typography>
+                          {opt.description && (
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                              }}
+                            >
+                              {opt.description}
+                            </Typography>
+                          )}
+                        </Box>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleStartEdit(idx)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          size="small"
+                          onClick={() => handleRemove(idx)}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
+                );
+              })}
+
+              {/* ── “Add” Button: Appends a New Option X ── */}
+              <div className="flex justify-center items-center gap-2">
+                <Box sx={{ mt: 1 }}>
+                  <UniversalButton label="Add Option" onClick={handleAddNew} />
+                </Box>
+
+                <Box sx={{ mt: 1 }}>
+                  <UniversalButton
+                    id="save-dropdown-options"
+                    label="Save Dropdown"
+                    onClick={handleSaveDropdown}
+                  />
+                </Box>
+              </div>
+            </FormControl>
+          )}
 
           {/* Editable option for chipselector In */}
-          {(selectedItem?.type === "chipSelector" || selectedThenComponent === "chipSelector" ||
-            selectedElseComponent === "chipSelector") && (
-              <FormControl fullWidth>
-                <div className="mt-3 space-y-3 mb-3">
-                  <InputField
-                    label="Label"
-                    placeholder="Enter label"
-                    tooltipContent="Enter MainLabel"
-                    tooltipPlacement="right"
-                    value={chipSelectorLabel}
-                    onChange={(e) => setChipSelectorLabel(e.target.value)}
-                  />
-                  <InputField
-                    label="Description"
-                    placeholder="Enter Description"
-                    tooltipContent="Enter Description for ChipSelector"
-                    tooltipPlacement="right"
-                    value={chipDescription}
-                    onChange={(e) => setChipDescription(e.target.value)}
-                  />
+          {selectedItem?.type === "chipSelector" && (
+            <FormControl fullWidth>
+              <div className="mt-3 space-y-3 mb-3">
+                {selectedThenComponent === "chipSelector"
+                  ? "Then Component"
+                  : selectedElseComponent === "chipSelector"
+                  ? "Else Component"
+                  : ""}
+                <InputField
+                  label="Label"
+                  placeholder="Enter label"
+                  tooltipContent="Enter MainLabel"
+                  tooltipPlacement="right"
+                  maxLength={80}
+                  value={chipSelectorLabel}
+                  onChange={(e) => setChipSelectorLabel(e.target.value)}
+                />
+                <InputField
+                  label="Description"
+                  placeholder="Enter Description"
+                  tooltipContent="Enter Description for ChipSelector"
+                  tooltipPlacement="right"
+                  maxLength={300}
+                  value={chipDescription}
+                  onChange={(e) => setChipDescription(e.target.value)}
+                />
 
-                  <InputField
-                    label="Max-Selection Options In Chip"
-                    placeholder="Enter Max-option"
-                    tooltipContent="Enter Max-option for ChipSelector"
-                    tooltipPlacement="right"
-                    value={valueSelection}
-                    type="number"
-                    onChange={(e) => setValueSelection(e.target.value)}
-                  />
-                </div>
+                <InputField
+                  label="Max-Selection Options In Chip"
+                  placeholder="Enter Max-option"
+                  tooltipContent="Enter Max-option for ChipSelector"
+                  tooltipPlacement="right"
+                  value={valueSelection}
+                  type="number"
+                  onChange={(e) => setValueSelection(e.target.value)}
+                />
+              </div>
 
-                {chipSelectorOptions.map((opt, idx) => {
-                  const isEditing = idx === editingChipIdx;
-                  return (
-                    <Box
-                      key={opt.id}
-                      sx={{
-                        mb: 1,
-                        p: 1,
-                        border: "1px solid #ddd",
-                        borderRadius: 1,
-                        display: "flex",
-                        alignItems: "center",
-                        bgcolor: isEditing ? "#f5f5f5" : "white",
-                      }}
-                    >
-                      {isEditing ? (
-                        <Box sx={{ flexGrow: 1 }}>
-                          {/* <InputField
+              {chipSelectorOptions.map((opt, idx) => {
+                const isEditing = idx === editingChipIdx;
+                return (
+                  <Box
+                    key={opt.id}
+                    sx={{
+                      mb: 1,
+                      p: 1,
+                      border: "1px solid #ddd",
+                      borderRadius: 1,
+                      display: "flex",
+                      alignItems: "center",
+                      bgcolor: isEditing ? "#f5f5f5" : "white",
+                    }}
+                  >
+                    {isEditing ? (
+                      <Box sx={{ flexGrow: 1 }}>
+                        {/* <InputField
                         label="Name"
                         placeholder="Enter Name"
                         value={chipName}
                         onChange={(e) => setChipName(e.target.value)}
                       /> */}
-                          <InputField
-                            label="Title"
-                            placeholder="Enter Title"
-                            tooltipContent="Enter Title for ChipSelector"
-                            tooltipPlacement="right"
-                            value={chipTitle}
-                            onChange={(e) => setChipTitle(e.target.value)}
+                        <InputField
+                          label="Title"
+                          placeholder="Enter Title"
+                          tooltipContent="Enter Title for ChipSelector"
+                          tooltipPlacement="right"
+                          value={chipTitle}
+                          onChange={(e) => setChipTitle(e.target.value)}
+                        />
+
+                        <Box
+                          sx={{
+                            display: "flex",
+                            gap: 1,
+                            mt: 2,
+                            justifyContent: "center",
+                          }}
+                        >
+                          <UniversalButton
+                            label="Save Option"
+                            onClick={handleSaveChipSelectorInline}
+                            disabled={!chipTitle.trim()}
                           />
-
-                          <Box
-                            sx={{
-                              display: "flex",
-                              gap: 1,
-                              mt: 2,
-                              justifyContent: "center",
-                            }}
-                          >
-                            <UniversalButton
-                              label="Save Option"
-                              onClick={handleSaveChipSelectorInline}
-                              disabled={!chipTitle.trim()}
-                            />
-                            <UniversalButton
-                              label="Cancel"
-                              className="p-button-text"
-                              onClick={handleCancelChipSelectorInline}
-                            />
-                          </Box>
+                          <UniversalButton
+                            label="Cancel"
+                            className="p-button-text"
+                            onClick={handleCancelChipSelectorInline}
+                          />
                         </Box>
-                      ) : (
-                        <>
-                          <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
-                            <Typography variant="subtitle1">
-                              {opt.name}
+                      </Box>
+                    ) : (
+                      <>
+                        <Box sx={{ flexGrow: 1, cursor: "pointer" }}>
+                          <Typography variant="subtitle1">
+                            {opt.name}
+                          </Typography>
+                          {opt.title && (
+                            <Typography variant="body2" color="textSecondary">
+                              {opt.title}
                             </Typography>
-                            {opt.title && (
-                              <Typography variant="body2" color="textSecondary">
-                                {opt.title}
-                              </Typography>
-                            )}
-                          </Box>
-                          <IconButton
-                            onClick={() => handleStartChipSelectorEdit(idx)}
-                          >
-                            <EditIcon fontSize="small" />
-                          </IconButton>
-                          <IconButton
-                            onClick={() => handleChipSelectorRemove(idx)}
-                          >
-                            <CloseIcon fontSize="small" />
-                          </IconButton>
-                        </>
-                      )}
-                    </Box>
-                  );
-                })}
+                          )}
+                        </Box>
+                        <IconButton
+                          onClick={() => handleStartChipSelectorEdit(idx)}
+                        >
+                          <EditIcon fontSize="small" />
+                        </IconButton>
+                        <IconButton
+                          onClick={() => handleChipSelectorRemove(idx)}
+                        >
+                          <CloseIcon fontSize="small" />
+                        </IconButton>
+                      </>
+                    )}
+                  </Box>
+                );
+              })}
 
-                <div className="flex justify-center items-center gap-2 mt-3">
-                  <UniversalButton
-                    label="Add Option"
-                    onClick={handleAddNewChipSelector}
-                    disabled={chipSelectorOptions.length >= 200}
-                  />
-                  <UniversalButton
-                    id="save-chip-selector"
-                    label="Save ChipSelector"
-                    onClick={handleChipSelectorSave}
-                  />
-                </div>
-              </FormControl>
-            )}
+              <div className="flex justify-center items-center gap-2 mt-3">
+                <UniversalButton
+                  label="Add Option"
+                  onClick={handleAddNewChipSelector}
+                />
+
+                <UniversalButton
+                  id="save-chip-selector"
+                  label="Save ChipSelector"
+                  onClick={handleChipSelectorSave}
+                />
+              </div>
+            </FormControl>
+          )}
 
           {/* Editable option for FooterButton  */}
           {selectedItem?.type === "footerbutton" && (
@@ -3389,6 +3950,7 @@ const EditPanel = ({
                 placeholder="Enter Footer Button Label"
                 tooltipContent="Enter Label"
                 tooltipPlacement="right"
+                maxLength={35}
                 id="footer-button-label"
                 value={footerButtonLabel}
                 onChange={(e) => setFooterButtonLabel(e.target.value)}
@@ -3399,7 +3961,7 @@ const EditPanel = ({
                 placeholder="Enter Left Caption"
                 id="left-caption"
                 tooltipContent="Enter Left Caption"
-                tooltipPlacement="rigth"
+                tooltipPlacement="right"
                 value={leftCaption}
                 onChange={(e) => setLeftCaption(e.target.value)}
               />
@@ -3419,6 +3981,7 @@ const EditPanel = ({
                 placeholder="Enter Center Caption"
                 tooltipContent="Enter Center Caption"
                 tooltipPlacement="right"
+                maxLength={15}
                 id="center-caption"
                 value={centerCaption}
                 onChange={(e) => setCenterCaption(e.target.value)}
@@ -3436,105 +3999,78 @@ const EditPanel = ({
                 value={nextAction}
                 onChange={(val) => setNextAction(val)}
               />
+
               <div className="flex justify-center ">
-                <UniversalButton label="SAVE" onClick={handleFooterSave} />
+                {selectedItem?.type === "footerbutton" ? (
+                  <UniversalButton label="SAVE" onClick={handleFooterSave} />
+                ) : (
+                  ""
+                )}
               </div>
             </div>
           )}
 
-          {/* Editable option for Embedded link */}
-          {/* {selectedItem?.type === "embeddedlink" && (
-          <>
-            <div className="mt-3 space-y-3">
-              <InputField
-                label="Text"
-                type="url"
-                value={link}
-                tooltipContent="Enter Url Link"
-                tooltipPlacement="right"
-                placeholder="Button Embedded Link"
-                onChange={handleChange}
-              />
-              <AnimatedDropdown
-                id="next-action"
-                label="Next Action"
-                tooltipContent="Next-Action"
-                tooltipPlacement="right"
-                options={[
-                  { value: "complete", label: "Complete" },
-                  { value: "navigate", label: "Navigate" },
-                ]}
-                value={onClickAction}
-                onChange={(value) => setOnClickAction(value)}
-              />
-               <AnimatedDropdown 
-              id='screen-name'
-              label='List Of Screen Name'
-              tooltipContent="List Of Screen Name"
-              tooltipPlacement="right"
-              value={}
-              onChange={()=> }
+          {selectedItem.type === "embeddedlink" && (
+            <div className="mt-5">
+              <div className="mb-2">
+                <InputField
+                  label="Text"
+                  type="url"
+                  maxLength={25}
+                  value={text}
+                  tooltipContent="Enter label which display in the screen"
+                  tooltipPlacement="right"
+                  placeholder="Button Embedded Link"
+                  onChange={(e) => setText(e.target.value)}
+                />
+              </div>
 
-              />  
+              <div className="mb-2">
+                <AnimatedDropdown
+                  id="next-action"
+                  label="Next Action"
+                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: "data_exchange", label: "Data_exchange" },
+                    { value: "navigate", label: "Navigate" },
+                    { value: "open_url", label: "Open_url" },
+                  ]}
+                  value={onClickAction}
+                  onChange={(value) => setOnClickAction(value)}
+                />
+              </div>
 
-              <div className=" flex justify-center">
+              {onClickAction === "navigate" && (
+                <AnimatedDropdown
+                  id="screen-name"
+                  label="List Of Screen Name"
+                  tooltipContent="List Of Screen Name"
+                  tooltipPlacement="right"
+                  options={screenNameOptions}
+                  value={selectedScreenName}
+                  onChange={(value) => setSelectedScreenName(value)}
+                />
+              )}
+
+              {onClickAction === "open_url" && (
+                <InputField
+                  label="URL"
+                  placeholder="Enter the URL to open"
+                  type="text"
+                  tooltipContent="Provide the URL to open when user clicks Read more"
+                  value={embeddedlinktUrl}
+                  onChange={(e) => setEmbeddedlinktUrl(e.target.value)}
+                />
+              )}
+
+              <div className="flex justify-center mt-5">
                 <UniversalButton
                   label="Save"
                   onClick={handleEmbeddedLinkSave}
                 />
               </div>
             </div>
-
-           
-          </>
-        )} */}
-
-          {selectedItem?.type === "embeddedlink" && (
-            <>
-              <div className="mt-3 space-y-3">
-                <InputField
-                  label="Text"
-                  type="url"
-                  value={text}
-                  tooltipContent="Enter Url Link"
-                  tooltipPlacement="right"
-                  placeholder="Button Embedded Link"
-                  onChange={(e) => setText(e.target.value)}
-                />
-
-                <AnimatedDropdown
-                  id="next-action"
-                  label="Next Action"
-                  tooltipContent="Next-Action"
-                  tooltipPlacement="right"
-                  options={[
-                    { value: "complete", label: "Complete" },
-                    { value: "navigate", label: "Navigate" },
-                  ]}
-                  value={onClickAction}
-                  onChange={(value) => setOnClickAction(value)}
-                />
-
-                {onClickAction === "navigate" && (
-                  <AnimatedDropdown
-                    id="screen-name"
-                    label="List Of Screen Name"
-                    tooltipContent="List Of Screen Name"
-                    tooltipPlacement="right"
-                    options={screenNameList}
-                    value={selectedScreenName}
-                    onChange={(value) => setSelectedScreenName(value)}
-                  />
-                )}
-
-                <div className="flex justify-center">
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleEmbeddedLinkSave}
-                  />
-                </div>
-              </div>
-            </>
           )}
 
           {/* Editable option for Opt In */}
@@ -3543,13 +4079,17 @@ const EditPanel = ({
               <div className="space-y-3 mt-3">
                 <InputField
                   label="OPT-In Label"
+                  placeholder="Enter Lable"
                   type="text"
+                  maxLength={120}
+                  tooltipContent="Enter label which display in the screen"
                   value={optLabel}
                   onChange={(e) => setOptLabel(e.target.value)}
                 />
 
-                <div className="mt-2">
+                <div className="mt-2 flex">
                   <UniversalLabel
+                    label=" Required"
                     htmlFor="required"
                     className="text-sm font-medium text-gray-700"
                     tooltipcontent="Select an option which required for you."
@@ -3558,31 +4098,50 @@ const EditPanel = ({
                   ></UniversalLabel>
                   <div className="flex items-center gap-2 ">
                     <Switch
-                      checked={optRequired}
-                      onChange={handleOptRequiredChange}
+                      checked={optInRequired}
+                      onChange={handleOptInRequiredChange}
                       id="required"
                     />
-                    <span>{optRequired ? "True" : "False"}</span>
+                    <span>{optInRequired ? "True" : "False"}</span>
                   </div>
                 </div>
-
-                {/* <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
-              /> */}
 
                 <AnimatedDropdown
                   id="next-action"
                   label="Action"
                   options={[
-                    { value: "data-exchage", label: "Data Exchange" },
+                    { value: "data_exchange", label: "Data_exchange" },
                     { value: "navigate", label: "Navigate" },
-                    { value: "open-url", label: "Open URL" },
+                    { value: "open_url", label: "Open_url" },
                   ]}
+                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
                   value={optAction}
                   onChange={(value) => setOPTAction(value)}
                 />
+
+                {optAction === "navigate" && (
+                  <AnimatedDropdown
+                    id="screen-name"
+                    label="List Of Screen Name"
+                    tooltipContent="List Of Screen Name"
+                    tooltipPlacement="right"
+                    options={optScreenNameOptions}
+                    value={optSelectedScreenName}
+                    onChange={(value) => setOptSelectedScreenName(value)}
+                  />
+                )}
+
+                {optAction === "open_url" && (
+                  <InputField
+                    label="URL"
+                    placeholder="Enter the URL to open"
+                    type="text"
+                    tooltipContent="Provide the URL to open when user clicks Read more"
+                    value={optUrl}
+                    onChange={(e) => setOptUrl(e.target.value)}
+                  />
+                )}
+
                 <div className="flex justify-center ">
                   <UniversalButton
                     label="Save"
@@ -3610,12 +4169,11 @@ const EditPanel = ({
                     onChange={handleImageChange}
                     ref={imageInputRef}
                   />
-                  <button onClick={handlePhotoUpload}>
-                    <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-                  </button>
 
                   <button onClick={handleImageDelete}>
-                    <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
+                    <DeleteOutlineIcon
+                      sx={{ fontSize: "23px", marginTop: 3, color: "#ef4444" }}
+                    />
                   </button>
                 </div>
 
@@ -3662,6 +4220,7 @@ const EditPanel = ({
 
                 <InputField
                   label="Alt-Text"
+                  placeholder="Enter Alt-Text"
                   tooltipContent="Alt-Text"
                   tooltipPlacement="right"
                   value={imgAltText}
@@ -3819,7 +4378,7 @@ const EditPanel = ({
                   />
                   <button onClick={() => handleImageCarouselDelete(index)}>
                     <DeleteOutlineIcon
-                      sx={{ fontSize: "23px", marginTop: 3 }}
+                      sx={{ fontSize: "23px", marginTop: 3, color: "#ef4444" }}
                     />
                   </button>
                 </div>
@@ -3862,9 +4421,10 @@ const EditPanel = ({
 
           {/* Editable option for if-else In */}
 
-          {selectedItem?.type === "ifelse" && (
+          {/* {(selectedItem?.type === "ifelse" ||
+            selectedThenComponent === "ifelse" ||
+            selectedElseComponent === "ifelse") && (
             <>
-              {selectedCondition ? <h2>{selectedCondition}</h2> : ""}
               <div className="mt-4">
                 <AnimatedDropdown
                   label="If-Condition"
@@ -3897,9 +4457,26 @@ const EditPanel = ({
                     { label: "textArea", value: "textArea" },
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" }
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "footer", value: "footerbutton" },
+                    { label: "ifelse", value: "ifelse" }
                   ]}
-                  onChange={(value) => setSelectedThenComponent(value)}
+                  
+                  // onChange={(value) => setSelectedThenComponent(value)}
+                  onChange={(value) => {
+                    setSelectedThenComponent(value);
+                    if (value === "ifelse") {
+                      setNestedIf(true); // ✅ Set your flag here
+                    } else {
+                      setNestedIf(false); // optionally reset
+                    }
+                  }}
                 />
               </div>
 
@@ -3918,18 +4495,161 @@ const EditPanel = ({
                     { label: "textArea", value: "textArea" },
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" }
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
                   ]}
-                  onChange={(value) => setSelectedElseComponent(value)}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    if (value === "ifelse") {
+                      setNestedElse(true); // ✅ Set your flag here
+                    } else {
+                      setNestedElse(false); // optionally reset
+                    }
+                  }}
                 />
 
                 <div className="flex justify-center mt-4">
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleIfElseSave}
-                  />
+                  <UniversalButton label="Save" onClick={handleIfElseSave} />
                 </div>
               </div>
+            </>
+          )}
+
+          {(nestedIf === true || nestedElse === true) && (
+            <>
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="If-Condition"
+                  tooltipContent="Select If-Condition"
+                  tooltipPlacement="right"
+                  value={selectedCondition}
+                  options={[
+                    { label: "Equal to", value: "==" },
+                    { label: "Not equal to", value: "!=" },
+                    { label: "AND", value: "&&" },
+                    { label: "OR", value: "||" },
+                    { label: "NOT", value: "!" },
+                  ]}
+                  onChange={(value) => setSelectedCondition(value)}
+                />
+              </div>
+
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Then Branch"
+                  tooltipContent="Select Then Branch"
+                  tooltipPlacement="right"
+                  value={selectedThenComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
+                  ]}
+                  onChange={(value) => {
+                    setSelectedThenComponent(value);
+                    if (value === "ifelse") {
+                      setNestedIf(true); // ✅ Set your flag here
+                    } else {
+                      setNestedIf(false); // optionally reset
+                    }
+                  }}
+                />
+              </div>
+
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Else Branch"
+                  tooltipContent="Select Else Branch"
+                  tooltipPlacement="right"
+                  value={selectedElseComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
+                  ]}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    if (value === "ifelse") {
+                      setNestedElse(true); // ✅ Set your flag here
+                    } else {
+                      setNestedElse(false); // optionally reset
+                    }
+                  }}
+                />
+
+                <div className="flex justify-center mt-4">
+                  <UniversalButton label="Save" onClick={handleIfElseSave} />
+                </div>
+              </div>
+
+          
+          )}
+           */}
+
+          {selectedItem?.type === "ifelse" && (
+            <>
+              <IfElseBlock
+                level={1}
+                selectedThenComponent={selectedThenComponent}
+                setSelectedThenComponent={setSelectedThenComponent}
+                selectedElseComponent={selectedElseComponent}
+                setSelectedElseComponent={setSelectedElseComponent}
+                selectedCondition={selectedCondition}
+                setSelectedCondition={setSelectedCondition}
+                handleIfElseSave={handleIfElseSave}
+                onUpdateTree={handleUpdateTree}
+              />
+            </>
+          )}
+
+          {selectedItem?.type === "switch" && (
+            <>
+              <SwitchFlow
+                selectedItem={selectedItem}
+                onSave={(payload) => {
+                  const updatedItem = {
+                    ...selectedItem,
+                    ...payload,
+                  };
+                  onSave(updatedItem);
+                  console.log("Final Switch Payload", updatedItem);
+                }}
+              />
             </>
           )}
 
@@ -3945,7 +4665,6 @@ const EditPanel = ({
                 value={dateLable}
                 onChange={(e) => setDateLabel(e.target.value)}
               />
-
 
               <InputField
                 label="Helper Text"
