@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const UniversalTextArea = ({
   label,
@@ -15,6 +17,8 @@ const UniversalTextArea = ({
   readOnly = false,
   className = "",
   ref = null,
+  tooltipContent = "",
+  tooltipPlacement = "top",
 }) => {
   const [text, setText] = useState("");
 
@@ -39,12 +43,22 @@ const UniversalTextArea = ({
   return (
     <div className="w-full mb-2">
       {label && (
-        <label
-          htmlFor={id}
-          className="block text-sm font-semibold text-gray-700 mb-1"
-        >
-          {label}
-        </label>
+        <div className="flex items-center gap-2 mb-2">
+          <label htmlFor={id} className="text-sm font-medium text-gray-700">
+            {label}
+          </label>
+          {tooltipContent && (
+            <CustomTooltip
+              title={tooltipContent}
+              placement={tooltipPlacement}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
+          )}
+        </div>
       )}
       <textarea
         id={id}

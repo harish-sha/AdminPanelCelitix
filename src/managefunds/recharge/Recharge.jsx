@@ -102,7 +102,6 @@ const Recharge = () => {
   };
 
   const handleSubmitRecharge = () => {
-    // Validation
     if (!selectedUser) return toast.error("Please select a user.");
     if (!selectedRechargeType) return toast.error("Please select recharge type.");
     if (!amount || isNaN(amount) || Number(amount) <= 0) return toast.error("Enter a valid amount.");
@@ -138,7 +137,7 @@ const Recharge = () => {
           setRechargeSuccess(false);
         }, 5000);
       } else {
-        toast.error("Recharge failed.");
+        toast.error(res?.msg || "Recharge failed.");
       }
     } catch (error) {
       toast.error("Recharge failed.");
@@ -146,7 +145,6 @@ const Recharge = () => {
       setIsSubmitting(false);
     }
   };
-
 
 
   return (
@@ -365,10 +363,22 @@ const Recharge = () => {
               />
             </div> */}
             <div className="p-4 text-center">
-              <p className="text-xl font-semibold text-gray-700">
-                Are you sure you want to recharge for <b>{selectedUserObj?.userId || selectedUser}</b> of <b>{amount}</b><br />
+              {/* <p className="text-xl font-semibold text-gray-700">
+                Are you sure you want to recharge for <span className="font-bold" >{selectedUserObj?.userId || selectedUser}</span> of <span className="text-green-700 font-semibold" >{amount}</span><br />
+              </p> */}
+              <p className="text-lg font-medium text-gray-800 leading-relaxed">
+                You are about to recharge&nbsp;
+                <span className="text-blue-700 font-semibold">
+                  {selectedUserObj?.userId || selectedUser}
+                </span>
+                &nbsp;with an amount of&nbsp;
+                <span className="text-green-600 font-bold">
+                  ₹{amount}
+                </span>.
+                <br />
+                Please confirm to proceed.
               </p>
-              <p className="mt-2 text-md text-gray-500">
+              <p className="mt-2 text-sm text-gray-500">
                 This action is irreversible.
               </p>
             </div>
@@ -383,7 +393,7 @@ const Recharge = () => {
                 />
               )}
               <UniversalButton
-                label={isSubmitting ? "Submitting..." : "Submit"}
+                label={isSubmitting ? "Processing..." : "Confirm"}
                 onClick={handleConfirmRecharge}
                 disabled={isSubmitting}
               />

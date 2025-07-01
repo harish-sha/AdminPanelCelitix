@@ -347,12 +347,12 @@ export default function WhatsappLiveChat() {
         return;
       }
 
-      if (res?.unreadCounts?.length > 0) {
-        const audio = new Audio("./receive-message.mp3");
-        audio.play().catch((e) => {
-          // console.log("Audio play error:", e);
-        });
-      }
+      // if (res?.unreadCounts?.length > 0) {
+      //   const audio = new Audio("./receive-message.mp3");
+      //   audio.play().catch((e) => {
+      //     // console.log("Audio play error:", e);
+      //   });
+      // }
 
       const mappedConversations = res.conversationEntityList?.map((chat) => {
         const unread = res.unreadCounts.find(
@@ -819,12 +819,18 @@ export default function WhatsappLiveChat() {
         setVarLength(item?.example?.body_text);
       }
       if (item?.type === "BUTTONS") {
-        item?.buttons?.map(({ type, example }) => {
+        // item?.buttons?.map(({ type, example }) => {
+        //   if (type === "URL") {
+        //     // const regex = /{{(\d+)}}/g;
+        //     // const matches = regex.exec(example);
+        //     // setBtnVarLength(matches);
+        //     setBtnVarLength(example);
+        //   }
+        // });
+        item?.buttons?.map(({ type, example, url }) => {
           if (type === "URL") {
-            // const regex = /{{(\d+)}}/g;
-            // const matches = regex.exec(example);
-            // setBtnVarLength(matches);
-            setBtnVarLength(example);
+            const varLength = url?.match(/{{(.+?)}}/g);
+            setBtnVarLength(varLength?.length || 0);
           }
         });
       }
@@ -850,10 +856,10 @@ export default function WhatsappLiveChat() {
       if (res?.conversationEntityList.length === 0) {
         return;
       }
-      const audio = new Audio("./receive-message.mp3");
-      audio.play().catch((e) => {
-        // console.log("Audio play error:", e);
-      });
+      // const audio = new Audio("./receive-message.mp3");
+      // audio.play().catch((e) => {
+      //   // console.log("Audio play error:", e);
+      // });
       await handleFetchSpecificConversation();
     } catch (e) {
       // console.log(e);

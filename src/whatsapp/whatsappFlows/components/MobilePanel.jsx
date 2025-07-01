@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -12,17 +12,18 @@ import {
   FormControl,
   FormLabel,
   Slide,
-
-
+  Chip,
+  // Dropdown
 } from "@mui/material";
 import InputField from "../../components/InputField";
-import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
-import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
-import ArticleOutlinedIcon from '@mui/icons-material/ArticleOutlined';
-
+import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
+import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import UniversalDatePicker from "../../components/UniversalDatePicker";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
 
 const MobilePanel = ({ items, onUpdateItem }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
@@ -52,8 +53,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     }
   };
 
-
-
   const handleDropdownChange = (index, dropdownId, selectedValue) => {
     if (onUpdateItem) {
       onUpdateItem(index, (prevItem) => {
@@ -66,14 +65,36 @@ const MobilePanel = ({ items, onUpdateItem }) => {
         };
       });
     }
-  }
+  };
 
+  // chipSelector
+  const handleChipOptionClick = (itemIndex, optionName) => {
+    onUpdateItem &&
+      onUpdateItem(itemIndex, (prevItem) => {
+        const selected = prevItem.selected || [];
 
+        const isSelected = selected.includes(optionName);
+        const newSelected = isSelected
+          ? selected.filter((name) => name !== optionName)
+          : [...selected, optionName];
+
+        if (!isSelected && newSelected.length > 2) {
+          toast.error("You can select up to 2 options only.");
+          return prevItem;
+        }
+
+        return {
+          ...prevItem,
+          selected: newSelected,
+        };
+      });
+  };
 
   const handleFileUpload = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
+      // console.log("File uploaded:", selectedFile.name);
       // console.log("File uploaded:", selectedFile.name);
     } else {
       alert("Please select a file to upload.");
@@ -85,10 +106,58 @@ const MobilePanel = ({ items, onUpdateItem }) => {
     if (selectedPhoto) {
       setUploadPhoto(selectedPhoto);
       // console.log("Photo uploaded:", selectedPhoto.name);
+      // console.log("Photo uploaded:", selectedPhoto.name);
     } else {
       alert("Please choose a photo.");
     }
   };
+
+  // imageCarousel
+
+  const imageCarousel = () => {
+    const images = items?.images || [];
+    const scaleType = items?.["scale-type"] || "contain";
+
+    const [carouselIndex, setCarouselIndex] = useState(0);
+    const touchStartRef = useRef(null);
+
+    useEffect(() => {
+      if (images.length > 1) {
+        const interval = setInterval(() => {
+          setCarouselIndex((prev) => (prev + 1) % images.length);
+        }, 3000);
+        return () => clearInterval(interval);
+      }
+    }, [images]);
+
+    const handleSwipeStart = (e) => {
+      touchStartRef.current = e.touches[0].clientX;
+    };
+
+    const handleSwipeEnd = (e) => {
+      const touchEnd = e.changedTouches[0].clientX;
+      const diff = touchStartRef.current - touchEnd;
+
+      if (diff > 50) {
+        // swipe left
+        setCarouselIndex((prev) => (prev + 1) % images.length);
+      } else if (diff < -50) {
+        // swipe right
+        setCarouselIndex((prev) => (prev - 1 + images.length) % images.length);
+      }
+    };
+  };
+
+  // const [carouselIndex, setCarouselIndex] = useState(0);
+
+  // useEffect(() => {
+  //   if (items?.type === "imageCarousel" && Array.isArray(items.images)) {
+  //     const interval = setInterval(() => {
+  //       setCarouselIndex((prev) => (prev + 1) % items.images.length);
+  //     }, 3000);
+  //     return () => clearInterval(interval);
+  //   }
+  // }, [items]);
 
   // console.log("itemsssssss", items)
 
@@ -109,7 +178,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h5"
                   className="text-lg font-semibold mb-1"
                 >
-                  {item.heading || "Heading Placeholder"}
+                  {item.text || "Heading Placeholder"}
                 </Typography>
               );
 
@@ -121,15 +190,19 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="h8"
                   className="text-md font-medium  mb-1"
                 >
-                  {item.subheading || "Subheading Placeholder"}
+                  {item.text || "Subheading Placeholder"}
                 </Typography>
               );
 
             // Render Text Body and Text Caption
             case "textbody":
               return (
-                <Typography key={index} variant="h8" sx={{ whiteSpace: "pre-line" }}>
-                  {item.textbody || "Text Body "}
+                <Typography
+                  key={index}
+                  variant="h8"
+                  sx={{ whiteSpace: "pre-line" }}
+                >
+                  {item.text || "Text Body "}
                 </Typography>
               );
 
@@ -140,7 +213,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   variant="caption"
                 // sx={{ whiteSpace: "pre-line" }}
                 >
-                  {item.textcaption || "Text Caption Placeholder"}
+                  {item.text || "Text Caption Placeholder"}
                 </Typography>
               );
 
@@ -152,272 +225,382 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                     variant="caption"
                   // sx={{ whiteSpace: "pre-line" }}
                   >
-                    {item.texts?.textInput_1?.label || "Label"}
+                    {item.label || "Label"}
                   </Typography>
 
                   <InputField
+                    readOnly
                     fullWidth
-                    placeholder={item.texts?.textInput_1?.helper_text || "Placeholder"}
-                  // placeholder="Text Input Placeholder"
-                  // onChange={(e) =>
-                  //   onUpdateItem &&
-                  //   onUpdateItem(index, (prevItem) => ({
-                  //     ...prevItem,
-                  //     value: e.target.value,
-                  //   }))
-                  // }
+                    multiline
+                    rows={4}
+                    value={item.value || ""}
+                    placeholder={
+                      item["helper-text"] || "Text Input Placeholder"
+                    }
+                    error={item.required && !item.value?.trim()}
+                    helperText={item["error-message"] || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
+                    }
                   />
                 </div>
-
               );
 
             // Render Text Area
             case "textArea":
               return (
-                <div key={index} className="mb-4">
+                <div key={index} className="mb-0">
                   <Typography variant="caption">
-                    {item.texts?.textArea_1?.label || "Label"}
+                    {item.label || "Label"}
                   </Typography>
-
                   <InputField
+                    readOnly
                     fullWidth
                     multiline
                     rows={4}
-                    placeholder={item.texts?.textArea_1?.helper_text || "Placeholder"}
-                  // placeholder="Text Area Placeholder"
-                  // onChange={(e) =>
-                  //   onUpdateItem &&
-                  //   onUpdateItem(index, (prevItem) => ({
-                  //     ...prevItem,
-                  //     value: e.target.value,
-                  //   }))
-                  // }
+                    value={item.value || ""}
+                    placeholder={item["helper-text"] || "Text Area Placeholder"}
+                    error={item.required && !item.value?.trim()}
+                    helperText={item["error-message"] || ""}
+                    onChange={(e) =>
+                      onUpdateItem &&
+                      onUpdateItem(index, (prevItem) => ({
+                        ...prevItem,
+                        value: e.target.value,
+                      }))
+                    }
                   />
                 </div>
               );
-
 
             // Render Checkboxes
             // anshu
             case "checkBox":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-                  {item?.checkboxGroups && Object.keys(item.checkboxGroups).length > 0 ? (
-                    Object.entries(item.checkboxGroups).map(([groupId, groupData], groupIdx) => (
-                      <Box key={groupId} sx={{ mb: 2 }}>
-                        {/* Group Label */}
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                          {groupData.label || `Checkbox Group ${groupIdx + 1}`}
-                        </Typography>
-
-                        {/* Options List */}
-                        {(groupData["data-source"] || []).map((option, optionIndex) => (
-                          <Box
-                            key={optionIndex}
-                            sx={{
-                              display: 'flex',
-                              alignItems: 'center',
-                              justifyContent: 'space-between',
-                              p: 1,
-                              mb: 1,
-                              borderRadius: 1,
-                              border: '1px solid #e0e0e0',
-                            }}
+                <div key={index} className="">
+                  {item?.checkboxGroups &&
+                    Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.entries(item.checkboxGroups).map(
+                      ([groupId, groupData], groupIdx) => (
+                        <div key={groupId} className="p-1">
+                          {/* Group Label */}
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ fontWeight: 600, mb: 1 }}
                           >
-                            {/* Left: Image + Title/Desc */}
-                            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                              {option.image && (
-                                <Box
-                                  component="img"
-                                  src={option.image}
-                                  alt={option.title || `Option ${optionIndex + 1}`}
-                                  sx={{
-                                    width: 40,
-                                    height: 40,
-                                    borderRadius: '50%',
-                                    mr: 1,
-                                    border: '1px solid #ccc',
-                                  }}
-                                />
-                              )}
-                              <Box>
-                                <Typography variant="body2" fontWeight={600}>
-                                  {option.title || `Option ${optionIndex + 1}`}
-                                </Typography>
-                                {option.description && (
-                                  <Typography variant="caption" color="text.secondary">
-                                    {option.description}
-                                  </Typography>
-                                )}
-                              </Box>
-                            </Box>
+                            {groupData.label ||
+                              `Checkbox Group ${groupIdx + 1}`}
+                          </Typography>
 
-                            {/* Right: Checkbox */}
-                            <Checkbox
-                              checked={item.checked?.[`${groupId}_${optionIndex}`] || false}
-                              onChange={(e) =>
-                                handleCheckboxChange(index, `${groupId}_${optionIndex}`, e.target.checked)
-                              }
-                              icon={<CheckBoxOutlineBlankIcon />}
-                              checkedIcon={<CheckBoxIcon />}
-                            />
-                          </Box>
-                        ))}
-                      </Box>
-                    ))
+                          {/* Options List */}
+                          {(groupData["data-source"] || []).map(
+                            (option, optionIndex) => (
+                              <Box
+                                key={optionIndex}
+                                sx={{
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "space-between",
+                                  px: 0.5,
+                                  py: 0.4,
+                                  mb: 1,
+                                  borderRadius: 1,
+                                  border: "1px solid #e0e0e0",
+                                }}
+                              >
+                                {/* Left: Image + Title/Desc */}
+                                <Box
+                                  sx={{
+                                    display: "flex",
+                                    alignItems: "center",
+                                    marginLeft: 1,
+                                  }}
+                                >
+                                  {option.image && (
+                                    <Box
+                                      component="img"
+                                      src={option.image}
+                                      alt={
+                                        option.title ||
+                                        `Option ${optionIndex + 1}`
+                                      }
+                                      sx={{
+                                        width: 40,
+                                        height: 40,
+                                        borderRadius: "50%",
+                                        mr: 1,
+                                        border: "1px solid #ccc",
+                                      }}
+                                    />
+                                  )}
+
+                                  <Box>
+                                    <Typography
+                                      variant="body2"
+                                      fontWeight={600}
+                                    >
+                                      {option.title ||
+                                        `Option ${optionIndex + 1}`}
+                                    </Typography>
+                                    {option.description && (
+                                      <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                      >
+                                        {option.description}
+                                      </Typography>
+                                    )}
+                                  </Box>
+                                </Box>
+
+                                {/* Right: Checkbox */}
+                                <Checkbox
+                                  checked={
+                                    item.checked?.[
+                                    `${groupId}_${optionIndex}`
+                                    ] || false
+                                  }
+                                  onChange={(e) =>
+                                    handleCheckboxChange(
+                                      index,
+                                      `${groupId}_${optionIndex}`,
+                                      e.target.checked
+                                    )
+                                  }
+                                  icon={<CheckBoxOutlineBlankIcon />}
+                                  checkedIcon={<CheckBoxIcon />}
+                                />
+                              </Box>
+                            )
+                          )}
+                        </div>
+                      )
+                    )
                   ) : (
-                    <Typography color="text.secondary">No checkbox groups found.</Typography>
+                    <Typography color="text.secondary">
+                      No checkbox groups found.
+                    </Typography>
                   )}
-                </Box>
+                </div>
               );
             // anshu
 
             // Render Radio Buttons
             case "radioButton":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-                  {item?.radioButton && Object.keys(item.radioButton).length > 0 ? (
-                    Object.entries(item.radioButton).map(([groupId, groupData], groupIdx) => (
-                      <Box key={groupId} sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                          {groupData.label || `Radio Group ${groupIdx + 1}`}
-                        </Typography>
+                <div key={index} className="ml-3">
+                  {item?.radioButton &&
+                    Object.keys(item.radioButton).length > 0 ? (
+                    Object.entries(item.radioButton).map(
+                      ([groupId, groupData], groupIdx) => (
+                        <div key={groupId} className="">
+                          <Typography
+                            variant="subtitle1"
+                            sx={{ fontWeight: 600, mb: 1 }}
+                          >
+                            {groupData.label || `Radio Group ${groupIdx + 1}`}
+                          </Typography>
 
-                        <RadioGroup
-                          name={`radio-${groupId}`}
-                          value={item.selected?.[groupId] || ""}
-                          onChange={(e) => handleRadioChange(index, groupId, e.target.value)}
-                        >
-                          {(groupData["data-source"] || []).map((option, optionIndex) => (
-                            <FormControlLabel
-                              key={optionIndex}
-                              value={option.id}
-                              control={<Radio />}
-                              label={
-                                <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                          <RadioGroup
+                            name={`radio-${groupId}`}
+                            value={item.selected?.[groupId] || ""}
+                            onChange={(e) =>
+                              handleRadioChange(index, groupId, e.target.value)
+                            }
+                          >
+                            {(groupData["data-source"] || []).map(
+                              (option, optionIndex) => (
+                                <FormControlLabel
+                                  key={optionIndex}
+                                  value={option.id}
+                                  control={<Radio />}
+                                  label={
+                                    <Box
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                      }}
+                                    >
+                                      {option.image && (
+                                        <Box
+                                          component="img"
+                                          src={option.image}
+                                          alt={
+                                            option.title ||
+                                            `Option ${optionIndex + 1}`
+                                          }
+                                          sx={{
+                                            width: 40,
+                                            height: 40,
+                                            borderRadius: "50%",
+                                            mr: 1,
+                                            border: "1px solid #ccc",
+                                          }}
+                                        />
+                                      )}
+                                      <Box>
+                                        <Typography
+                                          variant="body2"
+                                          fontWeight={600}
+                                        >
+                                          {option.title ||
+                                            `Option ${optionIndex + 1}`}
+                                        </Typography>
+                                        {option.description && (
+                                          <Typography
+                                            variant="caption"
+                                            color="text.secondary"
+                                          >
+                                            {option.description}
+                                          </Typography>
+                                        )}
+                                      </Box>
+                                    </Box>
+                                  }
+                                  sx={{
+                                    mb: 1,
+                                    px: 0.5,
+                                    py: 0.4,
+                                    borderRadius: 1,
+                                    border: "1px solid #e0e0e0",
+                                    alignItems: "flex-start",
+                                  }}
+                                />
+                              )
+                            )}
+                          </RadioGroup>
+                        </div>
+                      )
+                    )
+                  ) : (
+                    <Typography color="text.secondary">
+                      No radio groups found.
+                    </Typography>
+                  )}
+                </div>
+              );
+
+            // Render Dropdown
+            case "dropDown":
+              return (
+                <div key={index}>
+                  {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
+                    Object.entries(item.dropdown).map(
+                      ([dropdownId, dropdownData], groupIdx) => {
+                        const dropdownOptions =
+                          (dropdownData["data-source"] || []).map(
+                            (option, optIdx) => ({
+                              value: option.id,
+                              label: (
+                                <Box
+                                  sx={{ display: "flex", alignItems: "center" }}
+                                >
                                   {option.image && (
                                     <Box
                                       component="img"
                                       src={option.image}
-                                      alt={option.title || `Option ${optionIndex + 1}`}
+                                      alt={
+                                        option.title || `Option ${optIdx + 1}`
+                                      }
                                       sx={{
                                         width: 40,
                                         height: 40,
-                                        borderRadius: '50%',
+                                        borderRadius: "50%",
                                         mr: 1,
-                                        border: '1px solid #ccc',
+                                        border: "1px solid #ccc",
+                                        objectFit: "cover",
                                       }}
                                     />
                                   )}
                                   <Box>
-                                    <Typography variant="body2" fontWeight={600}>
-                                      {option.title || `Option ${optionIndex + 1}`}
+                                    <Typography
+                                      variant="body2"
+                                      fontWeight={600}
+                                    >
+                                      {option.title || `Option ${optIdx + 1}`}
                                     </Typography>
                                     {option.description && (
-                                      <Typography variant="caption" color="text.secondary">
+                                      <Typography
+                                        variant="caption"
+                                        color="text.secondary"
+                                      >
                                         {option.description}
                                       </Typography>
                                     )}
                                   </Box>
                                 </Box>
+                              ),
+                            })
+                          ) || [];
+
+                        return (
+                          <Box key={dropdownId} sx={{ mb: 2 }}>
+                            <Typography
+                              variant="subtitle1"
+                              sx={{ fontWeight: 600, mb: 1 }}
+                            >
+                              {dropdownData.label || `Dropdown ${groupIdx + 1}`}
+                            </Typography>
+
+                            <AnimatedDropdown
+                              value={item.selected?.[dropdownId] || ""}
+                              onChange={(value) =>
+                                handleDropdownChange(index, dropdownId, value)
                               }
-                              sx={{
-                                mb: 1,
-                                px: 1,
-                                py: 0.5,
-                                borderRadius: 1,
-                                border: '1px solid #e0e0e0',
-                                alignItems: 'flex-start',
-                              }}
+                              options={dropdownOptions}
                             />
-                          ))}
-                        </RadioGroup>
-                      </Box>
-                    ))
+                          </Box>
+                        );
+                      }
+                    )
                   ) : (
-                    <Typography color="text.secondary">No radio groups found.</Typography>
+                    <Typography color="text.secondary">
+                      No dropdowns found.
+                    </Typography>
                   )}
-                </Box>
+                </div>
               );
 
-
-            // Render Dropdown
-            case "dropDown":
+            case "chipSelector":
               return (
-                <Box key={index} sx={{ mb: 2, p: 2, borderRadius: 2 }}>
-                  {item?.dropdown && Object.keys(item.dropdown).length > 0 ? (
-                    Object.entries(item.dropdown).map(([dropdownId, dropdownData], groupIdx) => (
-                      <Box key={dropdownId} sx={{ mb: 2 }}>
-                        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-                          {dropdownData.label || `Dropdown ${groupIdx + 1}`}
-                        </Typography>
+                <div className="p-2 bg-gray-100 rounded-lg">
+                  <label className="block mb-2 text-sm font-medium text-gray-900">
+                    {item.label || "Select Options"}
+                  </label>
 
-                        <TextField
-                          select
-                          fullWidth
-                          size="small"
-                          value={item.selected?.[dropdownId] || ""}
-                          onChange={(e) =>
-                            handleDropdownChange(index, dropdownId, e.target.value)
+                  <div className="flex flex-wrap gap-2">
+                    {(item["data-source"] || []).map((option, i) => {
+                      const isSelected = (item.selected || []).includes(
+                        option.title
+                      );
+
+                      return (
+                        <button
+                          key={i}
+                          type="button"
+                          onClick={() =>
+                            handleChipOptionClick(index, option.title)
                           }
-                          sx={{ backgroundColor: "#fff" }}
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
+                              ? "bg-blue-600 text-white border-blue-600"
+                              : "bg-white text-gray-800 border-gray-300"
+                            }`}
                         >
-                          {(dropdownData["data-source"] || []).map((option, optIdx) => (
-                            <MenuItem key={option.id} value={option.id}>
-                              <Box sx={{ display: "flex", alignItems: "center" }}>
-                                {option.image && (
-                                  <Box
-                                    component="img"
-                                    src={option.image}
-                                    alt={option.title || `Option ${optIdx + 1}`}
-                                    sx={{
-                                      width: 30,
-                                      height: 30,
-                                      borderRadius: 1,
-                                      mr: 1,
-                                      border: "1px solid #ccc",
-                                    }}
-                                  />
-                                )}
-                                <Box>
-                                  <Typography variant="body2" fontWeight={600}>
-                                    {option.title}
-                                  </Typography>
-                                  {option.description && (
-                                    <Typography variant="caption" color="text.secondary">
-                                      {option.description}
-                                    </Typography>
-                                  )}
-                                </Box>
-                              </Box>
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </Box>
-                    ))
-                  ) : (
-                    <Typography color="text.secondary">No dropdowns found.</Typography>
-                  )}
-                </Box>
+                          {option.title}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <p className="text-xs text-gray-500 mt-2">
+                    {(item.selected || []).length} selected (max 2)
+                  </p>
+                </div>
               );
-
-            case 'chipSelector':
-              return (
-                <InputField
-                  type="url"
-                  placeholder="Enter a valid URL"
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
-                  }
-                  className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                />
-              )
-
 
             case "footerbutton":
               return (
@@ -425,18 +608,31 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   <div className="w-full max-w-md  text-center py-2 bottom-0 ">
                     {/* Left and Right Captions */}
                     <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <p>{item.footer ? item.footer.footer_1.left_caption : "Left Caption"}</p>
-                      <p>{item.footer ? item.footer.footer_1.right_caption : "Right Caption"}</p>
+                      <p>
+                        {item.footer
+                          ? item.footer.footer_1.left_caption
+                          : "Left Caption"}
+                      </p>
+                      <p>
+                        {item.footer
+                          ? item.footer.footer_1.right_caption
+                          : "Right Caption"}
+                      </p>
                     </div>
 
                     {/* Footer Button */}
                     <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
-                      {item.footer ? item.footer?.footer_1.center_caption : "Click me"}
+                      {item.footer
+                        ? item.footer?.footer_1.center_caption
+                        : "Click me"}
                     </button>
 
                     {/* Managed by Section */}
                     <p className="text-xs text-gray-500 mt-2">
-                      Managed by the business. <a href="#" className="text-blue-600 hover:underline">Learn more</a>
+                      Managed by the business.
+                      <a href="#" className="text-blue-600 hover:underline">
+                        Learn more
+                      </a>
                     </p>
                   </div>
                 </>
@@ -457,8 +653,7 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                   }
                   className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
-
-              )
+              );
 
             case "optin":
               return (
@@ -471,116 +666,386 @@ const MobilePanel = ({ items, onUpdateItem }) => {
                       ...prevItem,
                       value: e.target.value,
                     }))
-
                   }
                 />
-              )
+              );
 
             case "image":
               return (
-                <Box key={index}>
-                  <InputField
-                    type="file"
-                    id="file-upload"
-                    accept=".png, .jpeg,"
-                    onChange={handlePhotoUpload}
-                  />
-                </Box>
-              )
+                <div className="mt-6 p-4 border rounded-xl shadow-sm bg-white max-w-xs mx-auto">
+                  <div className="w-full px-4 py-2">
+                    {/* Image Preview */}
+                    {item.src ? (
+                      <>
+                        <img
+                          src={item.src}
+                          alt={item["alt-text"] || "Preview image"}
+                          className={`w-full h-auto rounded-md object-${item["scale-type"] || "contain"
+                            } mb-3`}
+                          style={{ aspectRatio: item["aspect-ratio"] || "1" }}
+                        />
+                        {/* Alt Text */}
+                        {item["alt-text"] && (
+                          <p className="text-center text-sm text-gray-600 italic">
+                            Alt: {item["alt-text"]}
+                          </p>
+                        )}
+                        {/* Scale Type */}
+                        {item["scale-type"] && (
+                          <p className="text-center text-sm text-gray-500 mt-1">
+                            Scale Type:{" "}
+                            <span className="font-medium">
+                              {item["scale-type"]}
+                            </span>
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <div className="w-full h-40 flex items-center justify-center border border-dashed rounded-md text-sm text-gray-400">
+                        No image uploaded
+                      </div>
+                    )}
+                  </div>
+                </div>
+              );
 
             case "document":
               return (
                 <>
                   {item.type === "document" && (
                     <div className="p-4 border rounded-md shadow-sm">
-                      <p className="font-semibold">{item.label || "Upload photos"}</p>
-                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <p className="font-semibold">
+                        {item.label || "Upload Documents"}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {item.description}
+                      </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Min Photos: {item["min-uploaded-photos"] || 1} | Max Photos: {item["max-uploaded-photos"] || 1}
+                        Min Documents: {item["min-uploaded-documents"] || ""} |
+                        Max Documents: {item["max-uploaded-documents"] || ""}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
                         <span className="text-green-400 space-x-2">
                           <ArticleOutlinedIcon />
-                          Upload Document </span>
+                          Upload Document
+                        </span>
                       </div>
                     </div>
-                  )
-                  }
+                  )}
                 </>
-              )
-            case 'media':
+              );
+            case "media":
               return (
                 <>
                   {item.type === "media" && (
                     <div className="p-4 border rounded-md shadow-sm">
-                      <p className="font-semibold">{item.label || "Upload photos"}</p>
-                      <p className="text-sm text-gray-600">{item.description}</p>
+                      <p className="font-semibold">
+                        {item.label || "Upload photos"}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {item.description}
+                      </p>
                       <p className="text-xs text-gray-500 mt-1">
-                        Min Photos: {item["min-uploaded-photos"] || 1} | Max Photos: {item["max-uploaded-photos"] || 10}
+                        Min Photos: {item["min-uploaded-photos"] || ""} | Max
+                        Photos: {item["max-uploaded-photos"] || ""}
                       </p>
                       <div className="mt-2 border-2 border-dashed border-gray-300 p-2 text-center rounded-md">
                         <span className="text-green-400 space-x-2">
                           <AddAPhotoOutlinedIcon />
-                          Take Photo </span>
+                          Take Photo{" "}
+                        </span>
                       </div>
                     </div>
-                  )
-                  }
+                  )}
                 </>
+              );
 
-              )
+            // case "imageCarousel":
+            //   const images = item?.images || [];
+            //   const scaleType = item?.["scale-type"] || "contain";
+            //   return (
+            //     <div className="w-[320px] mx-auto border rounded-xl shadow-md overflow-hidden bg-white">
+            //       <div
+            //         className=""
+            //       >
+            //         {images.map((img, idx) => (
+            //           <img
+            //             key={idx}
+            //             src={img?.src || ""}
+            //             alt={img?.["alt-text"] || `Image ${idx + 1}`}
+            //             className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
+            //               }`}
+            //           />
+            //         ))}
+
+            //         {images.length > 1 && (
+            //           <>
+            //             <button
+            //               className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+            //               onClick={() =>
+            //                 setCurrentIndex(
+            //                   (prev) =>
+            //                     (prev - 1 + images.length) % images.length
+            //                 )
+            //               }
+            //             >
+            //               ‹
+            //             </button>
+            //             <button
+            //               className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+            //               onClick={() =>
+            //                 setCurrentIndex(
+            //                   (prev) => (prev + 1) % images.length
+            //                 )
+            //               }
+            //             >
+            //               ›
+            //             </button>
+            //           </>
+            //         )}
+            //       </div>
+
+            //       <div className="text-center py-2 text-sm text-gray-500">
+            //         {images[currentIndex]?.["alt-text"] ||
+            //           `Image ${currentIndex + 1}`}
+            //       </div>
+            //     </div>
+
+            //   );
+
+            case "imageCarousel": {
+              return (
+                <div className="mt-6 border rounded-xl shadow-sm bg-white max-w-xs mx-auto overflow-hidden">
+                  <div
+                    className="relative w-full h-[200px]"
+                    onTouchStart={handleSwipeStart}
+                    onTouchEnd={handleSwipeEnd}
+                  >
+                    {images.map((img, idx) => (
+                      <img
+                        key={idx}
+                        src={img?.src}
+                        alt={img?.["alt-text"] || `Image ${idx + 1}`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-700 ${idx === carouselIndex ? "opacity-100" : "opacity-0"
+                          }`}
+                      />
+                    ))}
+
+                    {/* Arrows */}
+                    {images.length > 1 && (
+                      <>
+                        <button
+                          className="absolute left-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                          onClick={() =>
+                            setCarouselIndex(
+                              (prev) =>
+                                (prev - 1 + images.length) % images.length
+                            )
+                          }
+                        >
+                          ‹
+                        </button>
+                        <button
+                          className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-black bg-opacity-50 text-white px-2 py-1 rounded"
+                          onClick={() =>
+                            setCarouselIndex(
+                              (prev) => (prev + 1) % images.length
+                            )
+                          }
+                        >
+                          ›
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  {/* Alt Text */}
+                  <div className="text-center py-2 text-sm text-gray-500">
+                    {images[carouselIndex]?.["alt-text"] ||
+                      `Image ${carouselIndex + 1}`}
+                  </div>
+
+                  {/* Dot Indicators */}
+                  <div className="flex justify-center gap-1 pb-2">
+                    {images.map((_, i) => (
+                      <div
+                        key={i}
+                        className={`w-2 h-2 rounded-full ${i === carouselIndex ? "bg-blue-600" : "bg-gray-300"
+                          }`}
+                      ></div>
+                    ))}
+                  </div>
+                </div>
+              );
+            }
 
             case "ifelse":
+              return <InputField value={item.value || ""} />;
+            case "switch":
+              return <InputField placeholder="SWITCH" label="SWITCH" />;
+
+            case "calendar":
               return (
-                <InputField
-                  value={item.value || ""}
-                  onChange={(e) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: e.target.value,
-                    }))
+                <div className="w-full px-3 py-2">
+                  {item.mode === "range" ? (
+                    <div className="space-y-4">
+                      {/* Start Date */}
+                      <div className="w-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {item.label?.["start-date"] || "Start Date"}
+                        </label>
+                        <UniversalDatePicker
+                          selected={
+                            item.value?.["start-date"]
+                              ? new Date(item.value["start-date"])
+                              : null
+                          }
+                          onChange={(date) =>
+                            onUpdateItem &&
+                            onUpdateItem(index, (prevItem) => ({
+                              ...prevItem,
+                              value: {
+                                ...prevItem.value,
+                                "start-date": date?.toISOString().split("T")[0],
+                              },
+                            }))
+                          }
+                          placeholderText="Select start date"
+                          minDate={
+                            item["min-date"]
+                              ? new Date(item["min-date"])
+                              : undefined
+                          }
+                          maxDate={
+                            item["max-date"]
+                              ? new Date(item["max-date"])
+                              : undefined
+                          }
+                          unavailableDate={
+                            Array.isArray(item["unavailable-dates"])
+                              ? item["unavailable-dates"].map(
+                                (d) => new Date(d)
+                              )
+                              : undefined
+                          }
+                          dateFormat="yyyy-MM-dd"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                        />
+                        {item["helper-text"]?.["start-date"] && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item["helper-text"]["start-date"]}
+                          </p>
+                        )}
+                      </div>
 
-                  }
-                />
-              )
-            case 'switch':
-              return (
-                <InputField
-                  placeholder='SWITCH'
-                  label='SWITCH'
-                />
-              )
+                      {/* End Date */}
+                      <div className="w-full">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          {item.label?.["end-date"] || "End Date"}
+                        </label>
+                        <UniversalDatePicker
+                          selected={
+                            item.value?.["end-date"]
+                              ? new Date(item.value["end-date"])
+                              : null
+                          }
+                          onChange={(date) =>
+                            onUpdateItem &&
+                            onUpdateItem(index, (prevItem) => ({
+                              ...prevItem,
+                              value: {
+                                ...prevItem.value,
+                                "end-date": date?.toISOString().split("T")[0],
+                              },
+                            }))
+                          }
+                          placeholderText="Select end date"
+                          minDate={
+                            item["min-date"]
+                              ? new Date(item["min-date"])
+                              : undefined
+                          }
+                          maxDate={
+                            item["max-date"]
+                              ? new Date(item["max-date"])
+                              : undefined
+                          }
+                          unavailableDate={
+                            Array.isArray(item["unavailable-dates"])
+                              ? item["unavailable-dates"].map(
+                                (d) => new Date(d)
+                              )
+                              : undefined
+                          }
+                          dateFormat="yyyy-MM-dd"
+                          className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                        />
+                        {item["helper-text"]?.["end-date"] && (
+                          <p className="text-xs text-gray-500 mt-1">
+                            {item["helper-text"]["end-date"]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="w-full">
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        {item.label || "Date"}
+                      </label>
+                      <UniversalDatePicker
+                        selected={item.value ? new Date(item.value) : null}
+                        onChange={(date) =>
+                          onUpdateItem &&
+                          onUpdateItem(index, (prevItem) => ({
+                            ...prevItem,
+                            value: date?.toISOString().split("T")[0],
+                          }))
+                        }
+                        placeholderText={item.placeholder || "Select a date"}
+                        minDate={
+                          item["min-date"]
+                            ? new Date(item["min-date"])
+                            : undefined
+                        }
+                        maxDate={
+                          item["max-date"]
+                            ? new Date(item["max-date"])
+                            : undefined
+                        }
+                        unavailableDate={
+                          Array.isArray(item["unavailable-dates"])
+                            ? item["unavailable-dates"].map((d) => new Date(d))
+                            : undefined
+                        }
+                        dateFormat="yyyy-MM-dd"
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none"
+                      />
+                      {item["helper-text"] && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          {item["helper-text"]}
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
 
-
+            // Render Date
             case "date":
               return (
-                <InputField
-                  value={item.value || ""}
-                  onChange={(value) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: value,
-                    }))
+                <div className="w-full px-4 py-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    {item.label}
+                  </label>
+                  <div className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-gray-100 text-gray-800">
+                    {item.value
+                      ? new Date(item.value).toLocaleDateString()
+                      : "No date selected"}
 
-                  }
-                />
-              )
-            case 'calendar':
-              return (
-                <InputField
-                  value={item.value || ""}
-                  onChange={(value) =>
-                    onUpdateItem &&
-                    onUpdateItem(index, (prevItem) => ({
-                      ...prevItem,
-                      value: value,
-                    }))
-
-                  }
-                />
-              )
+                    {item["max-date"] || "Date (Optional)"}
+                  </div>
+                </div>
+              );
 
             // case "userdetail":
             //   return (
@@ -603,7 +1068,6 @@ const MobilePanel = ({ items, onUpdateItem }) => {
         })}
       </Box>
     </div>
-  )
-
-}
+  );
+};
 export default MobilePanel;

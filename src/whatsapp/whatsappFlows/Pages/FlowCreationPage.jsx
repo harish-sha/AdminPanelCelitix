@@ -15,10 +15,9 @@ import { generatePayload } from "../lib/generatePayload";
 import { saveFlow } from "@/apis/whatsapp/whatsapp";
 import InputField from "@/components/layout/InputField";
 
-
 const FlowCreationPage = () => {
   const { state } = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [flowName, setFlowName] = useState("");
@@ -40,58 +39,234 @@ const FlowCreationPage = () => {
   const [screenEditName, setScreenEditName] = useState("");
   const [screenID, setScreenID] = useState("");
   const [createTab, setCreateTab] = useState("");
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(false);
+
+  // heading
+  const [headingValue, setHeadingValue] = useState("");
+
+  //texts
+  const [labelValue, setLabelValue] = useState("");
+  const [selectedOptionsType, setSelectedOptionsType] = useState(null);
+  const [placeholderValue, setPlaceholderValue] = useState("");
+  const [maxValue, setMaxValue] = useState("");
+  const [minValue, setMinValue] = useState("");
+  const [errorValue, setErrorValue] = useState("");
+  const [switchChecked, setSwitchChecked] = useState(false);
+
+  //radioButton
+  const [radioBtnLabel, setRadioBtnLabel] = useState("");
+  const [radioButtonOptions, setRadioButtonOptions] = useState([]);
+  const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
+  const [radioImageFile, setRadioImageFile] = useState(null);
+  const [radioImageSrc, setRadioImageSrc] = useState(null);
+  const [uploadedRadioImgId, setUploadedRadioImgId] = useState(null);
+  const [radioOptions, setRadioOptions] = useState([]);
+  const [draft, setDraft] = useState({
+    title: "",
+    description: "",
+    metadata: "",
+    image: "",
+    altText: "",
+  });
+
+  // console.log("labelValueeeeeeeeee", labelValue)
 
   const [randomNumber, setRandomNumber] = useState(
     Math.floor(Math.random() * 1000)
   );
+
+  // const handleAddItem = (item) => {
+  //   const newTabs = [...tabs];
+  //   console.log("newTabs", newTabs);
+
+  //   const nonDuplicateTabs = [
+  //     "heading",
+  //     "subheading",
+  //     "textbody",
+  //     "textcaption",
+  //   ];
+
+  //   const onlyOneMediaItem = [
+  //     "document",
+  //     "media"
+  //   ]
+
+  //   // Check for duplicates *only* if item.type is in nonDuplicateTabs
+  //   // const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
+
+  //   // if (shouldCheckDuplicate) {
+  //   //   const isDuplicate = newTabs[activeIndex]?.payload?.some(
+  //   //     (payloadItem) => payloadItem.type === item.type
+  //   //   );
+
+  //   //   if (isDuplicate) {
+  //   //     toast.error(`Only one "${item.type}" allowed in the canvas.`);
+  //   //     return;
+  //   //   }
+  //   // }
+
+  //   // Add the item
+  //   newTabs[activeIndex] = {
+  //     ...newTabs[activeIndex],
+  //     payload: [
+  //       ...newTabs[activeIndex].payload,
+  //       { type: item.type, value: "" },
+  //     ],
+  //   };
+
+  //   setTabs(newTabs);
+  //   // toast.success(`"${item.type}" added successfully`);
+  // };
 
   const handleAddItem = (item) => {
     const newTabs = [...tabs];
     // console.log("newTabs", newTabs);
 
     const nonDuplicateTabs = [
-      "heading",
-      "subheading",
-      "textbody",
-      "textcaption"
-    ];
+      "document",
+      "media",
+      "date",
+      "calendar"
+    ]
+    const onlyOneMediaItem = ["document", "media"];
+    const onlyOneDateOrCalendar = ["date", "calendar"];
 
-    // Check for duplicates *only* if item.type is in nonDuplicateTabs
-    // const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
+    const currentPayload = newTabs[activeIndex]?.payload || [];
 
-    // if (shouldCheckDuplicate) {
-    //   const isDuplicate = newTabs[activeIndex]?.payload?.some(
-    //     (payloadItem) => payloadItem.type === item.type
-    //   );
+    // 🛑 Check for media/document conflict
+    if (onlyOneMediaItem.includes(item.type)) {
+      const hasMedia = currentPayload.some(
+        (payloadItem) => payloadItem.type === "media"
+      );
+      const hasDocument = currentPayload.some(
+        (payloadItem) => payloadItem.type === "document"
+      );
 
-    //   if (isDuplicate) {
-    //     toast.error(`Only one "${item.type}" allowed in the canvas.`);
-    //     return;
-    //   }
-    // }
+      if (
+        (item.type === "media" && hasDocument) ||
+        (item.type === "document" && hasMedia)
+      ) {
+        toast.error(
+          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          }" already exists.`
+        );
+        return;
+      }
+    }
 
-    // Add the item
+    // 🛑 Check for media/document conflict
+    if (onlyOneDateOrCalendar.includes(item.type)) {
+      const hasDate = currentPayload.some(
+        (payloadItem) => payloadItem.type === "date"
+      );
+      const hasCalendar = currentPayload.some(
+        (payloadItem) => payloadItem.type === "calendar"
+      );
+
+      if (
+        (item.type === "date" && hasCalendar) ||
+        (item.type === "calendar" && hasDate)
+      ) {
+        toast.error(
+          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          }" already exists.`
+        );
+        return;
+      }
+    }
+
+    // ✅ Optional: Check for duplicates among nonDuplicateTabs
+    const shouldCheckDuplicate = nonDuplicateTabs.includes(item.type);
+
+    if (shouldCheckDuplicate) {
+      const isDuplicate = currentPayload.some(
+        (payloadItem) => payloadItem.type === item.type
+      );
+
+      if (isDuplicate) {
+        toast.error(`Only one "${item.type}" allowed in the canvas.`);
+        return;
+      }
+    }
+
+    // ✅ Add the item
     newTabs[activeIndex] = {
       ...newTabs[activeIndex],
-      payload: [
-        ...newTabs[activeIndex].payload,
-        { type: item.type, value: "" },
-      ],
+      payload: [...currentPayload, { type: item.type, value: "" }],
     };
 
     setTabs(newTabs);
-    // toast.success(`"${item.type}" added successfully`);
+    toast.success(`"${item.type}" added successfully`);
   };
-
 
   useEffect(() => {
     // console.log(tabs)
   }, [])
 
-  const handleEdit = (index) => {
-    tabs[activeIndex].payload[index];
-    setSelectedItem({ ...tabs[activeIndex].payload[index], index });
+  // const handleEdit = (index, item) => {
+  //   console.log("indexxxxxxxxxxxx", index)
+  //   console.log("itemmmmmmmmmmmmm", item)
+  //   tabs[activeIndex].payload[index];
+  //   setSelectedItem({ ...tabs[activeIndex].payload[index], index });
+  // };
+
+  const handleEdit = (index, item) => {
+    console.log("itemmmmmmmmmmmmm", item);
+    const type = item.type;
+
+    // Extract prefill value based on type
+    let prefillValue = "";
+    let prefillValueOfTexts = "";
+    let prefilledradioBtn = "";
+
+    if (type === "textInput" || type === "textArea") {
+      const key = type === "textInput" ? "textInput_1" : "textArea_1";
+      prefillValueOfTexts = item.texts?.[key] || "";
+      console.log("prefillValueOfTexts", prefillValueOfTexts);
+    } else if (
+      type === "heading" ||
+      type === "subheading" ||
+      type === "textbody" ||
+      type === "textcaption"
+    ) {
+      prefillValue = item[type] || "";
+    } else if (type === "radioButton") {
+      const radioKeys = Object.keys(item.radioButton || {}).filter((key) =>
+        key.startsWith("radioButton_")
+      );
+      console.log("radioKeys", radioKeys);
+      const key = radioKeys[0];
+      const radioOptions =
+        item?.radioButton?.radioButton_1?.["data-source"] || [];
+      console.log("radioOptions", radioOptions);
+      radioOptions.forEach((option, index) => {
+        setDraft({
+          title: option.title || "",
+          description: option.description || "",
+          metadata: option.metadata || "",
+          image: option.image || "",
+          altText: option.altText || "", // If altText exists in option
+        });
+      });
+    } else if (type === "footerbutton") {
+      prefillValue = item.footer?.footer_1?.center_caption || "";
+    }
+
+    setSelectedItem({ ...item, index });
+
+    // heading
+    setHeadingValue(prefillValue);
+
+    // textBtn
+    setLabelValue(prefillValueOfTexts?.helper_text);
+    setSelectedOptionsType(prefillValueOfTexts?.value);
+    setPlaceholderValue(prefillValueOfTexts?.label);
+    setErrorValue(prefillValueOfTexts?.error_message);
+    setMinValue(prefillValueOfTexts?.min_chars);
+    setMaxValue(prefillValueOfTexts?.max_chars);
+    setSwitchChecked(prefillValueOfTexts?.required);
+
+    // radioBtn
   };
 
   const handleSave = (updatedData) => {
@@ -108,7 +283,7 @@ const FlowCreationPage = () => {
           options: updatedData.options || [],
           checked: updatedData.checked || [],
           selectedOption: updatedData.selectedOption || "",
-          ...updatedData
+          ...updatedData,
         };
         // console.log("all tabs content when save within tabs", newTabs)
       } else {
@@ -125,76 +300,105 @@ const FlowCreationPage = () => {
   };
 
   async function handleFlowBuild() {
-    if (!flowName) {
-      toast.error("Please Enter FlowName")
-      return;
-    }
-
-    const hasAtLeastOneComponent = tabs.some(tab => tab.payload.length > 0);
+    const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
     if (!hasAtLeastOneComponent) {
       toast.error("Please add at least one component before building the flow");
       return;
     }
 
+    if (!flowName) {
+      toast.error("Please Enter FlowName");
+      return;
+    }
+
+
     try {
       const payload = generatePayload(tabs);
 
       const params = {
-        // name: state?.flowName,
         category: state?.selectCategories,
         waba: state?.selectedWaba,
         id: "",
         name: flowName,
       };
-      setIsLoading(true)
+
+      setIsLoading(true);
+      console.log("Calling saveFlow with:", params, payload);
 
       const res = await saveFlow(params, payload);
-      // console.log("final payload", payload)
-      if (res == {}) {
-        return toast.error("Flow creation failed");
+      console.log("Response from saveFlow final payload:", res);
+
+      if (!res || (typeof res === "object" && Object.keys(res).length === 0)) {
+        toast.error("Flow creation failed. Please try again.");
+        return;
       }
+
       if (res && Object.keys(res).length === 0 && res.constructor === Object) {
         return toast.error("Flow creation failed");
       }
-      // console.log("final response", res)
+
+      if (res.flag === false) {
+        const backendError =
+          res?.error_user_msg?.error?.error_user_msg ||
+          res?.msg?.validation_errors?.[0]?.message ||
+          "Something went wrong while creating the flow.";
+
+        toast.error(backendError);
+        return;
+      }
+
       if (!res.flag) {
         return toast.error(res.error_user_msg.error.error_user_msg);
       }
-      toast.success(res.msg);
-      navigate("/wwhatsappflows")
-    } catch (e) {
-      // console.log("error", e)
-      return toast.error(e.error_user_msg);
+
+      if (res.flag === true && typeof res.msg === "string") {
+        toast.success(res.msg);
+        // navigate("/wwhatsappflows"); // uncomment when navigation is needed
+        return;
+      }
+
+      if (res.flag === true && res.msg?.validation_errors?.length > 0) {
+        const firstError = res.msg.validation_errors[0]?.message;
+        toast.error(firstError || "Flow JSON is not valid.");
+        return;
+      }
+
+      toast.error("Unexpected response. Please try again.");
+    } catch (err) {
+      console.error("Unexpected API error:", err);
+      const fallbackMessage =
+        err?.error_user_msg?.error?.error_user_msg ||
+        err?.message ||
+        "An unexpected error occurred. Please try again.";
+
+      toast.error(fallbackMessage);
+      // return toast.error(e.error_user_msg);
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
-
-  async function handleFlowSave() {
-    toast.success("Flow Saved Successfully");
-
-  }
+  // async function handleFlowSave() {
+  //   toast.success("Flow Saved Successfully");
+  // }
 
   return (
     <div className="">
-
-
       <div className="bg-white rounded-md shadow-sm px-4 py-3 flex items-center justify-between">
         {/* <span className="text-md font-semibold text-gray-700">
           ChatFlow: {state?.flowName || "Untitled Flow"}
         </span> */}
-        <span className="text-md font-semibold text-gray-700">
-          ChatFlow
-        </span>
+        <span className="text-md font-semibold text-gray-700">ChatFlow</span>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-end gap-3">
           <InputField
             id="flowname"
             name="flowname"
             type="text"
             placeholder="Enter Flow Name"
+            label="Enter Flow Name"
+            tooltipContent="Enter a unique flow name one waba cannot contain same flow name"
             value={flowName}
             onChange={(e) => {
               const noSpaces = e.target.value.replace(/\s/g, "");
@@ -222,7 +426,6 @@ const FlowCreationPage = () => {
           />
         </div>
       </div>
-
 
       <div className="flex gap-3 items-start mt-4">
         {/* Siddebar */}
@@ -260,9 +463,39 @@ const FlowCreationPage = () => {
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}
+              headingValue={headingValue}
+              setHeadingValue={setHeadingValue}
+              labelValue={labelValue}
+              setLabelValue={setLabelValue}
+              selectedOptionsType={selectedOptionsType}
+              setSelectedOptionsType={setSelectedOptionsType}
+              setPlaceholderValue={setPlaceholderValue}
+              placeholderValue={placeholderValue}
+              minValue={minValue}
+              setMinValue={setMinValue}
+              maxValue={maxValue}
+              setMaxValue={setMaxValue}
+              errorValue={errorValue}
+              setErrorValue={setErrorValue}
+              switchChecked={switchChecked}
+              setSwitchChecked={setSwitchChecked}
+              radioBtnLabel={radioBtnLabel}
+              setRadioBtnLabel={setRadioBtnLabel}
+              radioButtonOptions={radioButtonOptions}
+              setRadioButtonOptions={setRadioButtonOptions}
+              radiobtnEditIdx={radiobtnEditIdx}
+              setRadiobtnEditIdx={setRadiobtnEditIdx}
+              radioImageFile={radioImageFile}
+              setRadioImageFile={setRadioImageFile}
+              radioImageSrc={radioImageSrc}
+              setRadioImageSrc={setRadioImageSrc}
+              uploadedRadioImgId={uploadedRadioImgId}
+              radioOptions={radioOptions}
+              setRadioOptions={setRadioOptions}
+              draft={draft}
+              setDraft={setDraft}
             />
           )}
-
         </div>
 
         <div className="flex-1 ">

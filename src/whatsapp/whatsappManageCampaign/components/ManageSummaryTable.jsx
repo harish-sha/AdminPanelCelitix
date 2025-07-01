@@ -17,6 +17,7 @@ import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import { Paper, Typography, Box, Button } from "@mui/material";
 import { useState } from "react";
 import { render } from "timeago.js";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -108,16 +109,16 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
 
     rows = Array.isArray(data)
       ? data.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          displayName: item.displayName,
-          month: item.month,
-          year: item.year,
-          country: item.country,
-          type: item.whatsappType,
-          count: item.count,
-          userCharge: item.userCharge,
-        }))
+        id: index + 1,
+        sn: index + 1,
+        displayName: item.displayName,
+        month: item.month,
+        year: item.year,
+        country: item.country,
+        type: item.whatsappType,
+        count: item.count,
+        userCharge: item.userCharge,
+      }))
       : [];
   } else {
     columns = [
@@ -143,15 +144,15 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
     ];
     rows = Array.isArray(data)
       ? data.map((item, index) => ({
-          id: index + 1,
-          sn: index + 1,
-          displayName: item.displayName,
-          sentDate: item.sentDate,
-          country: item.country,
-          type: item.whatsappType,
-          count: item.count,
-          userCharge: item.userCharge,
-        }))
+        id: index + 1,
+        sn: index + 1,
+        displayName: item.displayName,
+        sentDate: item.sentDate,
+        country: item.country,
+        type: item.whatsappType,
+        count: item.count,
+        userCharge: item.userCharge,
+      }))
       : [];
   }
 
@@ -241,7 +242,7 @@ const ManageSummaryTable = ({ id, name, data = [], isMonthWise }) => {
         pagination
         paginationModel={paginationModel}
         onPaginationModelChange={setPaginationModel}
-        checkboxSelection
+        // checkboxSelection
         rowHeight={45}
         slots={{ footer: CustomFooter, noRowsOverlay: CustomNoRowsOverlay }}
         slotProps={{ footer: { totalRecords: rows.length } }}

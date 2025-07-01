@@ -66,8 +66,8 @@ const ManageVoiceClips = () => {
     if (file) {
       const validExtensions = ['mp3', 'wav'];
       const fileExtension = file.name.split('.').pop().toLowerCase();
-      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, ""); 
-      
+      const fileNameWithoutExt = file.name.replace(/\.[^/.]+$/, "");
+
       if (validExtensions.includes(fileExtension)) {
         if (isValidFileName(fileNameWithoutExt)) {
           setUploadedFile(file);
@@ -174,111 +174,111 @@ const ManageVoiceClips = () => {
         className="lg:w-[30rem] md:w-[20rem] w-[20rem]"
         draggable={false}
       >
-       <div className='space-y-4'>
-       <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-          {/* Option 1 */}
-          <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="addfileOption1" name="addfileredio" value="enable" onChange={handleChangeAddfile} checked={addfileStatus === 'enable'} />
-              <label htmlFor="addfileOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Transactional</label>
-            </div>
-          </div>
-          {/* Option 2 */}
-          <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-            <div className="flex items-center gap-2" >
-              <RadioButton inputId="addfileOOption2" name="addfileredio" value="disable" onChange={handleChangeAddfile} checked={addfileStatus === 'disable'} />
-              <label htmlFor="addfileOOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Promotional</label>
-            </div>
-          </div>
-        </div>
-        <div>
-          <InputField
-            label="File Name"
-            id="addfilename"
-            name="addfilename"
-            placeholder="Enter File Name"
-          />
-        </div>
-
-        <div className="mt-2 file-upload">
-          <div
-            className="file-upload-container"
-            onDrop={handleFileDrop}
-            onDragOver={handleDragOver}
-          >
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="hidden"
-              id="fileInput"
-              name="fileInput"
-              accept=".mp3, .wav"
-            />
-            <div className="flex items-center justify-center gap-2" >
-              <label htmlFor="fileInput" className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500">
-                Choose or Drop File
-              </label>
-              <div className="upload-button-container ">
-                <button
-                  onClick={handleFileUpload}
-                  disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? 'disabled' : ''}`}
-                >
-                  <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
-                </button>
+        <div className='space-y-4'>
+          <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
+            {/* Option 1 */}
+            <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
+              <div className="flex items-center gap-2" >
+                <RadioButton inputId="addfileOption1" name="addfileredio" value="enable" onChange={handleChangeAddfile} checked={addfileStatus === 'enable'} />
+                <label htmlFor="addfileOption1" className="text-sm font-medium text-gray-700 cursor-pointer">Transactional</label>
               </div>
             </div>
-            <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
-              Supported File Formats: mp3 and wav. 
-            </p>
-            <div className="mt-3" >
-              {uploadedFile ? (
-                <div className="flex items-center justify-center gap-1 file-upload-info">
-                  <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
-                    {isUploaded ? (
-                      "File Uploaded: "
-                    ) : (
-                      "File Selected: "
-                    )}
-                    <strong>{uploadedFile.name}</strong>
-                  </p>
-                  <button
-                    className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
-                    onClick={handleRemoveFile}
-                  >
-                    <MdOutlineDeleteForever
-                      className='text-red-500 cursor-pointer hover:text-red-600'
-                      size={20}
-                    />
-                  </button>
-                </div>
-              ) : (
-                <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
-                  No file uploaded yet!
-                </p>
-              )}
+            {/* Option 2 */}
+            <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
+              <div className="flex items-center gap-2" >
+                <RadioButton inputId="addfileOOption2" name="addfileredio" value="disable" onChange={handleChangeAddfile} checked={addfileStatus === 'disable'} />
+                <label htmlFor="addfileOOption2" className="text-sm font-medium text-gray-700 cursor-pointer">Promotional</label>
+              </div>
             </div>
           </div>
+          <div>
+            <InputField
+              label="File Name"
+              id="addfilename"
+              name="addfilename"
+              placeholder="Enter File Name"
+            />
+          </div>
+
+          <div className="mt-2 file-upload">
+            <div
+              className="file-upload-container"
+              onDrop={handleFileDrop}
+              onDragOver={handleDragOver}
+            >
+              <input
+                type="file"
+                onChange={handleFileChange}
+                className="hidden"
+                id="fileInput"
+                name="fileInput"
+                accept=".mp3, .wav"
+              />
+              <div className="flex items-center justify-center gap-2" >
+                <label htmlFor="fileInput" className="inline-block px-3 py-2 text-sm font-medium tracking-wider text-center text-white bg-blue-400 rounded-lg cursor-pointer file-upload-button hover:bg-blue-500">
+                  Choose or Drop File
+                </label>
+                <div className="upload-button-container ">
+                  <button
+                    onClick={handleFileUpload}
+                    disabled={isUploading}
+                    className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? 'disabled' : ''}`}
+                  >
+                    <FileUploadOutlinedIcon sx={{ color: "white", fontSize: "23px" }} />
+                  </button>
+                </div>
+              </div>
+              <p className="file-upload-text mt-2 text-[0.8rem] text-gray-400 tracking-wide">
+                Supported File Formats: mp3 and wav.
+              </p>
+              <div className="mt-3" >
+                {uploadedFile ? (
+                  <div className="flex items-center justify-center gap-1 file-upload-info">
+                    <p className="file-upload-feedback file-upload-feedback-success text-sm text-green-500 font-[500]">
+                      {isUploaded ? (
+                        "File Uploaded: "
+                      ) : (
+                        "File Selected: "
+                      )}
+                      <strong>{uploadedFile.name}</strong>
+                    </p>
+                    <button
+                      className="file-remove-button rounded-2xl p-1.5 hover:bg-gray-200 cursor-pointer"
+                      onClick={handleRemoveFile}
+                    >
+                      <MdOutlineDeleteForever
+                        className='text-red-500 cursor-pointer hover:text-red-600'
+                        size={20}
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-sm font-semibold tracking-wide text-gray-500 file-upload-feedback file-upload-feedback-error">
+                    No file uploaded yet!
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+          <div>
+            <DropdownWithSearch
+              label="Assign To User"
+              id="assignToUser"
+              name="assignToUser"
+              options={assignusers}
+              value={selectedUser}
+              onChange={(value) => setSelectedUser(value)}
+            />
+          </div>
+          <div className='flex justify-center'>
+            <UniversalButton
+              label="Submit"
+              className="w-full mt-4"
+              id="addfilesubmit"
+              name="addfilesubmit"
+            />
+          </div>
         </div>
-        <div>
-          <DropdownWithSearch
-            label="Assign To User"
-            id="assignToUser"
-            name="assignToUser"
-            options={assignusers}
-            value={selectedUser}
-            onChange={(value) => setSelectedUser(value)}
-          />
-        </div>
-        <div className='flex justify-center'>
-          <UniversalButton
-            label="Submit"
-            className="w-full mt-4"
-            id="addfilesubmit"
-            name="addfilesubmit"
-          />
-        </div>
-       </div>
       </Dialog>
       {/* )} */}
     </div>

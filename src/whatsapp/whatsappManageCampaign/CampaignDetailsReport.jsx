@@ -127,13 +127,20 @@ const CampaignDetailsReport = () => {
       mobno: mobileNumber,
       status: "status",
       page: currentPage,
-      delStatus: deliveryStatus,
+      delStatus: deliveryStatus || "",
       selectedUserId: selectedUser || "0",
 
     };
-    const data = await getWhatsappCampaignDetailsReport(body);
-    setCampaignDetails(data.data);
-    setTotalPage(data.total);
+    setIsFetching(true)
+    try {
+      const data = await getWhatsappCampaignDetailsReport(body);
+      setCampaignDetails(data.data);
+      setTotalPage(data.total);
+    } catch (error) {
+      toast.error("failed to laod details!")
+    } finally {
+      setIsFetching(false)
+    }
   };
 
   useEffect(() => {
@@ -176,7 +183,8 @@ const CampaignDetailsReport = () => {
     // wabaNumber: item.wabaNumber || "N/A",
     mobileNo: item.mobileNo || "N/A",
     status: item.status || "N/A",
-    sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+    // sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
+    sentTime: item.sentTime || "-",
     deliveryTime: item.deliveryTime || "-",
     readTime: item.readTime || "-",
     deliveryStatus: item.deliveryStatus || "-",
@@ -285,7 +293,7 @@ const CampaignDetailsReport = () => {
             ]}
             value={deliveryStatus}
             onChange={setDeliveryStatus}
-            placeholder="delivery status"
+            placeholder="Select Status"
           />
         </div>
         <div className="w-max-content ">

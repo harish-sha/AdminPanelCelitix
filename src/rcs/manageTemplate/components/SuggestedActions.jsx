@@ -275,7 +275,7 @@ export const SuggestedActions = ({
                             selectedAction.dropdown2 === "Url Action"
                               ? "text"
                               : selectedAction.dropdown2 === "Dialer Action"
-                                ? "number"
+                                ? "text"
                                 : "text"
                           }
                         />
@@ -392,7 +392,7 @@ export const SuggestedActions = ({
                             selectedAction.dropdown3 === "Url Action"
                               ? "text"
                               : selectedAction.dropdown3 === "Dialer Action"
-                                ? "number"
+                                ? "text"
                                 : "text"
                           }
                         />
@@ -508,7 +508,7 @@ export const SuggestedActions = ({
                             selectedAction.dropdown4 === "Url Action"
                               ? "text"
                               : selectedAction.dropdown4 === "Dialer Action"
-                                ? "number"
+                                ? "text"
                                 : "text"
                           }
                         />

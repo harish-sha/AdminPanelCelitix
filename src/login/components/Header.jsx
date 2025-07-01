@@ -91,10 +91,6 @@ const Header = () => {
 
     const WEBSITE_BASEURL = import.meta.env.VITE_WEBSITE_URL;
 
-
-
-
-
     return (
         <>
 

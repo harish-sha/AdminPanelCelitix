@@ -37,6 +37,7 @@ import SmsOutlinedIcon from "@mui/icons-material/SmsOutlined";
 import PhoneMissedOutlinedIcon from "@mui/icons-material/PhoneMissedOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
+import SupportAgentOutlinedIcon from '@mui/icons-material/SupportAgentOutlined';
 import { useEffect } from "react";
 import toast from "react-hot-toast";
 // import RemoveRedEyeOutlinedIcon from "@mui/icons-material/RemoveRedEyeOutlined";
@@ -327,6 +328,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     state: "",
     city: "",
     pinCode: "",
+    agentLimit: ""
   });
 
   const [petmDetails, setPetmDetails] = useState({
@@ -371,6 +373,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           city: userDetails.city || "",
           pinCode: userDetails.pinCode || "",
           srno: userDetails.srno || "",
+          agentLimit: userDetails.agentLimit || ""
         });
         setSelectedId(srNo);
         setEditDetailsDialogVisible(true);
@@ -420,6 +423,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   const [whatsappCountry, setWhatsappCountry] = useState(null);
   const [whatsappUtility, setWhatsappUtility] = useState("");
   const [whatsappMarketing, setWhatsappMarketing] = useState("");
+  const [whatsappAuthentication, setWhatsappAuthentication] = useState("");
   const [whatsappDeleteVisible, setWhatsappDeleteVisible] = useState(false);
   const [rcsDeleteVisible, setRcsDeleteVisible] = useState(false);
   const [selectedWhatsappRow, setSelectedWhatsappRow] = useState(null);
@@ -459,6 +463,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           countryCode: String(item.country_srno || ""),
           utility: String(item.transactional || 0),
           marketing: String(item.promotional || 0),
+          authentication: String(item.authentication || 0),
           isoCode: String(item.ISO_code || ""),
           updateTime: item.update_time || "-",
         };
@@ -524,7 +529,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
   };
 
   const handleWhatsappAddCredit = async () => {
-    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing) {
+    if (!whatsappCountry || !whatsappUtility || !whatsappMarketing || !whatsappAuthentication) {
       toast.error("Please fill all the fields.");
       return;
     }
@@ -534,6 +539,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       userSrno: String(currentUserSrno),
       utility: String(whatsappUtility),
       marketing: String(whatsappMarketing),
+      authentication: String(whatsappAuthentication),
       countryCode: String(whatsappCountry),
     };
 
@@ -605,6 +611,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     setWhatsappCountry(null);
     setWhatsappUtility("");
     setWhatsappMarketing("");
+    setWhatsappAuthentication("");
   };
 
   // whatsapp End
@@ -1127,7 +1134,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
       const res = await fetchBalance(id);
       const data = {
         id,
-        balance: res?.balance,
+        balance: res?.balance || 0,
       };
       const updatedBalance = [...userBalance];
       if (updatedBalance.findIndex((item) => item.id === id) != "-1") {
@@ -1379,8 +1386,9 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
           <CustomTooltip
             arrow
             title={
-              userBalance.find((balance) => balance.id == params.row.srno)
-                ?.balance || 0
+              userBalance
+                .find((balance) => balance.id == params.row.srno)
+                ?.balance?.toString() || "Click to fetch balance"
             }
             placement="top"
           >
@@ -1487,6 +1495,7 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
     { field: "sn", headerName: "S.No", flex: 0.5 },
     { field: "countryName", headerName: "Country", flex: 1 },
     { field: "utility", headerName: "Utility", flex: 1 },
+    { field: "authentication", headerName: "Authentication", flex: 1 },
     { field: "marketing", headerName: "Marketing", flex: 1 },
     { field: "updateTime", headerName: "Updated On", flex: 1 },
     {
@@ -2145,6 +2154,16 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 setUpdateDetails({ ...updateDetails, pinCode: e.target.value })
               }
             />
+            <InputField
+              label="Agent Limit"
+              id="agentlimit"
+              name="agentlimit"
+              placeholder="Enter agent Limit in number"
+              value={updateDetails.agentLimit}
+              onChange={(e) =>
+                setUpdateDetails({ ...updateDetails, agentLimit: e.target.value })
+              }
+            />
           </div>
           <div className="flex justify-center mt-3">
             <UniversalButton
@@ -2496,10 +2515,10 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <LockOutlinedIcon className="text-gray-600" />
+                <SupportAgentOutlinedIcon className="text-gray-600" />
                 <p>
-                  <strong>Virtual Balance : </strong>{" "}
-                  {selectedUserDetails.virtualBalance || "Not Available"}
+                  <strong>Agent Limit : </strong>{" "}
+                  {selectedUserDetails.agentLimit || "Not Available"}
                 </p>
               </div>
             </div>
@@ -2748,6 +2767,19 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                     />
 
                     <InputField
+                      id="whatsappauthentication"
+                      name="whatsappauthentication"
+                      label="Authentication"
+                      placeholder="INR / Credit"
+                      value={whatsappAuthentication}
+                      onChange={(e) =>
+                        validateInput(e.target.value, setWhatsappAuthentication)
+                      }
+                      type="text"
+                      readOnly={!whatsappCountry}
+                    />
+
+                    <InputField
                       id="whatsappmarketing"
                       name="whatsappmarketing"
                       label="Marketing"
@@ -2759,6 +2791,8 @@ const ManageUserTable = ({ id, name, allUsers = [], fetchAllUsersDetails }) => {
                       type="text"
                       readOnly={!whatsappCountry}
                     />
+
+
 
                     <UniversalButton
                       label="Add"

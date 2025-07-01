@@ -2,7 +2,7 @@ import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
 import { SiGoogleauthenticator } from "react-icons/si";
 import { LuMessageSquareMore } from "react-icons/lu";
-
+import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -125,6 +125,7 @@ export const userItems = [
       { to: "/wwhatsappbot", label: "Manage Bot" },
       { to: "/wwhatsappflows", label: "Manage Flows" },
       { to: "/wblockuser", label: "Block User" },
+      { to: "/cannedmessagemanager", label: "Canned Message" },
       { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
       { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
       { to: "/createtemplate", label: "Create Bot", isHide: true },
@@ -175,9 +176,9 @@ export const userItems = [
     label: "OBD",
     type: "dropdown",
     links: [
-      // { to: "/obdcreatecampaign", label: "Create Campaign" },
-      // { to: "/obdmanagecampaign", label: "Reports" },
-      // { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
+      { to: "/obdcreatecampaign", label: "Create Campaign" },
+      { to: "/obdmanagecampaign", label: "Reports" },
+      { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
       // { to: "/obdIntegration", label: "Integration" },
     ],
     roles: ["ADMIN"],
@@ -288,15 +289,28 @@ export const userItems = [
     to: "/managecontacts",
     roles: ["ADMIN", "DIRECTUSER"],
   },
-  {
-    id: "",
-    name: "Wishmanagement",
-    icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
-    label: "Wish Management",
-    type: "single",
-    to: "/smswishmanagement",
-    roles: ["ADMIN"],
-  },
+  // {
+  //   id: "",
+  //   name: "Workflow",
+  //   icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+  //   label: "Workflow",
+  //   type: "single",
+  //   to: "/workflow",
+  //   // links: [
+  //   //   { to: "/workflow", label: "Manage Workflow" },
+  //   //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
+  //   // ],
+  //   roles: ["ADMIN"],
+  // },
+  // {
+  //   id: "",
+  //   name: "Wishmanagement",
+  //   icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+  //   label: "Wish Management",
+  //   type: "single",
+  //   to: "/smswishmanagement",
+  //   roles: ["ADMIN"],
+  // },
   // {
   //   id: "",
   //   name: "apiDocs",

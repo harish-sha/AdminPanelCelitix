@@ -285,7 +285,7 @@ const DataTable = ({
     { field: "category", headerName: "Category", flex: 1, minWidth: 120 },
     { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
     { field: "type", headerName: "Type", flex: 1, minWidth: 120 },
-    { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
+    { field: "qualityScore", headerName: "Qualtiy Score", flex: 1, minWidth: 120 },
     { field: "createdDate", headerName: "Created At", flex: 1, minWidth: 120 },
     {
       field: "is_hide",

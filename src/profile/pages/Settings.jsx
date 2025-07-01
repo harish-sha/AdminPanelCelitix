@@ -103,7 +103,7 @@ const Settings = () => {
 
     const response = await updateApiKey(newAPIKey);
 
-    if (response.message === "Api Key update succesfully") {
+    if (response.message.includes("succesfully")) {
       toast.success(response.message);
       await handlegetOldApiKey();
     } else {
@@ -267,7 +267,7 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
-            // variant="fullWidth"
+          // variant="fullWidth"
           >
             {/* <Tab
               label={

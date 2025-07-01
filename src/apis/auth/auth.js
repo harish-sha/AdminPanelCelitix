@@ -16,10 +16,11 @@ export const login = async (inputDetails) => {
 export const forgotPassword = async (inputDetails) => {
   return await axios.post(
     `${apiUrl}/user/forgotpassword`,
-    {
-      userId: inputDetails.userId,
-      mobileNo: inputDetails.mobileNo,
-    },
+    inputDetails,
+    // {
+    //   userId: inputDetails.userId,
+    //   mobileNo: inputDetails.mobileNo,
+    // },
     {
       headers: {
         "Content-Type": "application/json",
@@ -28,9 +29,37 @@ export const forgotPassword = async (inputDetails) => {
   );
 };
 
+// Forgot Password
+export const verifyForgotPasswordOtp = async (data) => {
+  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
 // Verify OTP
 export const verifyOtp = async (data) => {
-  return await axios.post(`${apiUrl}/user/validateOtp`, data, {
+  return await axios.post(`${apiUrl}/auth/validate-otp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+// request OTP
+export const requestOtp = async (data) => {
+  return await axios.post(`${apiUrl}/auth/request-otp`, data, {
+    headers: {
+      "Content-Type": "application/json",
+      // "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    },
+  });
+};
+
+// get client ip address
+export const getIpAddress = async () => {
+  return await axios.post(`${apiUrl}/auth/getClientIp`, "", {
     headers: {
       "Content-Type": "application/json",
     },

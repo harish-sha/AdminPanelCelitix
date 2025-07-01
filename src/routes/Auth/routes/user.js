@@ -49,6 +49,7 @@ export const userItems = [
       "/wflowcreation",
       "/apicampaigninfo",
       "/wblockuser",
+      "/cannedmessagemanager",
       "/wmmlite",
     ],
     roles: ["ADMIN"],
@@ -73,6 +74,7 @@ export const userItems = [
     links: [
       "/obdcreatecampaign",
       "/obdmanagecampaign",
+      "/obdCampaignDetailslog",
       "/obdmanagevoiceclips",
       "/obdIntegration",
     ],
@@ -161,14 +163,19 @@ export const userItems = [
     roles: ["ADMIN"],
   },
   {
-    name: "openRoutes",
-    links: [
-      "/download",
-      "/loginIpdetails",
-      "/profile",
-      "/settings",
-      "/transactions",
-    ],
+    name: "WorkFlow",
+    links: ["/workflow", "/workflow/create"],
     roles: ["ADMIN"],
   },
+  // {
+  //   name: "openRoutes",
+  //   links: [
+  //     "/download",
+  //     "/loginIpdetails",
+  //     "/profile",
+  //     "/settings",
+  //     "/transactions",
+  //   ],
+  //   roles: ["ADMIN"],
+  // },
 ];

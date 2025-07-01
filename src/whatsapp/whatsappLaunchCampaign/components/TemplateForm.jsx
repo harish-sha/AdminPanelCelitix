@@ -9,6 +9,7 @@ import { uploadImageFile } from "../../../apis/whatsapp/whatsapp.js";
 import CustomTooltip from "../../../components/common/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
 import { Carousel } from "react-responsive-carousel";
+import { RadioButton } from "primereact/radiobutton";
 
 // Function to extract variables from text (e.g., {{1}})
 const extractVariablesFromText = (text) => {
@@ -36,6 +37,8 @@ const TemplateForm = ({
   setCardIndex,
   setFileData,
   fileData,
+  marketingType,
+  setMarketingType,
 }) => {
   const [inputValues, setInputValues] = useState({});
   // const [selectedVariable, setSelectedVariable] = useState("");
@@ -207,7 +210,7 @@ const TemplateForm = ({
     onImageUpload(null);
     toast.success("Media removed successfully.");
   };
-  
+
   const isCarousal = templateDataNew?.components?.find(
     (comp) => comp.type === "CAROUSEL"
   );

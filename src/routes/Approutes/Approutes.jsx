@@ -27,6 +27,10 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
+import MmLite from "@/whatsapp/mmlite/MmLite";
+
+// Canned Message Manager
+import CannedMessage from "@/cannedmessage/CannedMessage";
 
 
 // manage funds
@@ -105,6 +109,7 @@ import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
 import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
 import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
 import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
+import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
@@ -130,10 +135,14 @@ import { EditCallback } from "@/callback/page/editCallback";
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
 
+//WorkFlow
+import { WorkflowDetails } from "@/workflow/details";
+import { WorkflowCreate } from "@/workflow/create";
+
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
-import MmLite from "@/whatsapp/mmlite/MmLite";
+
 
 const Approutes = () => {
   return (
@@ -265,6 +274,7 @@ const Approutes = () => {
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
         <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
@@ -279,6 +289,9 @@ const Approutes = () => {
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
 
+        {/* Canned Message Manager */}
+        <Route path="/cannedmessagemanager" element={<CannedMessage />} />
+
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
         <Route path="/authsettings" element={<AuthenticatorSetting />} />
@@ -286,6 +299,10 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Workflow */}
+        <Route path="/workflow" element={<WorkflowDetails />} />
+        <Route path="/workflow/create" element={<WorkflowCreate />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

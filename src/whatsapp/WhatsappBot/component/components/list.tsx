@@ -293,24 +293,54 @@ export const List = ({
       </div>
 
       <div className="w-full mt-2">
-        <div className="flex justify-end">
+        <InputField
+          id="text"
+          name="text"
+          tooltipContent="Give a footer for the list. Maximum 20 characters."
+          maxLength="20"
+          label={"List Footer"}
+          value={nodesInputData[id]?.listFooter}
+          onChange={(e: { target: { value: any } }) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                listFooter: e.target.value,
+              },
+            }));
+          }}
+        />
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.listFooter?.length || 0}/20
+        </p>
+      </div>
+
+      <div className="w-full mt-2">
+        {/* <div className="flex justify-end">
           <button onClick={handleOptionAdd}>
             <AddIcon />
           </button>
-        </div>
+        </div> */}
         <div className="flex items-center gap-2 mb-2">
           <h1 className="text-lg font-semibold mb-2">List Items</h1>
-          <CustomTooltip
-            title={
-              "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
-            }
-            placement={"top"}
-            arrow
-          >
-            <span>
-              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
-            </span>
-          </CustomTooltip>
+          <div className="flex justify-end">
+            <button onClick={handleOptionAdd}>
+              <AddIcon />
+            </button>
+          </div>
+          <div className="mb-1">
+            <CustomTooltip
+              title={
+                "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
+          </div>
         </div>
         <div className="space-y-2 ">
           {options?.map((option, index) => (

@@ -149,7 +149,7 @@ function AccountInfoModal({ show, handleClose }) {
       sn: 4,
       id: 4,
       service: "RCS",
-      created_on: rcsrate[0]?.update_time.replaceAll("-", "/"),
+      created_on: rcsrate[0]?.update_time.replaceAll("-", "-"),
       pricing: (
         <button onClick={() => setShowRcsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -167,7 +167,7 @@ function AccountInfoModal({ show, handleClose }) {
       sn: 6,
       id: 6,
       service: "WhatsApp",
-      created_on: whatsapprate[0]?.update_time.replaceAll("-", "/"),
+      created_on: whatsapprate[0]?.update_time.replaceAll("-", "-"),
       pricing: (
         <button onClick={() => setShowWhatsPricing(true)}>
           <VisibilityIcon className="text-green-600 cursor-pointer" />
@@ -225,7 +225,7 @@ function AccountInfoModal({ show, handleClose }) {
   });
 
   const accountcolumns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 70 },
     { field: "service", headerName: "Service", flex: 1, minWidth: 80 },
 
     { field: "created_on", headerName: "Activation Date", flex: 1, minWidth: 80 },

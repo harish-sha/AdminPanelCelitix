@@ -1,20 +1,23 @@
-import React, { useEffect, useRef } from "react";
-import { useState } from "react";
+import * as XLSX from "xlsx";
+import { useRef, useState } from "react";
+import React, { useEffect } from "react";
+import { IoSearch } from "react-icons/io5";
+import { Dialog } from "primereact/dialog";
+import { RadioButton } from "primereact/radiobutton";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import { MdOutlineDeleteForever } from "react-icons/md";
+import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
+import { IconButton, Switch } from "@mui/material";
+import { toast } from "react-hot-toast";
+
 import InputField from "../../components/layout/InputField";
 import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
-import { IoSearch } from "react-icons/io5";
-import Obdmanagecampaign from "./components/Obdmanagecampaign";
-import { Dialog } from "primereact/dialog";
-import { RadioButton } from "primereact/radiobutton";
 import CustomTooltip from "../../components/common/CustomTooltip";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import * as XLSX from "xlsx";
-import { MdOutlineDeleteForever } from "react-icons/md";
-import { toast } from "react-hot-toast";
+import { DataTable } from "@/components/layout/DataTable";
+import MusicPlayerSlider from "./components/ObdAudioplayer";
+import { DynamicFile } from "./components/DynamicFile";
 
-import PlayCircleFilledWhiteOutlinedIcon from "@mui/icons-material/PlayCircleFilledWhiteOutlined";
-import { IconButton, Switch } from "@mui/material";
 import {
   deleteVoiceClip,
   fetchVoiceClips,
@@ -22,9 +25,6 @@ import {
   saveDynamicVoice,
   saveStaticVoice,
 } from "@/apis/obd/obd";
-import { DataTable } from "@/components/layout/DataTable";
-import MusicPlayerSlider from "./components/ObdAudioplayer";
-import { DynamicFile } from "./components/DynamicFile";
 
 const ObdManageVoiceClips = () => {
   const [fileName, setFileName] = useState();
@@ -66,6 +66,7 @@ const ObdManageVoiceClips = () => {
     file: null,
     fileName: "",
   });
+
   const [dynamicVoice, setDynamicVoice] = useState({
     isdynamic: 1,
     voiceType: "",
@@ -81,6 +82,7 @@ const ObdManageVoiceClips = () => {
       },
     ],
   });
+
   const fileRef = useRef(null);
   const dynamicVoiceRef = useRef([]);
 
@@ -221,15 +223,15 @@ const ObdManageVoiceClips = () => {
         <CustomTooltip value={"Active"}>
           <Switch
             checked={Number(params.row.status) === 1}
-            onChange={(e) => {}}
+            onChange={(e) => { }}
             sx={{
               "& .MuiSwitch-switchBase.Mui-checked": {
                 color: "#34C759",
               },
               "& .css-161ms7l-MuiButtonBase-root-MuiSwitch-switchBase.Mui-checked+.MuiSwitch-track":
-                {
-                  backgroundColor: "#34C759",
-                },
+              {
+                backgroundColor: "#34C759",
+              },
             }}
           />
         </CustomTooltip>
@@ -314,10 +316,10 @@ const ObdManageVoiceClips = () => {
 
       const formattedData = Array.isArray(filteredData)
         ? filteredData.map((item, index) => ({
-            sn: index + 1,
-            id: item.srNo,
-            ...item,
-          }))
+          sn: index + 1,
+          id: item.srNo,
+          ...item,
+        }))
         : [];
 
       setRows(formattedData);
@@ -344,15 +346,16 @@ const ObdManageVoiceClips = () => {
     }
   }
 
+  const BASE_AUDIO_URL = import.meta.env.VITE_AUDIO_URL;
   async function handleAudioPlay(row) {
     try {
       const res = await fetchVoiceClipUrl(row.id);
       if (!res.path) return toast.error("Something went wrong");
-      const url = res.path;
+      const url = `${BASE_AUDIO_URL}/${res.path}`;
       setSelectedRow({ ...row, url });
       setIsOpenPlay(true);
     } catch (e) {
-      toast.error("Something went wrong");
+      toast.error("Something went wrong", e);
     }
   }
 
@@ -360,8 +363,7 @@ const ObdManageVoiceClips = () => {
     for (let i = 1; i < dynamicList.length; i++) {
       if (dynamicList[i].dynamicType === dynamicList[i - 1].dynamicType) {
         toast.error(
-          `Consecutive items at positions ${i} and ${
-            i + 1
+          `Consecutive items at positions ${i} and ${i + 1
           } have the same type "${dynamicList[i].dynamicType}"`
         );
         return true;
@@ -498,6 +500,9 @@ const ObdManageVoiceClips = () => {
 
   return (
     <div className="w-full">
+      <h1 className="text-2xl text-gray-600 text-center my-3 font-semibold" >
+        Manage Voice Clips
+      </h1>
       <div className="flex items-end justify-between gap-3">
         <div className="flex items-end gap-2">
           <div className="w-full sm:w-46 ">
@@ -507,6 +512,7 @@ const ObdManageVoiceClips = () => {
               value={searchValue.name}
               label="File Name"
               placeholder="File Name"
+              tooltipContent="Search by filename"
               type="text"
               onChange={(e) =>
                 setSearchValue({ ...searchValue, name: e.target.value })
@@ -523,9 +529,9 @@ const ObdManageVoiceClips = () => {
               tooltipPlacement="right"
               placeholder="Admin Status"
               options={[
-                { value: "1", label: "Approved" },
-                { value: "2", label: "Pending" },
-                { value: "3", label: "Disapproved" },
+                { value: 1, label: "Approved" },
+                { value: 2, label: "Pending" },
+                { value: 3, label: "Disapproved" },
               ]}
               onChange={(value) => {
                 setSearchValue({ ...searchValue, admin: value });
@@ -542,8 +548,8 @@ const ObdManageVoiceClips = () => {
               tooltipPlacement="right"
               placeholder="User Status"
               options={[
-                { value: "1", label: "Active" },
-                { value: "0", label: "Inactive" },
+                { value: 1, label: "Active" },
+                { value: 0, label: "Inactive" },
               ]}
               onChange={(value) => {
                 setSearchValue({ ...searchValue, user: value });
@@ -586,7 +592,7 @@ const ObdManageVoiceClips = () => {
 
       <div className="flex items-center gap-2">
         <Dialog
-          header="Add Voice Clips"
+          header="Edit details"
           visible={isVisible}
           onHide={() => {
             setIsVisible(false);
@@ -595,7 +601,7 @@ const ObdManageVoiceClips = () => {
           draggable={false}
         >
           <div className="flex gap-2">
-            <div className="flex flex-col gap-5">
+            <div className="flex gap-5 items-end ">
               <div className="flex gap-2 items-center shadow-md p-2 rounded-full">
                 <RadioButton
                   inputId="enablestaticOption1"
@@ -604,7 +610,7 @@ const ObdManageVoiceClips = () => {
                   // visible={isVisible}
                   checked={selectedOption === "option1"}
                   onChange={handleChangeEnablePostpaid}
-                  // onClick={()=>setIsChecked(false)}
+                // onClick={()=>setIsChecked(false)}
                 />
                 <label className="text-sky-800 font-semibold ">Static</label>
               </div>
@@ -621,7 +627,7 @@ const ObdManageVoiceClips = () => {
                 <label className="text-sky-800 font-semibold ">Dynamic</label>
               </div>
             </div>
-            <div className="flex flex-col gap-5">
+            <div className="flex gap-5 items-end ">
               <div className="flex gap-2 items-center shadow-md p-2 rounded-full">
                 <RadioButton
                   inputId="enabletransactionalOption1"
@@ -629,6 +635,7 @@ const ObdManageVoiceClips = () => {
                   value="transactional"
                   checked={selecteTransactional === "transactional"}
                   onChange={handleChangeTransactional}
+                  onClick={() => { }}
                 />
                 <label>Transactional</label>
               </div>
@@ -641,7 +648,7 @@ const ObdManageVoiceClips = () => {
                   checked={selecteTransactional === "promotional"}
                   onChange={handleChangeTransactional}
                 />
-                <label>Promotional</label>
+                <label>Promptional</label>
               </div>
             </div>
           </div>
@@ -715,7 +722,6 @@ const ObdManageVoiceClips = () => {
               </div>
             </>
           )}
-          {/* insert here */}
           {selectedOption === "option2" && (
             <>
               <div className="flex flex-col">

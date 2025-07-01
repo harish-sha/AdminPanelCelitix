@@ -7,18 +7,17 @@ import { motion } from "framer-motion";
 import { useUser } from "@/context/auth";
 import { UAParser } from "ua-parser-js";
 
-
 import UniversalButton from "@/components/common/UniversalButton";
 import celitixLogo from "@/assets/images/celitix-logo-white.svg";
-// import Header from "./Header";
 import InputField from "@/components/layout/InputField";
-// import Footer from "./components/Footer";
 import loginBanner from "@/assets/images/loginBanner.jpg";
 
 import "../../login.css";
-import { login } from "@/apis/auth/auth";
+import { getIpAddress, login, requestOtp, verifyOtp, verifyForgotPasswordOtp, forgotPassword } from "@/apis/auth/auth";
 import { getAllowedServices } from "@/apis/admin/admin";
 import axios from "axios";
+import { InputOtp } from "primereact/inputotp";
+// import { InputOtp } from "primereact/inputotp";
 
 const ResellerLogin = () => {
   const { authLogin } = useUser();
@@ -44,6 +43,10 @@ const ResellerLogin = () => {
   const [captchaProblem, setCaptchaProblem] = useState("");
   const [captchaSolution, setCaptchaSolution] = useState(null);
 
+  const [basicDetails, setBasicDetails] = useState({});
+
+  // const [basicDetails, setBasicDetails] = useState({});
+
   const parser = new UAParser();
   const uaResult = parser.getResult();
 
@@ -53,6 +56,10 @@ const ResellerLogin = () => {
   useEffect(() => {
     generateCaptcha();
   }, []);
+
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+
+  // const [isForgotPassword, setIsForgotPassword] = useState(false);
 
   // Check if passwords match and update border color state
   useEffect(() => {
@@ -112,20 +119,42 @@ const ResellerLogin = () => {
     }
 
     try {
-      const ipResponse = await axios.get("https://ipapi.co/json/");
-      const domain = window.location.hostname;
+      // const ipResponse = await axios.get("https://ipapi.co/json/");
+      // const ipResponse = await getIpAddress();
+      // const domain = window.location.hostname;
+      const domain = "reseller.alertsnow.in";
+
+      setBasicDetails({
+        systemInfo: uaResult.browser.name,
+        // ip: ipResponse?.data?.clientIp,
+        ip: "0.0.0.0",
+        domain,
+      });
+
       const payload = {
         userId: username,
         password,
         systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.ip || "0.0.0.0",
-        // domain: domain !== "celitix.alertsnow.in" ? domain : "",
+        // ip: ipResponse?.data?.ip || "0.0.0.0",
+        ip: "0.0.0.0",
         // domain: "reseller.alertsnow.in",
         // domain: "",
         // domain: domain
       };
 
       const res = await login(payload);
+
+      if (res?.data?.validateOtp) {
+        // return toast.error(res?.data?.message);
+        setStep("verifyNumber");
+        return;
+      }
+
+      if (res?.data?.validateOtp) {
+        // return toast.error(res?.data?.message);
+        setStep("verifyNumber");
+        return;
+      }
 
       if (!res?.data?.token) {
         return toast.error("Invalid credentials");
@@ -177,7 +206,7 @@ const ResellerLogin = () => {
     setStep("verifyOTP");
   }
 
-  function handleVerifyNumberRequest() {
+  async function handleVerifyNumberRequest() {
     const phoneRegex = /^\d{10}$/;
 
     if (!verifyNumber) {
@@ -185,22 +214,91 @@ const ResellerLogin = () => {
       return;
     }
 
-    if (!phoneRegex.test(verifyNumber)) {
-      toast.error("Invalid mobile number. Please enter a 10-digit number.");
-      return;
+    // if (!phoneRegex.test(verifyNumber)) {
+    //   toast.error("Invalid mobile number. Please enter a 10-digit number.");
+    //   return;
+    // }
+
+    let payload = {
+      userId: username,
+      // password: password,
+      mobileNo: verifyNumber,
+      // domain: window.location.hostname,
+      domain: basicDetails.domain,
+    };
+
+    // const res = await requestOtp(payload);
+
+    if (!isForgotPassword) {
+      payload = {
+        ...payload,
+        password: password,
+      };
     }
 
+    const res = isForgotPassword
+      ? await forgotPassword(payload)
+      : await requestOtp(payload);
+
+    // if (!res?.data?.status) {
+    //   return toast.error(res?.msg || "Unable to send OTP");
+    // }
     toast.success("OTP Sent to your mobile number");
     setStep("verifynumberotp");
   }
 
-  function handleVerifyNumberOTP() {
-    if (numberOtp === "123456") {
-      toast.success("Successfully Sign");
-      // Optionally reset to login or another appropriate step
-      // setStep("login");
-    } else {
-      toast.error("Incorrect OTP");
+  // function handleVerifyNumberOTP() {
+  //   if (numberOtp === "123456") {
+  //     toast.success("Successfully Sign");
+  //     // Optionally reset to login or another appropriate step
+  //     // setStep("login");
+  //   } else {
+  //     toast.error("Incorrect OTP");
+  //   }
+  // }
+
+  async function handleVerifyNumberOTP() {
+    try {
+      const payload = {
+        userId: username,
+        password: password,
+
+        mobileNo: verifyNumber,
+        otp: numberOtp,
+        ...basicDetails,
+      };
+      // const res = await verifyOtp(payload);
+      const res = isForgotPassword
+        ? await verifyForgotPasswordOtp({
+          userId: username,
+          mobileNo: verifyNumber,
+          otp: numberOtp,
+        })
+        : await verifyOtp(payload);
+      if (!res?.data?.token) {
+        return toast.error("Invalid otp");
+      }
+
+      if (isForgotPassword) {
+        setStep("login");
+        return;
+      }
+
+      const { token, role, ttl } = res.data;
+
+      // Set token (consider using localStorage if rememberMe is implemented)
+      sessionStorage.setItem("token", token);
+
+      let allowedServices = null;
+      if (role !== "AGENT") {
+        allowedServices = await getAllowedServices();
+      }
+
+      toast.success("Login Successful!");
+      authLogin(role, allowedServices, ttl);
+      navigate("/");
+    } catch (e) {
+      toast.error("Unable to Verify OTP");
     }
   }
 
@@ -262,6 +360,8 @@ const ResellerLogin = () => {
   // back to login step button
   const handleBackToLogin = () => {
     setStep("login");
+    setIsForgotPassword(false)
+    setIsForgotPassword(false)
   };
 
   return (
@@ -276,9 +376,7 @@ const ResellerLogin = () => {
 
           {step === "login" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified{" "}
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -295,9 +393,7 @@ const ResellerLogin = () => {
           )}
           {step === "verifyNumber" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified{" "}
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -314,9 +410,7 @@ const ResellerLogin = () => {
           )}
           {step === "verifynumberotp" && (
             <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-              <h1 className="text-cyan-600 text-5xl font-medium">
-                Simplified{" "}
-              </h1>
+              <h1 className="text-cyan-600 text-5xl font-medium">Simplified</h1>
               <h1 className="text-cyan-600 text-5xl font-medium">
                 Communication,
               </h1>
@@ -337,7 +431,7 @@ const ResellerLogin = () => {
                 Reset Password!
               </h1>
               <p className="text-cyan-600 font-medium mt-2">
-                Follow the prompts to reset your password & regain access{" "}
+                Follow the prompts to reset your password & regain access
               </p>
             </div>
           )}
@@ -347,7 +441,7 @@ const ResellerLogin = () => {
                 Reset Password!
               </h1>
               <p className="text-cyan-600 font-medium mt-2">
-                Follow the prompts to reset your password & regain access{" "}
+                Follow the prompts to reset your password & regain access
               </p>
             </div>
           )}
@@ -357,439 +451,517 @@ const ResellerLogin = () => {
                 Reset Password!
               </h1>
               <p className="text-cyan-600 font-medium mt-2">
-                Follow the prompts to reset your password & regain access{" "}
+                Follow the prompts to reset your password & regain access
               </p>
             </div>
           )}
         </div>
 
-        <div className="flex items-center justify-center rounded-2xl p-6 w-full lg:w-1/2 lg:p-12">
-          <div>
+        <div className="flex items-center justify-center rounded-2xl p-6 w-full lg:w-1/2 lg:p-12 border-2 border-cyan-600 m-4 bg-gray-50 shadow-2xl">
+          <div className="">
             {step === "login" && (
               <>
-                <div className="flex flex-col items-center justify-center my-2 ">
-                  <h3 className="text-5xl font-medium my-2 playf">
-                    Welcome Back
-                  </h3>
-                  <p className="text-base sm:text-sm my-2 text-center ">
-                    Enter your username and password to access your account{" "}
-                  </p>
-                </div>
-
-                <div className="w-full">
-                  <div htmlFor="username" className="text-base mb-2">
-                    Username
-                  </div>
-                  <input
-                    id="username"
-                    name="username"
-                    type="text"
-                    placeholder="Enter Username"
-                    className="w-full p-2 mb-2 border border-gray-200 rounded-md"
-                    onChange={(e) => setUsername(e.target.value)}
-                  // maxLength={8}
-                  />
-                </div>
-
-                <div className="relative w-full ">
-                  <div htmlFor="password" className="text-base mb-2">
-                    Password
-                  </div>
-                  <input
-                    id="password"
-                    name="password"
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter Password"
-                    className="w-full p-2 mb-2 border border-gray-200 rounded-md"
-                    onChange={(e) => setPassword(e.target.value)}
-                    value={password}
-                    maxLength={8}
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    className="absolute inset-y-0 right-2 top-6 flex items-center"
-                  >
-                    {showPassword ? (
-                      // Eye Slash (Hide password)
-                      <svg
-                        className="w-5 h-5 text-black hover:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                        />
-                      </svg>
-                    ) : (
-                      // Eye Open (Show password)
-                      <svg
-                        className="w-5 h-5 text-black hover:text-gray-700"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                        />
-                      </svg>
-                    )}
-                  </button>
-                </div>
-
-                {/* <div className="flex items-center justify-end">
-                  <button
-                    className="text-black mt-2 cursor-pointer text-right "
-                    onClick={() => setStep("forgotPassword")}
-                  >
-                    Forgot Password?
-                  </button>
-                </div> */}
-
-                <h2 className="my-3 text-l">Solve Captcha</h2>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="p-2 ">{captchaProblem}</span>
-                  <input
-                    type="number"
-                    maxLength={2}
-                    placeholder="Enter Captcha"
-                    className="w-2/3 p-2 border border-gray-200 rounded-md"
-                    onChange={(e) => {
-                      const inputValue = e.target.value;
-                      // Allow only numeric characters
-                      if (/^\d*$/.test(inputValue)) {
-                        setCaptcha(inputValue);
-                      }
-                    }}
-                  />
-                </div>
-
-                <button
-                  className="w-full bg-black text-white p-2 rounded-lg mt-6"
-                  onClick={handleLogin}
+                <motion.div
+                  initial={{ opacity: 0, y: 100 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -100 }}
+                  transition={{ duration: 0.5 }}
                 >
-                  Sign In
-                </button>
-                {/* <ToastContainer /> */}
+                  <div className="flex flex-col items-center justify-center my-2">
+                    <h3 className="text-5xl font-medium my-2 playf">
+                      Welcome Back
+                    </h3>
+                    <p className="text-base sm:text-sm my-2 text-center">
+                      Enter your username and password to access your account
+                    </p>
+                  </div>
+
+                  <div className="w-full">
+                    <div htmlFor="username" className="text-base mb-2">
+                      Username
+                    </div>
+                    <input
+                      id="username"
+                      name="username"
+                      type="text"
+                      placeholder="Enter Username"
+                      className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
+                      onChange={(e) => setUsername(e.target.value)}
+                    // maxLength={8}
+                    />
+                  </div>
+
+                  <div className="relative w-full ">
+                    <div htmlFor="password" className="text-base mb-2">
+                      Password
+                    </div>
+                    <input
+                      id="password"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Enter Password"
+                      className="w-full p-2 mb-2 border border-gray-300 rounded-xl"
+                      onChange={(e) => setPassword(e.target.value)}
+                      value={password}
+                    // maxLength={8}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      className="absolute inset-y-0 right-2 top-6 flex items-center"
+                    >
+                      {showPassword ? (
+                        <AiOutlineEyeInvisible size={20} />
+                      ) : (
+                        <AiOutlineEye size={20} />
+                      )}
+                    </button>
+                  </div>
+
+                  {/* <div className="flex items-center justify-end">
+                    <button
+                      className="text-black mt-2 cursor-pointer text-right "
+                      onClick={() => setStep("forgotPassword")}
+                    >
+                      Forgot Password?
+                    </button>
+                  </div> */}
+
+                  <div className="flex justify-between my-3">
+                    <h2 className="text-md">Solve Captcha</h2>
+                    <button
+                      onClick={() => {
+                        setStep("verifyNumber");
+                        setIsForgotPassword(true);
+                      }}
+                      className="hover:underline cursor-pointer"
+                    >
+                      Forgot Password
+                    </button>
+                  </div>
+                  <div className="flex justify-between items-center mt-2">
+                    <span className="p-2 ">{captchaProblem}</span>
+                    <input
+                      type="number"
+                      maxLength={2}
+                      placeholder="Enter Captcha"
+                      className="w-2/3 p-2 border border-gray-300 rounded-xl"
+                      onChange={(e) => {
+                        const inputValue = e.target.value;
+                        if (/^\d*$/.test(inputValue)) {
+                          setCaptcha(inputValue);
+                        }
+                      }}
+                    />
+                  </div>
+
+                  <button
+                    className="w-full bg-black text-white p-2 rounded-lg mt-6"
+                    onClick={handleLogin}
+                  >
+                    Sign In
+                  </button>
+                </motion.div>
               </>
             )}
 
             {step === "verifyNumber" && (
-              <div className="p-1 ">
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+                className="p-1 "
+              >
                 <h1 className="text-4xl font-semibold text-center my-2 playf">
-                  Verify Number
+                  {/* Verify Number */}
+                  {isForgotPassword ? "Forgot Password" : "Verify Number"}
                 </h1>
-                <p className="text-centre font-medium sm:text-lg playf">
-                  Provide your mobile number for secure access.{" "}
+                {!isForgotPassword && (
+                  <p className="text-center font-medium sm:text-lg playf">
+                    Provide your mobile number for secure access.{" "}
+                  </p>
+                )}
+                <p className="text-center font-medium sm:text-lg playf">
+                  Provide your mobile number & userId for <br /> secure access.{" "}
                 </p>
-                <input
-                  type="text"
-                  placeholder="Mobile Number"
-                  className="w-full p-2 my-4 border border-gray-200 rounded"
-                  onChange={(e) => setVerifyNumber(e.target.value)}
-                  maxLength={10}
-                />
+                <div lassName="space-y-2">
+                  {isForgotPassword && (
+                    // <InputField
+                    //   id="userId"
+                    //   label={"Enter userId Number"}
+                    //   name="userId"
+                    //   onChange={(e) => setUsername(e.target.value)}
+                    //   value={username}
+                    //   placeholder="Enter userId"
+                    // />
+                    <input
+                      type="text"
+                      placeholder="Enter UserId"
+                      className="w-full p-2 my-4 border border-gray-300 rounded-xl"
+                      onChange={(e) => setUsername(e.target.value)}
+                    // maxLength={13}
+                    />
+                  )}
+                  <input
+                    type="text"
+                    placeholder="Enter Mobile Number"
+                    className="w-full p-2 border border-gray-300 rounded-xl"
+                    onChange={(e) => setVerifyNumber(e.target.value)}
+                    maxLength={13}
+                  />
+                </div>
+
                 <button
                   className="w-full text-white bg-black p-2 rounded-lg mt-2"
                   onClick={handleVerifyNumberRequest}
                 >
                   Request OTP
                 </button>
-                {/* <ToastContainer /> */}
-              </div>
-            )}
-
-            {step === "verifynumberotp" && (
-              <>
-                <h2 className="text-4xl font-bold mb-4 text-center playf">
-                  Enter OTP
-                </h2>
-                <p className="text-center mb-4">
-                  We've sent a 6-digit code to your mobile. Enter it below
-                </p>
-
-                <div className="flex items-center justify-center">
-                  <InputOtp
-                    length={6}
-                    value={numberOtp}
-                    onChange={(e) => setNumberOtp(e.value)}
-                    variant={"outlined"}
-                  />
-                </div>
-
-                <div className="flex items-center justify-center gap-4 mt-6">
-                  <button
-                    className="w-full bg-black text-white p-2 rounded-lg"
-                    onClick={handleVerifyNumberOTP}
-                  >
-                    Verify OTP
-                  </button>
-                </div>
-
                 <div className="flex items-center justify-center">
                   <button
-                    className=" text-black underline p-2 rounded-lg mt-4 text-centre"
+                    className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
                     onClick={handleBackToLogin}
                   >
                     ← Back to Login
                   </button>
                 </div>
-                {/* <ToastContainer /> */}
+              </motion.div>
+            )}
+
+            {step === "verifynumberotp" && (
+              <>
+                <motion.div
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-4xl font-bold mb-4 text-center playf">
+                    Enter OTP
+                  </h2>
+                  <p className="text-center mb-4">
+                    We've sent a 6-digit code to your mobile. Enter it below
+                  </p>
+
+                  <div className="flex items-center justify-center">
+                    <InputOtp
+                      length={6}
+                      value={numberOtp}
+                      onChange={(e) => setNumberOtp(e.value)}
+                      variant={"outlined"}
+                      className="p-2"
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-center gap-4 mt-6">
+                    <button
+                      className="w-full bg-black text-white p-2 rounded-lg"
+                      onClick={handleVerifyNumberOTP}
+                    >
+                      Verify OTP
+                    </button>
+                    {!isResendDisabled && (
+                      <button
+                        className="w-full bg-black text-white p-2 rounded-lg"
+                        onClick={handleVerifyNumberRequest}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                    {!isResendDisabled && (
+                      <button
+                        className="w-full bg-black text-white p-2 rounded-lg"
+                        onClick={handleVerifyNumberRequest}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
+                  <p className="text-center mt-3 text-gray-500">
+                    {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                  </p>
+                  <p className="text-center mt-3 text-gray-500">
+                    {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                  </p>
+
+                  <div className="flex items-center justify-center">
+                    <button
+                      className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                      onClick={handleBackToLogin}
+                    >
+                      ← Back to Login
+                    </button>
+                  </div>
+                </motion.div>
               </>
             )}
 
             {step === "forgotPassword" && (
-              <div className="flex flex-col ">
-                <h1 className="lg:text-3xl text-2xl font-medium text-center playf">
-                  Enter Your Registered{" "}
-                </h1>
-                <h1 className="lg:text-2xl text-xl font-medium text-center my-1 playf">
-                  Mobile Number & Email Address
-                </h1>
-                <input
-                  type="text"
-                  placeholder="Mobile Number"
-                  className=" p-2 my-4 border border-gray-200 rounded-md"
-                  onChange={(e) => setMobile(e.target.value)}
-                  maxLength={10}
-                />
-                <input
-                  type="email"
-                  placeholder="Email Address"
-                  className=" p-2 my-4 border border-gray-200 rounded"
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <button
-                  className=" text-white bg-black p-2 rounded-lg mt-2"
-                  onClick={handleRequestOTP}
-                >
-                  Request OTP
-                </button>
-                {/* <ToastContainer /> */}
-              </div>
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="flex flex-col ">
+                  <h1 className="lg:text-3xl text-2xl font-medium text-center playf">
+                    Enter Your Registered{" "}
+                  </h1>
+                  <h1 className="lg:text-2xl text-xl font-medium text-center my-1 playf">
+                    Mobile Number & Email Address
+                  </h1>
+                  <input
+                    type="text"
+                    placeholder="Mobile Number"
+                    className=" p-2 my-4 border border-gray-200 rounded-md"
+                    onChange={(e) => setMobile(e.target.value)}
+                    maxLength={10}
+                  />
+                  <input
+                    type="email"
+                    placeholder="Email Address"
+                    className=" p-2 my-4 border border-gray-200 rounded"
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <button
+                    className=" text-white bg-black p-2 rounded-lg mt-2"
+                    onClick={handleRequestOTP}
+                  >
+                    Request OTP
+                  </button>
+                  <div className="flex items-center justify-center">
+                    <button
+                      className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                      onClick={handleBackToLogin}
+                    >
+                      ← Back to Login
+                    </button>
+                  </div>
+                </div>
+              </motion.div>
             )}
 
             {step === "verifyOTP" && (
               <>
-                <h2 className="text-xl font-medium mb-4 text-center playf">
-                  Enter the mobile OTP
-                </h2>
-                <InputOtp
-                  length={6}
-                  value={mobileotp}
-                  onChange={(e) => setMobileOtp(e.value)}
-                  variant={"outlined"}
-                />
+                <motion.div
+                  initial={{ opacity: 0, x: 100 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -100 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-xl font-medium mb-4 text-center playf">
+                    Enter the mobile OTP
+                  </h2>
+                  <InputOtp
+                    length={6}
+                    value={mobileotp}
+                    onChange={(e) => setMobileOtp(e.value)}
+                    variant={"outlined"}
+                  />
 
-                <h2 className="text-xl font-medium mb-4 text-center mt-4 playf">
-                  Enter the email OTP
-                </h2>
-                <InputOtp
-                  length={6}
-                  value={emailotp}
-                  onChange={(e) => setEmailOtp(e.value)}
-                  variant={"outlined"}
-                />
+                  <h2 className="text-xl font-medium mb-4 text-center mt-4 playf">
+                    Enter the email OTP
+                  </h2>
+                  <InputOtp
+                    length={6}
+                    value={emailotp}
+                    onChange={(e) => setEmailOtp(e.value)}
+                    variant={"outlined"}
+                  />
 
-                <div className="flex items-center justify-center gap-4 mt-6">
-                  <button
-                    className="w-full bg-black text-white p-2 rounded-lg"
-                    onClick={handleVerifyOTP}
-                  >
-                    Verify OTP
-                  </button>
-
-                  {!isResendDisabled && (
+                  <div className="flex items-center justify-center gap-4 mt-6">
                     <button
                       className="w-full bg-black text-white p-2 rounded-lg"
-                      onClick={handleResendOTP}
+                      onClick={handleVerifyOTP}
                     >
-                      Resend OTP
+                      Verify OTP
                     </button>
-                  )}
-                </div>
 
-                <p className="text-center mt-3 text-gray-500">
-                  {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
-                </p>
+                    {!isResendDisabled && (
+                      <button
+                        className="w-full bg-black text-white p-2 rounded-lg"
+                        onClick={handleResendOTP}
+                      >
+                        Resend OTP
+                      </button>
+                    )}
+                  </div>
 
-                {/* <ToastContainer /> */}
+                  <p className="text-center mt-3 text-gray-500">
+                    {isResendDisabled ? `Resend OTP in ${timer} seconds` : ""}
+                  </p>
+                  <div className="flex items-center justify-center">
+                    <button
+                      className=" text-black underline p-2 rounded-lg mt-4 text-centre cursor-pointer"
+                      onClick={handleBackToLogin}
+                    >
+                      ← Back to Login
+                    </button>
+                  </div>
+                </motion.div>
               </>
             )}
 
             {step === "resetPassword" && (
-              <div className="w-xl flex flex-col items-center justify-center sm:p-4">
-                <h2 className="text-4xl font-medium mb-2 text-center playf">
-                  Reset Password
-                </h2>
+              <motion.div
+                initial={{ opacity: 0, x: 100 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -100 }}
+                transition={{ duration: 0.5 }}
+              >
+                <div className="w-xl flex flex-col items-center justify-center sm:p-4">
+                  <h2 className="text-4xl font-medium mb-2 text-center playf">
+                    Reset Password
+                  </h2>
+                  <div className="relative flex flex-col items-center my-4">
+                    <p className="text-base">New Password</p>
+                    <div className="relative w-full max-w-xs">
+                      <input
+                        id="new-password"
+                        placeholder="New Password"
+                        className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
+                          }`}
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                        type={showNewPassword ? "text" : "password"}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowNewPassword((prev) => !prev)}
+                        className="absolute inset-y-0 right-3 flex items-center"
+                      >
+                        {showNewPassword ? (
+                          <svg
+                            className="w-5 h-5 text-black"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
+                            />
+                          </svg>
+                        ) : (
+                          <svg
+                            className="w-5 h-5 text-black"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
 
-                {/* New Password - with dynamic border color */}
-                <div className="relative flex flex-col items-center my-4">
-                  <p className="text-base">New Password</p>
+                  {/* Confirm Password - with dynamic border color */}
+                  <div className="relative flex flex-col items-center my-1">
+                    <p className="text-base">Confirm New Password</p>
+                    <div className="relative w-full max-w-xs">
+                      <input
+                        placeholder="Confirm New Password"
+                        className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
+                          }`}
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        type={showConfirmPassword ? "text" : "password"}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        className="absolute inset-y-0 right-3 flex items-center"
+                      >
+                        {showConfirmPassword ? (
+                          // Eye Slash (Hide password)
+                          <svg
+                            className="w-5 h-5 text-black hover:text-gray-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
+                            />
+                          </svg>
+                        ) : (
+                          // Eye Open (Show password)
+                          <svg
+                            className="w-5 h-5 text-black hover:text-gray-700"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                            />
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                            />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                  </div>
 
-                  <div className="relative w-full max-w-xs">
-                    <input
-                      id="new-password"
-                      placeholder="New Password"
-                      className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
-                        ? "border-gray-400"
-                        : passwordsMatch === true
-                          ? "border-green-500"
-                          : "border-red-500"
-                        }`}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      type={showNewPassword ? "text" : "password"}
-                    />
+                  {/* Buttons */}
+                  <div className="w-1/2 flex items-center justify-center gap-2 p-1 mt-2">
                     <button
-                      type="button"
-                      onClick={() => setShowNewPassword((prev) => !prev)}
-                      className="absolute inset-y-0 right-3 flex items-center"
+                      className="w-3xs bg-black text-white p-2 rounded-lg"
+                      onClick={generatePassword}
                     >
-                      {showNewPassword ? (
-                        // Eye Slash (Hide password)
-                        <svg
-                          className="w-5 h-5 text-black"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                          />
-                        </svg>
-                      ) : (
-                        // Eye Open (Show password)
-                        <svg
-                          className="w-5 h-5 text-black"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      )}
+                      Generate
+                    </button>
+                    <button
+                      className="w-3xs bg-black text-white p-2 rounded-lg"
+                      onClick={handleResetPassword}
+                    >
+                      Submit
                     </button>
                   </div>
                 </div>
-
-                {/* Confirm Password - with dynamic border color */}
-                <div className="relative flex flex-col items-center my-1">
-                  <p className="text-base">Confirm New Password</p>
-                  <div className="relative w-full max-w-xs">
-                    <input
-                      placeholder="Confirm New Password"
-                      className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
-                        ? "border-gray-400"
-                        : passwordsMatch === true
-                          ? "border-green-500"
-                          : "border-red-500"
-                        }`}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      type={showConfirmPassword ? "text" : "password"}
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      className="absolute inset-y-0 right-3 flex items-center"
-                    >
-                      {showConfirmPassword ? (
-                        // Eye Slash (Hide password)
-                        <svg
-                          className="w-5 h-5 text-black hover:text-gray-700"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M13.875 18.825A10.05 10.05 0 0112 19c-5.523 0-10-6-10-6a16.57 16.57 0 014.609-4.845m2.608-1.45A9.988 9.988 0 0112 5c5.523 0 10 6 10 6a16.536 16.536 0 01-1.986 2.12M3 3l18 18"
-                          />
-                        </svg>
-                      ) : (
-                        // Eye Open (Show password)
-                        <svg
-                          className="w-5 h-5 text-black hover:text-gray-700"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                          />
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                          />
-                        </svg>
-                      )}
-                    </button>
-                  </div>
-                </div>
-
-                {/* Buttons */}
-                <div className="w-1/2 flex items-center justify-center gap-2 p-1 mt-2">
-                  <button
-                    className="w-3xs bg-black text-white p-2 rounded-lg"
-                    onClick={generatePassword}
-                  >
-                    Generate
-                  </button>
-                  <button
-                    className="w-3xs bg-black text-white p-2 rounded-lg"
-                    onClick={handleResetPassword}
-                  >
-                    Submit
-                  </button>
-                </div>
-                {/* <ToastContainer /> */}
-              </div>
+              </motion.div>
             )}
           </div>
         </div>
       </div>
-    </div>
+    </div >
   );
 };
 

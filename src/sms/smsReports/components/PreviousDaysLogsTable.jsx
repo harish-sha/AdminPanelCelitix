@@ -1,13 +1,16 @@
 import { Box, Button, Paper, styled, Typography } from "@mui/material";
 import { DataGrid, GridFooterContainer } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverlay";
 import usePagination from "@mui/material/usePagination";
 import DescriptionOutlinedIcon from "@mui/icons-material/DescriptionOutlined";
-import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import CustomTooltip from "../../../whatsapp/components/CustomTooltip";
 import { useNavigate } from "react-router-dom";
+import InfoPopover from "@/components/common/InfoPopover";
+import { ImInfo } from "react-icons/im";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 
 const CustomPagination = ({
   totalPages,
@@ -70,79 +73,151 @@ const CustomPagination = ({
   );
 };
 
-const AttachmentLogsTbaleSms = ({ id, name }) => {
+const PreviousDaysLogsTable = ({ id, name, data, selectedUser }) => {
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
   });
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
   const navigate = useNavigate();
-
   const handleDetailed = () => {
-    navigate("/smsAttachmentdetaillog");
+    navigate("/smscampaigndetaillogs");
   };
 
-  const handleDownload = () => {
-    navigate("/download");
-  };
+  const closeDropdown = () => setDropdownOpenId(null);
 
-  const rows = Array.from({ length: 20 }, (_, i) => ({
-    id: i + 1,
-    sn: i + 1,
-    campaignname: "XYZ",
-    date: "27/09/2023",
-    totalclicks: "6",
-  }));
+  const dropdownButtonRefs = useRef([]);
+  
+  const rows = data || [];
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
-    {
-      field: "campaignname",
-      headerName: "Campaign Name",
-      flex: 1,
-      minWidth: 120,
-    },
-    { field: "date", headerName: "Date", flex: 1, minWidth: 120 },
-    {
-      field: "totalclicks",
-      headerName: "Total clicks",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 100,
-      renderCell: (params) => (
-        <>
-          <CustomTooltip title="Detailed Log" placement="top" arrow>
-            <IconButton
-              className="no-xs"
-              onClick={() => handleDetailed(params.row)}
-            >
-              <DescriptionOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "green",
+        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+        // {
+        //   field: "sending_user_id",
+        //   headerName: "User",
+        //   flex: 1,
+        //   minWidth: 120,
+        // },
+        {
+          field: "TOTALSMS",
+          headerName: "Total SMS",
+          flex: 1,
+          minWidth: 120,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("TOTALSMS");
+                  handlePreviosDayDetailDisplay("TOTALSMS");
                 }}
-              />
-            </IconButton>
-          </CustomTooltip>
-          <CustomTooltip title="Download" placement="top" arrow>
-            <IconButton onClick={() => handleDownload(params.row)}>
-              <DownloadForOfflineOutlinedIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
+              >
+                {params.row.TOTALSMS}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "Pending",
+          headerName: "Pending",
+          flex: 1,
+          minWidth: 90,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.Pending} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("Pending");
+                  handlePreviosDayDetailDisplay("Pending");
                 }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
-      ),
-    },
-  ];
+              >
+                {params.row.Pending}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "failed",
+          headerName: "Failed",
+          flex: 1,
+          minWidth: 70,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.failed} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("failed");
+                  handlePreviosDayDetailDisplay("failed");
+                }}
+              >
+                {params.row.failed}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "Sent",
+          headerName: "Sent",
+          flex: 1,
+          minWidth: 60,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.Sent} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("Sent");
+                  handlePreviosDayDetailDisplay("Sent");
+                }}
+              >
+                {params.row.Sent}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "delivered",
+          headerName: "Delivered",
+          flex: 1,
+          minWidth: 90,
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.delivered} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("delivered");
+                  handlePreviosDayDetailDisplay("delivered");
+                }}
+              >
+                {params.row.delivered}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "undelivered",
+          headerName: "Undelivered",
+          flex: 1,
+          minWidth: 110,
+
+          renderCell: (params) => (
+            <CustomTooltip title={params.row.undelivered} placement="top" arrow>
+              <button
+                onClick={() => {
+                  setSelectedCol("undelivered");
+                  handlePreviosDayDetailDisplay("undelivered");
+                }}
+              >
+                {params.row.undelivered}
+              </button>
+            </CustomTooltip>
+          ),
+        },
+        {
+          field: "drNotAvailable",
+          headerName: "Pending DR",
+          flex: 1,
+          minWidth: 110,
+        },
+        { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+      ];
+
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
   const CustomFooter = () => {
     return (
@@ -236,4 +311,4 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
   );
 };
 
-export default AttachmentLogsTbaleSms;
+export default PreviousDaysLogsTable;

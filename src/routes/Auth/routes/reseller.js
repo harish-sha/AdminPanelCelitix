@@ -41,8 +41,12 @@ export const resellerItems = [
         links: ["/rcsdeliverycampaigndetails", "/rcsdeliveryreport"],
       },
       {
-        id: "7",
+        id: "4",
         links: [],
+      },
+      {
+        id: "7",
+        links: ["/obdmanagecampaign"],
       },
     ],
     roles: ["ADMIN"],

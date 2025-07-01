@@ -22,6 +22,7 @@ import PermMediaOutlinedIcon from '@mui/icons-material/PermMediaOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import DeveloperBoardOutlinedIcon from '@mui/icons-material/DeveloperBoardOutlined';
 import SwitchLeftOutlinedIcon from '@mui/icons-material/SwitchLeftOutlined';
+import ViewCarouselSharpIcon from '@mui/icons-material/ViewCarouselSharp';
 import "./sidebar.css";
 
 const items = [
@@ -92,7 +93,8 @@ const items4 = [
 const items5 = [
   { id: 1, type: "image", label: "Image", icon: <ImageIcon /> },
   { id: 2, type: "document", label: "Document", icon: <InsertDriveFileIcon /> },
-  { id: 3, type: "media", label: "Media", icon: <PermMediaOutlinedIcon /> }
+  { id: 3, type: "media", label: "Media", icon: <PermMediaOutlinedIcon /> },
+  { id: 4, type: "imageCarousel", label: "ImageCarousel", icon: <ViewCarouselSharpIcon /> }
 ];
 
 const items6 = [

@@ -39,7 +39,7 @@ export const fetchCampaignDetailReport = async (
   selectedUserId = ""
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}${
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus = ""}${
       selectedUserId ? `&selectedUserId=${selectedUserId}` : ""
     }`,
     {
@@ -104,9 +104,13 @@ export const fetchAllAgents = async () => {
 };
 
 // fetch all templates list
-export const fetchAllTemplates = async (data = "", isActive = "") => {
+export const fetchAllTemplates = async (
+  data = "",
+  isActive = "",
+  status = ""
+) => {
   return await fetchWithAuth(
-    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}&status=${status}`,
     {
       method: "POST",
     }

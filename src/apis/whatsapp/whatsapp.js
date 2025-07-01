@@ -587,16 +587,6 @@ export const updateFlowStatus = async (data) => {
   );
 };
 
-// fetch reply data (livechat)
-export const fetchReplyData = async (data) => {
-  return await fetchWithAuth(
-    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
-    {
-      method: "GET",
-    }
-  );
-};
-
 // save whatsapp flows
 export const saveFlow = async (params, data) => {
   return await fetchWithAuth(
@@ -609,6 +599,24 @@ export const saveFlow = async (params, data) => {
     }
   );
 };
+
+// delete flow
+export const deleteFlow = async (data) => {
+  return await fetchWithAuth(`/WhatsappFlow/deleteWorkflow?flowId=${data}`, {
+    method: "DELETE",
+  });
+};
+
+// fetch reply data (livechat)
+export const fetchReplyData = async (data) => {
+  return await fetchWithAuth(
+    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
 
 // cancel campaign
 export const cancelCampaign = async ({ srno, selectedUserId = "0" }) => {
@@ -648,5 +656,30 @@ export const deleteblockUser = async (waba, data) => {
   return await fetchWithAuth(`/whatsapp/delete-block-user/${waba}`, {
     method: "DELETE",
     body: JSON.stringify(data),
+  });
+};
+
+// Save canned message
+export const saveCannedMessage = async (data) => {
+  return await fetchWithAuth(`/canned/save-message`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Get all canned messages
+export const getAllCannedMessages = async () => {
+  return await fetchWithAuth(`/canned/all-messages`);
+};
+
+// Get canned message by SrNo
+export const getCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/getbySrno?srNo=${srNo}`);
+};
+
+// Delete canned message by SrNo
+export const deleteCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/deleteBySrno?srNo=${srNo}`, {
+    method: "DELETE",
   });
 };

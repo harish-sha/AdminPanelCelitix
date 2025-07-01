@@ -20,6 +20,7 @@ import InputField from "../../components/layout/InputField.jsx";
 import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
 import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
+import { RadioButton } from "primereact/radiobutton";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -78,6 +79,8 @@ const WhatsappLaunchCampaign = () => {
   const [fileData, setFileData] = useState([]);
 
   const [cardIndex, setCardIndex] = useState(0);
+
+  const [marketingType, setMarketingType] = useState(1);
 
   const fileRef = useRef(null);
 
@@ -227,6 +230,29 @@ const WhatsappLaunchCampaign = () => {
       });
     }
 
+    const contentValues = bodyVariables
+      ?.map((variable) => {
+        const key = `body${variable}`;
+        const value = (formData[key] || "").trim();
+        console.log("value", value);
+
+        if (!value) {
+          isError = true;
+          return;
+        }
+
+        if (value.match(/{{(.*?)}}/)) {
+          return `#${value.match(/{{(.*?)}}/)[1]}#`;
+        }
+
+        return `"${value}"`;
+      })
+      ?.join(",");
+
+    if (isError) {
+      return toast.error("Please enter all variable values!");
+    }
+
     setTotalRecords(finalTotalRecords);
     setDialogVisible(true);
   };
@@ -237,9 +263,8 @@ const WhatsappLaunchCampaign = () => {
     const selectedWabaData = wabaList?.find(
       (waba) => waba.mobileNo === selectedWaba
     );
-    
     const selectedTemplateData = templateList?.find(
-      (template) => template.vendorTemplateId  === selectedTemplate
+      (template) => template.vendorTemplateId === selectedTemplate
     );
 
     const bodyVariables = templateDataNew?.components
@@ -298,6 +323,11 @@ const WhatsappLaunchCampaign = () => {
       ?.map((variable) => {
         const key = `body${variable}`;
         const value = (formData[key] || "").trim();
+
+        if (!value) {
+          isError = true;
+          return toast.error("Please enter all variable values!");
+        }
 
         if (value.match(/{{(.*?)}}/)) {
           return `#${value.match(/{{(.*?)}}/)[1]}#`;
@@ -374,6 +404,8 @@ const WhatsappLaunchCampaign = () => {
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
+      // isMarketingMessage: marketingType || "",
+      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -442,7 +474,8 @@ const WhatsappLaunchCampaign = () => {
         setVarLength(0);
         setFileData([]);
         setIsGroup(-1);
-        fileRef.current.value = "";
+        // fileRef.current.value = "";
+        fileRef.current && (fileRef.current.value = "");
       } else {
         toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");
@@ -495,8 +528,9 @@ const WhatsappLaunchCampaign = () => {
       const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
+        const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
         setTemplateOptions(
-          response.map((template) => ({
+          approvedTemplateList.map((template) => ({
             value: template.vendorTemplateId,
             label: template.templateName,
           }))
@@ -537,7 +571,7 @@ const WhatsappLaunchCampaign = () => {
 
   // Find the selected template data
   const selectedTemplateData = templateList.find(
-    (template) => template.templateName === selectedTemplate
+    (template) => template.vendorTemplateId === selectedTemplate
   );
 
   useEffect(() => {
@@ -655,6 +689,52 @@ const WhatsappLaunchCampaign = () => {
                       placeholder="Select Template"
                     />
                   </div>
+                  {selectedTemplateData?.category === "MARKETING" && (
+                    <div>
+                      <h1 className="mb-1 text-sm font-medium text-gray-800">
+                        Send Via
+                      </h1>
+                      <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
+                        {/* Option 1 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2 cursor-pointer">
+                            <RadioButton
+                              inputId="radioOption1"
+                              name="radioGroup"
+                              value="2"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 2}
+                            />
+                            <label
+                              htmlFor="radioOption1"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              Cloud API
+                            </label>
+                          </div>
+                        </label>
+
+                        {/* Option 2 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2">
+                            <RadioButton
+                              inputId="radioOption2"
+                              name="radioGroup"
+                              value="1"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 1}
+                            />
+                            <label
+                              htmlFor="radioOption2"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              MM Lite
+                            </label>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -679,6 +759,8 @@ const WhatsappLaunchCampaign = () => {
                           cardIndex={cardIndex}
                           setFileData={setFileData}
                           fileData={fileData}
+                          marketingType={marketingType}
+                          setMarketingType={setMarketingType}
                         />
                       )
                     )}
@@ -700,6 +782,7 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
+                    setSelectedOption={setSelectedOption}
                   // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
@@ -751,7 +834,7 @@ const WhatsappLaunchCampaign = () => {
                     ?.name || "N/A"}
                 </p>
                 <span className="font-semibold font-m">Template Name : </span>
-                <p className="">{selectedTemplate || "N/A"}</p>
+                <p className=""> {selectedTemplateData?.templateName || "N/A"}</p>
                 <span className="font-semibold font-m">Template Type : </span>
                 <p className="">{selectedTemplateData?.type || "N/A"}</p>
                 <span className="font-semibold font-m">
