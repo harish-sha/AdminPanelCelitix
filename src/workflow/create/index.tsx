@@ -125,7 +125,7 @@ function NodeComponent({
         <Handle
           type="target"
           position={Position.Left}
-          className={`${data.type == "starting" ? "hidden" : ""} `}
+          className={`${id == "1" ? "hidden" : ""} `}
           style={{
             background: connectionType === "source" ? "green" : "blue",
           }}
