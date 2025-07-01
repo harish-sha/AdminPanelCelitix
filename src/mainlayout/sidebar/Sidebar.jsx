@@ -101,76 +101,8 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const menuItems = user?.role === "RESELLERUSER" ? userItems : resellerItems;
   // const menuItems = [];
 
-  // const getFilteredMenuItems = (menuItems = [], userState) => {
-  //   let allowedServices = [];
-  //   if (userState.role === "AGENT") {
-  //     return [
-  //       {
-  //         id: "",
-  //         name: "Home",
-  //         icon: <FaHome />,
-  //         label: "Home",
-  //         type: "single",
-  //         to: "/",
-  //       },
-  //       {
-  //         id: "",
-  //         name: "WhatsApp Live Chat",
-  //         icon: <FaWhatsapp />,
-  //         label: "WhatsApp Live Chat",
-  //         type: "single",
-  //         to: "/wlivechat",
-  //       },
-  //     ];
-  //   }
-
-  //   const alwaysIncludeNames = [
-  //     "Home",
-  //     "apiDocs",
-  //     "CallBack",
-  //     "Managecontacts",
-  //   ];
-
-  //   if (userState.role === "RESELLER") {
-  //     // return menuItems;
-  //     allowedServices = menuItems.map((item) => {
-  //       if (alwaysIncludeNames.includes(item.name)) {
-  //         return item;
-  //       }
-  //       if (item.name === "Reports") {
-  //         const hasMatch = item.links.filter((service) =>
-  //           userState.services.some(
-  //             (link) => link.id == service.service_type_id
-  //           )
-  //         );
-
-  //         return {
-  //           ...item,
-  //           links: hasMatch,
-  //         };
-  //       }
-  //     });
-  //   } else {
-  //     allowedServices = menuItems.map((item) => {
-  //       if (alwaysIncludeNames.includes(item.name)) {
-  //         return item;
-  //       }
-  //       const hasMatch = userState.services.some(
-  //         (service) => service.service_type_id == item.id
-  //       );
-
-  //       return {
-  //         ...item,
-  //         links: hasMatch ? item.links : [],
-  //       };
-  //     });
-  //   }
-
-  //   return allowedServices;
-  // };
-
   const getFilteredMenuItems = (menuItems = [], userState) => {
-    // Early return for AGENT role
+    let allowedServices = [];
     if (userState.role === "AGENT") {
       return [
         {
@@ -197,31 +129,46 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
-      "managefunds",
     ];
 
-    const filterLinks = (item) => {
-      if (userState.role === "RESELLER" && item.name === "Reports") {
-        const matchedLinks = item.links.filter((service) =>
-          userState.services.some((link) => link.id === service.service_type_id)
-        );
-        return { ...item, links: matchedLinks };
+    if (userState.role === "RESELLER") {
+      alwaysIncludeNames.push("User Management");
+      alwaysIncludeNames.push("managefunds");
+      allowedServices = menuItems.map((item) => {
+        if (alwaysIncludeNames.includes(item.name)) {
+          return item;
+        }
+        if (item.name === "Reports") {
+          const hasMatch = item.links.filter((link) =>
+            userState.services.some(
+              (service) => link.id == service.service_type_id
+            )
+          );
+
+          return {
+            ...item,
+            links: hasMatch,
+          };
+        }
+      });
+
+      return allowedServices;
+    }
+    allowedServices = menuItems.map((item) => {
+      if (alwaysIncludeNames.includes(item.name)) {
+        return item;
       }
+      const hasMatch = userState.services.some(
+        (service) => service.service_type_id == item.id
+      );
+
       return {
         ...item,
-        links: userState.services.some(
-          (service) => service.service_type_id === item.id
-        )
-          ? item.links
-          : [],
+        links: hasMatch ? item.links : [],
       };
-    };
+    });
 
-    return menuItems.filter(
-      (item) =>
-        alwaysIncludeNames.includes(item.name) ||
-        filterLinks(item).links.length > 0
-    );
+    return allowedServices;
   };
 
   const filteredItems = getFilteredMenuItems(menuItems, user);
