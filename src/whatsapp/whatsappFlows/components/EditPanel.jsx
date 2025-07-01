@@ -317,61 +317,63 @@ const EditPanel = ({
   // }
 
   // EmbeddedLink
-  const screenName = useSelector((state) => state.flows.screenName);
+  const embeddedscreenName = useSelector((state) => state.flows.screenName);
   // console.log("screenNameedtred:", screenName);
 
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
   const [selectedScreenName, setSelectedScreenName] = useState("");
-  const  [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("")
+  const [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("");
 
   // Get list of screens from screenName
-  const screenNameOptions = Object.values(screenName).map((screen, index) => ({
-    label: screen.screenName || `Screen ${index + 1}`,
-    value: screen.screenName || `Screen ${index + 1}`,
-  }));
+  const screenNameOptions = Object.values(embeddedscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
 
   //  console.log("screenNameOptions:", screenNameOptions);
 
   useEffect(() => {
     if (onClickAction !== "navigate") {
       setSelectedScreenName("");
-      setEmbeddedlinktUrl(selectedItem.url || "");
+      // setEmbeddedlinktUrl(selectedItem.url || "");
     }
   }, [onClickAction]);
 
   useEffect(() => {
-    if (selectedItem?.type === "embeddedlink") {
+    if (selectedItem) {
       setText(selectedItem.text || "");
       const action = selectedItem["on-click-action"] || "complete";
       setOnClickAction(action);
 
-      if (action === "navigate") {
-        const screenName = selectedItem.name;
-        const screenExists = screenNameOptions.includes(screenName);
+      // if (action === "navigate") {
+      //   const screenName = selectedItem.name;
+      //   const screenExists = screenNameOptions.includes(screenName);
 
-        if (screenName && screenExists) {
-          setSelectedScreenName(screenName);
-        } else {
-          toast.error("Please Create New Screen");
-          setSelectedScreenName("");
-        }
-      } else {
-        setSelectedScreenName("");
-      }
+      //   if (screenName && screenExists) {
+      //     setSelectedScreenName(screenName);
+      //   } else {
+      //     toast.error("Please Create New Screen");
+      //     setSelectedScreenName("");
+      //   }
+      // } else {
+      //   setSelectedScreenName("");
+      // }
     }
-  }, [screenName, selectedItem]);
+  }, [selectedItem]);
 
   const handleEmbeddedLinkSave = () => {
-    if(!text){
-      toast.error("Text is required")
+    if (!text) {
+      toast.error("Text is required");
       return;
     }
     const payload = {
       text: text,
       "on-click-action": onClickAction,
-       ...(onClickAction === "open_url" && { url: embeddedlinktUrl }),
-      ...(onClickAction === "navigate" && { screen: optSelectedScreenName }),
+      ...(onClickAction === "open_url" && { url: embeddedlinktUrl }),
+      ...(onClickAction === "navigate" && { screen: selectedScreenName }),
     };
 
     const updatedData = {
@@ -379,7 +381,7 @@ const EditPanel = ({
       ...payload,
     };
 
-    console.log("payloadlink:", payload);
+    // console.log("payloadlink:", payload);
 
     onSave(updatedData);
     onClose();
@@ -393,11 +395,11 @@ const EditPanel = ({
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
   const [optUrl, setOptUrl] = useState("");
-  const [optInRequired, setOptInRequired] = useState(false)
+  const [optInRequired, setOptInRequired] = useState(false);
 
   const handleOptInRequiredChange = () => {
-    setOptInRequired((prev) => !prev)
-  }
+    setOptInRequired((prev) => !prev);
+  };
 
   const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
 
@@ -411,7 +413,7 @@ const EditPanel = ({
   }, [selectedItem]);
 
   const allscreenName = useSelector((state) => state.flows.screenName) || {};
-  console.log("allflowItems:", allscreenName);
+  // console.log("allflowItems:", allscreenName);
 
   const optScreenNameOptions = Object.values(allscreenName).map(
     (screen, index) => ({
@@ -419,7 +421,7 @@ const EditPanel = ({
       value: screen.screenName || `Screen ${index + 1}`,
     })
   );
-  console.log("optScreenNameOptions", optScreenNameOptions);
+  // console.log("optScreenNameOptions", optScreenNameOptions);
 
   useEffect(() => {
     if (optAction !== "navigate") {
@@ -428,9 +430,9 @@ const EditPanel = ({
   }, [optAction]);
 
   const handleOPTSave = () => {
-    if(!optLabel){
-     toast.error("Label is reuired")
-     return;
+    if (!optLabel) {
+      toast.error("Label is reuired");
+      return;
     }
     const payload = {
       label: optLabel,
@@ -509,34 +511,6 @@ const EditPanel = ({
     }
   };
 
-  // const handleImageChange = async (e) => {
-  //   const file = e.target.files?.[0];
-  //   if (!file) {
-  //     toast.error("No file selected");
-  //     return;
-  //   }
-
-  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
-  //     toast.error("Please select a .png or .jpeg file");
-  //     e.target.value = "";
-  //     return;
-  //   }
-  //   setImageFile(file);
-
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     setImageSrc(reader.result);
-  //   };
-  //   reader.readAsDataURL(file);
-
-  //   try {
-  //     const base64String = await getBase64(file);
-  //     setDraft((prev) => ({ ...prev, image: base64String }));
-  //     toast.success("Image loaded successfully!");
-  //   } catch {
-  //     toast.error("Failed to convert image to base64");
-  //   }
-  // };
 
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -569,8 +543,15 @@ const EditPanel = ({
     setImageFile((prev) => [...(Array.isArray(prev) ? prev : []), file]);
 
     const reader = new FileReader();
+
+    // reader.onload = () => {
+    //   setImageSrc(reader.result);
+    // };
+
     reader.onload = () => {
-      setImageSrc(reader.result);
+      const result = reader.result;
+      const base64Only = result.split(",")[1];
+      setImageSrc(base64Only);
     };
     reader.readAsDataURL(file);
 
@@ -592,6 +573,9 @@ const EditPanel = ({
       toast.error("Image Required");
       return;
     }
+   
+const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imageSrc.trim();
+
 
     const selectedPhoto = "";
     const payload = {
@@ -675,7 +659,8 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${index + 1
+        `Please delete the existing image before uploading a new one in slot ${
+          index + 1
         }`
       );
       return;
@@ -955,8 +940,8 @@ const EditPanel = ({
       setUnavailableCalendarDates(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"].map(
-            (dateStr) => new Date(dateStr)
-          )
+              (dateStr) => new Date(dateStr)
+            )
           : []
       );
 
@@ -1053,36 +1038,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-          mode: "single",
-          label: dateCalendarLable,
-          "helper-text": dateCalendarPlaceholder,
-          required: startCalenderRequired,
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        }
+            mode: "single",
+            label: dateCalendarLable,
+            "helper-text": dateCalendarPlaceholder,
+            required: startCalenderRequired,
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          }
         : {
-          mode: "range",
-          label: {
-            "start-date": dateCalendarLable || "",
-            "end-date": endCalendarLabel || "",
-          },
-          "helper-text": {
-            "start-date": dateCalendarPlaceholder || "",
-            "end-date": endCalendarHelperText || "",
-          },
-          required: {
-            "start-date": startCalenderRequired,
-            "end-date": endCalendarRequired,
-          },
-          "min-date": formatDateCalendarToString(minCalendarDate),
-          "max-date": formatDateCalendarToString(maxCalendarDate),
-          "unavailable-dates": formatArrayToCalendarDates(
-            validUnavailableDates
-          ),
-        };
+            mode: "range",
+            label: {
+              "start-date": dateCalendarLable || "",
+              "end-date": endCalendarLabel || "",
+            },
+            "helper-text": {
+              "start-date": dateCalendarPlaceholder || "",
+              "end-date": endCalendarHelperText || "",
+            },
+            required: {
+              "start-date": startCalenderRequired,
+              "end-date": endCalendarRequired,
+            },
+            "min-date": formatDateCalendarToString(minCalendarDate),
+            "max-date": formatDateCalendarToString(maxCalendarDate),
+            "unavailable-dates": formatArrayToCalendarDates(
+              validUnavailableDates
+            ),
+          };
 
     const updatedData = {
       ...selectedItem,
@@ -1610,7 +1595,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -2057,12 +2042,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-            ...o,
-            title: draftTitle.trim(),
-            description: draftDescription.trim(),
-            metadata: draftMetadata.trim(),
-            image: dropImageSrc || o.image || "",
-          }
+              ...o,
+              title: draftTitle.trim(),
+              description: draftDescription.trim(),
+              metadata: draftMetadata.trim(),
+              image: dropImageSrc || o.image || "",
+            }
           : o
       )
     );
@@ -2254,10 +2239,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-            ...o,
-            // name: chipName.trim(),
-            title: chipTitle.trim(),
-          }
+              ...o,
+              // name: chipName.trim(),
+              title: chipTitle.trim(),
+            }
           : o
       )
     );
@@ -3000,8 +2985,8 @@ const EditPanel = ({
               {selectedThenComponent === "textInput"
                 ? "Then Component"
                 : selectedElseComponent === "textInput"
-                  ? "Else Component"
-                  : ""}
+                ? "Else Component"
+                : ""}
               <InputField
                 label="Input Label"
                 id="mainlabel"
@@ -3401,8 +3386,8 @@ const EditPanel = ({
                 {selectedThenComponent === "radioButton"
                   ? "Then Component"
                   : selectedElseComponent === "radioButton"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Radio Group Label"
                   tooltipContent="Enter Radio Group Label"
@@ -3605,8 +3590,8 @@ const EditPanel = ({
                 {selectedThenComponent === "dropDown"
                   ? "Then Component"
                   : selectedElseComponent === "dropDown"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Label"
                   id="mainlabel"
@@ -3814,8 +3799,8 @@ const EditPanel = ({
                 {selectedThenComponent === "chipSelector"
                   ? "Then Component"
                   : selectedElseComponent === "chipSelector"
-                    ? "Else Component"
-                    : ""}
+                  ? "Else Component"
+                  : ""}
                 <InputField
                   label="Label"
                   placeholder="Enter label"
@@ -4053,16 +4038,15 @@ const EditPanel = ({
               )}
 
               {onClickAction === "open_url" && (
-                  <InputField
-                    label="URL"
-                    placeholder="Enter the URL to open"
-                    type="text"
-                    tooltipContent="Provide the URL to open when user clicks Read more"
-                    value={embeddedlinktUrl}
-                    onChange={(e) => setEmbeddedlinktUrl(e.target.value)}
-                  />
-                )}
-
+                <InputField
+                  label="URL"
+                  placeholder="Enter the URL to open"
+                  type="text"
+                  tooltipContent="Provide the URL to open when user clicks Read more"
+                  value={embeddedlinktUrl}
+                  onChange={(e) => setEmbeddedlinktUrl(e.target.value)}
+                />
+              )}
 
               <div className="flex justify-center mt-5">
                 <UniversalButton

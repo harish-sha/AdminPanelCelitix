@@ -27,9 +27,9 @@ export const EditFlow = () => {
   const preData = [];
   parsedJson?.screens?.forEach((data, item) => {
     data.layout.children.forEach((child, index) => {
-      if(type === "RadioButtonsGroup"){
+      if (type === "RadioButtonsGroup") {
         {
-            
+
         }
       }
     });

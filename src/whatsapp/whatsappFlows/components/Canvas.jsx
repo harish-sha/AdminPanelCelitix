@@ -251,23 +251,23 @@ const Canvas = ({
 
             <style>
               {`
-    .prose h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    .prose h2 {
-      font-size: 1.25rem;
-      font-weight: 500;
-    }
-    .prose img {
-      width: 2.5rem; 
-      height: 2.5rem; 
-      border-radius: 9999px; 
-      object-fit: cover; 
-      border: 1px solid #d1d5db; 
-      display: inline-block; 
-    }
-  `}
+                  .prose h1 {
+                    font-size: 1.5rem;
+                    font-weight: 700;
+                       }
+                  .prose h2 {
+                   font-size: 1.25rem;
+                   font-weight: 500;
+                   }
+                  .prose img {
+                   width: 2.5rem; 
+                   height: 2.5rem; 
+                   border-radius: 9999px; 
+                   object-fit: cover; 
+                   border: 1px solid #d1d5db; 
+                   display: inline-block; 
+                   }
+              `}
             </style>
           </div>
         </>
@@ -558,12 +558,11 @@ const Canvas = ({
             </div>
           )}
 
-           {targetItem["on-click-action"] && (
+          {targetItem["on-click-action"] && (
             <div>
-               <span className="font-semibold">Action: </span>
-               {targetItem["on-click-action"]}
-               </div>
-
+              <span className="font-semibold">Action: </span>
+              {targetItem["on-click-action"]}
+            </div>
           )}
         </div>
       );
@@ -588,44 +587,43 @@ const Canvas = ({
 
           {targetItem["on-click-action"] && (
             <div>
-               <span className="font-semibold">Action: </span>
-               {targetItem["on-click-action"]}
-               </div>
-
+              <span className="font-semibold">Action: </span>
+              {targetItem["on-click-action"]}
+            </div>
           )}
-
         </div>
       );
     }
 
     if (item.type === "image") {
       return (
-        <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm ">
+        <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm flex items-center gap-5">
           {targetItem.src && (
             <img
-              src={targetItem.src}
+               src={`data:image/png;base64,${targetItem.src}`}
               alt={targetItem["alt-text"] || "Image preview"}
-              className="rounded-md max-w-full"
+              className="rounded-full max-w-full h-40 w-40 border-2 border-gray-200 shadow-xl"
               style={{
                 objectFit: targetItem["scale-type"] || "contain",
                 aspectRatio: targetItem["aspect-ratio"] || "auto",
               }}
             />
           )}
+          <div>
+            {targetItem["alt-text"] && (
+              <div className="mt-1">
+                <span className="font-semibold">Alt Text: </span>
+                {targetItem["alt-text"] || "No description"}
+              </div>
+            )}
 
-          {targetItem["alt-text"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Alt Text: </span>
-              {targetItem["alt-text"] || "No description"}
-            </div>
-          )}
-
-          {targetItem["scale-type"] && (
-            <div className="mt-1">
-              <span className="font-semibold"> Scale Type: </span>
-              {targetItem["scale-type"] || "contain"}
-            </div>
-          )}
+            {targetItem["scale-type"] && (
+              <div className="mt-1">
+                <span className="font-semibold"> Scale Type: </span>
+                {targetItem["scale-type"] || "contain"}
+              </div>
+            )}
+          </div>
         </div>
       );
     }
@@ -945,8 +943,12 @@ const Canvas = ({
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 
-
-    const content = getDynamicFieldValue(tabs, activeIndex, item, "helper_text");
+    const content = getDynamicFieldValue(
+      tabs,
+      activeIndex,
+      item,
+      "helper_text"
+    );
 
     return (
       // <motion.div
@@ -994,9 +996,6 @@ const Canvas = ({
           </Box>
         </div>
 
-
-
-
         {/* <div
           className="text-sm p-2 rounded-md bg-white border border-gray-300 text-wrap"
           style={{
@@ -1012,17 +1011,19 @@ const Canvas = ({
           className="text-sm p-2 rounded-md bg-white border border-gray-300 text-wrap"
           style={{
             whiteSpace: item.type === "textArea" ? "pre-wrap" : "secondary",
-            minHeight: item.type === "textArea" ? `${item.rows || 4}em` : "auto",
+            minHeight:
+              item.type === "textArea" ? `${item.rows || 4}em` : "auto",
           }}
         >
-          {content && content?.props?.children
-            ? content
-            : (
-              <span className="text-gray-400 italic">
-                Please fill this field by clicking the <span className="text-violet-600 font-medium">edit icon</span> or remove this block.
-              </span>
-            )
-          }
+          {content && content?.props?.children ? (
+            content
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
+          )}
         </div>
       </Paper>
       // </motion.div>

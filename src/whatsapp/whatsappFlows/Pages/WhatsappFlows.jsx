@@ -65,6 +65,7 @@ import {
   getWhatsappFlowTemplate,
   updateFlowStatus,
   deleteFlow,
+  getMainJson
 } from "@/apis/whatsapp/whatsapp";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
@@ -270,9 +271,41 @@ const WhatsappFlows = () => {
     }
   }
 
-  const handleExport = (flow = selectedFlow) => {
+  const handleExport = async (flow = selectedFlow) => {
+    console.log("flow", flow)
+    setIsLoading(true);
+    try {
+      const response = await getMainJson(flow.srNo);
+      console.log("response from download", response);
+
+      const mainJsonStr = response.data[0].mainJson;
+      const mainJsonObj = JSON.parse(mainJsonStr);
+
+      // Convert to pretty JSON string
+      const jsonString = JSON.stringify(mainJsonObj, null, 2);
+
+      // Create Blob
+      const blob = new Blob([jsonString], { type: "application/json" });
+
+      // Create download link
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = flow.flowName;
+
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      URL.revokeObjectURL(url);
+      toast.success("Downloaded Successfully")
+    } catch (error) {
+      console.error("Error in exporting the data:", error);
+    }
+    setIsLoading(false);
     handleMenuClose();
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -480,8 +513,8 @@ const WhatsappFlows = () => {
                       </div>
                       <span
                         className={`text-xs shadow-md tracking-wide px-2 py-1 rounded-md w-max  ${flow.status === "DRAFT"
-                            ? "bg-orange-500 text-white"
-                            : "bg-blue-500 text-white"
+                          ? "bg-orange-500 text-white"
+                          : "bg-blue-500 text-white"
                           }`}
                       >
                         {flow.status}
@@ -515,8 +548,8 @@ const WhatsappFlows = () => {
                       <div className="relative inline-block">
                         <button
                           className={`bg-orange-400 hover:bg-orange-500 text-white px-4 py-1.5 rounded-3xl border-2 border-white text-sm flex items-center gap-2 ${isPublishingNow === flow.flowId
-                              ? "cursor-not-allowed opacity-70"
-                              : "cursor-pointer"
+                            ? "cursor-not-allowed opacity-70"
+                            : "cursor-pointer"
                             }`}
                           onClick={() => {
                             if (!isPublishingNow) {

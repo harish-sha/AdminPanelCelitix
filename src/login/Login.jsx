@@ -1065,7 +1065,7 @@ const Login = () => {
         // systemInfo: uaResult.browser.name || "Unknown",
         // ip: ipResponse?.data?.clientIp || "0.0.0.0",
         systemInfo: "Chrome",
-        ip: "0.0.0.0",
+        ip: "43.224.1.224",
       }));
 
       const payloadd = {
@@ -1073,7 +1073,7 @@ const Login = () => {
         // systemInfo: uaResult.browser.name || "Unknown",
         // ip: ipResponse?.data?.clientIp || "0.0.0.0",
         systemInfo: "Chrome",
-        ip: "0.0.0.0",
+        ip: "43.224.1.224",
       }
 
       delete payloadd.rememberMe;

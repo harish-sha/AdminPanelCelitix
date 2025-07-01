@@ -361,7 +361,7 @@ const FlowCreationPage = () => {
     if (
       updatedData.text ||
       updatedData.label ||
-      updatedData.footer.footer_1.label ||
+      // updatedData.footer.footer_1.label ||
       updatedData.src
     ) {
       dispatch(

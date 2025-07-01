@@ -511,7 +511,7 @@ export const generatePayload = (data) => {
         component = {
           // name,
           type: "Image",
-          src: pay.src,
+          src: pay?.src,
           // width: pay.width,
           // // height: pay.height,
           "scale-type": pay["scale-type"],
@@ -644,29 +644,67 @@ export const generatePayload = (data) => {
         }
       }
 
+     
+
       if (type === "optin") {
         const optActionName = pay["on-click-action"] || "";
         const nextScreenId = data[index + 1]?.id || null;
+
+        const onClickAction = {
+          name: optActionName,
+        };
+
+        if (optActionName === "navigate") {
+          index !== data.length - 1;
+          onClickAction.next = {
+            type: "screen",
+            name: nextScreenId,
+          };
+        }
+
+        if (optActionName === "open_url") {
+          onClickAction.url = pay.url;
+        }
 
         component = {
           name,
           type: "OptIn",
           label: pay.label,
           required: true,
-          "on-click-action": {
-            name: optActionName,
-            ...(index !== data.length - 1 && {
-              next: {
-                type: "screen",
-                name: nextScreenId,
-              },
-            }),
-            ...(optActionName === "open_url" && {
-              url: pay.url, // take url from payload
-            }),
-          },
+          "on-click-action": onClickAction,
         };
+        // console.log("Generated component:", JSON.stringify(component, null, 2));
       }
+
+      if (type === "embeddedlink") {
+        const embeddedLinkActionName = pay["on-click-action"] || "";
+        const nextScreenId = data[index + 1]?.id || null;
+
+        const onClickAction = {
+          name: embeddedLinkActionName,
+        };
+
+        if(embeddedLinkActionName === "navigate") {
+          index !== data.length - 1;
+          onClickAction.next = {
+             type: "screen",
+            name: nextScreenId,
+          };
+        }
+
+        if(embeddedLinkActionName === "open_url"){
+          onClickAction.url = pay.url;
+        }
+
+        component = {
+          type: "EmbeddedLink",
+          text: pay?.text,
+          "on-click-action": onClickAction,
+        }
+        //  console.log("Generated embeddedlink component:", JSON.stringify(component, null, 2));
+      }
+
+     
 
       if (pay.type === "If") {
         console.log("pay", pay);
@@ -687,28 +725,6 @@ export const generatePayload = (data) => {
             },
           ],
           // required: true,
-        };
-      }
-
-      if (type === "embeddedlink") {
-        const onClickActionName = pay["on-click-action"] || "";
-        const nextScreenId = data[index + 1]?.id || null;
-
-        component = {
-          type: "EmbeddedLink",
-          text: pay?.text,
-          "on-click-action": {
-            name: onClickActionName,
-            ...(index !== data.length - 1 && {
-              next: {
-                type: "screen",
-                name: nextScreenId,
-              },
-            }),
-             ...(onClickActionName === "open_url" && {
-              url: pay.url, // take url from payload
-            }),
-          },
         };
       }
 

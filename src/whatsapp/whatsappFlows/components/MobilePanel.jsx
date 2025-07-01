@@ -736,7 +736,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                         }}
                       >
                         <img
-                          src={item.src}
+                          src={`data:image/png;base64,${item?.src}`}
                           alt={item["alt-text"] || "Uploaded image"}
                           style={{
                             position: "absolute",
@@ -837,7 +837,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                     {images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={`data:image/jpeg;base64,${img.src}`} // <-- fix is here
+                        src={`${img.src}`} 
                         alt={img["alt-text"] || `Image ${idx + 1}`}
                         className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
                           }`}

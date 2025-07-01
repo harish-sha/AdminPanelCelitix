@@ -581,3 +581,9 @@ export const deleteFlow = async (data) => {
     method: "DELETE",
   });
 };
+
+export const getMainJson = async (srNo) => {
+  return await fetchWithAuth(`/WhatsappFlow/getMainJson?srNo=${srNo}`, {
+    method: "GET",
+  });
+};
