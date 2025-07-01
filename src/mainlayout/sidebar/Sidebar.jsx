@@ -101,7 +101,76 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   const menuItems = user?.role === "RESELLERUSER" ? userItems : resellerItems;
   // const menuItems = [];
 
+  // const getFilteredMenuItems = (menuItems = [], userState) => {
+  //   let allowedServices = [];
+  //   if (userState.role === "AGENT") {
+  //     return [
+  //       {
+  //         id: "",
+  //         name: "Home",
+  //         icon: <FaHome />,
+  //         label: "Home",
+  //         type: "single",
+  //         to: "/",
+  //       },
+  //       {
+  //         id: "",
+  //         name: "WhatsApp Live Chat",
+  //         icon: <FaWhatsapp />,
+  //         label: "WhatsApp Live Chat",
+  //         type: "single",
+  //         to: "/wlivechat",
+  //       },
+  //     ];
+  //   }
+
+  //   const alwaysIncludeNames = [
+  //     "Home",
+  //     "apiDocs",
+  //     "CallBack",
+  //     "Managecontacts",
+  //   ];
+
+  //   if (userState.role === "RESELLER") {
+  //     // return menuItems;
+  //     allowedServices = menuItems.map((item) => {
+  //       if (alwaysIncludeNames.includes(item.name)) {
+  //         return item;
+  //       }
+  //       if (item.name === "Reports") {
+  //         const hasMatch = item.links.filter((service) =>
+  //           userState.services.some(
+  //             (link) => link.id == service.service_type_id
+  //           )
+  //         );
+
+  //         return {
+  //           ...item,
+  //           links: hasMatch,
+  //         };
+  //       }
+  //     });
+  //   } else {
+  //     allowedServices = menuItems.map((item) => {
+  //       if (alwaysIncludeNames.includes(item.name)) {
+  //         return item;
+  //       }
+  //       const hasMatch = userState.services.some(
+  //         (service) => service.service_type_id == item.id
+  //       );
+
+  //       return {
+  //         ...item,
+  //         links: hasMatch ? item.links : [],
+  //       };
+  //     });
+  //   }
+
+  //   return allowedServices;
+  // };
+
   const getFilteredMenuItems = (menuItems = [], userState) => {
+    // Early return for AGENT role
     if (userState.role === "AGENT") {
       return [
         {
@@ -122,32 +191,37 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         },
       ];
     }
-    if (userState.role === "RESELLER") {
-      return menuItems;
-    }
 
     const alwaysIncludeNames = [
       "Home",
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "managefunds",
     ];
 
-    const allowedServices = menuItems.map((item) => {
-      if (alwaysIncludeNames.includes(item.name)) {
-        return item;
+    const filterLinks = (item) => {
+      if (userState.role === "RESELLER" && item.name === "Reports") {
+        const matchedLinks = item.links.filter((service) =>
+          userState.services.some((link) => link.id === service.service_type_id)
+        );
+        return { ...item, links: matchedLinks };
       }
-      const hasMatch = userState.services.some(
-        (service) => service.service_type_id == item.id
-      );
-
       return {
         ...item,
-        links: hasMatch ? item.links : [],
+        links: userState.services.some(
+          (service) => service.service_type_id === item.id
+        )
+          ? item.links
+          : [],
       };
-    });
+    };
 
-    return allowedServices;
+    return menuItems.filter(
+      (item) =>
+        alwaysIncludeNames.includes(item.name) ||
+        filterLinks(item).links.length > 0
+    );
   };
 
   const filteredItems = getFilteredMenuItems(menuItems, user);
@@ -187,23 +261,26 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           >
             <motion.div
               onClick={() => handleDropdownClick(item.name)}
-              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
-                }`}
+              className={`flex items-center py-2 w-full cursor-pointer hover:bg-[#e6f4ff] text-left text-gray-800 transition-all duration-300 ${collapsedClass} ${
+                isActiveRoute(`/${item.name}`) ? "bg-[#6b728075]" : ""
+              }`}
             >
               <span className="text-black flex-shrink-0">{item.icon}</span>
               <motion.span
                 animate={{ opacity: isCollapsed ? 0 : 1 }}
                 transition={{ duration: 0.15 }}
-                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${isCollapsed ? "w-0" : "w-auto"
-                  }`}
+                className={`overflow-hidden whitespace-nowrap font-semibold ml-2 ${
+                  isCollapsed ? "w-0" : "w-auto"
+                }`}
               >
                 {item.label}
               </motion.span>
 
               {!isCollapsed && (
                 <div
-                  className={`ml-auto transition-transform duration-300 ${openDropdown === item.name ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`ml-auto transition-transform duration-300 ${
+                    openDropdown === item.name ? "rotate-180" : "rotate-0"
+                  }`}
                 >
                   {openDropdown === item.name ? (
                     <MdExpandLess />
@@ -250,8 +327,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                         }}
                       />
                       <span
-                        className={`font-[600] ${isActive ? "text-blue-800" : "text-gray-800"
-                          }`}
+                        className={`font-[600] ${
+                          isActive ? "text-blue-800" : "text-gray-800"
+                        }`}
                       >
                         {link.label}
                       </span>
@@ -281,8 +359,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
                   item.onClick();
                   handleSingleRouteClick();
                 }}
-                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${isCollapsed ? "justify-center" : ""
-                  }`}
+                className={`flex items-center gap-4 px-4 py-2 transition-all w-full text-left cursor-pointer text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 ${
+                  isCollapsed ? "justify-center" : ""
+                }`}
               >
                 <span className="flex-shrink-0">{item.icon}</span>
                 <span className={`${isCollapsed ? "hidden" : ""} font-[600]`}>
@@ -293,15 +372,17 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
               <Link
                 to={item.to}
                 onClick={handleSingleRouteClick}
-                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
-                  }`}
+                className={`flex items-center gap-0  py-2 w-full text-gray-800 hover:bg-[#e6f4ff] hover:text-blue-800 transition-all duration-300 ${collapsedClass} ${
+                  isActiveRoute(item.to) ? "bg-[#e6f4ff] text-blue-800 " : ""
+                }`}
               >
                 <span className="flex-shrink-0 text-lg">{item.icon}</span>
                 <motion.span
                   animate={{ opacity: isCollapsed ? 0 : 1 }}
                   transition={{ duration: 0.15 }}
-                  className={`whitespace-nowrap font-semibold ${isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
-                    }`}
+                  className={`whitespace-nowrap font-semibold ${
+                    isCollapsed ? "w-0 overflow-hidden" : "w-auto ml-2"
+                  }`}
                 >
                   {item.label}
                 </motion.span>
