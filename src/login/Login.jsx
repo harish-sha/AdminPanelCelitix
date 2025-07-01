@@ -436,9 +436,8 @@ const Login = () => {
                     </button> */}
                     <div className="flex items-center justify-center ">
                       <button
-                        className={`custom-signin-btn ${
-                          loading ? "loading" : ""
-                        }`}
+                        className={`custom-signin-btn ${loading ? "loading" : ""
+                          }`}
                         disabled={loading}
                         onClick={handleLogin}
                       >
