@@ -164,10 +164,10 @@ const Canvas = ({
             </div>
           )}
 
-          {targetItem["init-value"] && (
+          {targetItem["input-type"] && (
             <div>
-              <span className="font-semibold">Initial Value: </span>
-              {targetItem["init-value"]}
+              <span className="font-semibold">Input Type: </span>
+              {targetItem["input-type"]}
             </div>
           )}
 
@@ -868,8 +868,8 @@ const Canvas = ({
   const dispatch = useDispatch();
   // Handle deleting items from the canvas
   const handleDelete = (index, item) => {
-    console.log("index", index);
-    console.log("item", item);
+    // console.log("index", index);
+    // console.log("item", item);
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -897,9 +897,9 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    console.log("item", item);
+    // console.log("item", item);
     if (!item?.type) {
-      console.error("DraggableItem error: item.type is not defined");
+      // console.error("DraggableItem error: item.type is not defined");
       return null;
     }
 

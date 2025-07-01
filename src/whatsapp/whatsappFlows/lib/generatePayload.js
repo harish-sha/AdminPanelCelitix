@@ -269,7 +269,7 @@ import { convertNodeToMarkdown } from "../components/Editor";
 export const generatePayload = (data) => {
   console.log("data", data);
   const payload = {
-    version: "7.0",
+    version: "7.1",
     screens: [],
   };
 
@@ -382,7 +382,7 @@ export const generatePayload = (data) => {
           type: "TextInput",
           label: pay.label,
           required: pay.required ?? true,
-          // name:pay.name,
+          ["input-type"]: pay["input-type"] || "",
           "error-message": pay["error-message"] || "",
           "helper-text": pay["helper-text"],
           "min-chars": parseInt(pay["min-chars"]) || undefined,
@@ -579,7 +579,7 @@ export const generatePayload = (data) => {
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
-          "scale-type": String(pay["scale-type"] || "contain"),
+          "scale-type": (pay["scale-type"] || "contain"),
           //  "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
           images: [
             {

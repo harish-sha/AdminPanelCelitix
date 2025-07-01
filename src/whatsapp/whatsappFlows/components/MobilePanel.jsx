@@ -640,8 +640,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                             handleChipOptionClick(index, option.title)
                           }
                           className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-800 border-gray-300"
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-800 border-gray-300"
                             }`}
                         >
                           {option.title}
@@ -837,7 +837,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                     {images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={`${img.src}`} 
+                        src={`data:image/png;base64,${img.src}`}
                         alt={img["alt-text"] || `Image ${idx + 1}`}
                         className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
                           }`}

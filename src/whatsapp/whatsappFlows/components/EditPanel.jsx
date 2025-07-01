@@ -47,8 +47,6 @@ const EditPanel = ({
   setHeadingValue,
   setLabelValue,
   labelValue,
-  // selectedOptionsType,
-  // setSelectedOptionsType,
   placeholderValue,
   setPlaceholderValue,
   minValue,
@@ -459,30 +457,41 @@ const EditPanel = ({
   const [scaleType, setSCaleType] = useState("contain");
   const [aspectRatio, setAspectRatio] = useState(1);
   const [imgAltText, setImgAltText] = useState("");
-  const [imageSrc, setImageSrc] = useState(null);
-  const [imageFile, setImageFile] = useState([]);
+  const [imageSrc, setImageSrc] = useState(null); // will hold base64 only
+  const [imageFile, setImageFile] = useState(null); // null or File object
+  const imageSrcFile =
+    imageFile && typeof imageFile === "string"
+      ? `data:image/png;base64,${imageFile}`
+      : "";
+
+  const imageSrcUrl =
+    imageFile && typeof imageFile === "object"
+      ? URL.createObjectURL(imageFile)
+      : "";
+
+  const finalSrc = imageSrcFile || imageSrcUrl;
+
+  console.log("finalSrc", finalSrc);
+  const imageInputRef = useRef(null);
 
   useEffect(() => {
     if (selectedItem) {
-      setImageFile(selectedItem.image || "");
+      setImageFile(selectedItem.src); // No File object to preload
+
       setImgAltText(selectedItem["alt-text"] || "");
       setAspectRatio(
         typeof selectedItem["aspect-ratio"] === "number"
           ? selectedItem["aspect-ratio"]
           : 1
       );
-      setSCaleType(selectedItem["scale-type"] || "");
-      // setWidth(selectedItem.width || "")
-      // setHeigh(selectedItem.height || "")
+      setSCaleType(selectedItem["scale-type"] || "contain");
+      setImageSrc(selectedItem.src || null);
     }
   }, [selectedItem]);
-
-  const imageInputRef = useRef(null);
 
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
       reader.onload = () => {
         const base64String = reader.result.split(",")[1];
@@ -491,26 +500,6 @@ const EditPanel = ({
       reader.onerror = (error) => reject(error);
     });
   }
-
-  const handleImageDelete = async () => {
-    if (!imageFile) {
-      toast.error("File not exist");
-      return;
-    }
-    try {
-      setImageSrc(null);
-      setImageFile(null);
-      toast.success("File Delete Succesfully");
-
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-      console.log("Image DLT");
-    } catch (error) {
-      toast.error("Failed To delete file");
-    }
-  };
-
 
   const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -526,38 +515,22 @@ const EditPanel = ({
     }
 
     if (file.size > 300 * 1024) {
-      // 300KB
       toast.error("Recommended image size is up to 300KB.");
       e.target.value = "";
       return;
     }
 
-    // Check max image count
-    if (Array.isArray(imageFile) && imageFile.length >= 3) {
-      toast.error("Maximum 3 images allowed per screen.");
+    if (imageFile) {
+      toast.error("Only 1 image allowed per screen.");
       e.target.value = "";
       return;
     }
 
-    // Set file
-    setImageFile((prev) => [...(Array.isArray(prev) ? prev : []), file]);
-
-    const reader = new FileReader();
-
-    // reader.onload = () => {
-    //   setImageSrc(reader.result);
-    // };
-
-    reader.onload = () => {
-      const result = reader.result;
-      const base64Only = result.split(",")[1];
-      setImageSrc(base64Only);
-    };
-    reader.readAsDataURL(file);
+    setImageFile(file);
 
     try {
       const base64String = await getBase64(file);
-      // Could check total payload size here if tracking
+      setImageSrc(base64String); // store base64 only
       setDraft((prev) => ({
         ...prev,
         image: base64String,
@@ -568,20 +541,34 @@ const EditPanel = ({
     }
   };
 
-  const handleImageSave = (e) => {
-    if (!imageFile) {
-      toast.error("Image Required");
+  const handleImageDelete = () => {
+    if (!imageFile && !imageSrc) {
+      toast.error("No image to delete");
       return;
     }
-   
-const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imageSrc.trim();
 
+    setImageSrc(null);
+    setImageFile(null);
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+    toast.success("File deleted successfully");
+    console.log("Image deleted");
+  };
 
-    const selectedPhoto = "";
+  const handleImageSave = () => {
+    if (!imageFile && !imageSrc) {
+      toast.error("Image required");
+      return;
+    }
+
+    if (!imageSrc) {
+      toast.error("No image source available");
+      return;
+    }
+
     const payload = {
-      src: imageSrc.trim(),
-      // width: width,
-      // height: height,
+      src: imageSrc.trim(), // base64 string
       "scale-type": scaleType,
       "aspect-ratio": aspectRatio,
       "alt-text": imgAltText,
@@ -600,7 +587,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
+    console.log("Saved payload:", payload);
   };
 
   // IMAGECarousel
@@ -914,7 +901,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
   // Calendar
   const [dateCalendarLable, setDateCalendarLabel] = useState("");
   const [minCalendarDate, setMinCalendarDate] = useState("");
-  console.log("minCalendarDate", minCalendarDate);
+
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
   const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
@@ -1278,7 +1265,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
   const [radioBtnLabel, setRadioBtnLabel] = useState("");
-  console.log("radioBtnLabel", radioBtnLabel);
+
   const [radioButtonOptions, setRadioButtonOptions] = useState([]);
   const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
   const [radioImageFile, setRadioImageFile] = useState(null);
@@ -1354,7 +1341,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
     }
   }, [selectedItem]);
 
-  console.log("selectedItem", selectedItem);
+  // console.log("selectedItem", selectedItem);
 
   useEffect(() => {
     if (selectedItem?.type === "checkBox") {
@@ -1396,7 +1383,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
 
   const radioImageInputRef = useRef(null);
 
-  console.log("radioImageInputRef", radioImageInputRef);
+  // console.log("radioImageInputRef", radioImageInputRef);
 
   const handleRadioImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -1501,33 +1488,6 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
     ]);
   };
 
-  // const handleRadioUploadFile = async () => {
-  //   if (!radioImageFile) {
-  //     toast.error("Please select an image first before uploading");
-  //     return;
-  //   }
-
-  //   if (draft?.image) {
-  //     toast.error("Image already Uploaded");
-  //     return;
-  //   }
-
-  //   try {
-  //     const base64String = await getBase64(radioImageFile);
-  //     console.log("base64String", base64String);
-
-  //     // Instead of setting global state, update the draft
-  //     setDraft((prev) => ({
-  //       ...prev,
-  //       image: base64String,
-  //     }));
-
-  //     toast.success("File uploaded successfully!");
-  //   } catch (error) {
-  //     toast.error("Failed to upload file.");
-  //   }
-  // };
-
   const handleDeleteRadioFile = async () => {
     if (!draft.image) {
       toast.error("No image to delete");
@@ -1612,7 +1572,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
       metadata: opt.metadata?.trim() || "",
       image: opt.image || "",
     }));
-    console.log("Filtered and processed radio button options:", payloadOptions);
+    // console.log("Filtered and processed radio button options:", payloadOptions);
 
     // 4) Final payload and merge
     const payload = {
@@ -1664,6 +1624,8 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
     image: "",
   });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
+
+  console.log("checkboxImageFile", checkboxImageFile)
 
   //  useEffect((idx) => {
   //   if (selectedItem) {
@@ -2544,6 +2506,12 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
       setInputError(selectedItem["error-message"] || "");
       setInputRequired(selectedItem.required ?? false);
 
+      const option =
+        OptionsTypeOptions.find(
+          (opt) => opt.value === selectedItem["input-type"]
+        ) || null;
+      setSelectedOptionsType(option);
+
       setInputMin(
         typeof selectedItem["min-chars"] === "number"
           ? selectedItem["min-chars"]
@@ -2554,11 +2522,6 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
           ? selectedItem["max-chars"]
           : ""
       );
-      setSelectedOptionsType(
-        OptionsTypeOptions.find(
-          (opt) => opt.value === selectedItem["input-type"]
-        ) || { value: "text", label: "Text" }
-      );
     }
   }, [selectedItem]);
 
@@ -2566,6 +2529,9 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
     { value: "text", label: "Text" },
     { value: "number", label: "Number" },
     { value: "email", label: "Email" },
+    { value: "password", label: "Password" },
+    { value: "passcode", label: "Passcode" },
+    { value: "phone", label: "Phone" },
   ];
 
   const handleInputChange = (e) => {
@@ -2629,6 +2595,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
       "helper-text": inputPlaceholder.trim(),
       required: inputRequired,
       name: inputName,
+      "input-type": selectedOptionsType?.value,
       "error-message": inputError,
       "min-chars": inputMin ? Number(inputMin) : undefined,
       "max-chars": inputMax ? Number(inputMax) : undefined,
@@ -4016,7 +3983,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                   tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
                   tooltipPlacement="right"
                   options={[
-                    { value: "data_exchange", label: "Data_exchange" },
+                    // { value: "data_exchange", label: "Data_exchange" },
                     { value: "navigate", label: "Navigate" },
                     { value: "open_url", label: "Open_url" },
                   ]}
@@ -4071,7 +4038,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                   onChange={(e) => setOptLabel(e.target.value)}
                 />
 
-                <div className="mt-2 flex">
+                <div className="mt-2 flex items-end">
                   <UniversalLabel
                     label=" Required"
                     htmlFor="required"
@@ -4080,13 +4047,15 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                     tooltipplacement="top"
                     text="Required"
                   ></UniversalLabel>
-                  <div className="flex items-center gap-2 ">
+                  <div className="flex items-center">
                     <Switch
                       checked={optInRequired}
                       onChange={handleOptInRequiredChange}
                       id="required"
                     />
-                    <span>{optInRequired ? "True" : "False"}</span>
+                    <span className="text-sm">
+                      {optInRequired ? "True" : "False"}
+                    </span>
                   </div>
                 </div>
 
@@ -4094,11 +4063,11 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                   id="next-action"
                   label="Action"
                   options={[
-                    { value: "data_exchange", label: "Data_exchange" },
+                    // { value: "data_exchange", label: "Data_exchange" },
                     { value: "navigate", label: "Navigate" },
                     { value: "open_url", label: "Open_url" },
                   ]}
-                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Data Exchange = ... ] [Open_url = paste or enter url link where user can redirect to page]"
+                  tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Open_url = paste or enter url link where user can redirect to page]"
                   value={optAction}
                   onChange={(value) => setOPTAction(value)}
                 />
@@ -4141,7 +4110,8 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
           {selectedItem?.type === "image" && (
             <>
               <div className="space-y-3 mt-3">
-                <div className="flex justify-center items-center gap-2 ">
+                {/* {
+                imageFile ? <img src={imageSrcFile} alt="preview" /> : <div className="flex justify-center items-center gap-2 ">
                   <InputField
                     label="Upload Image"
                     type="file"
@@ -4160,6 +4130,51 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                     />
                   </button>
                 </div>
+              } */}
+
+                {imageFile ? (
+                  <div className="flex justify-center items-center gap-2">
+                    {/* Clickable image label */}
+                    <label htmlFor="file-upload" className="cursor-pointer">
+                      <img
+                        src={finalSrc}
+                        alt="preview"
+                        className="rounded-full w-20 h-20 object-cover border-2 border-gray-300 hover:opacity-80 transition"
+                      />
+                    </label>
+
+                    {/* Hidden input to trigger re-upload on image click */}
+                    {/* <input
+                      id="file-upload"
+                      type="file"
+                      accept=".png, .jpeg"
+                      onChange={handleImageChange}
+                      ref={imageInputRef}
+                      className="hidden"
+                    /> */}
+
+                    {/* Delete button */}
+                    <button onClick={handleImageDelete}>
+                      <DeleteOutlineIcon
+                        sx={{ fontSize: "23px", color: "#ef4444" }}
+                      />
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex justify-center items-center gap-2">
+                    <InputField
+                      label="Upload Image"
+                      type="file"
+                      id="file-upload"
+                      accept=".png, .jpeg"
+                      tooltipContent="Upload Image"
+                      tooltipPlacement="right"
+                      required={true}
+                      onChange={handleImageChange}
+                      ref={imageInputRef}
+                    />
+                  </div>
+                )}
 
                 {/* {imageSrc && (
                 <img
@@ -4348,7 +4363,7 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
 
           {selectedItem?.type === "imageCarousel" && (
             <div className="space-y-3 mt-3">
-              {[0, 1, 2].map((index) => (
+              {/* {imageCarouselImages.map((index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <InputField
                     label={`Image ${index + 1}`}
@@ -4366,7 +4381,56 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
                     />
                   </button>
                 </div>
-              ))}
+              ))} */}
+
+              {imageCarouselImages.map((item, index) => {
+                // Prepare final image source
+                const imageSrcFile = item.src
+                  ? `data:image/png;base64,${item.src}`
+                  : "";
+                const imageSrcUrl = item.file
+                  ? URL.createObjectURL(item.file)
+                  : "";
+                const finalSrc = imageSrcFile || imageSrcUrl;
+
+                return (
+                  <div key={index} className="flex items-center space-x-2">
+                    {finalSrc ? (
+                      <label
+                        htmlFor={`carousel-upload-${index}`}
+                        className="cursor-pointer"
+                      >
+                        <img
+                          src={finalSrc}
+                          alt={`Image ${index + 1}`}
+                          className="rounded-full w-20 h-20 object-cover border-2 border-gray-300 hover:opacity-80 transition"
+                        />
+                        
+                      </label>
+                    ) : (
+                      <InputField
+                        label={`Image ${index + 1}`}
+                        type="file"
+                        accept=".png, .jpeg"
+                        tooltipContent="Upload Image"
+                        tooltipPlacement="right"
+                        required={true}
+                        onChange={(e) => handleImageCarouselChange(e, index)}
+                        ref={imageCarouselInputRefs[index]}
+                      />
+                    )}
+                    <button onClick={() => handleImageCarouselDelete(index)}>
+                      <DeleteOutlineIcon
+                        sx={{
+                          fontSize: "23px",
+                          marginTop: 3,
+                          color: "#ef4444",
+                        }}
+                      />
+                    </button>
+                  </div>
+                );
+              })}
 
               <AnimatedDropdown
                 label="Scale-Type"
@@ -4888,3 +4952,10 @@ const base64Only = imageSrc.includes(",") ? imageSrc.split(",")[1].trim() : imag
 };
 
 export default EditPanel;
+
+
+
+
+
+
+
