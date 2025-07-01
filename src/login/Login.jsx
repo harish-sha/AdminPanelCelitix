@@ -57,7 +57,7 @@ const Login = () => {
   });
 
   const [isForgotPassword, setIsForgotPassword] = useState(false);
-  const[isLoading, setLoading] = useState(false);
+  const [isLoading, setLoading] = useState(false);
 
   useEffect(() => {
     let timer;
@@ -111,8 +111,8 @@ const Login = () => {
         },
       };
 
-      const ipResponse = await getIpAddress();
-      // const ipResponse = "0.0.0.0";
+      // const ipResponse = await getIpAddress();
+      const ipResponse = "0.0.0.0";
 
       setInputDetails((prev) => ({
         ...prev,
@@ -122,9 +122,10 @@ const Login = () => {
 
       const payloadd = {
         ...inputDetails,
-        systemInfo: uaResult.browser.name || "Unknown",
-        ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        // domain: "127.0.0.4"
+        // systemInfo: uaResult.browser.name || "Unknown",
+        systemInfo: "Chrome",
+        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        ip: "0.0.0.0",
       };
       delete payloadd.rememberMe;
       const res = await login(payloadd);
