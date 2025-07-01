@@ -215,10 +215,10 @@ const Approutes = () => {
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
         />
-        <Route
+        {/* <Route
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
-        />
+        /> */}
         <Route path="wwhatsappmanageagent" element={<ManageAgent />} />
         <Route path="wwhatsappbot" element={<WhatsappBot />} />
         <Route path="createwhatsappbot" element={<CreateWhatsAppBot />} />

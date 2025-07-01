@@ -90,7 +90,7 @@ const Transactions = () => {
 
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 70 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
@@ -299,7 +299,7 @@ const Transactions = () => {
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
               onClick={handleExport}
-              // onClick={handleExport}
+            // onClick={handleExport}
             />
           </div>
         </div>

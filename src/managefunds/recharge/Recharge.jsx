@@ -13,9 +13,10 @@ import InputField from "../../components/layout/InputField";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import { Checkbox } from "primereact/checkbox";
 import { useUser } from "@/context/auth";
-import { fetchAllUsers } from "@/apis/admin/admin";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { recharge } from "@/apis/recharge/recharge";
 import toast from "react-hot-toast";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 const Recharge = () => {
   const [amount, setAmount] = useState("");
@@ -41,16 +42,22 @@ const Recharge = () => {
     //fetchAllUsersDetails
     if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
+          // companyName: "",
+          // status: "-1",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -159,16 +166,24 @@ const Recharge = () => {
         <div className="flex items-center justify-center gap-3 w-full">
           {user.role === "ADMIN" && (
             <div className="flex-1">
-              <AnimatedDropdown
+              <DropdownWithSearch
                 id="manageuser"
                 name="manageuser"
                 label="Select User"
                 tooltipContent="Select user you want to see reports"
                 tooltipPlacement="right"
-                options={allUsers.map((user) => ({
-                  label: user.userId,
-                  value: user.srno,
-                }))}
+                // options={allUsers.map((user) => ({
+                //   label: user.userName,
+                //   value: user.srNo,
+                // }))}
+                options={allUsers
+                  .slice()
+                  .sort((a, b) => a.userName.localeCompare(b.userName))
+                  .map((user) => ({
+                    label: user.userName,
+                    value: user.srNo,
+                  }))
+                }
                 value={selectedUser}
                 onChange={setSelectedUser}
                 placeholder="Select User"

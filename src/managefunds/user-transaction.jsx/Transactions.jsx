@@ -22,8 +22,9 @@ import { DataTable } from "../../components/layout/DataTable";
 import InputField from "../../components/layout/InputField";
 
 import { useUser } from "@/context/auth";
-import { fetchAllUsers } from "@/apis/admin/admin";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { exportToExcel } from "@/utils/utills";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 
 function CustomTabPanel(props) {
@@ -83,16 +84,22 @@ const TransactionsUser = () => {
     //fetchAllUsersDetails
     if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
+          // companyName: "",
+          // status: "-1",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -128,7 +135,7 @@ const TransactionsUser = () => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, width: 70 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
@@ -331,16 +338,24 @@ const TransactionsUser = () => {
             </div>
             {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
-                <AnimatedDropdown
+                <DropdownWithSearch
                   id="manageuser"
                   name="manageuser"
                   label="Select User"
                   tooltipContent="Select user you want to see reports"
                   tooltipPlacement="right"
-                  options={allUsers.map((user) => ({
-                    label: user.userId,
-                    value: user.srno,
-                  }))}
+                  // options={allUsers.map((user) => ({
+                  //   label: user.userName,
+                  //   value: user.srNo,
+                  // }))}
+                  options={allUsers
+                    .slice()
+                    .sort((a, b) => a.userName.localeCompare(b.userName))
+                    .map((user) => ({
+                      label: user.userName,
+                      value: user.srNo,
+                    }))
+                  }
                   value={selectedUser}
                   onChange={setSelectedUser}
                   placeholder="Select User"

@@ -16,6 +16,14 @@ export const fetchUserbySrno = async (srNo) => {
   });
 };
 
+// fetch srno and name of user
+export const fetchUserSrno = async (data) => {
+  return await fetchWithAuth("/user/getUserNameList", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 // update user by srno
 export const updateUserbySrno = async (data) => {
   return await fetchWithAuth("/user/updateUserById", {
@@ -119,7 +127,7 @@ export const getPETMChain = async (data) => {
   });
 };
 
-// get whatsapp monthly charges 
+// get whatsapp monthly charges
 export const getCharges = async (userSrno) => {
   return await fetchWithAuth(
     `/WhatsappUserMonthlyRent/getWhatsappMontlyRate?userSrno=${userSrno}`,

@@ -31,10 +31,11 @@ import { ExportDialog } from "./components/exportDialog";
 import CampaignScheduleTable from "./components/CampaignSchedule";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
-import { fetchAllUsers } from "@/apis/admin/admin";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import moment from "moment";
 import { Dialog } from "primereact/dialog";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -48,16 +49,20 @@ const DeliveryreportRcs = () => {
     //fetchAllUsersDetails
     if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           toast.error("Something went wrong! Please try again later.");
         } finally {
@@ -125,7 +130,7 @@ const DeliveryreportRcs = () => {
     campaignType: "",
     status: "",
     deliveryStatus: "",
-    source:"",
+    source: "",
     type: "campaign",
   });
 
@@ -400,16 +405,24 @@ const DeliveryreportRcs = () => {
             </Tabs>
             {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
-                <AnimatedDropdown
+                <DropdownWithSearch
                   id="manageuser"
                   name="manageuser"
                   label="Select User"
                   tooltipContent="Select user you want to see reports"
                   tooltipPlacement="right"
-                  options={allUsers.map((user) => ({
-                    label: user.userId,
-                    value: user.srno,
-                  }))}
+                  // options={allUsers.map((user) => ({
+                  //   label: user.userName,
+                  //   value: user.srNo,
+                  // }))}
+                  options={allUsers
+                    .slice()
+                    .sort((a, b) => a.userName.localeCompare(b.userName))
+                    .map((user) => ({
+                      label: user.userName,
+                      value: user.srNo,
+                    }))
+                  }
                   value={selectedUser}
                   // onChange={setSelectedUser}
                   onChange={(e) => {

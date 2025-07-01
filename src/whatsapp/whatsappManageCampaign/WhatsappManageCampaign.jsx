@@ -41,12 +41,13 @@ import CampaignLogCard from "./components/CampaignLogCard.jsx";
 import ManageSummaryTable from "./components/ManageSummaryTable.jsx";
 import UniversalLabel from "../components/UniversalLabel";
 import { ExportDialog } from "./components/exportDialog";
-import { fetchAllUsers } from "@/apis/admin/admin";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import ManageScheduleCampaignTable from "./components/ManageScheduleCampaignTable";
 import moment from "moment";
 import { useDownload } from "@/context/DownloadProvider";
+import DropdownWithSearch from "../components/DropdownWithSearch";
 
 function CustomTabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -184,16 +185,22 @@ const WhatsappManageCampaign = () => {
     //fetchAllUsersDetails
     if (user.role === "ADMIN") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
+          // companyName: "",
+          // status: "-1",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -676,16 +683,24 @@ const WhatsappManageCampaign = () => {
             </Tabs>
             {user.role === "ADMIN" && (
               <div className="w-full sm:w-54">
-                <AnimatedDropdown
+                <DropdownWithSearch
                   id="manageuser"
                   name="manageuser"
                   label="Select User"
                   tooltipContent="Select user you want to see reports"
                   tooltipPlacement="right"
-                  options={allUsers.map((user) => ({
-                    label: user.userId,
-                    value: user.srno,
-                  }))}
+                  // options={allUsers.map((user) => ({
+                  //   label: user.userName,
+                  //   value: user.srNo,
+                  // }))}
+                  options={allUsers
+                    .slice()
+                    .sort((a, b) => a.userName.localeCompare(b.userName))
+                    .map((user) => ({
+                      label: user.userName,
+                      value: user.srNo,
+                    }))
+                  }
                   value={selectedUser}
                   onChange={setSelectedUser}
                   placeholder="Select User"

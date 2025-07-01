@@ -30,11 +30,19 @@ export const resellerItems = [
     links: [
       {
         id: "1",
-        links: ["/smsreports"],
+        links: [
+          "/smsreports",
+          "/smscampaigndetaillogs",
+          "/smsAttachmentdetaillog",
+        ],
       },
       {
         id: "2",
-        links: ["/wmanagecampaign", "/apicampaigninfo"],
+        links: [
+          "/wmanagecampaign",
+          "/apicampaigninfo",
+          "/wcampaigndetailsreport",
+        ],
       },
       {
         id: "3",
@@ -46,7 +54,7 @@ export const resellerItems = [
       },
       {
         id: "7",
-        links: ["/obdmanagecampaign"],
+        links: ["/obdmanagecampaign", "/obdCampaignDetailslog"],
       },
     ],
     roles: ["ADMIN"],
