@@ -52,6 +52,7 @@ export const resellerItems = [
         to: "/rcsdeliverycampaigndetails",
         label: "Delivery Campaign Report",
         isHide: true,
+        id: "3",
       },
     ],
     roles: ["ADMIN"],
