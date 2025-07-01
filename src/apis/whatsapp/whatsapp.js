@@ -140,18 +140,18 @@ export const getWhatsappCampaignReport = async (filters = {}) => {
     //     ).toLocaleDateString("en-GB")
     //   : new Date().toLocaleDateString("en-GB");
 
-    const requestBody = {
-      fromQueDateTime: filters.fromQueDateTime,
-      toQueDateTime: filters.toQueDateTime,
-      campaignName: filters.campaignName || "",
-      template_category: filters.template_category || "all",
-    };
+    // const requestBody = {
+    //   fromQueDateTime: filters.fromQueDateTime,
+    //   toQueDateTime: filters.toQueDateTime,
+    //   campaignName: filters.campaignName || "",
+    //   template_category: filters.template_category || "all",
+    // };
 
     // console.log("Sending Request:", requestBody);
 
     const response = await fetchWithAuth("/whatsapp/getCampaignReport", {
       method: "POST",
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify(filters),
     });
     if (!response || !response.data) {
       console.error("Failed to fetch campaign report.");

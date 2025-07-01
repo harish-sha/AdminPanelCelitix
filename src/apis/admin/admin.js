@@ -16,6 +16,14 @@ export const fetchUserbySrno = async (srNo) => {
   });
 };
 
+// fetch srno and name of user
+export const fetchUserSrno = async (data) => {
+  return await fetchWithAuth("/user/getUserNameList", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
 // update user by srno
 export const updateUserbySrno = async (data) => {
   return await fetchWithAuth("/user/updateUserById", {

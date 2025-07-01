@@ -102,6 +102,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
   // const menuItems = [];
 
   const getFilteredMenuItems = (menuItems = [], userState) => {
+    let allowedServices = [];
     if (userState.role === "AGENT") {
       return [
         {
@@ -122,9 +123,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         },
       ];
     }
-    if (userState.role === "RESELLER") {
-      return menuItems;
-    }
+    // if (userState.role === "RESELLER") {
+    //   return menuItems;
+    // }
 
     const alwaysIncludeNames = [
       "Home",
@@ -133,7 +134,47 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "Managecontacts",
     ];
 
-    const allowedServices = menuItems.map((item) => {
+    // const allowedServices = menuItems.map((item) => {
+    //   if (alwaysIncludeNames.includes(item.name)) {
+    //     return item;
+    //   }
+    //   const hasMatch = userState.services.some(
+    //     (service) => service.service_type_id == item.id
+    //   );
+
+    //   return {
+    //     ...item,
+    //     links: hasMatch ? item.links : [],
+    //   };
+    // });
+
+    // return allowedServices;
+
+
+    if (userState.role === "RESELLER") {
+      alwaysIncludeNames.push("User Management");
+      alwaysIncludeNames.push("managefunds");
+      allowedServices = menuItems.map((item) => {
+        if (alwaysIncludeNames.includes(item.name)) {
+          return item;
+        }
+        if (item.name === "Reports") {
+          const hasMatch = item.links.filter((link) =>
+            userState.services.some(
+              (service) => link.id == service.service_type_id
+            )
+          );
+
+          return {
+            ...item,
+            links: hasMatch,
+          };
+        }
+      });
+
+      return allowedServices;
+    }
+    allowedServices = menuItems.map((item) => {
       if (alwaysIncludeNames.includes(item.name)) {
         return item;
       }

@@ -43,11 +43,11 @@ export const resellerItems = [
     label: "Reports",
     type: "dropdown",
     links: [
-      { to: "/smsreports", label: "SMS" },
-      { to: "/rcsdeliveryreport", label: "RCS" },
-      { to: "/wmanagecampaign", label: "WHATSAPP" },
-      { to: "/obdmanagecampaign", label: "OBD" },
-      { to: "/obdCampaignDetailslog", label: "OBD", isHide: true },
+      { to: "/smsreports", label: "SMS", id: "1" },
+      { to: "/rcsdeliveryreport", label: "RCS", id: "3" },
+      { to: "/wmanagecampaign", label: "WHATSAPP", id: "2" },
+      { to: "/obdmanagecampaign", label: "OBD", id: "7" },
+      { to: "/obdCampaignDetailslog", label: "OBD", isHide: true, id: "7" },
       {
         to: "/rcsdeliverycampaigndetails",
         label: "Delivery Campaign Report",

@@ -48,7 +48,8 @@ import { exportToExcel } from "@/utils/utills.js";
 import ManageScheduleCampaignTableObd from "./components/ManageScheduleCampaignTableObd.jsx";
 import UniversalSkeleton from "@/whatsapp/components/UniversalSkeleton.jsx";
 import { useUser } from "@/context/auth.jsx";
-import { fetchAllUsers } from "@/apis/admin/admin.js";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin.js";
+import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch.jsx";
 
 const ObdCampaignReports = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -81,16 +82,20 @@ const ObdCampaignReports = () => {
     //fetchAllUsersDetails
     if (user.role === "RESELLER") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -569,16 +574,24 @@ const ObdCampaignReports = () => {
                 />
                 {user.role === "RESELLER" && (
                   <div className="w-full sm:w-56">
-                    <AnimatedDropdown
+                    <DropdownWithSearch
                       id="manageuser"
                       name="manageuser"
                       label="Select User"
                       tooltipContent="Select user you want to see reports"
                       tooltipPlacement="right"
-                      options={allUsers.map((user) => ({
-                        label: user.userId,
-                        value: user.srno,
-                      }))}
+                      // options={allUsers.map((user) => ({
+                      //   label: user.userName,
+                      //   value: user.srNo,
+                      // }))}
+                      options={allUsers
+                        .slice()
+                        .sort((a, b) => a.userName.localeCompare(b.userName))
+                        .map((user) => ({
+                          label: user.userName,
+                          value: user.srNo,
+                        }))
+                      }
                       value={selectedUser}
                       onChange={setSelectedUser}
                       placeholder="Select User"

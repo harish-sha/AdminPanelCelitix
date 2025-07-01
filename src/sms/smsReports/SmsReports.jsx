@@ -18,7 +18,7 @@ import UniversalLabel from "../../whatsapp/components/UniversalLabel";
 import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 import CampaignTableSms from "./components/CampaignTableSms";
-import PreviousDaysLogsTable  from "./components/PreviousDaysLogsTable";
+import PreviousDaysLogsTable from "./components/PreviousDaysLogsTable";
 import DayWiseSummaryTableSms from "./components/DayWiseSummaryTableSms";
 // import AttachmentLogsTableSms from "./components/AttachmentLogsTbaleSms";
 import AttachmentLogsTable from "./components/AttachmentLogsTable";
@@ -45,7 +45,7 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
-import { fetchAllUsers } from "@/apis/admin/admin";
+import { fetchAllUsers, fetchUserSrno } from "@/apis/admin/admin";
 import { useUser } from "@/context/auth";
 import moment from "moment";
 
@@ -85,16 +85,20 @@ const SmsReports = () => {
     //fetchAllUsersDetails
     if (user.role === "RESELLER") {
       const fetchAllUsersDetails = async () => {
+        // const data = {
+        //   userId: "",
+        //   mobileNo: "",
+        //   companyName: "",
+        //   status: "-1",
+        // };
         const data = {
-          userId: "",
-          mobileNo: "",
-          companyName: "",
-          status: "-1",
+          userSrno: "",
+          date: "",
         };
         try {
           setIsFetching(true);
-          const res = await fetchAllUsers(data);
-          setAllUsers(res.userMstPojoList);
+          const res = await fetchUserSrno(data);
+          setAllUsers(res);
         } catch (e) {
           // console.log(e);
           toast.error("Something went wrong! Please try again later.");
@@ -215,7 +219,7 @@ const SmsReports = () => {
     campaignType: "",
     status: "",
     deliveryStatus: "",
-    source:"",
+    source: "",
     type: "campaign",
   });
 
@@ -616,7 +620,7 @@ const SmsReports = () => {
       setCampaignTableData(mappedData);
       setRows(mappedData);
 
-      
+
     } catch (error) {
       console.error("Error fetching campaign data:", error);
       toast.error("Something went wrong.");
@@ -1350,16 +1354,24 @@ const SmsReports = () => {
                 View reports for a specific user (select user from dropdown first) :
               </div> */}
               <div className="w-full sm:w-54">
-                <AnimatedDropdown
+                <DropdownWithSearch
                   id="manageuser"
                   name="manageuser"
                   label="Select User"
                   tooltipContent="Select user you want to see reports"
                   tooltipPlacement="right"
-                  options={allUsers.map((user) => ({
-                    label: user.userId,
-                    value: user.srno,
-                  }))}
+                  // options={allUsers.map((user) => ({
+                  //   label: user.userName,
+                  //   value: user.srNo,
+                  // }))}
+                  options={allUsers
+                    .slice()
+                    .sort((a, b) => a.userName.localeCompare(b.userName))
+                    .map((user) => ({
+                      label: user.userName,
+                      value: user.srNo,
+                    }))
+                  }
                   value={selectedUser}
                   onChange={setSelectedUser}
                   placeholder="Select User"
