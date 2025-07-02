@@ -22,6 +22,8 @@ const SendSms = () => {
     templateType: 1,
     senderId: "",
     sender: [],
+    attachmentType: null,
+    attachmentVar: {},
   });
 
   const [allTemplates, setAllTemplates] = useState([]);
@@ -271,6 +273,8 @@ const SendSms = () => {
           setContactData={setContactData}
           contactData={contactData}
           countryList={countryList}
+          setInputDetails={setInputDetails}
+          inputDetails={inputDetails}
         />
         <Preview inputDetails={inputDetails} />
         {/* </div> */}
