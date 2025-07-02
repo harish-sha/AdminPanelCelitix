@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useMemo } from "react";
 import { parseISO, format } from "date-fns";
 // MUI imports
@@ -33,7 +31,7 @@ function useAggregatedData(rawData, view) {
       let key;
       switch (view) {
         case 1: key = format(d, "yyyy-MM"); break; // Month
-        case 2: key = format(d, "yyyy");   break; // Year
+        case 2: key = format(d, "yyyy"); break; // Year
         default: key = format(d, "yyyy-MM-dd"); // Day
       }
       if (!buckets[key]) buckets[key] = { name: key, online: 0, offline: 0, lastBalance: 0 };
@@ -79,12 +77,12 @@ export default function RevenueChartWithFilter({ rawData }) {
             <ComposedChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>
               <defs>
                 <linearGradient id="totalGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#1976d2" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#1976d2" stopOpacity={0.2}/>
+                  <stop offset="5%" stopColor="#1976d2" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#1976d2" stopOpacity={0.2} />
                 </linearGradient>
                 <linearGradient id="balanceGradient" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#388e3c" stopOpacity={0.8}/>
-                  <stop offset="95%" stopColor="#388e3c" stopOpacity={0.2}/>
+                  <stop offset="5%" stopColor="#388e3c" stopOpacity={0.8} />
+                  <stop offset="95%" stopColor="#388e3c" stopOpacity={0.2} />
                 </linearGradient>
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
@@ -96,8 +94,8 @@ export default function RevenueChartWithFilter({ rawData }) {
               />
               <Legend verticalAlign="top" align="center" iconType="circle" />
 
-              <Bar dataKey="total" name="Total Sales" barSize={24} fill="url(#totalGradient)" radius={[4,4,0,0]} />
-              <Bar dataKey="balance" name="Balance" barSize={24} fill="url(#balanceGradient)" radius={[4,4,0,0]} />
+              <Bar dataKey="total" name="Total Sales" barSize={24} fill="url(#totalGradient)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="balance" name="Balance" barSize={24} fill="url(#balanceGradient)" radius={[4, 4, 0, 0]} />
             </ComposedChart>
           ) : (
             <LineChart data={data} margin={{ top: 10, right: 30, left: 20, bottom: 5 }}>

@@ -884,7 +884,7 @@ export default function WhatsappLiveChat() {
     const intervalId = setInterval(() => {
       handleLoadNewChat();
       handleIsView();
-    }, 500);
+    }, 3000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
 

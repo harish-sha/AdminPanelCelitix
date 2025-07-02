@@ -91,7 +91,7 @@ const CampaignTableSms = ({ id, name, data }) => {
 
   const dropdownButtonRefs = useRef([]);
   const rows = data?.map((item, i) => ({
-    id: item.receipt_no_of_duplicate_message,
+    id: i + 1,
     sn: i + 1,
     ...item,
     campaign_type:

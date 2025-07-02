@@ -69,4 +69,12 @@ export const dailyWalletUsage = async (data) => {
   });
 };
 
-
+// daily wallet usage
+export const dailySeriveUsage = async (data) => {
+  return await fetchWithAuth(
+    `/service/service-wise-usage?userSrno=${data.userSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}`,
+    {
+      method: "POST",
+    }
+  );
+};

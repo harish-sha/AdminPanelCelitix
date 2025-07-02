@@ -18,6 +18,7 @@ import {
   SupportAgent,
   Feedback,
 } from "@mui/icons-material";
+import { FaWhatsapp, FaPhone, FaRegCommentDots, FaSms } from "react-icons/fa";
 import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
 import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
@@ -56,9 +57,10 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
+  ComposedChart,
 } from "recharts";
 import CustomTooltip from "@/components/common/CustomTooltip";
-import { dailyWalletUsage, fetchBalance } from "@/apis/settings/setting";
+import { dailySeriveUsage, dailyWalletUsage, fetchBalance } from "@/apis/settings/setting";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import moment from "moment";
 import ClockCard from "./components/ClockCard";
@@ -157,71 +159,126 @@ const ResellerDashboard = () => {
     getBalance();
   }, []);
 
-  // ========================================================================================
+  // =======================================daily service usage end=================================================
 
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [walletUsageData, setWalletUsageData] = useState([]);
+  const [activeServices, setActiveServices] = useState([]);
 
-  const dailyAmountUsage = async () => {
+  const FILTERS = ["Day", "Month", "Year"];
+
+  const icons = {
+    whatsapp: <FaWhatsapp className="text-green-500 text-2xl" />,
+    voice: <FaPhone className="text-blue-500 text-2xl" />,
+    rcs: <FaRegCommentDots className="text-indigo-500 text-2xl" />,
+    sms: <FaSms className="text-yellow-500 text-2xl" />,
+  };
+
+  const [filter, setFilter] = useState("Day");
+  const [usageData, setUsageData] = useState(null);
+
+  // const dailyAmountUsage = async () => {
+  //   const payload = {
+  //     userSrno: 0,
+  //     // fromDate: moment(startDate).format("YYYY-MM-DD"),
+  //     date: moment(endDate).format("YYYY-MM-DD"),
+  //   };
+  //   console.log("date payload", payload);
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await dailyWalletUsage(payload);
+  //     console.log("daily wallet usage", response.data);
+  //     if (response.data && response.data.length > 0) {
+  //       setWalletUsageData(response.data);
+  //     } else {
+  //       setWalletUsageData([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error daily wallet usage:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const dailyServiceUsage = async () => {
     const payload = {
       userSrno: 0,
-      // fromDate: moment(startDate).format("YYYY-MM-DD"),
-      date: moment(endDate).format("YYYY-MM-DD"),
+      fromDate: moment(startDate).format("YYYY-MM-DD"),
+      toDate: moment(endDate).format("YYYY-MM-DD"),
     };
-    console.log("date payload", payload);
     setIsLoading(true);
     try {
-      const response = await dailyWalletUsage(payload);
-      console.log("daily wallet usage", response.data);
-      if (response.data && response.data.length > 0) {
-        setWalletUsageData(response.data);
+      const res = await dailySeriveUsage(payload);
+      const data = await res.json();
+      if (response.data && Object.keys(response.data).length > 0) {
+        setUsageData(response.data); // also rename setWalletUsageData -> setUsageData for consistency
       } else {
-        setWalletUsageData([]);
+        setUsageData({});
       }
-    } catch (error) {
-      console.error("Error daily wallet usage:", error);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setUsageData(null);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const chartData = {
-    labels: walletUsageData.map((item) => item.date),
-    datasets: [
-      {
-        label: "Wallet Usage",
-        data: walletUsageData.map((item) => item.walletUsage),
-        fill: false,
-        borderColor: "#4CAF50",
-        tension: 0.1,
-      },
-    ],
-  };
+  const servicesDailyUsage = ["whatsapp", "voice", "rcs", "sms"];
 
+  const chartData = servicesDailyUsage.map((s) => {
+    const item = usageData?.[s]?.[0] || {};
+    return {
+      name: s.toUpperCase(),
+      totalSent: item.totalSent || 0,
+      totalCharge: item.totalCharge || 0,
+    };
+  });
+
+  // useEffect(() => {
+  //   dailyAmountUsage();
+  // }, []);
+
+  // useEffect(() => {
+  //   dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
+  // }, [startDate, endDate]);
   useEffect(() => {
-    dailyAmountUsage();
+    dailyServiceUsage();
   }, []);
 
   useEffect(() => {
-    dailyAmountUsage(); // Fetch data when the component mounts or when date range changes
-  }, [startDate, endDate]);
+    dailyServiceUsage();
+  }, [startDate, endDate, filter]);
+
+
+  // ======================================daily service usage end=================================================
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
+    const fetchUser = async () => {
       setIsLoading(true);
-      const response = await getUserDetails();
-      if (response && response.statusCode === 200) {
-        const user = response.data[0];
-        setUserData(user);
-        setFormData({ firstName: user.firstName || "" });
-      } else {
-        console.error("Failed to load user details.");
+      try {
+        const response = await getUserDetails();
+        if (response?.statusCode === 200) {
+          const user = response.data[0];
+          setUserData(user);
+
+          // 2) Derive the flat list of ACTIVE service names:
+          const names = Array.isArray(user.services)
+            ? user.services.map(s => s.display_name.toUpperCase())
+            : [];
+          setActiveServices(names);
+        } else {
+          throw new Error("Non-200 status code");
+        }
+      } catch (err) {
+        console.error(err);
         toast.error("Failed to load user details!");
+      } finally {
+        setIsLoading(false);
       }
-      setIsLoading(false);
     };
-    fetchUserDetails();
+
+    fetchUser();
   }, []);
 
   const quickStats = [
@@ -243,33 +300,13 @@ const ResellerDashboard = () => {
           key={refreshKey}
         />
       ),
-      // onHover: () => setShowRefresh(true),
-      // onMouseLeave: () => setShowRefresh(false),
       showRefreshIcon: true,
     },
-    // {
-    //     icon: <GppMaybeIcon className="text-red-800" />,
-    //     label: "Outstanding Balance",
-    //     value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} />
-    // },
-    ...(user.role === "RESELLER"
-      ? [
-          {
-            icon: <GppMaybeIcon className="text-red-800" />,
-            label: "Outstanding Balance",
-            value: (
-              <CountUp
-                start={0}
-                end={rechargableCredit}
-                separator=","
-                decimals={2}
-                duration={1.5}
-                key={refreshKey}
-              />
-            ),
-          },
-        ]
-      : []),
+    {
+        icon: <GppMaybeIcon className="text-red-800" />,
+        label: "Outstanding Balance",
+        value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} />
+    },
     {
       icon: <TrendingUp className="text-blue-600" />,
       label: "Engagement Rate",
@@ -385,6 +422,9 @@ const ResellerDashboard = () => {
     // More records
   ];
 
+
+
+
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
       {/* Logged In User Card */}
@@ -413,7 +453,7 @@ const ResellerDashboard = () => {
             <p className="text-xs opacity-80">
               You're doing great. Here's a quick overview of your dashboard.
             </p>
-            <button onClick={dailyAmountUsage}>daily usage</button>
+            <button onClick={dailyServiceUsage}>daily Service usage</button>
           </div>
         </div>
         <div className="flex items-center justify-center gap-3">
@@ -470,11 +510,9 @@ const ResellerDashboard = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className={`relative rounded-xl bg-gradient-to-br ${
-                  service.color
-                } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
-                  hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"
-                } `}
+                className={`relative rounded-xl bg-gradient-to-br ${service.color
+                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"
+                  } `}
               >
                 {hasService && (
                   <>
@@ -538,61 +576,119 @@ const ResellerDashboard = () => {
           transition={{ duration: 0.5 }}
           className="bg-white p-4 rounded-2xl shadow-sm"
         >
-          {/* <h2 className="text-lg font-semibold mb-2">Total Revenue</h2> */}
-          {/* <UniversalDatePicker
-                        id="dailyusagestartdate"
-                        name="dailyusagestartdate"
-                        label="From Date"
-                        value={startDate}
-                        onChange={(newValue) => setStartDate(newValue)}
-                        placeholder="Pick a start date"
-                        tooltipContent="Select the starting date for your project"
-                        tooltipPlacement="right"
-                        errorText="Please select a valid date"
-                    />
-                    <UniversalDatePicker
-                        id="dailyusagestartdate"
-                        name="dailyusagestartdate"
-                        label="To Date"
-                        value={endDate}
-                        onChange={(newValue) => setEndDate(newValue)}
-                        placeholder="Pick a start date"
-                        tooltipContent="Select the starting date for your project"
-                        tooltipPlacement="right"
-                        errorText="Please select a valid date"
-                    /> */}
+          <UniversalDatePicker
+            id="dailyusagestartdate"
+            name="dailyusagestartdate"
+            label="From Date"
+            value={startDate}
+            onChange={(newValue) => setStartDate(newValue)}
+            placeholder="Pick a start date"
+            tooltipContent="Select the starting date for your project"
+            tooltipPlacement="right"
+            errorText="Please select a valid date"
+          />
+          <UniversalDatePicker
+            id="dailyusagestartdate"
+            name="dailyusagestartdate"
+            label="To Date"
+            value={endDate}
+            onChange={(newValue) => setEndDate(newValue)}
+            placeholder="Pick a start date"
+            tooltipContent="Select the starting date for your project"
+            tooltipPlacement="right"
+            errorText="Please select a valid date"
+          />
 
           {/* <ResponsiveContainer width="100%" height={220}>
-                        <BarChart data={revenueData}>
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="name" />
-                            <YAxis />
-                            <Tooltip />
-                            <Legend />
-                            <Bar dataKey="online" fill="#3498db" name="Online Sales" />
-                            <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
-                        </BarChart>
-                    </ResponsiveContainer> */}
+            <BarChart data={revenueData}>
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="name" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="online" fill="#3498db" name="Online Sales" />
+              <Bar dataKey="offline" fill="#2ecc71" name="Offline Sales" />
+            </BarChart>
+          </ResponsiveContainer> */}
 
-          <RevenueChartWithFilter rawData={rawData} />
+          {/* <RevenueChartWithFilter rawData={rawData} /> */}
 
-          {isLoading && (
-            <div className="flex justify-center items-center">
-              <div className="loader">Loading...</div>
-            </div>
-          )}
 
-          {!isLoading && walletUsageData.length > 0 && (
-            <div className="mb-6">
-              <Line data={chartData} options={{ responsive: true }} />
-            </div>
-          )}
+        </motion.div>
 
-          {!isLoading && walletUsageData.length === 0 && (
-            <div className="text-center text-gray-500">
-              No data available for the selected date range.
-            </div>
-          )}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="bg-white p-6 rounded-2xl shadow-md"
+        >
+          <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
+
+          {/* Filter Buttons */}
+          <div className="flex gap-4 mb-6">
+            {FILTERS.map((item) => (
+              <button
+                key={item}
+                onClick={() => setFilter(item)}
+                className={`px-4 py-2 rounded-full border ${filter === item
+                  ? "bg-blue-600 text-white"
+                  : "bg-gray-100 text-gray-700"
+                  } transition`}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
+
+          {/* Usage Cards */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {servicesDailyUsage.map((service) => {
+              const record = usageData?.[service]?.[0];
+              return (
+                <motion.div
+                  key={service}
+                  whileHover={{ scale: 1.03 }}
+                  className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center shadow-sm"
+                >
+                  {icons[service]}
+                  <p className="text-sm mt-2 text-gray-500 capitalize">{service}</p>
+                  <p className="text-xl font-bold mt-1">
+                    {record?.totalSent ?? 0} Sent
+                  </p>
+                  <p className="text-sm text-gray-400">
+                    ₹{record?.totalCharge?.toFixed(2) ?? "0.00"} charged
+                  </p>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Graph */}
+          <div className="mt-10 bg-gray-100 p-4 rounded-xl">
+            <ResponsiveContainer width="100%" height={300}>
+              <ComposedChart data={chartData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="name" />
+                <YAxis yAxisId="left" label={{ value: "Sent", angle: -90, position: "insideLeft" }} />
+                <YAxis
+                  yAxisId="right"
+                  orientation="right"
+                  label={{ value: "Charge ₹", angle: 90, position: "insideRight" }}
+                />
+                <Tooltip />
+                <Legend />
+                <Bar yAxisId="left" dataKey="totalSent" fill="#60a5fa" />
+                <Line
+                  yAxisId="right"
+                  type="monotone"
+                  dataKey="totalCharge"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  dot={{ r: 4 }}
+                />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
         </motion.div>
 
         {/* Customer Satisfaction */}
@@ -653,7 +749,7 @@ const ResellerDashboard = () => {
                         <span className="text-yellow-600">₹12,122</span>
                     </div> */}
 
-          <LineGraphChart rawData={rawDatanew} />
+          <LineGraphChart rawData={rawDatanew} activeServices={activeServices} />
         </motion.div>
       </div>
       <motion.div
@@ -662,10 +758,10 @@ const ResellerDashboard = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
       >
-        <div className="flex items-center gap-4 mb-4">
+        {/* <div className="flex items-center gap-4 mb-4">
           <SmartToy className="text-purple-600 text-3xl" />
           <h2 className="text-xl font-semibold">Your Bots</h2>
-        </div>
+        </div> */}
         <div className="grid grid-cols-1 sm:grid-cols-1 gap-4">
           {/* {bots.map((bot, index) => {
             const BotIcon = bot.icon;
@@ -683,7 +779,7 @@ const ResellerDashboard = () => {
               </motion.div>
             );
           })} */}
-          <MetricsDashboard/>
+          <MetricsDashboard />
         </div>
       </motion.div>
     </div>

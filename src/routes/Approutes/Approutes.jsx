@@ -146,6 +146,8 @@ import { UpdateWorkflow } from "@/workflow/edit";
 // GPT
 import GptConfiguration from "@/gpt/GptConfiguration";
 
+// Self Recharge
+import SelfRecharge from "@/SelfRecharge/SelfRecharge";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -253,7 +255,7 @@ const Approutes = () => {
           element={<CampaignDeliveryReportDetails />}
         />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
-        {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
+        <Route path="rcslivechats" element={<RcsLiveChat />} />
 
         {/* profile */}
         <Route path="profile" element={<ProfilePage />} />
@@ -323,6 +325,9 @@ const Approutes = () => {
 
         {/* Ai Configuration */}
         <Route path="/aiconfiguration" element={<GptConfiguration />} />
+
+        {/* self recharge */}
+        <Route path="selfrecharge" element={<SelfRecharge />} />
 
       </Route>
 

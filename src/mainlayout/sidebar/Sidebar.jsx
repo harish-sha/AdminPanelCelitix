@@ -177,7 +177,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: "/sendrcs", label: "Send RCS" },
         { to: "/rcsmanagetemplate", label: "Manage Template" },
-        // { to: "/rcslivechats", label: "Live Chats" },
+        { to: "/rcslivechats", label: "Live Chats" },
         { to: "/rcssuggestionreport", label: "Suggestion Report" },
         { to: "/rcsdeliveryreport", label: "Delivery Report" },
         {
@@ -219,7 +219,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappflows", label: "Manage Flows" },
         // { to: "/wblockuser", label: "Block User" },
         { to: "/cannedmessagemanager", label: "Canned Message" },
-        { to: "/wmmlite", label: "MM Lite" },
+        // { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
         { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
@@ -317,16 +317,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
       roles: ["ADMIN"],
     },
-    // {
-    //     name: 'settings',
-    //     icon: <IoSettingsOutline />,
-    //     label: 'Settings',
-    //     type: "dropdown",
-    //     links: [
-    //         { to: '/mainsettings', label: 'Profile' },
-    //         { to: '/mainaccount', label: 'Account' },
-    //     ],
-    // },
     {
       id: "",
       name: "CallBack",
@@ -393,10 +383,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Ai Configuration",
       type: "single",
       to: "/aiconfiguration",
-      // links: [
-      //   { to: "/workflow", label: "Manage Workflow" },
-      //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
-      // ],
       roles: ["ADMIN"],
     },
     {
@@ -406,10 +392,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       label: "Workflow",
       type: "single",
       to: "/workflow",
-      // links: [
-      //   { to: "/workflow", label: "Manage Workflow" },
-      //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
-      // ],
+      roles: ["ADMIN"],
+    },
+    {
+      id: "",
+      name: "recharge",
+      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Recharge",
+      type: "single",
+      to: "/selfrecharge",
       roles: ["ADMIN"],
     },
     // {

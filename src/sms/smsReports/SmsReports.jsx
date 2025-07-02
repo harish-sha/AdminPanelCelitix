@@ -1884,11 +1884,11 @@ const SmsReports = () => {
               col={columns}
               rows={rows}
             /> */}
-            {/* <ManageScheduleCampaignSmsTable
+            <AttachmentLogsTableSms
               id="AttachmentTableSms"
               name="AttachmentTableSms"
               data={attachmentTableData}
-            /> */}
+            />
           </div>
         </CustomTabPanel>
         <CustomTabPanel value={value} index={4}>

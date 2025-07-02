@@ -241,13 +241,13 @@ function ProfileCard({
   onDelete,
   params,
 }) {
-  const iconMap = {
-    voice: Animationobd,
-    whatsapp: Animationwhatsapp2,
-    rcs: Animationrcs,
-    sms: Animationsms,
-  };
-  const animationData = iconMap[node_type] || null;
+  // const iconMap = {
+  //   voice: Animationobd,
+  //   whatsapp: Animationwhatsapp2,
+  //   rcs: Animationrcs,
+  //   sms: Animationsms,
+  // };
+  // const animationData = iconMap[node_type] || null;
   const navigate = useNavigate();
   // Fallback to initials if no icon for type
   // const initials =
@@ -256,7 +256,7 @@ function ProfileCard({
   return (
     <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-200 via-blue-75 to-white p-5 flex flex-col justify-between shadow-lg hover:shadow-2xl transition-transform transform hover:-translate-y-1">
       <div className="flex items-start space-x-3 mb-4">
-        <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-lg">
+        {/* <div className="h-12 w-12 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 font-semibold text-lg">
           {animationData ? (
             <Lottie
               animationData={animationData}
@@ -269,7 +269,7 @@ function ProfileCard({
               {initials}
             </span>
           )}
-        </div>
+        </div> */}
         <div>
           <h3 className="text-base font-bold text-gray-800">
             {workflow_name || "Unnamed"}
@@ -341,13 +341,13 @@ export const WorkflowDetails = () => {
       const res = await getAllWorkflow(type);
       const list = Array.isArray(res)
         ? res.map((item, index) => ({
-            sr_no: item.sr_no ?? index + 1,
-            node_type: item.node_type || "",
-            workflow_name: item.workflow_name || "",
+          sr_no: item.sr_no ?? index + 1,
+          node_type: item.node_type || "",
+          workflow_name: item.workflow_name || "",
 
-            isOtpWorkflow: item.isOtpWorkflow ?? null,
-            insert_time: item.insert_time || item.insert_time || "",
-          }))
+          isOtpWorkflow: item.isOtpWorkflow ?? null,
+          insert_time: item.insert_time || item.insert_time || "",
+        }))
         : [];
       setRows(list);
     } catch (e) {
@@ -366,10 +366,10 @@ export const WorkflowDetails = () => {
       setRows(
         Array.isArray(res)
           ? res?.map((item, index) => ({
-              id: index + 1,
-              sn: index + 1,
-              ...item,
-            }))
+            id: index + 1,
+            sn: index + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {
@@ -401,7 +401,7 @@ export const WorkflowDetails = () => {
     setVisibleDialog(true);
   }
 
-  function handleUpdate() {}
+  function handleUpdate() { }
   async function handleConfirmDelete(row) {
     const srno = selectedRowData.srno;
     const type = selectedRowData.type;
