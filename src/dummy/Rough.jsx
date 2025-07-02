@@ -2,21 +2,20 @@
   {tabs.map((tab, index) => (
     <div
       key={index}
-      className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${
-        activeIndex === index
+      className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${activeIndex === index
           ? "bg-blue-100 border-blue-400 text-blue-700"
           : "bg-gray-100 border-transparent text-gray-700 hover:bg-gray-200"
-      }`}
+        }`}
       onClick={() => setActiveIndex(index)}
       onMouseEnter={(e) =>
-        (e.currentTarget.style.backgroundColor = activeIndex === index
-          ? "#bfdbfe"
-          : "#e5e7eb")
+      (e.currentTarget.style.backgroundColor = activeIndex === index
+        ? "#bfdbfe"
+        : "#e5e7eb")
       }
       onMouseLeave={(e) =>
-        (e.currentTarget.style.backgroundColor = activeIndex === index
-          ? "#bfdbfe"
-          : "#f3f4f6")
+      (e.currentTarget.style.backgroundColor = activeIndex === index
+        ? "#bfdbfe"
+        : "#f3f4f6")
       }
     >
       <span className="pr-1 font-medium">{tab.title}</span>

@@ -175,6 +175,26 @@ export const convertNodeToMarkdown = (node) => {
   }
 };
 
+// const [content, setContent] = useState("");
+
+// useEffect(() => {
+//   if (editorRef.current) {
+//     if (selectedItem?.content) {
+//       // Prefill raw HTML
+//       editorRef.current.innerHTML = selectedItem.content;
+//     } else if (Array.isArray(selectedItem?.text)) {
+//       // Prefill converted markdown
+//       const markdown = selectedItem.text.join("\n");
+//       const html = marked.parse(markdown);
+//       editorRef.current.innerHTML = html;
+//     } else {
+//       // Empty
+//       editorRef.current.innerHTML = "";
+//     }
+//   }
+// }, [selectedItem]);
+
+
 
 const walkNodes = (node) => {
   if (!node) return [];

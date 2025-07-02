@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Canvas from "../components/Canvas";
@@ -37,6 +37,31 @@ const FlowCreationPage = () => {
   const [setting, setSetting] = useState("");
   const [error, setError] = useState("");
   const [buildFlows, setBuildFlows] = useState("");
+
+  const editPanelRef = useRef(null);
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (editPanelRef.current && editPanelRef.current.contains(event.target)) {
+        return; // inside edit panel
+      }
+
+      if (
+        event.target.closest(".MuiPopover-root") ||
+        event.target.closest(".MuiPickersPopper-root") || // DatePicker popper
+        event.target.closest(".MuiDialog-root") ||
+        event.target.closest(".MuiMenu-root") ||
+        event.target.closest("[role='listbox']") ||
+        event.target.closest(".MuiIconButton-root")
+      ) {
+        return; // inside dropdown/popover
+      }
+
+      setSelectedItem(null);
+    }
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   // console.log("canvasItems", canvasItems)
   //create new screen
@@ -142,17 +167,17 @@ const FlowCreationPage = () => {
 
     const uniqueId = `flow-${item.id}-${Date.now()}`; // safer than just +new Date()
 
-    dispatch(
-      addFlowItem({
-        id: uniqueId,
-        data: {
-          screenId: screenId,
-          type: item.type,
-          value: item.label,
-          status: 0,
-        },
-      })
-    );
+    // dispatch(
+    //   addFlowItem({
+    //     id: uniqueId,
+    //     data: {
+    //       screenId: screenId,
+    //       type: item.type,
+    //       value: item.label,
+    //       status: 0,
+    //     },
+    //   })
+    // );
 
     const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
@@ -210,14 +235,15 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
       }
     }
 
-    // 🛑 Check for media/document conflict
+    // 🛑 Check for date/calendar conflict
     if (onlyOneDateOrCalendar.includes(item.type)) {
       const hasDate = currentPayload.some(
         (payloadItem) => payloadItem.type === "date"
@@ -231,7 +257,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -251,6 +278,18 @@ const FlowCreationPage = () => {
         return;
       }
     }
+
+    dispatch(
+      addFlowItem({
+        id: uniqueId,
+        data: {
+          screenId: screenId,
+          type: item.type,
+          value: item.label,
+          status: 0,
+        },
+      })
+    );
 
     // ✅ Add the item
     newTabs[activeIndex] = {
@@ -334,6 +373,7 @@ const FlowCreationPage = () => {
   };
 
   const handleSave = (updatedData) => {
+    console.log("updatedData", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (
@@ -356,11 +396,33 @@ const FlowCreationPage = () => {
     });
     setSelectedItem(null);
 
-    if (
+    console.log("updatedData", updatedData);
+
+    if (updatedData.type === "imageCarousel") {
+      const imageKeys = Object.keys(updatedData).filter((key) =>
+        key.startsWith("image-")
+      );
+
+      // Check if any of those keys has a non-empty src
+      const hasImageSrc = imageKeys.some(
+        (key) => updatedData[key]?.src && updatedData[key].src !== ""
+      );
+
+      if (hasImageSrc) {
+        dispatch(
+          updateFlowItem({
+            id: updatedData.storeId,
+            data: {
+              status: 1,
+            },
+          })
+        );
+      }
+    } else if (
       updatedData.text ||
       updatedData.label ||
-      // updatedData.footer.footer_1.label ||
-      updatedData.src
+      updatedData.src ||
+      updatedData.footer?.footer_1?.label
     ) {
       dispatch(
         updateFlowItem({
@@ -615,8 +677,9 @@ const FlowCreationPage = () => {
                   }
                 </span>
                 <ExpandMoreIcon
-                  className={`transform transition ${showErrors ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`transform transition ${
+                    showErrors ? "rotate-180" : "rotate-0"
+                  }`}
                 />
               </motion.button>
 
@@ -630,10 +693,11 @@ const FlowCreationPage = () => {
                 onClick={handleFlowBuild}
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
-                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
+                  isLoading || hasErrors
                     ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                     : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
-                  }`}
+                }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
                 {isLoading ? "Building..." : "Build Flow"}
@@ -817,6 +881,7 @@ const FlowCreationPage = () => {
           {selectedItem && (
             <EditPanel
               // key={selectedItem.id}
+              editPanelRef={editPanelRef}
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}

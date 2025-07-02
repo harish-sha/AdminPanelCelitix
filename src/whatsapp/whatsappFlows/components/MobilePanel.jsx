@@ -661,18 +661,24 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 <>
                   <div className="w-full max-w-md  text-center py-2 bottom-0 ">
                     {/* Left and Right Captions */}
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
+                    {/* <div className="flex justify-between text-sm text-gray-600 mb-2">
                       <p>
-                        {item.footer
+                      {item.footer
                           ? item.footer.footer_1.left_caption
                           : "Left Caption"}
                       </p>
                       <p>
+                          {item.footer 
+                      ? item.footer.footer_1.center_caption
+                      : "Center Caption"}
+                        </p>
+                      <p>
                         {item.footer
                           ? item.footer.footer_1.right_caption
                           : "Right Caption"}
-                      </p>
-                    </div>
+                    
+                     </p>
+                  </div> */}
 
                     {/* Footer Button */}
                     <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">

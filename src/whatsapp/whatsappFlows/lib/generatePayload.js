@@ -579,7 +579,7 @@ export const generatePayload = (data) => {
       if (type === "imageCarousel") {
         component = {
           type: "ImageCarousel",
-          "scale-type": (pay["scale-type"] || "contain"),
+          "scale-type": pay["scale-type"] || "contain",
           //  "aspect-ratio": String(pay["aspect-ratio"] || "4:3"),
           images: [
             {
@@ -644,8 +644,6 @@ export const generatePayload = (data) => {
         }
       }
 
-     
-
       if (type === "optin") {
         const optActionName = pay["on-click-action"] || "";
         const nextScreenId = data[index + 1]?.id || null;
@@ -684,15 +682,15 @@ export const generatePayload = (data) => {
           name: embeddedLinkActionName,
         };
 
-        if(embeddedLinkActionName === "navigate") {
+        if (embeddedLinkActionName === "navigate") {
           index !== data.length - 1;
           onClickAction.next = {
-             type: "screen",
+            type: "screen",
             name: nextScreenId,
           };
         }
 
-        if(embeddedLinkActionName === "open_url"){
+        if (embeddedLinkActionName === "open_url") {
           onClickAction.url = pay.url;
         }
 
@@ -700,11 +698,9 @@ export const generatePayload = (data) => {
           type: "EmbeddedLink",
           text: pay?.text,
           "on-click-action": onClickAction,
-        }
+        };
         //  console.log("Generated embeddedlink component:", JSON.stringify(component, null, 2));
       }
-
-     
 
       if (pay.type === "If") {
         console.log("pay", pay);
@@ -729,7 +725,7 @@ export const generatePayload = (data) => {
       }
 
       if (type === "footerbutton") {
-        const footerData = pay.footer?.footer_1 || {};
+        const footerData = pay.footer || {};
         const onClickActionName = footerData.on_click_action || "complete";
 
         // Find the next screen ID if it exists
@@ -738,6 +734,9 @@ export const generatePayload = (data) => {
         component = {
           type: "Footer",
           label: footerData.label || "Submit",
+           "left-caption": pay["left-caption"],
+            "right-caption":pay["right-caption"] ,
+            "center-caption":pay["center-caption"] ,
           "on-click-action": {
             name: onClickActionName,
             ...(index !== data.length - 1 && {
