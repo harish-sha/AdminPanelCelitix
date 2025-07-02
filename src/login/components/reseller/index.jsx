@@ -110,25 +110,26 @@ const ResellerLogin = () => {
       return toast.error("All fields are required. Please fill them out.");
     }
 
-    // if (!captcha) {
-    //   return toast.error("CAPTCHA is required. Please fill it out.");
-    // }
+    if (!captcha) {
+      return toast.error("CAPTCHA is required. Please fill it out.");
+    }
 
-    // if (parseInt(captcha) !== captchaSolution) {
-    //   return toast.error("Invalid CAPTCHA");
-    // }
+    if (parseInt(captcha) !== captchaSolution) {
+      return toast.error("Invalid CAPTCHA");
+    }
 
     try {
       // const ipResponse = await axios.get("https://ipapi.co/json/");
-      const ipResponse = await getIpAddress();
-      const domain = window.location.hostname;
+      // const ipResponse = await getIpAddress();
+      const ipResponse = "0.0.0.0";
+      // const domain = window.location.hostname;
       // const domain = "reseller.alertsnow.in";
 
       setBasicDetails({
         systemInfo: uaResult.browser.name,
-        ip: ipResponse?.data?.clientIp,
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // ip: "0.0.0.0",
-        domain,
+        // domain,
       });
 
       const payload = {
@@ -138,7 +139,7 @@ const ResellerLogin = () => {
         ip: ipResponse?.data?.clientIp || "0.0.0.0",
         // ip: "0.0.0.0",
         // domain: "reseller.alertsnow.in",
-        domain,
+        // domain,
       };
 
       const res = await login(payload);
@@ -963,7 +964,7 @@ const ResellerLogin = () => {
   //   </div >
   // );
   return (
-    <div className="h-screen flex items-center justify-center bg-gradient-to-br from-red-200 via-slate-50 to-slate-50">
+    <div className="h-screen flex items-center justify-center bg-white">
       <div className="bg-white flex rounded-2xl shadow-2xl ">
         <div className="flex items-center justify-center rounded-2xl p-6  lg:p-8 border-2 border-gray-500 m-4 bg-gray-50 shadow-2xl">
           <div className="">
@@ -1032,9 +1033,9 @@ const ResellerLogin = () => {
                     </button>
                   </div> */}
 
-                  {/* <div className="flex justify-between my-2">
+                  <div className="flex justify-between my-2">
                     <h2 className="text-sm">Solve Captcha</h2>
-                    <button
+                    {/* <button
                       onClick={() => {
                         setStep("verifyNumber");
                         setIsForgotPassword(true);
@@ -1042,7 +1043,7 @@ const ResellerLogin = () => {
                       className="hover:underline cursor-pointer"
                     >
                       Forgot Password
-                    </button>
+                    </button> */}
                   </div>
                   <div className="flex justify-between items-center mt-2">
                     <span className="p-2 ">{captchaProblem}</span>
@@ -1058,7 +1059,7 @@ const ResellerLogin = () => {
                         }
                       }}
                     />
-                  </div> */}
+                  </div>
                   <div className="w-full flex items-center justify-center" >
                     <button
                       className="w-30 bg-black text-white p-2 rounded-lg mt-4 cursor-pointer"
