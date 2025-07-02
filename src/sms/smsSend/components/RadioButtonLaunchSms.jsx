@@ -169,10 +169,6 @@ export const RadioButtonLaunchSms = ({
     }
   }
 
-  useEffect(() => {
-    console.log(inputDetails);
-  }, [inputDetails]);
-
   return (
     <div className="max-h-full bg-gray-100 rounded-lg shadow-md lg:flex-1 border p-2 space-y-2 md:w-1/3 w-full">
       <div>
