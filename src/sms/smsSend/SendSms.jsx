@@ -24,6 +24,7 @@ const SendSms = () => {
     sender: [],
     attachmentType: null,
     attachmentVar: {},
+    shortUrl: 0,
   });
 
   const [allTemplates, setAllTemplates] = useState([]);

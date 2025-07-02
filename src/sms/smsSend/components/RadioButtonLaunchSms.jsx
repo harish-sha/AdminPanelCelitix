@@ -125,15 +125,19 @@ export const RadioButtonLaunchSms = ({
     );
   }
   function handleAttachmentChange(e) {
-    const tag = `{#${e}#}`;
-    const message = stripPlaceholders(inputDetails.message);
-    const updatedMessageContent = message + tag;
-    setInputDetails((prev) => ({
-      ...prev,
-      attachmentType: e,
-      message: updatedMessageContent,
-      attachmentVar: {},
-    }));
+    setInputDetails((prev) => {
+      const strippedMessage = stripPlaceholders(prev.message);
+      const hasAttachment = Boolean(e);
+      const tag = hasAttachment ? `{#${e}#}` : "";
+
+      return {
+        ...prev,
+        attachmentType: hasAttachment ? e : null,
+        message: strippedMessage + tag,
+        shortUrl: hasAttachment ? 1 : 0,
+        attachmentVar: {},
+      };
+    });
   }
 
   async function handleAttachmentFileChange(e) {
