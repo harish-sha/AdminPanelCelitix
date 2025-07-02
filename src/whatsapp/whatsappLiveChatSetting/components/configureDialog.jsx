@@ -6,8 +6,10 @@ import { Dialog } from "primereact/dialog";
 import { RadioButton } from "primereact/radiobutton";
 import { Variables } from "./Variable";
 import { Preview } from "./preview";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
+import { getAgentList } from "@/apis/Agent/Agent";
 
 export const ConfigureDialog = ({
   configureState,
@@ -27,12 +29,13 @@ export const ConfigureDialog = ({
     url: "",
     file: "",
   });
+  const [agent, setallAgents] = useState([]);
 
   const [minuteInput, setMinuteInput] = useState("");
   const [lastSetMinute, setLastSetMinute] = useState("");
 
   const handleSetMinute = async () => {
-    if (!minuteInput || isNaN(minuteInput) || Number(minuteInput) <= 0) {
+    if (!basicDetails.time || Number(basicDetails.time) <= 0) {
       toast.error("Please enter a valid number of minutes");
       return;
     }
@@ -41,6 +44,23 @@ export const ConfigureDialog = ({
     toast.success(`Response time set to ${minuteInput} minutes`);
     // setMinuteInput("");
   };
+
+  useEffect(() => {
+    async function handleFetchAgents() {
+      try {
+        const res = await getAgentList();
+        const data = res?.data?.map((agent) => ({
+          value: agent?.sr_no,
+          label: agent?.name,
+        }));
+        setallAgents(data);
+      } catch (e) {
+        toast.error("Error Fetching Agents");
+      }
+    }
+
+    handleFetchAgents();
+  }, []);
 
   return (
     <Dialog
@@ -162,6 +182,26 @@ export const ConfigureDialog = ({
             </div>
           </div>
         )}
+
+        <div>
+          {configureState?.type === "agent_assign_message" && (
+            <div>
+              <h1>Choose an Agent</h1>
+              <AnimatedDropdown
+                id="agent"
+                name="agent"
+                options={agent}
+                onChange={(e) => {
+                  setBasicDetails((prev) => ({
+                    ...prev,
+                    agent: e,
+                  }));
+                }}
+                value={basicDetails?.agent}
+              />
+            </div>
+          )}
+        </div>
 
         <div className="shadom-md p-3 bg-gray-100 rounded-md w-full flex flex-row gap-5">
           <div className="w-46">

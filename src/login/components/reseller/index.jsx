@@ -819,10 +819,10 @@ const ResellerLogin = () => {
                         id="new-password"
                         placeholder="New Password"
                         className={`p-2 my-1 border rounded-lg w-full pr-10 ${newPassword === ""
-                            ? "border-gray-400"
-                            : passwordsMatch === true
-                              ? "border-green-500"
-                              : "border-red-500"
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
                           }`}
                         value={newPassword}
                         onChange={(e) => setNewPassword(e.target.value)}
@@ -881,10 +881,10 @@ const ResellerLogin = () => {
                       <input
                         placeholder="Confirm New Password"
                         className={`p-2 my-2 border rounded-lg w-full pr-10 ${confirmPassword === ""
-                            ? "border-gray-400"
-                            : passwordsMatch === true
-                              ? "border-green-500"
-                              : "border-red-500"
+                          ? "border-gray-400"
+                          : passwordsMatch === true
+                            ? "border-green-500"
+                            : "border-red-500"
                           }`}
                         value={confirmPassword}
                         onChange={(e) => setConfirmPassword(e.target.value)}

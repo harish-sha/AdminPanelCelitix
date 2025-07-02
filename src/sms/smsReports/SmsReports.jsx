@@ -359,8 +359,9 @@ const SmsReports = () => {
       // Map account_usage_type_id to campaign types
       const mappedData = Array.isArray(res)
         ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
+          // id: item.receipt_no_of_duplicate_message,
           sn: i + 1,
+          id: i + 1,
           ...item,
           campaign_type:
             item.account_usage_type_id === 1

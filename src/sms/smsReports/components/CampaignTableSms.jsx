@@ -89,7 +89,7 @@ const CampaignTableSms = ({ id, name, data, selectedUser }) => {
   const closeDropdown = () => setDropdownOpenId(null);
 
   const dropdownButtonRefs = useRef([]);
-  
+
   const rows = data || [];
 
   const columns = [
