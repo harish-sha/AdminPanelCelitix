@@ -344,9 +344,7 @@ export const ChatScreen = ({
                 const isDocument = msg.replyType === "document";
                 const templateType = msg?.templateType;
                 const isBot = msg?.replyType === "interactive";
-                const isText = ["text", "button"].includes(
-                  msg.replyType
-                );
+                const isText = ["text", "button"].includes(msg.replyType);
                 const isReply = msg?.isReply;
                 const commonMediaClass = "object-contain mb-2 select-none";
                 const mediaUrl = isSent
@@ -620,15 +618,15 @@ export const ChatScreen = ({
                       </div>
                     )}
 
-                    {isText  && (
+                    {isText && (
                       <div
-                        className={`flex items-center gap-2 w-full ${
+                        className={`flex items-center gap-2 max-w-[200px] ${
                           isSent ? "flex-row-reverse" : ""
                         }`}
                       >
-                        <div className="max-w-[250px]">
+                        <div>
                           <p
-                            className={`w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
+                            className={`whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm ${
                               isSent
                                 ? "bg-[#22577E] text-white rounded-br-none"
                                 : "bg-[#5584AC] text-white rounded-bl-none"
