@@ -92,7 +92,7 @@ const BotPreview = ({ template }) => {
 
   function renderText() {
     return (
-      <div className="text-sm">
+      <div className="text-sm max-w-[250px]">
         <p className="w-full whitespace-pre-wrap break-words p-3 rounded-2xl text-sm shadow-sm  bg-[#5584AC] text-white rounded-bl-none">
           {template?.messageBody}
         </p>
