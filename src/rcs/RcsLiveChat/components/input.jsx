@@ -53,7 +53,7 @@ export const InputData = ({
             type="text"
             name="search"
             id="search"
-            placeholder="Search Conversations"
+            placeholder="Search Conversations (Start with +91)"
             className="flex-grow bg-transparent outline-none text-sm"
             value={search}
             onChange={(e) => {
