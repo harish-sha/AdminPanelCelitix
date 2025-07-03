@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 export const InputData = ({
   agentState,
+  setAgentState,
   chatState,
   setChatState,
   search,
@@ -24,11 +25,12 @@ export const InputData = ({
           label="Select Agent"
           id="agentList"
           name="agentList"
-          options={agentState?.map((item) => ({
+          options={agentState?.all?.map((item) => ({
             label: item?.agent_name,
             value: item?.agent_id,
           }))}
           onChange={(e) => {
+            setAgentState((prev) => ({ ...prev, id: e }));
             setChatState({
               active: null,
               input: "",
@@ -38,10 +40,9 @@ export const InputData = ({
                 srno: "",
                 replayTime: "",
               },
-              agent_id: e,
             });
           }}
-          value={chatState?.agent_id}
+          value={agentState?.id}
         />
 
         <div
@@ -70,7 +71,7 @@ export const InputData = ({
         </div>
       </div>
 
-      {chatState?.agent_id && (
+      {agentState?.id && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,6 +91,17 @@ export const InputData = ({
               onClick={() => {
                 setBtnOption("active");
                 // setIsSubscribed(false);
+                setChatState((prev) => ({
+                  ...prev,
+                  active: null,
+                  input: "",
+                  allConversations: [],
+                  specificConversation: [],
+                  latestMessage: {
+                    srno: "",
+                    replayTime: "",
+                  },
+                }));
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${
                 btnOption === "active"
@@ -102,7 +114,17 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("close");
-                // setIsSubscribed(false);
+                setChatState((prev) => ({
+                  ...prev,
+                  active: null,
+                  input: "",
+                  allConversations: [],
+                  specificConversation: [],
+                  latestMessage: {
+                    srno: "",
+                    replayTime: "",
+                  },
+                }));
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${
                 btnOption === "close"
