@@ -18,7 +18,8 @@ const UniversalDatePicker = ({
     minDate,
     maxDate,
     defaultValue,
-    views
+    views,
+    disabled,
 }) => {
     return (
         <div className='w-full'>
@@ -82,6 +83,7 @@ const UniversalDatePicker = ({
                     minDate={minDate}
                     maxDate={maxDate}
                     views={views}
+                    disabled={disabled}
                     defaultValue={defaultValue || null}
                     format="dd/MM/yyyy"
                     slotProps={{
