@@ -1,15 +1,14 @@
-import { fetchAllConvo } from "@/apis/rcs/rcs";
-import React from "react";
+import { fetchAllBotsList, fetchAllConvo } from "@/apis/rcs/rcs";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
+import { InputData } from "./components/input";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = React.useState(false);
-  const [agentState, setAgentState] = React.useState({
-    id: "",
-    all: [],
-  });
+  const [agentState, setAgentState] = React.useState([]);
 
   const [mobileNo, setMobileNo] = React.useState("");
+  const [btnOption, setBtnOption] = React.useState("active");
   const [chatState, setChatState] = React.useState({
     active: null,
     input: "",
@@ -19,15 +18,24 @@ const RcsLiveChat = () => {
       srno: "",
       replayTime: "",
     },
+    agent_id: "",
     // replyData: "",
     // isReply: false,
   });
 
+  async function handleFetchAgents() {
+    try {
+      const res = await fetchAllBotsList();
+      setAgentState(res);
+    } catch (e) {
+      toast.error("Error fetching conversations");
+    }
+  }
   async function handleFetchAllConvo() {
-    if (!agentState.id) return;
+    if (!chatState?.agent_id) return;
     try {
       const payload = {
-        agentId: agentState.id,
+        agentId: chatState?.agent_id,
         search: mobileNo,
         active: chatState.active,
       };
@@ -37,7 +45,33 @@ const RcsLiveChat = () => {
       toast.error("Error fetching conversations");
     }
   }
-  return <div>RcsLiveChat</div>;
+
+  //useEffect
+
+  useEffect(() => {
+    handleFetchAgents();
+  }, []);
+
+  useEffect(() => {
+    handleFetchAllConvo();
+  }, [btnOption, chatState]);
+
+  return (
+    <div>
+      <div>
+        <InputData
+          agentState={agentState}
+          chatState={chatState}
+          setChatState={setChatState}
+          search={mobileNo}
+          setSearch={setMobileNo}
+          handleSearch={handleFetchAllConvo}
+          btnOption={btnOption}
+          setBtnOption={setBtnOption}
+        />
+      </div>
+    </div>
+  );
 };
 
 export default RcsLiveChat;
