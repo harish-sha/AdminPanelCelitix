@@ -189,3 +189,11 @@ export const fetchSpecificConvo = (data) => {
     }
   );
 };
+export const sendRCSMessage = (data) => {
+  return fetchWithAuth(
+    `/rcs/sendRcsMessage?agentId=${data.agentId}&mobile=${data.mobileNo}&message=${data.message}&replyFrom=user&replyType=${data.replyType}`,
+    {
+      method: "POST",
+    }
+  );
+};

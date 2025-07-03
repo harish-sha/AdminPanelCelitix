@@ -4,10 +4,10 @@ import React from "react";
 import { flushSync } from "react-dom";
 import { FiSend } from "react-icons/fi";
 
-export const ChatInput = ({ input, setInput }) => {
+export const ChatInput = ({ input, setInput, sendMessage }) => {
   const inputRef = React.useRef(null);
 
-  function sendMessage() {}
+  // function sendMessage() {}
 
   function insertEmoji(emoji) {
     const el = inputRef.current;

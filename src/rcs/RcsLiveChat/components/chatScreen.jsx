@@ -6,7 +6,7 @@ import { ChatInput } from "./chatInput";
 export const ChatScreen = ({
   chatState,
   btnOption,
-
+  sendMessage,
   input,
   setInput,
 }) => {
@@ -378,7 +378,7 @@ export const ChatScreen = ({
       </div>
 
       {btnOption === "active" ? (
-        <ChatInput input={input} setInput={setInput} />
+        <ChatInput input={input} setInput={setInput}  sendMessage={sendMessage} />
       ) : (
         "arihant"
       )}

@@ -2,6 +2,7 @@ import {
   fetchAllBotsList,
   fetchAllConvo,
   fetchSpecificConvo,
+  sendRCSMessage,
 } from "@/apis/rcs/rcs";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -106,6 +107,33 @@ const RcsLiveChat = () => {
       const messages = [...(res?.conversationEntityList || [])].reverse();
     } catch (e) {
       toast.error("Error fetching conversation");
+    }
+  }
+
+  async function sendMessage() {
+    if (!chatState.active) return;
+    if (!input) return;
+
+    // const mobileNo = chatState.active.mobileNo.includes("+91")
+    //   ? chatState.active.mobileNo
+    //   : `+91${chatState.active.mobileNo}`;
+    try {
+      const payload = {
+        agentId: chatState.active.agentId,
+        mobileNo: chatState.active.mobileNo,
+        message: input.trim(),
+        replyType: "text",
+        // chatNo: chatState.active.srno,
+      };
+
+      const res = await sendRCSMessage(payload);
+      if (res?.status === "error") {
+        toast.error(res?.msg);
+        return;
+      }
+    } catch (e) {
+      console.log(e);
+      toast.error("Error sending message");
     }
   }
 
@@ -265,7 +293,7 @@ const RcsLiveChat = () => {
               // handleAttachmentDownload={handleAttachmentDownload}
               // insertEmoji={insertEmoji}
               // inputRef={inputRef}
-              // sendMessage={sendMessage}
+              sendMessage={sendMessage}
               // items={items}
               // visibleRight={visibleRight}
               input={input}

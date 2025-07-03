@@ -42,6 +42,7 @@ export const InputData = ({
               },
             });
           }}
+          placeholder="Select Agent"
           value={agentState?.id}
         />
 
