@@ -427,13 +427,23 @@ const ResellerDashboard = () => {
                             <motion.div
                                 whileHover={{ scale: 1.05 }}
                                 transition={{ type: "spring", stiffness: 300 }}
-                                className={`rounded-xl bg-gradient-to-br ${service.color} p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"}`}
+                                className={`relative rounded-xl bg-gradient-to-br ${service.color
+                                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
+                                    } `}
                             >
                                 {hasService && (
                                     <>
                                         <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white">
                                         </div>
                                         <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm" >Active</div>
+                                    </>
+                                )}
+                                {!hasService && (
+                                    <>
+                                        <div className="absolute top-2 right-2 bg-red-400 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                                        <div className="absolute top-2 right-8 bg-red-400 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                                            inActive
+                                        </div>
                                     </>
                                 )}
                                 <div className="font-semibold text-lg text-gray-800">

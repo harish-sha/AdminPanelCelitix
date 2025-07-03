@@ -26,7 +26,7 @@ export const Whatsapp = ({
     waba: [],
     selected: "",
   });
-  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
   const [allTemplates, setAllTemplates] = useState([]);
   const [specificTemplate, setSpecificTemplate] = useState({});
   const [variablesData, setVariablesData] = useState({
@@ -62,10 +62,23 @@ export const Whatsapp = ({
 
   async function handleFetchWaba() {
     try {
+      const data = nodesInputData[id];
+
       const res = await getWabaList();
-      setWabaState((prev) => ({
+      const wabaMbNo = res.find(
+        (item) => item.wabaSrno == data?.wabanumber
+      )?.mobileNo;
+
+      const selectedMobile = wabaMbNo || "";
+      setWabaState({
         waba: res,
-        selected: "",
+        selected: selectedMobile,
+      });
+
+      setVariablesData((prev) => ({
+        ...prev,
+        input: data?.variables,
+        btnInput: data?.urlValues ? [data?.urlValues] : [],
       }));
     } catch (e) {
       return toast.error("Error fetching Waba Details");
@@ -77,13 +90,16 @@ export const Whatsapp = ({
   }, []);
 
   async function handleFetchAllTemplates() {
+    const data = nodesInputData[id];
     if (!wabaState.selected) return;
     try {
       const res = await getWabaTemplateDetails(wabaState.selected);
       const approvedTemplates = res.filter(
-        (item) => item.status === "APPROVED"
+        (item) => item.status === "APPROVED" && item.type !== "carousel"
       );
+
       setAllTemplates(approvedTemplates);
+      setSelectedTemplate(Number(data?.whatsappTemplate));
     } catch (e) {
       return toast.error("Error fetching all templates");
     }
@@ -118,6 +134,8 @@ export const Whatsapp = ({
   }, [selectedTemplate]);
 
   function handleSave() {
+    if (!wabaState.selected) return toast.error("Please select WABA");
+    if (!selectedTemplate) return toast.error("Select template");
     const template = allTemplates.find(
       (item) => item.templateSrno === selectedTemplate
     );
@@ -125,20 +143,23 @@ export const Whatsapp = ({
       (item) => item.mobileNo === wabaState.selected
     )?.wabaSrno;
 
-    // //  "wabanumber": "2",
-    // //     "whatsappTemplate": "812",
-    // //     "whatsapp_category": "Marketing", //to be find later
-    // //     "whatsapp_templateType": "image", //to be find later
-    // //     "variables": ["kh"],
-    // //     "fileInput": "http://localhost:9090/cpaas/Whatsapp/whatsapp193871735904792368.png",
-    // //     "urlValues": "2"
-    // console.log("selectedTemplate", wabaSrno);
-    // console.log("wabaState.selected", wabaState.selected);
-    // console.log("categoty", template?.category);
-    // console.log("type", template?.type);
-    // console.log("variablesData.input", variablesData.input);
-    // console.log("variablesData.btnInput", variablesData.btnInput);
-    // console.log("basicDetails.fileInput", basicDetails.mediaPath);
+    const variables = variablesData.input.filter((item) => item !== "");
+    const btnVar = variablesData.btnInput.filter((item) => item !== "");
+
+    if (
+      variablesData.data.length > 0 &&
+      variables.length !== variablesData.data.length
+    ) {
+      return toast.error("Please enter Variable Value");
+    }
+
+    if (
+      variablesData.btn.length > 0 &&
+      btnVar.length !== variablesData.btn.length
+    ) {
+      return toast.error("Please enter URL Variable Value");
+    }
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -158,31 +179,31 @@ export const Whatsapp = ({
   }
 
   //to persist data after reopen the dialog
-  useEffect(() => {
-    const data = nodesInputData[id];
-    async function handleFetchWaba() {
-      try {
-        const waba = await getWabaList();
-        const wabaMbNo = waba.find(
-          (item) => item.wabaSrno === data?.wabaSrno
-        )?.mobileNo;
+  // useEffect(() => {
+  //   const data = nodesInputData[id];
+  //   async function handleFetchWaba() {
+  //     try {
+  //       const waba = await getWabaList();
+  //       const wabaMbNo = waba.find(
+  //         (item) => item.wabaSrno === data?.wabaSrno
+  //       )?.mobileNo;
 
-        setSelectedTemplate(data?.whatsappTemplate);
-        setWabaState((prev) => ({
-          ...prev,
-          selected: wabaMbNo,
-        }));
-        setVariablesData((prev) => ({
-          ...prev,
-          input: data?.variables,
-          btnInput: data?.urlValues ? [data?.urlValues] : [],
-        }));
-      } catch (e) {
-        return toast.error("Error fetching Waba Details");
-      }
-    }
-    handleFetchWaba();
-  }, []);
+  //       setSelectedTemplate(data?.whatsappTemplate);
+  //       setWabaState((prev) => ({
+  //         ...prev,
+  //         selected: wabaMbNo,
+  //       }));
+  //       setVariablesData((prev) => ({
+  //         ...prev,
+  //         input: data?.variables,
+  //         btnInput: data?.urlValues ? [data?.urlValues] : [],
+  //       }));
+  //     } catch (e) {
+  //       return toast.error("Error fetching Waba Details");
+  //     }
+  //   }
+  //   handleFetchWaba();
+  // }, []);
 
   return (
     <div className="w-full flex flex-col justify-between h-full">
@@ -221,7 +242,7 @@ export const Whatsapp = ({
               onChange={(e) => {
                 setSelectedTemplate(e);
                 setFileData({ url: "", file: "" });
-                fileRef ? (fileRef.current.value = "") : null;
+                fileRef && fileRef.current && (fileRef.current.value = "");
                 setVariablesData({
                   length: 0,
                   data: [],

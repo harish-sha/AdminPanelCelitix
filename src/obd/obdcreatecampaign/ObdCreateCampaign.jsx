@@ -584,7 +584,6 @@ const ObdCreateCampaign = () => {
       const res = await fetchVoiceClipUrl(audioId);
       // if (!res.path) return toast.error("Something went wrong");
       const url = BASE_AUDIO_URL + res.path;
-      // console.log(url);
       setVoiceSBURLPath(url);
     } catch (error) {
       console.error("Error fetching Voice File:", error);
@@ -609,7 +608,7 @@ const ObdCreateCampaign = () => {
   const handleSelectDynamicVoice = async (srno) => {
     try {
       const res = await ObdVariableList(srno);
-      // console.log("res", res);
+      console.log("res", res);
       if (!res?.data || !Array.isArray(res.data)) {
         toast.error("Invalid variable data received");
         return;
@@ -631,8 +630,6 @@ const ObdCreateCampaign = () => {
   };
 
   const handleVoiceVariableChange = (index, newValue, dynamicTtsArea) => {
-    // console.log("newValue", newValue);
-    // console.log("index", index);
     setVoiceVariables((prev) => {
       const updated = [...prev];
       updated[index].variableSampleValue = newValue;

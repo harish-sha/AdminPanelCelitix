@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
+import EditNoteIcon from "@mui/icons-material/EditNote";
 
 export const WorkflowDetails = () => {
   const navigate = useNavigate();
@@ -59,6 +60,8 @@ export const WorkflowDetails = () => {
     });
     setVisibledialog(true);
   }
+
+  function handleUpdate() {}
   async function handleConfirmDelete(row) {
     const srno = selectedRowData.srno;
     const type = selectedRowData.type;
@@ -92,17 +95,39 @@ export const WorkflowDetails = () => {
       headerName: "Action",
       width: 200,
       renderCell: (params) => (
-        <CustomTooltip title="Delete Workflow" placement="top" arrow>
-          <IconButton
-            className="no-xs"
-            onClick={() => handleDelete(params.row)}
-          >
-            <MdOutlineDeleteForever
-              className="text-red-500 cursor-pointer hover:text-red-600"
-              size={20}
-            />
-          </IconButton>
-        </CustomTooltip>
+        <>
+          <CustomTooltip title="Update Workflow" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => {
+                navigate("/workflow/edit", {
+                  state: {
+                    data: params?.row?.node_json || "[]",
+                    workflow_meta_data: params?.row,
+                  },
+                });
+              }}
+            >
+              <EditNoteIcon
+                sx={{
+                  fontSize: "1.2rem",
+                  color: "gray",
+                }}
+              />
+            </IconButton>
+          </CustomTooltip>
+          <CustomTooltip title="Delete Workflow" placement="top" arrow>
+            <IconButton
+              className="no-xs"
+              onClick={() => handleDelete(params.row)}
+            >
+              <MdOutlineDeleteForever
+                className="text-red-500 cursor-pointer hover:text-red-600"
+                size={20}
+              />
+            </IconButton>
+          </CustomTooltip>
+        </>
       ),
     },
   ];

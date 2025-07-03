@@ -26,6 +26,7 @@ import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 import { BlockUser } from "@/whatsapp/blockUser";
 import MmLite from "@/whatsapp/mmlite/MmLite";
 
@@ -138,6 +139,10 @@ import PageNotFound from "@/NotFound/PageNotFound";
 //WorkFlow
 import { WorkflowDetails } from "@/workflow/details";
 import { WorkflowCreate } from "@/workflow/create";
+import { UpdateWorkflow } from "@/workflow/edit";
+
+// Self Recharge
+import SelfRecharge from "@/SelfRecharge/SelfRecharge";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
@@ -225,6 +230,7 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wflowedit" element={<EditFlow />} />
         <Route path="wblockuser" element={<BlockUser />} />
         <Route path="wmmlite" element={<MmLite />} />
 
@@ -240,8 +246,7 @@ const Approutes = () => {
           element={<CampaignDeliveryReportDetails />}
         />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
-
-        {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
+        <Route path="rcslivechats" element={<RcsLiveChat />} />
 
         {/* profile */}
         <Route path="profile" element={<ProfilePage />} />
@@ -303,6 +308,10 @@ const Approutes = () => {
         {/* Workflow */}
         <Route path="/workflow" element={<WorkflowDetails />} />
         <Route path="/workflow/create" element={<WorkflowCreate />} />
+        <Route path="/workflow/edit" element={<UpdateWorkflow />} />
+
+        {/* self recharge */}
+        <Route path="/selfrecharge" element={<SelfRecharge />} />
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

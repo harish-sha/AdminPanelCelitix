@@ -289,19 +289,15 @@ export const userItems = [
     to: "/managecontacts",
     roles: ["ADMIN", "DIRECTUSER"],
   },
-  // {
-  //   id: "",
-  //   name: "Workflow",
-  //   icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
-  //   label: "Workflow",
-  //   type: "single",
-  //   to: "/workflow",
-  //   // links: [
-  //   //   { to: "/workflow", label: "Manage Workflow" },
-  //   //   { to: "/workflow/create", label: "Add Workflow", isHide: true },
-  //   // ],
-  //   roles: ["ADMIN"],
-  // },
+  {
+    id: "",
+    name: "Workflow",
+    icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+    label: "Workflow",
+    type: "single",
+    to: "/workflow",
+    roles: ["ADMIN"],
+  },
   // {
   //   id: "",
   //   name: "Wishmanagement",

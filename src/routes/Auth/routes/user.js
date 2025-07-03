@@ -164,7 +164,7 @@ export const userItems = [
   },
   {
     name: "WorkFlow",
-    links: ["/workflow", "/workflow/create"],
+    links: ["/workflow", "/workflow/create", "/workflow/edit"],
     roles: ["ADMIN"],
   },
   // {

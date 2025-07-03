@@ -84,15 +84,14 @@ const ClockCard = () => {
     <motion.div
       layout
       transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
-      className={`relative bg-white rounded-xl shadow flex flex-col items-center justify-center ${
-        is24Hour ? "w-54" : "w-62"
-      } h-28 group`}
+      className={`relative bg-white rounded-xl shadow flex flex-col items-center justify-center ${is24Hour ? "w-54" : "w-62"
+        } h-28 group`}
     >
       <div className="flex gap-3 items-center">
         <AnimatePresence mode="wait">
-          <TimeUnit label="HH" value={hours} />
-          <TimeUnit label="MM" value={minutes} />
-          <TimeUnit label="SS" value={seconds} />
+          <TimeUnit key="a" label="HH" value={hours} />
+          <TimeUnit key="b" label="MM" value={minutes} />
+          <TimeUnit key="c" label="SS" value={seconds} />
         </AnimatePresence>
         {!is24Hour && (
           <motion.span
@@ -118,17 +117,15 @@ const ClockCard = () => {
         >
           <button
             onClick={() => setIs24Hour(false)}
-            className={`w-7 h-7 rounded-full text-sm border text-gray-600 hover:bg-gray-100 transition ${
-              !is24Hour ? "bg-gray-200 font-bold" : ""
-            }`}
+            className={`w-7 h-7 rounded-full text-sm border text-gray-600 hover:bg-gray-100 transition ${!is24Hour ? "bg-gray-200 font-bold" : ""
+              }`}
           >
             12
           </button>
           <button
             onClick={() => setIs24Hour(true)}
-            className={`w-7 h-7 rounded-full text-sm border text-gray-600 hover:bg-gray-100 transition ${
-              is24Hour ? "bg-gray-200 font-bold" : ""
-            }`}
+            className={`w-7 h-7 rounded-full text-sm border text-gray-600 hover:bg-gray-100 transition ${is24Hour ? "bg-gray-200 font-bold" : ""
+              }`}
           >
             24
           </button>

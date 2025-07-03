@@ -4,6 +4,7 @@ import { isEnglish } from "@/sms/smsSend/helper/isEnglish";
 import React, { useEffect, useState } from "react";
 import { Grid1 } from "./grid1";
 import { Preview } from "./preview";
+import toast from "react-hot-toast";
 
 export const SMS = ({
   id,
@@ -31,12 +32,19 @@ export const SMS = ({
 
   useEffect(() => {
     // if (!inputDetails?.templateType) return;
+    const data = nodesInputData[id];
     async function handleFetchAllTemplates() {
       try {
         const res = await getAllTemplates("all");
         setAllTemplates(res);
+
+        setInputDetails((prev) => ({
+          ...prev,
+          templateId: data?.sms_template,
+          entityId: data?.entityId,
+        }));
       } catch (e) {
-        // console.log(e);
+        toast.error("Something went wrong.");
       }
     }
 
@@ -69,6 +77,12 @@ export const SMS = ({
   }, [inputDetails?.message]);
 
   function handleSave() {
+    if (!inputDetails?.templateId)
+      return toast.error("Please select a template.");
+    if (!inputDetails?.entityId) return toast.error("Invalid entity id.");
+    if (!inputDetails?.senderId)
+      return toast.error("Please select a sender ID");
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {
@@ -83,6 +97,17 @@ export const SMS = ({
 
     setDetailsDialogVisible(false);
   }
+
+  useEffect(() => {
+    const data = nodesInputData[id];
+    setInputDetails((prev) => ({
+      ...prev,
+      unicode: data?.unicode,
+      message: data?.sms_message,
+      templateType: 1,
+      senderId: data?.sms_sender_id,
+    }));
+  }, []);
   return (
     <>
       <div className="flex flex-col md:flex-row gap-2">

@@ -405,7 +405,7 @@ const WhatsappLaunchCampaign = () => {
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
       // isMarketingMessage: marketingType || "",
-      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -699,14 +699,14 @@ const WhatsappLaunchCampaign = () => {
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2 cursor-pointer">
                             <RadioButton
-                              inputId="radioOption1"
-                              name="radioGroup"
+                              inputId="radioOptionSend1"
+                              name="radioGroupSend"
                               value="2"
                               onChange={(e) => setMarketingType(parseInt(e.target.value))}
                               checked={marketingType === 2}
                             />
                             <label
-                              htmlFor="radioOption1"
+                              htmlFor="radioOptionSend1"
                               className="text-sm font-medium text-gray-700 cursor-pointer"
                             >
                               Cloud API
@@ -718,14 +718,14 @@ const WhatsappLaunchCampaign = () => {
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2">
                             <RadioButton
-                              inputId="radioOption2"
-                              name="radioGroup"
+                              inputId="radioOptionSend2"
+                              name="radioGroupSend"
                               value="1"
                               onChange={(e) => setMarketingType(parseInt(e.target.value))}
                               checked={marketingType === 1}
                             />
                             <label
-                              htmlFor="radioOption2"
+                              htmlFor="radioOptionSend2"
                               className="text-sm font-medium text-gray-700 cursor-pointer"
                             >
                               MM Lite

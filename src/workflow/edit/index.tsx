@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { use, useCallback, useEffect, useMemo, useState } from "react";
 import {
   ReactFlow,
   useNodesState,
@@ -18,15 +18,17 @@ import UniversalButton from "@/components/common/UniversalButton";
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CloseOutlinedIcon from "@mui/icons-material/CloseOutlined";
 import { Dialog } from "primereact/dialog";
-import { SMSNode } from "./components/SMSDialog";
-import { VoiceNode } from "./components/VoiceDialog";
-import { RCSNode } from "./components/RcsDialog";
-import { WhatsAppNode } from "./components/WhatsappDialog";
-import { generatePayload } from "./helpers/generatePayload";
+import { SMSNode } from "../create/components/SMSDialog";
+import { VoiceNode } from "../create/components/VoiceDialog";
+import { RCSNode } from "../create/components/RcsDialog";
+import { WhatsAppNode } from "../create/components/WhatsappDialog";
+import { generatePayload } from "../create/helpers/generatePayload";
 import { saveWorkflow } from "@/apis/workflow";
 import { HiOutlineDocument } from "react-icons/hi2";
-import { DetailsDialog } from "./components/details";
+import { DetailsDialog } from "../create/components/details";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
+import { convertPaylaod } from "./helpers/convertPaylaod";
 
 function NodeComponent({
   id,
@@ -160,17 +162,31 @@ function NodeComponent({
   );
 }
 
-export const WorkflowCreate = () => {
+export const UpdateWorkflow = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { data, workflow_meta_data } = location.state;
+
+  if (!data) {
+    toast.error("Workflow not found");
+    navigate("/workflow");
+  }
+
+  const formattedData = convertPaylaod(data);
   let node = [];
   let edge = [];
-  // let data = {};
 
-  const [nodes, setNodes, onNodesChange] = useNodesState(node);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(edge);
-  const [nodeId, setNodeId] = useState(1);
-  const [name, setName] = useState("");
-  const [nodesInputData, setNodesInputData] = useState({});
+  const [nodes, setNodes, onNodesChange] = useNodesState(
+    formattedData?.nodes || node
+  );
+  const [edges, setEdges, onEdgesChange] = useEdgesState(
+    formattedData?.edges || edge
+  );
+  const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
+  const [name, setName] = useState(workflow_meta_data?.workflow_name || "");
+  const [nodesInputData, setNodesInputData] = useState(
+    formattedData?.nodedata || {}
+  );
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
   const [type, setType] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
@@ -185,6 +201,18 @@ export const WorkflowCreate = () => {
 
       let isSourceAlreadyConnected = false;
       let isTargetAlreadyConnected = false;
+
+      //   if (type === "list" || type === "button") {
+      //     isSourceAlreadyConnected = edges.some(
+      //       (edge) => edge.sourceHandle === source
+      //     );
+      //     isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      //   } else {
+      //     isSourceAlreadyConnected = edges.some(
+      //       (edge) => edge.sourceHandle === source
+      //     );
+      //     isTargetAlreadyConnected = edges.some((edge) => edge.target === target);
+      //   }
 
       isSourceAlreadyConnected = edges.some(
         (edge) => edge.sourceHandle === source
@@ -209,14 +237,6 @@ export const WorkflowCreate = () => {
     "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
-    // if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
-
-    // const isNodeAlreadyAdded = nodes.some((node) => node.type === type);
-
-    // if (isNodeAlreadyAdded) {
-    //   return toast.error("You can add only one node per type");
-    // }
-
     const newNode = {
       id: `${nodeId}`,
       position: position || { ...lastPosition },
@@ -355,7 +375,6 @@ export const WorkflowCreate = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
-
     if (nodes.length < 2) return toast.error("Please add at least two nodes");
     if (nodes.length !== edges.length)
       return toast.error("Please connect all the nodes");
@@ -364,8 +383,8 @@ export const WorkflowCreate = () => {
 
     const data = {
       workflowName: name,
-      isEditWorkflow: 0,
-      srNo: 0,
+      isEditWorkflow: 1,
+      srNo: workflow_meta_data?.sr_no,
       nodeJson: JSON.stringify(payload),
     };
 
@@ -374,7 +393,7 @@ export const WorkflowCreate = () => {
       if (res?.statusCode !== 200) {
         return toast.error(res.msg || "Error while saving workflow");
       }
-      toast.success("Workflow saved successfully");
+      toast.success("Workflow updated successfully");
       navigate("/workflow");
     } catch (e) {
       toast.error("Error while saving workflow");
@@ -506,7 +525,7 @@ export const WorkflowCreate = () => {
             <UniversalButton
               id="saveWorkFlow"
               name="saveWorkFlow"
-              label={`Save`}
+              label={`update`}
               onClick={handleSaveWorkflow}
               style={{ width: "100%" }}
             />

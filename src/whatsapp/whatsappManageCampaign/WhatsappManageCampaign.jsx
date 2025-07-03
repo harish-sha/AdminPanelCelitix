@@ -97,12 +97,14 @@ const WhatsappManageCampaign = () => {
   const [orignalScheduleData, setOrignalScheduleData] = useState([]);
   const [logsData, setLogsData] = useState([]);
   const [WabaList, setWabaList] = useState([]);
-  const [isMonthWise, setIsMonthWise] = useState(false);
+  const [isMonthWise, setIsMonthWise] = useState(0);
   const [fromDate, setfromDate] = useState(new Date());
   const [toDate, settoDate] = useState(new Date());
   const [summaryReport, setSummaryReport] = useState([]);
   const [selectedWaBaNumber, setSelectedWaBaNumber] = useState("");
-  const [selectedMonth, setSelectedMonth] = useState(new Date());
+  const [selectedSearchType, setSelectedSearchType] = useState("")
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear().toString());
   const [hasSearched, setHasSearched] = useState(false);
   const { triggerDownloadNotification } = useDownload();
 
@@ -561,8 +563,10 @@ const WhatsappManageCampaign = () => {
         // whatsappTypes: null,
         wabaNumber: selectedWaBaNumber,
         monthwise: 1,
-        year: moment(FinalFromDate).format("YYYY"),
-        month: moment(FinalFromDate).format("MM"),
+        // year: moment(FinalFromDate).format("YYYY"),
+        // month: moment(FinalFromDate).format("MM"),
+        year: selectedYear,
+        month: selectedMonth,
       });
     } else {
       result = await getSummaryReport({
@@ -1009,7 +1013,128 @@ const WhatsappManageCampaign = () => {
           <CustomTabPanel value={value} index={2}>
             <div className="w-full">
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                {isMonthWise ? (
+                <div className="w-full sm:w-56">
+                  <AnimatedDropdown
+                    id="manageWaBaAccount"
+                    name="manageWaBaAccount"
+                    label="WaBa Account"
+                    tooltipContent="Select WABA Account"
+                    tooltipPlacement="right"
+                    options={WabaList?.map((waba) => ({
+                      value: waba.wabaSrno,
+                      label: waba.name,
+                    }))}
+                    value={selectedWaBaNumber}
+                    onChange={(value) => setSelectedWaBaNumber(value)}
+                    placeholder="Waba Account"
+                  />
+                </div>
+
+                <div className="w-full sm:w-56">
+                  <AnimatedDropdown
+                    id="nameSearchType"
+                    name="nameSearchType"
+                    label="Search Type"
+                    tooltipContent="Select Search Type"
+                    tooltipPlacement="right"
+                    options={[
+                      { value: 0, label: "Custom" },
+                      { value: 1, label: "Monthly" },
+                    ]}
+                    value={isMonthWise}
+                    onChange={(value) => setIsMonthWise(value)}
+                    placeholder="Search Type"
+                  />
+                </div>
+
+                {isMonthWise === 1 ? (
+                  <>
+                    {/* Month Dropdown */}
+                    <div className="w-full sm:w-56">
+                      <AnimatedDropdown
+                        id="monthSelect"
+                        name="monthSelect"
+                        label="Select Month"
+                        tooltipContent="Select Month"
+                        tooltipPlacement="right"
+                        options={[
+                          { value: 1, label: "January" },
+                          { value: 2, label: "February" },
+                          { value: 3, label: "March" },
+                          { value: 4, label: "April" },
+                          { value: 5, label: "May" },
+                          { value: 6, label: "June" },
+                          { value: 7, label: "July" },
+                          { value: 8, label: "August" },
+                          { value: 9, label: "September" },
+                          { value: 10, label: "October" },
+                          { value: 11, label: "November" },
+                          { value: 12, label: "December" },
+                        ]}
+                        value={selectedMonth}
+                        onChange={(value) => setSelectedMonth(value)}
+                        placeholder="Select Month"
+                      />
+                    </div>
+
+                    {/* Year Dropdown */}
+                    <div className="w-full sm:w-56">
+                      <AnimatedDropdown
+                        id="yearSelect"
+                        name="yearSelect"
+                        label="Select Year"
+                        tooltipContent="Select Year"
+                        tooltipPlacement="right"
+                        options={Array.from({ length: 2025 - 1990 + 1 }, (_, i) => {
+                          const year = 1990 + i;
+                          return { value: String(year), label: String(year) };
+                        }).reverse()}
+                        value={selectedYear}
+                        onChange={(value) => setSelectedYear(value)}
+                        placeholder="Select Year"
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* From Date */}
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageFromDate"
+                        name="manageFromDate"
+                        label="From Date"
+                        value={fromDate}
+                        onChange={(newValue) => setfromDate(newValue)}
+                        placeholder="Pick a start date"
+                        tooltipContent="Select the start date"
+                        tooltipPlacement="right"
+                        error={!fromDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+
+                    {/* To Date */}
+                    <div className="w-full sm:w-56">
+                      <UniversalDatePicker
+                        id="manageToDate"
+                        name="manageToDate"
+                        label="To Date"
+                        value={toDate}
+                        onChange={(newValue) => settoDate(newValue)}
+                        placeholder="Pick an end date"
+                        tooltipContent="Select the end date"
+                        tooltipPlacement="right"
+                        error={!toDate}
+                        minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                        maxDate={new Date()}
+                        errorText="Please select a valid date"
+                      />
+                    </div>
+                  </>
+                )}
+                {/* {isMonthWise ? (
                   <>
                     <div className="w-full sm:w-56">
                       <UniversalDatePicker
@@ -1064,32 +1189,9 @@ const WhatsappManageCampaign = () => {
                       />
                     </div>
                   </>
-                )}
-                <div className="w-full sm:w-56">
-                  <AnimatedDropdown
-                    id="manageWaBaAccount"
-                    name="manageWaBaAccount"
-                    label="WaBa Account"
-                    tooltipContent="Select WABA Account"
-                    tooltipPlacement="right"
-                    options={WabaList?.map((waba) => ({
-                      value: waba.wabaSrno,
-                      label: waba.name,
-                    }))}
-                    value={selectedWaBaNumber}
-                    onChange={(value) => setSelectedWaBaNumber(value)}
-                    placeholder="Waba Account"
-                  />
-                </div>
-                <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
-                  {/* <FormGroup>
-                    <FormControlLabel
-                      control={<Checkbox />}
-                      label="Month Wise"
-                      value={isMonthWise}
-                      onClick={(e) => setIsMonthWise(e.target.checked)}
-                    />
-                  </FormGroup> */}
+                )} */}
+
+                {/* <div className="flex items-center gap-3 justify-center mb-2 w-full sm:w-35">
                   <Checkbox
                     checked={isMonthWise}
                     onChange={(e) => setIsMonthWise(e.target.checked)}
@@ -1100,7 +1202,7 @@ const WhatsappManageCampaign = () => {
                   >
                     Month Wise
                   </label>
-                </div>
+                </div> */}
                 <div className="w-full sm:w-56">
                   <UniversalButton
                     id="manageCampaignLogsShowhBtn"

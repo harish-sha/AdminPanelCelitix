@@ -865,11 +865,11 @@ import { Ai } from "./components/Ai";
 const MotionPaper = motion(Paper);
 
 const tabs = [
-  {
-    key: "configuration",
-    label: "AI Configurations",
-    icon: <BiMessageSquareDetail size={20} />,
-  },
+  // {
+  //   key: "configuration",
+  //   label: "AI Configurations",
+  //   icon: <BiMessageSquareDetail size={20} />,
+  // },
   { key: "settings", label: "Chat Settings", icon: <BiCog size={20} /> },
   { key: "users", label: "Block User", icon: <BiUserCircle size={20} /> },
 ];
@@ -1403,7 +1403,7 @@ const WhatsappLiveChatSettings = () => {
     }
   }
 
-  const [activeTab, setActiveTab] = useState("chat");
+  const [activeTab, setActiveTab] = useState("settings");
   const [activeSub, setActiveSub] = useState("ai");
 
   const renderContent = () => {
@@ -2072,8 +2072,8 @@ const WhatsappLiveChatSettings = () => {
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
                 className={`flex items-center w-full px-4 py-3 mb-1 text-sm font-medium rounded-lg transition-colors hover:bg-gray-100 focus:outline-none ${activeTab === tab.key
-                    ? "bg-blue-100 text-blue-600"
-                    : "text-gray-700"
+                  ? "bg-blue-100 text-blue-600"
+                  : "text-gray-700"
                   }`}
               >
                 <span className="mr-2">{tab.icon}</span>
@@ -2088,8 +2088,8 @@ const WhatsappLiveChatSettings = () => {
                       type="button"
                       onClick={() => setActiveSub(opt.key)}
                       className={`flex items-center w-full px-3 py-2 text-sm rounded-md transition-colors hover:bg-blue-50 focus:outline-none ${activeSub === opt.key
-                          ? "bg-blue-50 text-blue-600 font-semibold"
-                          : "text-gray-600"
+                        ? "bg-blue-50 text-blue-600 font-semibold"
+                        : "text-gray-600"
                         }`}
                     >
                       <span className="mr-2">{opt.icon}</span>

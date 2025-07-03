@@ -607,6 +607,12 @@ export const deleteFlow = async (data) => {
   });
 };
 
+export const getMainJson = async (srNo) => {
+  return await fetchWithAuth(`/WhatsappFlow/getMainJson?srNo=${srNo}`, {
+    method: "GET",
+  });
+};
+
 // fetch reply data (livechat)
 export const fetchReplyData = async (data) => {
   return await fetchWithAuth(
@@ -616,7 +622,6 @@ export const fetchReplyData = async (data) => {
     }
   );
 };
-
 
 // cancel campaign
 export const cancelCampaign = async ({ srno, selectedUserId = "0" }) => {

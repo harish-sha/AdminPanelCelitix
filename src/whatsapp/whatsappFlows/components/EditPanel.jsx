@@ -32,6 +32,13 @@ import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import IfElseBlock from "./IfElseBlock";
+import SwitchFlow from "./SwitchFlow";
+import RichTextEditor from "./Editor.jsx";
+import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
+import { useSelector } from "react-redux";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
 
 const EditPanel = ({
   selectedItem,
@@ -41,8 +48,6 @@ const EditPanel = ({
   setHeadingValue,
   setLabelValue,
   labelValue,
-  // selectedOptionsType,
-  // setSelectedOptionsType,
   placeholderValue,
   setPlaceholderValue,
   minValue,
@@ -54,6 +59,10 @@ const EditPanel = ({
   switchChecked,
   setSwitchChecked,
   screens,
+  handleComponentUpdate,
+  onUpdate,
+  editPanelRef,
+  setSelectedItem,
 }) => {
   // const [options, setOptions] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -84,34 +93,6 @@ const EditPanel = ({
   const handerRequired = () => {
     confirm.log(handerRequired);
   };
-
-  // const handleSave = () => {
-  //   if (
-  //     !value.trim() &&
-  //     [
-  //       "heading",
-  //       "subheading",
-  //       "textbody",
-  //       "textcaption",
-  //       "textInput",
-  //       "textArea",
-  //     ].includes(selectedItem.type)
-  //   ) {
-  //     toast.error("Input cannot be empty!");
-  //     return;
-  //   }
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     value,
-  //     options,
-  //     checked,
-  //     selectedOption,
-  //   };
-
-  //   onSave(updatedData);
-  //   onClose();
-  // };
 
   const handleOptionChange = (index, newValue) => {
     setOptions((prev) => {
@@ -337,75 +318,47 @@ const EditPanel = ({
   // }
 
   // EmbeddedLink
+  const embeddedscreenName = useSelector((state) => state.flows.screenName);
+  // console.log("screenNameedtred:", screenName);
+
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
-  const [screenNameList, setScreenNameList] = useState([]);
   const [selectedScreenName, setSelectedScreenName] = useState("");
+  const [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("");
 
-  const [tabs, setTabs] = useState([
-    { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
-  ]);
-
-  useEffect(() => {
-    if (tabs && Array.isArray(tabs)) {
-      const options = tabs
-        .filter((tab) => {
-          if (tab.id === selectedItem?.id) return false;
-
-          const hasEmbeddedLink = tab.payload?.some(
-            (item) => item.type === "EmbeddedLink"
-          );
-          return !hasEmbeddedLink;
-        })
-        .map((tab) => ({
-          value: tab.id,
-          label: tab.title || tab.id,
-        }));
-
-      setScreenNameList(options);
-    }
-  }, [tabs, selectedItem]);
+  // Get list of screens from screenName
+  const screenNameOptions = Object.values(embeddedscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
 
   useEffect(() => {
-    if (onClickAction !== "navigate") {
-      setSelectedScreenName("");
-    }
-  }, [onClickAction]);
-
-  useEffect(() => {
-    if (selectedItem?.type === "embeddedlink") {
-      if (selectedItem?.text?.startsWith("text ")) {
-        setText(selectedItem.text.replace("text ", ""));
-      }
+    if (selectedItem) {
+      setText(selectedItem.text || "");
+      setEmbeddedlinktUrl(selectedItem.url || "");
 
       const action = selectedItem["on-click-action"] || "complete";
       setOnClickAction(action);
-
-      if (action === "navigate") {
-        const screenName = selectedItem["screen-name"];
-        const screenExists = tabs.some(
-          (tab) => tab.id === screenName && tab.id !== selectedItem.id
-        );
-
-        if (screenName && screenExists) {
-          setSelectedScreenName(screenName);
-        } else {
-          toast.error("Please Create New Screen");
-          setSelectedScreenName("");
-        }
-      } else {
-        setSelectedScreenName("");
-      }
+      setSelectedScreenName(selectedItem.screen);
     }
-  }, [selectedItem, tabs]);
+  }, [selectedItem]);
 
   const handleEmbeddedLinkSave = () => {
+    if (!text) {
+      toast.error("Text is required");
+      return;
+    }
+
+    if (!onClickAction) {
+      toast.error("Action Requi");
+    }
     const payload = {
-      text: `text `,
+      text: text,
       "on-click-action": onClickAction,
-      ...(onClickAction === "navigate" && {
-        name: selectedScreenName,
-      }),
+      ...(onClickAction === "open_url" && { url: embeddedlinktUrl }),
+      ...(onClickAction === "navigate" && { screen: selectedScreenName }),
     };
 
     const updatedData = {
@@ -413,32 +366,81 @@ const EditPanel = ({
       ...payload,
     };
 
+    // console.log("payloadlink:", payload);
+
     onSave(updatedData);
     onClose();
   };
 
-  // if (selectedItem?.type !== "embeddedlink") return null;
+  // richtextPayload
+  const [richTextPayload, setRichTextPayload] = useState();
 
   // // opt-in
-
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
-  const [optRequired, setOptRequired] = useState(false);
+  const [optUrl, setOptUrl] = useState("");
+  const [optInRequired, setOptInRequired] = useState(false);
 
-  // const handleChecked = (e) => {
-  //   setCheckbox(e.target.checked);
-  // };
-
-  const handleOptRequiredChange = (e) => {
-    setOptRequired((prev) => !prev);
+  const handleOptInRequiredChange = () => {
+    setOptInRequired((prev) => !prev);
   };
 
+  const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
+
+  // useEffect(() => {
+  //   console.log("selectedItemooooppppttttiiinnn", selectedItem.screen);
+  //   if (selectedItem) {
+  //     setOptLabel(selectedItem.label || "");
+  //     setOPTAction(selectedItem["on-click-action"]);
+  //     setOptSelectedScreenName(selectedItem.screen);
+  //     setOptUrl(selectedItem.url || "");
+  //     setOptInRequired(selectedItem.required ?? true);
+  //   }
+  // }, [selectedItem]);
+
+  useEffect(() => {
+    if (selectedItem) {
+      setOptLabel(selectedItem.label || "");
+      setOptUrl(selectedItem.url || "");
+
+      const action = selectedItem["on-click-action"] || "complete";
+      setOPTAction(action);
+      setOptSelectedScreenName(selectedItem.screen);
+
+      // console.log("selectedItem.screen", selectedItem.screen);
+      setOptInRequired(selectedItem.required ?? true);
+    }
+  }, [selectedItem]);
+
+  const allscreenName = useSelector((state) => state.flows.screenName) || {};
+  // console.log("allflowItems:", allscreenName);
+
+  const optScreenNameOptions = Object.values(allscreenName).map(
+    (screen, index) => ({
+      label: screen.screenName || `Screen ${index + 1}`,
+      value: screen.screenName || `Screen ${index + 1}`,
+    })
+  );
+  // console.log("optScreenNameOptions", optScreenNameOptions);
+
+  // useEffect(() => {
+  //   if (optAction !== "navigate") {
+  //     setOptSelectedScreenName("");
+  //   }
+  // }, [optAction]);
+
   const handleOPTSave = () => {
+    if (!optLabel) {
+      toast.error("Label is reuired");
+      return;
+    }
     const payload = {
       label: optLabel,
-      required: true,
+      required: optInRequired,
       "on-click-action": optAction,
+      ...(optAction === "open_url" && { url: optUrl }),
+      ...(optAction === "navigate" && { screen: optSelectedScreenName }),
     };
 
     const updatedData = {
@@ -448,8 +450,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-
-    console.log(payload);
   };
 
   // image
@@ -458,30 +458,40 @@ const EditPanel = ({
   const [scaleType, setSCaleType] = useState("contain");
   const [aspectRatio, setAspectRatio] = useState(1);
   const [imgAltText, setImgAltText] = useState("");
-  const [imageSrc, setImageSrc] = useState(null);
-  const [imageFile, setImageFile] = useState([]);
+  const [imageSrc, setImageSrc] = useState(null); // will hold base64 only
+  const [imageFile, setImageFile] = useState(null); // null or File object
+  const imageSrcFile =
+    imageFile && typeof imageFile === "string"
+      ? `data:image/png;base64,${imageFile}`
+      : "";
+
+  const imageSrcUrl =
+    imageFile && typeof imageFile === "object"
+      ? URL.createObjectURL(imageFile)
+      : "";
+
+  const finalSrc = imageSrcFile || imageSrcUrl;
+
+  const imageInputRef = useRef(null);
 
   useEffect(() => {
     if (selectedItem) {
-      setImageFile(selectedItem.image || "");
+      setImageFile(selectedItem.src); // No File object to preload
+
       setImgAltText(selectedItem["alt-text"] || "");
       setAspectRatio(
         typeof selectedItem["aspect-ratio"] === "number"
           ? selectedItem["aspect-ratio"]
           : 1
       );
-      setSCaleType(selectedItem["scale-type"] || "");
-      // setWidth(selectedItem.width || "")
-      // setHeigh(selectedItem.height || "")
+      setSCaleType(selectedItem["scale-type"] || "contain");
+      setImageSrc(selectedItem.src || null);
     }
   }, [selectedItem]);
-
-  const imageInputRef = useRef(null);
 
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-
       reader.readAsDataURL(file);
       reader.onload = () => {
         const base64String = reader.result.split(",")[1];
@@ -491,76 +501,73 @@ const EditPanel = ({
     });
   }
 
-  const handlePhotoUpload = async () => {
-    if (!imageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    // if (!imageFile?.image) {
-    //   toast.error(
-    //     "Image already uploaded. Delete it before uploading a new one."
-    //   );
-    //   return;
-    // }
-    const src = await getBase64(imageFile);
-    toast.success("Image Uploaded Successfully");
-    console.log(src);
-    setImageSrc(src);
-  };
-
-  const handleImageDelete = async () => {
-    if (!imageFile) {
-      toast.error("File not exist");
-      return;
-    }
-    try {
-      setImageSrc(null);
-      setImageFile(null);
-      toast.success("File Delete Succesfully");
-
-      if (imageInputRef.current) {
-        imageInputRef.current.value = "";
-      }
-      console.log("Image DLT");
-    } catch (error) {
-      toast.error("Failed To delete file");
-    }
-  };
-
-  const handleImageChange = (e) => {
-    console.log(e);
+  const handleImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
+      toast.error("Only JPEG and PNG images are supported.");
+      e.target.value = "";
+      return;
+    }
+
+    if (file.size > 300 * 1024) {
+      toast.error("Recommended image size is up to 300KB.");
+      e.target.value = "";
+      return;
+    }
+
+    if (imageFile) {
+      toast.error("Only 1 image allowed per screen.");
+      e.target.value = "";
       return;
     }
 
     setImageFile(file);
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      setImageSrc(reader.result);
-    };
-    reader.readAsDataURL(file);
+    try {
+      const base64String = await getBase64(file);
+      setImageSrc(base64String); // store base64 only
+      setDraft((prev) => ({
+        ...prev,
+        image: base64String,
+      }));
+      toast.success("Image loaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
+    }
   };
 
-  // const base64HeaderRemoved = imageSrc.split(",")[1];
-  // const mimeType = imageSrc.match(/^data:(image\/[a-zA-Z]+);base64/)[1];
-
-  const handleImageSave = (e) => {
-    if (!imageFile) {
-      toast.error("Image Required");
+  const handleImageDelete = () => {
+    if (!imageFile && !imageSrc) {
+      toast.error("No image to delete");
       return;
     }
 
-    const selectedPhoto = "";
+    setImageSrc(null);
+    setImageFile(null);
+    if (imageInputRef.current) {
+      imageInputRef.current.value = "";
+    }
+    toast.success("File deleted successfully");
+  };
+
+  const handleImageSave = () => {
+    if (!imageFile && !imageSrc) {
+      toast.error("Image required");
+      return;
+    }
+
+    if (!imageSrc) {
+      toast.error("No image source available");
+      return;
+    }
+
     const payload = {
-      src: imageSrc.trim(),
-      // width: width,
-      // height: height,
+      src: imageSrc.trim(), // base64 string
       "scale-type": scaleType,
       "aspect-ratio": aspectRatio,
       "alt-text": imgAltText,
@@ -571,9 +578,14 @@ const EditPanel = ({
       ...payload,
     };
 
+    const totalPayloadSizeKB = JSON.stringify(updatedData).length / 1024;
+    if (totalPayloadSizeKB > 1024) {
+      toast.error("Total payload size exceeds 1 MB.");
+      return;
+    }
+
     onSave(updatedData);
     onClose();
-    console.log(payload);
   };
 
   // IMAGECarousel
@@ -583,18 +595,17 @@ const EditPanel = ({
     { src: "", file: null },
   ]);
 
-  const [imageCarouselScaleType, setImageCarouselScaleType] =
-    useState("contain");
-  const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
-    useState("4:3");
+  const [imageCarouselScaleType, setImageCarouselScaleType] = useState("");
+  // const [imageCarouselAspectRatio, setImageCarouselAspectRatio] =
+  //   useState("4:3");
   const [imageCarouselAltText, setImageCarouselAltText] = useState("");
   const imageCarouselInputRefs = [useRef(null), useRef(null), useRef(null)];
 
   useEffect(() => {
     if (selectedItem) {
-      setImageCarouselAltText(selectedItem["alt-text"] || "");
-      setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
-      setImageCarouselScaleType(selectedItem["scale-type"] || "contain");
+      setImageCarouselAltText(selectedItem?.["image-1"]?.["alt-text"] || "");
+      // setImageCarouselAspectRatio(selectedItem["aspect-ratio"] || "4:3");
+      setImageCarouselScaleType(selectedItem["scale-type"] || "");
 
       if (Array.isArray(selectedItem.images)) {
         const mappedImages = selectedItem.images.map((img) => ({
@@ -608,15 +619,14 @@ const EditPanel = ({
 
   const imageCarouselInputRef = useRef(null);
 
-
-
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
       reader.readAsDataURL(file);
-      reader.onload = () => {
+      reader.onloadend = () => {
         const base64String = reader.result.split(",")[1];
+
         resolve(base64String);
       };
       reader.onerror = (error) => reject(error);
@@ -641,9 +651,10 @@ const EditPanel = ({
     }
 
     const reader = new FileReader();
-    reader.onload = () => {
+    reader.onloadend = () => {
+      const base64 = reader.result.split(",")[1];
       const updated = [...imageCarouselImages];
-      updated[index] = { file, src: reader.result };
+      updated[index] = { src: base64, file };
       setImageCarouselImages(updated);
       toast.success(`Image ${index + 1} uploaded successfully`);
     };
@@ -651,14 +662,13 @@ const EditPanel = ({
   };
 
   const handleImageUpload = async () => {
-    if (!imageCarouselFile) {
+    if (!imageCarouselImages) {
       toast.error("Please select an image first before uploading");
       return;
     }
-    const src = await getBase64(imageCarouselFile);
+    const src = await getBase64(imageCarouselImages);
     toast.success("Image Uploaded Successfully");
-    console.log(src);
-    setImageCarouselSrc(src);
+    setImageCarouselImages(src);
   };
 
   const handleImageCarouselDelete = (index) => {
@@ -677,7 +687,6 @@ const EditPanel = ({
   };
 
   const handleImageCarouselSave = async () => {
-
     if (imageCarouselImages.some((img) => !img)) {
       toast.error("Please upload all three images");
       return;
@@ -685,17 +694,17 @@ const EditPanel = ({
 
     const payload = {
       "scale-type": imageCarouselScaleType,
-      // "aspect-ratio": imageCarouselAspectRatio,
+      //  "aspect-ratio": imageCarouselAspectRatio,
       "image-1": {
-        src: imageCarouselImages[0]?.src || "",
+        src: imageCarouselImages[0].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-2": {
-        src: imageCarouselImages[1]?.src || "",
+        src: imageCarouselImages[1].src || "",
         "alt-text": imageCarouselAltText || "",
       },
       "image-3": {
-        src: imageCarouselImages[2]?.src || "",
+        src: imageCarouselImages[2].src || "",
         "alt-text": imageCarouselAltText || "",
       },
     };
@@ -717,10 +726,7 @@ const EditPanel = ({
   const [elseComponents, setElseComponents] = useState();
   const [selectedElseComponent, setSelectedElseComponent] = useState();
   const [selectedCondition, setSelectedCondition] = useState();
-  console.log("value", value);
-  console.log("selectedThenComponent", selectedThenComponent);
-  console.log("selectedElseComponent", selectedElseComponent);
-  console.log("condition", condition)
+  const [componentTree, setComponentTree] = useState({});
 
   const handleIfElseSave = () => {
     if (!selectedCondition) {
@@ -752,7 +758,24 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("payload", payload);
+  };
+
+  const handleUpdateTree = (path, data) => {
+    setComponentTree((prev) => {
+      const updated = { ...prev };
+      let node = updated;
+
+      path.forEach((key, index) => {
+        if (!node[key]) node[key] = {};
+        if (index === path.length - 1) {
+          node[key] = data;
+        } else {
+          node = node[key];
+        }
+      });
+
+      return { ...updated };
+    });
   };
 
   // date
@@ -765,8 +788,13 @@ const EditPanel = ({
   useEffect(() => {
     if (selectedItem) {
       setDateLabel(selectedItem.label || "");
-      setMinDate(selectedItem["min-date"] || "");
-      setMaxDate(selectedItem["max-date"] || "");
+      setDatePlaceholder(selectedItem["helper-text"]);
+      setMinDate(
+        selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null
+      );
+      setMaxDate(
+        selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null
+      );
       setUnavailableDate(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"]
@@ -801,22 +829,13 @@ const EditPanel = ({
       (!min.isValid() || d.isSameOrAfter(min, "day")) &&
       (!max.isValid() || d.isSameOrBefore(max, "day"));
 
-    if (!isValid) {
-      toast.error("Unavailable date must be between Min and Max dates");
-      return;
-    }
-
     if (
       formatted &&
-      !unavailableDates.some((d) => formatDateToString(d) === formatted)
+      !unavailableDate.some((d) => formatDateToString(d) === formatted)
     ) {
-      setUnavailableDates((prev) => [...prev, date]);
+      setUnavailableDate((prev) => [...prev, date]);
     }
   };
-
-  // useEffect(() => {
-  //   console.log("unavailableDate state:", unavailableDate);
-  // }, [unavailableDate]);
 
   // Handle removing a selected date
   const handleRemoveUnavailableDate = (indexToRemove) => {
@@ -834,7 +853,11 @@ const EditPanel = ({
     const minDates = moment(minDate);
     const maxDates = moment(maxDate);
 
-    if (minDates.isValid() && maxDates.isValid() && maxDates.isBefore(minDates)) {
+    if (
+      minDates.isValid() &&
+      maxDates.isValid() &&
+      maxDates.isBefore(minDates)
+    ) {
       toast.error("Max date cannot be earlier than Min date");
       return;
     }
@@ -863,13 +886,12 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
   };
-
 
   // Calendar
   const [dateCalendarLable, setDateCalendarLabel] = useState("");
   const [minCalendarDate, setMinCalendarDate] = useState("");
+
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
   const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
@@ -881,12 +903,30 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setDateCalendarLabel(selectedItem.label || "");
-      setMinCalendarDate(selectedItem["min-date"] || "");
-      setMaxCalendarDate(selectedItem["max-date"] || "");
-      setUnavailableCalendarDates(selectedItem["unavailable-dates"] || []);
-      setDateCalendarPlaceholder(selectedItem["helper-text"] || "");
+      setDateCalendarLabel(selectedItem.label?.["start-date"] || "");
+      // setEndCalendarLabel(selcetedItem.label["end-date"] || "")
+      setCalendarMode(selectedItem.mode);
+      setEndCalendarLabel(selectedItem.label?.["end-date"]);
+      setEndCalendarHelperText(selectedItem["helper-text"]?.["end-date"]);
+      setMinCalendarDate(
+        selectedItem["min-date"] ? new Date(selectedItem["min-date"]) : null
+      );
+      setMaxCalendarDate(
+        selectedItem["max-date"] ? new Date(selectedItem["max-date"]) : null
+      );
+      setUnavailableCalendarDates(
+        Array.isArray(selectedItem["unavailable-dates"])
+          ? selectedItem["unavailable-dates"].map(
+            (dateStr) => new Date(dateStr)
+          )
+          : []
+      );
+
+      setDateCalendarPlaceholder(
+        selectedItem["helper-text"]?.["start-date"] || ""
+      );
       setStartCalendarRequired(selectedItem.required || "");
+      setEndCalendarRequired(selectedItem.required?.["end-date"]);
     }
   }, [selectedItem]);
 
@@ -957,11 +997,6 @@ const EditPanel = ({
     const minDate = moment(minCalendarDate);
     const maxDate = moment(maxCalendarDate);
 
-    if (minDate.isValid() && maxDate.isValid() && maxDate.isBefore(minDate)) {
-      toast.error("Max date cannot be earlier than Min date");
-      return;
-    }
-
     // Filter unavailable dates within range
     const validUnavailableDates = unavailableCalendarDates.filter((date) => {
       const d = moment(date);
@@ -1013,7 +1048,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log(payload);
   };
 
   // document
@@ -1091,7 +1125,6 @@ const EditPanel = ({
       // uploadedFile: file.name,
     };
 
-    console.log("Saving:", payload);
     toast.success("Document saved successfully!");
 
     const updatedData = {
@@ -1101,7 +1134,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final Document data:", updatedData);
   };
 
   // media
@@ -1142,7 +1174,6 @@ const EditPanel = ({
       "max-uploaded-photos": maxPhotoUpload,
     };
 
-    console.log("Saving:", payload);
     toast.success("Media saved successfully!");
 
     const updatedData = {
@@ -1152,7 +1183,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final Media data:", updatedData);
   };
 
   // footertype
@@ -1161,17 +1191,32 @@ const EditPanel = ({
   const [rightCaption, setRightCaption] = useState("");
   const [centerCaption, setCenterCaption] = useState("");
   const [nextAction, setNextAction] = useState("complete");
+  const [caption, setCaption] = useState("");
+
+  const captionRef = useRef(null);
 
   useEffect(() => {
-    if (selectedItem?.footer) {
-      const footerData = selectedItem.footer["footer_1"];
+    if (selectedItem) {
+      setFooterButtonLabel(selectedItem.label || "");
+      setLeftCaption(selectedItem["left-caption"] || "");
+      setRightCaption(selectedItem["right-caption"] || "");
+      setCenterCaption(selectedItem["center-caption"] || "");
+      setNextAction(
+        (selectedItem["on-click-action"] &&
+          selectedItem["on-click-action"].name) ||
+        "complete"
+      );
 
-      if (footerData) {
-        setFooterButtonLabel(footerData.label || "");
-        setLeftCaption(footerData.left_caption || "");
-        setRightCaption(footerData.right_caption || "");
-        setCenterCaption(footerData.center_caption || "");
-        setNextAction(footerData.on_click_action || "complete");
+      // Derive caption type from data
+      if (selectedItem["center-caption"]) {
+        setCaption("center");
+      } else if (
+        selectedItem["left-caption"] ||
+        selectedItem["right-caption"]
+      ) {
+        setCaption("left-right");
+      } else {
+        setCaption("");
       }
     }
   }, [selectedItem]);
@@ -1182,23 +1227,32 @@ const EditPanel = ({
       return;
     }
 
+    if (centerCaption && (leftCaption || rightCaption)) {
+      toast.error(
+        "Cannot set center caption together with left/right captions"
+      );
+      return;
+    }
+
+    if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
+      toast.error("Both left and right captions must be provided together");
+      return;
+    }
+
     const payload = {
-      footer: {},
-    };
-
-    const id = `footer_1`; // Unique ID for the footer (adjust if needed)
-
-    payload.footer[id] = {
       label: footerButtonLabel,
-      left_caption: leftCaption || "",
-      right_caption: rightCaption || "",
-      center_caption: centerCaption || "",
-      on_click_action: nextAction || "",
+      "on-click-action": nextAction || "",
     };
 
-    console.log("Saving footer payload:", payload);
+    if (centerCaption) {
+      payload["center-caption"] = centerCaption;
+    }
 
-    // Assuming we want to merge it with selectedItem like in handleInputSave
+    if (leftCaption && rightCaption) {
+      payload["left-caption"] = leftCaption;
+      payload["right-caption"] = rightCaption;
+    }
+
     const updatedData = {
       ...selectedItem,
       ...payload,
@@ -1206,7 +1260,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final footer data:", updatedData);
   };
 
   // footertype
@@ -1215,6 +1268,7 @@ const EditPanel = ({
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
   const [radioBtnLabel, setRadioBtnLabel] = useState("");
+
   const [radioButtonOptions, setRadioButtonOptions] = useState([]);
   const [radiobtnEditIdx, setRadiobtnEditIdx] = useState(null);
   const [radioImageFile, setRadioImageFile] = useState(null);
@@ -1231,20 +1285,96 @@ const EditPanel = ({
     altText: "",
   });
 
+  // useEffect(() => {
+  //   if (selectedItem?.type === "radioButton") {
+  //     setRadioBtnLabel(selectedItem.label || "");
+  //     setDraft(
+  //       (selectedItem =
+  //         {
+  //           title: selectedItem.title || "",
+  //           description: selectedItem.description || "",
+  //           metadata: selectedItem.label || "",
+  //           image: selectedItem.metadata || "",
+  //           altText: selectedItem.altText || "",
+  //         } || "")
+  //     );
+  //     setRadioRequired(selectedItem.required ?? false);
+  //   }
+  // }, [selectedItem]);
+
   useEffect(() => {
     if (selectedItem?.type === "radioButton") {
+      // Set group label
       setRadioBtnLabel(selectedItem.label || "");
-      setDraft(
-        (selectedItem =
-          {
-            title: "",
-            description: "",
-            metadata: "",
-            image: "",
-            altText: "",
-          } || "")
-      );
+
+      // Set required field
       setRadioRequired(selectedItem.required ?? false);
+
+      // Set options
+      const radioOptions = selectedItem["data-source"] || [];
+      setRadioButtonOptions(radioOptions);
+
+      // Prefill draft with first option (optional)
+      if (radioOptions.length > 0) {
+        const first = radioOptions[0];
+        setDraft({
+          title: first.title || "",
+          description: first.description || "",
+          metadata: first.metadata || "",
+          image: first.image || "",
+          altText: first.altText || "",
+        });
+
+        // const base64Image = first.image;
+        // const objectURL = base64ToObjectURL(base64Image, "image/png");
+
+        setRadiobtnEditIdx(0); // if you want to open first in edit mode, otherwise remove this line
+      } else {
+        setDraft({
+          title: "",
+          description: "",
+          metadata: "",
+          image: "",
+          altText: "",
+        });
+        setRadiobtnEditIdx(null);
+      }
+    }
+  }, [selectedItem]);
+
+  // console.log("selectedItem", selectedItem);
+
+  useEffect(() => {
+    if (selectedItem?.type === "checkBox") {
+      // Set group label
+      setMainLabelCheckbox(selectedItem.label || "");
+
+      // Set required field
+      setCheckboxRequired(selectedItem.required ?? false);
+
+      // Set options
+      const checkboxOptions = selectedItem["data-source"] || [];
+      setCheckBoxes(checkboxOptions);
+
+      // Prefill draft with first option (optional)
+      if (checkBoxes.length > 0) {
+        const first = checkboxOptions[0];
+        setDraftCheckbox({
+          title: first.title || "",
+          description: first.description || "",
+          metadata: first.metadata || "",
+          image: first.image || "",
+        });
+        setRadiobtnEditIdx(0);
+      } else {
+        setDraftCheckbox({
+          title: "",
+          description: "",
+          metadata: "",
+          image: "",
+        });
+        setEditCheckBoxId(null);
+      }
     }
   }, [selectedItem]);
 
@@ -1254,22 +1384,39 @@ const EditPanel = ({
 
   const radioImageInputRef = useRef(null);
 
-  const handleRadioImageChange = (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  // console.log("radioImageInputRef", radioImageInputRef);
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
-      toast.error("Please select a .png or .jpeg file");
+  const handleRadioImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected");
       return;
     }
 
-    setRadioImageFile(file);
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
+      toast.error("Please select a .png or .jpeg file");
+      e.target.value = "";
+      return;
+    }
+
+    // if (file.size > MAX_IMAGE_SIZE) {
+    //   toast.error("Image must be under 100 KB");
+    //   e.target.value = "";
+    //   return;
+    // }
 
     const reader = new FileReader();
-    reader.onload = () => {
-      setRadioImageSrc(reader.result);
-    };
+    reader.onload = () => setRadioImageSrc(reader.result);
     reader.readAsDataURL(file);
+    setRadioImageFile(file);
+
+    try {
+      const base64String = await getBase64(file);
+      setDraft((prev) => ({ ...prev, image: base64String }));
+      toast.success("Image loaded and ready!");
+    } catch {
+      toast.error("Failed to encode image");
+    }
   };
 
   const handleRadioBtnEdit = (idx) => {
@@ -1324,6 +1471,11 @@ const EditPanel = ({
   };
 
   const handleRadioBtnAddNew = () => {
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
+
     const newId = (radioButtonOptions.length + 1).toString();
     setRadioButtonOptions((prev) => [
       ...prev,
@@ -1335,33 +1487,6 @@ const EditPanel = ({
         image: "",
       },
     ]);
-  };
-
-  const handleRadioUploadFile = async () => {
-    if (!radioImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    if (draft?.image) {
-      toast.error("Image already Uploaded");
-      return;
-    }
-
-    try {
-      const base64String = await getBase64(radioImageFile);
-      console.log("base64String", base64String);
-
-      // Instead of setting global state, update the draft
-      setDraft((prev) => ({
-        ...prev,
-        image: base64String,
-      }));
-
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
-    }
   };
 
   const handleDeleteRadioFile = async () => {
@@ -1448,7 +1573,7 @@ const EditPanel = ({
       metadata: opt.metadata?.trim() || "",
       image: opt.image || "",
     }));
-    console.log("Filtered and processed radio button options:", payloadOptions);
+    // console.log("Filtered and processed radio button options:", payloadOptions);
 
     // 4) Final payload and merge
     const payload = {
@@ -1461,7 +1586,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.radioButton).length
       : 0;
 
-    const id = `radioButton_${existingCount + 1}`;
+    // const id = `radioButton_${existingCount + 1}`;
+    const id = existingCount[0] || "radioButton_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1475,11 +1601,6 @@ const EditPanel = ({
     // 5) Save and close
     onSave(updatedData);
     onClose();
-
-    console.log(
-      "Radio button updated data which send to generate payload",
-      updatedData
-    );
   };
 
   //checkbox
@@ -1530,56 +1651,54 @@ const EditPanel = ({
 
   const checkboxImageInputRef = useRef(null);
 
-  const Max_Image_Size = 100 * 1024; // 100 KB
+  // const Max_Image_Size = 100 * 1024; // 100 KB
 
-  const handleCheckboxImageChange = (e) => {
+  const handleCheckboxImageChange = async (e) => {
     const file = e.target.files?.[0];
-    if (!file) return;
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
 
     if (checkboxImageFile?.image) {
       toast.error("Image already uploaded");
+      e.target.value = ""; // reset input
       return;
     }
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
       toast.error("Please select a .png or .jpeg file");
+      e.target.value = "";
       return;
     }
 
-    // const src = await getBase64(file);
-    // setCheckboxImageFile(src);
+    // if (file.size > MAX_IMAGE_SIZE) {
+    //   toast.error("Image must be under 100 KB");
+    //   e.target.value = "";
+    //   return;
+    // }
 
-    setCheckboxImageFile(file);
+    setCheckboxImageFile(file); // save raw file object
 
     const reader = new FileReader();
     reader.onload = () => {
-      setCheckboxImageSrc(reader.result);
+      setCheckboxImageSrc(reader.result); // preview
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleCheckboxUploadFile = async () => {
-    if (!checkboxImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    if (draftCheckbox?.image) {
-      toast.error("Image already uploaded");
-      return;
-    }
 
     try {
-      const base64String = await getBase64(checkboxImageFile);
-      console.log("base64String", base64String);
-
+      const base64String = await getBase64(file);
+      setDraft((prev) => ({
+        ...prev,
+        checkboxImage: base64String, // if needed
+      }));
       setDraftCheckbox((prev) => ({
         ...prev,
-        image: base64String,
+        image: `${base64String}`, // ✅ this is what checkbox preview uses
       }));
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      toast.error("Failed to upload file.");
+      toast.success("Image loaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
     }
   };
 
@@ -1597,7 +1716,6 @@ const EditPanel = ({
       }
 
       toast.success("File Delete Succesfully");
-      console.log("Image DLT");
     } catch (error) {
       toast.error("Failed To delete file");
     }
@@ -1616,7 +1734,7 @@ const EditPanel = ({
 
   const handleCancelInlineCheckbox = () => {
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", description: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "", image: "" });
   };
 
   const handleSaveInlineCheckbox = () => {
@@ -1624,11 +1742,11 @@ const EditPanel = ({
     updated[checkboxEditIdx] = {
       ...updated[checkboxEditIdx],
       ...draftCheckbox,
-      image: draftCheckbox.image || updated[checkboxEditIdx].image || "",
+      image: draftCheckbox.image || updated[checkboxEditIdx].image || "", // ✅ make sure image is carried
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
-    setDraftCheckbox({ title: "", description: "", metadata: "" });
+    setDraftCheckbox({ title: "", description: "", metadata: "", image: "" });
   };
 
   const handleRemoveCheckbox = (idx) => {
@@ -1638,6 +1756,11 @@ const EditPanel = ({
 
   const handleCheckboxAddNew = () => {
     const newId = (checkBoxes.length + 1).toString();
+
+    if (checkBoxes.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setCheckBoxes((prev) => [
       ...prev,
       {
@@ -1684,7 +1807,10 @@ const EditPanel = ({
       ? Object.keys(selectedItem.checkboxGroups).length
       : 0;
 
-    const id = `checkbox_${existingCount + 1}`;
+    // const id = `checkbox_${existingCount + 1}`;
+
+    const id =
+      Object.keys(selectedItem?.checkboxGroups || {})[0] || "checkbox_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1697,8 +1823,6 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-
-    console.log("Final checkboxes data:", updatedData);
   };
   // anshu
   //checkbox
@@ -1717,67 +1841,125 @@ const EditPanel = ({
 
   const dropImageInputRef = useRef(null);
 
+  // useEffect(() => {
+  //   if (selectedItem) {
+  //     console.log("selectedItem", selectedItem)
+  //     setMainLabelDropdown(selectedItem.label || "");
+  //     setDraftTitle(selectedItem.title || "");
+  //     setDraftDescription(selectedItem.description || "");
+  //     setDraftMetaData(selectedItem.metadata || "");
+  //     setDropImageFile(selectedItem.image || "");
+  //     setDropdownRequired(selectedItem.required ?? false);
+  //   }
+  // }, [selectedItem]);
+
   useEffect(() => {
-    if (selectedItem) {
+    if (selectedItem?.type === "dropDown") {
+      // Set main label and required flag
       setMainLabelDropdown(selectedItem.label || "");
-      setDraftTitle(selectedItem.title || "");
-      setDraftDescription(selectedItem.description || "");
-      setDraftMetaData(selectedItem.metadata || "");
-      setDropImageFile(selectedItem.image || "");
       setDropdownRequired(selectedItem.required ?? false);
+
+      // Get dropdown options
+      const dropdownOptions = selectedItem["data-source"] || [];
+      setOptions(dropdownOptions);
+
+      // Prefill draft with first option (optional)
+      if (dropdownOptions.length > 0) {
+        const first = dropdownOptions[0];
+        setEditingIdx(0);
+        setDraftTitle(first.title || "");
+        setDraftDescription(first.description || "");
+        setDraftMetaData(first.metadata || "");
+        setDropImageFile(first.image || "");
+      } else {
+        setEditingIdx(null);
+        setDraftTitle("");
+        setDraftDescription("");
+        setDraftMetaData("");
+        setDropImageFile("");
+      }
     }
   }, [selectedItem]);
+
+  const currentOption = options[editingIdx] || {};
 
   const handleDropdownRequiredChange = () => {
     setDropdownRequired((prev) => !prev);
   };
 
-  const handleDropdownImageChange = (event) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
+  //  const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
-    if (!file.type.match(/image\/(png|jpeg)/)) {
+  // const handleDropdownImageChange = async (event) => {
+  //   const file = event.target.files?.[0];
+  //   if (!file) {
+  //     toast.error("No file selected");
+  //     return;
+  //   }
+
+  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
+  //     toast.error("Please select a .png or .jpeg file");
+  //     event.target.value = "";
+  //     return;
+  //   }
+
+  //   // if (file.size > MAX_IMAGE_SIZE) {
+  //   //   toast.error("Image must be under 100 KB");
+  //   //   event.target.value = "";
+  //   //   return;
+  //   // }
+
+  //   setDropImageFile(file);
+  //   const reader = new FileReader();
+  //   reader.onload = () => {
+  //     setDropImageSrc(reader.result);
+  //   };
+  //   reader.readAsDataURL(file);
+
+  //   try {
+  //     const base64String = await getBase64(file);
+  //     setDraft((prev) => ({
+  //       ...prev,
+  //       // dropdownImage: base64String,
+  //     }));
+  //     toast.success("Image uploaded successfully!");
+  //   } catch {
+  //     toast.error("Failed to convert image to base64");
+  //   }
+  // };
+
+  const handleDropdownImageChange = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) {
+      toast.error("No file selected");
+      return;
+    }
+
+    if (!file.type.match(/^image\/(png|jpeg)$/)) {
       toast.error("Please select a .png or .jpeg file");
+      event.target.value = "";
       return;
     }
 
     setDropImageFile(file);
 
     const reader = new FileReader();
-
     reader.onload = () => {
-      setDropImageSrc(reader.result);
+      setDropImageSrc(reader.result); // still use full base64 for preview
     };
     reader.readAsDataURL(file);
-  };
-
-  const handleDropdownUploadFile = async () => {
-    const currentOption = options[editingIdx];
-
-    if (!dropImageFile) {
-      toast.error("Please select an image first before uploading");
-      return;
-    }
-
-    if (currentOption?.image) {
-      toast.error("Image already uploaded.");
-      return;
-    }
 
     try {
-      // const response = await uploadImageFile(dropImageFile, 1);
-      const base64String = await getBase64(dropImageFile);
-      console.log("base64String", base64String);
-      setOptions((prev) =>
-        prev.map((o, i) =>
-          i === editingIdx ? { ...o, image: base64String } : o
-        )
-      );
-      // setDropdownUploadedId(base64String);
-      toast.success("File uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("Failed to upload file.");
+      const base64String = await getBase64(file);
+      setDropImageSrc(`${base64String}`);
+
+      setDraft((prev) => ({
+        ...prev,
+        // image: base64String, // ✅ No prefix stored in payload
+      }));
+
+      toast.success("Image uploaded successfully!");
+    } catch {
+      toast.error("Failed to convert image to base64");
     }
   };
 
@@ -1819,6 +2001,7 @@ const EditPanel = ({
             title: draftTitle.trim(),
             description: draftDescription.trim(),
             metadata: draftMetadata.trim(),
+            image: dropImageSrc || o.image || "",
           }
           : o
       )
@@ -1828,6 +2011,7 @@ const EditPanel = ({
     setDraftTitle("");
     setDraftDescription("");
     setDraftMetaData("");
+    setDropImageSrc(null);
   };
 
   const handleCancelInline = () => {
@@ -1849,6 +2033,15 @@ const EditPanel = ({
   };
 
   const handleAddNew = () => {
+    const hasImage = options.some((opt) => opt.image && opt.image !== "");
+
+    const maxOptions = hasImage ? 100 : 200;
+
+    if (options.length >= maxOptions) {
+      toast.error(`Maximum ${maxOptions} dropdown options allowed.`);
+      return;
+    }
+
     setOptions((prev) => [
       ...prev,
       {
@@ -1856,8 +2049,10 @@ const EditPanel = ({
         title: `Option ${prev.length + 1}`,
         description: "",
         metadata: "",
+        image: dropImageSrc || "",
       },
     ]);
+    setDropImageSrc(null);
   };
 
   const handleSaveDropdown = () => {
@@ -1888,7 +2083,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.dropdown).length
       : 0;
 
-    const id = `dropdown_${existingCount + 1}`;
+    // const id = `dropdown_${existingCount + 1}`;
+    const id = existingCount[0] || "dropdown_1";
 
     const updatedData = {
       ...selectedItem,
@@ -1900,12 +2096,61 @@ const EditPanel = ({
     };
 
     onSave(updatedData);
-
-    console.log(
-      "dropdown updated data which send to generate payload",
-      updatedData
-    );
   };
+
+  // const handleSaveDropdown = async () => {
+  //   const filteredOptions = options.filter((o) => o.title.trim());
+
+  //   if (filteredOptions.length < 2) {
+  //     toast.error("At least two Dropdown options are required!");
+  //     return;
+  //   }
+
+  //   const payloadOptions = await Promise.all(
+  //     filteredOptions.map(async (opt, idx) => {
+  //       let imagePath = opt.image; // default is already string (url)
+
+  //       // If image is a File, upload it
+  //       if (opt.image instanceof File) {
+  //         const uploadedUrl = await uploadImageToServer(opt.image);
+  //         imagePath = uploadedUrl || "";
+  //       }
+
+  //       return {
+  //         id: idx + 1,
+  //         title: opt.title.trim(),
+  //         description: opt.description?.trim() || "",
+  //         metadata: opt.metadata?.trim() || "",
+  //         image: imagePath,
+  //       };
+  //     })
+  //   );
+
+  //   const payload = {
+  //     label: mainLabelDropdown.trim(),
+  //     required: dropdownRequired,
+  //     "data-source": payloadOptions,
+  //   };
+
+  //   const existingCount = selectedItem?.dropdown
+  //     ? Object.keys(selectedItem.dropdown).length
+  //     : 0;
+
+  //   const id = `dropdown_${existingCount + 1}`;
+
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //     dropdown: {
+  //       ...(selectedItem?.dropdown || {}),
+  //       [id]: payload,
+  //     },
+  //   };
+
+  //   onSave(updatedData);
+  //   onClose();
+  // };
+
   // dropdown
   // akhil
 
@@ -1923,7 +2168,10 @@ const EditPanel = ({
       setChipSelectorLabel(selectedItem.label || "");
       setChipTitle(selectedItem.title || "");
       setChipDescription(selectedItem.description || "");
-      setValueSelection(selectedItem["min-selected-items"] || "");
+      setValueSelection(selectedItem["max-selected-items"] || ""); // correct key
+
+      // If you want to prefill the options (data-source)
+      setChipSelectorOptions(selectedItem["data-source"] || []);
     }
   }, [selectedItem]);
 
@@ -1969,6 +2217,10 @@ const EditPanel = ({
   };
 
   const handleAddNewChipSelector = () => {
+    if (chipSelectorOptions.length >= 20) {
+      toast.error("You’ve already added 20 options — that’s the limit!");
+      return;
+    }
     setChipSelectorOptions((prev) => [
       ...prev,
       {
@@ -2002,7 +2254,8 @@ const EditPanel = ({
       ? Object.keys(selectedItem.chipSelector).length
       : 0;
 
-    const id = `chipSelector_${existingCount + 1}`;
+    // const id = `chipSelector_${existingCount + 1}`;
+    const id = existingCount[0] || `chipSelector_${existingCount + 1}`;
 
     const updatedData = {
       ...selectedItem,
@@ -2027,6 +2280,28 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+  const textRef = useRef(null);
+
+  const handleEmojiSelect = (setState, emoji, maxLength) => {
+    if (!textRef.current) return;
+
+    const text = textRef.current;
+    const start = text.selectionStart;
+    const end = text.selectionEnd;
+    const current = text.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        text.focus();
+        text.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
+
   const headingSave = () => {
     if (!headingInput) {
       toast.error("Heading Required");
@@ -2048,6 +2323,7 @@ const EditPanel = ({
 
   // sub-heading
   const [subheadingInput, setSubheadingInput] = useState("");
+
   useEffect(() => {
     if (selectedItem) {
       setSubheadingInput(selectedItem.text || "");
@@ -2055,6 +2331,28 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+
+  const subheadingRef = useRef(null);
+
+  const handleSubheadingEmojiSelect = (setState, emoji, maxLength) => {
+    if (!subheadingRef.current) return;
+
+    const subheading = subheadingRef.current;
+    const start = subheading.selectionStart;
+    const end = subheading.selectionEnd;
+    const current = subheading.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        subheading.focus();
+        subheading.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
 
   const handleSubheadingSave = () => {
     if (!subheadingInput) {
@@ -2086,6 +2384,28 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
+  const textBodyRef = useRef(null);
+
+  const handleTextBodyEmojiSelect = (setState, emoji, maxLength) => {
+    if (!textBodyRef.current) return;
+
+    const textBody = textBodyRef.current;
+    const start = textBody.selectionStart;
+    const end = textBody.selectionEnd;
+    const current = textBody.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textBody.focus();
+        textBody.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
+
   const handleTextbodySave = () => {
     if (!textbodyInput.trim()) {
       toast.error("Textbody Required");
@@ -2115,6 +2435,28 @@ const EditPanel = ({
       setSelectedOption(selectedItem.selectedOption || "");
     }
   }, [selectedItem]);
+
+  const textCaptionRef = useRef(null);
+
+  const handleTextCaptionSelectEmoji = (setState, emoji, maxLength) => {
+    if (!textCaptionRef.current) return;
+
+    const textCaption = textCaptionRef.current;
+    const start = textCaption.selectionStart;
+    const end = textCaption.selectionEnd;
+    const current = textCaption.value;
+
+    const newText = current.slice(0, start) + emoji + current.slice(end);
+
+    if (newText.length <= maxLength) {
+      setState(newText);
+      setTimeout(() => {
+        const newCaret = start + emoji.length;
+        textCaption.focus();
+        textCaption.setSelectionRange(newCaret, newCaret);
+      }, 0);
+    }
+  };
 
   const handleTextCaptionSave = () => {
     if (!textcaptionInput.trim()) {
@@ -2151,7 +2493,13 @@ const EditPanel = ({
       setInputPlaceholder(selectedItem["helper-text"] || "");
       setInputError(selectedItem["error-message"] || "");
       setInputRequired(selectedItem.required ?? false);
-      setInputName(selectedItem.name || "");
+
+      const option =
+        OptionsTypeOptions.find(
+          (opt) => opt.value === selectedItem["input-type"]
+        ) || null;
+      setSelectedOptionsType(option);
+
       setInputMin(
         typeof selectedItem["min-chars"] === "number"
           ? selectedItem["min-chars"]
@@ -2162,11 +2510,6 @@ const EditPanel = ({
           ? selectedItem["max-chars"]
           : ""
       );
-      setSelectedOptionsType(
-        OptionsTypeOptions.find(
-          (opt) => opt.value === selectedItem["input-type"]
-        ) || { value: "text", label: "Text" }
-      );
     }
   }, [selectedItem]);
 
@@ -2174,6 +2517,9 @@ const EditPanel = ({
     { value: "text", label: "Text" },
     { value: "number", label: "Number" },
     { value: "email", label: "Email" },
+    { value: "password", label: "Password" },
+    { value: "passcode", label: "Passcode" },
+    { value: "phone", label: "Phone" },
   ];
 
   const handleInputChange = (e) => {
@@ -2237,12 +2583,11 @@ const EditPanel = ({
       "helper-text": inputPlaceholder.trim(),
       required: inputRequired,
       name: inputName,
+      "input-type": selectedOptionsType?.value,
       "error-message": inputError,
       "min-chars": inputMin ? Number(inputMin) : undefined,
       "max-chars": inputMax ? Number(inputMax) : undefined,
     };
-
-    console.log("textinput payload", payload);
 
     const updatedData = {
       ...selectedItem,
@@ -2252,6 +2597,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+
+  // useEffect(() => {
+  //   console.log("123", tabs);
+  // }, [tabs]);
 
   // textArea
   const [textAreaLabel, setTextAreaLabel] = useState("");
@@ -2302,6 +2651,9 @@ const EditPanel = ({
     onClose();
   };
 
+  // // switch
+  // const [addCases, setAddCases] = useState("")
+
   const maxLengthMap = {
     heading: 80,
     subheading: 80,
@@ -2311,33 +2663,35 @@ const EditPanel = ({
 
   return (
     <Box>
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: 30 }}
-          transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
-          className="bg-white z-10 p-3 absolute right-3 w-80 top-18 border-2 rounded-xl shadow-sm border-gray-200"
-        >
-          {/* <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-          <Typography variant="h6">Edit Item</Typography>
-          <IconButton onClick={onClose}>
-            <CloseIcon fontSize="small" />
-            </IconButton>
-            </Box> */}
+      <AnimatePresence mode="wait">
+        <ClickAwayListener onClickAway={() => setSelectedItem(null)}>
+          <motion.div
+            ref={editPanelRef}
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 30 }}
+            transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
+            className="bg-gray-100 z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
+          >
+            <div className="flex items-center justify-between border-b-2">
+              <label className="text-sm font-semibold text-gray-700 tracking-wide">
+                Edit Item
+              </label>
+              <IconButton onClick={onClose}>
+                <CloseIcon fontSize="small" />
+              </IconButton>
+            </div>
 
-          <div className="flex items-center justify-between border-b-2">
-            <label className="text-sm font-semibold text-gray-700 tracking-wide">
-              Edit Item
-            </label>
-            <IconButton onClick={onClose}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </div>
-
-          {/* Input Fields for Text-Based Items */}
-          {/* {["heading", "subheading", "textbody", "textcaption"].includes(
+            {/* if-else condition */}
+            {selectedCondition && (
+              <h2 className="text-xl font-semibold mb-2 top-0">
+                {selectedCondition}
+              </h2>
+            )}
+            {/* if-else condition */}
+            {/* Input Fields for Text-Based Items */}
+            {/* {["heading", "subheading", "textbody", "textcaption"].includes(
           selectedItem?.type
         ) && (
           <div className="mb-2 font-semibold text-lg mt-3">
@@ -2367,17 +2721,10 @@ const EditPanel = ({
           </div>
         )} */}
 
-          {/* new */}
-          {(selectedItem?.type === "heading" ||
-            selectedThenComponent === "heading" ||
-            selectedElseComponent === "heading") && (
+            {/* new */}
+            {selectedItem?.type === "heading" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {selectedThenComponent === "heading"
-                  ? "Then Component"
-                  : selectedElseComponent === "heading"
-                    ? "Else Component" : ""
-                }
-                <InputField
+                {/* <InputField
                   label="Heading"
                   placeholder="Enter Text for  Heading"
                   variant="outlined"
@@ -2388,22 +2735,65 @@ const EditPanel = ({
                   type="text"
                   maxLength={80}
                   onChange={(e) => setHeadingInput(e.target.value)}
-                />
+                /> */}
+                <div className="relative">
+                  <UniversalTextArea
+                    label="Heading"
+                    placeholder="Enter Text for  Heading"
+                    variant="outlined"
+                    tooltipContent="Max 80 character allowed"
+                    tooltipPlacement="right"
+                    fullWidth
+                    value={headingInput}
+                    type="text"
+                    maxLength={80}
+                    onChange={(e) => setHeadingInput(e.target.value)}
+                    textareaClassName="font-semibold h-40"
+                    ref={textRef}
+                  />
+                  <p className="text-gray-600 text-xs">
+                    Chars: {headingInput.length}/80
+                  </p>
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleEmojiSelect(setHeadingInput, emoji, 80)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-center">
-                  {selectedItem?.type === "heading" ? (
-                    <UniversalButton label="Save" onClick={headingSave} />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton label="Save" onClick={headingSave} />
                 </div>
               </div>
             )}
 
-          {(selectedItem?.type === "subheading" ||
-            selectedThenComponent === "subHeading" ||
-            selectedElseComponent === "subHeading") && (
+            {/* {selectedItem?.type === "heading" && (
+            <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+              <InputField
+                label="Heading"
+                placeholder="Enter Text for Heading"
+                variant="outlined"
+                tooltipContent="Enter Text for Heading"
+                tooltipPlacement="right"
+                fullWidth
+                value={headingInput}
+                type="text"
+                maxLength={80}
+                onChange={(e) => setHeadingInput(e.target.value)}
+              />
+              <div className="flex justify-center">
+                <UniversalButton label="Save" onClick={headingSave} />
+              </div>
+            </div>
+          )} */}
+
+            {selectedItem?.type === "subheading" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+                {/* <InputField
                   label="Sub-Heading"
                   placeholder="Enter Text for Sub-Heading "
                   tooltipContent="Enter Text for  Sub-Heading"
@@ -2413,25 +2803,50 @@ const EditPanel = ({
                   value={subheadingInput}
                   onChange={(e) => setSubheadingInput(e.target.value)}
                   fullWidth
-                />
-                <div className="flex justify-center">
-                  {selectedItem?.type === "subheading" ? (
-                    <UniversalButton
-                      label="Save"
-                      onClick={handleSubheadingSave}
+                /> */}
+
+                <div className="relative">
+                  <UniversalTextArea
+                    label="Sub-Heading"
+                    placeholder="Enter Text for Sub-Heading "
+                    tooltipContent="Max 80 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={80}
+                    value={subheadingInput}
+                    onChange={(e) => setSubheadingInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={subheadingRef}
+                  />
+                  <p className="text-gray-600 text-xs">
+                    Chars: {subheadingInput.length}/80
+                  </p>
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleSubheadingEmojiSelect(
+                          setSubheadingInput,
+                          emoji,
+                          80
+                        )
+                      }
+                      position="right"
                     />
-                  ) : (
-                    ""
-                  )}
+                  </div>
+                </div>
+                <div className="flex justify-center">
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleSubheadingSave}
+                  />
                 </div>
               </div>
             )}
 
-          {(selectedItem?.type === "textbody" ||
-            selectedThenComponent === "textBody" ||
-            selectedElseComponent === "textBody") && (
+            {selectedItem?.type === "textbody" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+                {/* <InputField
                   label="TextBody"
                   placeholder="Enter Text for TextBody "
                   tooltipContent="Enter Text for  TextBody"
@@ -2441,44 +2856,96 @@ const EditPanel = ({
                   value={textbodyInput}
                   onChange={(e) => setTextbodyInput(e.target.value)}
                   fullWidth
-                />
+                /> */}
+
+                <div className="relative">
+                  <UniversalTextArea
+                    label="TextBody"
+                    placeholder="Enter Text for TextBody "
+                    tooltipContent="Max 4096 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={4096}
+                    value={textbodyInput}
+                    onChange={(e) => setTextbodyInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={textBodyRef}
+                  />
+                  <p className="text-gray-600 text-xs">
+                    Chars: {textbodyInput.length}/4096
+                  </p>
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleTextBodyEmojiSelect(setTextbodyInput, emoji, 4096)
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
+
                 <div className="flex justify-center">
-                  {selectedItem?.type === "textbody" ? (
-                    <UniversalButton label="Save" onClick={handleTextbodySave} />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton label="Save" onClick={handleTextbodySave} />
                 </div>
               </div>
             )}
 
-          {(selectedItem?.type === "textcaption" ||
-            selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
-              <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                <InputField
+            {selectedItem?.type === "textcaption" && (
+              <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
+                {/* <InputField
                   label="TextCaption"
                   placeholder="Enter Text for text caption"
                   tooltipContent="Enter Text for text caption"
                   tooltipPlacement="right"
                   type="text"
                   maxLength={409}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
+                  value={textcaptionInput}
+                  onChange={(e) => setTextcaptionInput(e.target.value)}
                   fullWidth
-                />
+                /> */}
+                <div className="relative">
+                  <UniversalTextArea
+                    label="TextCaption"
+                    placeholder="Enter Text for text caption"
+                    tooltipContent="Max 409 character allowed"
+                    tooltipPlacement="right"
+                    type="text"
+                    maxLength={409}
+                    value={textcaptionInput}
+                    onChange={(e) => setTextcaptionInput(e.target.value)}
+                    fullWidth
+                    textareaClassName="font-semibold h-40"
+                    ref={textCaptionRef}
+                  />
+                  <p className="text-gray-600 text-xs">
+                    Chars: {textcaptionInput.length}/409
+                  </p>
+
+                  <div className="absolute top-6 right-0 mt-2 mr-2 flex space-x-2 ">
+                    <CustomEmojiPicker
+                      onSelect={(emoji) =>
+                        handleTextCaptionSelectEmoji(
+                          setTextcaptionInput,
+                          emoji,
+                          409
+                        )
+                      }
+                      position="right"
+                    />
+                  </div>
+                </div>
                 <div className="flex justify-center">
-                  {selectedItem?.type === "textcaption" ? (
-                    <UniversalButton label="Save" onClick={handleTextbodySave} />
-                  ) : (
-                    ""
-                  )}
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleTextCaptionSave}
+                  />
                 </div>
               </div>
             )}
 
-          {(selectedItem?.type === "textInput" || selectedThenComponent === "textInput" ||
-            selectedElseComponent === "textInput") && (
+            {selectedItem?.type === "textInput" && (
               <div className="mb-2 text-lg space-y-2 mt-3">
                 <InputField
                   label="Input Label"
@@ -2490,7 +2957,6 @@ const EditPanel = ({
                   onChange={(e) => setInputLabel(e.target.value)}
                   maxLength={20}
                 />
-
                 <AnimatedDropdown
                   label="Select Input Type"
                   tooltipContent="Select input type (select text for default)"
@@ -2499,6 +2965,7 @@ const EditPanel = ({
                   value={selectedOptionsType?.value || ""}
                   onChange={handleDropdownChange}
                   placeholder="Select Type"
+                  data-ignore-click-outside="true"
                 />
 
                 <InputField
@@ -2511,15 +2978,6 @@ const EditPanel = ({
                   maxLength={80}
                   onChange={(e) => setInputPlaceholder(e.target.value)}
                 />
-
-                {/* <InputField
-                label="Name"
-                placeholder="Enter Name"
-                tooltipContent="Enter name for input field"
-                tooltipPlacement="right"
-                value={inputName}
-                onChange={handleInputChange}
-              /> */}
 
                 <InputField
                   label="Enter error to display"
@@ -2578,13 +3036,12 @@ const EditPanel = ({
                 </div>
 
                 <div className="flex justify-center items-center">
-                  {selectedItem?.type === "textInput" && <UniversalButton label="Save" onClick={handleInputSave} />}
+                  <UniversalButton label="Save" onClick={handleInputSave} />
                 </div>
               </div>
             )}
 
-          {(selectedItem?.type === "textArea" || selectedThenComponent === "textArea" ||
-            selectedElseComponent === "textArea") && (
+            {selectedItem?.type === "textArea" && (
               <div className="mb-2 text-lg space-y-2 mt-3">
                 <InputField
                   label="Edit TextArea"
@@ -2623,7 +3080,6 @@ const EditPanel = ({
                   tooltipContent="Enter Error for TextArea"
                   tooltipPlacement="right"
                   value={textAreaError}
-                  maxLength={30}
                   onChange={(e) => setTextAreaError(e.target.value)}
                 />
 
@@ -2650,7 +3106,7 @@ const EditPanel = ({
                 onChange={(e) => setTextAreaMax(e.target.value)}
                 autoComplete="off"
               />
-            </div> */}
+             </div> */}
 
                 <div className="flex items-end">
                   <UniversalLabel
@@ -2673,23 +3129,34 @@ const EditPanel = ({
                 </div>
 
                 <div className="flex justify-center items-center">
-                  {selectedItem?.type === "textArea" && <UniversalButton label="SAVE" onClick={handleTextSave} />}
+                  <UniversalButton label="SAVE" onClick={handleTextSave} />
                 </div>
               </div>
             )}
+            {/* NEW */}
 
-          {/* NEW */}
+            {selectedItem?.type === "richText" && (
+              <RichTextEditor
+                content={selectedItem.content || ""}
+                text={selectedItem.text || []}
+                onUpdate={(payload) => {
+                  handleComponentUpdate(payload);
+                  onClose();
+                }}
+                selectedItem={selectedItem}
+              />
+            )}
 
-          {/* Editable Options for Checkboxes */}
-          {(selectedItem?.type === "checkBox" || selectedThenComponent === "checkBox" ||
-            selectedElseComponent === "checkBox") && (
+            {/* Editable Options for Checkboxes */}
+            {selectedItem?.type === "checkBox" && (
               <FormControl fullWidth>
-                <div className="mb-2, mt-3, space-y-3 ">
+                <div className="mb-2 mt-3 space-y-3">
                   <InputField
                     label="Checkbox Group Label"
                     tooltipContent="Enter Checkbox Group Label "
                     tooltipPlacement="right"
                     value={mainLabelCheckbox}
+                    maxLength={30}
                     onChange={(e) => setMainLabelCheckbox(e.target.value)}
                     placeholder="Enter label"
                     fullWidth
@@ -2735,6 +3202,7 @@ const EditPanel = ({
                               tooltipContent="Enter Title"
                               tooltipPlacement="right"
                               value={draftCheckbox.title}
+                              maxLength={30}
                               onChange={(e) =>
                                 setDraftCheckbox((d) => ({
                                   ...d,
@@ -2749,6 +3217,7 @@ const EditPanel = ({
                               placeholder="Enter Description"
                               tooltipContent="Enter Description"
                               tooltipPlacement="right"
+                              maxLength={300}
                               value={draftCheckbox.description}
                               onChange={(e) =>
                                 setDraftCheckbox((d) => ({
@@ -2765,6 +3234,7 @@ const EditPanel = ({
                               tooltipContent="Enter MetaData"
                               tooltipPlacement="right"
                               required={true}
+                              maxLength={20}
                               value={draftCheckbox.metadata}
                               onChange={(e) =>
                                 setDraftCheckbox((d) => ({
@@ -2775,6 +3245,30 @@ const EditPanel = ({
                               fullWidth
                               sx={{ mb: 1 }}
                             />
+
+                            {/* <Box sx={{ display: "flex", mb: 1 }}>
+                            <InputField
+                              label="Upload Image"
+                              type="file"
+                              id="checkbox-file-upload"
+                              accept=".png, .jpeg"
+                              tooltipContent="Upload Image"
+                              tooltipPlacement="right"
+                              required={true}
+                              onChange={handleCheckboxImageChange}
+                              ref={checkboxImageInputRef}
+                            />
+
+                            <button onClick={handleCheckboxFileDelete}>
+                              <DeleteOutlineIcon
+                                sx={{
+                                  fontSize: "23px",
+                                  marginTop: 3,
+                                  color: "#ef4444",
+                                }}
+                              />
+                            </button>
+                          </Box> */}
 
                             <Box sx={{ display: "flex", mb: 1 }}>
                               <InputField
@@ -2788,18 +3282,13 @@ const EditPanel = ({
                                 onChange={handleCheckboxImageChange}
                                 ref={checkboxImageInputRef}
                               />
-                              <button onClick={handleCheckboxUploadFile}>
-                                <FileUploadOutlinedIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
-
-                              <button onClick={handleCheckboxFileDelete}>
-                                <DeleteOutlineIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
                             </Box>
+
+                            {draftCheckbox.image && (
+                              <p className="text-green-600 text-sm font-medium mt-1">
+                                Image uploaded
+                              </p>
+                            )}
 
                             <Box
                               sx={{
@@ -2829,13 +3318,19 @@ const EditPanel = ({
                           }}
                         >
                           <Box
-                            sx={{ flexGrow: 1 }}
+                            sx={{ flexGrow: 1, minWidth: 0 }}
                             onClick={() => handleCheckboxEdit(idx)}
                           >
                             <Typography variant="subtitle1">
                               {opt.title}
                             </Typography>
-                            <Typography variant="body2">
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                              }}
+                            >
                               {opt.description}
                             </Typography>
                           </Box>
@@ -2856,24 +3351,23 @@ const EditPanel = ({
                     onClick={handleCheckboxAddNew}
                   />
 
-                  {selectedItem?.type === "checkBox" && <UniversalButton
+                  <UniversalButton
                     label="Save Checkbox"
                     onClick={handleCheckBoxSave}
-                  />}
-
+                  />
                 </div>
               </FormControl>
             )}
 
-          {/* Editable Options for Radio Buttons */}
-          {(selectedItem?.type === "radioButton" || selectedThenComponent === "radioButton" ||
-            selectedElseComponent === "radioButton") && (
+            {/* Editable Options for Radio Buttons */}
+            {selectedItem?.type === "radioButton" && (
               <FormControl fullWidth>
-                <div className="mb-2, mt-3">
+                <div className="mb-2 mt-3">
                   <InputField
                     label="Radio Group Label"
                     tooltipContent="Enter Radio Group Label"
                     tooltipPlacement="right"
+                    maxLength={30}
                     value={radioBtnLabel}
                     onChange={(e) => setRadioBtnLabel(e.target.value)}
                     placeholder="Enter label"
@@ -2920,9 +3414,13 @@ const EditPanel = ({
                               placeholder="Enter Title"
                               tooltipContent="Enter Title"
                               tooltipPlacement="right"
+                              maxLength={30}
                               value={draft.title}
                               onChange={(e) =>
-                                setDraft((d) => ({ ...d, title: e.target.value }))
+                                setDraft((d) => ({
+                                  ...d,
+                                  title: e.target.value,
+                                }))
                               }
                               fullWidth
                               sx={{ mb: 1 }}
@@ -2932,6 +3430,7 @@ const EditPanel = ({
                               placeholder="Enter Description"
                               tooltipContent="Enter Description"
                               tooltipPlacement="right"
+                              maxLength={300}
                               value={draft.description}
                               onChange={(e) =>
                                 setDraft((d) => ({
@@ -2948,6 +3447,7 @@ const EditPanel = ({
                               tooltipContent="Enter MetaData"
                               tooltipPlacement="right"
                               required={true}
+                              maxLength={20}
                               value={draft.metadata.trim()}
                               onChange={(e) =>
                                 setDraft((d) => ({
@@ -2965,6 +3465,7 @@ const EditPanel = ({
                         fullWidth
                         sx={{ mb: 1 }}
                        /> */}
+
                             <Box sx={{ display: "flex", mb: 1 }}>
                               <InputField
                                 label="Upload Image"
@@ -2977,17 +3478,23 @@ const EditPanel = ({
                                 onChange={handleRadioImageChange}
                                 ref={radioImageInputRef}
                               />
-                              <button onClick={handleRadioUploadFile}>
-                                <FileUploadOutlinedIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
-                                />
-                              </button>
+
                               <button onClick={handleDeleteRadioFile}>
                                 <DeleteOutlineIcon
-                                  sx={{ fontSize: "23px", marginTop: 3 }}
+                                  sx={{
+                                    fontSize: "23px",
+                                    marginTop: 3,
+                                    color: "#ef4444",
+                                  }}
                                 />
                               </button>
                             </Box>
+
+                            {draft.image && (
+                              <p className="text-green-600 text-sm font-medium mt-1">
+                                Image uploaded
+                              </p>
+                            )}
 
                             <Box
                               sx={{
@@ -3017,13 +3524,19 @@ const EditPanel = ({
                           }}
                         >
                           <Box
-                            sx={{ flexGrow: 1 }}
+                            sx={{ flexGrow: 1, minWidth: 0 }}
                             onClick={() => handleRadioBtnEdit(idx)}
                           >
                             <Typography variant="subtitle1">
                               {opt.title}
                             </Typography>
-                            <Typography variant="body2">
+                            <Typography
+                              variant="body2"
+                              sx={{
+                                wordWrap: "break-word",
+                                overflowWrap: "break-word",
+                              }}
+                            >
                               {opt.description}
                             </Typography>
                           </Box>
@@ -3038,6 +3551,7 @@ const EditPanel = ({
                     </Box>
                   );
                 })}
+
                 <div className="flex flex-row justify-center items-center gap-2 py-1 px-2">
                   <UniversalButton
                     label="AddOptions"
@@ -3052,9 +3566,8 @@ const EditPanel = ({
               </FormControl>
             )}
 
-          {/* Editable Options for Dropdown */}
-          {(selectedItem?.type === "dropDown" || selectedThenComponent === "textCaption" ||
-            selectedElseComponent === "textCaption") && (
+            {/* Editable Options for Dropdown */}
+            {selectedItem?.type === "dropDown" && (
               <FormControl fullWidth>
                 {/* ── Dropdown Label Input ── */}
                 <div className=" mb-2, mt-3 space-y-3">
@@ -3063,6 +3576,7 @@ const EditPanel = ({
                     id="mainlabel"
                     tooltipContent="Enter MainLabel"
                     tooltipPlacement="right"
+                    maxLength={20}
                     value={mainLabelDropdown}
                     onChange={(e) => setMainLabelDropdown(e.target.value)}
                     placeholder="Enter label"
@@ -3115,6 +3629,7 @@ const EditPanel = ({
                               id={`edit-title-${idx}`}
                               tooltipContent="Enter Title"
                               tooltipPlacement="right"
+                              maxLength={30}
                               value={draftTitle}
                               onChange={(e) => setDraftTitle(e.target.value)}
                               placeholder="Enter title"
@@ -3129,6 +3644,7 @@ const EditPanel = ({
                               id={`edit-desc-${idx}`}
                               tooltipContent="Enter Description"
                               tooltipPlacement="right"
+                              maxLength={300}
                               value={draftDescription}
                               onChange={(e) =>
                                 setDraftDescription(e.target.value)
@@ -3144,6 +3660,7 @@ const EditPanel = ({
                               id={`edit-meta-${idx}`}
                               tooltipContent="Enter MetaData"
                               tooltipPlacement="right"
+                              maxLength={20}
                               value={draftMetadata}
                               required={true}
                               onChange={(e) => setDraftMetaData(e.target.value)}
@@ -3164,18 +3681,22 @@ const EditPanel = ({
                               onChange={handleDropdownImageChange}
                               ref={dropImageInputRef}
                             />
-                            <button onClick={handleDropdownUploadFile}>
-                              <FileUploadOutlinedIcon
-                                sx={{ fontSize: "23px", marginTop: 3 }}
-                              />
-                            </button>
 
                             <button onClick={handleDropdownFileDelete}>
                               <DeleteOutlineIcon
-                                sx={{ fontSize: "23px", marginTop: 3 }}
+                                sx={{
+                                  fontSize: "23px",
+                                  marginTop: 3,
+                                  color: "#ef4444",
+                                }}
                               />
                             </button>
                           </Box>
+                          {currentOption.image && (
+                            <p className="text-green-600 text-sm font-medium mt-1">
+                              Image uploaded
+                            </p>
+                          )}
                           <Box
                             sx={{
                               display: "flex",
@@ -3202,14 +3723,20 @@ const EditPanel = ({
                         // ── Static View with Edit & Remove Icons ──
                         <>
                           <Box
-                            sx={{ flexGrow: 1, cursor: "pointer" }}
+                            sx={{ flexGrow: 1, cursor: "pointer", minWidth: 0 }}
                             onClick={() => handleStartEdit(idx)}
                           >
                             <Typography variant="subtitle1">
                               {opt.title}
                             </Typography>
                             {opt.description && (
-                              <Typography variant="body2" color="textSecondary">
+                              <Typography
+                                variant="body2"
+                                sx={{
+                                  wordWrap: "break-word",
+                                  overflowWrap: "break-word",
+                                }}
+                              >
                                 {opt.description}
                               </Typography>
                             )}
@@ -3238,7 +3765,6 @@ const EditPanel = ({
                     <UniversalButton
                       label="Add Option"
                       onClick={handleAddNew}
-                      disabled={options.length >= 200}
                     />
                   </Box>
 
@@ -3253,9 +3779,8 @@ const EditPanel = ({
               </FormControl>
             )}
 
-          {/* Editable option for chipselector In */}
-          {(selectedItem?.type === "chipSelector" || selectedThenComponent === "chipSelector" ||
-            selectedElseComponent === "chipSelector") && (
+            {/* Editable option for chipselector In */}
+            {selectedItem?.type === "chipSelector" && (
               <FormControl fullWidth>
                 <div className="mt-3 space-y-3 mb-3">
                   <InputField
@@ -3263,6 +3788,7 @@ const EditPanel = ({
                     placeholder="Enter label"
                     tooltipContent="Enter MainLabel"
                     tooltipPlacement="right"
+                    maxLength={80}
                     value={chipSelectorLabel}
                     onChange={(e) => setChipSelectorLabel(e.target.value)}
                   />
@@ -3271,6 +3797,7 @@ const EditPanel = ({
                     placeholder="Enter Description"
                     tooltipContent="Enter Description for ChipSelector"
                     tooltipPlacement="right"
+                    maxLength={300}
                     value={chipDescription}
                     onChange={(e) => setChipDescription(e.target.value)}
                   />
@@ -3370,8 +3897,8 @@ const EditPanel = ({
                   <UniversalButton
                     label="Add Option"
                     onClick={handleAddNewChipSelector}
-                    disabled={chipSelectorOptions.length >= 200}
                   />
+
                   <UniversalButton
                     id="save-chip-selector"
                     label="Save ChipSelector"
@@ -3381,245 +3908,289 @@ const EditPanel = ({
               </FormControl>
             )}
 
-          {/* Editable option for FooterButton  */}
-          {selectedItem?.type === "footerbutton" && (
-            <div className="mb-2 text-lg space-y-3 mt-3">
-              <InputField
-                label="Footer Button Label"
-                placeholder="Enter Footer Button Label"
-                tooltipContent="Enter Label"
-                tooltipPlacement="right"
-                id="footer-button-label"
-                value={footerButtonLabel}
-                onChange={(e) => setFooterButtonLabel(e.target.value)}
-              />
+            {/* Editable option for FooterButton  */}
 
-              <InputField
-                label="Left Caption"
-                placeholder="Enter Left Caption"
-                id="left-caption"
-                tooltipContent="Enter Left Caption"
-                tooltipPlacement="rigth"
-                value={leftCaption}
-                onChange={(e) => setLeftCaption(e.target.value)}
-              />
-
-              <InputField
-                label="Right Caption"
-                placeholder="Enter Right Caption"
-                tooltipContent="Enter Right Caption"
-                tooltipPlacement="right"
-                id="right-caption"
-                value={rightCaption}
-                onChange={(e) => setRightCaption(e.target.value)}
-              />
-
-              <InputField
-                label="Center Caption"
-                placeholder="Enter Center Caption"
-                tooltipContent="Enter Center Caption"
-                tooltipPlacement="right"
-                id="center-caption"
-                value={centerCaption}
-                onChange={(e) => setCenterCaption(e.target.value)}
-              />
-
-              <AnimatedDropdown
-                id="next-action"
-                label="Next Action"
-                tooltipContent="Select Option"
-                tooltipPlacement="right"
-                options={[
-                  { value: "complete", label: "Complete" },
-                  { value: "navigate", label: "Navigate" },
-                ]}
-                value={nextAction}
-                onChange={(val) => setNextAction(val)}
-              />
-              <div className="flex justify-center ">
-                <UniversalButton label="SAVE" onClick={handleFooterSave} />
-              </div>
-            </div>
-          )}
-
-          {/* Editable option for Embedded link */}
-          {/* {selectedItem?.type === "embeddedlink" && (
-          <>
-            <div className="mt-3 space-y-3">
-              <InputField
-                label="Text"
-                type="url"
-                value={link}
-                tooltipContent="Enter Url Link"
-                tooltipPlacement="right"
-                placeholder="Button Embedded Link"
-                onChange={handleChange}
-              />
-              <AnimatedDropdown
-                id="next-action"
-                label="Next Action"
-                tooltipContent="Next-Action"
-                tooltipPlacement="right"
-                options={[
-                  { value: "complete", label: "Complete" },
-                  { value: "navigate", label: "Navigate" },
-                ]}
-                value={onClickAction}
-                onChange={(value) => setOnClickAction(value)}
-              />
-               <AnimatedDropdown 
-              id='screen-name'
-              label='List Of Screen Name'
-              tooltipContent="List Of Screen Name"
-              tooltipPlacement="right"
-              value={}
-              onChange={()=> }
-
-              />  
-
-              <div className=" flex justify-center">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleEmbeddedLinkSave}
-                />
-              </div>
-            </div>
-
-           
-          </>
-        )} */}
-
-          {selectedItem?.type === "embeddedlink" && (
-            <>
-              <div className="mt-3 space-y-3">
+            {selectedItem?.type === "footerbutton" && (
+              <div className="mb-2 text-lg space-y-3 mt-3">
                 <InputField
-                  label="Text"
-                  type="url"
-                  value={text}
-                  tooltipContent="Enter Url Link"
+                  label="Footer Button Label"
+                  placeholder="Enter Footer Button Label"
+                  tooltipContent="Enter Label"
                   tooltipPlacement="right"
-                  placeholder="Button Embedded Link"
-                  onChange={(e) => setText(e.target.value)}
+                  maxLength={35}
+                  id="footer-button-label"
+                  value={footerButtonLabel}
+                  onChange={(e) => setFooterButtonLabel(e.target.value)}
                 />
+
+                <AnimatedDropdown
+                  label="Caption Type"
+                  tooltipContent="Select Caption Type"
+                  tooltipPlacement="right"
+                  options={[
+                    { value: "center", label: "Center Caption" },
+                    { value: "left-right", label: "Left + Right Caption" },
+                  ]}
+                  value={caption}
+                  onChange={(value) => {
+                    setCaption(value);
+                    if (value === "center") {
+                      setLeftCaption("");
+                      setRightCaption("");
+                    } else if (value === "left-right") {
+                      setCenterCaption("");
+                    }
+                  }}
+                />
+
+                {caption === "center" && (
+                  <InputField
+                    label="Center Caption"
+                    placeholder="Enter Center Caption"
+                    tooltipContent="Enter Center Caption"
+                    tooltipPlacement="right"
+                    maxLength={15}
+                    id="center-caption"
+                    value={centerCaption}
+                    onChange={(e) => setCenterCaption(e.target.value)}
+                  />
+                )}
+
+                {caption === "left-right" && (
+                  <>
+                    <InputField
+                      label="Left Caption"
+                      placeholder="Enter Left Caption"
+                      tooltipContent="Enter Left Caption"
+                      tooltipPlacement="right"
+                      maxLength={15}
+                      id="left-caption"
+                      value={leftCaption}
+                      onChange={(e) => setLeftCaption(e.target.value)}
+                    />
+                    <InputField
+                      label="Right Caption"
+                      placeholder="Enter Right Caption"
+                      tooltipContent="Enter Right Caption"
+                      tooltipPlacement="right"
+                      maxLength={15}
+                      id="right-caption"
+                      value={rightCaption}
+                      onChange={(e) => setRightCaption(e.target.value)}
+                    />
+                  </>
+                )}
 
                 <AnimatedDropdown
                   id="next-action"
                   label="Next Action"
-                  tooltipContent="Next-Action"
+                  tooltipContent="Select Option"
                   tooltipPlacement="right"
                   options={[
                     { value: "complete", label: "Complete" },
                     { value: "navigate", label: "Navigate" },
                   ]}
-                  value={onClickAction}
-                  onChange={(value) => setOnClickAction(value)}
+                  value={nextAction}
+                  onChange={(val) => setNextAction(val)}
                 />
 
-                {onClickAction === "navigate" && (
-                  <AnimatedDropdown
-                    id="screen-name"
-                    label="List Of Screen Name"
-                    tooltipContent="List Of Screen Name"
+                <div className="flex justify-center">
+                  <UniversalButton label="SAVE" onClick={handleFooterSave} />
+                </div>
+              </div>
+            )}
+
+            {selectedItem.type === "embeddedlink" && (
+              <div className="mt-5">
+                <div className="mb-2">
+                  <InputField
+                    label="Text"
+                    type="url"
+                    maxLength={25}
+                    value={text}
+                    tooltipContent="Enter label which display in the screen max length 25"
                     tooltipPlacement="right"
-                    options={screenNameList}
-                    value={selectedScreenName}
-                    onChange={(value) => setSelectedScreenName(value)}
+                    placeholder="Button Embedded Link"
+                    onChange={(e) => setText(e.target.value)}
+                  />
+                </div>
+                <p className="text-gray-600 text-xs mb-2">
+                  Chars: {text.length}/25
+                </p>
+
+                <div className="mb-2">
+                  <AnimatedDropdown
+                    id="next-action"
+                    label="Next Action"
+                    tooltipContent="[navigate = ensure there is screen created where user can navigate],[Open_url = paste or enter url link where user can redirect to page]"
+                    tooltipPlacement="right"
+                    options={[
+                      // { value: "data_exchange", label: "Data_exchange" },
+                      { value: "navigate", label: "Navigate" },
+                      { value: "open_url", label: "Open_url" },
+                    ]}
+                    value={onClickAction}
+                    onChange={(value) => setOnClickAction(value)}
+                  />
+                </div>
+
+                {onClickAction === "navigate" && (
+                  <>
+                    <AnimatedDropdown
+                      id="screen-name"
+                      label="List Of Screen Name"
+                      tooltipContent="Create a screen where you want to naviagate the user"
+                      tooltipPlacement="right"
+                      options={screenNameOptions}
+                      value={selectedScreenName}
+                      onChange={(value) => setSelectedScreenName(value)}
+                    />
+                    <span className="text-xs">
+                      NOTE: Create a screen or select where you want to navigate
+                      the user
+                    </span>
+                  </>
+                )}
+
+                {onClickAction === "open_url" && (
+                  <InputField
+                    label="URL"
+                    placeholder="Enter the URL to open"
+                    type="text"
+                    tooltipContent="Provide the URL to open when user clicks Read more"
+                    value={embeddedlinktUrl}
+                    onChange={(e) => setEmbeddedlinktUrl(e.target.value)}
                   />
                 )}
 
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-5">
                   <UniversalButton
                     label="Save"
                     onClick={handleEmbeddedLinkSave}
                   />
                 </div>
               </div>
-            </>
-          )}
+            )}
 
-          {/* Editable option for Opt In */}
-          {selectedItem?.type === "optin" && (
-            <>
-              <div className="space-y-3 mt-3">
-                <InputField
-                  label="OPT-In Label"
-                  type="text"
-                  value={optLabel}
-                  onChange={(e) => setOptLabel(e.target.value)}
-                />
+            {/* Editable option for Opt In */}
+            {selectedItem?.type === "optin" && (
+              <>
+                <div className="space-y-3 mt-3">
+                  <InputField
+                    label="OPT-In Label"
+                    placeholder="Enter Lable"
+                    type="text"
+                    maxLength={120}
+                    tooltipContent="Enter label which display in the screen max length 120"
+                    value={optLabel}
+                    onChange={(e) => setOptLabel(e.target.value)}
+                  />
+                  <p className="text-gray-600 text-xs">
+                    Chars: {optLabel.length}/120
+                  </p>
 
-                <div className="mt-2">
-                  <UniversalLabel
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="top"
-                    text="Required"
-                  ></UniversalLabel>
-                  <div className="flex items-center gap-2 ">
-                    <Switch
-                      checked={optRequired}
-                      onChange={handleOptRequiredChange}
-                      id="required"
+                  <div className="mt-2 flex items-end">
+                    <UniversalLabel
+                      label=" Required"
+                      htmlFor="required"
+                      className="text-sm font-medium text-gray-700"
+                      tooltipcontent="Select an option which required for you."
+                      tooltipplacement="top"
+                      text="Required"
+                    ></UniversalLabel>
+                    <div className="flex items-center">
+                      <Switch
+                        checked={optInRequired}
+                        onChange={handleOptInRequiredChange}
+                        id="required"
+                      />
+                      <span className="text-sm">
+                        {optInRequired ? "True" : "False"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <AnimatedDropdown
+                    id="next-action"
+                    label="Action"
+                    options={[
+                      // { value: "data_exchange", label: "Data_exchange" },
+                      { value: "navigate", label: "Navigate" },
+                      { value: "open_url", label: "Open_url" },
+                    ]}
+                    tooltipContent="[navigate = ensure there is screen created where user can navigate] , [Open_url = paste or enter url link where user can redirect to page]"
+                    value={optAction}
+                    onChange={(value) => setOPTAction(value)}
+                  />
+
+                  {optAction === "navigate" && (
+                    <AnimatedDropdown
+                      id="screen-name"
+                      label="List Of Screen Name"
+                      tooltipContent="List Of Screen Name"
+                      tooltipPlacement="right"
+                      options={optScreenNameOptions}
+                      value={optSelectedScreenName}
+                      onChange={(value) => setOptSelectedScreenName(value)}
                     />
-                    <span>{optRequired ? "True" : "False"}</span>
+                  )}
+
+                  {optAction === "open_url" && (
+                    <InputField
+                      label="URL"
+                      placeholder="Enter the URL to open"
+                      type="text"
+                      tooltipContent="Provide the URL to open when user clicks Read more"
+                      value={optUrl}
+                      onChange={(e) => setOptUrl(e.target.value)}
+                    />
+                  )}
+
+                  <div className="flex justify-center ">
+                    <UniversalButton
+                      label="Save"
+                      onClick={handleOPTSave}
+                      className="text-blue-600 underline text-sm w-fit"
+                    />
                   </div>
                 </div>
+              </>
+            )}
 
-                {/* <input
-                type="checkbox"
-                checked={isChecked}
-                onChange={(e) => setIsChecked(e.target.checked)}
-              /> */}
+            {/* Editable option for Image In */}
+            {selectedItem?.type === "image" && (
+              <>
+                <div className="space-y-3 mt-3">
+                  <div className="flex justify-center items-center gap-2 ">
+                    <InputField
+                      label="Upload Image"
+                      type="file"
+                      id="file-upload"
+                      accept=".png, .jpeg"
+                      tooltipContent="Upload Image"
+                      tooltipPlacement="right"
+                      required={true}
+                      onChange={handleImageChange}
+                      ref={imageInputRef}
+                    />
 
-                <AnimatedDropdown
-                  id="next-action"
-                  label="Action"
-                  options={[
-                    { value: "data-exchage", label: "Data Exchange" },
-                    { value: "navigate", label: "Navigate" },
-                    { value: "open-url", label: "Open URL" },
-                  ]}
-                  value={optAction}
-                  onChange={(value) => setOPTAction(value)}
-                />
-                <div className="flex justify-center ">
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleOPTSave}
-                    className="text-blue-600 underline text-sm w-fit"
-                  />
-                </div>
-              </div>
-            </>
-          )}
+                    <button onClick={handleImageDelete}>
+                      <DeleteOutlineIcon
+                        sx={{
+                          fontSize: "23px",
+                          marginTop: 3,
+                          color: "#ef4444",
+                        }}
+                      />
+                    </button>
+                  </div>
+                  {imageFile && (
+                    <p className="text-green-600 text-sm font-medium mt-1">
+                      Image uploaded
+                    </p>
+                  )}
 
-          {/* Editable option for Image In */}
-          {selectedItem?.type === "image" && (
-            <>
-              <div className="space-y-3 mt-3">
-                <div className="flex justify-center items-center gap-2 ">
-                  <InputField
-                    label="Upload Image"
-                    type="file"
-                    id="file-upload"
-                    accept=".png, .jpeg"
-                    tooltipContent="Upload Image"
-                    tooltipPlacement="right"
-                    required={true}
-                    onChange={handleImageChange}
-                    ref={imageInputRef}
-                  />
-                  <button onClick={handlePhotoUpload}>
-                    <FileUploadOutlinedIcon sx={{ fontSize: "23px" }} />
-                  </button>
-
-                  <button onClick={handleImageDelete}>
-                    <DeleteOutlineIcon sx={{ fontSize: "23px" }} />
-                  </button>
-                </div>
-
-                {/* {imageSrc && (
+                  {/* {imageSrc && (
                 <img
                   src={imageSrc}
                   alt="Uploaded preview"
@@ -3627,7 +4198,7 @@ const EditPanel = ({
                 />
               )} */}
 
-                {/* <InputField
+                  {/* <InputField
                 label="Width"
                 type="integer"
                 value={width}
@@ -3641,85 +4212,86 @@ const EditPanel = ({
                 onChange={(e) => setHeight(e.target.value)}
               /> */}
 
-                <AnimatedDropdown
-                  label="Scale-Type"
-                  tooltipContent="Select Scale-Type"
-                  tooltipPlacement="right"
-                  value={scaleType}
-                  options={[
-                    { value: "contain", label: "Contain" },
-                    { value: "cover", label: "Cover" },
-                  ]}
-                  onChange={(value) => setSCaleType(value)}
-                />
+                  <AnimatedDropdown
+                    label="Scale-Type"
+                    tooltipContent="Select Scale-Type"
+                    tooltipPlacement="right"
+                    value={scaleType}
+                    options={[
+                      { value: "contain", label: "Contain" },
+                      { value: "cover", label: "Cover" },
+                    ]}
+                    onChange={(value) => setSCaleType(value)}
+                  />
 
-                {/* <InputField
+                  {/* <InputField
                 label="Aspect-Ratio"
                 type="number"
                 value={aspectRatio}
                 onChange={(e) => setAspectRatio(e.target.value)}
               /> */}
 
-                <InputField
-                  label="Alt-Text"
-                  tooltipContent="Alt-Text"
-                  tooltipPlacement="right"
-                  value={imgAltText}
-                  type="text"
-                  onChange={(e) => setImgAltText(e.target.value)}
-                />
-                <div className="flex justify-center">
-                  <UniversalButton label="Save" onClick={handleImageSave} />
+                  <InputField
+                    label="Alt-Text"
+                    placeholder="Enter Alt-Text"
+                    tooltipContent="Alt-Text"
+                    tooltipPlacement="right"
+                    value={imgAltText}
+                    type="text"
+                    onChange={(e) => setImgAltText(e.target.value)}
+                  />
+                  <div className="flex justify-center">
+                    <UniversalButton label="Save" onClick={handleImageSave} />
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {/* Editable option for document In */}
-          {selectedItem?.type === "document" && (
-            <>
-              <div className="space-y-3 mt-3">
-                <InputField
-                  label="Upload Documents"
-                  placeholder="Enter Label"
-                  tooltipContent="Enter Label For Upload Document"
-                  tooltipPlacement="right"
-                  type="text"
-                  value={documentLabel}
-                  onChange={(e) => setDocumentLabel(e.target.value)}
-                />
+            {/* Editable option for document In */}
+            {selectedItem?.type === "document" && (
+              <>
+                <div className="space-y-3 mt-3">
+                  <InputField
+                    label="Upload Documents"
+                    placeholder="Enter Label"
+                    tooltipContent="Enter Label For Upload Document"
+                    tooltipPlacement="right"
+                    type="text"
+                    value={documentLabel}
+                    onChange={(e) => setDocumentLabel(e.target.value)}
+                  />
 
-                <InputField
-                  label="Description"
-                  placeholder="Enter Description"
-                  tooltipContent="Enter Description for Document"
-                  tooltipPlacement="right"
-                  type="text"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
+                  <InputField
+                    label="Description"
+                    placeholder="Enter Description"
+                    tooltipContent="Enter Description for Document"
+                    tooltipPlacement="right"
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                  />
 
-                <InputField
-                  label="Min-Upload-Document"
-                  placeholder="Minimum document upload"
-                  tooltipContent="Minimum document user can upload 1 is necessary"
-                  tooltipPlacement="right"
-                  type="number"
-                  value={minDocsUpload}
-                  onChange={(e) => setMinDocsUpload(e.target.value)}
-                />
+                  <InputField
+                    label="Min-Upload-Document"
+                    placeholder="Minimum document upload"
+                    tooltipContent="Minimum document user can upload 1 is necessary"
+                    tooltipPlacement="right"
+                    type="number"
+                    value={minDocsUpload}
+                    onChange={(e) => setMinDocsUpload(e.target.value)}
+                  />
 
-                <InputField
-                  label="Max-Upload-Document"
-                  placeholder="Maximum document upload"
-                  tooltipContent="Maximum document user can Upload"
-                  tooltipPlacement="right"
-                  type="number"
-                  value={maxDocsUpload}
-                  onChange={(e) => setMaxDocsUpload(e.target.value)}
-                />
+                  <InputField
+                    label="Max-Upload-Document"
+                    placeholder="Maximum document upload"
+                    tooltipContent="Maximum document user can Upload"
+                    tooltipPlacement="right"
+                    type="number"
+                    value={maxDocsUpload}
+                    onChange={(e) => setMaxDocsUpload(e.target.value)}
+                  />
 
-                {/* <InputField
+                  {/* <InputField
                 label="List-items"
                 minLength={1}
                 maxLength={20}
@@ -3728,84 +4300,87 @@ const EditPanel = ({
                 onChange={(e) => setListItems(e.target.value)}
               /> */}
 
-                <div className="flex justify-center">
-                  <UniversalButton label="Save" onClick={handleDocumentSave} />
-                </div>
-              </div>
-            </>
-          )}
-
-          {/* Editable option for media In */}
-          {selectedItem?.type === "media" && (
-            <>
-              <div className="space-y-3 mt-3">
-                <InputField
-                  label="Upload photos"
-                  placeholder="Enter Label"
-                  tooltipContent="Enter Label For Upload Photo"
-                  tooltipPlacement="right"
-                  value={mediaLabel}
-                  onChange={(e) => setMediaLabel(e.target.value)}
-                />
-
-                <InputField
-                  label="Description"
-                  placeholder="Enter Description"
-                  tooltipContent="Enter Description for Photo"
-                  tooltipPlacement="right"
-                  value={mediaDescription}
-                  onChange={(e) => setMediaDescription(e.target.value)}
-                />
-
-                <InputField
-                  label="Min-Upload-Photo"
-                  placeholder="Minimum 1 photo upload"
-                  tooltipContent="Minimum 1 photo upload"
-                  tooltipPlacement="right"
-                  type="number"
-                  value={minPhotoUpload}
-                  onChange={(e) => setMinPhotoUpload(e.target.value)}
-                />
-
-                <InputField
-                  label="Max-Upload-Photos"
-                  placeholder="Maximum 1 photos Upload"
-                  tooltipContent="Maximum 1 photos Upload"
-                  tooltipPlacement="right"
-                  type="number"
-                  value={maxPhotoUpload}
-                  onChange={(e) => setMaxPhotoUpload(e.target.value)}
-                />
-
-                <div className="mt-2">
-                  <UniversalLabel
-                    label=" Required"
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    tooltipcontent="Select an option which required for you."
-                    tooltipplacement="top"
-                    text="Required"
-                  ></UniversalLabel>
-                  <div className="flex items-center gap-2 ">
-                    <Switch
-                      checked={mediaRequired}
-                      onChange={handleMediaRequiredChange}
-                      id="required"
+                  <div className="flex justify-center">
+                    <UniversalButton
+                      label="Save"
+                      onClick={handleDocumentSave}
                     />
-                    <span>{mediaRequired ? "True" : "False"}</span>
                   </div>
                 </div>
+              </>
+            )}
 
-                <div className="flex justify-center">
-                  <UniversalButton label="Save" onClick={handleMediaSave} />
+            {/* Editable option for media In */}
+            {selectedItem?.type === "media" && (
+              <>
+                <div className="space-y-3 mt-3">
+                  <InputField
+                    label="Upload photos"
+                    placeholder="Enter Label"
+                    tooltipContent="Enter Label For Upload Photo"
+                    tooltipPlacement="right"
+                    value={mediaLabel}
+                    onChange={(e) => setMediaLabel(e.target.value)}
+                  />
+
+                  <InputField
+                    label="Description"
+                    placeholder="Enter Description"
+                    tooltipContent="Enter Description for Photo"
+                    tooltipPlacement="right"
+                    value={mediaDescription}
+                    onChange={(e) => setMediaDescription(e.target.value)}
+                  />
+
+                  <InputField
+                    label="Min-Upload-Photo"
+                    placeholder="Minimum 1 photo upload"
+                    tooltipContent="Minimum 1 photo upload"
+                    tooltipPlacement="right"
+                    type="number"
+                    value={minPhotoUpload}
+                    onChange={(e) => setMinPhotoUpload(e.target.value)}
+                  />
+
+                  <InputField
+                    label="Max-Upload-Photos"
+                    placeholder="Maximum 1 photos Upload"
+                    tooltipContent="Maximum 1 photos Upload"
+                    tooltipPlacement="right"
+                    type="number"
+                    value={maxPhotoUpload}
+                    onChange={(e) => setMaxPhotoUpload(e.target.value)}
+                  />
+
+                  <div className="mt-2">
+                    <UniversalLabel
+                      label=" Required"
+                      htmlFor="required"
+                      className="text-sm font-medium text-gray-700"
+                      tooltipcontent="Select an option which required for you."
+                      tooltipplacement="top"
+                      text="Required"
+                    ></UniversalLabel>
+                    <div className="flex items-center gap-2 ">
+                      <Switch
+                        checked={mediaRequired}
+                        onChange={handleMediaRequiredChange}
+                        id="required"
+                      />
+                      <span>{mediaRequired ? "True" : "False"}</span>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-center">
+                    <UniversalButton label="Save" onClick={handleMediaSave} />
+                  </div>
                 </div>
-              </div>
-            </>
-          )}
+              </>
+            )}
 
-          {selectedItem?.type === "imageCarousel" && (
-            <div className="space-y-3 mt-3">
-              {[0, 1, 2].map((index) => (
+            {selectedItem?.type === "imageCarousel" && (
+              <div className="space-y-3 mt-3">
+                {/* {imageCarouselImages.map((index) => (
                 <div key={index} className="flex items-center space-x-2">
                   <InputField
                     label={`Image ${index + 1}`}
@@ -3819,52 +4394,144 @@ const EditPanel = ({
                   />
                   <button onClick={() => handleImageCarouselDelete(index)}>
                     <DeleteOutlineIcon
-                      sx={{ fontSize: "23px", marginTop: 3 }}
+                      sx={{ fontSize: "23px", marginTop: 3, color: "#ef4444" }}
                     />
                   </button>
                 </div>
-              ))}
+              ))} */}
 
-              <AnimatedDropdown
-                label="Scale-Type"
-                tooltipContent="Select Scale-Type"
-                tooltipPlacement="right"
-                value={imageCarouselScaleType}
-                options={[
-                  { value: "contain", label: "Contain" },
-                  { value: "cover", label: "Cover" },
-                ]}
-                onChange={(value) => setImageCarouselScaleType(value)}
-              />
+                {imageCarouselImages.map((item, index) => {
+                  return (
+                    <div
+                      key={index}
+                      className="flex items-center justify-center space-x-2"
+                    >
+                      <div className="flex flex-col w-full">
+                        <InputField
+                          label={`Image ${index + 1}`}
+                          type="file"
+                          accept=".png, .jpeg"
+                          tooltipContent={`Upload Image ${index + 1}`}
+                          tooltipPlacement="right"
+                          required={true}
+                          onChange={(e) => handleImageCarouselChange(e, index)}
+                          ref={imageCarouselInputRefs[index]}
+                        />
 
-              <InputField
-                label="Alt-Text"
-                placeholder="Enter an Alt-text"
-                value={imageCarouselAltText}
-                onChange={(e) => setImageCarouselAltText(e.target.value)}
-              />
+                        {(() => {
+                          const imageKey = `image-${index + 1}`;
+                          const imageObj = selectedItem?.[imageKey];
+                          const isUploaded =
+                            imageObj?.src && imageObj?.src !== "";
+                          return isUploaded ? (
+                            <p className="text-green-600 text-sm mt-1">
+                              Image uploaded
+                            </p>
+                          ) : null;
+                        })()}
+                      </div>
+                      <button onClick={() => handleImageCarouselDelete(index)}>
+                        <DeleteOutlineIcon
+                          sx={{
+                            fontSize: "23px",
+                            marginTop: 3,
+                            color: "#ef4444",
+                          }}
+                        />
+                      </button>
+                    </div>
+                  );
+                })}
+                {/* {imageCarouselImages.map((item, index) => {
+                  // Prepare final image source
+                  console.log("item", item)
+                  const imageSrcFile = item.src
+                    ? `data:image/png;base64,${item.src}`
+                    : "";
+                  const imageSrcUrl = item.file
+                    ? URL.createObjectURL(item.file)
+                    : "";
+                  const finalSrc = imageSrcFile || imageSrcUrl;
 
-              {/* <InputField
+                  return (
+                    <div key={index} className="flex items-center space-x-2">
+                      {finalSrc ? (
+                        <label
+                          htmlFor={`carousel-upload-${index}`}
+                          className="cursor-pointer"
+                        >
+                          <img
+                            src={finalSrc}
+                            alt={`Image ${index + 1}`}
+                            className="rounded-full w-20 h-20 object-cover border-2 border-gray-300 hover:opacity-80 transition"
+                          />
+                        </label>
+                      ) : (
+                        <InputField
+                          label={`Image ${index + 1}`}
+                          type="file"
+                          accept=".png, .jpeg"
+                          tooltipContent="Upload Image"
+                          tooltipPlacement="right"
+                          required={true}
+                          onChange={(e) => handleImageCarouselChange(e, index)}
+                          ref={imageCarouselInputRefs[index]}
+                        />
+                      )}
+                      <button onClick={() => handleImageCarouselDelete(index)}>
+                        <DeleteOutlineIcon
+                          sx={{
+                            fontSize: "23px",
+                            marginTop: 3,
+                            color: "#ef4444",
+                          }}
+                        />
+                      </button>
+                    </div>
+                  );
+                })} */}
+
+                <AnimatedDropdown
+                  label="Scale-Type"
+                  tooltipContent="Select Scale-Type"
+                  tooltipPlacement="right"
+                  value={imageCarouselScaleType}
+                  options={[
+                    { value: "contain", label: "Contain" },
+                    { value: "cover", label: "Cover" },
+                  ]}
+                  onChange={(value) => setImageCarouselScaleType(value)}
+                />
+
+                <InputField
+                  label="Alt-Text"
+                  placeholder="Enter an Alt-text"
+                  value={imageCarouselAltText}
+                  onChange={(e) => setImageCarouselAltText(e.target.value)}
+                />
+
+                {/* <InputField
                 label="Aspect-Ratio"
                 placeholder=""
                 value={imageCarouselAspectRatio}
                 onChange={(e) => setImageCarouselAspectRatio(e.target.value)}
               /> */}
 
-              <div className="flex justify-center">
-                <UniversalButton
-                  label="Save"
-                  onClick={handleImageCarouselSave}
-                />
+                <div className="flex justify-center">
+                  <UniversalButton
+                    label="Save"
+                    onClick={handleImageCarouselSave}
+                  />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Editable option for if-else In */}
+            {/* Editable option for if-else In */}
 
-          {selectedItem?.type === "ifelse" && (
+            {/* {(selectedItem?.type === "ifelse" ||
+            selectedThenComponent === "ifelse" ||
+            selectedElseComponent === "ifelse") && (
             <>
-              {selectedCondition ? <h2>{selectedCondition}</h2> : ""}
               <div className="mt-4">
                 <AnimatedDropdown
                   label="If-Condition"
@@ -3897,9 +4564,26 @@ const EditPanel = ({
                     { label: "textArea", value: "textArea" },
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" }
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "footer", value: "footerbutton" },
+                    { label: "ifelse", value: "ifelse" }
                   ]}
-                  onChange={(value) => setSelectedThenComponent(value)}
+                  
+                  // onChange={(value) => setSelectedThenComponent(value)}
+                  onChange={(value) => {
+                    setSelectedThenComponent(value);
+                    if (value === "ifelse") {
+                      setNestedIf(true); // ✅ Set your flag here
+                    } else {
+                      setNestedIf(false); // optionally reset
+                    }
+                  }}
                 />
               </div>
 
@@ -3918,228 +4602,380 @@ const EditPanel = ({
                     { label: "textArea", value: "textArea" },
                     { label: "checkBox", value: "checkBox" },
                     { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" }
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
                   ]}
-                  onChange={(value) => setSelectedElseComponent(value)}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    if (value === "ifelse") {
+                      setNestedElse(true); // ✅ Set your flag here
+                    } else {
+                      setNestedElse(false); // optionally reset
+                    }
+                  }}
                 />
 
                 <div className="flex justify-center mt-4">
-                  <UniversalButton
-                    label="Save"
-                    onClick={handleIfElseSave}
-                  />
+                  <UniversalButton label="Save" onClick={handleIfElseSave} />
                 </div>
               </div>
             </>
           )}
 
-          {/* Editable option for date In */}
-          {selectedItem?.type === "date" && (
-            <div className="space-y-3 mt-3">
-              <InputField
-                label="Date Label"
-                placeholder="Enter Date Label"
-                tooltipContent="Enter Date Label"
-                tooltipPlacement="right"
-                maxLength={40}
-                value={dateLable}
-                onChange={(e) => setDateLabel(e.target.value)}
-              />
-
-
-              <InputField
-                label="Helper Text"
-                placeholder="Enter Placeholder for Date"
-                tooltipContent="Enter Placeholder for Date"
-                tooltipPlacement="right"
-                value={datePlaceholder}
-                onChange={(e) => setDatePlaceholder(e.target.value)}
-              />
-
-              <UniversalDatePicker
-                label="Min-Date"
-                tooltipContent="Select Min-Date"
-                tooltipPlacement="right"
-                value={minDate}
-                onChange={(value) => setMinDate(value)}
-              />
-
-              <UniversalDatePicker
-                label="Max-Date"
-                tooltipContent="Select Max-Date"
-                tooltipPlacement="right"
-                value={maxDate}
-                onChange={(value) => setMaxDate(value)}
-              />
-
-              <UniversalDatePicker
-                label="Unavailable Dates"
-                tooltipContent="Select Unavailable-Date"
-                tooltipPlacement="right"
-                value={null}
-                onChange={handleAddUnavailableDate}
-                disabled={!minDate || !maxDate}
-              />
-
-              <div className="flex flex-wrap gap-2 mt-2 ">
-                {unavailableDate.map((date, index) => (
-                  <Chip
-                    sx={{ padding: 1 }}
-                    key={index}
-                    label={new Date(date).toLocaleDateString()}
-                    onDelete={() =>
-                      setUnavailableDate((prev) =>
-                        prev.filter((_, i) => i !== index)
-                      )
-                    }
-                  />
-                ))}
-              </div>
-
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleDateSave} />
-              </div>
-            </div>
-          )}
-
-          {/* Editable option for calendar In */}
-          {selectedItem?.type === "calendar" && (
-            <div className="space-y-3 mt-3">
-              <InputField
-                label="Calendar Label"
-                tooltipContent="Enter Label for Calendar"
-                tooltipPlacement="right"
-                placeholder="Calendar Label"
-                maxLength={40}
-                value={dateCalendarLable}
-                onChange={(e) => setDateCalendarLabel(e.target.value)}
-              />
-
-              <InputField
-                label="Helper Text"
-                placeholder="Enter Placeholder for Date"
-                tooltipContent="Enter Placeholder for Date"
-                tooltipPlacement="right"
-                value={dateCalendarPlaceholder}
-                onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
-              />
-
-              <div className="mt-2">
-                <UniversalLabel
-                  htmlFor="required"
-                  className="text-sm font-medium text-gray-700"
-                  tooltipcontent="Select an option which required for you."
-                  tooltipplacement="top"
-                  text="Required"
-                ></UniversalLabel>
-                <div className="flex items-center gap-2 ">
-                  <Switch
-                    checked={startCalenderRequired}
-                    onChange={handleRequiredChange}
-                    id="required"
-                  />
-                  <span>{startCalenderRequired ? "True" : "False"}</span>
-                </div>
-              </div>
-
-              <UniversalDatePicker
-                label="Min-Date"
-                tooltipContent="Select Min-Date"
-                tooltipPlacement="right"
-                value={minCalendarDate}
-                onChange={(value) => setMinCalendarDate(value)}
-              />
-
-              <UniversalDatePicker
-                label="Max-Date"
-                tooltipContent="Select Max-Date"
-                tooltipPlacement="right"
-                value={maxCalendarDate}
-                onChange={(value) => setMaxCalendarDate(value)}
-              />
-
-              <UniversalDatePicker
-                label="Unavailable Dates"
-                tooltipContent="Select Unavailable-Date"
-                tooltipPlacement="right"
-                value={null}
-                disabled={!minCalendarDate || !maxCalendarDate}
-                onChange={handleAddCalendarUnavailableDate}
-              />
-
-              <div className="flex flex-wrap gap-2 mt-2 ">
-                {unavailableCalendarDates.map((date, index) => (
-                  <Chip
-                    sx={{ padding: 1 }}
-                    key={index}
-                    label={new Date(date).toLocaleDateString()}
-                    onDelete={() =>
-                      setUnavailableCalendarDates((prev) =>
-                        prev.filter((_, i) => i !== index)
-                      )
-                    }
-                  />
-                ))}
-              </div>
-              <div className="flex gap-2">
-                <label>Mode: Range</label>
-                <input
-                  type="checkbox"
-                  checked={calendarMode === "range"}
-                  onChange={(e) =>
-                    setCalendarMode(e.target.checked ? "range" : "single")
-                  }
+          {(nestedIf === true || nestedElse === true) && (
+            <>
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="If-Condition"
+                  tooltipContent="Select If-Condition"
+                  tooltipPlacement="right"
+                  value={selectedCondition}
+                  options={[
+                    { label: "Equal to", value: "==" },
+                    { label: "Not equal to", value: "!=" },
+                    { label: "AND", value: "&&" },
+                    { label: "OR", value: "||" },
+                    { label: "NOT", value: "!" },
+                  ]}
+                  onChange={(value) => setSelectedCondition(value)}
                 />
               </div>
 
-              {calendarMode === "range" && (
-                <div className="space-y-2">
-                  <InputField
-                    label="Second Calendar Label"
-                    tooltipContent="Enter End Date Label"
-                    tooltipPlacement="right"
-                    placeholder="Enter End Date Label"
-                    value={endCalendarLabel}
-                    onChange={(e) => setEndCalendarLabel(e.target.value)}
-                  />
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Then Branch"
+                  tooltipContent="Select Then Branch"
+                  tooltipPlacement="right"
+                  value={selectedThenComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
+                  ]}
+                  onChange={(value) => {
+                    setSelectedThenComponent(value);
+                    if (value === "ifelse") {
+                      setNestedIf(true); // ✅ Set your flag here
+                    } else {
+                      setNestedIf(false); // optionally reset
+                    }
+                  }}
+                />
+              </div>
 
-                  <InputField
-                    label="Second Calendar Helper Text"
-                    placeholder="Enter Second Calendar Helper-text"
-                    tooltipContent="Second Calendar Helper Text"
-                    tooltipPlacement="right"
-                    value={endCalendarHelperText}
-                    onChange={(e) => setEndCalendarHelperText(e.target.value)}
-                  />
+              <div className="mt-4">
+                <AnimatedDropdown
+                  label="Add Component to Else Branch"
+                  tooltipContent="Select Else Branch"
+                  tooltipPlacement="right"
+                  value={selectedElseComponent}
+                  options={[
+                    { label: "heading", value: "heading" },
+                    { label: "subHeading", value: "subHeading" },
+                    { label: "textBody", value: "textBody" },
+                    { label: "textCaption", value: "textCaption" },
+                    { label: "textInput", value: "textInput" },
+                    { label: "textArea", value: "textArea" },
+                    { label: "checkBox", value: "checkBox" },
+                    { label: "radioButton", value: "radioButton" },
+                    { label: "chipSelector", value: "chipSelector" },
+                    { label: "dropDown", value: "dropDown" },
+                    { label: "datePicker", value: "date" },
+                    { label: "embeddedlink", value: "embeddedlink" },
+                    { label: "image", value: "image" },
+                    { label: "optin", value: "optin" },
+                    { label: "switch", value: "switch" },
+                    { label: "ifelse", value: "ifelse" },
+                    { label: "footer", value: "footerbutton" },
+                  ]}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    if (value === "ifelse") {
+                      setNestedElse(true); // ✅ Set your flag here
+                    } else {
+                      setNestedElse(false); // optionally reset
+                    }
+                  }}
+                />
 
-                  <div className="mt-2">
-                    <UniversalLabel
-                      htmlFor="required"
-                      className="text-sm font-medium text-gray-700"
-                      tooltipcontent="Select an option which required for you."
-                      tooltipplacement="top"
-                      text="Required"
-                    ></UniversalLabel>
-                    <div className="flex items-center gap-2">
-                      <Switch
-                        checked={endCalendarRequired}
-                        onChange={handleEndRequiredChange}
-                        id="required"
-                      />
-                      <span>{endCalendarRequired ? "True" : "False"}</span>
-                    </div>
+                <div className="flex justify-center mt-4">
+                  <UniversalButton label="Save" onClick={handleIfElseSave} />
+                </div>
+              </div>
+
+          
+          )}
+           */}
+
+            {selectedItem?.type === "ifelse" && (
+              <>
+                <IfElseBlock
+                  level={1}
+                  selectedThenComponent={selectedThenComponent}
+                  setSelectedThenComponent={setSelectedThenComponent}
+                  selectedElseComponent={selectedElseComponent}
+                  setSelectedElseComponent={setSelectedElseComponent}
+                  selectedCondition={selectedCondition}
+                  setSelectedCondition={setSelectedCondition}
+                  handleIfElseSave={handleIfElseSave}
+                  onUpdateTree={handleUpdateTree}
+                />
+              </>
+            )}
+
+            {selectedItem?.type === "switch" && (
+              <>
+                <SwitchFlow
+                  selectedItem={selectedItem}
+                  onSave={(payload) => {
+                    const updatedItem = {
+                      ...selectedItem,
+                      ...payload,
+                    };
+                    onSave(updatedItem);
+                  }}
+                />
+              </>
+            )}
+
+            {/* Editable option for date In */}
+            {selectedItem?.type === "date" && (
+              <div className="space-y-3 mt-3">
+                <InputField
+                  label="Date Label"
+                  placeholder="Enter Date Label"
+                  tooltipContent="Enter Date Label"
+                  tooltipPlacement="right"
+                  maxLength={40}
+                  value={dateLable}
+                  onChange={(e) => setDateLabel(e.target.value)}
+                />
+
+                <InputField
+                  label="Helper Text"
+                  placeholder="Enter Placeholder for Date"
+                  tooltipContent="Enter Placeholder for Date"
+                  tooltipPlacement="right"
+                  value={datePlaceholder}
+                  onChange={(e) => setDatePlaceholder(e.target.value)}
+                />
+
+                <UniversalDatePicker
+                  label="Min-Date"
+                  tooltipContent="Select Min-Date"
+                  tooltipPlacement="right"
+                  value={minDate}
+                  onChange={(value) => setMinDate(value)}
+                />
+
+                <UniversalDatePicker
+                  label="Max-Date"
+                  tooltipContent="Select Max-Date"
+                  tooltipPlacement="right"
+                  value={maxDate}
+                  onChange={(value) => setMaxDate(value)}
+                  minDate={minDate}
+                  disabled={!minDate}
+                />
+
+                <UniversalDatePicker
+                  label="Unavailable Dates"
+                  tooltipContent="Select Unavailable-Date"
+                  tooltipPlacement="right"
+                  value={null}
+                  onChange={handleAddUnavailableDate}
+                  disabled={!minDate || !maxDate}
+                  minDate={minDate}
+                  maxDate={maxDate}
+                />
+
+                <div className="flex flex-wrap gap-2 mt-2 ">
+                  {unavailableDate.map((date, index) => (
+                    <Chip
+                      sx={{ padding: 1 }}
+                      key={index}
+                      label={new Date(date).toLocaleDateString()}
+                      onDelete={() =>
+                        setUnavailableDate((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        )
+                      }
+                    />
+                  ))}
+                </div>
+
+                <div className="flex justify-center">
+                  <UniversalButton label="Save" onClick={handleDateSave} />
+                </div>
+              </div>
+            )}
+
+            {/* Editable option for calendar In */}
+            {selectedItem?.type === "calendar" && (
+              <div className="space-y-3 mt-3">
+                <InputField
+                  label="Calendar Label"
+                  tooltipContent="Enter Label for Calendar"
+                  tooltipPlacement="right"
+                  placeholder="Calendar Label"
+                  maxLength={40}
+                  value={dateCalendarLable}
+                  onChange={(e) => setDateCalendarLabel(e.target.value)}
+                />
+
+                <InputField
+                  label="Helper Text"
+                  placeholder="Enter Placeholder for Date"
+                  tooltipContent="Enter Placeholder for Date"
+                  tooltipPlacement="right"
+                  value={dateCalendarPlaceholder}
+                  onChange={(e) => setDateCalendarPlaceholder(e.target.value)}
+                />
+
+                <div className="mt-2">
+                  <UniversalLabel
+                    htmlFor="required"
+                    className="text-sm font-medium text-gray-700"
+                    tooltipcontent="Select an option which required for you."
+                    tooltipplacement="top"
+                    text="Required"
+                  ></UniversalLabel>
+                  <div className="flex items-center gap-2 ">
+                    <Switch
+                      checked={startCalenderRequired}
+                      onChange={handleRequiredChange}
+                      id="required"
+                    />
+                    <span>{startCalenderRequired ? "True" : "False"}</span>
                   </div>
                 </div>
-              )}
 
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={handleCalendarSave} />
+                <UniversalDatePicker
+                  label="Min-Date"
+                  tooltipContent="Select Min-Date"
+                  tooltipPlacement="right"
+                  value={minCalendarDate}
+                  onChange={(value) => setMinCalendarDate(value)}
+                  PopperProps={{ "data-ignore-click-outside": true }}
+                />
+
+                <UniversalDatePicker
+                  label="Max-Date"
+                  tooltipContent="Select Max-Date"
+                  tooltipPlacement="right"
+                  value={maxCalendarDate}
+                  onChange={(value) => setMaxCalendarDate(value)}
+                  minDate={minCalendarDate}
+                  disabled={!minCalendarDate}
+                  PopperProps={{ "data-ignore-click-outside": true }}
+                />
+
+                <UniversalDatePicker
+                  label="Unavailable Dates"
+                  tooltipContent="Select Unavailable-Date"
+                  tooltipPlacement="right"
+                  value={null}
+                  disabled={!minCalendarDate || !maxCalendarDate}
+                  onChange={handleAddCalendarUnavailableDate}
+                  PopperProps={{ "data-ignore-click-outside": true }}
+                  minDate={minCalendarDate}
+                  maxDate={maxCalendarDate}
+                />
+
+                <div className="flex flex-wrap gap-2 mt-2 ">
+                  {unavailableCalendarDates.map((date, index) => (
+                    <Chip
+                      sx={{ padding: 1 }}
+                      key={index}
+                      label={new Date(date).toLocaleDateString()}
+                      onDelete={() =>
+                        setUnavailableCalendarDates((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        )
+                      }
+                    />
+                  ))}
+                </div>
+                <div className="flex gap-2">
+                  <label>Mode: Range</label>
+                  <input
+                    type="checkbox"
+                    checked={calendarMode === "range"}
+                    onChange={(e) =>
+                      setCalendarMode(e.target.checked ? "range" : "single")
+                    }
+                  />
+                </div>
+
+                {calendarMode === "range" && (
+                  <div className="space-y-2">
+                    <InputField
+                      label="Second Calendar Label"
+                      tooltipContent="Enter End Date Label"
+                      tooltipPlacement="right"
+                      placeholder="Enter End Date Label"
+                      value={endCalendarLabel}
+                      onChange={(e) => setEndCalendarLabel(e.target.value)}
+                    />
+
+                    <InputField
+                      label="Second Calendar Helper Text"
+                      placeholder="Enter Second Calendar Helper-text"
+                      tooltipContent="Second Calendar Helper Text"
+                      tooltipPlacement="right"
+                      value={endCalendarHelperText}
+                      onChange={(e) => setEndCalendarHelperText(e.target.value)}
+                    />
+
+                    <div className="mt-2">
+                      <UniversalLabel
+                        htmlFor="required"
+                        className="text-sm font-medium text-gray-700"
+                        tooltipcontent="Select an option which required for you."
+                        tooltipplacement="top"
+                        text="Required"
+                      ></UniversalLabel>
+                      <div className="flex items-center gap-2">
+                        <Switch
+                          checked={endCalendarRequired}
+                          onChange={handleEndRequiredChange}
+                          id="required"
+                        />
+                        <span>{endCalendarRequired ? "True" : "False"}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                <div className="flex justify-center">
+                  <UniversalButton label="Save" onClick={handleCalendarSave} />
+                </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* {selectedItem?.type === "userdetail" && (
-          <>
+            {/* {selectedItem?.type === "userdetail" && (
+           <>
             <InputField
               placeholder="User Details"
               value={value}
@@ -4168,8 +5004,8 @@ const EditPanel = ({
           </>
         )} */}
 
-          {/* Save Button */}
-          {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+            {/* Save Button */}
+            {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <UniversalButton
             onClick={handleSave}
             label="Save"
@@ -4178,7 +5014,8 @@ const EditPanel = ({
             Save
           </UniversalButton>
         </Box> */}
-        </motion.div>
+          </motion.div>
+        </ClickAwayListener>
       </AnimatePresence>
     </Box>
   );
