@@ -197,3 +197,10 @@ export const sendRCSMessage = (data) => {
     }
   );
 };
+
+export const sendRCSTemplateMessage = (data) => {
+  return fetchWithAuth(`/wrapper/rcs/sendRCS`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

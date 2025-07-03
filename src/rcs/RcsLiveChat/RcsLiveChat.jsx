@@ -3,6 +3,7 @@ import {
   fetchAllConvo,
   fetchSpecificConvo,
   sendRCSMessage,
+  sendRCSTemplateMessage,
 } from "@/apis/rcs/rcs";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
@@ -134,6 +135,24 @@ const RcsLiveChat = () => {
     } catch (e) {
       console.log(e);
       toast.error("Error sending message");
+    }
+  }
+
+  async function sendTemplateMessage() {
+    try {
+      const payload = {
+        contentMessage: {
+          templateMessage: {
+            templateCode: "dovesoftinfo",
+          },
+          mobileno: chatState.active.mobileNo,
+          botId: agentState.id,
+        },
+      };
+      const res = await sendRCSTemplateMessage(payload);
+      console.log(res);
+    } catch (e) {
+      toast.error("Error sending Template message");
     }
   }
 
