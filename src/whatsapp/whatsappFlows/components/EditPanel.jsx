@@ -334,32 +334,14 @@ const EditPanel = ({
     })
   );
 
-  //  console.log("screenNameOptions:", screenNameOptions);
-  console.log("selectedScreenName", selectedScreenName);
-  console.log("selectedItem", selectedItem);
-
-  // useEffect(() => {
-  //   if (onClickAction !== "navigate") {
-  //     setSelectedScreenName(selectedItem.screen);
-  //     setEmbeddedlinktUrl(selectedItem.url || "");
-  //   }
-  // }, [onClickAction]);
-
   useEffect(() => {
     if (selectedItem) {
       setText(selectedItem.text || "");
       setEmbeddedlinktUrl(selectedItem.url || "");
+
       const action = selectedItem["on-click-action"] || "complete";
       setOnClickAction(action);
-
-      if (action === "navigate") {
-        const screenName = selectedItem.screen;
-        const screenExists = screenNameOptions.includes(screenName);
-
-        if (screenName && screenExists) {
-          setSelectedScreenName(screenName);
-        }
-      }
+      setSelectedScreenName(selectedItem.screen);
     }
   }, [selectedItem]);
 
@@ -406,11 +388,27 @@ const EditPanel = ({
 
   const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
 
+  // useEffect(() => {
+  //   console.log("selectedItemooooppppttttiiinnn", selectedItem.screen);
+  //   if (selectedItem) {
+  //     setOptLabel(selectedItem.label || "");
+  //     setOPTAction(selectedItem["on-click-action"]);
+  //     setOptSelectedScreenName(selectedItem.screen);
+  //     setOptUrl(selectedItem.url || "");
+  //     setOptInRequired(selectedItem.required ?? true);
+  //   }
+  // }, [selectedItem]);
+
   useEffect(() => {
     if (selectedItem) {
       setOptLabel(selectedItem.label || "");
-      setOPTAction(selectedItem["on-click-action"]);
       setOptUrl(selectedItem.url || "");
+
+      const action = selectedItem["on-click-action"] || "complete";
+      setOPTAction(action);
+      setOptSelectedScreenName(selectedItem.screen);
+
+      // console.log("selectedItem.screen", selectedItem.screen);
       setOptInRequired(selectedItem.required ?? true);
     }
   }, [selectedItem]);
@@ -426,11 +424,11 @@ const EditPanel = ({
   );
   // console.log("optScreenNameOptions", optScreenNameOptions);
 
-  useEffect(() => {
-    if (optAction !== "navigate") {
-      setOptSelectedScreenName("");
-    }
-  }, [optAction]);
+  // useEffect(() => {
+  //   if (optAction !== "navigate") {
+  //     setOptSelectedScreenName("");
+  //   }
+  // }, [optAction]);
 
   const handleOPTSave = () => {
     if (!optLabel) {
@@ -646,8 +644,7 @@ const EditPanel = ({
 
     if (imageCarouselImages[index].file) {
       toast.error(
-        `Please delete the existing image before uploading a new one in slot ${
-          index + 1
+        `Please delete the existing image before uploading a new one in slot ${index + 1
         }`
       );
       return;
@@ -920,8 +917,8 @@ const EditPanel = ({
       setUnavailableCalendarDates(
         Array.isArray(selectedItem["unavailable-dates"])
           ? selectedItem["unavailable-dates"].map(
-              (dateStr) => new Date(dateStr)
-            )
+            (dateStr) => new Date(dateStr)
+          )
           : []
       );
 
@@ -1013,36 +1010,36 @@ const EditPanel = ({
     const payload =
       calendarMode === "single"
         ? {
-            mode: "single",
-            label: dateCalendarLable,
-            "helper-text": dateCalendarPlaceholder,
-            required: startCalenderRequired,
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          }
+          mode: "single",
+          label: dateCalendarLable,
+          "helper-text": dateCalendarPlaceholder,
+          required: startCalenderRequired,
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        }
         : {
-            mode: "range",
-            label: {
-              "start-date": dateCalendarLable || "",
-              "end-date": endCalendarLabel || "",
-            },
-            "helper-text": {
-              "start-date": dateCalendarPlaceholder || "",
-              "end-date": endCalendarHelperText || "",
-            },
-            required: {
-              "start-date": startCalenderRequired,
-              "end-date": endCalendarRequired,
-            },
-            "min-date": formatDateCalendarToString(minCalendarDate),
-            "max-date": formatDateCalendarToString(maxCalendarDate),
-            "unavailable-dates": formatArrayToCalendarDates(
-              validUnavailableDates
-            ),
-          };
+          mode: "range",
+          label: {
+            "start-date": dateCalendarLable || "",
+            "end-date": endCalendarLabel || "",
+          },
+          "helper-text": {
+            "start-date": dateCalendarPlaceholder || "",
+            "end-date": endCalendarHelperText || "",
+          },
+          required: {
+            "start-date": startCalenderRequired,
+            "end-date": endCalendarRequired,
+          },
+          "min-date": formatDateCalendarToString(minCalendarDate),
+          "max-date": formatDateCalendarToString(maxCalendarDate),
+          "unavailable-dates": formatArrayToCalendarDates(
+            validUnavailableDates
+          ),
+        };
 
     const updatedData = {
       ...selectedItem,
@@ -1196,20 +1193,47 @@ const EditPanel = ({
   const [nextAction, setNextAction] = useState("complete");
   const [caption, setCaption] = useState("");
 
-  // useEffect(() => {
-  //   if (selectedItem?.footer) {
-  //     const footerData = selectedItem.footer["footer_1"];
+  // console.log("leftCaption", leftCaption);
+  // console.log("rightCaption", rightCaption);
+  // console.log("centerCaption", centerCaption);
 
-  //     if (footerData) {
-  //       setFooterButtonLabel(footerData.label || "");
-  //       // setLeftCaption(footerData.left_caption || "");
-  //       // setRightCaption(footerData.right_caption || "");
-  //       // setCenterCaption(footerData.center_caption || "");
-  //       setNextAction(footerData.on_click_action || "complete");
-  //       setCaption(footerData.caption || "");
-  //     }
-  //   }
-  // }, [selectedItem]);
+  useEffect(() => {
+    if (selectedItem) {
+      console.log(selectedItem, "selectedItemfooter");
+      setFooterButtonLabel(selectedItem.label || "");
+      setLeftCaption(selectedItem["left-caption"] || "");
+      setRightCaption(selectedItem["right-caption"] || "");
+      setCenterCaption(selectedItem["center-caption"] || "");
+      setNextAction(
+        (selectedItem["on-click-action"] &&
+          selectedItem["on-click-action"].name) ||
+        "complete"
+      );
+
+      setCaption(selectedItem.caption || "center");
+
+      // Derive caption type from data
+      // if (selectedItem["center-caption"]) {
+      //   setCaption("center");
+      // } else if (
+      //   selectedItem["left-caption"] ||
+      //   selectedItem["right-caption"]
+      // ) {
+      //   setCaption("left-right");
+      // } else {
+      //   setCaption("");
+      // }
+
+      console.log("caption", caption);
+
+      //   if (caption === "center") {
+      //     setCenterCaption(selectedItem["center-caption"] || "");
+      //   } else if (caption === "left-right") {
+      //     setLeftCaption(selectedItem["left-caption"] || "");
+      //     setRightCaption(selectedItem["right-caption"] || "");
+      //   }
+    }
+  }, [selectedItem?.id]);
 
   const handleFooterSave = () => {
     if (!footerButtonLabel) {
@@ -1217,25 +1241,54 @@ const EditPanel = ({
       return;
     }
 
-    // const payload = {
-    //   footer: {},
-    // };
+    if (!nextAction) {
+      toast.error("Action is required.");
+      return;
+    }
 
-    // const id = `footer_1`; // Unique ID for the footer (adjust if needed)
+    if (centerCaption && (leftCaption || rightCaption)) {
+      toast.error(
+        "Cannot set center caption together with left/right captions"
+      );
+      return;
+    }
 
-   const payload = {
+    if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
+      toast.error("Both left and right captions must be provided together");
+      return;
+    }
+
+    const payload = {
+      //  id: selectedItem.id,
       label: footerButtonLabel,
-     "left-caption": leftCaption || "",
-     "right-caption" : rightCaption || "",
-      "center-caption": centerCaption || "",
-      on_click_action: nextAction || "",
+      "on-click-action": nextAction || "",
     };
 
-    // Assuming we want to merge it with selectedItem like in handleInputSave
+    if (centerCaption) {
+      payload["center-caption"] = centerCaption;
+    }
+
+    if (leftCaption && rightCaption) {
+      payload["left-caption"] = leftCaption;
+      payload["right-caption"] = rightCaption;
+    }
+
     const updatedData = {
       ...selectedItem,
       ...payload,
+      // caption,
     };
+
+    if (caption === "center" && centerCaption) {
+      updatedData["center-caption"] = centerCaption;
+    }
+
+    if (caption === "left-right") {
+      if (leftCaption) updatedData["left-caption"] = leftCaption;
+      if (rightCaption) updatedData["right-caption"] = rightCaption;
+    }
+
+    console.log(updatedData, "updatedData");
 
     onSave(updatedData);
     onClose();
@@ -1535,7 +1588,7 @@ const EditPanel = ({
       if (opt.image) {
         const imageSize = Math.ceil(
           opt.image.length * (3 / 4) -
-            (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
+          (opt.image.endsWith("==") ? 2 : opt.image.endsWith("=") ? 1 : 0)
         );
         // if (imageSize > 100 * 1024) {
         //   toast.error(`Option ${i + 1}: Image must be under 100KB`);
@@ -1976,12 +2029,12 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingIdx
           ? {
-              ...o,
-              title: draftTitle.trim(),
-              description: draftDescription.trim(),
-              metadata: draftMetadata.trim(),
-              image: dropImageSrc || o.image || "",
-            }
+            ...o,
+            title: draftTitle.trim(),
+            description: draftDescription.trim(),
+            metadata: draftMetadata.trim(),
+            image: dropImageSrc || o.image || "",
+          }
           : o
       )
     );
@@ -2168,10 +2221,10 @@ const EditPanel = ({
       prev.map((o, i) =>
         i === editingChipIdx
           ? {
-              ...o,
-              // name: chipName.trim(),
-              title: chipTitle.trim(),
-            }
+            ...o,
+            // name: chipName.trim(),
+            title: chipTitle.trim(),
+          }
           : o
       )
     );
@@ -3888,6 +3941,7 @@ const EditPanel = ({
             )}
 
             {/* Editable option for FooterButton  */}
+
             {selectedItem?.type === "footerbutton" && (
               <div className="mb-2 text-lg space-y-3 mt-3">
                 <InputField
@@ -3902,19 +3956,26 @@ const EditPanel = ({
                 />
 
                 <AnimatedDropdown
-                  label="Caption"
-                  tooltipContent="Select Caption"
+                  label="Caption Type"
+                  tooltipContent="Select Caption Type"
                   tooltipPlacement="right"
                   options={[
-                    { value: "center caption", label: "Center Caption" },
-                    { value: "right caption", label: "Right Caption" },
-                    { value: "left caption", label: "Left Caption" },
+                    { value: "center", label: "Center Caption" },
+                    { value: "left-right", label: "Left + Right Caption" },
                   ]}
                   value={caption}
-                  onChange={(value) => setCaption(value)}
+                  onChange={(value) => {
+                    setCaption(value);
+                    if (value === "center") {
+                      setLeftCaption("");
+                      setRightCaption("");
+                    } else if (value === "left-right") {
+                      setCenterCaption("");
+                    }
+                  }}
                 />
 
-                {caption === "center caption" && (
+                {caption === "center" && (
                   <InputField
                     label="Center Caption"
                     placeholder="Enter Center Caption"
@@ -3927,28 +3988,29 @@ const EditPanel = ({
                   />
                 )}
 
-                {caption === "right caption" && (
-                  <InputField
-                    label="Right Caption"
-                    placeholder="Enter Right Caption"
-                    tooltipContent="Enter Right Caption"
-                    tooltipPlacement="right"
-                    id="right-caption"
-                    value={rightCaption}
-                    onChange={(e) => setRightCaption(e.target.value)}
-                  />
-                )}
-
-                {caption === "left caption" && (
-                  <InputField
-                    label="Left Caption"
-                    placeholder="Enter Left Caption"
-                    id="left-caption"
-                    tooltipContent="Enter Left Caption"
-                    tooltipPlacement="right"
-                    value={leftCaption}
-                    onChange={(e) => setLeftCaption(e.target.value)}
-                  />
+                {caption === "left-right" && (
+                  <>
+                    <InputField
+                      label="Left Caption"
+                      placeholder="Enter Left Caption"
+                      tooltipContent="Enter Left Caption"
+                      tooltipPlacement="right"
+                      maxLength={15}
+                      id="left-caption"
+                      value={leftCaption}
+                      onChange={(e) => setLeftCaption(e.target.value)}
+                    />
+                    <InputField
+                      label="Right Caption"
+                      placeholder="Enter Right Caption"
+                      tooltipContent="Enter Right Caption"
+                      tooltipPlacement="right"
+                      maxLength={15}
+                      id="right-caption"
+                      value={rightCaption}
+                      onChange={(e) => setRightCaption(e.target.value)}
+                    />
+                  </>
                 )}
 
                 <AnimatedDropdown
@@ -3964,12 +4026,8 @@ const EditPanel = ({
                   onChange={(val) => setNextAction(val)}
                 />
 
-                <div className="flex justify-center ">
-                  {selectedItem?.type === "footerbutton" ? (
-                    <UniversalButton label="SAVE" onClick={handleFooterSave} />
-                  ) : (
-                    ""
-                  )}
+                <div className="flex justify-center">
+                  <UniversalButton label="SAVE" onClick={handleFooterSave} />
                 </div>
               </div>
             )}

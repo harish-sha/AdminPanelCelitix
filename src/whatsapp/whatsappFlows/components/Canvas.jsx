@@ -252,59 +252,6 @@ const Canvas = ({
       );
     }
 
-    // if (item.type === "richText") {
-    //   let renderedHTML = "<p>No content available</p>";
-
-    //   try {
-    //     const markdown = Array.isArray(targetItem?.text)
-    //       ? targetItem.text.join("\n")
-    //       : targetItem?.content || "";
-
-    //     if (markdown.trim()) {
-    //       renderedHTML = marked.parse(markdown);
-    //     } else {
-    //       renderedHTML =
-    //         "<p class='text-gray-400 italic '>Please fill this field by clicking the <span class='text-violet-600 font-medium'>edit icon</span> or remove this block.</p>";
-    //     }
-    //   } catch (err) {
-    //     console.error("Markdown rendering error:", err);
-    //     renderedHTML =
-    //       "<p class='text-gray-400 italic '>Please fill this field by clicking the <span class='text-violet-600 font-medium'>edit icon</span> or remove this block.</p>";
-    //   }
-
-    //   return (
-    //     <div className="bg-white ">
-    //     <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden h-auto  flex flex-col p-3 space-y-2 bg-blue-50 break-words whitespace-pre-wrap max-w-full">
-    //       <div
-    //         className="  flex-1 overflow-y-auto prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
-    //         dangerouslySetInnerHTML={{ __html: renderedHTML }}
-    //       />
-
-    //       <style>
-    //         {`
-    //       .prose h1 {
-    //         font-size: 1.5rem;
-    //         font-weight: 700;
-    //       }
-    //       .prose h2 {
-    //         font-size: 1.25rem;
-    //         font-weight: 500;
-    //       }
-    //       .prose img {
-    //         width: 2.5rem;
-    //         height: 2.5rem;
-    //         border-radius: 9999px;
-    //         object-fit: cover;
-    //         border: 1px solid #d1d5db;
-    //         display: inline-block;
-    //       }
-    //     `}
-    //       </style>
-    //     </div>
-    //     </div>
-    //   );
-    // }
-
     if (item.type === "richText") {
       let renderedHTML = "";
       let isEmptyContent = false;
@@ -363,53 +310,71 @@ const Canvas = ({
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
-      const footer = targetItem.footer?.["footer_1"] || {};
-
       const hasContent =
-        footer.label ||
-        footer.left_caption ||
-        footer.right_caption ||
-        footer.center_caption ||
-        footer.on_click_action;
+        targetItem.label ||
+        targetItem["left-caption"] ||
+        targetItem["right-caption"] ||
+        targetItem["center-caption"] ||
+        targetItem["on-click-action"];
 
       return (
         <div className="bg-white">
           {hasContent ? (
             <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-              {footer.label && (
+              {targetItem.label && (
                 <div>
                   <span className="font-semibold">Label: </span>
-                  {footer.label}
+                  {targetItem.label}
                 </div>
               )}
 
-              {footer.left_caption && (
+              {/* {targetItem["left-caption"] && (
                 <div className="mt-1">
                   <span className="font-semibold">Left-caption: </span>
-                  {footer.left_caption}
+                  {targetItem["left-caption"]}
                 </div>
               )}
 
-              {footer.right_caption && (
+              {targetItem["right-caption"] && (
                 <div className="mt-1">
                   <span className="font-semibold">Right-caption: </span>
-                  {footer.right_caption}
+                  {targetItem["right-caption"]}
                 </div>
               )}
 
-              {footer.center_caption && (
+              {targetItem["center-caption"] && (
                 <div className="mt-1">
                   <span className="font-semibold">Center-caption: </span>
-                  {footer.center_caption}
+                  {targetItem["center-caption"]}
+                </div>
+              )} */}
+
+              {targetItem["center-caption"] ? (
+                <div className="mt-1">
+                  <span className="font-semibold">Center-caption: </span>
+                  {targetItem["center-caption"]}
+                </div>
+              ) : targetItem["left-caption"] && targetItem["right-caption"] ? (
+                <>
+                  <div className="mt-1">
+                    <span className="font-semibold">Left-caption: </span>
+                    {targetItem["left-caption"]}
+                  </div>
+                  <div className="mt-1">
+                    <span className="font-semibold">Right-caption: </span>
+                    {targetItem["right-caption"]}
+                  </div>
+                </>
+              ) : null}
+
+              {targetItem["on-click-action"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Next Action: </span>
+                  {targetItem["on-click-action"]}
                 </div>
               )}
 
-              {footer.on_click_action && (
-                <div className="mt-1">
-                  <span className="font-semibold">Next Action: </span>
-                  {footer.on_click_action}
-                </div>
-              )}
+
             </div>
           ) : (
             <span className="text-gray-400 italic">
@@ -1202,6 +1167,7 @@ const Canvas = ({
 
     drag(drop(ref));
 
+
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
@@ -1209,6 +1175,9 @@ const Canvas = ({
       setSelectedItem({ ...item, index, caseKey: item.caseKey }); // ✅ force a new reference
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
+
+
+
 
     const content = getDynamicFieldValue(
       tabs,

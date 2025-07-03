@@ -14,6 +14,8 @@ import {
 import TableViewIcon from "@mui/icons-material/TableView";
 import UniversalButton from "../../components/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
+import { useDispatch } from "react-redux";
+import { updateFlowItem } from "../redux/features/FlowSlice";
 
 export const convertNodeToMarkdown = (node) => {
   if (!node) return;
@@ -213,6 +215,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   const editorRef = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState("");
+  const dispatch = useDispatch()
 
   const exec = (command, value = null) => {
     editorRef.current?.focus();
@@ -403,6 +406,15 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     toast.success("Changes saved!");
     // if (onPayloadChange) onPayloadChange(payload);
     onUpdate(updatedData);
+
+    dispatch(
+      updateFlowItem({
+        id: updatedData.storeId,
+        data: {
+          status: 1,
+        },
+      })
+    );
   };
 
 

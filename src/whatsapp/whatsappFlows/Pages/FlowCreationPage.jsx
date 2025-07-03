@@ -235,8 +235,7 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -257,8 +256,7 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${
-            hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -677,9 +675,8 @@ const FlowCreationPage = () => {
                   }
                 </span>
                 <ExpandMoreIcon
-                  className={`transform transition ${
-                    showErrors ? "rotate-180" : "rotate-0"
-                  }`}
+                  className={`transform transition ${showErrors ? "rotate-180" : "rotate-0"
+                    }`}
                 />
               </motion.button>
 
@@ -693,11 +690,10 @@ const FlowCreationPage = () => {
                 onClick={handleFlowBuild}
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
-                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
-                  isLoading || hasErrors
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
-                }`}
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                  }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
                 {isLoading ? "Building..." : "Build Flow"}

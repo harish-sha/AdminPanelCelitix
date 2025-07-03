@@ -133,7 +133,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
       animate={{ opacity: 1, x: 0 }}
       exit={{ opacity: 0, x: 100 }}
       transition={{ type: "spring", stiffness: 200, damping: 25 }}
-      className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto">
+      className="relative h-[83vh] w-[340px] rounded-3xl shadow-md bg-gray-100 border-3 border-indigo-300 hide-scrollbar overflow-auto"
+    >
       <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
@@ -656,54 +657,41 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+
             case "footerbutton":
               return (
-                <>
-                  <div className="w-full max-w-md  text-center py-2 bottom-0 ">
-                    {/* Left and Right Captions */}
-                    {/* <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <p>
-                      {item.footer
-                          ? item.footer.footer_1.left_caption
-                          : "Left Caption"}
-                      </p>
-                      <p>
-                          {item.footer 
-                      ? item.footer.footer_1.center_caption
-                      : "Center Caption"}
-                        </p>
-                      <p>
-                        {item.footer
-                          ? item.footer.footer_1.right_caption
-                          : "Right Caption"}
-                    
-                     </p>
-                  </div> */}
+                <div className="w-full max-w-md text-center py-2 bottom-0">
+                  {/* Captions */}
 
-                    {/* Footer Button */}
-                    <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
-                      {item.footer
-                        ? item.footer?.footer_1.center_caption
-                        : "Click me"}
-                    </button>
+                  {(item["left-caption"] || item["right-caption"]) && (
+                    <div className="flex justify-between text-sm text-gray-700 mb-1">
+                      <span>{item["left-caption"] || ""}</span>
+                      <span>{item["right-caption"] || ""}</span>
+                    </div>
+                  )}
+                  {(item["center-caption"]) && (
+                    <div className="flex justify-center text-sm text-gray-700 mb-1">
+                      <span>{item["center-caption"] || ""}</span>
+                    </div>
+                  )}
 
-                    {/* Managed by Section */}
-                    <p className="text-xs text-gray-500 mt-2">
-                      Managed by the business.
-                      <a href="#" className="text-blue-600 hover:underline">
-                        Learn more
-                      </a>
-                    </p>
-                  </div>
-                </>
+                  {/* Footer Button */}
+                  <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
+                    {item.label || "Click me"}
+                  </button>
+
+                  {/* Managed by Section */}
+                  <p className="text-xs text-gray-500 mt-2">
+                    Managed by the business.{" "}
+                    <a href="#" className="text-blue-600 hover:underline">
+                      Learn more
+                    </a>
+                  </p>
+                </div>
               );
 
             case "embeddedlink":
-              return (
-                <div className="text-green-500">
-                  {item.text || ""}
-                </div>
-              );
+              return <div className="text-green-500">{item.text || ""}</div>;
 
             case "optin":
               return (
@@ -721,7 +709,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                     className="w-4 h-4 text-green-600 border-green-300 rounded focus:ring-green-500"
                   />
                   <p className="text-sm text-gray-700">
-                    {item.label || ""}  <span className="text-green-500">Read More</span>
+                    {item.label || ""}{" "}
+                    <span className="text-green-500">Read More</span>
                   </p>
                 </div>
               );

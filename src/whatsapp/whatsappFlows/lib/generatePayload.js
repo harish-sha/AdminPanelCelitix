@@ -724,19 +724,40 @@ export const generatePayload = (data) => {
         };
       }
 
+      // if (type === "footerbutton") {
+      //   const footerData = pay.footer || {};
+      //   const onClickActionName = footerData.on_click_action || "complete";
+
+      //   // Find the next screen ID if it exists
+      //   const nextScreenId = data[index + 1]?.id || null;
+
+      //   component = {
+      //     type: "Footer",
+      //     label: footerData.label || " ",
+      //      "left-caption": pay["left-caption"],
+      //       "right-caption":pay["right-caption"] ,
+      //       "center-caption":pay["center-caption"] ,
+      //     "on-click-action": {
+      //       name: onClickActionName,
+      //       ...(index !== data.length - 1 && {
+      //         next: {
+      //           type: "screen",
+      //           name: nextScreenId,
+      //         },
+      //       }),
+      //     },
+      //   };
+      // }
+
       if (type === "footerbutton") {
         const footerData = pay.footer || {};
         const onClickActionName = footerData.on_click_action || "complete";
 
-        // Find the next screen ID if it exists
         const nextScreenId = data[index + 1]?.id || null;
 
         component = {
           type: "Footer",
-          label: footerData.label || "Submit",
-           "left-caption": pay["left-caption"],
-            "right-caption":pay["right-caption"] ,
-            "center-caption":pay["center-caption"] ,
+          label: pay.label || "",
           "on-click-action": {
             name: onClickActionName,
             ...(index !== data.length - 1 && {
@@ -747,6 +768,42 @@ export const generatePayload = (data) => {
             }),
           },
         };
+
+        // Extract captions
+        const leftCaption = pay["left-caption"];
+        const rightCaption = pay["right-caption"];
+        const centerCaption = pay["center-caption"];
+
+        //  caption combinations validation
+        if (centerCaption && (leftCaption || rightCaption)) {
+          throw new Error(
+            "Invalid Footer configuration: Cannot use center-caption together with left/right captions"
+          );
+        }
+
+        if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
+          throw new Error(
+            "Invalid Footer configuration: Both left-caption and right-caption must be provided together"
+          );
+        }
+
+        // Add captions conditionally
+        if (centerCaption) {
+          if (centerCaption.trim() === "") {
+            throw new Error("center-caption should not be empty");
+          }
+          component["center-caption"] = centerCaption;
+        }
+
+        if (leftCaption && rightCaption) {
+          if (leftCaption.trim() === "" || rightCaption.trim() === "") {
+            throw new Error(
+              "left-caption and right-caption should not be empty"
+            );
+          }
+          component["left-caption"] = leftCaption;
+          component["right-caption"] = rightCaption;
+        }
       }
 
       layout.children.push(component);
