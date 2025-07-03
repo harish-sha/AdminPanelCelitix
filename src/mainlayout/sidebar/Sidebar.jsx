@@ -169,7 +169,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: "/sendrcs", label: "Send RCS" },
         { to: "/rcsmanagetemplate", label: "Manage Template" },
-        // { to: "/rcslivechats", label: "Live Chats" },
+        { to: "/rcslivechats", label: "Live Chats" },
         { to: "/rcssuggestionreport", label: "Suggestion Report" },
         { to: "/rcsdeliveryreport", label: "Delivery Report" },
         {

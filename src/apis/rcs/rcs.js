@@ -1,4 +1,4 @@
-import { is } from "date-fns/locale";
+// import { is } from "date-fns/locale";
 import { fetchWithAuth } from "../apiClient";
 
 // get campaign report
@@ -170,4 +170,13 @@ export const exportSuggestion = async (data) => {
     method: "POST",
     body: JSON.stringify(data),
   });
+};
+
+export const fetchAllConvo = (data) => {
+  return fetchWithAuth(
+    `rcs/getRcsChatDetail?agentId=${data.agentId}&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    {
+      method: "POST",
+    }
+  );
 };
