@@ -54,11 +54,12 @@ export const EditCallback = () => {
             const headers = [];
             custom_headers.map((item) => {
                 let header = {};
-                header.key = item.headerValue;
+                header.key = item.headerKey;
                 header.value = item.headerValue;
 
                 headers.push(header);
             });
+
             setCustomHeader({
                 isSelect: true,
                 data: headers,
@@ -109,7 +110,20 @@ export const EditCallback = () => {
                 ...details,
                 authorizationType: details?.authorizationType || authorization,
             };
+            if (customHeader.isSelect && customHeader.data.length === 0) {
+                toast.error("Please add at least one header");
+                return;
+            }
+
+            if (customHeader.isSelect) {
+                const headers = {};
+                customHeader.data.map((item) => {
+                    headers[item.key] = item.value;
+                });
+                payload.customHeader = headers;
+            }
             const res = await addCallback(payload);
+
             if (!res?.status) {
                 toast.error(res?.msg);
                 return;

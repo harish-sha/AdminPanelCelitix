@@ -3,7 +3,7 @@ import { PiBracketsCurlyBold } from "react-icons/pi";
 import { Divider } from '@mui/material';
 
 const ObdVariable = ({ variables = [], selectVariable }) => {
-    
+
     const [showDropdown, setShowDropdown] = useState(false);
     const dropdownRef = useRef(null);
 

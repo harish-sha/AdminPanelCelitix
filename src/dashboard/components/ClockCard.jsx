@@ -89,9 +89,9 @@ const ClockCard = () => {
     >
       <div className="flex gap-3 items-center">
         <AnimatePresence mode="wait">
-          <TimeUnit label="HH" value={hours} />
-          <TimeUnit label="MM" value={minutes} />
-          <TimeUnit label="SS" value={seconds} />
+          <TimeUnit key="a" label="HH" value={hours} />
+          <TimeUnit key="b" label="MM" value={minutes} />
+          <TimeUnit key="c" label="SS" value={seconds} />
         </AnimatePresence>
         {!is24Hour && (
           <motion.span

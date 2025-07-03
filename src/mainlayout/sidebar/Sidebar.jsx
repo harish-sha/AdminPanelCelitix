@@ -177,7 +177,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       links: [
         { to: "/sendrcs", label: "Send RCS" },
         { to: "/rcsmanagetemplate", label: "Manage Template" },
-        { to: "/rcslivechats", label: "Live Chats" },
+        // { to: "/rcslivechats", label: "Live Chats" },
         { to: "/rcssuggestionreport", label: "Suggestion Report" },
         { to: "/rcsdeliveryreport", label: "Delivery Report" },
         {
@@ -376,15 +376,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/managecontacts",
       roles: ["ADMIN", "DIRECTUSER"],
     },
-    // {
-    //   id: "",
-    //   name: "Aiconfiguration",
-    //   icon: <HiOutlineSparkles className="text-indigo-700 rounded-full h-6 w-6" />,
-    //   label: "Ai Configuration",
-    //   type: "single",
-    //   to: "/aiconfiguration",
-    //   roles: ["ADMIN"],
-    // },
+    {
+      id: "",
+      name: "Aiconfiguration",
+      icon: <HiOutlineSparkles className="h-4.5 w-4.5" />,
+      label: "Ai Configuration",
+      type: "single",
+      to: "/aiconfiguration",
+      roles: ["ADMIN"],
+    },
     {
       id: "",
       name: "Workflow",
@@ -412,15 +412,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //   to: "/smswishmanagement",
     //   roles: ["ADMIN"],
     // },
-    // {
-    //   id: "",
-    //   name: "tagmanager",
-    //   icon: <LiaTagsSolid fontSize="20" style={{ fontSize: "17px" }} />,
-    //   label: "Tag Manager",
-    //   type: "single",
-    //   to: "/tagmanager",
-    //   roles: ["ADMIN"],
-    // },
+    {
+      id: "",
+      name: "tagmanager",
+      icon: <LiaTagsSolid fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Tag Manager",
+      type: "single",
+      to: "/tagmanager",
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "apiDocs",

@@ -67,3 +67,22 @@ merge files to main & reseller
     "status": "error"
 }
 
+=======july03===============================
+
+Callback
+1.editCallback.jsx - done
+
+whatsapp - 
+1.WhatsappLiveChatSetting.jsx - done
+2.whatsappmanagecampaign.jsx - done
+
+SMS - 
+1.SendSms.jsx - done
+2.RadioButtonLaunchSms.jsx - done
+
+RCS - 
+1.
+
+OBD -
+1.
+

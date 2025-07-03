@@ -232,16 +232,15 @@ const TemplateTypes = ({
               {templateHeader.length}/60
             </p>
           </div>
-          <div className="relative">
+          {/* <div className="relative">
             <VariableManager
               templateFormat={templateHeader}
               setTemplateFormat={setTemplateHeader}
               onUpdateVariables={updateHeaderVariables}
               ref={HeaderRef}
             />
-          </div>
+          </div> */}
         </div>
-
       )}
 
       {selectedTemplateType === "image" && (

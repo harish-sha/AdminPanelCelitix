@@ -77,6 +77,12 @@ export const SMS = ({
   }, [inputDetails?.message]);
 
   function handleSave() {
+    if (!inputDetails?.templateId)
+      return toast.error("Please select a template.");
+    if (!inputDetails?.entityId) return toast.error("Invalid entity id.");
+    if (!inputDetails?.senderId)
+      return toast.error("Please select a sender ID");
+
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {

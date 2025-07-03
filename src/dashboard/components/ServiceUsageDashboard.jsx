@@ -31,6 +31,20 @@ import ReactApexChart from "react-apexcharts";
 import { getUserDetails } from "@/apis/user/user";
 import { dailySeriveUsage } from "@/apis/settings/setting";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
+// import MiniCalendar from "./date";
+import DateInputWithCalendar from "./DateInputWithCalendar";
+
+import BarChartIcon from "@mui/icons-material/BarChart";
+import ShowChartIcon from "@mui/icons-material/ShowChart";
+import PieChartIcon from "@mui/icons-material/PieChart";
+// import CandlestickChartSharpIcon from '@mui/icons-material/CandlestickChartSharp';
+
+const ICON_MAP = {
+  Bar: <BarChartIcon />,
+  Line: <ShowChartIcon />,
+  Pie: <PieChartIcon />,
+  // Scatter: <CandlestickChartSharpIcon />,
+};
 
 const icons = {
   WHATSAPP: <FaWhatsapp className="text-green-500 text-2xl" />,
@@ -42,7 +56,7 @@ const icons = {
 };
 
 const FILTERS = ["Day", "Month", "Year", "Custom"];
-const CHART_TYPES = ["Bar", "Line", "Pie", "Candlestick"];
+const CHART_TYPES = ["Bar", "Line", "Pie"];
 
 export default function ServiceUsageDashboard() {
   const [startDate, setStartDate] = useState(new Date());
@@ -239,38 +253,104 @@ export default function ServiceUsageDashboard() {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
       {/* Sidebar */}
-      <div className="lg:col-span-1 bg-white p-4 rounded-2xl shadow-md h-fit sticky top-4">
-        <h3 className="font-semibold mb-4">Filter by Service</h3>
-        <div className="flex flex-col gap-2">
-          {activeServices.map((service) => (
-            <label key={service} className="flex items-center gap-2">
-              <input
-                type="checkbox"
-                checked={selectedServices.includes(service)}
-                onChange={() => {
+      <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-xl h-fit sticky top-4 space-y-6">
+        {/* Services Filter */}
+        <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wide">
+          Filter Services
+        </h3>
+        <div className="space-y-2">
+          {activeServices.map((service) => {
+            const selected = selectedServices.includes(service);
+            // Map service → its color palette
+            const palette = {
+              whatsapp: [
+                "from-green-100",
+                "to-green-300",
+                "text-black-00",
+                "bg-green-50",
+              ],
+              sms: [
+                "from-pink-100",
+                "to-pink-300",
+                "text-black-600",
+                "bg-pink-50",
+              ],
+              rcs: [
+                "from-purple-100",
+                "to-purple-300",
+                "text-black-600",
+                "bg-purple-50",
+              ],
+              obd: [
+                "from-yellow-100",
+                "to-yellow-300",
+                "text-black-600",
+                "bg-yellow-50",
+              ],
+            }[service.toLowerCase()] || [
+              "from-gray-100",
+              "to-gray-300",
+              "text-black-600",
+              "bg-gray-50",
+            ];
+
+            const [from, to, txt, bg] = palette;
+
+            return (
+              <button
+                key={service}
+                onClick={() =>
                   setSelectedServices((prev) =>
-                    prev.includes(service)
+                    selected
                       ? prev.filter((s) => s !== service)
                       : [...prev, service]
-                  );
-                }}
-              />
-              {icons[service] ?? "⚠️"} <span>{service}</span>
-            </label>
-          ))}
+                  )
+                }
+                className={`
+            flex items-center gap-3 w-full px-4 py-2 rounded-lg transition 
+            ${
+              selected
+                ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+            }
+          `}
+              >
+                <span
+                  className={`
+              flex-shrink-0 p-2 rounded-full transition
+              ${selected ? "bg-white" : bg} ${selected ? txt : "text-gray-400"}
+            `}
+                >
+                  {icons[service] || "🔧"}
+                </span>
+                <span className="flex-1 text-left font-medium capitalize">
+                  {service}
+                </span>
+                {/* {selected && (
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          )} */}
+              </button>
+            );
+          })}
         </div>
 
+        {/* Chart Type */}
         <h3 className="font-semibold mt-6 mb-2">Chart Type</h3>
+
         <div className="flex flex-col gap-2">
           {CHART_TYPES.map((type) => (
             <button
               key={type}
               onClick={() => setChartType(type)}
-              className={`text-left px-3 py-1 rounded-md ${
+              className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
                 chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
               }`}
             >
-              {type}
+              {ICON_MAP[type] || <span className="w-5" />}
+              {/* label */}
+              <span className="font-medium">{type}</span>
             </button>
           ))}
         </div>
@@ -304,7 +384,8 @@ export default function ServiceUsageDashboard() {
                   className="border rounded-lg px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   maxDate={endDate}
                 /> */}
-                <UniversalDatePicker
+                <DateInputWithCalendar
+                  selected={startDate}
                   onChange={(date) => setStartDate(date)}
                   value={startDate}
                   label="From Date"
@@ -324,7 +405,14 @@ export default function ServiceUsageDashboard() {
                   maxDate={new Date()}
                 /> */}
 
-                <UniversalDatePicker
+                {/* <MiniCalendar
+                  onChange={(date) => setEndDate(date)}
+                  value={endDate}
+                  label="To Date"
+                  minDate={startDate}
+                  maxDate={new Date()}
+                /> */}
+                <DateInputWithCalendar
                   onChange={(date) => setEndDate(date)}
                   value={endDate}
                   label="To Date"
@@ -363,7 +451,7 @@ export default function ServiceUsageDashboard() {
           ))}
         </div> */}
 
-         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 ">
           {filteredData.map((service) => (
             <motion.div
               key={service.name}
@@ -395,7 +483,7 @@ export default function ServiceUsageDashboard() {
         </div>
 
         {/* Graph */}
-        <div className="mt-10 p-6 rounded-2xl bg-white shadow-md">
+        <div className="mt-5 p-6 rounded-2xl bg-white shadow-md">
           <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
           <ResponsiveContainer width="100%" height={350}>
             {renderChart()}

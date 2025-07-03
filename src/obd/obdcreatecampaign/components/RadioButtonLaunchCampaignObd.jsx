@@ -350,9 +350,8 @@ const RadioButtonLaunchCampaignObd = ({
                 <button
                   onClick={handleFileUpload}
                   disabled={isUploading}
-                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${
-                    isUploading ? "disabled" : ""
-                  }`}
+                  className={`px-2 py-1.5 bg-green-400 rounded-lg hover:bg-green-500 cursor-pointer ${isUploading ? "disabled" : ""
+                    }`}
                 >
                   <FileUploadOutlinedIcon
                     sx={{ color: "white", fontSize: "23px" }}

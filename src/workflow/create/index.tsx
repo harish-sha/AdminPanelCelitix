@@ -27,11 +27,6 @@ import { saveWorkflow } from "@/apis/workflow";
 import { HiOutlineDocument } from "react-icons/hi2";
 import { DetailsDialog } from "./components/details";
 import { useNavigate } from "react-router-dom";
-import CallIcon from '@mui/icons-material/Call';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import SmsIcon from '@mui/icons-material/Sms';
-import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 
 function NodeComponent({
   id,
@@ -130,7 +125,7 @@ function NodeComponent({
         <Handle
           type="target"
           position={Position.Left}
-          className={`${data.type == "starting" ? "hidden" : ""} `}
+          className={`${id == "1" ? "hidden" : ""} `}
           style={{
             background: connectionType === "source" ? "green" : "blue",
           }}
@@ -211,7 +206,7 @@ export const WorkflowCreate = () => {
   };
 
   const commonButtonClass =
-    "cursor-pointer h-15 text-[1rem] font-semibold bg-gradient-to-br from-blue-200 border border-gray-700 text-black to-white shadow-md";
+    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
     // if (nodes.length >= 5) return toast.error("You can add only 5 nodes");
@@ -360,7 +355,10 @@ export const WorkflowCreate = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
-    if (!nodes.length) return toast.error("Please add at least one node");
+
+    if (nodes.length < 2) return toast.error("Please add at least two nodes");
+    if (nodes.length !== edges.length)
+      return toast.error("Please connect all the nodes");
     const payload = generatePayload(nodesInputData, nodes, edges);
     if (!payload) return toast.error("Error while saving workflow");
 
@@ -425,7 +423,7 @@ export const WorkflowCreate = () => {
         <div className="flex flex-col justify-between w-[250px] gap-4">
           <div>
             <h1>Select Channel</h1>
-             <div className="grid grid-cols-1 p-1 gap-x-2 gap-y-3">
+            <div className="grid grid-cols-1 p-1 gap-x-2 gap-y-3">
               <Button
                 draggable
                 onDragStart={(event) => {
@@ -436,7 +434,6 @@ export const WorkflowCreate = () => {
                 }}
                 className={commonButtonClass}
               >
-                <CallIcon size={32} className="text-indigo-600" />
                 OBD
               </Button>
               <Button
@@ -449,7 +446,6 @@ export const WorkflowCreate = () => {
                 }}
                 className={commonButtonClass}
               >
-                 <WhatsAppIcon size={32} className="text-green-600" />
                 WhatsApp
               </Button>
               <Button
@@ -462,7 +458,6 @@ export const WorkflowCreate = () => {
                 }}
                 className={commonButtonClass}
               >
-                <ChatBubbleOutlineIcon size={32} className="text-blue-600" />
                 RCS
               </Button>
               <Button
@@ -475,7 +470,6 @@ export const WorkflowCreate = () => {
                 }}
                 className={commonButtonClass}
               >
-                <SmsIcon size={32} className="text-blue-600" />
                 SMS
               </Button>
               <Button
@@ -485,10 +479,9 @@ export const WorkflowCreate = () => {
                   reset();
                 }}
                 className={
-                  "cursor-pointer  h-15 text-[1rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
+                  "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
                 }
               >
-                <RestartAltOutlinedIcon size={32} className="text-white"/>
                 Reset
               </Button>
             </div>

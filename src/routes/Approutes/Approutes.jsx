@@ -155,8 +155,6 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 
 
-
-
 const Approutes = () => {
   return (
     <Routes>
@@ -312,7 +310,6 @@ const Approutes = () => {
         {/* Canned Message Manager */}
         <Route path="/cannedmessagemanager" element={<CannedMessage />} />
 
-
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
         <Route path="/authsettings" element={<AuthenticatorSetting />} />
@@ -330,7 +327,7 @@ const Approutes = () => {
         <Route path="/aiconfiguration" element={<GptConfiguration />} />
 
         {/* self recharge */}
-        <Route path="selfrecharge" element={<SelfRecharge />} />
+        <Route path="/selfrecharge" element={<SelfRecharge />} />
 
       </Route>
 

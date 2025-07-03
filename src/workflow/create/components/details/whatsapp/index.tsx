@@ -147,17 +147,17 @@ export const Whatsapp = ({
     const btnVar = variablesData.btnInput.filter((item) => item !== "");
 
     if (
-      variablesData.btn.length > 0 &&
-      btnVar.length !== variablesData.btn.length
-    ) {
-      return toast.error("Please enter URL Variable Value");
-    }
-
-    if (
       variablesData.data.length > 0 &&
       variables.length !== variablesData.data.length
     ) {
       return toast.error("Please enter Variable Value");
+    }
+
+    if (
+      variablesData.btn.length > 0 &&
+      btnVar.length !== variablesData.btn.length
+    ) {
+      return toast.error("Please enter URL Variable Value");
     }
 
     setNodesInputData((prev) => ({

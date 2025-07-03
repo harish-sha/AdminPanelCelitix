@@ -29,11 +29,6 @@ import { DetailsDialog } from "../create/components/details";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { convertPaylaod } from "./helpers/convertPaylaod";
-import CallIcon from '@mui/icons-material/Call';
-import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ChatBubbleOutlineIcon from '@mui/icons-material/ChatBubbleOutline';
-import SmsIcon from '@mui/icons-material/Sms';
-import RestartAltOutlinedIcon from "@mui/icons-material/RestartAltOutlined";
 
 function NodeComponent({
   id,
@@ -132,7 +127,7 @@ function NodeComponent({
         <Handle
           type="target"
           position={Position.Left}
-          className={`${data.type == "starting" ? "hidden" : ""} `}
+          className={`${id == "1" ? "hidden" : ""} `}
           style={{
             background: connectionType === "source" ? "green" : "blue",
           }}
@@ -170,7 +165,7 @@ function NodeComponent({
 export const UpdateWorkflow = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { data } = location.state;
+  const { data, workflow_meta_data } = location.state;
 
   if (!data) {
     toast.error("Workflow not found");
@@ -188,7 +183,7 @@ export const UpdateWorkflow = () => {
     formattedData?.edges || edge
   );
   const [nodeId, setNodeId] = useState(formattedData?.nodes?.length + 1 || 1);
-  const [name, setName] = useState("");
+  const [name, setName] = useState(workflow_meta_data?.workflow_name || "");
   const [nodesInputData, setNodesInputData] = useState(
     formattedData?.nodedata || {}
   );
@@ -239,7 +234,7 @@ export const UpdateWorkflow = () => {
   };
 
   const commonButtonClass =
-    "cursor-pointer h-15 text-[1rem] font-semibold bg-gradient-to-br from-blue-200 border border-gray-700 text-black to-white shadow-md";
+    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
 
   const addNode = (type: string, position?: { x: number; y: number }) => {
     const newNode = {
@@ -380,14 +375,16 @@ export const UpdateWorkflow = () => {
 
   async function handleSaveWorkflow() {
     if (!name) return toast.error("Please enter a name for the workflow");
-    if (!nodes.length) return toast.error("Please add at least one node");
+    if (nodes.length < 2) return toast.error("Please add at least two nodes");
+    if (nodes.length !== edges.length)
+      return toast.error("Please connect all the nodes");
     const payload = generatePayload(nodesInputData, nodes, edges);
     if (!payload) return toast.error("Error while saving workflow");
 
     const data = {
       workflowName: name,
-      isEditWorkflow: 0,
-      srNo: 0,
+      isEditWorkflow: 1,
+      srNo: workflow_meta_data?.sr_no,
       nodeJson: JSON.stringify(payload),
     };
 
@@ -396,7 +393,7 @@ export const UpdateWorkflow = () => {
       if (res?.statusCode !== 200) {
         return toast.error(res.msg || "Error while saving workflow");
       }
-      toast.success("Workflow saved successfully");
+      toast.success("Workflow updated successfully");
       navigate("/workflow");
     } catch (e) {
       toast.error("Error while saving workflow");
@@ -456,7 +453,6 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
-                <CallIcon size={32} className="text-indigo-600" />
                 OBD
               </Button>
               <Button
@@ -469,7 +465,6 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
-                <WhatsAppIcon size={32} className="text-green-600" />
                 WhatsApp
               </Button>
               <Button
@@ -482,7 +477,6 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
-                <ChatBubbleOutlineIcon size={32} className="text-blue-600" />
                 RCS
               </Button>
               <Button
@@ -495,7 +489,6 @@ export const UpdateWorkflow = () => {
                 }}
                 className={commonButtonClass}
               >
-                <SmsIcon size={32} className="text-blue-600" />
                 SMS
               </Button>
               <Button
@@ -505,10 +498,9 @@ export const UpdateWorkflow = () => {
                   reset();
                 }}
                 className={
-                  "cursor-pointer  h-15 text-[1rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
+                  "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-red-400 to-red-600 shadow-lg"
                 }
               >
-                <RestartAltOutlinedIcon size={32} className="text-white"/>
                 Reset
               </Button>
             </div>
