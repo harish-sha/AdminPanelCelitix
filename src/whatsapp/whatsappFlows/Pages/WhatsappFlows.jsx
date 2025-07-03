@@ -241,7 +241,14 @@ const WhatsappFlows = () => {
     setSelectedFlow(null);
   };
 
-  const handleEdit = (flow = selectedFlow) => {
+  const handleEdit = (flow) => {
+    console.log("flow", flow);
+    navigate("/wflowedit", {
+      state: {
+        data: flow?.srNo,
+        flow: flow,
+      },
+    });
     handleMenuClose();
   };
 
@@ -698,16 +705,18 @@ const WhatsappFlows = () => {
                         }}
                         onClose={handleMenuClose}
                       >
-                        <button
-                          onClick={() => handleEdit(flow)}
-                          className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
-                        >
-                          <EditIcon
-                            fontSize="small"
-                            className="text-gray-600"
-                          />
-                          Edit
-                        </button>
+                        {flow.status === "DRAFT" && (
+                          <button
+                            onClick={() => handleEdit(flow)}
+                            className="w-full text-left px-4 py-2 text-sm text-slate-600 hover:bg-slate-100 flex items-center gap-2"
+                          >
+                            <EditIcon
+                              fontSize="small"
+                              className="text-gray-600"
+                            />
+                            Edit
+                          </button>
+                        )}
 
                         {/* Delete Button */}
                         <button

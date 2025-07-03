@@ -344,7 +344,7 @@ export default function ServiceUsageDashboard() {
         </div>
 
         {/* Usage Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredData.map((service, i) => (
             <motion.div
               key={service.name}
@@ -358,6 +358,37 @@ export default function ServiceUsageDashboard() {
               <p className="text-xl font-bold mt-1">{service.totalSent} Sent</p>
               <p className="text-sm text-gray-400">
                 ₹{service.totalCharge.toFixed(2)} charged
+              </p>
+            </motion.div>
+          ))}
+        </div> */}
+
+         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 ">
+          {filteredData.map((service) => (
+            <motion.div
+              key={service.name}
+              whileHover={{ backgroundColor: "#f9fafb" }}
+              transition={{ duration: 0.2 }}
+              className="flex items-center justify-between border border-gray-300 rounded-md p-3 hover:border-indigo-300 transition"
+            >
+              {/* Icon */}
+              <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-3 text-2xl">
+                {icons[service.name]}
+              </div>
+
+              {/* Service Name + Sent */}
+              <div className="flex-1 px-4">
+                <p className="text-sm font-semibold text-gray-800 capitalize">
+                  {service.name}
+                </p>
+                <p className="text-base font-bold text-gray-900">
+                  {service.totalSent} Sent
+                </p>
+              </div>
+
+              {/* Charge */}
+              <p className="text-sm text-gray-500 whitespace-nowrap">
+                ₹{service.totalCharge.toFixed(2)}
               </p>
             </motion.div>
           ))}

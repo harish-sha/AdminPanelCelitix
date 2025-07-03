@@ -244,37 +244,37 @@ const WhatsappManageWaba = ({ id, name }) => {
   const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
   // const API_BASE_URL = "/api";
 
-  // async function onboardUser(accessToken) {
-  //   const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //       "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
-  //     }
-  //   });
+  async function onboardUser(accessToken) {
+    const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+      }
+    });
 
-  //   // pass accesstoken via formdata
-  //   // const formData = new FormData();
-  //   // formData.append("code", accessToken);
+    // pass accesstoken via formdata
+    // const formData = new FormData();
+    // formData.append("code", accessToken);
 
-  //   // const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess`, {
-  //   //   method: "POST",
-  //   //   headers: {
-  //   //     "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
-  //   //     // Don't set Content-Type manually when using FormData
-  //   //   },
-  //   //   body: formData,
-  //   // });
+    // const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    //     // Don't set Content-Type manually when using FormData
+    //   },
+    //   body: formData,
+    // });
 
-  //   const data = await res.json();
-  //   console.log(data)
-  //   if (!res.ok) {
-  //     toast.error(data.message || "Something went wrong")
-  //   } else {
-  //     toast.success(data.message || "Onboarding successful")
-  //   }
-  //   // return data;
-  // }
+    const data = await res.json();
+    console.log(data)
+    if (!res.ok) {
+      toast.error(data.message || "Something went wrong")
+    } else {
+      toast.success(data.message || "Onboarding successful")
+    }
+    // return data;
+  }
 
   const handleFacebookLogin = () => {
     window.FB.login(
@@ -282,7 +282,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          console.log('Access Token:', accessToken);
+          // console.log('Access Token:', accessToken);
           // onboardUser(accessToken)
           getWabaList()
         } else {
@@ -294,10 +294,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         }
       },
       {
-        // old config id
-        // config_id: "827520649332611",
-        // new config id
-        config_id: "1058536032491055",
+        config_id: "827520649332611",
         response_type: 'code',
         override_default_response_type: true,
         extras: {

@@ -142,54 +142,72 @@ const Canvas = ({
 
     if (item.type === "textInput") {
       return (
-        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm ">
-          {targetItem.label && (
-            <div>
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
+        <div className="bg-white">
+          {targetItem.label ||
+            targetItem["helper-text"] ||
+            targetItem["error-message"] ||
+            targetItem["input-type"] ||
+            targetItem["min-chars"] ||
+            targetItem["max-chars"] ||
+            targetItem.required ? (
+            <div className="text-sm p-2 rounded-md bg-blue-50 border border-gray-300">
+              <div className="flex flex-col items-start space-y-1.5">
+                {targetItem.label && (
+                  <div>
+                    <span className="font-semibold">Label: </span>
+                    {targetItem.label}
+                  </div>
+                )}
 
-          {targetItem["helper-text"] && (
-            <div className="break-words whitespace-pre-wrap w-full max-w-full">
-              <span className="font-semibold ">Helper Text: </span>
-              {targetItem["helper-text"]}
-            </div>
-          )}
+                {targetItem["helper-text"] && (
+                  <div className="break-words whitespace-pre-wrap w-full max-w-full">
+                    <span className="font-semibold">Helper Text: </span>
+                    {targetItem["helper-text"]}
+                  </div>
+                )}
 
-          {targetItem["error-message"] && (
-            <div className="break-words whitespace-pre-wrap w-full max-w-full">
-              <span className="font-semibold">Error Message: </span>
-              {targetItem["error-message"]}
-            </div>
-          )}
+                {targetItem["error-message"] && (
+                  <div className="break-words whitespace-pre-wrap w-full max-w-full">
+                    <span className="font-semibold">Error Message: </span>
+                    {targetItem["error-message"]}
+                  </div>
+                )}
 
-          {targetItem["init-value"] && (
-            <div>
-              <span className="font-semibold">Initial Value: </span>
-              {targetItem["init-value"]}
-            </div>
-          )}
+                {targetItem["input-type"] && (
+                  <div>
+                    <span className="font-semibold">Input Type: </span>
+                    {targetItem["input-type"]}
+                  </div>
+                )}
 
-          {targetItem["min-chars"] && (
-            <div>
-              <span className="font-semibold">Min Characters: </span>
-              {targetItem["min-chars"]}
-            </div>
-          )}
+                {targetItem["min-chars"] !== undefined && (
+                  <div>
+                    <span className="font-semibold">Min Characters: </span>
+                    {targetItem["min-chars"]}
+                  </div>
+                )}
 
-          {targetItem["max-chars"] && (
-            <div>
-              <span className="font-semibold">Max Characters: </span>
-              {targetItem["max-chars"]}
-            </div>
-          )}
+                {targetItem["max-chars"] !== undefined && (
+                  <div>
+                    <span className="font-semibold">Max Characters: </span>
+                    {targetItem["max-chars"]}
+                  </div>
+                )}
 
-          {targetItem.required && (
-            <div>
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
+                {targetItem.required !== undefined && (
+                  <div>
+                    <span className="font-semibold">Required: </span>
+                    {targetItem.required ? "True" : "False"}
+                  </div>
+                )}
+              </div>
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -197,302 +215,397 @@ const Canvas = ({
 
     if (item.type === "textArea") {
       return (
-        <div className="p-3  rounded-md space-y-2 bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="break-words whitespace-pre-wrap w-full max-w-full">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
+        <div className="bg-white">
+          {targetItem.label ||
+            targetItem["helper-text"] ||
+            targetItem.required ? (
+            <div className="p-1.5  rounded-md space-y-1.5 bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="break-words whitespace-pre-wrap w-full max-w-full">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </div>
+              )}
 
-          {targetItem["helper-text"] && (
-            <div className="break-words whitespace-pre-wrap w-full max-w-full">
-              <span className="font-semibold">Helper Text: </span>
-              {targetItem["helper-text"]}
-            </div>
-          )}
+              {targetItem["helper-text"] && (
+                <div className="break-words whitespace-pre-wrap w-full max-w-full">
+                  <span className="font-semibold">Helper Text: </span>
+                  {targetItem["helper-text"]}
+                </div>
+              )}
 
-          {targetItem.required && (
-            <div>
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
+              {targetItem.required && (
+                <div>
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
     }
 
     if (item.type === "richText") {
-      let renderedHTML = "<p>No content available</p>";
+      let renderedHTML = "";
+      let isEmptyContent = false;
 
       try {
         const markdown = Array.isArray(targetItem?.text)
           ? targetItem.text.join("\n")
           : targetItem?.content || "";
 
-        renderedHTML = marked.parse(markdown);
-      } catch (err) {
-        console.error("Markdown rendering error:", err);
-        renderedHTML = "<p>No content available</p>";
-
-        renderedHTML = renderedHTML.replace(
-          /<img[^>]*src=["'](?!data:image\/)[^"']*["'][^>]* style="width-10px" >/g,
-          `<img$1 class="w-10 h-10 rounded-full object-cover border">`
-        );
+        if (markdown.trim()) {
+          renderedHTML = marked.parse(markdown);
+        } else {
+          isEmptyContent = true;
+          renderedHTML =
+            "<p class='text-gray-400 italic'>Please fill this field by clicking the <span class='text-violet-600 font-medium'>edit icon</span> or remove this block.</p>";
+        }
+      } catch {
+        isEmptyContent = true;
+        renderedHTML =
+          "<p class='text-gray-400 italic'>Please fill this field by clicking the <span class='text-violet-600 font-medium'>edit icon</span> or remove this block.</p>";
       }
-      return (
-        <>
-          {/* {targetItem.text && ( */}
-          <div className="w-full mx-auto border rounded-md shadow-md overflow-hidden  h-auto flex flex-col p-3 space-y-2 bg-blue-50 break-words whitespace-pre-wrap max-w-full">
-            <div
-              className="flex-1 overflow-y-auto  prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
-              dangerouslySetInnerHTML={{ __html: renderedHTML }}
-            />
 
-            <style>
-              {`
-    .prose h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    .prose h2 {
-      font-size: 1.25rem;
-      font-weight: 500;
-    }
-    .prose img {
-      width: 2.5rem; 
-      height: 2.5rem; 
-      border-radius: 9999px; 
-      object-fit: cover; 
-      border: 1px solid #d1d5db; 
-      display: inline-block; 
-    }
-  `}
-            </style>
-          </div>
-        </>
+      return (
+        <div
+          className={`p-3 rounded-md border shadow-sm ${isEmptyContent ? "bg-white" : "bg-blue-50"
+            }`}
+        >
+          <div
+            className="flex-1 overflow-y-auto prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
+            dangerouslySetInnerHTML={{ __html: renderedHTML }}
+          />
+
+          <style>
+            {`
+          .prose h1 {
+            font-size: 1.5rem;
+             font-weight: 700;
+         }
+           .prose h2 {
+             font-size: 1.25rem;
+             font-weight: 500;
+           }
+          .prose img {
+             width: 2.5rem; 
+             height: 2.5rem; 
+             border-radius: 9999px; 
+             object-fit: cover; 
+             border: 1px solid #d1d5db; 
+            display: inline-block; 
+           }
+        `}
+          </style>
+        </div>
       );
     }
 
     // For footerbutton: look under footer
-
     if (item.type === "footerbutton") {
-      const footer = targetItem.footer?.["footer_1"];
+      const hasContent =
+        targetItem.label ||
+        targetItem["left-caption"] ||
+        targetItem["right-caption"] ||
+        targetItem["center-caption"] ||
+        targetItem["on-click-action"];
 
       return (
-        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-          {footer?.label && (
-            <div>
-              <span className="font-semibold">Label: </span>
-              {footer.label}
-            </div>
-          )}
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div>
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </div>
+              )}
 
-          {footer?.left_caption && (
-            <div className="mt-1">
-              <span className="font-semibold">Left-caption: </span>
-              {footer.left_caption}
-            </div>
-          )}
+              {targetItem["left-caption"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Left-caption: </span>
+                  {targetItem["left-caption"]}
+                </div>
+              )}
 
-          {footer?.right_caption && (
-            <div className="mt-1">
-              <span className="font-semibold">Right-caption: </span>
-              {footer.right_caption}
-            </div>
-          )}
+              {targetItem["right-caption"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Right-caption: </span>
+                  {targetItem["right-caption"]}
+                </div>
+              )}
 
-          {footer?.center_caption && (
-            <div className="mt-1">
-              <span className="font-semibold">Center-caption: </span>
-              {footer.center_caption}
-            </div>
-          )}
+              {targetItem["center-caption"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Center-caption: </span>
+                  {targetItem["center-caption"]}
+                </div>
+              )}
 
-          {footer?.on_click_action && (
-            <div className="mt-1">
-              <span className="font-semibold">Next Action: </span>
-              {footer.on_click_action}
+              {targetItem["on-click-action"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Next Action: </span>
+                  {targetItem["on-click-action"]}
+                </div>
+              )}
+              {/* 
+             {targetItem["on-click-action"] && (
+  <div className="mt-1">
+    <span className="font-semibold">Next Action: </span>
+    {targetItem["on-click-action"].name || "N/A"}
+  </div>
+)}
+
+{targetItem["on-click-action"]?.next?.name && (
+  <div className="mt-1">
+    <span className="font-semibold">Next Screen: </span>
+    {targetItem["on-click-action"].next.name}
+  </div>
+)} */}
+
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
     }
 
     if (item.type === "radioButton") {
-      return (
-        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
+      const options = targetItem["data-source"] || [];
+      const hasContent =
+        targetItem.label || targetItem.required || options.length > 0;
 
-          {(targetItem["data-source"] || []).map((opt, i) => (
-            <div
-              key={i}
-              className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between"
-            >
-              <div>
-                <p className="mb-1">
-                  <span className="font-semibold">Title:</span> {opt.title}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Description:</span>{" "}
-                  {opt.description}
-                </p>
-                <p className="mb-1">
-                  <span className="font-semibold">Metadata:</span>{" "}
-                  {opt.metadata}
-                </p>
-              </div>
-              {opt.image && (
-                <div className="flex justify-end items-center mt-0">
-                  <img
-                    src={
-                      opt.image?.startsWith("data:")
-                        ? opt.image
-                        : `data:image/jpeg;base64,${opt.image}`
-                    }
-                    alt={opt.title || "option image"}
-                    className="w-10 h-10 rounded-full object-cover border"
-                    onError={(e) => (e.currentTarget.style.display = "none")}
-                  />
+      return (
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </div>
+              )}
+
+              {options.map((opt, i) => (
+                <div
+                  key={i}
+                  className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between"
+                >
+                  <div>
+                    {opt.title && (
+                      <p className="mb-1">
+                        <span className="font-semibold">Title: </span>{" "}
+                        {opt.title}
+                      </p>
+                    )}
+                    {opt.description && (
+                      <p className="mb-1">
+                        <span className="font-semibold">Description: </span>{" "}
+                        {opt.description}
+                      </p>
+                    )}
+                    {opt.metadata && (
+                      <p className="mb-1">
+                        <span className="font-semibold">Metadata: </span>{" "}
+                        {opt.metadata}
+                      </p>
+                    )}
+                  </div>
+
+                  {opt.image && (
+                    <div className="flex justify-end items-center mt-0">
+                      <img
+                        src={
+                          opt.image.startsWith("data:")
+                            ? opt.image
+                            : `data:image/jpeg;base64,${opt.image}`
+                        }
+                        alt={opt.title || "option image"}
+                        className="w-10 h-10 rounded-full object-cover border"
+                        onError={(e) =>
+                          (e.currentTarget.style.display = "none")
+                        }
+                      />
+                    </div>
+                  )}
+                </div>
+              ))}
+
+              {targetItem.required && (
+                <div className="mt-1">
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
                 </div>
               )}
             </div>
-          ))}
-
-          {targetItem.required && (
-            <div className="mt-1">
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
-            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
     }
 
     if (item.type === "checkBox") {
+      const options = targetItem["data-source"] || [];
+      const hasContent =
+        targetItem.label || targetItem.required || options.length > 0;
       return (
-        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
-
-          <div className="mt-2 space-y-2">
-            {(targetItem["data-source"] || []).map((opt, idx) => (
-              <div
-                key={idx}
-                className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between "
-              >
-                <div>
-                  {opt.title && (
-                    <div className="mb-1">
-                      <span className="font-semibold"> Title: </span>
-                      {opt.title || "Option"}
-                    </div>
-                  )}
-                  {opt.description && (
-                    <div className="mb-1">
-                      <span className="font-semibold"> Description: </span>
-                      {opt.description}
-                    </div>
-                  )}
-                  {opt.metadata && (
-                    <div className="mb-1">
-                      <span className="font-semibold">Metadata: </span>
-                      {opt.metadata}
-                    </div>
-                  )}
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
                 </div>
-                {opt.image && (
-                  <div className="flex justify-end items-center mt-0">
-                    <img
-                      src={
-                        opt.image?.startsWith("data:")
-                          ? opt.image
-                          : `data:image/jpeg;base64,${opt.image}`
-                      }
-                      alt={opt.title || "option image"}
-                      className="w-10 h-10 rounded-full object-cover border"
-                    />
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+              )}
 
-          {targetItem.required && (
-            <div className="mt-1">
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
+              <div className="mt-2 space-y-2">
+                {(targetItem["data-source"] || []).map((opt, idx) => (
+                  <div
+                    key={idx}
+                    className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between "
+                  >
+                    <div>
+                      {opt.title && (
+                        <div className="mb-1">
+                          <span className="font-semibold"> Title: </span>
+                          {opt.title || "Option"}
+                        </div>
+                      )}
+                      {opt.description && (
+                        <div className="mb-1">
+                          <span className="font-semibold"> Description: </span>
+                          {opt.description}
+                        </div>
+                      )}
+                      {opt.metadata && (
+                        <div className="mb-1">
+                          <span className="font-semibold">Metadata: </span>
+                          {opt.metadata}
+                        </div>
+                      )}
+                    </div>
+                    {opt.image && (
+                      <div className="flex justify-end items-center mt-0">
+                        <img
+                          src={
+                            opt.image?.startsWith("data:")
+                              ? opt.image
+                              : `data:image/jpeg;base64,${opt.image}`
+                          }
+                          alt={opt.title || "option image"}
+                          className="w-10 h-10 rounded-full object-cover border"
+                        />
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
+              {targetItem.required && (
+                <div className="mt-1">
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
     }
 
     if (item.type === "dropDown") {
+      const options = targetItem["data-source"] || [];
+      const hasContent =
+        targetItem.label || targetItem.required || options.length > 0;
       return (
-        <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
-
-          <div className="space-y-1">
-            {(targetItem["data-source"] || []).map((opt, index) => (
-              <div
-                key={index}
-                className="border border-gray-300 p-2 rounded bg-white flex  items-center justify-between"
-              >
-                <div>
-                  <div className="mb-1">
-                    <span className="font-semibold"> Title: </span>
-                    {opt.title || "Untitled Option"}
-                  </div>
-                  {opt.description && (
-                    <div className="mb-1">
-                      <span className="font-semibold"> Description: </span>
-                      {opt.description}
-                    </div>
-                  )}
-                  {opt.metadata && (
-                    <div className="mb-1">
-                      <span className="font-semibold"> Metadata: </span>
-                      {opt.metadata}
-                    </div>
-                  )}
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
                 </div>
+              )}
 
-                {opt.image && (
-                  <div className="flex justify-end items-center mt-0">
-                    <img
-                      src={
-                        opt.image?.startsWith("data:")
-                          ? opt.image
-                          : `data:image/jpeg;base64,${opt.image}`
-                      }
-                      alt={opt.title || "option image"}
-                      className="w-10 h-10 rounded-full object-cover border"
-                    />
+              <div className="space-y-1">
+                {(targetItem["data-source"] || []).map((opt, index) => (
+                  <div
+                    key={index}
+                    className="mt-2 p-2 border rounded-md bg-white shadow-sm flex items-center justify-between "
+                  >
+                    <div>
+                      <div className="mb-1">
+                        <span className="font-semibold"> Title: </span>
+                        {opt.title || "Untitled Option"}
+                      </div>
+                      {opt.description && (
+                        <div className="mb-1">
+                          <span className="font-semibold"> Description: </span>
+                          {opt.description}
+                        </div>
+                      )}
+                      {opt.metadata && (
+                        <div className="mb-1">
+                          <span className="font-semibold"> Metadata: </span>
+                          {opt.metadata}
+                        </div>
+                      )}
+                    </div>
+
+                    {opt.image && (
+                      <div className="flex justify-end items-center mt-0">
+                        <img
+                          src={
+                            opt.image?.startsWith("data:")
+                              ? opt.image
+                              : `data:image/jpeg;base64,${opt.image}`
+                          }
+                          alt={opt.title || "option image"}
+                          className="w-10 h-10 rounded-full object-cover border"
+                        />
+                      </div>
+                    )}
                   </div>
-                )}
+                ))}
               </div>
-            ))}
-          </div>
-          {targetItem.required && (
-            <div className="mt-1">
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
+              {targetItem.required && (
+                <div className="mt-1">
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -500,49 +613,61 @@ const Canvas = ({
 
     if (item.type === "chipSelector") {
       const options = targetItem["data-source"] || [];
+      const hasContent =
+        targetItem.label || targetItem.required || options.length > 0;
       return (
-        <div className=" p-3 rounded-md  bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
+        <div className="bg-white">
+          {hasContent ? (
+            <div className=" p-3 rounded-md  bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </div>
+              )}
+
+              {targetItem.description && (
+                <p className="mb-1">
+                  <span className="font-semibold">Description: </span>
+                  {targetItem.description}
+                </p>
+              )}
+
+              <div className="flex flex-wrap gap-2 mb-2">
+                {options.length > 0 ? (
+                  options.map((opt, idx) => (
+                    <span
+                      key={idx}
+                      className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm"
+                    >
+                      {opt.title || `Option ${idx + 1}`}
+                    </span>
+                  ))
+                ) : (
+                  <p className="text-sm text-gray-400"></p>
+                )}
+              </div>
+
+              {targetItem["max-selected-items"] && (
+                <p className="mb-1">
+                  <span className="font-semibold">Max Selectable: </span>
+                  {targetItem["max-selected-items"] || 2}
+                </p>
+              )}
+
+              {targetItem.required && (
+                <div className="mt-1">
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
+                </div>
+              )}
             </div>
-          )}
-
-          {targetItem.description && (
-            <p className="mb-1">
-              <span className="font-semibold">Description: </span>
-              {targetItem.description}
-            </p>
-          )}
-
-          <div className="flex flex-wrap gap-2 mb-2">
-            {options.length > 0 ? (
-              options.map((opt, idx) => (
-                <span
-                  key={idx}
-                  className="bg-white text-gray-900 px-3 py-1 rounded-full text-sm"
-                >
-                  {opt.title || `Option ${idx + 1}`}
-                </span>
-              ))
-            ) : (
-              <p className="text-sm text-gray-400"></p>
-            )}
-          </div>
-
-          {targetItem["max-selected-items"] && (
-            <p className="mb-1">
-              <span className="font-semibold">Max Selectable: </span>
-              {targetItem["max-selected-items"] || 2}
-            </p>
-          )}
-
-          {targetItem.required && (
-            <div className="mt-1">
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
-            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -550,19 +675,29 @@ const Canvas = ({
 
     if (item.type === "embeddedlink") {
       return (
-        <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
-          {targetItem.text && (
-            <div className="mb-1">
-              <span className="font-semibold">Text: </span>
-              {targetItem.text}
-            </div>
-          )}
+        <div className=" bg-white">
+          {targetItem.text || targetItem["on-click-action"] ? (
+            <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
+              {targetItem.text && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.text}
+                </div>
+              )}
 
-          {targetItem["on-click-action"] && (
-            <div>
-              <span className="font-semibold">Action: </span>
-              {targetItem["on-click-action"]}
+              {targetItem["on-click-action"] && (
+                <div>
+                  <span className="font-semibold">Action: </span>
+                  {targetItem["on-click-action"]}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -570,26 +705,38 @@ const Canvas = ({
 
     if (item.type === "optin") {
       return (
-        <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
-          {targetItem.label && (
-            <div className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </div>
-          )}
+        <div className="bg-white">
+          {targetItem.label ||
+            targetItem.required ||
+            targetItem["on-click-action"] ? (
+            <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
+              {targetItem.label && (
+                <div className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </div>
+              )}
 
-          {targetItem.required && (
-            <div className="mt-1">
-              <span className="font-semibold">Required: </span>
-              {targetItem.required ? "True" : "False"}
-            </div>
-          )}
+              {targetItem.required && (
+                <div className="mt-1">
+                  <span className="font-semibold">Required: </span>
+                  {targetItem.required ? "True" : "False"}
+                </div>
+              )}
 
-          {targetItem["on-click-action"] && (
-            <div>
-              <span className="font-semibold">Action: </span>
-              {targetItem["on-click-action"]}
+              {targetItem["on-click-action"] && (
+                <div>
+                  <span className="font-semibold">Action: </span>
+                  {targetItem["on-click-action"]}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -597,31 +744,44 @@ const Canvas = ({
 
     if (item.type === "image") {
       return (
-        <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm ">
-          {targetItem.src && (
-            <img
-              src={targetItem.src}
-              alt={targetItem["alt-text"] || "Image preview"}
-              className="rounded-md max-w-full"
-              style={{
-                objectFit: targetItem["scale-type"] || "contain",
-                aspectRatio: targetItem["aspect-ratio"] || "auto",
-              }}
-            />
-          )}
+        <div className=" bg-white">
+          {targetItem.src ||
+            targetItem["alt-text"] ||
+            targetItem["scale-type"] ? (
+            <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm flex items-center gap-5">
+              {targetItem.src && (
+                <img
+                  src={`data:image/png;base64,${targetItem.src}`}
+                  alt={targetItem["alt-text"] || "Image preview"}
+                  className="rounded-full max-w-full h-40 w-40 border-2 border-gray-200 shadow-xl"
+                  style={{
+                    objectFit: targetItem["scale-type"] || "contain",
+                    aspectRatio: targetItem["aspect-ratio"] || "auto",
+                  }}
+                />
+              )}
+              <div>
+                {targetItem["alt-text"] && (
+                  <div className="mt-1">
+                    <span className="font-semibold">Alt Text: </span>
+                    {targetItem["alt-text"] || "No description"}
+                  </div>
+                )}
 
-          {targetItem["alt-text"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Alt Text: </span>
-              {targetItem["alt-text"] || "No description"}
+                {targetItem["scale-type"] && (
+                  <div className="mt-1">
+                    <span className="font-semibold"> Scale Type: </span>
+                    {targetItem["scale-type"] || "contain"}
+                  </div>
+                )}
+              </div>
             </div>
-          )}
-
-          {targetItem["scale-type"] && (
-            <div className="mt-1">
-              <span className="font-semibold"> Scale Type: </span>
-              {targetItem["scale-type"] || "contain"}
-            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -629,32 +789,45 @@ const Canvas = ({
 
     if (item.type === "document") {
       return (
-        <div className="p-3 border rounded-md shadow-sm bg-blue-50">
-          {targetItem.label && (
-            <label className="font-semibold">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label || "Upload Documents"}
-            </label>
-          )}
+        <div className=" bg-white">
+          {targetItem.label ||
+            targetItem.description ||
+            targetItem["min-uploaded-documents"] ||
+            targetItem["max-uploaded-documents"] ? (
+            <div className="p-3 border rounded-md shadow-sm bg-blue-50">
+              {targetItem.label && (
+                <label className="font-semibold">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label || "Upload Documents"}
+                </label>
+              )}
 
-          {targetItem.description && (
-            <p className="">
-              <span className="font-semibold">Description: </span>
-              {targetItem.description}
-            </p>
-          )}
+              {targetItem.description && (
+                <p className="">
+                  <span className="font-semibold">Description: </span>
+                  {targetItem.description}
+                </p>
+              )}
 
-          {targetItem["min-uploaded-documents"] && (
-            <p className=" mt-1">
-              <span className="font-semibold">Min Documents: </span>
-              {targetItem["min-uploaded-documents"] || ""}
-            </p>
-          )}
-          {targetItem["max-uploaded-documents"] && (
-            <p>
-              <span className="font-semibold"> Max Documents: </span>
-              {targetItem["max-uploaded-documents"] || ""}
-            </p>
+              {targetItem["min-uploaded-documents"] && (
+                <p className=" mt-1">
+                  <span className="font-semibold">Min Documents: </span>
+                  {targetItem["min-uploaded-documents"] || ""}
+                </p>
+              )}
+              {targetItem["max-uploaded-documents"] && (
+                <p>
+                  <span className="font-semibold"> Max Documents: </span>
+                  {targetItem["max-uploaded-documents"] || ""}
+                </p>
+              )}
+            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -662,33 +835,44 @@ const Canvas = ({
 
     if (item.type === "media") {
       return (
-        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
-          {targetItem.label && (
-            <label className="">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label || "Upload photos"}
-            </label>
-          )}
-
-          {targetItem.description && (
-            <p className="">
-              <span className="font-semibold">Description: </span>
-              {targetItem.description}
-            </p>
-          )}
-
-          {targetItem["min-uploaded-photos"] && (
-            <p className=" mt-1">
-              <span className="font-semibold"> Min Photos: </span>
-              {targetItem["min-uploaded-photos"] || ""}
-            </p>
-          )}
-
-          {targetItem["max-uploaded-photos"] && (
-            <p>
-              <span className="font-semibold"> Max Photos: </span>
-              {targetItem["max-uploaded-photos"] || ""}
-            </p>
+        <div className=" bg-white ">
+          {targetItem.label ||
+            targetItem.description ||
+            targetItem["min-uploaded-photos"] ||
+            targetItem["max-uploaded-photos"] ? (
+            <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
+              {" "}
+              {targetItem.label && (
+                <label className="">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label || "Upload photos"}
+                </label>
+              )}
+              {targetItem.description && (
+                <p className="">
+                  <span className="font-semibold">Description: </span>
+                  {targetItem.description}
+                </p>
+              )}
+              {targetItem["min-uploaded-photos"] && (
+                <p className=" mt-1">
+                  <span className="font-semibold"> Min Photos: </span>
+                  {targetItem["min-uploaded-photos"] || ""}
+                </p>
+              )}
+              {targetItem["max-uploaded-photos"] && (
+                <p>
+                  <span className="font-semibold"> Max Photos: </span>
+                  {targetItem["max-uploaded-photos"] || ""}
+                </p>
+              )}
+            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -696,12 +880,22 @@ const Canvas = ({
 
     if (item.type === "imageCarousel") {
       return (
-        <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
-          {targetItem["scale-type"] && (
-            <p>
-              <span className="font-semibold">Scale-Type: </span>
-              {targetItem["scale-type"]}
-            </p>
+        <div className=" bg-white ">
+          {targetItem["scale-type"] ? (
+            <div className="p-3 border bg-blue-50 rounded-md">
+              {targetItem["scale-type"] && (
+                <p>
+                  <span className="font-semibold">Scale-Type: </span>
+                  {targetItem["scale-type"]}
+                </p>
+              )}
+            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
 
           {/* {targetItem["alt-text"] && (
@@ -716,42 +910,56 @@ const Canvas = ({
 
     if (item.type === "date") {
       return (
-        <div className="w-full px-4 py-2  bg-blue-50 border rounded-md shadow-sm">
-          {targetItem.label && (
-            <label className="mb-1">
-              <span className="font-semibold">Label: </span>
-              {targetItem.label}
-            </label>
-          )}
+        <div className="bg-white">
+          {targetItem.label ||
+            targetItem["helper-text"] ||
+            targetItem["min-date"] ||
+            targetItem["max-date"] ||
+            targetItem["unavailable-dates"] ? (
+            <div className=" bg-blue-50 px-4 py-2 rounded-md shadow-sm  border w-full">
+              {targetItem.label && (
+                <label className="mb-1">
+                  <span className="font-semibold">Label: </span>
+                  {targetItem.label}
+                </label>
+              )}
 
-          {targetItem["helper-text"] && (
-            <div className="mt-1">
-              <span className="font-semibold">Helper-Text: </span>
-              {targetItem["helper-text"] || ""}
-            </div>
-          )}
+              {targetItem["helper-text"] && (
+                <div className="mt-1">
+                  <span className="font-semibold">Helper-Text: </span>
+                  {targetItem["helper-text"] || ""}
+                </div>
+              )}
 
-          {targetItem["min-date"] && (
-            <div className="mt-1">
-              <span className="font-semibold"> Min-Date: </span>
-              {targetItem["min-date"] || ""}
-            </div>
-          )}
+              {targetItem["min-date"] && (
+                <div className="mt-1">
+                  <span className="font-semibold"> Min-Date: </span>
+                  {targetItem["min-date"] || ""}
+                </div>
+              )}
 
-          {targetItem["max-date"] && (
-            <div className="mt-1">
-              <span className="font-semibold"> Max-Date: </span>
-              {targetItem["max-date"] || ""}
-            </div>
-          )}
+              {targetItem["max-date"] && (
+                <div className="mt-1">
+                  <span className="font-semibold"> Max-Date: </span>
+                  {targetItem["max-date"] || ""}
+                </div>
+              )}
 
-          {targetItem["unavailable-dates"] && (
-            <div>
-              <span className="font-semibold"> Unavailable-Date: </span>
-              {Array.isArray(targetItem["unavailable-dates"])
-                ? targetItem["unavailable-dates"].join(", ")
-                : targetItem["unavailable-dates"] || ""}
+              {targetItem["unavailable-dates"] && (
+                <div>
+                  <span className="font-semibold"> Unavailable-Date: </span>
+                  {Array.isArray(targetItem["unavailable-dates"])
+                    ? targetItem["unavailable-dates"].join(", ")
+                    : targetItem["unavailable-dates"] || ""}
+                </div>
+              )}
             </div>
+          ) : (
+            <span className="text-gray-400 italic ">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -759,102 +967,122 @@ const Canvas = ({
 
     if (item.type === "calendar") {
       const isRange = targetItem.mode === "range";
+
+      const hasContent =
+        targetItem.label ||
+        targetItem["helper-text"] ||
+        targetItem.mode ||
+        targetItem["min-date"] ||
+        targetItem["max-date"] ||
+        targetItem["unavailable-dates"] ||
+        targetItem.required;
+
       return (
-        <div className="space-y-2 bg-blue-50 border rounded-md shadow-sm p-3">
-          {targetItem.label && (
-            <label className=" mb-1">
-              {isRange && typeof targetItem.label === "object" ? (
-                <>
-                  <div>
-                    <span className="font-semibold">First-label: </span>
-                    {targetItem.label?.["start-date"] || ""}
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-semibold">Second-label: </span>
-                    {targetItem.label?.["end-date"] || ""}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="font-semibold">Label:</span>
-                  {targetItem.label}
-                </>
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="space-y-2 bg-blue-50 border rounded-md shadow-sm p-3">
+              {targetItem.label && (
+                <label className="mb-1">
+                  {isRange && typeof targetItem.label === "object" ? (
+                    <div>
+                      <div>
+                        <span className="font-semibold">First-label: </span>
+                        {targetItem.label?.["start-date"] || ""}
+                      </div>
+                      <div className="mt-1">
+                        <span className="font-semibold">Second-label: </span>
+                        {targetItem.label?.["end-date"] || ""}
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <span className="font-semibold">Label: </span>
+                      {targetItem.label}
+                    </>
+                  )}
+                </label>
               )}
-            </label>
-          )}
 
-          {targetItem["helper-text"] && (
-            <div className=" mb-1">
-              {isRange && typeof targetItem["helper-text"] === "object" ? (
-                <>
-                  <div>
-                    <span className="font-semibold">Start: </span>
-                    {targetItem["helper-text"]?.["start-date"] || ""} {"   "}
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-semibold">End: </span>
-                    {targetItem["helper-text"]?.["end-date"] || ""}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="font-semibold">Helper-Text: </span>
-                  {targetItem["helper-text"] || ""}
-                </>
+              {targetItem["helper-text"] && (
+                <div className="mb-1">
+                  {isRange && typeof targetItem["helper-text"] === "object" ? (
+                    <>
+                      <div>
+                        <span className="font-semibold">Start: </span>
+                        {targetItem["helper-text"]?.["start-date"] || ""}
+                      </div>
+                      <div className="mt-1">
+                        <span className="font-semibold">End: </span>
+                        {targetItem["helper-text"]?.["end-date"] || ""}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold">Helper-Text: </span>
+                      {targetItem["helper-text"]}
+                    </>
+                  )}
+                </div>
+              )}
+
+              {targetItem.mode && (
+                <div>
+                  <span className="font-semibold">Mode: </span>
+                  {targetItem.mode}
+                </div>
+              )}
+
+              {targetItem["min-date"] && (
+                <div>
+                  <span className="font-semibold">Min-Date: </span>
+                  {targetItem["min-date"]}
+                </div>
+              )}
+
+              {targetItem["max-date"] && (
+                <div>
+                  <span className="font-semibold">Max-Date: </span>
+                  {targetItem["max-date"]}
+                </div>
+              )}
+
+              {targetItem["unavailable-dates"] && (
+                <div>
+                  <span className="font-semibold">Unavailable-Date: </span>
+                  {Array.isArray(targetItem["unavailable-dates"])
+                    ? targetItem["unavailable-dates"].join(", ")
+                    : targetItem["unavailable-dates"]}
+                </div>
+              )}
+
+              {targetItem.required && (
+                <div className="text-sm">
+                  {isRange && typeof targetItem.required === "object" ? (
+                    <>
+                      <div>
+                        <span className="font-semibold">Start-date: </span>
+                        {targetItem.required["start-date"] ? "True" : "False"}
+                      </div>
+                      <div className="mt-1">
+                        <span className="font-semibold">End-date: </span>
+                        {targetItem.required["end-date"] ? "True" : "False"}
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <span className="font-semibold">Required: </span>
+                      {targetItem.required ? "True" : "False"}
+                    </>
+                  )}
+                </div>
               )}
             </div>
-          )}
-
-          {targetItem.mode && (
-            <div>
-              <span className="font-semibold"> Mode: </span>
-              {targetItem.mode || ""}
-            </div>
-          )}
-
-          {targetItem["min-date"] && (
-            <div>
-              <span className="font-semibold"> Min-Date: </span>
-              {targetItem["min-date"] || ""}
-            </div>
-          )}
-
-          {targetItem["max-date"] && (
-            <div>
-              <span className="font-semibold"> Max-Date: </span>
-              {targetItem["max-date"] || ""}
-            </div>
-          )}
-
-          {targetItem["unavailable-dates"] && (
-            <div>
-              <span className="font-semibold"> Unavailable-Date: </span>
-              {Array.isArray(targetItem["unavailable-dates"])
-                ? targetItem["unavailable-dates"].join(", ")
-                : targetItem["unavailable-dates"] || ""}
-            </div>
-          )}
-
-          {targetItem.required && (
-            <div className="text-sm">
-              {isRange && typeof targetItem.required === "object" ? (
-                <>
-                  <div>
-                    <span className="font-semibold">Start-date:</span>{" "}
-                    {targetItem.required["start-date"] ? "True" : "False"}
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-semibold">End-date:</span>{" "}
-                    {targetItem.required["end-date"] ? "True" : "False"}
-                  </div>
-                </>
-              ) : (
-                <>
-                  <span className="font-semibold">Required:</span>{" "}
-                  {targetItem.required ? "True" : "False"}
-                </>
-              )}
-            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
       );
@@ -867,8 +1095,8 @@ const Canvas = ({
   const dispatch = useDispatch();
   // Handle deleting items from the canvas
   const handleDelete = (index, item) => {
-    console.log("index", index);
-    console.log("item", item);
+    // console.log("index", index);
+    // console.log("item", item);
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -896,9 +1124,9 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    console.log("item", item);
+    // console.log("item", item);
     if (!item?.type) {
-      console.error("DraggableItem error: item.type is not defined");
+      // console.error("DraggableItem error: item.type is not defined");
       return null;
     }
 
@@ -969,11 +1197,10 @@ const Canvas = ({
           backgroundColor: getBackgroundColor(item.type),
           borderRadius: "10px",
         }}
-        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${
-          item.status === 0
-            ? "border-2 border-red-300"
-            : "border-2 border-green-300"
-        }`}
+        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${item.status === 0
+          ? "border-2 border-red-300"
+          : "border-2 border-green-300"
+          }`}
       >
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-700 tracking-wider">

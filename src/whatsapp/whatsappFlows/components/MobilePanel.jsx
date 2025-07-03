@@ -194,7 +194,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 <div key={index} className="">
                   <Typography
                     variant="caption"
-                    // sx={{ whiteSpace: "pre-line" }}
+                  // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.label || "Label"}
                   </Typography>
@@ -337,7 +337,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               return (
                 <div key={index} className="">
                   {item?.checkboxGroups &&
-                  Object.keys(item.checkboxGroups).length > 0 ? (
+                    Object.keys(item.checkboxGroups).length > 0 ? (
                     Object.entries(item.checkboxGroups).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId}>
@@ -433,7 +433,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               return (
                 <div key={index} className="">
                   {item?.radioButton &&
-                  Object.keys(item.radioButton).length > 0 ? (
+                    Object.keys(item.radioButton).length > 0 ? (
                     Object.entries(item.radioButton).map(
                       ([groupId, groupData], groupIdx) => (
                         <div key={groupId}>
@@ -640,11 +640,10 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                           onClick={() =>
                             handleChipOptionClick(index, option.title)
                           }
-                          className={`px-3 py-1 rounded-full text-sm border transition-all ${
-                            isSelected
-                              ? "bg-blue-600 text-white border-blue-600"
-                              : "bg-white text-gray-800 border-gray-300"
-                          }`}
+                          className={`px-3 py-1 rounded-full text-sm border transition-all ${isSelected
+                            ? "bg-blue-600 text-white border-blue-600"
+                            : "bg-white text-gray-800 border-gray-300"
+                            }`}
                         >
                           {option.title}
                         </button>
@@ -658,40 +657,32 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+
             case "footerbutton":
               return (
-                <>
-                  <div className="w-full max-w-md  text-center py-2 bottom-0 ">
-                    {/* Left and Right Captions */}
-                    <div className="flex justify-between text-sm text-gray-600 mb-2">
-                      <p>
-                        {item.footer
-                          ? item.footer.footer_1.left_caption
-                          : "Left Caption"}
-                      </p>
-                      <p>
-                        {item.footer
-                          ? item.footer.footer_1.right_caption
-                          : "Right Caption"}
-                      </p>
+                <div className="w-full max-w-md text-center py-2 bottom-0">
+                  {/* Captions */}
+
+                  {(item["left-caption"] || item["right-caption"]) && (
+                    <div className="flex justify-between text-sm text-gray-700 mb-1">
+                      <span>{item["left-caption"] || ""}</span>
+                      <span>{item["right-caption"] || ""}</span>
                     </div>
+                  )}
 
-                    {/* Footer Button */}
-                    <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
-                      {item.footer
-                        ? item.footer?.footer_1.center_caption
-                        : "Click me"}
-                    </button>
+                  {/* Footer Button */}
+                  <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
+                    {item["center-caption"] || "Click me"}
+                  </button>
 
-                    {/* Managed by Section */}
-                    <p className="text-xs text-gray-500 mt-2">
-                      Managed by the business.
-                      <a href="#" className="text-blue-600 hover:underline">
-                        Learn more
-                      </a>
-                    </p>
-                  </div>
-                </>
+                  {/* Managed by Section */}
+                  <p className="text-xs text-gray-500 mt-2">
+                    Managed by the business.{" "}
+                    <a href="#" className="text-blue-600 hover:underline">
+                      Learn more
+                    </a>
+                  </p>
+                </div>
               );
 
             case "embeddedlink":
@@ -735,7 +726,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                         }}
                       >
                         <img
-                          src={item.src}
+                          src={`data:image/png;base64,${item?.src}`}
                           alt={item["alt-text"] || "Uploaded image"}
                           style={{
                             position: "absolute",
@@ -836,11 +827,10 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                     {images.map((img, idx) => (
                       <img
                         key={idx}
-                        src={`data:image/jpeg;base64,${img.src}`} // <-- fix is here
+                        src={`data:image/png;base64,${img.src}`}
                         alt={img["alt-text"] || `Image ${idx + 1}`}
-                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${
-                          idx === currentIndex ? "opacity-100" : "opacity-0"
-                        }`}
+                        className={`absolute top-0 left-0 w-full h-full object-${scaleType} transition-opacity duration-300 ${idx === currentIndex ? "opacity-100" : "opacity-0"
+                          }`}
                         onError={(e) =>
                           (e.currentTarget.style.display = "none")
                         }
@@ -927,8 +917,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"
@@ -976,8 +966,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                           unavailableDate={
                             Array.isArray(item["unavailable-dates"])
                               ? item["unavailable-dates"].map(
-                                  (d) => new Date(d)
-                                )
+                                (d) => new Date(d)
+                              )
                               : undefined
                           }
                           dateFormat="yyyy-MM-dd"

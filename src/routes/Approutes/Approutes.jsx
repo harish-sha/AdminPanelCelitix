@@ -31,6 +31,7 @@ import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/pa
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
 import { BlockUser } from "@/whatsapp/blockUser";
+import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
 // MMLite
 import MmLite from "@/whatsapp/mmlite/MmLite";
 
@@ -155,6 +156,7 @@ import Arihant from "../../random/arihant";
 
 
 
+
 const Approutes = () => {
   return (
     <Routes>
@@ -241,6 +243,7 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wflowedit" element={<EditFlow />} />
         <Route path="wblockuser" element={<BlockUser />} />
         <Route path="wmmlite" element={<MmLite />} />
 

@@ -22,6 +22,9 @@ const SendSms = () => {
     templateType: 1,
     senderId: "",
     sender: [],
+    attachmentType: null,
+    attachmentVar: {},
+    shortUrl: 0,
   });
 
   const [allTemplates, setAllTemplates] = useState([]);
@@ -173,6 +176,17 @@ const SendSms = () => {
     setConfirmDialogVisible(true);
   }
 
+  function escapeRegExp(str) {
+    return str.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+  function replaceVarWithActualValue(type, message, vars) {
+    const tag = `{#${type}#}`;
+    const value = vars?.[tag];
+    if (!value) return message;
+    const rg = new RegExp(escapeRegExp(tag), "g");
+    return message.replace(rg, value);
+  }
+
   async function handleLaunchCampaign() {
     if (scheduleData?.isSchedule && !scheduleData?.time) {
       return toast.error("Please select a time.");
@@ -187,8 +201,14 @@ const SendSms = () => {
       grps = selectedGrp?.join(",");
     }
 
+    let messages = replaceVarWithActualValue(
+      inputDetails?.attachmentType,
+      inputDetails?.message,
+      inputDetails?.attachmentVar
+    );
+
     const data = {
-      message: inputDetails?.message,
+      message: messages,
       campaignName: inputDetails?.campaingName,
       templateId: inputDetails?.templateId,
       entityId: inputDetails?.entityId,
@@ -207,7 +227,8 @@ const SendSms = () => {
       groupSrNoList: grps,
       accountUsageTypeId: inputDetails?.templateType,
       countryCode: contactData?.selectedCountryCode ?? "0",
-      attachmentType: "file",
+      attachmentType: inputDetails?.attachmentType,
+      shortUrl: inputDetails?.shortUrl,
     };
 
     try {
@@ -271,6 +292,8 @@ const SendSms = () => {
           setContactData={setContactData}
           contactData={contactData}
           countryList={countryList}
+          setInputDetails={setInputDetails}
+          inputDetails={inputDetails}
         />
         <Preview inputDetails={inputDetails} />
         {/* </div> */}

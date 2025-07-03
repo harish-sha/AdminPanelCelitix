@@ -865,19 +865,28 @@ import { Ai } from "./components/Ai";
 const MotionPaper = motion(Paper);
 
 const tabs = [
-  {
-    key: "configuration",
-    label: "AI Configurations",
-    icon: <BiMessageSquareDetail size={20} />,
-  },
-  { key: "settings", label: "Chat Settings", icon: <BiCog size={20} /> },
-  { key: "users", label: "Block User", icon: <BiUserCircle size={20} /> },
+  // {
+  //   key: "configuration",
+  //   label: "AI Configurations",
+  //   icon: <BiMessageSquareDetail size={20} />,
+  // },
+  { key: "settings", label: "Chat Settings", icon: <BiCog size={20} active: true/> },
+  { key: "users", label: "Block User", icon: <BiUserCircle size={20} active: true/> },
 ];
 
 const chatSubOptions = [
   { key: "ai", label: "AI Assist", icon: <AiOutlineRobot size={18} /> },
   { key: "data", label: "Data source", icon: <StorageIcon size={18} /> },
 ];
+
+ const handleTabClick = (clickedKey) => {
+    setTabs((prev) =>
+      prev.map((tab) => ({
+        ...tab,
+        active: tab.key === clickedKey,
+      }))
+    );
+  };
 
 const WhatsappLiveChatSettings = () => {
   const [blockedUsers, setBlockedUsers] = useState([]);
@@ -1403,8 +1412,8 @@ const WhatsappLiveChatSettings = () => {
     }
   }
 
-  const [activeTab, setActiveTab] = useState("chat");
-  const [activeSub, setActiveSub] = useState("ai");
+  const [activeTab, setActiveTab] = useState("settings");
+  // const [activeSub, setActiveSub] = useState("ai");
 
   const renderContent = () => {
     if (activeTab === "configuration") {

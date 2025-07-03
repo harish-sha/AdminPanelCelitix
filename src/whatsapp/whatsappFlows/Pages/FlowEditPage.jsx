@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from "../components/Sidebar";
 import Canvas from "../components/Canvas";
@@ -16,7 +16,7 @@ import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import toast from "react-hot-toast";
 import { generatePayload } from "../lib/generatePayload";
-import { saveFlow } from "@/apis/whatsapp/whatsapp";
+import { getMainJson, saveFlow } from "@/apis/whatsapp/whatsapp";
 import InputField from "@/components/layout/InputField";
 import ParticleBackground from "../components/ParticleBackground";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -24,44 +24,24 @@ import CustomTooltip from "@/components/common/CustomTooltip";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import { addFlowItem, updateFlowItem } from "../redux/features/FlowSlice";
+import { convertPayload } from "../lib/convertPayload";
 
-const FlowCreationPage = () => {
-  const { state } = useLocation();
+export const EditFlow = () => {
+  const location = useLocation();
+  const { data, flow } = location?.state;
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const flowItems = useSelector((state) => state.flows.flowItems);
   const [canvasItems, setCanvasItems] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [flowName, setFlowName] = useState("");
+  const [flowName, setFlowName] = useState(flow?.flowName || "");
   const [save, setSave] = useState("");
   const [setting, setSetting] = useState("");
   const [error, setError] = useState("");
   const [buildFlows, setBuildFlows] = useState("");
 
-  const editPanelRef = useRef(null);
-  useEffect(() => {
-    function handleClickOutside(event) {
-      if (editPanelRef.current && editPanelRef.current.contains(event.target)) {
-        return; // inside edit panel
-      }
-
-      if (
-        event.target.closest(".MuiPopover-root") ||
-        event.target.closest(".MuiPickersPopper-root") || // DatePicker popper
-        event.target.closest(".MuiDialog-root") ||
-        event.target.closest(".MuiMenu-root") ||
-        event.target.closest("[role='listbox']") ||
-        event.target.closest(".MuiIconButton-root")
-      ) {
-        return; // inside dropdown/popover
-      }
-
-      setSelectedItem(null);
-    }
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  const [flowJson, setFlowJson] = useState([]);
 
   // console.log("canvasItems", canvasItems)
   //create new screen
@@ -167,18 +147,6 @@ const FlowCreationPage = () => {
 
     const uniqueId = `flow-${item.id}-${Date.now()}`; // safer than just +new Date()
 
-    // dispatch(
-    //   addFlowItem({
-    //     id: uniqueId,
-    //     data: {
-    //       screenId: screenId,
-    //       type: item.type,
-    //       value: item.label,
-    //       status: 0,
-    //     },
-    //   })
-    // );
-
     const nonDuplicateTabs = ["document", "media", "date", "calendar"];
     const onlyOneMediaItem = ["document", "media"];
     const onlyOneDateOrCalendar = ["date", "calendar"];
@@ -242,7 +210,7 @@ const FlowCreationPage = () => {
       }
     }
 
-    // 🛑 Check for date/calendar conflict
+    // 🛑 Check for media/document conflict
     if (onlyOneDateOrCalendar.includes(item.type)) {
       const hasDate = currentPayload.some(
         (payloadItem) => payloadItem.type === "date"
@@ -277,6 +245,15 @@ const FlowCreationPage = () => {
       }
     }
 
+    // ✅ Add the item
+    newTabs[activeIndex] = {
+      ...newTabs[activeIndex],
+      payload: [
+        ...currentPayload,
+        { type: item.type, value: "", status: 0, storeId: uniqueId },
+      ],
+    };
+
     dispatch(
       addFlowItem({
         id: uniqueId,
@@ -288,15 +265,6 @@ const FlowCreationPage = () => {
         },
       })
     );
-
-    // ✅ Add the item
-    newTabs[activeIndex] = {
-      ...newTabs[activeIndex],
-      payload: [
-        ...currentPayload,
-        { type: item.type, value: "", status: 0, storeId: uniqueId },
-      ],
-    };
 
     setTabs(newTabs);
     toast.success(`"${item.type}" added successfully`);
@@ -371,7 +339,6 @@ const FlowCreationPage = () => {
   };
 
   const handleSave = (updatedData) => {
-    console.log("updatedData", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (
@@ -393,34 +360,12 @@ const FlowCreationPage = () => {
       return newTabs;
     });
     setSelectedItem(null);
-
-    console.log("updatedData", updatedData);
-
-    if (updatedData.type === "imageCarousel") {
-      const imageKeys = Object.keys(updatedData).filter((key) =>
-        key.startsWith("image-")
-      );
-
-      // Check if any of those keys has a non-empty src
-      const hasImageSrc = imageKeys.some(
-        (key) => updatedData[key]?.src && updatedData[key].src !== ""
-      );
-
-      if (hasImageSrc) {
-        dispatch(
-          updateFlowItem({
-            id: updatedData.storeId,
-            data: {
-              status: 1,
-            },
-          })
-        );
-      }
-    } else if (
+    console.log("uploadedData", updatedData.footer.footer_1.label)
+    if (
       updatedData.text ||
       updatedData.label ||
-      updatedData.src ||
-      updatedData.footer?.footer_1?.label
+      updatedData.footer.footer_1.label ||
+      updatedData.src
     ) {
       dispatch(
         updateFlowItem({
@@ -482,6 +427,9 @@ const FlowCreationPage = () => {
 
   // ==================================Main Flow Build start===========================
   async function handleFlowBuild() {
+    if (!data) {
+      return toast.error("Please select a flow");
+    }
     const hasAtLeastOneComponent = tabs.some((tab) => tab.payload.length > 0);
 
     if (!hasAtLeastOneComponent) {
@@ -503,9 +451,9 @@ const FlowCreationPage = () => {
       const payload = generatePayload(tabs);
 
       const params = {
-        category: state?.selectCategories,
-        waba: state?.selectedWaba,
-        id: "",
+        category: flow?.category,
+        waba: flow?.mobileno,
+        id: flow?.flowId,
         name: flowName,
       };
 
@@ -540,7 +488,7 @@ const FlowCreationPage = () => {
 
       if (res.flag === true && typeof res.msg === "string") {
         toast.success(res.msg);
-        // navigate("/wwhatsappflows"); // uncomment when navigation is needed
+        navigate("/wwhatsappflows"); // uncomment when navigation is needed
         return;
       }
 
@@ -605,6 +553,40 @@ const FlowCreationPage = () => {
     link.click();
   }
 
+  const handleFetchJson = useCallback(async () => {
+    try {
+      const res = await getMainJson(data);
+      const parsedJson = JSON.parse(res?.data[0]?.mainJson);
+      setFlowJson(parsedJson);
+    } catch (e) {
+      toast.error("Error fetching JSON");
+    }
+  }, [data]);
+
+  useEffect(() => {
+    if (data) {
+      handleFetchJson();
+    }
+  }, [data, handleFetchJson]);
+
+  const processFlowJson = useCallback(() => {
+    const preData = convertPayload(flowJson);
+    setTabs(
+      preData || [
+        { title: "Welcome", content: "Welcome", id: "WELCOME", payload: [] },
+      ]
+    );
+  }, [flowJson]);
+
+  useEffect(() => {
+    if (flowJson?.screens) {
+      processFlowJson();
+    }
+  }, [flowJson, processFlowJson]);
+
+  useEffect(() => {
+    console.log("tabs", tabs);
+  }, [tabs]);
   // ========================================Localsave and export end=====================
 
   return (
@@ -691,8 +673,8 @@ const FlowCreationPage = () => {
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
                 className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
                   }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
@@ -877,7 +859,6 @@ const FlowCreationPage = () => {
           {selectedItem && (
             <EditPanel
               // key={selectedItem.id}
-              editPanelRef={editPanelRef}
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
               onSave={handleSave}
@@ -939,4 +920,4 @@ const FlowCreationPage = () => {
   );
 };
 
-export default FlowCreationPage;
+// export default FlowCreationPage;

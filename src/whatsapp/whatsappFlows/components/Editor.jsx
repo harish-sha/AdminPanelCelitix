@@ -14,6 +14,8 @@ import {
 import TableViewIcon from "@mui/icons-material/TableView";
 import UniversalButton from "../../components/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
+import { useDispatch } from "react-redux";
+import { updateFlowItem } from "../redux/features/FlowSlice";
 
 export const convertNodeToMarkdown = (node) => {
   if (!node) return;
@@ -53,7 +55,7 @@ export const convertNodeToMarkdown = (node) => {
         .map((li) => {
           const content = convertNodeToMarkdown(li);
           if (Array.isArray(content)) {
-            return content.map((c) => `+ ${c}`);
+            return content.map(c => `+ ${c}`);
           } else {
             return `+ ${content}`;
           }
@@ -64,17 +66,21 @@ export const convertNodeToMarkdown = (node) => {
     //   return Array.from(node.children)
     //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
 
+
     case "ol":
       return Array.from(node.children)
         .map((li, i) => {
           const content = convertNodeToMarkdown(li);
           if (Array.isArray(content)) {
-            return content.map((c) => `${i + 1}. ${c}`);
+            return content.map(c => `${i + 1}. ${c}`);
+
           } else {
             return `${i + 1}. ${content}`;
           }
         })
         .flat();
+
+
 
     // case "li":
     //   return children;
@@ -85,6 +91,7 @@ export const convertNodeToMarkdown = (node) => {
     //     .flat()
     //     // .join("")  // join content of li itself
     //     .trim();
+
 
     // case "ul":
     //   return Array.from(node.children)
@@ -140,6 +147,7 @@ export const convertNodeToMarkdown = (node) => {
     // case "li":
     //   return [children.flat().join("")];
 
+
     case "br":
       return "\n";
     case "p":
@@ -169,6 +177,27 @@ export const convertNodeToMarkdown = (node) => {
   }
 };
 
+// const [content, setContent] = useState("");
+
+// useEffect(() => {
+//   if (editorRef.current) {
+//     if (selectedItem?.content) {
+//       // Prefill raw HTML
+//       editorRef.current.innerHTML = selectedItem.content;
+//     } else if (Array.isArray(selectedItem?.text)) {
+//       // Prefill converted markdown
+//       const markdown = selectedItem.text.join("\n");
+//       const html = marked.parse(markdown);
+//       editorRef.current.innerHTML = html;
+//     } else {
+//       // Empty
+//       editorRef.current.innerHTML = "";
+//     }
+//   }
+// }, [selectedItem]);
+
+
+
 const walkNodes = (node) => {
   if (!node) return [];
   if (node.nodeType === 3) return [node];
@@ -186,6 +215,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   const editorRef = useRef(null);
   const [previewMode, setPreviewMode] = useState(false);
   const [content, setContent] = useState("");
+  const dispatch = useDispatch()
 
   const exec = (command, value = null) => {
     editorRef.current?.focus();
@@ -270,6 +300,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     ));
   };
 
+
   const insertTable = () => {
     editorRef.current?.focus();
 
@@ -293,6 +324,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     document.execCommand("insertHTML", false, tableHTML);
     setTimeout(updateActive, 0);
   };
+
 
   // const insertImage = () => {
   //   editorRef.current?.focus();
@@ -358,8 +390,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     // Convert to markdown
     const lines = Array.from(editorRef.current?.childNodes || [])
       .flatMap(convertNodeToMarkdown)
-      .map((line) => String(line).trim())
-      .filter((line) => line !== "");
+      .map(line => String(line).trim())
+      .filter(line => line !== "");
 
     const payload = {
       content: html,
@@ -374,7 +406,21 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     toast.success("Changes saved!");
     // if (onPayloadChange) onPayloadChange(payload);
     onUpdate(updatedData);
+
+    dispatch(
+      updateFlowItem({
+        id: updatedData.storeId,
+        data: {
+          status: 1,
+        },
+      })
+    );
   };
+
+
+
+
+
 
   const [active, setActive] = useState({
     h3: false,
@@ -461,9 +507,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
       // Move handleInsert here so we have access to t.id
       const handleInsert = () => {
         if (!/^https?:\/\/.+/.test(url)) {
-          toast.error("Please enter a valid URL (must start with http/https)", {
-            id: t.id,
-          });
+          toast.error("Please enter a valid URL (must start with http/https)", { id: t.id });
           return;
         }
 
@@ -604,9 +648,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertUnorderedList")}
-          className={`${base} ${
-            active.insertUnorderedList ? activeBtn : inactive
-          }`}
+          className={`${base} ${active.insertUnorderedList ? activeBtn : inactive
+            }`}
           title="Bulleted List"
         >
           <ListAltOutlined />
@@ -616,9 +659,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => doExec("insertOrderedList")}
-          className={`${base} ${
-            active.insertOrderedList ? activeBtn : inactive
-          }`}
+          className={`${base} ${active.insertOrderedList ? activeBtn : inactive
+            }`}
           title="Number List"
         >
           <FormatListNumberedOutlined />
@@ -636,6 +678,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         >
           <AddLinkOutlined />
         </button>
+
+
 
         {/* Image */}
         <button

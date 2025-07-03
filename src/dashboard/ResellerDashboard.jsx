@@ -514,11 +514,9 @@ const ResellerDashboard = () => {
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 transition={{ type: "spring", stiffness: 300 }}
-                className={`relative rounded-xl bg-gradient-to-br ${
-                  service.color
-                } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
-                  hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"
-                } `}
+                className={`relative rounded-xl bg-gradient-to-br ${service.color
+                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-2 ring-blue-300" : "grayscale opacity-70"
+                  } `}
               >
                 {hasService && (
                   <>
