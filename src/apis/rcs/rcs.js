@@ -174,7 +174,16 @@ export const exportSuggestion = async (data) => {
 
 export const fetchAllConvo = (data) => {
   return fetchWithAuth(
-    `rcs/getRcsChatDetail?agentId=${data.agentId}&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    `/rcs/getRcsChatDetail?agentId=${data.agentId}&searchMobileNumber=${data.search}&userActive=${data.active}`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+export const fetchSpecificConvo = (data) => {
+  return fetchWithAuth(
+    `/rcs/getRcsChatsOneUser?agentId=${data.agentId}&mobile=${data.mobileNo}&chatNo=${data.chatNo}`,
     {
       method: "POST",
     }

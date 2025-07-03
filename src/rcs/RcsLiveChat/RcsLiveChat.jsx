@@ -1,8 +1,13 @@
-import { fetchAllBotsList, fetchAllConvo } from "@/apis/rcs/rcs";
+import {
+  fetchAllBotsList,
+  fetchAllConvo,
+  fetchSpecificConvo,
+} from "@/apis/rcs/rcs";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { InputData } from "./components/input";
 import { Sidebar } from "./components/sidebar";
+import { ChatScreen } from "@/whatsapp/livechat/component/chat/ChatScreen";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -81,6 +86,21 @@ const RcsLiveChat = () => {
     }
   }
 
+  async function handleFetchSpecificConvo() {
+    if (!chatState.active) return;
+    try {
+      const payload = {
+        agentId: agentState?.id,
+        mobileNo: chatState.active.mobileNo,
+        chatNo: chatState.active.srno,
+      };
+
+      const res = await fetchSpecificConvo(payload);
+    } catch (e) {
+      toast.error("Error fetching conversation");
+    }
+  }
+
   //useEffect
 
   useEffect(() => {
@@ -90,6 +110,10 @@ const RcsLiveChat = () => {
   useEffect(() => {
     handleFetchAllConvo();
   }, [btnOption, agentState]);
+
+  useEffect(() => {
+    handleFetchSpecificConvo();
+  }, [chatState]);
 
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
