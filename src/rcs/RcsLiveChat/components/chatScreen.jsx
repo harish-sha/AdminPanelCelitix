@@ -1,8 +1,15 @@
 import { useRef } from "react";
 import { IoArrowBack } from "react-icons/io5";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import { ChatInput } from "./chatInput";
 
-export const ChatScreen = ({ chatState, btnOption }) => {
+export const ChatScreen = ({
+  chatState,
+  btnOption,
+
+  input,
+  setInput,
+}) => {
   const messageRef = useRef(null);
   const endOfMessagesRef = useRef(null);
 
@@ -47,7 +54,7 @@ export const ChatScreen = ({ chatState, btnOption }) => {
           ref={messageRef}
           className="flex-1 overflow-y-auto p-4 space-y-2 flex flex-col md:max-h-[calc(100vh-8rem)] md:-mt-5 bg-[url(/WB.png)]"
         >
-          {/* {chatState.specificConversation?.map((group, groupIndex) => (
+          {chatState.specificConversation?.map((group, groupIndex) => (
             <div key={groupIndex}>
               <div className="my-4 text-xs text-center text-black font-semibold">
                 {group?.date}
@@ -364,13 +371,17 @@ export const ChatScreen = ({ chatState, btnOption }) => {
                 })}
               </div>
             </div>
-          ))} */}
+          ))}
 
           <div ref={endOfMessagesRef} />
         </div>
       </div>
 
-      {btnOption === "active" && <>Hello</>}
+      {btnOption === "active" ? (
+        <ChatInput input={input} setInput={setInput} />
+      ) : (
+        "arihant"
+      )}
     </div>
   );
 };

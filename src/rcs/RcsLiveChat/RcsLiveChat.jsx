@@ -31,6 +31,7 @@ const RcsLiveChat = () => {
     // replyData: "",
     // isReply: false,
   });
+  const [input, setInput] = React.useState("");
 
   async function handleFetchAgents() {
     try {
@@ -267,8 +268,8 @@ const RcsLiveChat = () => {
               // sendMessage={sendMessage}
               // items={items}
               // visibleRight={visibleRight}
-              // input={input}
-              // setInput={setInput}
+              input={input}
+              setInput={setInput}
               // setSendMessageDialogVisible={setSendMessageDialogVisible}
               setChatState={setChatState}
               chatState={chatState}

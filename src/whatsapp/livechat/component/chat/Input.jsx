@@ -131,8 +131,9 @@ export const ChatInput = ({
       <div className="relative ml-4">
         <button
           onClick={() => setIsSpeedDialOpen(!isSpeedDialOpen)}
-          className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${isSpeedDialOpen ? "rotate-45" : ""
-            }`}
+          className={`flex items-center justify-center w-8 h-8 cursor-pointer bg-[#22577E] text-white rounded-full shadow-md transition-transform ${
+            isSpeedDialOpen ? "rotate-45" : ""
+          }`}
         >
           <FaPlus />
         </button>
