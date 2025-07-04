@@ -471,11 +471,11 @@ const ResellerDashboard = () => {
             </p>
           </div>
         </div>
-        <div className="flex items-center justify-center gap-3">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-3 w-full">
           {quickStats.map((stat, i) => (
             <div
               key={i}
-              className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
+              className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center md:w-50"
             >
               {stat.showRefreshIcon && (
                 <CustomTooltip title="Refresh Balance" placement="top" arrow>
@@ -662,25 +662,25 @@ const ResellerDashboard = () => {
       <ServiceUsageDashboard />
 
       {/* Service Usage Trends start */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="bg-white p-4 rounded-2xl shadow-sm"
       >
-        {/* <LineGraphChart rawData={rawDatanew} activeServices={activeServices} /> */}
-      </motion.div>
+        <LineGraphChart rawData={rawDatanew} activeServices={activeServices} />
+      </motion.div> */}
       {/* Service Usage Trends end */}
 
       {/* Revenue & Balance History start */}
-      <motion.div
+      {/* <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="bg-white p-4 rounded-2xl shadow-sm"
       >
-        {/* <RevenueChartWithFilter rawData={rawData} /> */}
-      </motion.div>
+        <RevenueChartWithFilter rawData={rawData} />
+      </motion.div> */}
       {/* Revenue & Balance History end */}
 
       {/* bots & flows start */}

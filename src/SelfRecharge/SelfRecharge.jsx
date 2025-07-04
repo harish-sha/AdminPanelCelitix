@@ -280,8 +280,6 @@
 //   );
 // }
 
-"use client";
-
 import React, { useEffect, useState } from "react";
 import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
@@ -304,7 +302,7 @@ export default function RechargeFullWidth() {
   const handlePayNow = async (e) => {
     e.preventDefault();
 
-    
+
     if (!name || !email || !phone || !amount) {
       toast.error("Please fill in all fields.");
       return;
@@ -351,7 +349,7 @@ export default function RechargeFullWidth() {
       }
     }
 
-    
+
     if (!cashfree) {
       toast.error("Payment SDK not loaded yet. Try again in a moment.");
       return;
@@ -377,11 +375,11 @@ export default function RechargeFullWidth() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-6">
-      <div className="w-full max-w-6xl bg-white bg-opacity-90 backdrop-filter backdrop-blur-md rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row">
-        
+    <div className="flex flex-col items-center justify-center h-[90vh]">
+      <div className="w-full max-w-6xl bg-white bg-opacity-90 backdrop-filter backdrop-blur-md rounded-3xl shadow-xl overflow-hidden flex flex-col md:flex-row border-4 border-dashed border-blue-300 p-3">
+
         {/* Lottie Panel */}
-        <div className="md:w-1/2 relative h-64 md:h-auto bg-[#EDF5FF]">
+        <div className="md:w-1/2 relative h-64 md:h-auto bg-[#EDF5FF] rounded-2xl shadow-lg">
           <Lottie
             animationData={rechargeAnim}
             loop
@@ -393,9 +391,14 @@ export default function RechargeFullWidth() {
           </div>
         </div>
 
+        {/* Divider */}
+        <div className="hidden lg:flex flex-col items-center justify-center px-2">
+          <div className="h-full w-1 bg-gradient-to-b from-indigo-100 via-indigo-300 to-indigo-100 rounded-full" />
+        </div>
+
         {/* Form Panel */}
         <div className="md:w-1/2 p-8">
-          <h1 className="text-4xl font-extrabold text-gray-800 mb-6 text-center">
+          <h1 className="text-4xl font-bold text-gray-700 mb-6 text-center">
             Recharge Wallet
           </h1>
           <form onSubmit={handlePayNow} className="space-y-4">

@@ -548,6 +548,7 @@ import { IconButton } from "@mui/material";
 import metaAiAnimation from "../../assets/animation/metaai.json";
 
 import Lottie from "lottie-react";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 
 export default function CannedMessageManager() {
   const [isOpen, setIsOpen] = useState(false);
@@ -561,6 +562,8 @@ export default function CannedMessageManager() {
   const [search, setSearch] = useState("");
   const [style, setStyle] = useState("Normal");
   const [optimizeFor, setOptimizeFor] = useState("Click Rate");
+  const [language, setLanguage] = useState("English");
+
 
   const TypingText = ({ text, onDone }) => {
     const [displayed, setDisplayed] = useState("");
@@ -585,21 +588,23 @@ export default function CannedMessageManager() {
     );
   };
 
-  const buildPrompt = (userPrompt, style, optimizeFor) => {
+  const buildPrompt = (userPrompt, style, optimizeFor, language) => {
     return `
   You are an expert marketing AI that writes engaging marketing and promotional message templates.
   
   Style: ${style}
   Optimization Goal: ${optimizeFor}
+  Language: ${language}
   
   Task: ${userPrompt}
   
-  Write the message as a short marketing template message with a clear CTA if applicable.
-  Avoid excessive emojis. Make it mobile friendly.
-    `.trim();
+  Write the message as a short marketing template message in ${language}, with a clear CTA if applicable.
+   Make it mobile friendly. Make sure it is grammatically correct and clear.
+  `.trim();
   };
+  // Write the message as a short marketing template message with a clear CTA if applicable.
 
-  const prompt = buildPrompt(aiPrompt, style, optimizeFor);
+  const prompt = buildPrompt(aiPrompt, style, optimizeFor, language);
 
   const validatePrompt = (text) => {
     const invalidKeywords = [
@@ -972,6 +977,7 @@ export default function CannedMessageManager() {
                           placeholder="e.g. Generate a welcome message..."
                           value={aiPrompt}
                           onChange={(e) => setAiPrompt(e.target.value)}
+                          maxLength="1000"
                         />
                         <button
                           onClick={handleGenerate}
@@ -994,7 +1000,7 @@ export default function CannedMessageManager() {
                           <p className="w-full font-medium text-[#2b40b0]">
                             Choose your message style :
                           </p>
-                          {["Normal", "Poetic", "Exciting", "Funny"].map(
+                          {["Normal", "Poetic", "Exciting", "Funny", "Grammatical"].map(
                             (item) => (
                               <div
                                 key={item}
@@ -1007,8 +1013,8 @@ export default function CannedMessageManager() {
                                 <span className="relative z-10">{item}</span>
                                 <span
                                   className={`absolute inset-0 rounded-full transition-transform duration-300 ease-in-out bg-gradient-to-r from-[#2b40b0] to-[#36bae2] z-0
-            ${style === item ? "translate-y-0" : "translate-y-full"}
-          `}
+                                            ${style === item ? "translate-y-0" : "translate-y-full"}
+                                           `}
                                   style={{
                                     transformOrigin: "bottom",
                                   }}
@@ -1016,6 +1022,52 @@ export default function CannedMessageManager() {
                               </div>
                             )
                           )}
+                          {/* <div className="mt-4">
+                            <label className="block text-sm font-medium text-[#2b40b0] mb-1">
+                              Generate in Language:
+                            </label>
+                            <select
+                              value={language}
+                              onChange={(e) => setLanguage(e.target.value)}
+                              className="w-full p-2 border border-gray-300 rounded-md shadow-sm text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            >
+                              <option>English</option>
+                              <option>Hindi</option>
+                              <option>Spanish</option>
+                              <option>French</option>
+                              <option>German</option>
+                              <option>Arabic</option>
+                              <option>Gujarati</option>
+                              <option>Marathi</option>
+                              <option>Tamil</option>
+                              <option>Telugu</option>
+                            </select>
+                          </div> */}
+                          {/* <p className="w-full font-medium text-[#2b40b0]">
+                            Choose message language :
+                          </p>
+                          <AnimatedDropdown
+                            id="aiLanguageGenerate"
+                            name="aiLanguageGenerate"
+                            // label="AI Language"
+                            tooltipContent="Select Language in which ai response"
+                            tooltipPlacement="right"
+                            placeholder="Select response language"
+                            options={[
+                              { value: "English", label: "English" },
+                              { value: "Hindi", label: "Hindi" },
+                              { value: "Spanish", label: "Spanish" },
+                              { value: "French", label: "French" },
+                              { value: "German", label: "German" },
+                              { value: "Arabic", label: "Arabic" },
+                              { value: "Gujarati", label: "Gujarati" },
+                              { value: "Marathi", label: "Marathi" },
+                              { value: "Tamil", label: "Tamil" },
+                              { value: "Telugu", label: "Telugu" },
+                            ]}
+                            value={language}
+                            onChange={setLanguage}
+                          /> */}
                         </div>
 
                         {/* <div className="flex flex-wrap gap-2 text-sm mt-4">

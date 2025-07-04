@@ -40,4 +40,3 @@ export const getPincodeDetails = async (pincode) => {
     throw error;
   }
 };
-

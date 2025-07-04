@@ -84,7 +84,7 @@ const ClockCard = () => {
     <motion.div
       layout
       transition={{ layout: { duration: 0.3, ease: "easeInOut" } }}
-      className={`relative bg-white rounded-xl shadow flex flex-col items-center justify-center ${is24Hour ? "w-54" : "w-62"
+      className={`relative bg-white rounded-xl shadow flex flex-col items-center justify-center ${is24Hour ? "w-54" : "md:w-62 w-full"
         } h-28 group`}
     >
       <div className="flex gap-3 items-center">

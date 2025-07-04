@@ -619,8 +619,8 @@ const AddTemplateRcs = () => {
                   setAi={setAi}
                   setIsOpen={setIsOpen}
                   isOpen={isOpen}
-                  right={0.5}
-                  bottom={2.9}
+                  right={10}
+                  bottom={50}
                   setMessageContent={setMessageContent}
                   messageContent={messageContent}
                   length={2500}

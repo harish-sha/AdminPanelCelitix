@@ -55,7 +55,8 @@ const icons = {
   IBD: <FaFireAlt className="text-orange-500 text-2xl" />,
 };
 
-const FILTERS = ["Day", "Month", "Year", "Custom"];
+// const FILTERS = ["Day", "Month", "Year", "Custom"];
+const FILTERS = ["Day", "Month", "Year"];
 const CHART_TYPES = ["Bar", "Line", "Pie"];
 
 export default function ServiceUsageDashboard() {
@@ -251,188 +252,164 @@ export default function ServiceUsageDashboard() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
-      {/* Sidebar */}
-      <div className="lg:col-span-1 bg-white p-6 rounded-2xl shadow-xl h-fit sticky top-4 space-y-6">
-        {/* Services Filter */}
-        <h3 className="text-lg font-bold text-gray-800 uppercase tracking-wide">
-          Filter Services
-        </h3>
-        <div className="space-y-2">
-          {activeServices.map((service) => {
-            const selected = selectedServices.includes(service);
-            // Map service → its color palette
-            const palette = {
-              whatsapp: [
-                "from-green-100",
-                "to-green-300",
-                "text-black-00",
-                "bg-green-50",
-              ],
-              sms: [
-                "from-pink-100",
-                "to-pink-300",
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
+        {/* Sidebar */}
+        <div className="lg:col-span-1 bg-white p-2 rounded-2xl shadow-xl h-fit lg:sticky top-4 space-y-4 border-2">
+          {/* Services Filter */}
+          <h3 className="text-lg font-semibold text-gray-800 tracking-wide">
+            Filter Services
+          </h3>
+          <div className="space-y-2">
+            {activeServices.map((service) => {
+              const selected = selectedServices.includes(service);
+              // Map service → its color palette
+              const palette = {
+                whatsapp: [
+                  "from-green-100",
+                  "to-green-300",
+                  "text-black-00",
+                  "bg-green-50",
+                ],
+                sms: [
+                  "from-pink-100",
+                  "to-pink-300",
+                  "text-black-600",
+                  "bg-pink-50",
+                ],
+                rcs: [
+                  "from-purple-100",
+                  "to-purple-300",
+                  "text-black-600",
+                  "bg-purple-50",
+                ],
+                obd: [
+                  "from-yellow-100",
+                  "to-yellow-300",
+                  "text-black-600",
+                  "bg-yellow-50",
+                ],
+              }[service.toLowerCase()] || [
+                "from-gray-100",
+                "to-gray-300",
                 "text-black-600",
-                "bg-pink-50",
-              ],
-              rcs: [
-                "from-purple-100",
-                "to-purple-300",
-                "text-black-600",
-                "bg-purple-50",
-              ],
-              obd: [
-                "from-yellow-100",
-                "to-yellow-300",
-                "text-black-600",
-                "bg-yellow-50",
-              ],
-            }[service.toLowerCase()] || [
-              "from-gray-100",
-              "to-gray-300",
-              "text-black-600",
-              "bg-gray-50",
-            ];
+                "bg-gray-50",
+              ];
 
-            const [from, to, txt, bg] = palette;
+              const [from, to, txt, bg] = palette;
 
-            return (
-              <button
-                key={service}
-                onClick={() =>
-                  setSelectedServices((prev) =>
-                    selected
-                      ? prev.filter((s) => s !== service)
-                      : [...prev, service]
-                  )
-                }
-                className={`
-            flex items-center gap-3 w-full px-4 py-2 rounded-lg transition 
-            ${
-              selected
-                ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-            }
-          `}
-              >
-                <span
+              return (
+                <button
+                  key={service}
+                  onClick={() =>
+                    setSelectedServices((prev) =>
+                      selected
+                        ? prev.filter((s) => s !== service)
+                        : [...prev, service]
+                    )
+                  }
                   className={`
-              flex-shrink-0 p-2 rounded-full transition
-              ${selected ? "bg-white" : bg} ${selected ? txt : "text-gray-400"}
-            `}
-                >
-                  {icons[service] || "🔧"}
-                </span>
-                <span className="flex-1 text-left font-medium capitalize">
-                  {service}
-                </span>
-                {/* {selected && (
-            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M5 13l4 4L19 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          )} */}
-              </button>
-            );
-          })}
-        </div>
+                    flex items-center gap-2 w-full px-2 py-2 rounded-lg transition 
+                         ${
+                           selected
+                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                         }
+                    `}>
+                  <span
+                    className={`
+                    flex-shrink-0 p-2 rounded-full transition
+                      ${selected ? "bg-white" : bg} ${
+                      selected ? txt : "text-gray-400"
+                    }
+                       `}
+                  >
+                    {icons[service] || "🔧"}
+                  </span>
 
-        {/* Chart Type */}
-        <h3 className="font-semibold mt-6 mb-2">Chart Type</h3>
+                  <span className="flex-1 text-left font-medium capitalize">
+                    {service}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
 
-        <div className="flex flex-col gap-2">
-          {CHART_TYPES.map((type) => (
-            <button
-              key={type}
-              onClick={() => setChartType(type)}
-              className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
-                chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
-              }`}
-            >
-              {ICON_MAP[type] || <span className="w-5" />}
-              {/* label */}
-              <span className="font-medium">{type}</span>
-            </button>
-          ))}
-        </div>
-      </div>
+          {/* Chart Type */}
+          <h3 className="font-semibold">Chart Type</h3>
 
-      {/* Main Content */}
-      <div className="lg:col-span-4 bg-white p-6 rounded-2xl shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
-
-        {/* Filter Buttons */}
-        <div className="flex flex-wrap gap-4 items-center mb-6">
-          {FILTERS.map((item) => (
-            <button
-              key={item}
-              onClick={() => setFilter(item)}
-              className={`px-4 py-1.5 rounded-full border ${
-                filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
-              }`}
-            >
-              {item}
-            </button>
-          ))}
-
-          {filter === "Custom" && (
-            <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
-              <div>
-                {/* <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border rounded-lg px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  maxDate={endDate}
-                /> */}
-                <DateInputWithCalendar
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                  value={startDate}
-                  label="From Date"
-                  maxDate={endDate}
-                />
-              </div>
-              <div>
-                {/* <label className="block text-sm font-medium text-gray-700 mb-1">
-                  To Date
-                </label>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                  dateFormat="yyyy-MM-dd"
-                  className="border rounded-lg px-3 py-2 w-40 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  minDate={startDate}
-                  maxDate={new Date()}
-                /> */}
-
-                {/* <MiniCalendar
-                  onChange={(date) => setEndDate(date)}
-                  value={endDate}
-                  label="To Date"
-                  minDate={startDate}
-                  maxDate={new Date()}
-                /> */}
-                <DateInputWithCalendar
-                  onChange={(date) => setEndDate(date)}
-                  value={endDate}
-                  label="To Date"
-                  minDate={startDate}
-                  maxDate={new Date()}
-                />
-              </div>
-
+          <div className="flex flex-col gap-2">
+            {CHART_TYPES.map((type) => (
               <button
-                onClick={fetchServiceUsage}
-                className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
+                key={type}
+                onClick={() => setChartType(type)}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
+                  chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
+                }`}
               >
-                Apply
+                {ICON_MAP[type] || <span className="w-5" />}
+                {/* label */}
+                <span className="font-medium">{type}</span>
               </button>
-            </div>
-          )}
+            ))}
+          </div>
         </div>
 
-        {/* Usage Cards */}
-        {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {/* Main Content */}
+        <div className="lg:col-span-4 bg-white p-3 rounded-2xl shadow-md">
+          <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
+
+          {/* Filter Buttons */}
+          <div className="flex flex-wrap gap-4 items-center mb-6">
+            {FILTERS.map((item) => (
+              <button
+                key={item}
+                onClick={() => setFilter(item)}
+                className={`px-4 py-1.5 rounded-full border ${
+                  filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
+                }`}
+              >
+                {item}
+              </button>
+            ))}
+
+            {filter === "Custom" && (
+              <div className="flex items-center gap-4 bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
+                <div>
+                  <DateInputWithCalendar
+                    selected={startDate}
+                    onChange={(date) => setStartDate(date)}
+                    value={startDate}
+                    label="From Date"
+                    maxDate={endDate}
+                  />
+                </div>
+                <div>
+                  <DateInputWithCalendar
+                    onChange={(date) => setEndDate(date)}
+                    value={endDate}
+                    label="To Date"
+                    minDate={startDate}
+                    maxDate={new Date()}
+                  />
+                </div>
+
+                <button
+                  onClick={fetchServiceUsage}
+                  className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-md shadow hover:bg-blue-700 transition"
+                >
+                  Apply
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Usage Cards */}
+          {/* <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {filteredData.map((service, i) => (
             <motion.div
               key={service.name}
@@ -451,45 +428,46 @@ export default function ServiceUsageDashboard() {
           ))}
         </div> */}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-2 ">
-          {filteredData.map((service) => (
-            <motion.div
-              key={service.name}
-              whileHover={{ backgroundColor: "#f9fafb" }}
-              transition={{ duration: 0.2 }}
-              className="flex items-center justify-between border border-gray-300 rounded-md p-3 hover:border-indigo-300 transition"
-            >
-              {/* Icon */}
-              <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-3 text-2xl">
-                {icons[service.name]}
-              </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 w-full">
+            {filteredData.map((service) => (
+              <motion.div
+                key={service.name}
+                whileHover={{ backgroundColor: "#f9fafb" }}
+                transition={{ duration: 0.2 }}
+                className="flex items-center justify-between border border-gray-300 rounded-md p-3 hover:border-indigo-300 transition w-full"
+              >
+                {/* Icon */}
+                <div className="flex-shrink-0 bg-indigo-50 text-indigo-600 rounded-full p-3 text-2xl">
+                  {icons[service.name]}
+                </div>
 
-              {/* Service Name + Sent */}
-              <div className="flex-1 px-4">
-                <p className="text-sm font-semibold text-gray-800 capitalize">
-                  {service.name}
+                {/* Service Name + Sent */}
+                <div className="flex-1 px-4">
+                  <p className="text-sm font-semibold text-gray-800 capitalize">
+                    {service.name}
+                  </p>
+                  <p className="text-base font-bold text-gray-900">
+                    {service.totalSent} Sent
+                  </p>
+                </div>
+
+                {/* Charge */}
+                <p className="text-sm text-gray-500 whitespace-nowrap">
+                  ₹{service.totalCharge.toFixed(2)}
                 </p>
-                <p className="text-base font-bold text-gray-900">
-                  {service.totalSent} Sent
-                </p>
-              </div>
+              </motion.div>
+            ))}
+          </div>
 
-              {/* Charge */}
-              <p className="text-sm text-gray-500 whitespace-nowrap">
-                ₹{service.totalCharge.toFixed(2)}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Graph */}
-        <div className="mt-5 p-6 rounded-2xl bg-white shadow-md">
-          <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
-          <ResponsiveContainer width="100%" height={350}>
-            {renderChart()}
-          </ResponsiveContainer>
+          {/* Graph */}
+          <div className="mt-5 p-6 rounded-2xl bg-white shadow-md">
+            <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
+            <ResponsiveContainer width="100%" height={350}>
+              {renderChart()}
+            </ResponsiveContainer>
+          </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 }
