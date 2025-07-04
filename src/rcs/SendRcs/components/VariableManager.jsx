@@ -118,7 +118,7 @@ export const VariableManager = ({
   );
 
   const insertVariable = (variable, index) => {
-    // console.log(variable);
+    console.log(variable);
     const input = textBoxRef.current;
     if (!input) return;
 
@@ -274,8 +274,8 @@ export const VariableManager = ({
 
   const renderBtnInput = () => (
     <>
-      <p>Button Variables</p>
-      <div className="relative w-full p-2">
+      <p className="text-sm font-semibold">Button Variables</p>
+      <div className="relative w-full p-1">
         {btnvarList?.map((label, index) => (
           <div className="relative w-full" key={index}>
             <div className="flex gap-2 items-center mb-3">
@@ -295,7 +295,7 @@ export const VariableManager = ({
                 sx={{ width: "100%", marginBottom: "1rem" }}
               />
             </div>
-            <div className="absolute top-[0.1rem] right-0 h-10">
+            <div className="absolute top-[0.1rem] right-0">
               <InputVariable
                 variables={headers}
                 onSelect={(e) => insertBtnVariable(e, index)}
@@ -313,7 +313,7 @@ export const VariableManager = ({
   return (
     <>
       {templateDetails[0] && (
-        <div className="bg-white  rounded-md">
+        <div className="bg-white rounded-md">
           <div className="bg-[#128C7E] p-2 rounded-t-md">
             <h1 className="text-[0.8rem] font-medium text-white tracking-wider">
               Template Type: {templateDetails[0].templateType}
@@ -321,7 +321,7 @@ export const VariableManager = ({
           </div>
         </div>
       )}
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col px-2 py-1 shadow-md rounded-b-2xl">
         {!isCarousal && varLength > 0 && renderSimpleInput()}
         {!isCarousal && btnvarLength > 0 && renderBtnInput()}
         {isCarousal && carVar?.length > 0 && renderCarouselInput()}
