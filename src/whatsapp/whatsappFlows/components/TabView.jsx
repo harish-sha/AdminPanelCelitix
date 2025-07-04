@@ -47,7 +47,7 @@ export default function CustomTabView({
   // const [randomNumber, setRandomNumber] = useState(
   //   Math.floor(Math.random() * 1000)
   // );
-  
+
   const screenNameStore = useSelector((state) => state.flows.screenName);
   const dispatch = useDispatch();
   const addTab = () => {
@@ -80,7 +80,7 @@ export default function CustomTabView({
     if (activeIndex >= updatedTabs.length) {
       setActiveIndex(updatedTabs.length - 1);
     }
-    dispatch(deleteScreen({id:screenDetails.id}))
+    dispatch(deleteScreen({ id: screenDetails.id }))
   };
 
   const handleTabClick = () => {
@@ -188,11 +188,10 @@ export default function CustomTabView({
         {tabs.map((tab, index) => (
           <div
             key={index}
-            className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${
-              activeIndex === index
-                ? "bg-blue-100 border-blue-400 text-blue-700"
-                : "bg-gray-100 border text-gray-700 hover:bg-gray-200"
-            }`}
+            className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${activeIndex === index
+              ? "bg-blue-100 border-blue-400 text-blue-700"
+              : "bg-gray-100 border text-gray-700 hover:bg-gray-200"
+              }`}
             onClick={() => setActiveIndex(index)}
           >
             <span className="pr-1 font-medium">{tab.title}</span>

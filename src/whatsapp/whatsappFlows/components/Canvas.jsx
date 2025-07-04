@@ -18,10 +18,15 @@ import { marked } from "marked";
 import { useDispatch } from "react-redux";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import { deleteFlowItem } from "../redux/features/FlowSlice";
+import IfElseBlock from "./IfElseBlock";
+
 
 const Canvas = ({
   items,
   setItems,
+  openIfElse,
+  setOpenIfElse,
+  onSave,
   onEdit,
   tabs,
   setTabs,
@@ -309,83 +314,111 @@ const Canvas = ({
     }
 
     // For footerbutton: look under footer
+    // if (item.type === "footerbutton") {  
+    //   const footer = targetItem.footerData.footer_1
+    //   const hasContent =
+    //     footer.label ||
+    //     // targetItem["left-caption"] ||
+    //     // targetItem["right-caption"] ||
+    //    footer["center-caption"] ||
+    //     footer["on-click-action"];
+
+    //   return (
+    //     <div className="bg-white">
+    //       {hasContent ? (
+    //         <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+    //           {footer.label && (
+    //             <div>
+    //               <span className="font-semibold">Label: </span>
+    //               {footer.label}
+    //             </div>
+    //           )}
+
+    //           {/* {targetItem["left-caption"] && (
+    //             <div className="mt-1">
+    //               <span className="font-semibold">Left-caption: </span>
+    //               {targetItem["left-caption"]}
+    //             </div>
+    //           )}
+
+    //           {targetItem["right-caption"] && (
+    //             <div className="mt-1">
+    //               <span className="font-semibold">Right-caption: </span>
+    //               {targetItem["right-caption"]}
+    //             </div>
+    //           )}  */}
+
+    //           {footer.center_caption && (
+    //             <div className="mt-1">
+    //               <span className="font-semibold">Center-caption: </span>
+    //               {footer.center_caption}
+    //             </div>
+    //           )}
+
+
+    //           {footer.on_click_action && (
+    //             <div className="mt-1">
+    //               <span className="font-semibold">Next Action: </span>
+    //               {footer.on_click_action}
+    //             </div>
+    //           )}
+    //         </div>
+    //       ) : (
+    //         <span className="text-gray-400 italic">
+    //           Please fill this field by clicking the{" "}
+    //           <span className="text-violet-600 font-medium">edit icon</span> or
+    //           remove this block.
+    //         </span>
+    //       )}
+    //     </div>
+    //   );
+    // }
+
+
     if (item.type === "footerbutton") {
-      const hasContent =
-        targetItem.label ||
-        targetItem["left-caption"] ||
-        targetItem["right-caption"] ||
-        targetItem["center-caption"] ||
-        targetItem["on-click-action"];
+  const footer = targetItem.footerData?.footer_1 || {};
 
-      return (
-        <div className="bg-white">
-          {hasContent ? (
-            <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-              {targetItem.label && (
-                <div>
-                  <span className="font-semibold">Label: </span>
-                  {targetItem.label}
-                </div>
-              )}
+  const hasContent =
+    footer.label ||
+    footer.center_caption ||
+    footer.on_click_action;
 
-              {/* {targetItem["left-caption"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Left-caption: </span>
-                  {targetItem["left-caption"]}
-                </div>
-              )}
-
-              {targetItem["right-caption"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Right-caption: </span>
-                  {targetItem["right-caption"]}
-                </div>
-              )}
-
-              {targetItem["center-caption"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Center-caption: </span>
-                  {targetItem["center-caption"]}
-                </div>
-              )} */}
-
-              {targetItem["center-caption"] ? (
-                <div className="mt-1">
-                  <span className="font-semibold">Center-caption: </span>
-                  {targetItem["center-caption"]}
-                </div>
-              ) : targetItem["left-caption"] && targetItem["right-caption"] ? (
-                <>
-                  <div className="mt-1">
-                    <span className="font-semibold">Left-caption: </span>
-                    {targetItem["left-caption"]}
-                  </div>
-                  <div className="mt-1">
-                    <span className="font-semibold">Right-caption: </span>
-                    {targetItem["right-caption"]}
-                  </div>
-                </>
-              ) : null}
-
-              {targetItem["on-click-action"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Next Action: </span>
-                  {targetItem["on-click-action"]}
-                </div>
-              )}
-
-
+  return (
+    <div className="bg-white">
+      {hasContent ? (
+        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+          {footer.label && (
+            <div>
+              <span className="font-semibold">Label: </span>
+              {footer.label}
             </div>
-          ) : (
-            <span className="text-gray-400 italic">
-              Please fill this field by clicking the{" "}
-              <span className="text-violet-600 font-medium">edit icon</span> or
-              remove this block.
-            </span>
+          )}
+
+          {footer.center_caption && (
+            <div className="mt-1">
+              <span className="font-semibold">Center-caption: </span>
+              {footer.center_caption}
+            </div>
+          )}
+
+          {footer.on_click_action && (
+            <div className="mt-1">
+              <span className="font-semibold">Next Action: </span>
+              {footer.on_click_action}
+            </div>
           )}
         </div>
-      );
-    }
+      ) : (
+        <span className="text-gray-400 italic">
+          Please fill this field by clicking the{" "}
+          <span className="text-violet-600 font-medium">edit icon</span> or
+          remove this block.
+        </span>
+      )}
+    </div>
+  );
+}
+
 
     if (item.type === "radioButton") {
       const options = targetItem["data-source"] || [];
@@ -1129,7 +1162,7 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    // console.log("item", item);
+    // console.log("itemmmmmmmmmmmmmmm", item);
     if (!item?.type) {
       // console.error("DraggableItem error: item.type is not defined");
       return null;
@@ -1167,7 +1200,6 @@ const Canvas = ({
 
     drag(drop(ref));
 
-
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
@@ -1175,9 +1207,6 @@ const Canvas = ({
       setSelectedItem({ ...item, index, caseKey: item.caseKey }); // ✅ force a new reference
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
-
-
-
 
     const content = getDynamicFieldValue(
       tabs,
@@ -1207,8 +1236,8 @@ const Canvas = ({
           borderRadius: "10px",
         }}
         className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${item.status === 0
-          ? "border-2 border-red-300"
-          : "border-2 border-green-300"
+            ? "border-2 border-red-300"
+            : "border-2 border-green-300"
           }`}
       >
         <div className="flex items-center justify-between">
@@ -1216,7 +1245,16 @@ const Canvas = ({
             {getLabel(item.type)}
           </label>
           <Box>
-            <IconButton size="small" onClick={() => onEdit(index, item)}>
+            <IconButton
+              size="small"
+              onClick={() => {
+                if (item.type === "ifelse") {
+                  setOpenIfElse(true);
+                } else {
+                  onEdit(index, item);
+                }
+              }}
+            >
               <EditOutlinedIcon
                 style={{ cursor: "pointer" }}
                 fontSize="small"
@@ -1263,6 +1301,9 @@ const Canvas = ({
         </div>
       </Paper>
       // </motion.div>
+
+
+
     );
   });
 
@@ -1723,6 +1764,11 @@ const Canvas = ({
             ))}
         </AnimatePresence>
       </div>
+
+      {openIfElse && (
+        <IfElseBlock openIfElse={openIfElse} setOpenIfElse={setOpenIfElse} onSave={onSave} />
+      )}
+
     </div>
   );
 };

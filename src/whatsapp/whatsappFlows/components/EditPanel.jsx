@@ -32,7 +32,6 @@ import Chip from "@mui/material/Chip";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import { motion, AnimatePresence } from "framer-motion";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
-import IfElseBlock from "./IfElseBlock";
 import SwitchFlow from "./SwitchFlow";
 import RichTextEditor from "./Editor.jsx";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
@@ -40,12 +39,15 @@ import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import { useSelector } from "react-redux";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 
+
 const EditPanel = ({
   selectedItem,
   onClose,
   onSave,
   headingValue,
   setHeadingValue,
+  openIfElse,
+  setOpenIfElse,
   setLabelValue,
   labelValue,
   placeholderValue,
@@ -74,7 +76,7 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setValue(selectedItem.value || "");
+      // setValue(selectedItem.value || "");
       // setOptions(selectedItem.options || []);
       setChecked(selectedItem.checked || []);
       setSelectedOption(selectedItem.selectedOption || "");
@@ -718,66 +720,6 @@ const EditPanel = ({
     onClose();
   };
 
-  // if-else
-  const [value, setValue] = useState("");
-  const [condition, setCondition] = useState();
-  const [thenComponents, setThenComponents] = useState();
-  const [selectedThenComponent, setSelectedThenComponent] = useState();
-  const [elseComponents, setElseComponents] = useState();
-  const [selectedElseComponent, setSelectedElseComponent] = useState();
-  const [selectedCondition, setSelectedCondition] = useState();
-  const [componentTree, setComponentTree] = useState({});
-
-  const handleIfElseSave = () => {
-    if (!selectedCondition) {
-      toast.error("Please Enter condition first");
-      return;
-    }
-
-    const payload = {
-      type: "If",
-      condition: selectedCondition,
-      then: [
-        {
-          type: selectedThenComponent,
-          text: "It is a cat",
-        },
-      ],
-      else: [
-        {
-          type: selectedElseComponent,
-          text: "It is not a cat",
-        },
-      ],
-    };
-
-    const updatedData = {
-      ...selectedItem,
-      ...payload,
-    };
-
-    onSave(updatedData);
-    onClose();
-  };
-
-  const handleUpdateTree = (path, data) => {
-    setComponentTree((prev) => {
-      const updated = { ...prev };
-      let node = updated;
-
-      path.forEach((key, index) => {
-        if (!node[key]) node[key] = {};
-        if (index === path.length - 1) {
-          node[key] = data;
-        } else {
-          node = node[key];
-        }
-      });
-
-      return { ...updated };
-    });
-  };
-
   // date
   const [dateLable, setDateLabel] = useState("");
   const [minDate, setMinDate] = useState("");
@@ -1186,54 +1128,247 @@ const EditPanel = ({
   };
 
   // footertype
+  // const [footerButtonLabel, setFooterButtonLabel] = useState("");
+  // const [leftCaption, setLeftCaption] = useState("");
+  // const [rightCaption, setRightCaption] = useState("");
+  // const [centerCaption, setCenterCaption] = useState("");
+  // const [nextAction, setNextAction] = useState("complete");
+  // const [caption, setCaption] = useState("");
+
+  // console.log(nextAction, "NEXTACTIONFOOTER")
+  // // console.log("leftCaption", leftCaption);
+  // // console.log("rightCaption", rightCaption);
+  // // console.log("centerCaption", centerCaption);
+
+  // useEffect(() => {
+  //   if (selectedItem) {
+  //     console.log(selectedItem, "selectedItemfooter");
+  //     setFooterButtonLabel(selectedItem.label || "");
+  //     // setLeftCaption(selectedItem["left-caption"] || "");
+  //     // setRightCaption(selectedItem["right-caption"] || "");
+  //     setCenterCaption(selectedItem["center-caption"] || "");
+  //     // setNextAction(
+  //     //   (selectedItem["on-click-action"] &&
+  //     //     selectedItem["on-click-action"].name) ||
+  //     //   ""
+  //     // );
+
+  //     const action = selectedItem["on-click-action"] || "";
+  //     setNextAction(action);
+
+  //     setCaption(selectedItem.caption || "center");
+
+  //     // Derive caption type from data
+  //     // if (selectedItem["center-caption"]) {
+  //     //   setCaption("center");
+  //     // } else if (
+  //     //   selectedItem["left-caption"] ||
+  //     //   selectedItem["right-caption"]
+  //     // ) {
+  //     //   setCaption("left-right");
+  //     // } else {
+  //     //   setCaption("");
+  //     // }
+
+  //     console.log("caption", caption);
+
+  //     //   if (caption === "center") {
+  //     //     setCenterCaption(selectedItem["center-caption"] || "");
+  //     //   } else if (caption === "left-right") {
+  //     //     setLeftCaption(selectedItem["left-caption"] || "");
+  //     //     setRightCaption(selectedItem["right-caption"] || "");
+  //     //   }
+  //   }
+  // }, [selectedItem?.id]);
+
+  // const handleFooterSave = () => {
+  //   if (!footerButtonLabel) {
+  //     toast.error("Please enter a Footer Button Label");
+  //     return;
+  //   }
+
+  //   if (!nextAction) {
+  //     toast.error("Action is required.");
+  //     return;
+  //   }
+
+  //   // if (centerCaption && (leftCaption || rightCaption)) {
+  //   //   toast.error(
+  //   //     "Cannot set center caption together with left/right captions"
+  //   //   );
+  //   //   return;
+  //   // }
+
+  //   // if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
+  //   //   toast.error("Both left and right captions must be provided together");
+  //   //   return;
+  //   // }
+
+  //   const payload = {
+  //     //  id: selectedItem.id,
+  //     label: footerButtonLabel,
+  //     "on-click-action": nextAction || "",
+  //   };
+
+  //   if (centerCaption) {
+  //     payload["center-caption"] = centerCaption;
+  //   }
+
+  //   // if (leftCaption && rightCaption) {
+  //   //   payload["left-caption"] = leftCaption;
+  //   //   payload["right-caption"] = rightCaption;
+  //   // }
+
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //     // caption,
+  //   };
+
+  //   // if (caption === "center" && centerCaption) {
+  //   //   updatedData["center-caption"] = centerCaption;
+  //   // }
+
+  //   // if (caption === "left-right") {
+  //   //   if (leftCaption) updatedData["left-caption"] = leftCaption;
+  //   //   if (rightCaption) updatedData["right-caption"] = rightCaption;
+  //   // }
+
+  //   console.log(updatedData, "updatedDatafooter");
+
+  //   onSave(updatedData);
+  //   onClose();
+  // };
+
+  // const [footerButtonLabel, setFooterButtonLabel] = useState("");
+  // const [leftCaption, setLeftCaption] = useState("");
+  // const [rightCaption, setRightCaption] = useState("");
+  // const [centerCaption, setCenterCaption] = useState("");
+  // const [nextAction, setNextAction] = useState("complete");
+  // const [caption, setCaption] = useState("");
+
+  // // console.log("leftCaption", leftCaption);
+  // // console.log("rightCaption", rightCaption);
+  // // console.log("centerCaption", centerCaption);
+
+  // useEffect(() => {
+  //   if (selectedItem) {
+  //     console.log(selectedItem, "selectedItemfooter");
+  //     setFooterButtonLabel(selectedItem.label || "");
+  //     setLeftCaption(selectedItem["left-caption"] || "");
+  //     setRightCaption(selectedItem["right-caption"] || "");
+  //     setCenterCaption(selectedItem["center-caption"] || "");
+  //     setNextAction(
+  //       (selectedItem["on-click-action"] &&
+  //         selectedItem["on-click-action"].name) ||
+  //       "complete"
+  //     );
+
+
+  //     setCaption(selectedItem.caption || "center");
+
+  //     // Derive caption type from data
+  //     // if (selectedItem["center-caption"]) {
+  //     //   setCaption("center");
+  //     // } else if (
+  //     //   selectedItem["left-caption"] ||
+  //     //   selectedItem["right-caption"]
+  //     // ) {
+  //     //   setCaption("left-right");
+  //     // } else {
+  //     //   setCaption("");
+  //     // }
+
+  //     console.log("caption", caption);
+
+  //     //   if (caption === "center") {
+  //     //     setCenterCaption(selectedItem["center-caption"] || "");
+  //     //   } else if (caption === "left-right") {
+  //     //     setLeftCaption(selectedItem["left-caption"] || "");
+  //     //     setRightCaption(selectedItem["right-caption"] || "");
+  //     //   }
+  //   }
+  // }, [selectedItem?.id]);
+
+  // const handleFooterSave = () => {
+  //   if (!footerButtonLabel) {
+  //     toast.error("Please enter a Footer Button Label");
+  //     return;
+  //   }
+
+  //   if (!nextAction) {
+  //     toast.error("Action is required.");
+  //     return;
+  //   }
+
+  //   if (centerCaption && (leftCaption || rightCaption)) {
+  //     toast.error(
+  //       "Cannot set center caption together with left/right captions"
+  //     );
+  //     return;
+  //   }
+
+  //   if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
+  //     toast.error("Both left and right captions must be provided together");
+  //     return;
+  //   }
+
+  //   const payload = {
+  //     //  id: selectedItem.id,
+  //     label: footerButtonLabel,
+  //     "on-click-action": nextAction || "",
+  //   };
+
+  //   if (centerCaption) {
+  //     payload["center-caption"] = centerCaption;
+  //   }
+
+  //   if (leftCaption && rightCaption) {
+  //     payload["left-caption"] = leftCaption;
+  //     payload["right-caption"] = rightCaption;
+  //   }
+
+  //   const updatedData = {
+  //     ...selectedItem,
+  //     ...payload,
+  //     // caption,
+  //   };
+
+  //   if (caption === "center" && centerCaption) {
+  //     updatedData["center-caption"] = centerCaption;
+  //   }
+
+  //   if (caption === "left-right") {
+  //     if (leftCaption) updatedData["left-caption"] = leftCaption;
+  //     if (rightCaption) updatedData["right-caption"] = rightCaption;
+  //   }
+
+  //   console.log(updatedData, "updatedData");
+
+  //   onSave(updatedData);
+  //   onClose();
+  // };
+
+
   const [footerButtonLabel, setFooterButtonLabel] = useState("");
-  const [leftCaption, setLeftCaption] = useState("");
-  const [rightCaption, setRightCaption] = useState("");
+  // const [leftCaption, setLeftCaption] = useState("");
+  // const [rightCaption, setRightCaption] = useState("");
   const [centerCaption, setCenterCaption] = useState("");
   const [nextAction, setNextAction] = useState("complete");
-  const [caption, setCaption] = useState("");
-
-  // console.log("leftCaption", leftCaption);
-  // console.log("rightCaption", rightCaption);
-  // console.log("centerCaption", centerCaption);
 
   useEffect(() => {
-    if (selectedItem) {
-      console.log(selectedItem, "selectedItemfooter");
-      setFooterButtonLabel(selectedItem.label || "");
-      setLeftCaption(selectedItem["left-caption"] || "");
-      setRightCaption(selectedItem["right-caption"] || "");
-      setCenterCaption(selectedItem["center-caption"] || "");
-      setNextAction(
-        (selectedItem["on-click-action"] &&
-          selectedItem["on-click-action"].name) ||
-        "complete"
-      );
+    if (selectedItem?.footer) {
+      const footerData = selectedItem.footer["footer_1"];
 
-      setCaption(selectedItem.caption || "center");
-
-      // Derive caption type from data
-      // if (selectedItem["center-caption"]) {
-      //   setCaption("center");
-      // } else if (
-      //   selectedItem["left-caption"] ||
-      //   selectedItem["right-caption"]
-      // ) {
-      //   setCaption("left-right");
-      // } else {
-      //   setCaption("");
-      // }
-
-      console.log("caption", caption);
-
-      //   if (caption === "center") {
-      //     setCenterCaption(selectedItem["center-caption"] || "");
-      //   } else if (caption === "left-right") {
-      //     setLeftCaption(selectedItem["left-caption"] || "");
-      //     setRightCaption(selectedItem["right-caption"] || "");
-      //   }
+      if (footerData) {
+        setFooterButtonLabel(footerData.label || "");
+        // setLeftCaption(footerData.left_caption || "");
+        // setRightCaption(footerData.right_caption || "");
+        setCenterCaption(footerData.center_caption || "");
+        setNextAction(footerData.on_click_action || "complete");
+      }
     }
-  }, [selectedItem?.id]);
+  }, [selectedItem]);
 
   const handleFooterSave = () => {
     if (!footerButtonLabel) {
@@ -1241,58 +1376,33 @@ const EditPanel = ({
       return;
     }
 
-    if (!nextAction) {
-      toast.error("Action is required.");
-      return;
-    }
-
-    if (centerCaption && (leftCaption || rightCaption)) {
-      toast.error(
-        "Cannot set center caption together with left/right captions"
-      );
-      return;
-    }
-
-    if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
-      toast.error("Both left and right captions must be provided together");
-      return;
-    }
-
     const payload = {
-      //  id: selectedItem.id,
-      label: footerButtonLabel,
-      "on-click-action": nextAction || "",
+      footer: {},
     };
 
-    if (centerCaption) {
-      payload["center-caption"] = centerCaption;
-    }
+    const id = `footer_1`; // Unique ID for the footer (adjust if needed)
 
-    if (leftCaption && rightCaption) {
-      payload["left-caption"] = leftCaption;
-      payload["right-caption"] = rightCaption;
-    }
+    payload.footer[id] = {
+      label: footerButtonLabel,
+      // left_caption: leftCaption || "",
+      // right_caption: rightCaption || "",
+      center_caption: centerCaption || "",
+      on_click_action: nextAction || "",
+    };
 
+    console.log("Saving footer payload:", payload);
+
+    // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
       ...selectedItem,
       ...payload,
-      // caption,
     };
-
-    if (caption === "center" && centerCaption) {
-      updatedData["center-caption"] = centerCaption;
-    }
-
-    if (caption === "left-right") {
-      if (leftCaption) updatedData["left-caption"] = leftCaption;
-      if (rightCaption) updatedData["right-caption"] = rightCaption;
-    }
-
-    console.log(updatedData, "updatedData");
 
     onSave(updatedData);
     onClose();
+    console.log("Final footer data:", updatedData);
   };
+
 
   // footertype
 
@@ -2716,11 +2826,11 @@ const EditPanel = ({
             </div>
 
             {/* if-else condition */}
-            {selectedCondition && (
+            {/* {selectedCondition && (
               <h2 className="text-xl font-semibold mb-2 top-0">
                 {selectedCondition}
               </h2>
-            )}
+            )} */}
             {/* if-else condition */}
             {/* Input Fields for Text-Based Items */}
             {/* {["heading", "subheading", "textbody", "textcaption"].includes(
@@ -3955,13 +4065,13 @@ const EditPanel = ({
                   onChange={(e) => setFooterButtonLabel(e.target.value)}
                 />
 
-                <AnimatedDropdown
+                {/* <AnimatedDropdown
                   label="Caption Type"
                   tooltipContent="Select Caption Type"
                   tooltipPlacement="right"
                   options={[
                     { value: "center", label: "Center Caption" },
-                    { value: "left-right", label: "Left + Right Caption" },
+                    // { value: "left-right", label: "Left + Right Caption" },
                   ]}
                   value={caption}
                   onChange={(value) => {
@@ -3973,20 +4083,20 @@ const EditPanel = ({
                       setCenterCaption("");
                     }
                   }}
-                />
+                /> */}
 
-                {caption === "center" && (
-                  <InputField
-                    label="Center Caption"
-                    placeholder="Enter Center Caption"
-                    tooltipContent="Enter Center Caption"
-                    tooltipPlacement="right"
-                    maxLength={15}
-                    id="center-caption"
-                    value={centerCaption}
-                    onChange={(e) => setCenterCaption(e.target.value)}
-                  />
-                )}
+                {/* {caption === "center" && ( */}
+                <InputField
+                  label="Center Caption"
+                  placeholder="Enter Center Caption"
+                  tooltipContent="Enter Center Caption"
+                  tooltipPlacement="right"
+                  maxLength={15}
+                  id="center-caption"
+                  value={centerCaption}
+                  onChange={(e) => setCenterCaption(e.target.value)}
+                />
+                {/* )}
 
                 {caption === "left-right" && (
                   <>
@@ -4011,7 +4121,7 @@ const EditPanel = ({
                       onChange={(e) => setRightCaption(e.target.value)}
                     />
                   </>
-                )}
+                )} */}
 
                 <AnimatedDropdown
                   id="next-action"
@@ -4760,7 +4870,7 @@ const EditPanel = ({
           )}
            */}
 
-            {selectedItem?.type === "ifelse" && (
+            {/* {selectedItem?.type === "ifelse" && (
               <>
                 <IfElseBlock
                   level={1}
@@ -4774,7 +4884,7 @@ const EditPanel = ({
                   onUpdateTree={handleUpdateTree}
                 />
               </>
-            )}
+            )} */}
 
             {selectedItem?.type === "switch" && (
               <>
@@ -4790,6 +4900,7 @@ const EditPanel = ({
                 />
               </>
             )}
+
 
             {/* Editable option for date In */}
             {selectedItem?.type === "date" && (

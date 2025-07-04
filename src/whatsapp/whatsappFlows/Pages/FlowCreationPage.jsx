@@ -106,6 +106,11 @@ const FlowCreationPage = () => {
     altText: "",
   });
 
+
+  //if-else
+  const[openIfElse, setOpenIfElse] = useState(false)
+
+
   // console.log("labelValue", labelValue)
 
   const [randomNumber, setRandomNumber] = useState(
@@ -853,6 +858,9 @@ const FlowCreationPage = () => {
           <Canvas
             items={canvasItems}
             setItems={setCanvasItems}
+            onSave={handleSave}
+            openIfElse={openIfElse}
+            setOpenIfElse={setOpenIfElse}
             onEdit={handleEdit}
             tabs={tabs}
             setTabs={setTabs}
@@ -880,6 +888,8 @@ const FlowCreationPage = () => {
               editPanelRef={editPanelRef}
               selectedItem={selectedItem}
               onClose={handleCloseEditPanel}
+              openIfElse={openIfElse}
+              setOpenIfElse={setOpenIfElse}
               onSave={handleSave}
               headingValue={headingValue}
               setHeadingValue={setHeadingValue}
