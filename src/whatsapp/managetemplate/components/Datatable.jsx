@@ -534,6 +534,13 @@ const DataTable = ({
       //   await fetchTemplateData();
       //   return;
       // }
+      // error temp code start
+      if (res?.error === false) {
+        toast.error(res?.msg || "Failed to delete template.");
+        setVisible(false);
+        return
+      }
+      // error temp code end
       if (res?.success === true) {
         toast.success(res?.msg || "Template deleted successfully.");
         setVisible(false);
