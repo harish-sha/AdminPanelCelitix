@@ -3901,13 +3901,13 @@ const EditPanel = ({
                   onChange={(e) => setFooterButtonLabel(e.target.value)}
                 />
 
-                <AnimatedDropdown
+                {/* <AnimatedDropdown
                   label="Caption Type"
                   tooltipContent="Select Caption Type"
                   tooltipPlacement="right"
                   options={[
                     { value: "center", label: "Center Caption" },
-                    { value: "left-right", label: "Left + Right Caption" },
+                    // { value: "left-right", label: "Left + Right Caption" },
                   ]}
                   value={caption}
                   onChange={(value) => {
@@ -3919,20 +3919,20 @@ const EditPanel = ({
                       setCenterCaption("");
                     }
                   }}
-                />
+                /> */}
 
-                {caption === "center" && (
-                  <InputField
-                    label="Center Caption"
-                    placeholder="Enter Center Caption"
-                    tooltipContent="Enter Center Caption"
-                    tooltipPlacement="right"
-                    maxLength={15}
-                    id="center-caption"
-                    value={centerCaption}
-                    onChange={(e) => setCenterCaption(e.target.value)}
-                  />
-                )}
+                {/* {caption === "center" && ( */}
+                <InputField
+                  label="Center Caption"
+                  placeholder="Enter Center Caption"
+                  tooltipContent="Enter Center Caption"
+                  tooltipPlacement="right"
+                  maxLength={15}
+                  id="center-caption"
+                  value={centerCaption}
+                  onChange={(e) => setCenterCaption(e.target.value)}
+                />
+                {/* )}
 
                 {caption === "left-right" && (
                   <>
@@ -3957,7 +3957,7 @@ const EditPanel = ({
                       onChange={(e) => setRightCaption(e.target.value)}
                     />
                   </>
-                )}
+                )} */}
 
                 <AnimatedDropdown
                   id="next-action"

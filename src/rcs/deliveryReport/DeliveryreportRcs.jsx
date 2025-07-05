@@ -95,7 +95,7 @@ const DeliveryreportRcs = () => {
     customColumns: "",
     campaignType: "",
     status: "",
-    source:"",
+    source: "",
     deliveryStatus: "",
     type: "campaign",
   });
@@ -165,65 +165,65 @@ const DeliveryreportRcs = () => {
     }
   };
 
-const handleSummarySearch = async () => {
-  let FinalFromDate, FinalToDate;
+  const handleSummarySearch = async () => {
+    let FinalFromDate, FinalToDate;
 
-  // Case 1: Use selectedMonth if isMonthWise is enabled
-  if (selectedMonth && Number(summaryData.isMonthWise) === 1) {
-    FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
-    FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
-  }
+    // Case 1: Use selectedMonth if isMonthWise is enabled
+    if (selectedMonth && Number(summaryData.isMonthWise) === 1) {
+      FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
+      FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
+    }
 
-  // ✅ Case 2: No selectedMonth, but isMonthWise is true — fallback to fromDate
-  else if (
-    Number(summaryData.isMonthWise) === 1 &&
-    summaryData.fromDate
-  ) {
-    const fallbackMonth = summaryData.fromDate;
-    FinalFromDate = moment(fallbackMonth).startOf("month").format("YYYY-MM-DD");
-    FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
+    // ✅ Case 2: No selectedMonth, but isMonthWise is true — fallback to fromDate
+    else if (
+      Number(summaryData.isMonthWise) === 1 &&
+      summaryData.fromDate
+    ) {
+      const fallbackMonth = summaryData.fromDate;
+      FinalFromDate = moment(fallbackMonth).startOf("month").format("YYYY-MM-DD");
+      FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
 
-    // Clear selectedMonth ONLY in fallback case
-    setSelectedMonth(null);
-  }
+      // Clear selectedMonth ONLY in fallback case
+      setSelectedMonth(null);
+    }
 
-  // Case 3: Manual date range mode
-  else if (
-    Number(summaryData.isMonthWise) !== 1 &&
-    summaryData.fromDate &&
-    summaryData.toDate
-  ) {
-    FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
-    FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
+    // Case 3: Manual date range mode
+    else if (
+      Number(summaryData.isMonthWise) !== 1 &&
+      summaryData.fromDate &&
+      summaryData.toDate
+    ) {
+      FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
+      FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
 
-    // Optional: clear selectedMonth if switching to manual
-    setSelectedMonth(null);
-  }
+      // Optional: clear selectedMonth if switching to manual
+      setSelectedMonth(null);
+    }
 
-  // Invalid case
-  else {
-    toast.error("Please select a valid date range or month.");
-    return;
-  }
+    // Invalid case
+    else {
+      toast.error("Please select a valid date range or month.");
+      return;
+    }
 
-  const data = {
-    fromDate: FinalFromDate,
-    toDate: FinalToDate,
-    summaryType: "rcs,date,user",
-    isMonthWise: Number(summaryData.isMonthWise),
+    const data = {
+      fromDate: FinalFromDate,
+      toDate: FinalToDate,
+      summaryType: "rcs,date,user",
+      isMonthWise: Number(summaryData.isMonthWise),
+    };
+
+    try {
+      setIsFetching(true);
+      const res = await fetchSummaryReport(data);
+      setSummaryTableData(res);
+    } catch (e) {
+      toast.error("Something went wrong.");
+      console.error("Summary Search Error:", e);
+    } finally {
+      setIsFetching(false);
+    }
   };
-
-  try {
-    setIsFetching(true);
-    const res = await fetchSummaryReport(data);
-    setSummaryTableData(res);
-  } catch (e) {
-    toast.error("Something went wrong.");
-    console.error("Summary Search Error:", e);
-  } finally {
-    setIsFetching(false);
-  }
-};
 
 
 
@@ -254,23 +254,23 @@ const handleSummarySearch = async () => {
   //   }
   // };
 
-  const handleScheduleSearch = async () => {
-    try {
-      setIsFetching(true);
-      const res = await scheduledata();
+  // const handleScheduleSearch = async () => {
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await scheduledata();
 
-      if (Array.isArray(res) && res.length > 0) {
-        setScheduleTableData(res);
-      } else {
-        setScheduleTableData([]);
-      }
-    } catch (err) {
-      console.error("Error fetching schedule data:", err);
-      toast.error("Failed to fetch schedule data.");
-    } finally {
-      setIsFetching(false);
-    }
-  };
+  //     if (Array.isArray(res) && res.length > 0) {
+  //       setScheduleTableData(res);
+  //     } else {
+  //       setScheduleTableData([]);
+  //     }
+  //   } catch (err) {
+  //     console.error("Error fetching schedule data:", err);
+  //     toast.error("Failed to fetch schedule data.");
+  //   } finally {
+  //     setIsFetching(false);
+  //   }
+  // };
 
   // const handleCancel = async (srno) => {
   //   if (!srno) {
@@ -352,13 +352,13 @@ const handleSummarySearch = async () => {
       campaignDataName: scheduleData.campaignName,
       status: scheduleData.status ?? "",
     }
-    try{
+    try {
       setIsFetching(true);
       const res = await scheduledata(data)
       setScheduleTableData(res);
       console.log(res);
-    }catch(err){
-      toast.error("Not Fetching schedule Data",err)
+    } catch (err) {
+      toast.error("Not Fetching schedule Data", err)
     }
   }
 
