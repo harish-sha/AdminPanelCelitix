@@ -80,7 +80,7 @@ const WhatsappLaunchCampaign = () => {
 
   const [cardIndex, setCardIndex] = useState(0);
 
-  const [marketingType, setMarketingType] = useState(1);
+  const [marketingType, setMarketingType] = useState(2);
 
   const fileRef = useRef(null);
 
@@ -405,7 +405,7 @@ const WhatsappLaunchCampaign = () => {
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
       // isMarketingMessage: marketingType || "",
-      ...(marketingType === 1 && { isMarketingMessage: 1 }),
+      // ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -689,13 +689,12 @@ const WhatsappLaunchCampaign = () => {
                       placeholder="Select Template"
                     />
                   </div>
-                  {selectedTemplateData?.category === "MARKETING" && (
+                  {/* {selectedTemplateData?.category === "MARKETING" && (
                     <div>
                       <h1 className="mb-1 text-sm font-medium text-gray-800">
                         Send Via
                       </h1>
                       <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
-                        {/* Option 1 */}
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2 cursor-pointer">
                             <RadioButton
@@ -714,7 +713,6 @@ const WhatsappLaunchCampaign = () => {
                           </div>
                         </label>
 
-                        {/* Option 2 */}
                         <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
                           <div className="flex items-center justify-start gap-2">
                             <RadioButton
@@ -734,7 +732,7 @@ const WhatsappLaunchCampaign = () => {
                         </label>
                       </div>
                     </div>
-                  )}
+                  )} */}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />

@@ -283,7 +283,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
           // console.log('Access Token:', accessToken);
-          // onboardUser(accessToken)
+          onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
@@ -315,7 +315,7 @@ const WhatsappManageWaba = ({ id, name }) => {
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
           // console.log('Access Token:', accessToken);
-          // onboardUser(accessToken)
+          onboardUser(accessToken)
           getWabaList()
         } else {
           toast.error("User cancelled login")
@@ -900,14 +900,14 @@ const WhatsappManageWaba = ({ id, name }) => {
                   onClick={handleWabaCreate}
                 />
               </div>
-              <div className="w-max-content">
+              {/* <div className="w-max-content">
                 <UniversalButton
                   label="Onboard MM LIte"
                   id="wabammliteonboard"
                   name="wabammliteonboard"
                   onClick={handleWabaMMCreate}
                 />
-              </div>
+              </div> */}
               {/* <div className="w-max-content">
                 <UniversalButton
                   label="Celebrate"

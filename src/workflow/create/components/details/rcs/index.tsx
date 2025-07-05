@@ -56,14 +56,23 @@ export const RCS = ({
     if (!data || !Array.isArray(data)) return;
 
     if (data.length === 1) {
+      let matchLength = 0;
+      let matchBtnList = [];
       const content = data[0]?.content || "";
+      console.log("data", data[0].suggestions);
       const suggestionVar = data[0]?.suggestions?.map((item) => {
         if (item?.type === "website") {
           const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
-          setBtnVarLength(match.length);
-          setBtnVarList(match);
+          // setBtnVarLength(match.length);
+          // setBtnVarList(match);
+          matchLength += match.length;
+          matchBtnList = [...matchBtnList, ...match];
         }
       });
+
+      setBtnVarLength(matchLength);
+      setBtnVarList(matchBtnList);
+      console.log("suggestionvar", suggestionVar);
       const matches = content.match(/{#(.+?)#}/g) || [];
 
       setVarLength(matches.length);
