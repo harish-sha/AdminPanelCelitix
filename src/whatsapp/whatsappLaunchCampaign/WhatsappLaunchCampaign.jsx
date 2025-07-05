@@ -80,7 +80,7 @@ const WhatsappLaunchCampaign = () => {
 
   const [cardIndex, setCardIndex] = useState(0);
 
-  const [marketingType, setMarketingType] = useState(1);
+  const [marketingType, setMarketingType] = useState(2);
 
   const fileRef = useRef(null);
 

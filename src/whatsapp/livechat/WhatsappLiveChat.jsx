@@ -862,12 +862,13 @@ export default function WhatsappLiveChat() {
       // });
       await handleFetchSpecificConversation();
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
   }
   useEffect(() => {
     async function handleIsView() {
       if (!wabaState.selectedWaba || !chatState?.active) return;
+      if (!latestMessageData.srno) return
       try {
         const data = {
           mobile: chatState?.active.mobileNo,
@@ -876,7 +877,7 @@ export default function WhatsappLiveChat() {
         };
         await readMessage(data);
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
     // handleLoadNewChat();
@@ -884,7 +885,7 @@ export default function WhatsappLiveChat() {
     const intervalId = setInterval(() => {
       handleLoadNewChat();
       handleIsView();
-    }, 3000);
+    }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
 

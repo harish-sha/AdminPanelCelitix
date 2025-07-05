@@ -1187,36 +1187,21 @@ const EditPanel = ({
 
   // footertype
   const [footerButtonLabel, setFooterButtonLabel] = useState("");
-  const [leftCaption, setLeftCaption] = useState("");
-  const [rightCaption, setRightCaption] = useState("");
+  // const [leftCaption, setLeftCaption] = useState("");
+  // const [rightCaption, setRightCaption] = useState("");
   const [centerCaption, setCenterCaption] = useState("");
   const [nextAction, setNextAction] = useState("complete");
-  const [caption, setCaption] = useState("");
-
-  const captionRef = useRef(null);
 
   useEffect(() => {
-    if (selectedItem) {
-      setFooterButtonLabel(selectedItem.label || "");
-      setLeftCaption(selectedItem["left-caption"] || "");
-      setRightCaption(selectedItem["right-caption"] || "");
-      setCenterCaption(selectedItem["center-caption"] || "");
-      setNextAction(
-        (selectedItem["on-click-action"] &&
-          selectedItem["on-click-action"].name) ||
-        "complete"
-      );
+    if (selectedItem?.footer) {
+      const footerData = selectedItem.footer["footer_1"];
 
-      // Derive caption type from data
-      if (selectedItem["center-caption"]) {
-        setCaption("center");
-      } else if (
-        selectedItem["left-caption"] ||
-        selectedItem["right-caption"]
-      ) {
-        setCaption("left-right");
-      } else {
-        setCaption("");
+      if (footerData) {
+        setFooterButtonLabel(footerData.label || "");
+        // setLeftCaption(footerData.left_caption || "");
+        // setRightCaption(footerData.right_caption || "");
+        setCenterCaption(footerData.center_caption || "");
+        setNextAction(footerData.on_click_action || "complete");
       }
     }
   }, [selectedItem]);
@@ -1227,32 +1212,23 @@ const EditPanel = ({
       return;
     }
 
-    if (centerCaption && (leftCaption || rightCaption)) {
-      toast.error(
-        "Cannot set center caption together with left/right captions"
-      );
-      return;
-    }
-
-    if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
-      toast.error("Both left and right captions must be provided together");
-      return;
-    }
-
     const payload = {
-      label: footerButtonLabel,
-      "on-click-action": nextAction || "",
+      footer: {},
     };
 
-    if (centerCaption) {
-      payload["center-caption"] = centerCaption;
-    }
+    const id = `footer_1`; // Unique ID for the footer (adjust if needed)
 
-    if (leftCaption && rightCaption) {
-      payload["left-caption"] = leftCaption;
-      payload["right-caption"] = rightCaption;
-    }
+    payload.footer[id] = {
+      label: footerButtonLabel,
+      // left_caption: leftCaption || "",
+      // right_caption: rightCaption || "",
+      center_caption: centerCaption || "",
+      on_click_action: nextAction || "",
+    };
 
+    console.log("Saving footer payload:", payload);
+
+    // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
       ...selectedItem,
       ...payload,
@@ -1260,7 +1236,9 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
+    console.log("Final footer data:", updatedData);
   };
+
 
   // footertype
 

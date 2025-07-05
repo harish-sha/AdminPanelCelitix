@@ -236,7 +236,7 @@ export const InputData = ({
       transition={{ duration: 0.4 }}
     >
       {/* Animated Chip */}
-      <div className="flex items-center justify-center">
+      {/* <div className="flex items-center justify-center">
         <motion.div
           className="flex items-center justify-center px-4 text-xs w-fit py-2 mb-3 bg-gradient-to-r from-blue-500 to-green-500 text-white font-medium rounded-full shadow-md cursor-pointer"
           initial={{ scale: 1 }}
@@ -246,7 +246,7 @@ export const InputData = ({
         >
           🎉 New Features!
         </motion.div>
-      </div>
+      </div> */}
 
       <Dialog
         open={openDialog}

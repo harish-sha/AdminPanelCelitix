@@ -310,66 +310,35 @@ const Canvas = ({
 
     // For footerbutton: look under footer
     if (item.type === "footerbutton") {
+      const footer = targetItem.footer?.footer_1 || {};
+
       const hasContent =
-        targetItem.label ||
-        targetItem["left-caption"] ||
-        targetItem["right-caption"] ||
-        targetItem["center-caption"] ||
-        targetItem["on-click-action"];
+        footer.label || footer.center_caption || footer.on_click_action;
 
       return (
         <div className="bg-white">
           {hasContent ? (
             <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-              {targetItem.label && (
+              {footer.label && (
                 <div>
                   <span className="font-semibold">Label: </span>
-                  {targetItem.label}
+                  {footer.label}
                 </div>
               )}
 
-              {targetItem["left-caption"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Left-caption: </span>
-                  {targetItem["left-caption"]}
-                </div>
-              )}
-
-              {targetItem["right-caption"] && (
-                <div className="mt-1">
-                  <span className="font-semibold">Right-caption: </span>
-                  {targetItem["right-caption"]}
-                </div>
-              )}
-
-              {targetItem["center-caption"] && (
+              {footer.center_caption && (
                 <div className="mt-1">
                   <span className="font-semibold">Center-caption: </span>
-                  {targetItem["center-caption"]}
+                  {footer.center_caption}
                 </div>
               )}
 
-              {targetItem["on-click-action"] && (
+              {footer.on_click_action && (
                 <div className="mt-1">
                   <span className="font-semibold">Next Action: </span>
-                  {targetItem["on-click-action"]}
+                  {footer.on_click_action}
                 </div>
               )}
-              {/* 
-             {targetItem["on-click-action"] && (
-  <div className="mt-1">
-    <span className="font-semibold">Next Action: </span>
-    {targetItem["on-click-action"].name || "N/A"}
-  </div>
-)}
-
-{targetItem["on-click-action"]?.next?.name && (
-  <div className="mt-1">
-    <span className="font-semibold">Next Screen: </span>
-    {targetItem["on-click-action"].next.name}
-  </div>
-)} */}
-
             </div>
           ) : (
             <span className="text-gray-400 italic">
