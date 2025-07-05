@@ -70,7 +70,8 @@ const CustomPagination = ({
   );
 };
 
-const AttachmentLogsTbaleSms = ({ id, name }) => {
+const AttachmentLogsTbaleSms = ({ id, name, data = [] }) => {
+  console.log("data", data)
   const [selectedRows, setSelectedRows] = useState([]);
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
@@ -143,7 +144,7 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
       ),
     },
   ];
-  const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
+  const totalPages = Math.ceil(data.length / paginationModel.pageSize);
   const CustomFooter = () => {
     return (
       <GridFooterContainer
@@ -175,7 +176,7 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
           )}
 
           <Typography variant="body2">
-            Total Records: <span className="font-semibold">{rows.length}</span>
+            Total Records: <span className="font-semibold">{data.length}</span>
           </Typography>
         </Box>
 
@@ -201,7 +202,7 @@ const AttachmentLogsTbaleSms = ({ id, name }) => {
         <DataGrid
           id={id}
           name={name}
-          rows={rows}
+          data={data}
           columns={columns}
           initialState={{ pagination: { paginationModel } }}
           pageSizeOptions={[10, 20, 50]}

@@ -57,6 +57,7 @@ import { CustomTabPanel, a11yProps } from "./components/CustomTabPanel";
 import "../style.css";
 import { RadioButton } from "primereact/radiobutton";
 import { Dialog } from "primereact/dialog";
+import moment from "moment";
 
 const ManageTemplate = () => {
   const navigate = useNavigate();
@@ -376,18 +377,18 @@ const ManageTemplate = () => {
     setIsFetching(false);
   };
 
+
   const applyFilters = (data) => {
     const filtered = data.filter((item) => {
       const itemCategory = item.category?.toLowerCase().trim() || "";
       const itemType = item.type?.toLowerCase().trim() || "";
       const itemStatus = item.status?.toLowerCase().trim() || "";
       const itemName = item.templateName?.toLowerCase().trim() || "";
-      const itemDateLocal = new Date(item.createdDate).toLocaleDateString(
-        "en-CA"
-      );
+      const itemDateLocal = moment(new Date(item?.createdDate)).format("DD-MM-YYYY");
       let selectedDateLocal = "";
       if (selectedDate) {
-        selectedDateLocal = new Date(selectedDate).toLocaleDateString("en-CA");
+        selectedDateLocal = moment(selectedDate).format("DD-MM-YYYY");
+        // selectedDateLocal = new Date(selectedDate).toLocaleDateString("en-CA");
       }
       return (
         (!selectedCategory ||
@@ -397,11 +398,12 @@ const ManageTemplate = () => {
           itemStatus === selectedStatus.toLowerCase().trim()) &&
         (!templateName ||
           itemName.includes(templateName.toLowerCase().trim())) &&
-        (!selectedDate || itemDateLocal === selectedDateLocal)
+        (!selectedDate || itemDateLocal.includes(selectedDateLocal))
       );
     });
     setFilteredData(filtered);
   };
+
 
   const handleSyncTemplate = async () => {
     if (!syncWabaId) {
@@ -466,7 +468,7 @@ const ManageTemplate = () => {
                             />
                         </div> */}
             {/* Search Templates and Status */}
-            <div className="relative flex items-center h-0 transition-all duration-500 w-120">
+            {/* <div className="relative flex items-center h-0 transition-all duration-500 w-120">
               <div
                 className={`relative flex items-center transition-all duration-300 border rounded-lg border-gray-300 
             ${searchActive ? "w-80 " : "w-0"} 
@@ -495,7 +497,7 @@ const ManageTemplate = () => {
                   Search Templates
                 </span>
               )}
-            </div>
+            </div> */}
             <div className="flex gap-2">
               <div className="w-max-content">
                 <UniversalButton

@@ -46,7 +46,7 @@ export const StartingNodeContent = ({
   }, []);
 
   useEffect(() => {
-    const joinedString = inputFields.filter(Boolean).join(", ");
+    const joinedString = inputFields.filter(Boolean).join(",");
     setNodesInputData((prev) => ({
       ...prev,
       [id]: {

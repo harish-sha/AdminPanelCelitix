@@ -320,6 +320,7 @@ import CustomNoRowsOverlay from "../../components/CustomNoRowsOverlay.jsx";
 import DropdownMenuPortalCampaign from "@/utils/DropdownMenuCampaign.jsx";
 import InfoPopover from "../../../components/common/InfoPopover.jsx";
 import CampaignSummaryUI from "./CampaignSummaryUI.jsx";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -413,12 +414,12 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
     // Reset for this row
     setDropdownOpenId(null);
 
-    const fromDateStr = new Date(fromDate).toLocaleDateString("en-GB");
+    const fromDateStr = moment(fromDate).format("YYYY-MM-DD");
     const formattedDate = fromDateStr.replace(/\//g, "-");
 
     const data = {
       campSrno: row?.campaignSrno,
-      fromDate: formattedDate,
+      fromDate: fromDateStr,
     };
 
     try {
@@ -460,7 +461,13 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "queTime", headerName: "Created On", flex: 1, minWidth: 120 },
+    {
+      field: "queTime",
+      headerName: "Created On",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => moment(params.row.queTime).format("DD-MM-YYYY HH:mm"),
+    },
     {
       field: "campaignName",
       headerName: "Campaign Name",
@@ -590,6 +597,7 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
                     "pending",
                     "sent",
                     "delivered",
+                    "undelivered",
                     "read",
                     "source",
                     // "queTime",
@@ -643,20 +651,24 @@ const ManageCampaignTable = ({ id, name, data = [], fromDate }) => {
   //     action: 'True',
   // }));
 
-  const rows = Array.isArray(data)
+  const sortedData = data.sort(
+    (a, b) => new Date(b.queTime) - new Date(a.queTime)
+  );
+
+  const rows = Array.isArray(sortedData)
     ? data.map((item, index) => ({
-        id: index + 1,
-        sn: index + 1,
-        // queTime: formatDate(item.queTime) || "N/A",
-        queTime: item.queTime || "N/A",
-        campaignName: item.campaignName || "N/A",
-        templateName: item.templateName || "N/A",
-        templateCategory: item.templateCategory || "N/A",
-        templateType: item.templateType || "N/A",
-        status: item.status || "N/A",
-        totalAudience: item.totalAudience || "0",
-        campaignSrno: item.campaignSrno,
-      }))
+      id: index + 1,
+      sn: index + 1,
+      // queTime: formatDate(item.queTime) || "N/A",
+      queTime: moment(item.queTime).format("YYYY-MM-DD HH:mm:ss") || "N/A",
+      campaignName: item.campaignName || "N/A",
+      templateName: item.templateName || "N/A",
+      templateCategory: item.templateCategory || "N/A",
+      templateType: item.templateType || "N/A",
+      status: item.status || "N/A",
+      totalAudience: item.totalAudience || "0",
+      campaignSrno: item.campaignSrno,
+    }))
     : [];
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);

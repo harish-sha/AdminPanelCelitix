@@ -226,7 +226,7 @@ export const Preview = ({
               {pree?.updatedCData.map((item, index) => (
                 <div className="text-start p-2">
                   <div key={index}>
-                    <p className="text-md">{item.cardTitle}</p>
+                    {/* <p className="text-md">{item.cardTitle}</p> */}
                     {item.fileTempPath && (
                       <img
                         src={item.filePath}
@@ -234,11 +234,14 @@ export const Preview = ({
                         className="h-30 p-1 rounded-xl"
                       />
                     )}
-                    <div className="overflow-y-scroll  max-h-[150px] max-w-[525px] p-1 break-words whitespace-pre-wrap rounded-md border min-h-[100px] text-start text-sm">
-                      <pre className="p-1 break-words whitespace-pre-wrap rounded-md ">
-                        {item.cardDescription}
-                      </pre>
-                    </div>
+                    <p className="text-md">{item.cardTitle}</p>
+                    {item.cardDescription && (
+                      <div className="overflow-y-scroll  max-h-[150px] max-w-[525px] p-1 break-words whitespace-pre-wrap rounded-md border min-h-[100px] text-start text-sm">
+                        <pre className="p-1 break-words whitespace-pre-wrap rounded-md ">
+                          {item.cardDescription}
+                        </pre>
+                      </div>
+                    )}
                   </div>
                   {/* {JSON.stringify(pree?.updatedCData, null, 2)} */}
 

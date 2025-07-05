@@ -21,6 +21,7 @@ import {
   sendMessageToUser,
   sendTemplateMessageToUser,
   uploadImageFile,
+  getTemplateDetialsById
 } from "../../apis/whatsapp/whatsapp";
 import {
   BoltRounded,
@@ -66,6 +67,7 @@ import { InputData } from "./component/InputData";
 import { select } from "@material-tailwind/react";
 import DropdownWithSearch from "../components/DropdownWithSearch";
 import { useUser } from "@/context/auth";
+import moment from "moment";
 
 export default function WhatsappLiveChat() {
   const { user } = useUser();
@@ -225,11 +227,10 @@ export default function WhatsappLiveChat() {
       replyType: replyType,
       replyFrom: "user",
       wabaSrNo: wabaState?.wabaSrno,
-      ...(chatState?.isReply ? {} : { message: input || "" }),
+      // ...(chatState?.isReply ? {} : { message: input || "" }),
+      ...(chatState?.isReply ? {} : { message: input.trim() || "" }),
       // ...(selectedImage ? {} : { message: input || "" }),
     };
-
-    // console.log(data);
 
     let body = {};
 
@@ -346,12 +347,12 @@ export default function WhatsappLiveChat() {
         return;
       }
 
-      if (res?.unreadCounts?.length > 0) {
-        const audio = new Audio("./receive-message.mp3");
-        audio.play().catch((e) => {
-          // console.log("Audio play error:", e);
-        });
-      }
+      // if (res?.unreadCounts?.length > 0) {
+      //   const audio = new Audio("./receive-message.mp3");
+      //   audio.play().catch((e) => {
+      //     console.log("Audio play error:", e);
+      //   });
+      // }
 
       const mappedConversations = res.conversationEntityList?.map((chat) => {
         const unread = res.unreadCounts.find(
@@ -666,7 +667,7 @@ export default function WhatsappLiveChat() {
       func = sendMessageToUser;
     } else if (messageType === "template") {
       const templateType = allTemplated.find(
-        (temp) => temp.templateName === sendmessageData?.templateName
+        (temp) => temp.vendorTemplateId === sendmessageData?.templateName
       );
 
       if (
@@ -723,11 +724,17 @@ export default function WhatsappLiveChat() {
       if (btnVarLength?.length > 0 && !btnVariables) {
         return toast.error("Please enter Button variables");
       }
+
+      const templateName = allTemplated.find(
+        (temp) => temp.vendorTemplateId === sendmessageData?.templateName
+      )?.templateName;
+
       data = {
         srno: chatState?.active.srno,
         templateUrlVariable: btnVariables,
         templateType: templateType?.type,
-        templateName: sendmessageData?.templateName,
+        // templateName: sendmessageData?.templateName,
+        templateName: templateName,
         templateLanguage: "en",
         wabaNumber: wabaState.selectedWaba,
         mobileno: chatState?.active.mobileNo,
@@ -778,8 +785,10 @@ export default function WhatsappLiveChat() {
       (waba) => waba.mobileNo === wabaState.selectedWaba
     )?.wabaAccountId;
     try {
-      const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
-      setTemplateDetails(res.data[0]);
+      // const res = await getWabaTemplate(wabaId, sendmessageData?.templateName);
+      // setTemplateDetails(res.data[0]);
+      const res = await getTemplateDetialsById(sendmessageData?.templateName);
+      setTemplateDetails(res);
     } catch (e) {
       // console.log(e);
       return toast.error("Error fetching template details");
@@ -810,11 +819,18 @@ export default function WhatsappLiveChat() {
         setVarLength(item?.example?.body_text);
       }
       if (item?.type === "BUTTONS") {
-        item?.buttons?.map(({ type, example }) => {
+        // item?.buttons?.map(({ type, example }) => {
+        //   if (type === "URL") {
+        //     // const regex = /{{(\d+)}}/g;
+        //     // const matches = regex.exec(example);
+        //     // setBtnVarLength(matches);
+        //     setBtnVarLength(example);
+        //   }
+        // });
+        item?.buttons?.map(({ type, example, url }) => {
           if (type === "URL") {
-            const regex = /{{(\d+)}}/g;
-            const matches = regex.exec(example)
-            setBtnVarLength(matches);
+            const varLength = url?.match(/{{(.+?)}}/g);
+            setBtnVarLength(varLength?.length || 0);
           }
         });
       }
@@ -833,24 +849,26 @@ export default function WhatsappLiveChat() {
         mobile: chatState?.active.mobileNo,
         wabaNumber: wabaState.selectedWaba,
         ...latestMessageData,
+        replayTime: moment(replayTime).format("YYYY-MM-DD HH:mm:ss"),
       };
       const res = await loadNewChat(data);
 
       if (res?.conversationEntityList.length === 0) {
         return;
       }
-      const audio = new Audio("./receive-message.mp3");
-      audio.play().catch((e) => {
-        // console.log("Audio play error:", e);
-      });
+      // const audio = new Audio("./receive-message.mp3");
+      // audio.play().catch((e) => {
+      //   // console.log("Audio play error:", e);
+      // });
       await handleFetchSpecificConversation();
     } catch (e) {
-      // console.log(e);
+      console.log(e);
     }
   }
   useEffect(() => {
     async function handleIsView() {
       if (!wabaState.selectedWaba || !chatState?.active) return;
+      if (!latestMessageData.srno) return
       try {
         const data = {
           mobile: chatState?.active.mobileNo,
@@ -859,7 +877,7 @@ export default function WhatsappLiveChat() {
         };
         await readMessage(data);
       } catch (e) {
-        // console.log(e);
+        console.log(e);
       }
     }
     // handleLoadNewChat();
@@ -867,7 +885,7 @@ export default function WhatsappLiveChat() {
     const intervalId = setInterval(() => {
       handleLoadNewChat();
       handleIsView();
-    }, 500);
+    }, 5000);
     return () => clearInterval(intervalId);
   }, [latestMessageData]);
 
@@ -1122,7 +1140,7 @@ export default function WhatsappLiveChat() {
               placeholder="Group"
             />
 
-            <div className="flex items-center justify-center" >
+            <div className="flex items-center justify-center">
               <UniversalButton
                 id={"assignAgent"}
                 name={"assignAgent"}
@@ -1132,7 +1150,6 @@ export default function WhatsappLiveChat() {
             </div>
           </div>
         </Dialog>
-
       )}
 
       <Dialog
@@ -1202,7 +1219,7 @@ export default function WhatsappLiveChat() {
                     label="Select Template"
                     placeholder="Select Template"
                     options={allTemplated?.map((template) => ({
-                      value: template.templateName,
+                      value: template.vendorTemplateId,
                       label: template.templateName,
                     }))}
                     value={sendmessageData.templateName}
@@ -1212,7 +1229,7 @@ export default function WhatsappLiveChat() {
                         templateName: e,
                       }));
                       const templateType = allTemplated?.find(
-                        (template) => template.templateName === e
+                        (template) => template.vendorTemplateId === e
                       )?.type;
                       setTemplateType(templateType);
                       setBtnVarLength(0);

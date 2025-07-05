@@ -162,18 +162,27 @@ const VariableManager = ({
   setTemplateFormat,
   onUpdateVariables,
   allowSingleVariable = false,
+  ref,
 }) => {
   const containerRef = useRef(null);
   const [variables, setVariables] = useState([]);
   const [btnDisabled, setBtnDisabled] = useState(false);
 
   const addVariable = () => {
+    if (variables.length >= 10) return toast.error("You can't add more than 10 variables");
+    if (!ref.current) return;
+    const textAreaRef = ref.current;
     const newVarTag = `{{${variables.length + 1}}}`;
     const newVariable = { id: `${variables.length + 1}`, value: "" };
     if (templateFormat.length + newVarTag.length >= 1024) return;
     const updatedVariables = [...variables, newVariable];
     setVariables(updatedVariables);
-    setTemplateFormat((prev) => `${prev}{{${newVariable.id}}}`);
+    // setTemplateFormat((prev) => `${prev}{{${newVariable.id}}}`);
+    const updatedTemplateFormat =
+      templateFormat.slice(0, textAreaRef.selectionStart) +
+      `{{${newVariable.id}}}` +
+      templateFormat.slice(textAreaRef.selectionStart);
+    setTemplateFormat(updatedTemplateFormat);
     onUpdateVariables(updatedVariables);
 
     if (allowSingleVariable) {
@@ -255,8 +264,8 @@ const VariableManager = ({
 
   return (
     <div className="relative w-full ">
-      <p className="text-sm text-gray-500">{templateFormat.length}/1024</p>
-      <div className="flex items-center justify-end mb-7">
+      {/* <p className="text-sm text-gray-500">{templateFormat.length}/1024</p> */}
+      <div className="flex items-center justify-end mb-4">
         <button
           onClick={addVariable}
           disabled={btnDisabled}
@@ -282,6 +291,7 @@ const VariableManager = ({
               }
               placeholder={`Enter value for {{${variable.id}}}`}
               className="w-full p-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              // maxLength={10}
             />
             <button
               onClick={() => {

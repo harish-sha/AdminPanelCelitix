@@ -22,6 +22,7 @@ const InputField = ({
   // max = { maxLength },
   className = "",
   ref = null,
+  divClassName = ""
 }) => {
   // const handleChange = (e) => {
   //     let inputValue = e.target.value;
@@ -32,7 +33,7 @@ const InputField = ({
   // };
 
   return (
-    <div className="w-full">
+    <div className={`w-full ${divClassName}`}>
       {label && (
         <div className="flex items-center gap-2 mb-2">
           <label htmlFor={id} className="text-sm font-medium text-gray-700">

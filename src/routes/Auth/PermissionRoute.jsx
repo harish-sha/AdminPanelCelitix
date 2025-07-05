@@ -33,6 +33,8 @@ export const PermissionRoute = ({ children }) => {
         "/rcsdeliverycampaigndetails",
         "/rcsaddtemplatercs",
         "/rcsdeliveryreport",
+        "/rcsmanagebot",
+        "/rcslivechats",
       ],
       roles: ["ADMIN"],
     },
@@ -50,10 +52,15 @@ export const PermissionRoute = ({ children }) => {
         "/wwhatsappbot",
         "/createwhatsappbot",
         "/wcampaigndetailsreport",
+        "/smscampaigndetailsreport",
         "/createtemplate",
         "/wlcsetting",
         "/wwhatsappflows",
         "/wflowcreation",
+        "/apicampaigninfo",
+        "/wblockuser",
+        "/wmmlite",
+        "/cannedmessagemanager"
       ],
       roles: ["ADMIN"],
     },
@@ -79,6 +86,7 @@ export const PermissionRoute = ({ children }) => {
         "/obdmanagecampaign",
         "/obdmanagevoiceclips",
         "/obdIntegration",
+        "/obdCampaignDetailslog",
       ],
       roles: ["ADMIN"],
     },
@@ -131,6 +139,8 @@ export const PermissionRoute = ({ children }) => {
         "/managenotifications",
         "/CreateWhatsappTemplateAdmin",
         "/manageadduser",
+        "/editrouting",
+        "/addoperator",
       ],
       roles: ["ADMIN"],
     },
@@ -157,12 +167,24 @@ export const PermissionRoute = ({ children }) => {
         "/profile",
         "/settings",
         "/transactions",
+        "/tagmanager",
+
       ],
       roles: ["ADMIN"],
     },
     {
       name: "Download",
       links: "/dummy",
+      roles: ["ADMIN"],
+    },
+    {
+      name: "WorkFlow",
+      links: ["/workflow", "/workflow/create", "/workflow/edit"],
+      roles: ["ADMIN"],
+    },
+    {
+      name: "WorkFlow",
+      links: "/aiconfiguration",
       roles: ["ADMIN"],
     },
   ];
@@ -217,6 +239,13 @@ export const PermissionRoute = ({ children }) => {
       if (item.name === "Manage Contacts") {
         allowedServices.push(item);
       }
+      if (item.name === "WorkFlow") {
+        allowedServices.push(item);
+      }
+
+      // if (item.name === "Admin") {
+      //   allowedServices.push(item);
+      // }
     });
 
     return allowedServices;

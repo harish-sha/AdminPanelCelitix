@@ -199,7 +199,7 @@ const ManageAgentTable = ({
     name: "",
     mobileNumber: "",
     status: "",
-    allowAllChats: 1,
+    allowAllChats: 0,
     department: null,
     departmentId: "",
     departmentName: "",

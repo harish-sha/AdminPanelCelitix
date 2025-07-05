@@ -27,6 +27,7 @@ const InfoPopover = ({
       ]}
       disableEnforceFocus
       disableAutoFocus
+      className="z-100"
     >
       <ClickAwayListener onClickAway={onClose}>
         <Paper
@@ -45,7 +46,7 @@ const InfoPopover = ({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="p-3 min-w-[280px] max-w-full select-text"
+            className="p-3 min-w-[280px] max-w-full select-text z-100"
             style={{ userSelect: "text" }}
           >
             {children}

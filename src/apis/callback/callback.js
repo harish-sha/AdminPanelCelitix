@@ -18,7 +18,7 @@ export const getEditData = async (data) => {
 
 // delete callback number
 export const deleteData = async (data) => {
-  return await fetchWithAuth(`callBack/deleteCallBackNumber`, {
+  return await fetchWithAuth(`/callBack/deleteCallBackNumber`, {
     method: "POST",
     body: JSON.stringify(data),
   });
@@ -26,7 +26,7 @@ export const deleteData = async (data) => {
 
 // update callback status
 export const updateStatus = async (data) => {
-  return await fetchWithAuth(`callBack/updateCallbackStatus`, {
+  return await fetchWithAuth(`/callBack/updateCallbackStatus`, {
     method: "POST",
     body: JSON.stringify(data),
   });

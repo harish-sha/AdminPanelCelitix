@@ -304,7 +304,7 @@ const WhatsappLaunchPreview = ({
   const headerComponent = templateDataNew.components.find(
     (comp) =>
       comp.type === "HEADER" &&
-      ["IMAGE", "VIDEO", "DOCUMENT"].includes(comp.format)
+      ["IMAGE", "VIDEO", "DOCUMENT", "TEXT"].includes(comp.format)
   );
 
   const bodyComponent = templateDataNew.components.find(
@@ -419,6 +419,13 @@ const WhatsappLaunchPreview = ({
                     ></iframe>
                   </div>
                 ))}
+
+              {headerComponent && headerComponent.format === "TEXT" && (
+                <div className="text-md font-semibold text-gray-800">
+                  {headerComponent.text}
+                </div>
+              )}
+
 
               {/* {headerComponent &&
                 (headerComponent?.format === "IMAGE" ? (

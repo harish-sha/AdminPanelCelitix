@@ -161,7 +161,7 @@ export const DataTable = ({
         onRowSelectionModelChange={(ids) => setSelectedRows(ids)}
         disableRowSelectionOnClick
         // autoPageSize
-        disableColumnResize
+        // disableColumnResize
         disableColumnMenu
         sx={{
           border: 0,

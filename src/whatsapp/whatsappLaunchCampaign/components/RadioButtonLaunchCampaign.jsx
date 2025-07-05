@@ -29,10 +29,12 @@ function RadioButtonLaunchCampaign({
   uploadedFile,
   setIsUploaded,
   isUploaded,
-  fileRef
+  fileRef,
+  selectedOption,
+  setSelectedOption,
   // setIsCountryCodeChecked
 }) {
-  const [selectedOption, setSelectedOption] = useState("option2");
+  // const [selectedOption, setSelectedOption] = useState("option2");
   // const [selectedGroups, setSelectedGroups] = useState([]);
   // const [uploadedFile, setUploadedFile] = useState(null);
   const [showGroupList, setShowGroupList] = useState([]);

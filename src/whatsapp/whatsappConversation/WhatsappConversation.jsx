@@ -11,10 +11,17 @@ import UniversalButton from "../components/UniversalButton";
 import UniversalSkeleton from "../components/UniversalSkeleton";
 import Loader from "../components/Loader";
 
+import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
+import { exportToExcel } from "@/utils/utills.js";
+
 import {
+  exportConversationData,
   getConversationReport,
   getWabaList,
 } from "../../apis/whatsapp/whatsapp.js";
+
+import moment from "moment";
+import { useDownload } from "@/context/DownloadProvider";
 
 const WhatsappConversation = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -29,6 +36,9 @@ const WhatsappConversation = () => {
     page: 0,
   });
 
+  const { triggerDownloadNotification } = useDownload();
+
+
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
     pageSize: 10,
@@ -36,7 +46,6 @@ const WhatsappConversation = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [totalPage, setTotalPage] = useState(1);
   const [isMobileSearched, setIsMobileSearched] = useState(false);
-
 
   // Fetch WABA List
   useEffect(() => {
@@ -59,7 +68,7 @@ const WhatsappConversation = () => {
   }, []);
 
   // Format Date
-  const formatDate = (date) => date.toISOString().split("T")[0];
+  const formatDate = (date) => moment(date).format("YYYY-MM-DD");
 
   // Handle Search Click
   const handleSearch = async () => {
@@ -93,6 +102,26 @@ const WhatsappConversation = () => {
     }
   };
 
+  const handleExport = async () => {
+    const payload = {
+      ...filters,
+      fromDate: formatDate(filters?.fromDate),
+      toDate: formatDate(filters?.toDate),
+      mobileNumber: filters?.mobileNo,
+    };
+    delete payload.page;
+    try {
+      const res = await exportConversationData(payload);
+      if (!res?.status) {
+        return toast.error(res?.msg);
+      }
+      triggerDownloadNotification();
+      toast.success("File Downloaded Successfully");
+    } catch (e) {
+      toast.error("Error downloading file");
+    }
+  };
+
   useEffect(() => {
     handleSearch();
   }, [currentPage]);
@@ -113,74 +142,79 @@ const WhatsappConversation = () => {
           <div className="flex flex-wrap items-end w-full gap-2 mb-5">
             {/* Select WABA Dropdown */}
             <div className="w-full sm:w-56">
-            <AnimatedDropdown
-              id="wabadropdown"
-              label="Select WABA"
-              placeholder="Select WABA"
-              options={wabaList.map((waba) => ({
-                value: waba.wabaSrno,
-                label: waba.name,
-              }))}
-              value={filters.wabaSrno}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, wabaSrno: value }))
-              }
-            />
+              <AnimatedDropdown
+                id="wabadropdown"
+                label="Select WABA"
+                placeholder="Select WABA"
+                options={wabaList.map((waba) => ({
+                  value: waba.wabaSrno,
+                  label: waba.name,
+                }))}
+                value={filters.wabaSrno}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, wabaSrno: value }))
+                }
+              />
             </div>
             <div className="w-full sm:w-56">
-
-            {/* From Date Picker */}
-            <UniversalDatePicker
-              id="conversationfrom"
-              label="From Date"
-              value={filters.fromDate}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, fromDate: value }))
-              }
-            />
-               </div>
-               <div className="w-full sm:w-56">
-            {/* To Date Picker */}
-            <UniversalDatePicker
-              id="conversationto"
-              label="To Date"
-              value={filters.toDate}
-              onChange={(value) =>
-                setFilters((prev) => ({ ...prev, toDate: value }))
-              }
-            />
-             </div>
-             <div className="w-full sm:w-56">
-            {/* Mobile Number Input Field */}
-            <InputField
-              id="conversationmobile"
-              label="Mobile Number"
-              type="number"
-              placeholder="Enter Mobile Number"
-              value={filters.mobileNo}
-              onChange={(e) =>
-                setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
-              }
-            />
-             </div>
+              {/* From Date Picker */}
+              <UniversalDatePicker
+                id="conversationfrom"
+                label="From Date"
+                value={filters.fromDate}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, fromDate: value }))
+                }
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              {/* To Date Picker */}
+              <UniversalDatePicker
+                id="conversationto"
+                label="To Date"
+                value={filters.toDate}
+                onChange={(value) =>
+                  setFilters((prev) => ({ ...prev, toDate: value }))
+                }
+              />
+            </div>
+            <div className="w-full sm:w-56">
+              {/* Mobile Number Input Field */}
+              <InputField
+                id="conversationmobile"
+                label="Mobile Number"
+                type="number"
+                placeholder="Enter Mobile Number"
+                value={filters.mobileNo}
+                onChange={(e) =>
+                  setFilters((prev) => ({ ...prev, mobileNo: e.target.value }))
+                }
+              />
+            </div>
             {/* Search Button */}
             <div className="w-max-content ">
-            <UniversalButton
-              id="conversationsearch"
-              label={isFetching ? "Searching..." : "Search"}
-              icon={<IoSearch />}
-              onClick={handleSearch}
-              disabled={isFetching}
-            />
-             </div>
+              <UniversalButton
+                id="conversationsearch"
+                label={isFetching ? "Searching..." : "Search"}
+                icon={<IoSearch />}
+                onClick={handleSearch}
+                disabled={isFetching}
+              />
+            </div>
             {/* Export Button */}
-            <div className="w-max-content ">
-            <UniversalButton
-              id="conversationexport"
-              label="Export"
-              // onClick={() => console.log("Export Clicked")}
-            />
-             </div>
+            <div className="w-max-content">
+              <UniversalButton
+                id="conversationexport"
+                label="Export"
+                onClick={handleExport}
+                icon={
+                  <IosShareOutlinedIcon
+                    fontSize="small"
+                    sx={{ marginBottom: "3px" }}
+                  />
+                }
+              />
+            </div>
           </div>
 
           {/* Show Loader or Table */}

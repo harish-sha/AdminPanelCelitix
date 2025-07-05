@@ -93,11 +93,14 @@ export const ChatSidebar = ({
   setChatState,
   setSelectedAgentList,
   selectedWaba,
-  setSelectedGroupList
+  setSelectedGroupList,
+  // isLoading
 }) => {
   const isLoading =
     selectedWaba &&
     (!chatState?.allConversations || chatState.allConversations.length === 0);
+
+  // const isLoading = selectedWaba && !chatState?.allConversations;
 
   // async function fetchAgentDetails(srno) {
   //   try {
@@ -140,7 +143,7 @@ export const ChatSidebar = ({
   };
 
   return (
-    <div className="mt-2 h-[66vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+    <div className="mt-2 h-[70vh] max-h-full overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
       {!selectedWaba && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
@@ -200,6 +203,7 @@ export const ChatSidebar = ({
         ))}
 
       {!isLoading &&
+        chatState?.allConversations.length > 0 &&
         chatState?.allConversations
           ?.slice()
           ?.sort((a, b) => new Date(b.insertTime) - new Date(a.insertTime))

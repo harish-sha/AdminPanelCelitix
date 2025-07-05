@@ -552,7 +552,7 @@ const AddTemplateRcs = () => {
             onChange={(e) => {
               setInputData({ ...inputData, templateName: e.target.value });
             }}
-            tooltipContent="Enter Template Name"
+            tooltipContent="Enter a unique name (max 20 characters). Use letters, numbers, or underscores only. No spaces or special symbols."
             maxLength="20"
           />
         </div>
@@ -597,7 +597,7 @@ const AddTemplateRcs = () => {
               Template
             </span>
             <CustomTooltip
-              title="Enter Message content"
+              title="Enter Message content and variables. Maximum length is 2500 characters."
               placement="right"
               arrow
             >
@@ -619,8 +619,8 @@ const AddTemplateRcs = () => {
                   setAi={setAi}
                   setIsOpen={setIsOpen}
                   isOpen={isOpen}
-                  right={0.5}
-                  bottom={2.9}
+                  right={10}
+                  bottom={50}
                   setMessageContent={setMessageContent}
                   messageContent={messageContent}
                   length={2500}

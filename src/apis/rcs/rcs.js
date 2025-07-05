@@ -23,15 +23,29 @@ export const fetchCampaignBySrno = async (campSrno) => {
 export const fetchCampaignDetailReport = async (
   campaignSrNo,
   mobileNo,
-  page
+  page,
+  deliveryStatus
 ) => {
   return await fetchWithAuth(
-    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+    `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}&deliveryStatus=${deliveryStatus}`,
     {
       method: "POST",
     }
   );
 };
+
+// export const fetchCampaignDetailReport = async (
+//   campaignSrNo,
+//   mobileNo,
+//   page,
+// ) => {
+//   return await fetchWithAuth(
+//     `/rcs/getCampaignDetailLogs?campaignSrNo=${campaignSrNo}&mobileNo=${mobileNo}&page=${page}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
 
 // get summary report
 export const fetchSummaryReport = async (data) => {
@@ -73,9 +87,22 @@ export const fetchAllAgents = async () => {
 };
 
 // fetch all templates list
-export const fetchAllTemplates = async (data = "", isActive = "") => {
+// export const fetchAllTemplates = async (data = "", isActive = "") => {
+//   return await fetchWithAuth(
+//     `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+//     {
+//       method: "POST",
+//     }
+//   );
+// };
+
+export const fetchAllTemplates = async (
+  data = "",
+  isActive = "",
+  status = ""
+) => {
   return await fetchWithAuth(
-    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}`,
+    `/rcsTemplate/showTemplates?agentId=${data}&isActive=${isActive}&status=${status}`,
     {
       method: "POST",
     }
@@ -145,31 +172,30 @@ export const exportData = async (data) => {
   });
 };
 
-
-
 //schedule data
-export const  scheduledata = async(data) => {
-  return await fetchWithAuth(`/rcs/getScheduledRcsCampaignReport?selectedUserId=0`, {
-    method: 'POST',
-    body: JSON.stringify(data)
-  });
-}
-
-
-//cancelschedule
-export const cancelschedule = async (data) => {
+export const scheduledata = async () => {
   return await fetchWithAuth(
-    `/rcs/cancelCampaign?selectedUserId=0&srNo=${data.srNo}`,
+    `/rcs/getScheduledRcsCampaignReport?selectedUserId=0`,
     {
       method: "POST",
-     
     }
   );
 };
 
+//cancelschedule
+export const cancelschedule = async (data) => {
+  return await fetchWithAuth(
+    `/rcs/cancelCampaign?selectedUserId=0&srNo=${data.srno}`,
+    {
+      method: "POST",
+    }
+  );
+};
 
-
-
-
-
-
+// export suggestion data
+export const exportSuggestion = async (data) => {
+  return await fetchWithAuth("/rcs/getSuggestionExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};

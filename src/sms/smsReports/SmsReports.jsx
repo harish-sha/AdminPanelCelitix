@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import GradingOutlinedIcon from "@mui/icons-material/GradingOutlined";
 import LibraryBooksOutlinedIcon from "@mui/icons-material/LibraryBooksOutlined";
 import {
@@ -12,7 +12,9 @@ import AnimatedDropdown from "../../whatsapp/components/AnimatedDropdown";
 import UniversalButton from "../../whatsapp/components/UniversalButton";
 import { IoSearch } from "react-icons/io5";
 import { RadioButton } from "primereact/radiobutton";
-import AttachmentLogsTbaleSms from "./components/AttachmentLogsTbaleSms";
+import AttachmentLogsTableSms from "./components/AttachmentLogsTableSms";
+import DayWiseSummaryTableSms from "./components/DayWiseSummaryTableSms";
+import DetailedLogsTable from "./components/DetailedLogsTable";
 import { Dialog } from "primereact/dialog";
 import DropdownWithSearch from "../../whatsapp/components/DropdownWithSearch";
 import UniversalLabel from "../../whatsapp/components/UniversalLabel";
@@ -25,6 +27,9 @@ import {
   getAllCampaignSms,
   getPreviousCampaignDetails,
   getSummaryReport,
+  getSMSCampaignDataByCampNo,
+  fetchScheduleCampaignData,
+  cancelScheduleCampaignSms,
 } from "../../apis/sms/sms";
 import { DataTable } from "../../components/layout/DataTable";
 import IconButton from "@mui/material/IconButton";
@@ -37,12 +42,19 @@ import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOffli
 import { ProgressSpinner } from "primereact/progressspinner";
 import PreviousDaysTableSms from "./components/PreviousDaysTableSms";
 import { ExportDialog } from "./components/exportDialog";
+import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
+import ManageScheduleCampaignSmsTable from "./components/ManageScheduleCampaignSmsTable";
+import moment from "moment";
+import InfoPopover from "@/components/common/InfoPopover";
+import { ImInfo } from "react-icons/im";
+import CampaignTableSms from "./components/CampaignTableSms"
 
 const SmsReports = () => {
   const navigate = useNavigate();
 
   const [value, setValue] = useState(0);
   const [isFetching, setIsFetching] = useState(false);
+  const [isFetchingScheduleData, setIsFetchingScheduleData] = useState(false);
   const [exports, setExports] = useState(false);
   const [exportStatus, setExportStatus] = useState("disable");
   const [selectexportcampaign, setSelectExportCampaign] = useState(null);
@@ -55,9 +67,18 @@ const SmsReports = () => {
   const [selectstatus, setSelectStatus] = useState(null);
   const [selectedCol, setSelectedCol] = useState("");
 
+  const dropdownButtonRefs = useRef([]);
+  const [dropdownOpenId, setDropdownOpenId] = useState(null);
+  const [campaignInfoMap, setCampaignInfoMap] = useState({});
+
+  const closeDropdown = () => setDropdownOpenId(null);
+
   //common State
   const [rows, setRows] = useState([]);
+  const [scheduleData, setScheduleData] = useState([]);
   const [columns, setColumns] = useState([]);
+
+  const [detailedLogsData, setDetailedLogsData] = useState([]);
 
   //campaign State
   const [campaignDataToFilter, setCampaignDataToFilter] = useState({
@@ -66,6 +87,13 @@ const SmsReports = () => {
     mobilesnodata: "",
     campaingType: 1,
   });
+
+  const [campaignScheduleDataToFilter, setCampaignScheduleDataToFilter] =
+    useState({
+      campaignDate: new Date(),
+      campaignName: "",
+    });
+
   const [campaignTableData, setCampaignTableData] = useState([]);
 
   //previous Day State
@@ -82,8 +110,8 @@ const SmsReports = () => {
     searchUserId: "",
   });
   const [previousTableData, setPreviousTableData] = useState([]);
-  const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
-    useState(false);
+  // const [previousDayDetailsDialog, setPreviousDayDetailsDialog] =
+  //   useState(false);
   const [selectedColDetails, setSelectedColDetails] = useState("");
   const [previousDayColumn, setPreviousDayColumn] = useState([]);
   const [previousDayRows, setPreviousDayRows] = useState([]);
@@ -97,7 +125,6 @@ const SmsReports = () => {
     selectOption: "daywise",
   });
   const [daywiseTableData, setDaywiseTableData] = useState([]);
-
   //attachment state
   const [attachmentDataToFilter, setAttachmentDataToFilter] = useState({
     startDate: new Date(),
@@ -125,9 +152,14 @@ const SmsReports = () => {
     customColumns: "",
     campaignType: "",
     status: "",
-    delStatus: {},
+    source: "",
+    // delStatus: {},
+    deliveryStatus: "",
     type: "campaign",
   });
+
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   const templatetypeOptions = [
     { label: "Transactional", value: "Transactional" },
@@ -228,6 +260,33 @@ const SmsReports = () => {
     setRows([]);
   };
 
+  const handleView = async (row) => {
+    const id = row.campaignSrno;
+
+    setDropdownOpenId(null);
+
+    const date = moment(campaignDataToFilter.toDate).format("YYYY-MM-DD");
+
+    const data = {
+      campaignSrno: id,
+      fromDate: date,
+      toDate: date,
+      selectedUserId: 0,
+    };
+
+    try {
+      const res = await getSMSCampaignDataByCampNo(data);
+
+      setCampaignInfoMap((prev) => ({
+        [id]: res || null,
+      }));
+
+      setDropdownOpenId(id);
+    } catch (e) {
+      console.error("Error fetching campaign summary:", e);
+    }
+  };
+
   useEffect(() => {
     async function handleFetchAllSms() {
       try {
@@ -249,105 +308,175 @@ const SmsReports = () => {
         campaignName: campaignDataToFilter.campaingName,
         campaignType: campaignDataToFilter.campaingType || "-1",
         mobilesnodata: campaignDataToFilter.mobilesnodata,
-        toDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
-        fromDate: new Date(campaignDataToFilter.toDate).toLocaleDateString(
-          "en-GB"
-        ),
+        toDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
+        fromDate: moment(campaignDataToFilter.toDate).format("YYYY-MM-DD"),
+        // toDate: "2025-05-29",
+        // fromDate: "2025-05-29",
       };
       const res = await fetchCampaignData(data);
 
       // Map account_usage_type_id to campaign types
-      const mappedData = Array.isArray(res)
-        ? res.map((item, i) => ({
-          id: item.receipt_no_of_duplicate_message,
-          sn: i + 1,
-          ...item,
-          campaign_type:
-            item.account_usage_type_id === 1
-              ? "Transactional"
-              : item.account_usage_type_id === 2
-                ? "Promotional"
-                : item.account_usage_type_id === 3
-                  ? "International"
-                  : "Unknown",
-        }))
-        : [];
+      // const mappedData = Array.isArray(res)
+      //   ? res.map((item, i) => ({
+      //     id: item.receipt_no_of_duplicate_message,
+      //     sn: i + 1,
+      //     ...item,
+      //     campaign_type:
+      //       item.account_usage_type_id === 1
+      //         ? "Transactional"
+      //         : item.account_usage_type_id === 2
+      //           ? "Promotional"
+      //           : item.account_usage_type_id === 3
+      //             ? "International"
+      //             : "Unknown",
 
-      setCampaignTableData(mappedData);
+      //     insert_flag:
+      //       item.insert_flag === 1
+      //         ? "Pending"
+      //         : item.insert_flag === 2
+      //           ? "Processing"
+      //           : item.insert_flag === 3
+      //             ? "Sent"
+      //             : "Unknown",
+      //   }))
+      //   : [];
+
+      setCampaignTableData(res);
       // setCampaignTableData(res);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "que_time", headerName: "Created On", flex: 0, minWidth: 50 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "campaign_type",
-          headerName: "Campaign Type",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "templatename",
-          headerName: "Template Name",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "overall_status",
-          headerName: "Status",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "smsCount",
-          headerName: "Total Audience",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smscampaigndetaillogs", {
-                      state: { id: params.row.receipt_no_of_duplicate_message },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Cancel" placement="top" arrow>
-                <IconButton onClick={() => handleCancel(params.row)}>
-                  <CancelOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   { field: "que_time", headerName: "Created On", flex: 0, minWidth: 200 },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "campaign_type",
+      //     headerName: "Campaign Type",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "templatename",
+      //     headerName: "Template Name",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "insert_flag",
+      //     headerName: "Status",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "smsCount",
+      //     headerName: "Total Audience",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         {/* <CustomTooltip title="View Campaign" placement="top" arrow>
+      //           <IconButton
+      //             className="text-xs"
+      //             ref={(el) => {
+      //               if (el)
+      //                 dropdownButtonRefs.current[params.row.campaignSrno] = el;
+      //             }}
+      //             onClick={() => handleView(params.row)}
+      //           >
+      //             <InfoOutlinedIcon
+      //               sx={{ fontSize: "1.2rem", color: "green" }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip> */}
+      //         <InfoPopover
+      //           anchorEl={dropdownButtonRefs.current[params.row.campaignSrno]}
+      //           open={dropdownOpenId == params.row.campaignSrno}
+      //           onClose={closeDropdown}
+      //         >
+      //           {campaignInfoMap[params.row.campaignSrno] ? (
+      //             <div className="w-[280px] max-w-full">
+      //               {/* <div className="text-base font-semibold mb-2 text-gray-800">
+      //                           Campaign Summary
+      //                         </div> */}
+      //               <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+      //                 {[
+      //                   { label: "Total", key: "TotalUnit" },
+      //                   { label: "TotalSMS", key: "TOTALSMS" },
+      //                   { label: "Pending", key: "Pending" },
+      //                   { label: "Failed", key: "failed" },
+      //                   { label: "Delivered", key: "delivered" },
+      //                   { label: "Un Delivered", key: "undelivered" },
+      //                   { label: "Pending DR", key: "drNotAvailable" },
+      //                   // { label: "QUE Time", key: "queTime" },
+
+      //                   // "TotalUnit",
+      //                   // "TOTALSMS",
+      //                   // "Pending",
+      //                   // "failed",
+      //                   // // "failed",
+      //                   // "delivered",
+      //                   // "undelivered",
+      //                   // "drNotAvailable",
+      //                   // // "queTime",
+      //                 ].map(({ label, key }) => (
+      //                   <React.Fragment key={key}>
+      //                     <div className="font-medium capitalize text-gray-600 border-b border-gray-200 pb-2">
+      //                       {/* {key.replace(/([A-Z])/g, " $1")} */}
+      //                       {label}
+      //                     </div>
+      //                     <div className="text-right font-semibold text-gray-800 border-b border-gray-200 pb-2">
+      //                       {campaignInfoMap[params.row.campaignSrno][key] ??
+      //                         "N/A"}
+      //                     </div>
+      //                   </React.Fragment>
+      //                 ))}
+      //               </div>
+      //             </div>
+      //           ) : (
+      //             <div className="text-sm text-gray-500">No Data Available</div>
+      //           )}
+      //         </InfoPopover>
+
+      //         <CustomTooltip title="Detailed Log" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() =>
+      //               navigate("/smscampaigndetaillogs", {
+      //                 state: { id: params.row.receipt_no_of_duplicate_message },
+      //               })
+      //             }
+      //           >
+      //             <DescriptionOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //         {/* <CustomTooltip title="Cancel" placement="top" arrow>
+      //           <IconButton onClick={() => handleCancel(params.row)}>
+      //             <CancelOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip> */}
+      //       </>
+      //     ),
+      //   },
+      // ]);
       // setRows(
       //   Array.isArray(res)
       //     ? res?.map((item, i) => ({
@@ -359,162 +488,631 @@ const SmsReports = () => {
       //     }))
       //     : []
       // );
-      setRows(mappedData);
+      // setRows(mappedData);
+      // setScheduleData(mappedData); 
     } catch (e) {
-      // console.log(e);
+      // console.log("e", e);
       toast.error("Something went wrong.");
     } finally {
       setIsFetching(false);
     }
   };
 
+  const [clicked, setClicked] = useState([]);
+
+  const handleInfo = (row) => {
+    const id = row.id;
+    setDropdownOpenId((prevId) => (prevId === id ? null : id));
+
+    const data = {
+      que_time: row.que_time,
+      account_usage_type_id: row.account_usage_type_id,
+      "Entity ID": row.PE_ID,
+      smsunit: row.smsunit,
+      actual_sms_length: row.actual_sms_length,
+      sent_time: row.sent_time,
+      isunicode: row.isunicode,
+      source: row.source,
+      circle_srno: row.circle_srno,
+      del_time: row.del_time,
+    };
+    setClicked(data || []);
+  };
+
+  useEffect(() => {
+    console.log("clicked", clicked);
+  }, [clicked]);
+
+  // const handleScheduleCampaignSearch = async () => {
+  //   try {
+  //     setIsFetchingScheduleData(true);
+
+  //     // Prepare the data for the API call (if needed)
+
+  //     const filterCampaignName = campaignScheduleDataToFilter.campaignName;
+  //     // const filterCampaignDate = new Date(campaignScheduleDataToFilter.campaignDate).toLocaleDateString("en-GB");
+  //     const filterCampaignDate = campaignScheduleDataToFilter.campaignDate
+  //       ? new Date(campaignScheduleDataToFilter.campaignDate)
+  //           .toISOString()
+  //           .slice(0, 10)
+  //       : "";
+
+  //     // Make the API call (use data if required)
+  //     const res = await fetchScheduleCampaignData();
+
+  //     console.log("API Response:", res);
+
+  //     const handleScheduleSmsCancel = async (row) => {
+  //       const srno = row.campaignSrno;
+  //       const selectedUserId = 0;
+
+  //       try {
+  //         const result = await cancelScheduleCampaignSms({
+  //           srno,
+  //           selectedUserId,
+  //         });
+  //         if (result) {
+  //           toast.success("Campaign cancelled successfully");
+
+  //           // Remove the deleted campaign from the table data
+  //           setCampaignTableData((prev) =>
+  //             prev.filter((item) => item.campaignSrno !== srno)
+  //           );
+  //           setRows((prev) =>
+  //             prev.filter((item) => item.campaignSrno !== srno)
+  //           );
+  //         } else {
+  //           console.warn("Cancel request failed or returned empty response.");
+  //           toast.error("Cancel request failed");
+  //         }
+  //       } catch (error) {
+  //         console.error("Error cancelling campaign:", error);
+  //         toast.error("Error cancelling campaign");
+  //       }
+  //     };
+
+  //     // Filter logic
+  //     let filteredData = Array.isArray(res)
+  //       ? res.filter((item) => {
+  //           const itemName = item.campaignName?.toLowerCase().trim() || "";
+  //           // const itemDate = item.campaignDate
+  //           //   ? new Date(item.campaignDate).toLocaleDateString("en-GB")
+  //           //   : "";
+
+  //           const itemDate = item.campaignDate
+  //             ? new Date(item.campaignDate).toISOString().slice(0, 10)
+  //             : "";
+
+  //           const nameMatches = filterCampaignName
+  //             ? itemName.includes(filterCampaignName)
+  //             : true;
+  //           const dateMatches = filterCampaignDate
+  //             ? itemDate === filterCampaignDate
+  //             : true;
+
+  //           return nameMatches && dateMatches;
+  //         })
+  //       : [];
+
+  //     // Map data to the expected format
+  //     filteredData = filteredData.map((item, i) => ({
+  //       id: item.srno || `row-${i}`,
+  //       sn: i + 1,
+  //       campaign_date: item.campaignDate || "-",
+  //       campaign_name: item.campaignName || "-",
+  //       sent_time: item.sentTime || "-",
+  //       campaignSrno: item.srno,
+  //     }));
+
+  //     console.log("Filtered Campaign Data:", filteredData);
+
+  //     // Update state with filtered data
+  //     setCampaignTableData(filteredData);
+  //     setRows(filteredData);
+
+  //     // Define DataGrid columns
+  //     setColumns([
+  //       { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+  //       {
+  //         field: "campaign_date",
+  //         headerName: "Campaign Date",
+  //         flex: 1,
+  //         minWidth: 120,
+  //       },
+  //       {
+  //         field: "campaign_name",
+  //         headerName: "Campaign Name",
+  //         flex: 1,
+
+  //         minWidth: 150,
+  //       },
+  //       { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+  //       {
+  //         field: "action",
+  //         headerName: "Action",
+  //         flex: 1,
+  //         minWidth: 100,
+  //         renderCell: (params) => (
+  //           <>
+  //             {/* <CustomTooltip title="Detailed Log" placement="top" arrow>
+  //             <IconButton
+  //               className="no-xs"
+  //               onClick={() =>
+  //                 navigate("/smscampaigndetaillogs", {
+  //                   state: { id: params.row.id },
+  //                 })
+  //               }
+  //             >
+  //               <DescriptionOutlinedIcon
+  //                 sx={{
+  //                   fontSize: "1.2rem",
+  //                   color: "green",
+  //                 }}
+  //               />
+  //             </IconButton>
+  //           </CustomTooltip> */}
+
+  //             <CustomTooltip title="Cancel" placement="top" arrow>
+  //               <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+  //                 <CancelOutlinedIcon
+  //                   sx={{
+  //                     fontSize: "1.2rem",
+  //                     color: "gray",
+  //                   }}
+  //                 />
+  //               </IconButton>
+  //             </CustomTooltip>
+  //           </>
+  //         ),
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error fetching campaign data:", error);
+  //     toast.error("Something went wrong.");
+  //   } finally {
+  //     setIsFetchingScheduleData(false);
+  //   }
+  // };
+
+  // ManageScheduleCampaignSmsTable starts
+  const handleCancel = (srno, campaignName) => {
+    if (!srno || !campaignName) {
+      console.error("SRNO is undefined. Cannot cancel campaign.");
+      toast.error("Failed to cancel campaign. SRNO is missing.");
+      return;
+    }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("SRNO is missing. Cannot cancel the campaign.");
+      return;
+    }
+
+    const selectedUserId = 0; // Or dynamically if required
+
+    try {
+      setIsFetching(true);
+
+      const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+
+      if (result) {
+        toast.success("Campaign cancelled successfully");
+        handleScheduleCampaignSearch();
+        setVisible(false);
+      } else {
+        console.warn("Cancel request failed or returned empty response.");
+        toast.error("Cancel request failed");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
+    } finally {
+      setIsFetching(false);
+    }
+  };
+
+  // ManageScheduleCampaignSmsTable ends
+
+  // const handleScheduleSmsCancel = async (row) => {
+  //   const srno = row.campaignSrno;
+  //   const selectedUserId = 0; // Or dynamically if required
+
+  //   try {
+  //     const result = await cancelScheduleCampaignSms({ srno, selectedUserId });
+  //     if (result) {
+  //       toast.success("Campaign cancelled successfully");
+
+  //       // Remove it from the data table
+  //       setCampaignTableData((prev) =>
+  //         prev.filter((item) => item.campaignSrno !== srno)
+  //       );
+  //       setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+  //     } else {
+  //       console.warn("Cancel request failed or returned empty response.");
+  //       toast.error("Cancel request failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error cancelling campaign:", error);
+  //     toast.error("Error cancelling campaign");
+  //   }
+  // };
+
+  const handleScheduleCampaignSearch = async () => {
+    try {
+      setIsFetchingScheduleData(true);
+
+      const res = await fetchScheduleCampaignData();
+
+      // Step 1: Map API response first
+      // let mappedData = Array.isArray(res)
+      //   ? res.map((item, i) => ({
+      //     id: item.srno || `row-${i}`,
+      //     sn: i + 1,
+      //     campaign_date: item.campaignDate || "-",
+      //     campaign_name: item.campaignName || "-",
+      //     sent_time: item.sentTime || "-",
+      //     campaignSrno: item.srno,
+      //   }))
+      //   : [];
+
+      // Step 2: Extract filters if any
+      // const filterCampaignName = campaignScheduleDataToFilter?.campaignName
+      //   ?.toLowerCase()
+      //   .trim();
+      // const filterCampaignDate = campaignScheduleDataToFilter?.campaignDate
+      //   ? new Date(campaignScheduleDataToFilter.campaignDate)
+      //     .toISOString()
+      //     .slice(0, 10)
+      //   : null;
+
+      // Step 3: Filter only if filters are provided
+      // if (filterCampaignName || filterCampaignDate) {
+      //   mappedData = mappedData.filter((item) => {
+      //     const nameMatches = filterCampaignName
+      //       ? item.campaign_name.toLowerCase().includes(filterCampaignName)
+      //       : true;
+
+      //     const itemDate = item.campaign_date
+      //       ? new Date(item.campaign_date).toISOString().slice(0, 10)
+      //       : "";
+
+      //     const dateMatches = filterCampaignDate
+      //       ? itemDate === filterCampaignDate
+      //       : true;
+
+      //     return nameMatches && dateMatches;
+      //   });
+      // }
+
+      // Step 4: Update table state
+      // setCampaignTableData(mappedData);
+      // setRows(mappedData);
+      setScheduleData(res);
+      // Step 5: Setup columns
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   {
+      //     field: "campaign_date",
+      //     headerName: "Campaign Date",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 150,
+      //   },
+      //   { field: "sent_time", headerName: "Sent Time", flex: 1, minWidth: 120 },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Cancel" placement="top" arrow>
+      //           <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+      //             <CancelOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
+    } catch (error) {
+      console.error("Error fetching campaign data:", error);
+      toast.error("Something went wrong.");
+    } finally {
+      setIsFetchingScheduleData(false);
+    }
+  };
+
+  // const handleScheduleSmsCancel = async (row) => {
+  //   const srno = row.campaignSrno;
+  //   const selectedUserId = 0;
+
+  //   try {
+  //     const result = await cancelScheduleCampaignSms({
+  //       srno,
+  //       selectedUserId,
+  //     });
+  //     if (result) {
+  //       toast.success("Campaign cancelled successfully");
+
+  //       // Remove the deleted campaign from the table data
+  //       setCampaignTableData((prev) =>
+  //         prev.filter((item) => item.campaignSrno !== srno)
+  //       );
+  //       setRows((prev) => prev.filter((item) => item.campaignSrno !== srno));
+  //     } else {
+  //       console.warn("Cancel request failed or returned empty response.");
+  //       toast.error("Cancel request failed");
+  //     }
+  //   } catch (error) {
+  //     console.error("Error cancelling campaign:", error);
+  //     toast.error("Error cancelling campaign");
+  //   }
+  // };
+
+  // const handleScheduleCampaignSearch = async () => {
+  //   try {
+  //     setIsFetchingScheduleData(true);
+
+  //     // Prepare the data for the API call (if needed)
+  //     const filterCampaignName = campaignScheduleDataToFilter.campaignName;
+  //     const filterCampaignDate = new Date(
+  //       campaignScheduleDataToFilter.campaignDate
+  //     ).toLocaleDateString("en-GB");
+
+  //     // Make the API call (use data if required)
+  //     const res = await fetchScheduleCampaignData();
+
+  //     console.log("API Response:", res);
+
+  //     // Filter logic
+  //     let filteredData = Array.isArray(res)
+  //       ? res.filter((item) => {
+  //           const itemName = item.campaignName?.toLowerCase().trim() || "";
+  //           const itemDate = item.campaignDate
+  //             ? new Date(item.campaignDate).toLocaleDateString("en-GB")
+  //             : "";
+
+  //           const nameMatches = filterCampaignName
+  //             ? itemName.includes(filterCampaignName)
+  //             : true;
+  //           const dateMatches = filterCampaignDate
+  //             ? itemDate === filterCampaignDate
+  //             : true;
+
+  //           return nameMatches && dateMatches;
+  //         })
+  //       : [];
+
+  //     // Map data to the expected format
+  //     filteredData = filteredData.map((item, i) => ({
+  //       id: item.srno || `row-${i}`,
+  //       sn: i + 1,
+  //       campaign_date: item.campaignDate || "-",
+  //       campaign_name: item.campaignName || "-",
+  //       sent_time: item.sentTime || "-",
+  //       campaignSrno: item.srno,
+  //     }));
+
+  //     // Update state with filtered data
+  //     setCampaignTableData(filteredData);
+  //     setRows(filteredData);
+
+  //     console.log("Filtered Campaign Data:", filteredData);
+
+  //     // Define DataGrid columns
+  //     setColumns([
+  //       { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+  //       {
+  //         field: "campaign_date",
+  //         headerName: "Campaign Date",
+  //         flex: 1,
+  //         minWidth: 120,
+  //       },
+  //       {
+  //         field: "campaign_name",
+  //         headerName: "Campaign Name",
+  //         flex: 1,
+  //         minWidth: 150,
+  //       },
+  //       {
+  //         field: "sent_time",
+  //         headerName: "Sent Time",
+  //         flex: 1,
+  //         minWidth: 120,
+  //       },
+  //       {
+  //         field: "action",
+  //         headerName: "Action",
+  //         flex: 1,
+  //         minWidth: 100,
+  //         renderCell: (params) => (
+  //           <>
+  //             <CustomTooltip title="Cancel" placement="top" arrow>
+  //               <IconButton onClick={() => handleScheduleSmsCancel(params.row)}>
+  //                 <CancelOutlinedIcon
+  //                   sx={{
+  //                     fontSize: "1.2rem",
+  //                     color: "gray",
+  //                   }}
+  //                 />
+  //               </IconButton>
+  //             </CustomTooltip>
+  //           </>
+  //         ),
+  //       },
+  //     ]);
+  //   } catch (error) {
+  //     console.error("Error fetching campaign data:", error);
+  //     toast.error("Something went wrong.");
+  //   } finally {
+  //     setIsFetchingScheduleData(false);
+  //   }
+  // };
+
   const handlePreviousDaysSearch = async () => {
     const data = {
       ...previousDataToFilter,
-      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      // fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
+      //   "en-GB"
+      // ),
+      // toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
     };
 
     try {
       setIsFetching(true);
       const res = await fetchPreviousDayReport(data);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "sending_user_id",
-          headerName: "User",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "TOTALSMS",
-          headerName: "Total SMS",
-          flex: 1,
-          minWidth: 120,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.TOTALSMS} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("TOTALSMS");
-                  handlePreviosDayDetailDisplay("TOTALSMS");
-                }}
-              >
-                {params.row.TOTALSMS}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Pending",
-          headerName: "Pending",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Pending} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Pending");
-                  handlePreviosDayDetailDisplay("Pending");
-                }}
-              >
-                {params.row.Pending}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "failed",
-          headerName: "Failed",
-          flex: 1,
-          minWidth: 70,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.failed} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("failed");
-                  handlePreviosDayDetailDisplay("failed");
-                }}
-              >
-                {params.row.failed}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "Sent",
-          headerName: "Sent",
-          flex: 1,
-          minWidth: 60,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.Sent} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("Sent");
-                  handlePreviosDayDetailDisplay("Sent");
-                }}
-              >
-                {params.row.Sent}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "delivered",
-          headerName: "Delivered",
-          flex: 1,
-          minWidth: 90,
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.delivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("delivered");
-                  handlePreviosDayDetailDisplay("delivered");
-                }}
-              >
-                {params.row.delivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "undelivered",
-          headerName: "Undelivered",
-          flex: 1,
-          minWidth: 110,
+      setDetailedLogsData(res);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   // {
+      //   //   field: "sending_user_id",
+      //   //   headerName: "User",
+      //   //   flex: 1,
+      //   //   minWidth: 120,
+      //   // },
+      //   {
+      //     field: "TOTALSMS",
+      //     headerName: "Total SMS",
+      //     flex: 1,
+      //     minWidth: 120,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.TotalUnit} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("TOTALSMS");
+      //             handlePreviosDayDetailDisplay("TOTALSMS");
+      //           }}
+      //         >
+      //           {params.row.TOTALSMS}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "Pending",
+      //     headerName: "Pending",
+      //     flex: 1,
+      //     minWidth: 90,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.Pending} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("Pending");
+      //             handlePreviosDayDetailDisplay("Pending");
+      //           }}
+      //         >
+      //           {params.row.Pending}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "failed",
+      //     headerName: "Failed",
+      //     flex: 1,
+      //     minWidth: 70,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.failed} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("failed");
+      //             handlePreviosDayDetailDisplay("failed");
+      //           }}
+      //         >
+      //           {params.row.failed}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "Sent",
+      //     headerName: "Sent",
+      //     flex: 1,
+      //     minWidth: 60,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.Sent} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("Sent");
+      //             handlePreviosDayDetailDisplay("Sent");
+      //           }}
+      //         >
+      //           {params.row.Sent}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "delivered",
+      //     headerName: "Delivered",
+      //     flex: 1,
+      //     minWidth: 90,
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.delivered} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("delivered");
+      //             handlePreviosDayDetailDisplay("delivered");
+      //           }}
+      //         >
+      //           {params.row.delivered}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "undelivered",
+      //     headerName: "Undelivered",
+      //     flex: 1,
+      //     minWidth: 110,
 
-          renderCell: (params) => (
-            <CustomTooltip title={params.row.undelivered} placement="top" arrow>
-              <button
-                onClick={() => {
-                  setSelectedCol("undelivered");
-                  handlePreviosDayDetailDisplay("undelivered");
-                }}
-              >
-                {params.row.undelivered}
-              </button>
-            </CustomTooltip>
-          ),
-        },
-        {
-          field: "drNotAvailable",
-          headerName: "Pending DR",
-          flex: 1,
-          minWidth: 110,
-        },
-        { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
-      ]);
+      //     renderCell: (params) => (
+      //       <CustomTooltip title={params.row.undelivered} placement="top" arrow>
+      //         <button
+      //           onClick={() => {
+      //             setSelectedCol("undelivered");
+      //             handlePreviosDayDetailDisplay("undelivered");
+      //           }}
+      //         >
+      //           {params.row.undelivered}
+      //         </button>
+      //       </CustomTooltip>
+      //     ),
+      //   },
+      //   {
+      //     field: "drNotAvailable",
+      //     headerName: "Pending DR",
+      //     flex: 1,
+      //     minWidth: 110,
+      //   },
+      //   { field: "NDNCDenied", headerName: "NDNC", flex: 1, minWidth: 70 },
+      // ]);
 
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -526,76 +1124,78 @@ const SmsReports = () => {
   const handleDayWiseSummary = async () => {
     const data = {
       // ...daywiseDataToFilter,
-      fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
+      // fromDate: new Date(daywiseDataToFilter.fromDate).toLocaleDateString(
+      //   "en-GB"
+      // ),
+      // toDate: new Date(daywiseDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(daywiseDataToFilter.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(daywiseDataToFilter.toDate).format("YYYY-MM-DD"),
       summaryType: "date,user",
-      smsType: daywiseDataToFilter.smsType ?? "",
+      campaignType: daywiseDataToFilter.smsType ?? "",
     };
 
     try {
       setIsFetching(true);
       const res = await getSummaryReport(data);
-      // console.log(res);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
-        { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
-        { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
-        { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
-        { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
-        { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
-        { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
-        { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
-        {
-          field: "not_delivered",
-          headerName: "Not delivered",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "pending",
-          headerName: "Pending DR",
-          flex: 1,
-          minWidth: 50,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 50,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      setDaywiseTableData(res);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
+      //   { field: "queuedate", headerName: "Que Date", flex: 1, minWidth: 50 },
+      //   { field: "smscount", headerName: "SMS Count", flex: 1, minWidth: 50 },
+      //   { field: "smsunits", headerName: "SMS Units", flex: 1, minWidth: 50 },
+      //   { field: "pending", headerName: "Pending", flex: 1, minWidth: 50 },
+      //   { field: "failed", headerName: "Failed", flex: 1, minWidth: 50 },
+      //   { field: "blocked", headerName: "Blocked", flex: 1, minWidth: 50 },
+      //   { field: "sent", headerName: "Sent", flex: 1, minWidth: 50 },
+      //   { field: "delivered", headerName: "Delivered", flex: 1, minWidth: 50 },
+      //   {
+      //     field: "not_delivered",
+      //     headerName: "Not delivered",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "pending",
+      //     headerName: "Pending DR",
+      //     flex: 1,
+      //     minWidth: 50,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 50,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Download" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() => {
+      //               // console.log(params.row);
+      //             }}
+      //           >
+      //             <DownloadForOfflineOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
 
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // setRows(
+      //   Array.isArray(res)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -607,85 +1207,100 @@ const SmsReports = () => {
   const handleAttachmentSearch = async () => {
     const data = {
       ...attachmentDataToFilter,
-      startDate: new Date(attachmentDataToFilter.startDate).toLocaleDateString(
-        "en-GB"
-      ),
-      endDate: new Date(attachmentDataToFilter.endDate).toLocaleDateString(
-        "en-GB"
-      ),
+      // startDate: new Date(attachmentDataToFilter.startDate).toLocaleDateString(
+      //   "en-GB"
+      // ),
+      // endDate: new Date(attachmentDataToFilter.endDate).toLocaleDateString(
+      //   "en-GB"
+      // ),
+      startDate: moment(attachmentDataToFilter.startDate).format("YYYY-MM-DD"),
+      endDate: moment(attachmentDataToFilter.endDate).format("YYYY-MM-DD"),
       type: "",
     };
 
     try {
       setIsFetching(true);
       const res = await getAttachmentLogs(data);
-      setColumns([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
-        {
-          field: "campaign_name",
-          headerName: "Campaign Name",
-          flex: 1,
-          minWidth: 120,
-        },
-        { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
-        {
-          field: "count",
-          headerName: "Total clicks",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "action",
-          headerName: "Action",
-          flex: 1,
-          minWidth: 100,
-          renderCell: (params) => (
-            <>
-              <CustomTooltip title="Detailed Log" placement="top" arrow>
-                <IconButton
-                  className="no-xs"
-                  onClick={() =>
-                    navigate("/smsAttachmentdetaillog", {
-                      state: { id: params.row.campaign_srno },
-                    })
-                  }
-                >
-                  <DescriptionOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "green",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-              <CustomTooltip title="Download" placement="top" arrow>
-                <IconButton
-                  onClick={() => {
-                    // console.log(params.row);
-                  }}
-                >
-                  <DownloadForOfflineOutlinedIcon
-                    sx={{
-                      fontSize: "1.2rem",
-                      color: "gray",
-                    }}
-                  />
-                </IconButton>
-              </CustomTooltip>
-            </>
-          ),
-        },
-      ]);
+      setAttachmentTableData(res);
+      // setColumns([
+      //   { field: "sn", headerName: "S.No", flex: 0, minWidth: 120 },
+      //   {
+      //     field: "campaign_name",
+      //     headerName: "Campaign Name",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   // { field: "queTime", headerName: "Date", flex: 1, minWidth: 120 },
+      //   {
+      //     field: "queTime",
+      //     headerName: "Date",
+      //     flex: 1,
+      //     minWidth: 120,
+      //     renderCell: (params) =>
+      //       moment(params.row.queTime).format("YYYY-MM-DD HH:mm"),
+      //   },
+      //   {
+      //     field: "count",
+      //     headerName: "Total clicks",
+      //     flex: 1,
+      //     minWidth: 120,
+      //   },
+      //   {
+      //     field: "action",
+      //     headerName: "Action",
+      //     flex: 1,
+      //     minWidth: 100,
+      //     renderCell: (params) => (
+      //       <>
+      //         <CustomTooltip title="Detailed Log" placement="top" arrow>
+      //           <IconButton
+      //             className="no-xs"
+      //             onClick={() =>
+      //               navigate("/smsAttachmentdetaillog", {
+      //                 state: { id: params.row.campaign_srno },
+      //               })
+      //             }
+      //           >
+      //             <DescriptionOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "green",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //         <CustomTooltip title="Download" placement="top" arrow>
+      //           <IconButton
+      //             onClick={() => {
+      //               // console.log(params.row);
+      //             }}
+      //           >
+      //             <DownloadForOfflineOutlinedIcon
+      //               sx={{
+      //                 fontSize: "1.2rem",
+      //                 color: "gray",
+      //               }}
+      //             />
+      //           </IconButton>
+      //         </CustomTooltip>
+      //       </>
+      //     ),
+      //   },
+      // ]);
 
-      setRows(
-        Array.isArray(res)
-          ? res.map((item, i) => ({
-            id: i + 1,
-            sn: i + 1,
-            ...item,
-          }))
-          : []
-      );
+      // const sortedData = res.sort(
+      //   (a, b) => new Date(b.queTime) - new Date(a.queTime)
+      // );
+
+      // setRows(
+      //   Array.isArray(sortedData)
+      //     ? res.map((item, i) => ({
+      //       id: i + 1,
+      //       sn: i + 1,
+      //       ...item,
+      //     }))
+      //     : []
+      // );
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -699,95 +1314,29 @@ const SmsReports = () => {
     const data = {
       summaryType: col || selectedCol,
       mobileNo: "",
-      fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
-        "en-GB"
-      ),
-      toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      // fromDate: new Date(previousDataToFilter.fromDate).toLocaleDateString(
+      //   "en-GB"
+      // ),
+      // toDate: new Date(previousDataToFilter.toDate).toLocaleDateString("en-GB"),
+      fromDate: moment(previousDataToFilter.fromDate).format("YYYY-MM-DD"),
+      toDate: moment(previousDataToFilter.toDate).format("YYYY-MM-DD"),
       page: currentPage,
-      source: "api",
+      source: "",
     };
 
-    setPreviousDayDetailsDialog(true);
     setSelectedColDetails(col);
     try {
       setIsFetching(true);
       const res = await getPreviousCampaignDetails(data);
-      setTotalPage(res?.pages || 0);
 
-      setPreviousDayColumn([
-        { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        {
-          field: "que_time",
-          headerName: "Created on",
-          flex: 1,
-          minWidth: 120,
+      navigate("/smscampaigndetailsreport", {
+        state: {
+          campaignDetails: res?.data,
+          total: res?.total || 0,
+          campaignName: col,
+          data: data
         },
-        {
-          field: "smsunit",
-          headerName: "Sms Unit",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "mobile_no",
-          headerName: "Mobile Number",
-          flex: 1,
-          minWidth: 120,
-        },
-        // {
-        //   field: "source",
-        //   headerName: "Sms Source",
-        //   flex: 1,
-        //   minWidth: 120,
-        // },
-        {
-          field: "message",
-          headerName: "Message",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "sent_time",
-          headerName: "Sent Time",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "source",
-          headerName: "Sms Source",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "senderid",
-          headerName: "SenderId",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "total",
-          headerName: "Total",
-          flex: 1,
-          minWidth: 120,
-        },
-        {
-          field: "status",
-          headerName: "Status",
-          flex: 1,
-          minWidth: 120,
-        },
-      ]);
-
-      setPreviousDayRows(
-        Array.isArray(res?.data)
-          ? res?.data.map((item, index) => ({
-            sn: index + 1,
-            id: index + 1,
-            ...item,
-          }))
-          : []
-      );
-      setPreviousDayDetailsDialog(true);
+      });
     } catch (e) {
       // console.log(e);
       toast.error("Something went wrong.");
@@ -832,7 +1381,7 @@ const SmsReports = () => {
             <Tab
               label={
                 <span>
-                  <LibraryBooksOutlinedIcon size={20} /> Previous Days Logs
+                  <LibraryBooksOutlinedIcon size={20} /> Detailed Logs
                 </span>
               }
               {...a11yProps(1)}
@@ -872,6 +1421,24 @@ const SmsReports = () => {
                 </span>
               }
               {...a11yProps(3)}
+              sx={{
+                textTransform: "none",
+                fontWeight: "bold",
+                color: "text.secondary",
+                "&:hover": {
+                  color: "primary.main",
+                  backgroundColor: "#f0f4ff",
+                  borderRadius: "8px",
+                },
+              }}
+            />
+            <Tab
+              label={
+                <span>
+                  <LibraryBooksOutlinedIcon size={20} /> Schedule Logs
+                </span>
+              }
+              {...a11yProps(4)}
               sx={{
                 textTransform: "none",
                 fontWeight: "bold",
@@ -932,7 +1499,7 @@ const SmsReports = () => {
                   label="Mobile Number"
                   id="campaignnumber"
                   name="campaignnumber"
-                  placeholder="Enter Campaign Number"
+                  placeholder="Enter Mobile Number"
                   value={campaignDataToFilter.mobilesnodata}
                   onChange={(e) => {
                     setCampaignDataToFilter((prev) => ({
@@ -984,11 +1551,16 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="CampaignTableSms"
               name="CampaignTableSms"
               rows={rows}
               col={columns}
+            /> */}
+            <CampaignTableSms
+              id="CampaignTableSms"
+              name="CampaignTableSms"
+              data={campaignTableData}
             />
           </div>
         </CustomTabPanel>
@@ -1091,7 +1663,7 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="w-full sm:w-42">
+              {/* <div className="w-full sm:w-42">
                 <InputField
                   label="Sender ID"
                   id="previoussenderid"
@@ -1120,7 +1692,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-42">
                 <div className="w-max-content">
@@ -1136,11 +1708,17 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="PreviousDaysTableSms"
               name="PreviousDaysTableSms"
               rows={rows}
               col={columns}
+            /> */}
+            <DetailedLogsTable
+              id="DetailedLogsTable"
+              name="DetailedLogsTable"
+              data={detailedLogsData}
+              handlePreviosDayDetailDisplay={handlePreviosDayDetailDisplay}
             />
           </div>
         </CustomTabPanel>
@@ -1175,10 +1753,10 @@ const SmsReports = () => {
                   }}
                 />
               </div>
-              <div className="flex flex-wrap w-full gap-4 sm:w-56">
+              {/* <div className="flex flex-wrap w-full gap-4 sm:w-56">
                 <AnimatedDropdown
                   label="SmsType"
-                  id="SmsTyoe"
+                  id="SmsType"
                   name="SmsType"
                   options={[
                     { value: 1, label: "Day Wise" },
@@ -1193,7 +1771,7 @@ const SmsReports = () => {
                     }));
                   }}
                 />
-              </div>
+              </div> */}
 
               <div className="w-full sm:w-56">
                 <AnimatedDropdown
@@ -1227,11 +1805,16 @@ const SmsReports = () => {
           </div>
 
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="DayWiseSummaryTableSms"
               name="DayWiseSummaryTableSms"
               col={columns}
               rows={rows}
+            /> */}
+            <DayWiseSummaryTableSms
+              id="DayWiseSummaryTableSms"
+              name="DayWiseSummaryTableSms"
+              data={daywiseTableData}
             />
           </div>
         </CustomTabPanel>
@@ -1295,475 +1878,132 @@ const SmsReports = () => {
             </div>
           </div>
           <div className="w-full">
-            <DataTable
+            {/* <DataTable
               id="AttachmentTableSms"
               name="AttachmentTableSms"
               col={columns}
               rows={rows}
+            /> */}
+            <AttachmentLogsTableSms
+              id="AttachmentTableSms"
+              name="AttachmentTableSms"
+              data={attachmentTableData}
+            />
+          </div>
+        </CustomTabPanel>
+        <CustomTabPanel value={value} index={4}>
+          <div className="w-full">
+            <div className="flex flex-wrap items-end w-full gap-2 mb-5">
+              {/* <div className="w-full sm:w-52">
+                <UniversalDatePicker
+                  label="Created On"
+                  id="campaigndate"
+                  name="campaigndate"
+                  value={campaignScheduleDataToFilter.campaignDate}
+                  onChange={(value) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignDate: value,
+                    }));
+                  }}
+                  placeholder="Select Date"
+                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                  maxDate={new Date()}
+                />
+              </div>
+              <div className="w-full sm:w-52">
+                <InputField
+                  label="Campaign Name"
+                  id="campaignName"
+                  name="campaignName"
+                  placeholder="Enter campaign name"
+                  value={campaignScheduleDataToFilter.campaignName}
+                  onChange={(e) => {
+                    setCampaignScheduleDataToFilter((prev) => ({
+                      ...prev,
+                      campaignName: e.target.value,
+                    }));
+                  }}
+                />
+              </div> */}
+              <div className="w-full sm:w-52 flex gap-2">
+                <div className="w-max-content">
+                  <UniversalButton
+                    label={isFetchingScheduleData ? "Refreshing..." : "Refresh"}
+                    id="campaignsearch"
+                    name="campaignsearch"
+                    variant="primary"
+                    icon={<IoSearch />}
+                    onClick={handleScheduleCampaignSearch}
+                    disabled={isFetchingScheduleData}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div className="w-full">
+            {/* <DataTable
+              id="ScheduleCampaignTableSms"
+              name="ScheduleCampaignTableSms"
+              rows={rows}
+              col={columns}
+            /> */}
+            <ManageScheduleCampaignSmsTable
+              id="ScheduleCampaignTableSms"
+              name="ScheduleCampaignTableSms"
+              data={scheduleData}
+              onCancel={handleCancel}
             />
           </div>
         </CustomTabPanel>
       </Box>
 
-      {/* <Dialog
-        header="Export"
-        visible={exports}
-        onHide={() => setExports(false)}
-        className="w-[40rem]"
+      {/* cancel campaign Start */}
+      <Dialog
+        header={"Confirm Cancel"}
+        visible={visible}
+        style={{ width: "27rem" }}
+        onHide={() => setVisible(false)}
         draggable={false}
       >
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-2 mb-2 lg:w-100 md:w-100">
-            <div className="flex-1 px-2 py-3 transition-shadow duration-300 bg-white border border-gray-300 rounded-lg cursor-pointer hover:shadow-lg">
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="Option1"
-                  name="redio"
-                  value="enable"
-                  onChange={handleChangeexport}
-                  checked={exportStatus === "enable"}
-                />
-                <label
-                  htmlFor="Option1"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Campaign-wise
-                </label>
-              </div>
-            </div>
-
-            <div className="flex-1  cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2.5 hover:shadow-lg transition-shadow duration-300">
-              <div className="flex items-center gap-2">
-                <RadioButton
-                  inputId="Option2"
-                  name="redio"
-                  value="disable"
-                  onChange={handleChangeexport}
-                  checked={exportStatus === "disable"}
-                />
-                <label
-                  htmlFor="Option2"
-                  className="text-sm font-medium text-gray-700 cursor-pointer"
-                >
-                  Custom
-                </label>
-              </div>
-            </div>
-          </div>
-          {exportStatus === "enable" && (
-            <div className="space-y-4">
-              <div>
-                <DropdownWithSearch
-                  label="Campaign"
-                  id="exportdropdownCampaign"
-                  name="exportdropdownCampaign"
-                  options={exportcampaignOptions}
-                  value={selectexportcampaign}
-                  placeholder="Select Campaign"
-                  onChange={(value) => setSelectExportCampaign(value)}
-                />
-              </div>
-              <div className="flex flex-wrap gap-4 lg:w-100 md:w-100">
-                <div className="flex items-center justify-center">
-                  <UniversalLabel
-                    text="Custom Columns"
-                    id="customcolumn"
-                    name="customcolumn"
-                    className="text-sm font-medium text-gray-700"
-                  />
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <RadioButton
-                    inputId="customcolumnOption1"
-                    name="customcolumnredio"
-                    value="enable"
-                    onChange={handleChangeCustomColumn}
-                    checked={customcolumnStatus === "enable"}
-                  />
-                  <label
-                    htmlFor="customcolumnOption1"
-                    className="text-sm font-medium text-gray-700 cursor-pointer"
-                  >
-                    Enable
-                  </label>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <RadioButton
-                    inputId="editstatusOption2"
-                    name="customcolumnredio"
-                    value="disable"
-                    onChange={handleChangeCustomColumn}
-                    checked={customcolumnStatus === "disable"}
-                  />
-                  <label
-                    htmlFor="customcolumnOption2"
-                    className="text-sm font-medium text-gray-700 cursor-pointer"
-                  >
-                    Disable
-                  </label>
-                </div>
-              </div>
-              {customcolumnStatus === "enable" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      {
-                        id: "campaigncolumns1",
-                        name: "mobileno",
-                        value: "Mobile No.",
-                      },
-                      {
-                        id: "campaigncolumns2",
-                        name: "totalunit",
-                        value: "Total Unit",
-                      },
-                      {
-                        id: "campaigncolumns3",
-                        name: "message",
-                        value: "Message",
-                      },
-                      {
-                        id: "campaigncolumns4",
-                        name: "Senderid",
-                        value: "Sender id",
-                      },
-                      {
-                        id: "campaigncolumns5",
-                        name: "queuetime",
-                        value: "Queue Time",
-                      },
-                      {
-                        id: "campaigncolumns6",
-                        name: "status",
-                        value: "Status",
-                      },
-                      {
-                        id: "campaigncolumns7",
-                        name: "senttime",
-                        value: "Sent Time",
-                      },
-                      {
-                        id: "campaigncolumns8",
-                        name: "deliverytime",
-                        value: "Delivery Time",
-                      },
-                      {
-                        id: "campaigncolumns9",
-                        name: "deliverystatus",
-                        value: "Delivery Status",
-                      },
-                      {
-                        id: "campaigncolumns10",
-                        name: "errorcode",
-                        value: "ErrorCode",
-                      },
-                      {
-                        id: "campaigncolumns11",
-                        name: "reason",
-                        value: "Reason",
-                      },
-                      {
-                        id: "campaigncolumns12",
-                        name: "clientid",
-                        value: "Client id",
-                      },
-                      {
-                        id: "campaigncolumns13",
-                        name: "isunicode",
-                        value: "Is Unicode",
-                      },
-                      {
-                        id: "campaigncolumns14",
-                        name: "entityid",
-                        value: "Entity id",
-                      },
-                      {
-                        id: "campaigncolumns15",
-                        name: "templateid",
-                        value: "Template id",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          name={item.name}
-                          value={item.value}
-                          onChange={CampaignColumnsChange}
-                          checked={campaigncolumns.includes(item.value)}
-                        />
-                        <label htmlFor={item.id} className="text-sm">
-                          {item.value}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-center">
-                    <UniversalButton
-                      label="Submit"
-                      id="campaigncolumnssubmitbtn"
-                      name="campaigncolumnssubmitbtn"
-                      variant="primary"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {exportStatus === "disable" && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-1">
-                <div>
-                  <UniversalDatePicker
-                    label="From Date"
-                    id="customfromdatepicker"
-                    name="customfromdatepicker"
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                  />
-                </div>
-                <div>
-                  <UniversalDatePicker
-                    label="To Date"
-                    id="customtodatepicker"
-                    name="customtodatepicker"
-                    minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                    maxDate={new Date()}
-                  />
-                </div>
-                <div>
-                  <AnimatedDropdown
-                    label="Templats Type"
-                    id="customtemplatetype"
-                    name="customtemplatetype"
-                    options={templatetypeOptions}
-                    value={selecttemplatetype}
-                    placeholder="Select Template Type"
-                    onChange={(value) => setSelectTemplatetype(value)}
-                  />
-                </div>
-                <div>
-                  <AnimatedDropdown
-                    label="Status"
-                    id="customstatus"
-                    name="customstatus"
-                    options={statusOptions}
-                    value={selectstatus}
-                    placeholder="Select Template Type"
-                    onChange={(value) => setSelectStatus(value)}
-                  />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <UniversalLabel
-                  text="Delivery Status"
-                  id="customsdeliverystatus"
-                  name="customsdeliverystatus"
-                />
-
-                <div className="grid grid-cols-3 gap-4">
-                  {[
-                    {
-                      id: "deliverystatus1",
-                      name: "delivered",
-                      value: "Delivered",
-                    },
-                    {
-                      id: "deliverystatus2",
-                      name: "undelivered",
-                      value: "Undelivered",
-                    },
-                    {
-                      id: "deliverystatus3",
-                      name: "pendingdr",
-                      value: "Pending DR",
-                    },
-                  ].map((item) => (
-                    <div key={item.id} className="flex items-center space-x-2">
-                      <Checkbox
-                        id={item.id}
-                        name={item.name}
-                        value={item.value}
-                        onChange={DeliveryStatusChange}
-                        checked={deliverystatus.includes(item.value)}
-                      />
-                      <label htmlFor={item.id} className="text-sm">
-                        {item.value}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2">
-                <InputField
-                  label="Mobile Number"
-                  id="custommobile"
-                  name="custommobile"
-                  type="number"
-                  placeholder="Enter Mobile Number"
-                />
-                <div className="flex flex-col">
-                  <div className="">
-                    <UniversalLabel
-                      text="Custom Columns"
-                      id="customcolumncustom"
-                      name="customcolumncustom"
-                      className="text-sm font-medium text-gray-700"
-                    />
-                  </div>
-                  <div className="flex gap-4 mt-3">
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="customcolumncustomOption1"
-                        name="customcolumncustomredio"
-                        value="enable"
-                        onChange={handleCustomColumn}
-                        checked={customcolumnCustom === "enable"}
-                      />
-                      <label
-                        htmlFor="customcolumncustomOption1"
-                        className="text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        Enable
-                      </label>
-                    </div>
-
-                    <div className="flex items-center gap-2">
-                      <RadioButton
-                        inputId="editstatusOption2"
-                        name="customcolumncustomredio"
-                        value="disable"
-                        onChange={handleCustomColumn}
-                        checked={customcolumnCustom === "disable"}
-                      />
-                      <label
-                        htmlFor="customcolumncustomOption2"
-                        className="text-sm font-medium text-gray-700 cursor-pointer"
-                      >
-                        Disable
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              {customcolumnCustom === "enable" && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-3 gap-4">
-                    {[
-                      {
-                        id: "campaigncolumnscustom1",
-                        name: "mobileno",
-                        value: "Mobile No.",
-                      },
-                      {
-                        id: "campaigncolumnscustom2",
-                        name: "totalunit",
-                        value: "Total Unit",
-                      },
-                      {
-                        id: "campaigncolumnscustom3",
-                        name: "message",
-                        value: "Message",
-                      },
-                      {
-                        id: "campaigncolumnscustom4",
-                        name: "Senderid",
-                        value: "Sender id",
-                      },
-                      {
-                        id: "campaigncolumnscustom5",
-                        name: "queuetime",
-                        value: "Queue Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom6",
-                        name: "status",
-                        value: "Status",
-                      },
-                      {
-                        id: "campaigncolumnscustom7",
-                        name: "senttime",
-                        value: "Sent Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom8",
-                        name: "deliverytime",
-                        value: "Delivery Time",
-                      },
-                      {
-                        id: "campaigncolumnscustom9",
-                        name: "deliverystatus",
-                        value: "Delivery Status",
-                      },
-                      {
-                        id: "campaigncolumnscustom10",
-                        name: "errorcode",
-                        value: "ErrorCode",
-                      },
-                      {
-                        id: "campaigncolumnscustom11",
-                        name: "reason",
-                        value: "Reason",
-                      },
-                      {
-                        id: "campaigncolumnscustom12",
-                        name: "clientid",
-                        value: "Client id",
-                      },
-                      {
-                        id: "campaigncolumnscustom13",
-                        name: "isunicode",
-                        value: "Is Unicode",
-                      },
-                      {
-                        id: "campaigncolumnscustom14",
-                        name: "entityid",
-                        value: "Entity id",
-                      },
-                      {
-                        id: "campaigncolumnscustom15",
-                        name: "templateid",
-                        value: "Template id",
-                      },
-                    ].map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center space-x-2"
-                      >
-                        <Checkbox
-                          id={item.id}
-                          name={item.name}
-                          value={item.value}
-                          onChange={CampaignColumnsCustomChange}
-                          checked={campaigncolumnscustom.includes(item.value)}
-                        />
-                        <label htmlFor={item.id} className="text-sm">
-                          {item.value}
-                        </label>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="flex justify-center">
-                    <UniversalButton
-                      label="Submit"
-                      id="campaigncolumnscustomsubmitbtn"
-                      name="campaigncolumnscustomsubmitbtn"
-                      variant="primary"
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+        <div className="flex items-center justify-center">
+          <CancelOutlinedIcon
+            sx={{
+              fontSize: 64,
+              color: "#ff3f3f",
+            }}
+          />
         </div>
-      </Dialog> */}
+        <div className="p-4 text-center">
+          <p className="text-[1.1rem] font-semibold text-gray-700">
+            Are you sure you want to cancel the campaign:
+            <span className="text-green-500">"{currentRow?.campaignName}"</span>
+            ?
+          </p>
+          <p className="mt-2 text-sm text-gray-500">
+            This action is irreversible.
+          </p>
+        </div>
 
-      <Dialog
+        <div className="flex justify-center gap-4 mt-2">
+          {!isFetching && (
+            <UniversalButton
+              label="Cancel"
+              style={{
+                backgroundColor: "#090909",
+              }}
+              onClick={() => setVisible(false)}
+            />
+          )}
+          <UniversalButton
+            label={isFetching ? "Deleting..." : "Delete"}
+            style={{}}
+            onClick={() => handleCancelConfirm(currentRow.srno)}
+            disabled={isFetching}
+          />
+        </div>
+      </Dialog>
+      {/* <Dialog
         header={selectedColDetails}
         visible={previousDayDetailsDialog}
         onHide={() => {
@@ -1775,10 +2015,10 @@ const SmsReports = () => {
           setCurrentPage(1);
           setSelectedCol("");
         }}
-        className="w-fit "
+        className="w-fit"
         draggable={false}
-      >
-        {/* {isFetching ? (
+      > */}
+      {/* {isFetching ? (
           <div className="card flex justify-content-center">
             <ProgressSpinner strokeWidth="2" className="text-blue-500" />
           </div>
@@ -1800,17 +2040,12 @@ const SmsReports = () => {
             totalPage={totalPage}
           />
         )} */}
-        <PreviousDaysTableSms
+      {/* <PreviousDaysTableSms
           id="previousdaydetailstable"
           name="previousdaydetailstable"
-          rows={previousDayRows}
-          col={previousDayColumn}
-          paginationModel={paginationModel}
-          setPaginationModel={setPaginationModel}
-          setCurrentPage={setCurrentPage}
-          totalPage={totalPage}
-        />
-      </Dialog>
+          data={detailedLogsInsideData}
+        /> */}
+      {/* </Dialog> */}
 
       {/* exportDialogStart */}
       {isExportDialogOpen && (

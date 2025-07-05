@@ -10,6 +10,8 @@ import toast from "react-hot-toast";
 import { extractVariable } from "./helper/extractVariable";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import CustomTooltip from "@/components/common/CustomTooltip";
 // import { Handle, Position } from "@xyflow/react";
 
 // import { Handle, Position } from "@xyflow/react";
@@ -27,7 +29,6 @@ export const List = ({
   allVariables: any[];
   addVariable: (data: String) => void;
 }) => {
-  console.log("asd", nodesInputData[id]);
   const fileInputRef = useRef(null);
   const [options, setOptions] = useState([
     {
@@ -85,7 +86,7 @@ export const List = ({
         text: nodeData?.listHeading,
       },
     }));
-    const listItems = [{ option: "", value: "" }];
+    const listItems = [];
     nodeData?.options?.forEach((item: any) => {
       const data = {
         option: "",
@@ -95,9 +96,10 @@ export const List = ({
       data.value = item.value;
       listItems.push(data);
     });
-    console.log("nodeData", listItems);
 
-    setOptions(listItems);
+    listItems.length > 0
+      ? setOptions(listItems)
+      : setOptions([{ option: "", value: "" }]);
   }, []);
 
   useEffect(() => {
@@ -144,7 +146,31 @@ export const List = ({
   return (
     <>
       <div className="flex gap-2">
-        <AnimatedDropdown
+        <div className="w-full">
+          <InputField
+            id="text"
+            name="text"
+            tooltipContent="List Heading"
+            maxLength="20"
+            // label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
+            label={"List Heading"}
+            value={nodesInputData[id]?.text}
+            onChange={(e: { target: { value: any } }) => {
+              setNodesInputData((prev) => ({
+                ...prev,
+                [id]: {
+                  ...prev[id],
+                  type: "text",
+                  text: e.target.value,
+                },
+              }));
+            }}
+          />
+          <p className="text-xs mt-2">
+            {nodesInputData[id]?.text?.length || 0}/20
+          </p>
+        </div>
+        {/* <AnimatedDropdown
           id="type"
           name="type"
           label="Type"
@@ -192,7 +218,7 @@ export const List = ({
           <InputField
             id="text"
             name="text"
-            label={nodesInputData[id]?.type === "text" ? "Text" : "URL"}
+            label={nodesInputData[id]?.type === "text" ? "List Heading" : "URL"}
             value={nodesInputData[id]?.text}
             onChange={(e: { target: { value: any } }) => {
               setNodesInputData((prev) => ({
@@ -224,7 +250,7 @@ export const List = ({
               className="w-[250px]"
             />
           </div>
-        )}
+        )} */}
       </div>
 
       <div>
@@ -244,9 +270,11 @@ export const List = ({
               },
             }));
           }}
+          maxLength={4096}
           className="resize-none"
         />
       </div>
+      <p className="text-xs">{nodesInputData[id]?.message?.length || 0}/4096</p>
 
       <div>
         <AnimatedDropdown
@@ -265,10 +293,54 @@ export const List = ({
       </div>
 
       <div className="w-full mt-2">
-        <div className="flex justify-end">
+        <InputField
+          id="text"
+          name="text"
+          tooltipContent="Give a footer for the list. Maximum 20 characters."
+          maxLength="20"
+          label={"List Footer"}
+          value={nodesInputData[id]?.listFooter}
+          onChange={(e: { target: { value: any } }) => {
+            setNodesInputData((prev) => ({
+              ...prev,
+              [id]: {
+                ...prev[id],
+                listFooter: e.target.value,
+              },
+            }));
+          }}
+        />
+        <p className="text-xs mt-2">
+          {nodesInputData[id]?.listFooter?.length || 0}/20
+        </p>
+      </div>
+
+      <div className="w-full mt-2">
+        {/* <div className="flex justify-end">
           <button onClick={handleOptionAdd}>
             <AddIcon />
           </button>
+        </div> */}
+        <div className="flex items-center gap-2 mb-2">
+          <h1 className="text-lg font-semibold mb-2">List Items</h1>
+          <div className="flex justify-end">
+            <button onClick={handleOptionAdd}>
+              <AddIcon />
+            </button>
+          </div>
+          <div className="mb-1">
+            <CustomTooltip
+              title={
+                "For List Row: Supports text header type only. Maximum 60 characters. For List Items: Maximum 72 characters."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
+          </div>
         </div>
         <div className="space-y-2 ">
           {options?.map((option, index) => (
@@ -276,7 +348,7 @@ export const List = ({
               <InputField
                 id="option"
                 name="option"
-                label={`Option-${index + 1}`}
+                label={`Row-Title-${index + 1}`}
                 value={options[index]?.option}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "option", index);
@@ -285,7 +357,7 @@ export const List = ({
               <InputField
                 id="value"
                 name="value"
-                label={`Value-${index + 1}`}
+                label={`Row-Description-${index + 1}`}
                 value={options[index]?.value}
                 onChange={(e: { target: { value: any } }) => {
                   handleOptionInput(e.target.value, "value", index);

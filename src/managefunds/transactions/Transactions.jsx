@@ -17,6 +17,8 @@ import { AiOutlineInfoCircle } from "react-icons/ai";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { DataTable } from "../../components/layout/DataTable";
 import { fetchTransactions } from "../../apis/settings/setting";
+import moment from "moment";
+import { exportToExcel } from "@/utils/utills";
 
 import toast from "react-hot-toast";
 
@@ -64,33 +66,35 @@ const Transactions = () => {
 
   const [filterData, setFilterData] = useState({
     rechargeType: 0,
-    toDate: new Date().toLocaleDateString("en-GB"),
-    startDate: new Date().toLocaleDateString("en-GB"),
+    toDate: new Date(),
+    startDate: new Date(),
   });
   const [transactionalData, setTransactionalData] = useState([]);
 
   const handleSearch = async () => {
     try {
       setIsFetching(true);
-      const res = await fetchTransactions(filterData);
+      const data = {
+        ...filterData,
+        startDate: moment(filterData.startDate).format("YYYY-MM-DD"),
+        toDate: moment(filterData.toDate).format("YYYY-MM-DD"),
+      }
+      const res = await fetchTransactions(data);
       setTransactionalData(res);
     } catch (e) {
-      toast.error("Something went wring!");
+      toast.error("Something went wrong!");
     } finally {
       setIsFetching(false);
     }
   };
 
-  useEffect(() => {
-    handleSearch();
-  }, []);
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "user", headerName: "UserName", flex: 1, minWidth: 120 },
     {
       field: "rechargeDate",
-      headerName: "Recharge Data",
+      headerName: "Recharge Date",
       flex: 1,
       minWidth: 120,
     },
@@ -98,7 +102,7 @@ const Transactions = () => {
       field: "before",
       headerName: "Amount Before Recharge",
       flex: 1,
-      minWidth: 120,
+      minWidth: 150,
     },
     {
       field: "amount",
@@ -138,6 +142,7 @@ const Transactions = () => {
       ...item,
       sn: index + 1,
       id: index + 1,
+      balance: Number(item.balance).toFixed(2),
     }))
     : [];
 
@@ -148,6 +153,7 @@ const Transactions = () => {
     { name: "Istanbul", code: "IST" },
     { name: "Paris", code: "PRS" },
   ];
+  
   const multiSummary = [
     { name: "New York", code: "NY" },
     { name: "Rome", code: "RM" },
@@ -231,6 +237,18 @@ const Transactions = () => {
     setFilteredData([]); // Replace this with actual API data
   };
 
+  function handleExport() {
+    // columns
+    if (!rows.length) return toast.error("No data to download");
+    const col = columns.map((col) => col.field);
+
+    const row = rows.map((row) => col.map((field) => row[field] ?? ""));
+
+    const name = "Transaction Data";
+    exportToExcel(col, row, name);
+    toast.success("File Downloaded Successfully");
+  }
+
   return (
     <div className="w-full ">
       <Box sx={{ width: "100%" }}>
@@ -288,6 +306,7 @@ const Transactions = () => {
               label="Export"
               // icon={<IosShareOutlinedIcon fontSize='small' sx={{ marginBottom: '3px' }} />}
               variant="primary"
+              onClick={handleExport}
             />
           </div>
         </div>
@@ -334,7 +353,7 @@ const Transactions = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      startDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      startDate: newValue,
                     });
                   }}
                 />
@@ -353,7 +372,7 @@ const Transactions = () => {
                   onChange={(newValue) => {
                     setFilterData({
                       ...filterData,
-                      toDate: new Date(newValue).toLocaleDateString("en-GB"),
+                      toDate: newValue,
                     });
                   }}
                 />

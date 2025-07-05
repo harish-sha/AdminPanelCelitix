@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import InputField from "@/whatsapp/components/InputField";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
@@ -17,6 +17,18 @@ export const Answer = ({
   addVariable: (data: String) => void;
   allVariables: any[];
 }) => {
+  useEffect(() => {
+    setNodesInputData((prev) => ({
+      ...prev,
+      [id]: {
+        ...prev[id],
+        type: nodesInputData[id]?.type,
+        // variableId: nodesInputData[id]?.variableName,
+      },
+    }));
+    // type = nodesInputData[id]?.type;
+    // variableId = nodesInputData[id]?.variableName;
+  }, []);
   return (
     <div>
       <AnimatedDropdown

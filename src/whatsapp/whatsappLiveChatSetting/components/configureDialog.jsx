@@ -1,11 +1,15 @@
 import UniversalButton from "@/components/common/UniversalButton";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
 import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import InputField from "../../components/InputField";
 import { Dialog } from "primereact/dialog";
 import { RadioButton } from "primereact/radiobutton";
 import { Variables } from "./Variable";
 import { Preview } from "./preview";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
+import { getAgentList } from "@/apis/Agent/Agent";
 
 export const ConfigureDialog = ({
   configureState,
@@ -19,12 +23,44 @@ export const ConfigureDialog = ({
   fileRef,
   setVariablesData,
   setSpecificTemplate,
+  handle15MinTime,
 }) => {
-
   const [fileData, setFileData] = useState({
     url: "",
     file: "",
   });
+  const [agent, setallAgents] = useState([]);
+
+  const [minuteInput, setMinuteInput] = useState("");
+  const [lastSetMinute, setLastSetMinute] = useState("");
+
+  const handleSetMinute = async () => {
+    if (!basicDetails.time || Number(basicDetails.time) <= 0) {
+      toast.error("Please enter a valid number of minutes");
+      return;
+    }
+    await handle15MinTime(minuteInput);
+    setLastSetMinute(minuteInput);
+    toast.success(`Response time set to ${minuteInput} minutes`);
+    // setMinuteInput("");
+  };
+
+  useEffect(() => {
+    async function handleFetchAgents() {
+      try {
+        const res = await getAgentList();
+        const data = res?.data?.map((agent) => ({
+          value: agent?.sr_no,
+          label: agent?.name,
+        }));
+        setallAgents(data);
+      } catch (e) {
+        toast.error("Error Fetching Agents");
+      }
+    }
+
+    handleFetchAgents();
+  }, []);
 
   return (
     <Dialog
@@ -146,6 +182,50 @@ export const ConfigureDialog = ({
             </div>
           </div>
         )}
+
+        <div>
+          {configureState?.type === "agent_assign_message" && (
+            <div>
+              <h1>Choose an Agent</h1>
+              <AnimatedDropdown
+                id="agent"
+                name="agent"
+                options={agent}
+                onChange={(e) => {
+                  setBasicDetails((prev) => ({
+                    ...prev,
+                    agent: e,
+                  }));
+                }}
+                value={basicDetails?.agent}
+              />
+            </div>
+          )}
+        </div>
+
+        <div className="shadom-md p-3 bg-gray-100 rounded-md w-full flex flex-row gap-5">
+          <div className="w-46">
+            <InputField
+              label="Set No Response Time: "
+              tooltipContent="Enter only minutes"
+              value={basicDetails.time}
+              onChange={(e) =>
+                setBasicDetails((prev) => ({
+                  ...prev,
+                  time: e.target.value,
+                }))
+              }
+            />
+            {lastSetMinute && (
+              <div className="text-green-600 text-xs font-semibold mt-1">
+                Last set: {lastSetMinute} minutes
+              </div>
+            )}
+          </div>
+          <div className="w-25 mt-6">
+            <UniversalButton label="Set" onClick={handleSetMinute} />
+          </div>
+        </div>
 
         <UniversalButton
           label="Save"

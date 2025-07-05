@@ -22,6 +22,8 @@ import CustomTooltip from "../../../whatsapp/components/CustomTooltip.jsx";
 import { useRef } from "react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
 import { fetchCampaignBySrno } from "@/apis/rcs/rcs.js";
+import { render } from "timeago.js";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
   listStyle: "none",
@@ -143,7 +145,14 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
 
   const columns = [
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
+    // { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
+    {
+      field: "createdOn",
+      headerName: "Created On",
+      flex: 1,
+      minWidth: 120,
+      // renderCell: (params) => moment(params.row.createdOn).format("DD-MM-YYYY"),
+    },
     {
       field: "campaignName",
       headerName: "Campaign Name",
@@ -211,12 +220,13 @@ const CampaignsLogsTable = ({ id, name, data = [] }) => {
                 <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
                   {[
                     { label: "Total", key: "total" },
+                    { label: "Pending", key: "pending" },
                     { label: "Block", key: "block" },
                     { label: "Failed", key: "failed" },
-                    { label: "Pending", key: "pending" },
                     { label: "Submitted", key: "submitted" },
                     { label: "Sent", key: "sent" },
                     { label: "Delivered", key: "delivered" },
+                    { label: "Undelivered", key: "undelivered" },
                     { label: "Read", key: "read" },
                     { label: "Source", key: "source" },
                     // { label: "Charged Unit", key: "chargedUnit" },

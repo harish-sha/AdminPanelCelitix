@@ -268,7 +268,7 @@ export const Grid1 = ({
             inputDetails={inputDetails?.message}
             headers={headers}
           />
-          <GenerateAiContent
+          {/* <GenerateAiContent
             ai={ai}
             setAi={setAi}
             setIsOpen={setIsOpen}
@@ -284,7 +284,7 @@ export const Grid1 = ({
             messageContent={inputDetails?.message}
             length={1000}
             type="carousel"
-          />
+          /> */}
         </div>
 
         <div className="grid grid-cols-2 gap-2">

@@ -50,17 +50,19 @@ const ManageTemplateRcs = () => {
     }
   };
 
-  const handleSearch = () => {
+  const handleSearch = async () => {
     const data = {
       ...templateData,
       templateType: templateData.templateType ?? "",
       status: templateData.status ?? "",
     };
+    const res = await fetchAllTemplates();
     const keys = Object.keys(data).filter((key) => data[key] !== "");
-    const filtered = summaryTableData.filter((item) =>
+    const filtered = res?.Data?.filter((item) =>
       keys.every((key) => String(item[key]).includes(data[key]))
     );
     setSummaryFilterData(filtered);
+    fetchAllTemplates();
   };
 
   const updateTemplateStatus = async ({ srno, active }) => {
@@ -262,9 +264,8 @@ const ManageTemplateRcs = () => {
                 {templateDetails?.data[0]?.suggestions?.map((sug, idx) => (
                   <div key={idx} className="my-2 w-full">
                     <button
-                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
-                        templateTypeConfig[sug.type]?.css || ""
-                      }`}
+                      className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
+                        }`}
                       title={sug.suggestionValue}
                     >
                       {templateTypeConfig[sug.type]?.icon}
@@ -322,9 +323,8 @@ const ManageTemplateRcs = () => {
                     {template?.suggestions?.map((sug, idx) => (
                       <div key={idx} className="my-2">
                         <button
-                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${
-                            templateTypeConfig[sug.type]?.css || ""
-                          }`}
+                          className={`flex items-center px-4 py-2 text-sm rounded-md w-full justify-center ${templateTypeConfig[sug.type]?.css || ""
+                            }`}
                           title={sug.suggestionValue}
                         >
                           {templateTypeConfig[sug.type]?.icon}

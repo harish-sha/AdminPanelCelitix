@@ -11,6 +11,8 @@ import NavigateNextOutlinedIcon from "@mui/icons-material/NavigateNextOutlined";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import { GenerateAiContent } from "@/components/common/CustomContentGenerate";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const INITIAL_DROPDOWN_STATE = {
   dropdown1: "",
@@ -94,8 +96,8 @@ export const Carousel = ({
   }, [caraousalData, setCaraousalData]);
 
   const addNewCard = useCallback(() => {
-    if (caraousalData.length >= 10) {
-      toast.error("Maximum limit of 10 cards reached.");
+    if (caraousalData.length >= 6) {
+      toast.error("Maximum limit of 5 cards reached.");
       return;
     }
 
@@ -170,124 +172,83 @@ export const Carousel = ({
     [selectedCardIndex, setCaraousalData]
   );
 
+
   const handleImageChange = useCallback(
     (e) => {
-      const fileName = e.target.files[0];
-      if (!fileName) {
-        toast.error("No file selected.");
-        fileRefs.current = fileRefs.current.map((current) => {
-          if (current) {
-            current.value = "";
-          }
+      const file = e.target.files?.[0];
+
+      const clearInputsAndShowError = (message) => {
+        toast.error(message);
+        fileRefs.current.forEach((ref) => {
+          if (ref) ref.value = "";
         });
-        return;
+      };
+
+      if (!file) return clearInputsAndShowError("No file selected.");
+      if (!cardheight)
+        return clearInputsAndShowError("Please select card height.");
+
+      const fileType = file.type.split("/")[0];
+      const isImage = fileType === "image";
+      const isVideo = fileType === "video";
+
+      if (
+        (isImage && file.size > 1 * 1024 * 1024) || // 2MB
+        (isVideo && file.size > 5 * 1024 * 1024) // 10MB
+      ) {
+        return clearInputsAndShowError(
+          isImage
+            ? "File size must be less than 2MB."
+            : "File size must be less than 10MB."
+        );
       }
 
-      if (!cardheight) {
-        toast.error("Please select card height");
-        fileRefs.current = fileRefs.current.map((current) => {
-          if (current) {
-            current.value = "";
-          }
-        });
-        return;
-      }
-
-      const fileType = fileName.type.split("/")[0];
-
-      const img = new Image();
-      img.src = URL.createObjectURL(fileName);
-
-      if (fileName?.size) {
-        if (fileType === "image" && fileName?.size > 1 * 1024 * 1024) {
-          toast.error("File size must be less than 2MB.");
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        } else if (fileType === "video" && fileName?.size > 5 * 1024 * 1024) {
-          toast.error("File size must be less than 10MB.");
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-      }
-
-      img.onload = () => {
-        const width = img.naturalWidth;
-        const height = img.naturalHeight;
-
-        const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
-        const divisor = gcd(width, height);
-        const ratioWidth = width / divisor;
-        const ratioHeight = height / divisor;
-        const ratio = `${ratioWidth}:${ratioHeight}`;
-
-        if (cardheight === "short" && cardwidth === "small" && ratio != "5:4") {
-          toast.error(
-            "Please select a 5:4 ratio image for Short Height and Small Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-        if (
-          cardheight === "short" &&
-          cardwidth === "medium" &&
-          ratio != "2:1"
-        ) {
-          toast.error(
-            "Please select a 2:1 ratio image for Short Height and Medium Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-        if (
-          cardheight === "medium" &&
-          cardwidth === "small" &&
-          ratio != "4:5"
-        ) {
-          toast.error(
-            "Please select a 4:5 ratio image for Medium Height and Small Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
-        if (
-          cardheight === "medium" &&
-          cardwidth === "medium" &&
-          ratio != "4:3"
-        ) {
-          toast.error(
-            "Please select a 4:3 ratio image for Medium Height and Small Width card."
-          );
-          fileRefs.current = fileRefs.current.map((current) => {
-            if (current) {
-              current.value = "";
-            }
-          });
-          return;
-        }
+      if (isVideo) {
         setCaraousalData((prev) =>
           prev.map((item, index) =>
             index === selectedCardIndex
-              ? { ...item, fileName: fileName.name, fileTempPath: fileName }
+              ? { ...item, fileName: file.name, fileTempPath: file }
+              : item
+          )
+        );
+        return;
+      }
+
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+
+      img.onload = () => {
+        const { naturalWidth: width, naturalHeight: height } = img;
+
+        const gcd = (a, b) => (b === 0 ? a : gcd(b, a % b));
+        const divisor = gcd(width, height);
+        const ratio = `${width / divisor}:${height / divisor}`;
+
+        const expectedRatios = {
+          short: {
+            small: "5:4",
+            medium: "2:1",
+          },
+          medium: {
+            small: "4:5",
+            medium: "4:3",
+          },
+        };
+
+        const expectedRatio = expectedRatios[cardheight]?.[cardwidth];
+
+        if (expectedRatio && ratio !== expectedRatio) {
+          return clearInputsAndShowError(
+            `Please select a ${expectedRatio} ratio image for ${capitalize(
+              cardheight
+            )} Height and ${capitalize(cardwidth)} Width card.`
+          );
+        }
+
+        setCaraousalData((prev) =>
+          prev.map((item, index) =>
+            index === selectedCardIndex
+              ? { ...item, fileName: file.name, fileTempPath: file }
               : item
           )
         );
@@ -297,8 +258,10 @@ export const Carousel = ({
         URL.revokeObjectURL(img.src);
       };
     },
-    [selectedCardIndex, setCaraousalData, cardheight]
+    [selectedCardIndex, setCaraousalData, cardheight, cardwidth]
   );
+
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
   const handleUploadFile = async () => {
     try {
@@ -402,9 +365,8 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handlePreviousIndex} aria-label="Previous">
             <KeyboardArrowLeftOutlinedIcon
-              className={`text-black ${
-                selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
-              } `}
+              className={`text-black ${selectedCardIndex > 0 ? "cursor-pointer" : "cursor-not-allowed"
+                } `}
             />
           </IconButton>
           {/* {selectedCardIndex > 0 && (
@@ -419,6 +381,17 @@ export const Carousel = ({
           >
             Add Card
           </button>
+          <CustomTooltip
+            title={
+              "Click to add a new card in the carousel. You can create a max of 5 cards."
+            }
+            placement={"top"}
+            arrow
+          >
+            <span className="ml-2">
+              <AiOutlineInfoCircle className="text-gray-500 cursor-pointer" />
+            </span>
+          </CustomTooltip>
 
           {selectedCardIndex > 0 && (
             <IconButton
@@ -435,11 +408,10 @@ export const Carousel = ({
         <div>
           <IconButton onClick={handleNextIndex} aria-label="Next">
             <NavigateNextOutlinedIcon
-              className={`text-black ${
-                selectedCardIndex < caraousalData.length - 1
-                  ? "cursor-pointer"
-                  : "cursor-not-allowed"
-              }`}
+              className={`text-black ${selectedCardIndex < caraousalData.length - 1
+                ? "cursor-pointer"
+                : "cursor-not-allowed"
+                }`}
             />
           </IconButton>
         </div>
@@ -455,6 +427,14 @@ export const Carousel = ({
           ]}
           placeholder="Select Card Height"
           value={cardheight}
+          tooltipContent={`Tooltip: Select Card Height & Width \n
+Choose the Rich Card Carousel layout size.
+Follow RCS media specs to avoid delivery issues:
+Short + Small: 960×768px (5:4)
+Short + Medium: 1440×720px (2:1)
+Medium + Small: 576×720px (4:5)
+Medium + Medium: 1440×1080px (4:3)
+Images: Max 1MB | Videos: Max 5MB`}
           onChange={(e) => {
             setCardheight(e);
             setCaraousalData((prev) => {
@@ -504,6 +484,8 @@ export const Carousel = ({
           value={currentCardTitle}
           placeholder={`Sample Card ${selectedCardIndex + 1} Title`}
           onChange={handleCardTitleChange}
+          maxLength="200"
+          tooltipContent="Enter the title that will appear on the rich card. Keep it short and engaging."
         />
         <div className="flex flex-col gap-2 mb-2">
           <label

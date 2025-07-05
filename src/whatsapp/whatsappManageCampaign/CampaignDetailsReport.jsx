@@ -19,6 +19,7 @@ import UniversalButton from "../components/UniversalButton.jsx";
 import toast from "react-hot-toast";
 import UniversalSkeleton from "../components/UniversalSkeleton.jsx";
 import CustomNoRowsOverlay from "../components/CustomNoRowsOverlay.jsx";
+import moment from "moment";
 
 const PaginationList = styled("ul")({
     listStyle: "none",
@@ -101,27 +102,54 @@ const CampaignDetailsReport = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPage, setTotalPage] = useState(1);
 
-    useEffect(() => {
-        if (!campaignSrno) return;
-        const fetchData = async () => {
-            const body = {
-                campSrno: campaignSrno,
-                mobno: "",
-                status: "status",
-                page: currentPage,
-            };
+    // useEffect(() => {
+    //     if (!campaignSrno) return;
+    //     const fetchData = async () => {
+    //         const body = {
+    //             campSrno: campaignSrno,
+    //             mobno: mobileNumber || "",
+    //             status: "status",
+    //             delStatus: deliveryStatus || "",
+    //             page: currentPage,
+    //         };
+    //         console.log(body)
+    //         const data = await getWhatsappCampaignDetailsReport(body);
+    //         setCampaignDetails(data.data);
+    //         setTotalPage(data.total);
+    //     };
+    //     fetchData();
+    // }, [campaignSrno, currentPage]);
+
+    const fetchData = async () => {
+        const body = {
+            campSrno: campaignSrno,
+            mobno: mobileNumber,
+            status: "status",
+            page: currentPage,
+            delStatus: deliveryStatus || "",
+        };
+        setIsFetching(true)
+        try {
             const data = await getWhatsappCampaignDetailsReport(body);
             setCampaignDetails(data.data);
             setTotalPage(data.total);
-        };
+        } catch (error) {
+            toast.error("failed to laod details!")
+        } finally {
+            setIsFetching(false)
+        }
+    };
+
+    useEffect(() => {
+        if (!campaignSrno) return;
+
         fetchData();
     }, [campaignSrno, currentPage]);
 
     const handleSearch = async () => {
         setIsFetching(true);
-        setTimeout(() => {
-            setIsFetching(false);
-        }, 500);
+        await fetchData();
+        setIsFetching(false);
     };
 
     const columns = [
@@ -153,6 +181,7 @@ const CampaignDetailsReport = () => {
         // wabaNumber: item.wabaNumber || "N/A",
         mobileNo: item.mobileNo || "N/A",
         status: item.status || "N/A",
+        // sentTime: moment(item.sentTime).format("YYYY-MM-DD HH:mm:ss") || "-",
         sentTime: item.sentTime || "-",
         deliveryTime: item.deliveryTime || "-",
         readTime: item.readTime || "-",
@@ -160,7 +189,7 @@ const CampaignDetailsReport = () => {
         reason: item.reason || "-",
     }));
 
-    const totalPages = Math.floor(totalPage / paginationModel.pageSize);
+    const totalPages = Math.ceil(totalPage / paginationModel.pageSize);
 
     const CustomFooter = () => {
         return (
@@ -220,9 +249,9 @@ const CampaignDetailsReport = () => {
             </GridFooterContainer>
         );
     };
-    function handlePag() {
-        setCurrentPage(currentPage + 1);
-    }
+    // function handlePag() {
+    //     setCurrentPage(currentPage + 1);
+    // }
     return (
         <div className="w-full">
             {/* <button onClick={handlePag}>Click</button> */}
@@ -256,16 +285,16 @@ const CampaignDetailsReport = () => {
                         options={[
                             { value: "sent", label: "Sent" },
                             { value: "delivered", label: "Delivered" },
-                            { value: "clicked", label: "Clicked" },
-                            { value: "replied", label: "Replied" },
+                            // { value: "clicked", label: "Clicked" },
+                            { value: "read", label: "Read" },
                             { value: "failed", label: "Failed" },
                         ]}
                         value={deliveryStatus}
                         onChange={setDeliveryStatus}
-                        placeholder="Category"
+                        placeholder="Select Status"
                     />
                 </div>
-                <div className="w-max-content ">
+                <div className="w-max-content">
                     <UniversalButton
                         id="manageCampaignSearchBtn"
                         name="manageCampaignSearchBtn"

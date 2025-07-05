@@ -11,6 +11,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
+import moment from "moment";
 
 import {
   getAllTemplates,
@@ -112,7 +113,7 @@ const SmsDLTtemplate = () => {
                 : "Unknown",
         // consenttype: "-",
         inserttime: item.insertDate
-          ? new Date(item.insertDate).toLocaleString()
+          ? moment(item.insertDate).format("DD-MM-YYYY HH:mm:ss")
           : "-",
         status:
           item.status === 1
@@ -132,9 +133,9 @@ const SmsDLTtemplate = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTemplates();
-  }, [templateIdFilter, templateNameFilter]);
+  // useEffect(() => {
+  //   fetchTemplates();
+  // }, [templateIdFilter, templateNameFilter]);
 
   // const statusOptions = [
   //   { label: "Active", value: "active" },
@@ -222,7 +223,7 @@ const SmsDLTtemplate = () => {
   };
 
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 55 },
+    { field: "sn", headerName: "S.No", flex: 0, minWidth: 10 },
     { field: "userid", headerName: "UserId", flex: 0, minWidth: 100 },
     {
       field: "templatename",
@@ -241,13 +242,13 @@ const SmsDLTtemplate = () => {
     //   flex: 1,
     //   minWidth: 120,
     // },
-    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 110 },
+    { field: "inserttime", headerName: "Insert Time", flex: 1, minWidth: 200 },
     // { field: "status", headerName: "Status", flex: 1, minWidth: 80 },
     {
       field: "action",
       headerName: "Action",
       flex: 1,
-      minWidth: 120,
+      width: 120,
       renderCell: (params) => (
         <>
           <CustomTooltip title="more Info" placement="top" arrow>
@@ -404,18 +405,33 @@ const SmsDLTtemplate = () => {
 
     if (isError) return;
 
+    const dd = {
+      entityId: entityid,
+      templatename: templateData.templateName,
+      templateid: templateData.templateId,
+      template_type: templateData.type,
+      msg_format: templateData.message,
+      templatestatus: templateData.status,
+      senderid: templateData.senderId,
+    };
+
+    const inverted = Object.fromEntries(
+      Object.entries(dd).map(([key, value]) => [value, key])
+    );
+
     const data = {
       entityId: entityid,
       filepath: contactData?.filepath,
-      hashmap: {
-        entityId: entityid,
-        TemplateName: templateData.templatename,
-        TemplateId: templateData.templateId,
-        TemplateType: templateData.type,
-        Message: templateData.message,
-        Status: templateData.status,
-        SenderId: templateData.senderId,
-      },
+      hashmap: inverted,
+      // hashmap: {
+      //   entityId: entityid,
+      //   TemplateName: templateData.templateName,
+      //   TemplateId: templateData.templateId,
+      //   TemplateType: templateData.type,
+      //   Message: templateData.message,
+      //   Status: templateData.status,
+      //   SenderId: templateData.senderId,
+      // },
     };
 
     try {
@@ -430,6 +446,7 @@ const SmsDLTtemplate = () => {
       setIsUploaded(false);
       setUploadedFile(null);
       fileInputRef.current.value = "";
+      fetchTemplates()
     } catch (e) {
       return toast.error("Error importing template.");
     }
@@ -648,7 +665,7 @@ const SmsDLTtemplate = () => {
                   label="Template Name"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.templateName}
                   onChange={(e) => {
@@ -666,7 +683,7 @@ const SmsDLTtemplate = () => {
                   label="Template Id"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.templateId}
                   onChange={(e) => {
@@ -684,7 +701,7 @@ const SmsDLTtemplate = () => {
                   label="Template type"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.type}
                   onChange={(e) => {
@@ -702,7 +719,7 @@ const SmsDLTtemplate = () => {
                   label="Message"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.message}
                   onChange={(e) => {
@@ -720,7 +737,7 @@ const SmsDLTtemplate = () => {
                   label="Status"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.status}
                   onChange={(e) => {
@@ -738,7 +755,7 @@ const SmsDLTtemplate = () => {
                   label="senderId"
                   options={contactData?.headers?.map((header, index) => ({
                     label: header,
-                    value: String(index),
+                    value: header,
                   }))}
                   value={templateData?.senderId}
                   onChange={(e) => {

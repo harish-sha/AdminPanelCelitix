@@ -72,14 +72,14 @@ const Userlogin = () => {
         if (!forgotPassState.userId || !forgotPassState.mobileNo) return;
         try {
           const res = await forgotPassword(forgotPassState);
-          console.log(res);
+          // console.log(res);
 
           if (!res?.data.status) {
             return toast.error(res?.data?.msg || "Unable to send OTP");
           }
           toast.success(res?.data?.msg);
         } catch (e) {
-          console.log(e);
+          // console.log(e);
           toast.error("Unable to send OTP");
         }
       };
@@ -154,13 +154,13 @@ const Userlogin = () => {
       toast.success(res?.data?.msg);
       setStep(3);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Unable to send OTP");
     }
   }
 
   async function handleVerifyOtp() {
-    console.log(otp);
+    // console.log(otp);
     if (!otp?.mobileNo) {
       return toast.error("Enter OTP");
     }
@@ -178,7 +178,7 @@ const Userlogin = () => {
       toast.success("OTP verified successfully");
       setStep(1);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       return toast.error("Unable to verify OTP");
     }
   }

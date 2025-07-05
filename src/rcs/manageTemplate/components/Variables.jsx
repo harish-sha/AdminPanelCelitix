@@ -19,7 +19,7 @@ export const Variables = ({
   setIsRefresh
 }) => {
   const [variablesData, setVariablesData] = useState([]);
-  const MAX_LENGTH = 2500;
+  const MAX_LENGTH = 2000;
   const textBoxRef = useRef(null);
 
   const [userVariables, setUserVariables] = useState([]);

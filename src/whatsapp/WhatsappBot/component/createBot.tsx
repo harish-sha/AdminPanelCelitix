@@ -46,12 +46,14 @@ import { Details } from "./components/details";
 import generateBotPayload from "./components/helper/generatePayload";
 import { List } from "./components/list";
 import { ButtonNodeContent } from "./components/button";
+import LinkIcon from "@mui/icons-material/Link";
 
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   convertToReactFlow,
   transformNodesById,
 } from "./components/helper/convertToReactFlow";
+import { Url } from "./components/url";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -76,6 +78,7 @@ function NodeComponent({
   nodesInputData?: any;
 }) {
   const options = nodesInputData?.[id]?.options || [];
+  const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
 
   return (
     <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
@@ -139,6 +142,7 @@ function NodeComponent({
         {data.type === "answer" && <p>Answer Node ({id})</p>}
         {data.type === "list" && <p>List Node ({id})</p>}
         {data.type === "button" && <p>Button Node ({id})</p>}
+        {data.type === "urlbutton" && <p>Url Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -204,7 +208,7 @@ function NodeComponent({
             }}
           />
           <div className="flex flex-col gap-2 mt-2">
-            {options.map((option: any, index: number) => (
+            {buttonTexts.map((option: any, index: number) => (
               <div
                 key={index}
                 className="relative flex items-center justify-between px-2 py-1 text-sm bg-gray-100 border rounded"
@@ -564,6 +568,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      urlbutton: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData]
   );
@@ -573,7 +588,8 @@ const CreateWhatsAppBot = () => {
     setSelectedNodeId(node.id);
   };
   const commonButtonClass =
-    "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    // "cursor-pointer flex flex-col h-fit text-[0.9rem] bg-gradient-to-br from-blue-400 to-gray-600 shadow-lg ";
+    "cursor-pointer flex flex-col h-auto text-[0.7rem] bg-white text-gray-900 border-2 border-gray-500 shadow-lg hover:bg-gradient-to-br hover:from-blue-200 hover:to-blue-300 hover:text-gray-900 hover:shadow-2xl hover:scale-105";
 
   function addVariable(data: String) {
     if (!data) {
@@ -637,15 +653,16 @@ const CreateWhatsAppBot = () => {
         options: [],
       },
       answer: {
-        variableId: "",
+        // variableId: "",
         type: "",
       },
       button: {
         type: "",
-        text: "",
+        // text: "",
         message: "",
         buttonTexts: [],
       },
+      urlbutton: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -679,17 +696,17 @@ const CreateWhatsAppBot = () => {
       let isError = false;
       nodeData?.options.map(
         (option: { option: string; value: string }, index: number) => {
-          if (option.option === "" && option.value === "") return;
-          if (option.option && !option.value) {
-            isError = true;
-            toast.error(`Value is required for option ${index + 1}`);
-            return;
-          }
-          if (!option.option && option.value) {
-            isError = true;
-            toast.error(`Option Name is required for option ${index + 1}`);
-            return;
-          }
+          // if (option.option === "" && option.value === "") return;
+          // if (option.option && !option.value) {
+          //   isError = true;
+          //   toast.error(`Value is required for option ${index + 1}`);
+          //   return;
+          // }
+          // if (!option.option && option.value) {
+          //   isError = true;
+          //   toast.error(`Option Name is required for option ${index + 1}`);
+          //   return;
+          // }
           optionsToSave.push(option);
         }
       );
@@ -714,7 +731,7 @@ const CreateWhatsAppBot = () => {
 
       if (isError) return;
 
-      nodeData.options = optionsToSave;
+      nodeData.buttonTexts = optionsToSave;
     }
 
     setSelectedNodeId("");
@@ -776,7 +793,7 @@ const CreateWhatsAppBot = () => {
         id: "",
       },
       answer: {
-        variableId: "",
+        // variableId: "",
         type: "",
       },
       list: {
@@ -787,13 +804,15 @@ const CreateWhatsAppBot = () => {
       },
       button: {
         type: "",
-        text: "",
+        // text: "",
         message: "",
         buttonTexts: [],
       },
+      urlbutton: {},
     };
 
     let name = "";
+    let isError = false;
 
     for (const node of nodes) {
       const { id, type } = node;
@@ -810,8 +829,34 @@ const CreateWhatsAppBot = () => {
         !["http", "https"].includes(nodeData?.fileUrl.slice(0, 4))
       ) {
         const res = await uploadImageFile(nodeData?.fileUrl);
+        if (!res?.status) {
+          return toast.error(res?.msg);
+        }
 
         nodeData.fileUrl = res?.fileUrl;
+      }
+
+      if (nodeData?.options && nodeData?.options.length > 0) {
+        nodeData.options.map((item: any, index: number) => {
+          // if (!item.option || !item.value) {
+          //   isError = true;
+          //   return toast.error(
+          //     `Missing "option" or "value" for list item ${
+          //       index + 1
+          //     } in node "${id}".`
+          //   );
+          // }
+        });
+      }
+      if (nodeData?.buttonTexts && nodeData?.buttonTexts.length > 0) {
+        nodeData.buttonTexts.map((item: any, index: number) => {
+          if (!item) {
+            isError = true;
+            return toast.error(
+              `Missing "buttonValue" for button ${index + 1} in node "${id}".`
+            );
+          }
+        });
       }
 
       name = agenstState.dept.find(
@@ -837,8 +882,12 @@ const CreateWhatsAppBot = () => {
         );
         return;
       }
-    }
 
+      if (isError) {
+        return;
+      }
+    }
+    // }
     const srno = details?.waba.find(
       (item) => item.mobileNo === details?.selected
     )?.wabaSrno;
@@ -856,14 +905,15 @@ const CreateWhatsAppBot = () => {
       nodesInputData,
       botDetails
     );
+    // console.log("payt", payload);
     if (!payload) {
       return toast.error("Error Generating Payload");
     }
-
+    // return;
     try {
       const res = await saveOrEditBot(payload, state?.botSrno);
       if (!res?.status) {
-        return toast.error(res?.msg);
+        return toast.error("Error Saving Bot");
       }
 
       setNodes(initialNodes);
@@ -879,12 +929,9 @@ const CreateWhatsAppBot = () => {
       navigate("/wwhatsappbot");
     } catch (e) {
       // console.log(e);
+      toast.error("Error Saving Bot");
     }
   };
-
-  useEffect(() => {
-    // console.log(details);
-  }, [details]);
 
   return (
     <>
@@ -919,7 +966,7 @@ const CreateWhatsAppBot = () => {
           </ReactFlow>
         </div>
 
-        <div className="flex flex-col justify-between w-[250px] gap-4">
+        <div className="flex flex-col justify-between w-[250px] bg-gray-50 gap-4 px-2 py-2 rounded-md h-auto">
           <div className="grid grid-cols-2 p-1 gap-x-2 gap-y-3">
             <Button
               draggable
@@ -1000,6 +1047,15 @@ const CreateWhatsAppBot = () => {
             >
               <MicOutlinedIcon />
               Agent
+            </Button>
+            <Button
+              draggable
+              onDragStart={(event) => handleDragStart(event, "urlbutton")}
+              onClick={() => addNode("urlbutton")}
+              className={commonButtonClass}
+            >
+              <LinkIcon />
+              CTA URL
             </Button>
             <Button
               draggable
@@ -1106,6 +1162,12 @@ const CreateWhatsAppBot = () => {
             />
           ) : type === "button" ? (
             <ButtonNodeContent
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          ) : type === "urlbutton" ? (
+            <Url
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}

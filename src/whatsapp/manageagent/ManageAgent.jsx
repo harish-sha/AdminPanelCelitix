@@ -47,6 +47,7 @@ const ManageAgent = () => {
   const [agentPassword, setAgentPassword] = useState("");
 
   const [generatedPassword, setGeneratedPassword] = useState("");
+  const [allowAllChats, setAllowAllChats] = useState(0);
 
   const [selectedadddepartment, setSelectedAddDepartment] = useState(null);
   const [selectedDepartment, setSelectedDepartment] = useState(null);
@@ -170,7 +171,7 @@ const ManageAgent = () => {
     const isDuplicate = departmentList.some(
       (dept) =>
         dept.departmentName.toLowerCase() ===
-          editedDepartmentName.toLowerCase() &&
+        editedDepartmentName.toLowerCase() &&
         dept.departmentId !== selectedDepartmentData?.departmentId
     );
 
@@ -299,15 +300,16 @@ const ManageAgent = () => {
       mobileNumber: agentMobile.trim(),
       email: agentEmail.trim(),
       password: generatedPassword,
-      allowAllChats: 1,
+      allowAllChats: allowAllChats,
       departmentId: String(selectedDepartment),
       departmentName: department.departmentName,
       agentCode: "",
     };
     const response = await addAgent(agentData);
 
-    if (response?.status === 400) {
-      return toast.error(response?.response?.data?.message);
+    if (response?.statusCode === 400) {
+      // return toast.error(response?.response?.data?.message);
+      return toast.error(response?.message);
     }
 
     if (response?.statusCode === 201) {
@@ -432,8 +434,8 @@ const ManageAgent = () => {
   const filteredDepartmentList =
     selectedadddepartment && selectedadddepartment !== "no-selection"
       ? departmentList.filter(
-          (dept) => dept.departmentId === selectedadddepartment
-        )
+        (dept) => dept.departmentId === selectedadddepartment
+      )
       : departmentList;
 
   const rows = filteredDepartmentList.map((item, index) => ({
@@ -763,9 +765,9 @@ const ManageAgent = () => {
                   options={
                     Array.isArray(departmentList)
                       ? departmentList.map((department) => ({
-                          value: department.departmentId,
-                          label: department.departmentName,
-                        }))
+                        value: department.departmentId,
+                        label: department.departmentName,
+                      }))
                       : []
                   }
                   placeholder="Select Department"
@@ -776,11 +778,13 @@ const ManageAgent = () => {
                 id="assign"
                 name="assign"
                 label="Assign Type"
+                value={allowAllChats}
                 options={[
-                  { label: "Auto", value: "Auto" },
-                  { label: "Manual", value: "Manual" },
-                  { label: "All", value: "All" },
+                  { label: "Auto", value: 0 },
+                  { label: "Manual", value: 1 },
+                  { label: "All", value: 2 },
                 ]}
+                onChange={(e) => setAllowAllChats(e.target.value)}
               />
               <div className="flex justify-center ">
                 <UniversalButton

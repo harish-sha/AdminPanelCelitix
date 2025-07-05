@@ -4,13 +4,14 @@ import IconButton from "@mui/material/IconButton";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SyncOutlinedIcon from "@mui/icons-material/SyncOutlined";
 import ContentCopyOutlinedIcon from "@mui/icons-material/ContentCopyOutlined";
-
-import { motion } from "framer-motion";
+import Confetti from 'react-confetti';
+import { AnimatePresence, motion } from "framer-motion";
 import {
   FaWhatsapp,
   FaEnvelope,
   FaMapMarkerAlt,
   FaGlobe,
+  FaFacebookF,
 } from "react-icons/fa";
 
 import {
@@ -44,8 +45,14 @@ import {
 import Loader from "../components/Loader";
 
 import logo from "../../assets/images/celitix-cpaas-solution-logo.svg";
+import dummyimg from "../../assets/images/uploadimage.png";
 import { Position } from "@xyflow/react";
 import InfoPopover from "@/components/common/InfoPopover.jsx";
+import moment from "moment";
+import Lottie from "lottie-react";
+import verified from "../../assets/animation/verified.json";
+// import metaAiAnimation from "..//assets/animation/metaai.json";
+
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 const MIN_DIMENSION = 192; // Minimum 192px width/height
@@ -112,6 +119,7 @@ const CustomPagination = ({
   );
 };
 
+
 const WhatsappManageWaba = ({ id, name }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isSdkLoaded, setIsSdkLoaded] = useState(false);
@@ -131,6 +139,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const [selectedWaba, setSelectedWaba] = useState(null);
   const [dropdownOpenId, setDropdownOpenId] = useState(null);
   const [wabaCreatebtn, setWabaCreatebtn] = useState(false);
+  const [wabaCreateMMbtn, setWabaCreateMMbtn] = useState(false);
   const [clicked, setClicked] = useState([]);
   const [wabadetails, setwabadetails] = useState(null);
   const [editWebsite1, seteditWebsite1] = useState("");
@@ -140,6 +149,12 @@ const WhatsappManageWaba = ({ id, name }) => {
     page: 0,
     pageSize: 10,
   });
+
+  const [isCelebrating, setIsCelebrating] = useState(false);
+  const handleCelebration = () => {
+    setIsCelebrating(true);
+    setTimeout(() => setIsCelebrating(false), 5000);
+  };
 
   const fileInputRef = useRef(null);
 
@@ -223,13 +238,11 @@ const WhatsappManageWaba = ({ id, name }) => {
         document.body.appendChild(script);
       }
     };
-
     loadFacebookSDK();
   }, []);
 
-
-  // const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-  const API_BASE_URL = "/api";
+  const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  // const API_BASE_URL = "/api";
 
   async function onboardUser(accessToken) {
     const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess?code=${accessToken}`, {
@@ -240,25 +253,44 @@ const WhatsappManageWaba = ({ id, name }) => {
       }
     });
 
+    // pass accesstoken via formdata
+    // const formData = new FormData();
+    // formData.append("code", accessToken);
+
+    // const res = await fetch(`${API_BASE_URL}/whatsapp/wabaOnboardProcess`, {
+    //   method: "POST",
+    //   headers: {
+    //     "Authorization": `Bearer ${sessionStorage.getItem("token")}`,
+    //     // Don't set Content-Type manually when using FormData
+    //   },
+    //   body: formData,
+    // });
+
     const data = await res.json();
     console.log(data)
-    if (!data.ok) {
+    if (!res.ok) {
       toast.error(data.message || "Something went wrong")
+    } else {
+      toast.success(data.message || "Onboarding successful")
     }
-    toast.success(data.message || "Something went wrong")
     // return data;
   }
 
   const handleFacebookLogin = () => {
     window.FB.login(
       (response) => {
-        console.log(response)
+        // console.log(response)
         if (response.authResponse) {
           const accessToken = response.authResponse.code;
-          console.log('Access Token:', accessToken);
+          // console.log('Access Token:', accessToken);
           onboardUser(accessToken)
+          getWabaList()
         } else {
-          console.log('User cancelled login or did not fully authorize.');
+          toast.error("User cancelled login")
+          console.log('User cancelled login');
+          setTimeout(() => {
+            setWabaCreatebtn(false)
+          }, [1500])
         }
       },
       {
@@ -268,6 +300,40 @@ const WhatsappManageWaba = ({ id, name }) => {
         extras: {
           feature: 'whatsapp_embedded_signup',
           version: 2,
+          setup: {
+            solutionID: "597385276367677",
+          },
+        },
+      }
+    );
+  };
+
+  const handleFacebookLoginMMLite = () => {
+    window.FB.login(
+      (response) => {
+        // console.log(response)
+        if (response.authResponse) {
+          const accessToken = response.authResponse.code;
+          // console.log('Access Token:', accessToken);
+          onboardUser(accessToken)
+          getWabaList()
+        } else {
+          toast.error("User cancelled login")
+          console.log('User cancelled login');
+          setTimeout(() => {
+            setWabaCreateMMbtn(false)
+          }, [1500])
+        }
+      },
+      {
+        config_id: "827520649332611",
+        response_type: 'code',
+        override_default_response_type: true,
+        return_scope: true,
+        extras: {
+          scope: "public_profile,email,ads_read,ads_management,pages_show_list,business_management,pages_manage_metadata,pages_read_engagement,pages_manage_engagement,pages_read_user_content,pages_messaging,page_events,catalog_management",
+          sessionInfoVersion: 3,
+          featureType: 'marketing_messages_lite',
           setup: {
             solutionID: "597385276367677",
           },
@@ -293,7 +359,7 @@ const WhatsappManageWaba = ({ id, name }) => {
   const handleView = async (waba) => {
     setSelectedWaba(waba);
     const details = await getwabadetails(waba.wabaNumber);
-    console.log(details)
+    // console.log(details)
     setwabadetails(details.data[0]);
     setView(true);
   };
@@ -317,12 +383,17 @@ const WhatsappManageWaba = ({ id, name }) => {
     setWabaCreatebtn(true);
   };
 
+  const handleWabaMMCreate = (e) => {
+    setWabaCreateMMbtn(true);
+  };
+
   const handleSync = async (data) => {
-    if (!data.wabaSrno) return toast.error("Please select a WABA");
+    // if (!data.wabaSrno) return toast.error("Please select a WABA");
     try {
       const res = await refreshWhatsApp(data?.wabaSrno);
       if (res.status) {
         toast.success("Refreshed Successfully");
+        await fetchWabaList();
       } else {
         toast.error("Error Refreshing Data");
       }
@@ -356,28 +427,144 @@ const WhatsappManageWaba = ({ id, name }) => {
       websites: website,
       vertical: vertical,
     };
-
     const updateData = await updateWabaDetails(data, selectedWaba.wabaNumber);
   };
 
+  const statusMessages = {
+    CONNECTED: {
+      title: "Connected",
+      description:
+        "A phone number is associated with this account and is working properly.",
+    },
+    RESTRICTED: {
+      title: "Restricted",
+      description:
+        "This phone number has reached its 24-hour messaging limit and can no longer send messages to customers. Please wait until the messaging limit resets.",
+    },
+    FLAGGED: {
+      title: "Flagged",
+      description:
+        "This number has been flagged. Review the quality rating or check the account health.",
+    },
+    BANNED: {
+      title: "Banned",
+      description: "This number has been banned. Contact support for resolution.",
+    },
+    UNKNOWN: {
+      title: "Unknown",
+      description: "The status of this number is unknown or not reported.",
+    },
+  };
+
+  const qualityMessages = {
+    GREEN: {
+      title: "High Quality",
+      description:
+        "This account's quality rating is High. Messages are rarely flagged and deliverability is optimal.",
+    },
+    YELLOW: {
+      title: "Medium Quality",
+      description:
+        "This phone number is at risk of being banned. See our guidelines about how best to send messages to your customers.",
+    },
+    RED: {
+      title: "Low Quality",
+      description:
+        "This account's quality rating is Low. High risk of message failures or blocks—investigate account health immediately.",
+    },
+    UNKNOWN: {
+      title: "Unknown Quality",
+      description: "The quality rating for this account is not available.",
+    },
+  };
+
   const columns = [
-    { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
-    { field: "wabaName", headerName: "WABA Name", flex: 1, minWidth: 120 },
+    { field: "sn", headerName: "S.No", flex: 0, maxWidth: 60 },
+    { field: "name", headerName: "Display Name", flex: 1, minWidth: 120 },
     {
       field: "wabaNumber",
       headerName: "WABA Mobile No.",
       flex: 1,
       minWidth: 120,
     },
-    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 120 },
-    { field: "status", headerName: "Status", flex: 1, minWidth: 120 },
-    // {
-    //   field: "messaging_limit",
-    //   headerName: "Messaging Limit",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
-    // { field: "quality", headerName: "Quality", flex: 1, minWidth: 120 },
+    { field: "createdOn", headerName: "Created On", flex: 1, minWidth: 80 },
+    {
+      field: "businessStatus", headerName: "Business Verification Status", flex: 1, minWidth: 120,
+      renderCell: (params) => {
+        // Get the verification status and capitalize it
+        const verificationStatus = (params.row.businessVerificationStatus || "").charAt(0).toUpperCase() +
+          (params.row.businessVerificationStatus || "").slice(1).toLowerCase();
+
+        return (
+          <div className="flex items-center gap-2">
+            <span>{verificationStatus || "N/A"}</span>
+            {params.row.businessVerificationStatus === "verified" && (
+              <Lottie
+                animationData={verified}
+                loop
+                autoplay
+                style={{ width: "30px", height: "30px" }}
+              />
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      field: "status",
+      headerName: "Phone Status",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => {
+        const status = params.value || "UNKNOWN";
+        const statusMap = {
+          CONNECTED: { color: "bg-green-500", text: "Connected" },
+          FLAGGED: { color: "bg-orange-500", text: "Flagged" },
+          RESTRICTED: { color: "bg-red-500", text: "Restricted" },
+          BANNED: { color: "bg-red-700", text: "Banned" },
+          UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
+        };
+        const { color, text } = statusMap[status] || statusMap.UNKNOWN;
+        const content = statusMessages[status] || statusMessages.UNKNOWN;
+
+        const [showHover, setShowHover] = useState(false);
+        return (
+          <>
+            <div
+              onMouseEnter={() => setShowHover(true)}
+              onMouseLeave={() => setShowHover(false)}
+            >
+              <span
+                className={`px-4 py-1.5 rounded-full text-white text-xs tracking-wider font-semibold cursor-pointer ${color}`}
+                style={{ minWidth: 90, display: "inline-block", textAlign: "center" }}
+              >
+                {text}
+              </span>
+
+              <AnimatePresence>
+                {showHover && (
+                  <motion.div
+                    key="status-hover"
+                    initial={{ opacity: 0, y: 6 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 6 }}
+                    className="absolute z-50 bg-white shadow-xl border rounded-lg w-78 p-4 text-sm text-gray-700"
+                    style={{
+                      left: "50%",
+                      transform: "translateX(-50%)",
+                      marginTop: "0.25rem",
+                    }}
+                  >
+                    <p className="font-bold text-gray-900 mb-1">{content.title}</p>
+                    <p className="text-gray-600 text-wrap">{content.description}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </>
+        );
+      },
+    },
     {
       field: "quality",
       headerName: "Quality",
@@ -386,70 +573,57 @@ const WhatsappManageWaba = ({ id, name }) => {
       renderCell: (params) => {
         const quality = params.value || "UNKNOWN";
         const qualityMap = {
-          GREEN: { color: "green", text: "High Quality" },
-          YELLOW: { color: "yellow", text: "Medium Quality" },
-          RED: { color: "red", text: "Low Quality" },
-          UNKNOWN: { color: "gray", text: "Unknown Quality" },
+          GREEN: { color: "bg-green-500", text: "High" },
+          YELLOW: { color: "bg-yellow-400", text: "Medium" },
+          RED: { color: "bg-red-500", text: "Low" },
+          UNKNOWN: { color: "bg-gray-400", text: "Unknown" },
         };
 
         const { color, text } = qualityMap[quality] || qualityMap.UNKNOWN;
+        const content = qualityMessages[quality] || qualityMessages.UNKNOWN;
+
+        const [showHover, setShowHover] = useState(false);
 
         return (
-          <CustomTooltip title={text} placement="top" arrow>
-            <div
-              className="flex items-center h-full justify-center"
-              style={{
-                // display: "inline-flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* Circle */}
-              <span
-                style={{
-                  backgroundColor: color,
-                }}
-                className="h-5 w-10 rounded-full shadow-lg"
-              ></span>
-              {/* Capsule */}
-              {/* <span
-                style={{
-                  // padding: "2px 8px",
-                  // borderRadius: "12px",
-                  backgroundColor: color,
-                  // color: "white",
-                  // fontSize: "0.8rem",
-                  // fontWeight: "bold",
-                  // textTransform: "capitalize",
-                }}
-                className="h-auto w-auto px-3 py-1 rounded-full text-white text-sm tracking-wide font-normal"
-              >
-                {quality.toLowerCase()}
-              </span> */}
+          <div
+            onMouseEnter={() => setShowHover(true)}
+            onMouseLeave={() => setShowHover(false)}
+          >
+            <div className="flex items-center gap-2 py-3 cursor-pointer">
+              <span className={`inline-block w-4 h-4 rounded-full ${color}`} />
+              <span className="text-sm font-semibold text-gray-700">{text}</span>
             </div>
-          </CustomTooltip>
+
+            <AnimatePresence>
+              {showHover && (
+                <motion.div
+                  key="quality-hover"
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  className="absolute z-50 bg-white shadow-xl border rounded-lg w-78 p-4 text-sm text-gray-700"
+                  style={{
+                    left: "65%",
+                    transform: "translateX(-50%)",
+                    marginTop: "0.25rem",
+                  }}
+                >
+                  <p className="font-bold text-gray-900 mb-1">{content.title}</p>
+                  <p className="text-gray-600 text-wrap">{content.description}</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
         );
       },
     },
-    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 120 },
-    // {
-    //   field: "wabaAccountId",
-    //   headerName: "WABA Account ID",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
-    // { field: "health", headerName: "Health", flex: 1, minWidth: 120 },
-    // {
-    //   field: "phoneNumberId",
-    //   headerName: "Phone Number ID",
-    //   flex: 1,
-    //   minWidth: 120,
-    // },
+    { field: "expiryDate", headerName: "Expiry Date", flex: 1, minWidth: 100 },
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
-      minWidth: 150,
+      flex: 0,
+      width: 220,
       renderCell: (params) => (
         <>
           <CustomTooltip title="Info" placement="top" arrow>
@@ -464,43 +638,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               >
                 <ImInfo size={18} className="text-green-500 " />
               </IconButton>
-              {/* {dropdownOpenId === params.row.id && (
-                <DropdownMenuPortal
-                  targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
-                  onClose={closeDropdown}
-                  style={{
-                    position: "absolute",
-                  }}
-                  positionOverrides={{
-                    top: 260, // Set exact top position in pixels
-                    right: 0,
-                  }}
-                >
-                  {clicked && Object.keys(clicked).length > 0 ? (
-                    <table className="w-full text-sm text-left border border-gray-200 rounded-md overflow-hidden">
-                      <tbody>
-                        {Object.entries(clicked).map(([key, value], index) => (
-                          <tr
-                            key={index}
-                            className="hover:bg-gray-50 transition-colors border-b last:border-none"
-                          >
-                            <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-                              {key}
-                            </td>
-                            <td className="px-4 py-2 text-gray-800">
-                              {value || "N/A"}
-                            </td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  ) : (
-                    <div className="text-sm text-gray-400 italic px-2 py-2">
-                      No data
-                    </div>
-                  )}
-                </DropdownMenuPortal>
-              )} */}
               <InfoPopover
                 anchorEl={dropdownButtonRefs.current[params.row.id]}
                 open={dropdownOpenId === params.row.id}
@@ -514,11 +651,15 @@ const WhatsappManageWaba = ({ id, name }) => {
                           key={index}
                           className="hover:bg-gray-50 transition-colors border-b last:border-none"
                         >
-                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3">
-                            {key}
+                          <td className="px-4 py-2 font-medium text-gray-600 capitalize w-1/3 text-nowrap">
+                            {additionalInfoLabels[key] || key}
                           </td>
                           <td className="px-4 py-2 text-gray-800">
-                            {value || "N/A"}
+                            {key === "isEnabledForInsights"
+                              ? value === true || value === "true"
+                                ? "True"
+                                : "False"
+                              : value || "N/A"}
                           </td>
                         </tr>
                       ))}
@@ -532,27 +673,6 @@ const WhatsappManageWaba = ({ id, name }) => {
               </InfoPopover>
             </span>
           </CustomTooltip>
-
-          {/* {dropdownOpenId === params.row.id && (
-            <DropdownMenuPortal
-              targetRef={{ current: dropdownButtonRefs.current[params.row.id] }}
-              onClose={closeDropdown}
-            >
-              {clicked && clicked.length > 0 ? (
-                clicked.map((waba, index) => (
-                  <div
-                    key={index}
-                    className="text-sm text-slate-700 hover:bg-slate-100 px-2 py-1 rounded"
-                  >
-                    Expiry Date: {waba.expiryDate || "N/A"}
-                  </div>
-                ))
-              ) : (
-                <div className="text-sm text-gray-400 italic px-2">No data</div>
-              )}
-            </DropdownMenuPortal>
-          )} */}
-
           <CustomTooltip title="View Profile" placement="top" arrow>
             <IconButton
               className="no-xs"
@@ -595,21 +715,27 @@ const WhatsappManageWaba = ({ id, name }) => {
   ];
 
   // WABA LIST
-  useEffect(() => {
-    const fetchWabaList = async () => {
-      try {
-        setIsLoading(true);
-        const response = await getWabaList();
-        setWabaList(response?.length > 0 ? response : []);
-      } catch (error) {
-        console.error("Error fetching WABA list:", error);
-        toast.error("Error fetching WABA list.");
-        setWabaList([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  const fetchWabaList = async () => {
+    try {
+      const response = await getWabaList();
+      setWabaList(response?.length > 0 ? response : []);
+    } catch (error) {
+      console.error("Error fetching WABA list:", error);
+      toast.error("Error fetching WABA list.");
+      setWabaList([]);
+    }
+  };
 
+  useEffect(() => {
+    setIsLoading(true);
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     fetchWabaList();
   }, []);
 
@@ -617,22 +743,41 @@ const WhatsappManageWaba = ({ id, name }) => {
   const rows = wabaList.map((waba, index) => ({
     id: index + 1,
     sn: index + 1,
-    wabaName: waba.name || "N/A",
+    name: waba.name || "N/A",
     wabaNumber: waba.mobileNo || "N/A",
-    createdOn: waba.insertTime || "N/A",
+    businessVerificationStatus: waba.businessVerificationStatus || "N/A",
+    createdOn: moment(waba.insertTime).format("YYYY-MM-DD") || "N/A",
     status: waba.wabaStatus || "N/A",
     wabaAccountId: waba.wabaAccountId || "N/A",
     phoneNumberId: waba.phoneNumberId || "N/A",
     quality: waba.qualityRate || "N/A",
+    expiryDate: moment(waba.expiryDate).format("YYYY-MM-DD") || "N/A",
+
     additionalInfo: {
-      expiryDate: waba.expiryDate || "N/A",
       messagingLimit: waba.messagingLimits || "N/A",
-      // quality: waba.qualityRate || "N/A",
+      businessStatus: waba.businessStatus || "N/A",
       wabaAccountId: waba.wabaAccountId || "N/A",
+      wabaName: waba.wabaName || "N/A",
       phoneNumberId: waba.phoneNumberId || "N/A",
+      businessName: waba.businessName || "N/A",
+      businessId: waba.businessId || "N/A",
+      MM_Lite_Eligibility: waba.apiStatus || "N/A",
+      isEnabledForInsights: waba.isEnabledForInsights || "N/A",
     },
     ...waba,
   }));
+
+  const additionalInfoLabels = {
+    businessStatus: "Business Status",
+    messagingLimit: "Messaging Limit",
+    wabaAccountId: "WABA Account ID",
+    wabaName: "WABA Name",
+    phoneNumberId: "Phone Number ID",
+    businessName: "Business Name",
+    businessId: "Business ID",
+    MM_Lite_Eligibility: "MM Lite Eligibility",
+    isEnabledForInsights: "Insights",
+  };
 
   const totalPages = Math.ceil(rows.length / paginationModel.pageSize);
 
@@ -701,6 +846,37 @@ const WhatsappManageWaba = ({ id, name }) => {
   const phoneNumber = selectedWaba?.wabaNumber || "";
   const whatsappLinkPreview = `wa.me/${phoneNumber}`;
 
+  const FloatingIcons = () => {
+    const icons = Array.from({ length: 15 });
+    return (
+      <div className="absolute inset-0 overflow-hidden pointerevents-none z-0">
+        {icons.map((_, idx) => {
+          const left = Math.floor(Math.random() *
+            window.innerWidth); // Full width
+          return (
+            <motion.div
+              key={idx}
+              className="absolute text-green-500 opacity-30"
+              style={{ left: `${left}px`, bottom: -50 }}
+              initial={{ y: 0, rotate: 0 }}
+              animate={{
+                y: -window.innerHeight - 100, rotate: 0
+              }}
+              transition={{
+                duration: 20 + Math.random() * 10,
+                repeat: Infinity,
+                ease: "linear",
+                delay: Math.random() * 3,
+              }}
+            >
+              <FaWhatsapp size={74 + Math.random() * 24} />
+            </motion.div>
+          );
+        })}
+      </div>
+    );
+  };
+
   return (
     <div className="">
       {isLoading ? (
@@ -715,13 +891,32 @@ const WhatsappManageWaba = ({ id, name }) => {
                 <FaWhatsapp /> Manage Waba Accounts
               </label>
             </div>
-            <div className="w-max-content">
-              <UniversalButton
-                label="Create WABA"
-                id="mainwabacreate"
-                name="mainwabacreate"
-                onClick={handleWabaCreate}
-              />
+            <div className="flex items-center gap-3" >
+              <div className="w-max-content">
+                <UniversalButton
+                  label="Create WABA"
+                  id="mainwabacreate"
+                  name="mainwabacreate"
+                  onClick={handleWabaCreate}
+                />
+              </div>
+              <div className="w-max-content">
+                <UniversalButton
+                  label="Onboard MM LIte"
+                  id="wabammliteonboard"
+                  name="wabammliteonboard"
+                  onClick={handleWabaMMCreate}
+                />
+              </div>
+              {/* <div className="w-max-content">
+                <UniversalButton
+                  label="Celebrate"
+                  id="mainwabacreate"
+                  name="mainwabacreate"
+                  onClick={handleCelebration}
+                />
+              </div> */}
+              {isCelebrating && <Confetti />}
             </div>
           </div>
           <div style={{ transition: "filter 0.3s ease" }}>
@@ -771,8 +966,10 @@ const WhatsappManageWaba = ({ id, name }) => {
           </div>
         </>
       ) : (
-        <div className="flex h-[80vh] justify-center w-full items-center">
-          <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
+        <div className="relative h-[91vh] w-full border-2 flex items-center justify-center rounded-4xl border-green-600 shadow-2xl bg-gradient-to-tr from-blue-50 to-green-50">
+          <FloatingIcons />
+          <div className="flex justify-center items-center z-50">
+            {/* <div className="p-10 space-y-3 text-center bg-white shadow-md rounded-xl">
             <h1 className="text-xl font-semibold">No account connected yet!</h1>
             <p className="mb-6 font-medium">
               Login with Facebook to start launching campaigns and analyse phone
@@ -785,6 +982,56 @@ const WhatsappManageWaba = ({ id, name }) => {
             >
               Login with Facebook
             </button>
+          </div> */}
+            <div className="bg-white w-170 px-6 py-10 md:px-10 space-y-6 text-center border-2 border-[#1877F2] rounded-2xl shadow-2xl bg-gradient-to-tr from-green-100 to-blue-50">
+              <div className="space-y-2">
+                <h2 className="text-4xl font-[500] playf mb-4 text-green-600">Set Up Your WhatsApp Business Account</h2>
+                <p className="text-gray-600 text-sm leading-relaxed">
+                  Welcome! To get started with managing your business on WhatsApp, you need to link your official
+                  WhatsApp Business Account (WABA). This will allow you to securely communicate with your customers
+                  and manage interactions effectively.
+                  <br className="hidden md:block" />
+                  Click the button below to securely link your account via Facebook Business.
+                </p>
+              </div>
+              {/* <button
+              onClick={handleFacebookLogin}
+              className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+                <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+              </svg>
+              Link with Facebook
+            </button> */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                animate={{
+                  boxShadow: [
+                    "0 0 0px #1877F2",
+                    "0 0 8px #1877F2",
+                    "0 0 0px #1877F2",
+                  ],
+                }}
+                transition={{
+                  duration: 2,
+                  repeat: Infinity,
+                  repeatType: "loop",
+                }}
+                onClick={handleFacebookLogin}
+                className="bg-[#1877F2] hover:bg-[#166fe5]
+transition-all px-6 py-3 rounded-xl text-white text-base fontmedium flex items-center justify-center gap-2 mx-auto cursor-pointer"
+              >
+                <span className="bg-blue-900 p-1.5 rounded-full" >
+                  <FaFacebookF size={20} />
+                </span>
+                Link with Facebook
+              </motion.button>
+              <p className="text-xs text-gray-400 mt-2">
+                Rest assured, your privacy and security are our top priority. We do not store any of your credentials.
+                This login is exclusively for linking your new WABA through Meta's official authorization process.
+              </p>
+            </div>
           </div>
         </div>
       )}
@@ -837,7 +1084,7 @@ const WhatsappManageWaba = ({ id, name }) => {
 
           <div className="flex flex-col items-center p-6 text-white bg-gradient-to-r rounded-t-2xl from-purple-400 to-blue-300">
             <motion.img
-              src={wabadetails?.profile_picture_url || logo}
+              src={wabadetails?.profile_picture_url || dummyimg}
               alt="Profile"
               className="w-24 h-24 border-4 border-white rounded-full shadow-lg"
               initial={{ scale: 0.8 }}
@@ -1179,8 +1426,9 @@ const WhatsappManageWaba = ({ id, name }) => {
         </div>
       </Dialog>
 
+      {/* add more waba accounts Dialog start */}
       <Dialog
-        header="Create Waba"
+        header="Link more accounts"
         visible={wabaCreatebtn}
         onHide={() => {
           setWabaCreatebtn(false);
@@ -1189,20 +1437,69 @@ const WhatsappManageWaba = ({ id, name }) => {
         className="lg:w-[50rem] md:w-[35rem] sm:w-[20rem]"
         modal
       >
-        <div className="p-2 md:p-10 lg:p-10 space-y-2 text-center bg-white shadow-md rounded-xl h-48 md:h-auto lg:h-auto">
-          <h1 className="text-xl font-semibold">Add Another Account</h1>
-          <p className="mb-6 font-medium">
-            To add another WABA account, link the new account through Facebook.
-          </p>
+        <div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border border-[#1877F2] rounded-2xl shadow-xl">
+          <div className="space-y-2">
+            <h2 className="text-2xl font-[500] text-[#1877F2]   rounded-4xl shadow-xl py-3 mb-7 bg-gradient-to-br from-purple-100 to-blue-100">Link an Additional WhatsApp Business Account</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              You can connect multiple WhatsApp Business Accounts (WABAs) to manage different brands or regions under one platform.
+              <br className="hidden md:block" />
+              Click the button below to securely link a new account via your Facebook Business login.
+            </p>
+          </div>
           <button
-            // href="#signup"
-            className="bg-[#4267b2] p-2.5 rounded-lg lg:text-[1rem] md:text-[0.9rem] sm:text-[0.5rem] text-white cursor-pointer font-medium tracking-wide"
             onClick={handleFacebookLogin}
+            className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
           >
-            Login with Facebook
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+              <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+            </svg>
+            Link with Facebook
           </button>
+          <p className="text-xs text-gray-400 mt-2">
+            We do not store your credentials. This access is used only to link your new WABA through Meta's official authorization process.
+          </p>
         </div>
       </Dialog>
+      {/* add more waba accounts Dialog End */}
+
+      {/* MM Lite Onboard Dialog start */}
+      <Dialog
+        // header="Onboard MM Lite"
+        visible={wabaCreateMMbtn}
+        onHide={() => {
+          setWabaCreateMMbtn(false);
+        }}
+        draggable={false}
+        className="lg:w-[50rem] md:w-[35rem] sm:w-[20rem]"
+        modal
+      >
+        <div className="bg-white px-6 py-10 md:px-10 space-y-6 text-center border rounded-2xl border-[#1877F2] shadow-2xl">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-[500] text-[#1877F2]   rounded-4xl shadow-xl py-3 mb-7 bg-gradient-to-br from-purple-100 to-blue-100">Get Started With MM Lite</h1>
+            <h2 className="text-xl font-[500] text-gray-600">Connect Your Business Account</h2>
+            <p className="text-gray-600 text-sm leading-relaxed">
+              As an official Meta Partner, we help you seamlessly onboard your WhatsApp Business account.
+              To continue, connect your Facebook Business account to get started with MM Lite.
+            </p>
+          </div>
+
+          <button
+            onClick={handleFacebookLoginMMLite}
+            className="bg-[#1877F2] hover:bg-[#166fe5] transition-all px-6 py-3 rounded-lg text-white text-base font-medium flex items-center justify-center gap-2 mx-auto shadow-md cursor-pointer"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="24" height="24">
+              <path fill="#fff" d="M24 4C12.95 4 4 12.95 4 24c0 9.9 7.21 18.07 16.64 19.74v-13.96h-5.01v-5.78h5.01v-4.42c0-4.95 3.07-7.65 7.54-7.65 2.15 0 3.99.16 4.52.23v5.24l-3.1.001c-2.43 0-2.9 1.16-2.9 2.85v3.74h5.8l-.76 5.78h-5.04V43.74C36.79 42.07 44 33.9 44 24c0-11.05-8.95-20-20-20z" />
+            </svg>
+            Login with Facebook
+          </button>
+
+          <div className="text-xs text-gray-400">
+            Your information is secure and used only to set up your WhatsApp Business account.
+          </div>
+        </div>
+      </Dialog>
+      {/* MM Lite Onboard Dialog End */}
+
     </div>
   );
 };

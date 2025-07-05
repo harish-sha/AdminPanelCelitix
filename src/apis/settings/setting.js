@@ -60,3 +60,21 @@ export const LoginRequestIp = async (data) => {
     body: JSON.stringify(data),
   });
 };
+
+// daily wallet usage
+export const dailyWalletUsage = async (data) => {
+  return await fetchWithAuth("/wallet/getdailyamountusage", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// daily wallet usage
+export const dailySeriveUsage = async (data) => {
+  return await fetchWithAuth(
+    `/service/service-wise-usage?userSrno=${data.userSrno}&fromDate=${data.fromDate}&toDate=${data.toDate}`,
+    {
+      method: "POST",
+    }
+  );
+};

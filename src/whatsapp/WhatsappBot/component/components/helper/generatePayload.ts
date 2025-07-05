@@ -44,13 +44,13 @@ function generateBotPayload(
     };
 
     if (finalType === "START") {
-      entry["botName"] = botDetails?.botName;
+      entry["botName"] = botDetails?.botName?.trim();
       entry["wabaNumber"] = botDetails?.wabaNumber;
       entry["wabaSrno"] = botDetails?.wabaSrno;
       entry["startKeyword"] = nodeInput?.startingKeyword;
     }
     if (finalType === "text") {
-      entry["textMessage"] = nodeInput?.message;
+      entry["textMessage"] = nodeInput?.message?.trim();
     }
     if (finalType === "agent") {
       const data = {
@@ -63,47 +63,77 @@ function generateBotPayload(
     }
     if (finalType === "image") {
       entry["imageUrl"] = nodeInput?.fileUrl;
-      entry["imageCaption"] = nodeInput?.fileCaption;
+      entry["imageCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "video") {
       entry["videoUrl"] = nodeInput?.fileUrl;
-      entry["videoCaption"] = nodeInput?.fileCaption;
+      entry["videoCaption"] = nodeInput?.fileCaption.trim();
     }
     if (finalType === "document") {
       entry["documentUrl"] = nodeInput?.fileUrl;
-      entry["documentCaption"] = nodeInput?.fileCaption;
+      entry["documentCaption"] = nodeInput?.fileCaption?.trim();
+    }
+    if (finalType === "audio") {
+      entry["audioUrl"] = nodeInput?.fileUrl;
+      entry["audioCaption"] = nodeInput?.fileCaption?.trim();
     }
     if (finalType === "button") {
       const options = {
         image: "imageUrl",
         video: "videoUrl",
         document: "documentUrl",
+        text: "text",
       };
-      entry[options[nodeInput?.type]] = nodeInput?.text;
 
-      entry["buttonBody"] = nodeInput?.message;
+      entry["buttonUrl"] = nodeInput?.text?.trim() || nodeInput?.fileUrl;
+      entry["buttonType"] = nodeInput?.type;
+
+      entry["buttonBody"] = nodeInput?.message?.trim();
       entry["type"] = finalType;
-      entry["buttonTexts"] = nodeInput?.options;
-      entry["buttonTexts"] = nodeInput?.options;
+      entry["buttonTexts"] = nodeInput?.buttonTexts;
+      // entry["buttonTexts"] = nodeInput?.options;
       entry["nextNode"] = nextNodes;
+      entry["buttonFooter"] = nodeInput?.buttonFooter?.trim();
     }
 
     if (finalType === "list") {
       entry["nextNode"] = nextNodes;
-      entry["listHeading"] = nodeInput?.text;
-      entry["listUrl"] = nodeInput?.text;
-      entry["listBody"] = nodeInput?.message;
-      entry["listType"] = nodeInput?.type;
+      entry["listHeading"] = nodeInput?.text?.trim();
+      entry["listUrl"] = nodeInput?.text?.trim();
+      entry["listBody"] = nodeInput?.message?.trim();
+      entry["listType"] = nodeInput?.type?.trim();
+      entry["listFooter"] = nodeInput?.listFooter?.trim();
 
       entry["type"] = finalType;
 
       if (Array.isArray(nodeInput?.options)) {
         entry["listItems"] = nodeInput.options.map((item: any) => [
-          item.option || "",
-          item.value || "",
+          item.option?.trim() || "",
+          item.value?.trim() || "",
         ]);
       }
     }
+    if (finalType === "answer") {
+      (entry["answerOption"] = nodeInput?.type),
+        (entry["answerRadio"] = "text"),
+        (entry["answerText"] = nodeInput?.variableId),
+        (entry["answerVariable"] = "-1");
+    }
+    // if (finalType === "urlbutton") {
+
+    //   //      "position_left": "698px",
+    //   // "position_top": "683px",
+    //   // "prevNode": "text_9",
+    //   // "type": "urlbutton",
+    (entry["urlbuttonbody"] = nodeInput?.urlbuttonbody),
+      (entry["urlbuttonFooter"] = nodeInput?.urlbuttonFooter),
+      (entry["urlbuttonMediaUrl"] = nodeInput?.fileUrl),
+      (entry["urlbuttonText"] = nodeInput?.urlbuttonText),
+      (entry["urlbuttonType"] = nodeInput?.urlbuttonType),
+      (entry["urlbuttonUrl"] = nodeInput?.urlbuttonUrl),
+      //   // "value": "urlbutton_10"
+      // }
+      (entry["selectedOption"] = nodeInput?.selectedOption || "");
 
     if (prevNode) entry["prevNode"] = prevNode;
 

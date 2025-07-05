@@ -21,10 +21,10 @@ import {
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
-import { te } from "date-fns/locale";
+// import { te } from "date-fns/locale";
 import CustomTooltip from "../components/CustomTooltip.jsx";
 import { AiOutlineInfoCircle } from "react-icons/ai";
-import ca from "date-fns/esm/locale/ca/index.js";
+// import ca from "date-fns/esm/locale/ca/index.js";
 
 const WhatsappCreateTemplate = () => {
   const navigate = useNavigate();
@@ -74,6 +74,9 @@ const WhatsappCreateTemplate = () => {
   const [urlVariables, setUrlVariables] = useState([]);
 
   const [isFetching, setIsFetching] = useState(false);
+
+  const [headerVariable, setHeaderVariable] = useState("");
+  const [headerVariableValue, setHeaderVariableValue] = useState("");
 
 
   const [expiryTime, setExpiryTime] = useState(10);
@@ -311,6 +314,13 @@ const WhatsappCreateTemplate = () => {
       });
     }
 
+    const isValid = /^[a-z0-9_]+$/.test(templateName);
+
+    if (!isValid) {
+      toast.error("Only underscore (_) and alphanumeric are allowed in template name.");
+      return;
+    }
+
     const data = {
       name: templateName,
       category: selectedCategory,
@@ -320,14 +330,42 @@ const WhatsappCreateTemplate = () => {
       components: [],
     };
 
-    if (selectedTemplateType === "text" && templateHeader) {
+
+    // if (selectedTemplateType === "text" && templateHeader) {
+    //   data.components.push({
+    //     type: "HEADER",
+    //     format: "TEXT",
+    //     // text: templateHeader,
+    //     example: {
+    //       header_text: [templateHeader],
+    //     },
+    //   });
+    // }
+
+    const allHeadersVariable = headerVariable.map((variable, index) => {
+      if (!variable.value) {
+        return toast.error(`Please enter value for header variable ${index + 1}`);
+      }
+      return variable.value;
+    })
+
+    if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
       data.components.push({
         type: "HEADER",
         format: "TEXT",
-        // text: templateHeader,
+        text: templateHeader,
         example: {
-          header_text: [templateHeader],
+          header_text: allHeadersVariable,
         },
+      });
+    } else {
+      data.components.push({
+        type: "HEADER",
+        format: "TEXT",
+        text: templateHeader,
+        // example: {
+        //   header_text: [templateHeader],
+        // },
       });
     }
 
@@ -553,12 +591,15 @@ const WhatsappCreateTemplate = () => {
       setIsFetching(true);
       const response = await sendTemplatetoApi(payload);
 
-      if (response.msg === "Template Name is duplicate") {
+      const message = response?.msg;
+
+      if (message.message === "Template Name is duplicate") {
         return toast.error(
           "Template name is already in use. Please choose another."
         );
         // } else if (response.message === "Template Save Successfully") {
-      } else if (response.msg === "Template added successfully") {
+      } else if (message.message === "Template Save Successfully") {
+        // return
         setIsLoading(true);
         toast.success("Template submitted successfully!");
         setSelectedWaba("");
@@ -600,8 +641,8 @@ const WhatsappCreateTemplate = () => {
         return toast.error("Unable to create template at this time. Please try again later.");
       }
       else if (
-        response?.includes("language") &&
-        response?.includes("not available")
+        message?.includes("language") &&
+        message?.includes("not available")
       ) {
         return toast.error(
           "The selected language is not available for message templates. Please try a different language."
@@ -914,6 +955,10 @@ const WhatsappCreateTemplate = () => {
                               setvariables={setVariables}
                               uploadImageFile={uploadImageFile}
                               setFileUploadUrl={setFileUploadUrl}
+                              setHeaderVariable={setHeaderVariable}
+                              headerVariable={headerVariable}
+                              headerVariableValue={headerVariableValue}
+                              setHeaderVariableValue={setHeaderVariableValue}
                             />
 
                             <InteractiveActions

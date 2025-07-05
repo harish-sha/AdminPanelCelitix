@@ -38,6 +38,12 @@ export default defineConfig(({ mode }) => {
           secure: false,
           rewrite: (path) => path.replace(/^\/allDownloadUrl/, ""),
         },
+        "/voiceAudioUrl": {
+          target: env.VITE_AUDIO_URL,
+          changeOrigin: true,
+          secure: false,
+          rewrite: (path) => path.replace(/^\/voiceAudioUrl/, ""),
+        },
       },
     },
   };

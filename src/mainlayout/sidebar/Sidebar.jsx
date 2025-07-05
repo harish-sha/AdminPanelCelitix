@@ -14,8 +14,10 @@ import { IoWalletOutline } from "react-icons/io5";
 import Tooltip from "@mui/material/Tooltip";
 import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
+import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
 
+import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
 import callback from "../../assets/icons/Callback02.svg";
@@ -24,7 +26,14 @@ import obd from "../../assets/icons/OBD02.svg";
 import ibd from "../../assets/icons/IBD02.svg";
 import numberlookup from "../../assets/icons/Numberlookup.svg";
 import clicktwocall from "../../assets/icons/Click2Call02.svg";
+import aigenerate from "../../assets/icons/ai-generate.webp";
+import dash1 from "../../assets/icons/business.png";
+import dash2 from "../../assets/icons/dashboard.png";
+import dash3 from "../../assets/icons/layout.png";
+import aigenerate2 from "../../assets/icons/aigenerate2.jpg";
 import { LuWandSparkles } from "react-icons/lu";
+import { RiAiGenerate2 } from "react-icons/ri";
+import { HiOutlineSparkles } from "react-icons/hi2";
 
 import { useUser } from "@/context/auth";
 import { all } from "axios";
@@ -100,8 +109,9 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     {
       id: "",
       name: "Home",
-      icon: <FaHome />,
-      label: "Home",
+      // icon: <FaHome />,
+      icon: <img src={dash3} className="w-4 h-4" />,
+      label: "Dashboard",
       type: "single",
       to: "/",
       roles: ["ADMIN", "AGENT"],
@@ -180,6 +190,10 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
           label: "RcsAddTemplate",
           isHide: true,
         },
+        {
+          to: "/rcsmanagebot",
+          label: "Manage Bot",
+        },
       ],
       roles: ["ADMIN", "DIRECTUSER"],
     },
@@ -202,9 +216,13 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/wwhatsappconversation", label: "WhatsApp Conversation" },
         { to: "/wwhatsappmanageagent", label: "Manage Agent" },
         { to: "/wwhatsappbot", label: "Manage Bot" },
-        { to: "/wwhatsappflows", label: "Flows" },
+        { to: "/wwhatsappflows", label: "Manage Flows" },
+        // { to: "/wblockuser", label: "Block User" },
+        { to: "/cannedmessagemanager", label: "Canned Message" },
+        // { to: "/wmmlite", label: "MM Lite" },
         { to: "/createwhatsappbot", label: "Create Bot", isHide: true },
         { to: "/wcampaigndetailsreport", label: "Create Bot", isHide: true },
+        { to: "/smscampaigndetailsreport", label: "Create Bot", isHide: true },
         { to: "/createtemplate", label: "Create Bot", isHide: true },
         { to: "/wflowcreation", label: "Create Whatsapp Flow", isHide: true },
       ],
@@ -256,7 +274,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
         { to: "/obdcreatecampaign", label: "Create Campaign" },
         { to: "/obdmanagecampaign", label: "Reports" },
         { to: "/obdmanagevoiceclips", label: "Manage Voice Clips" },
-        { to: "/obdIntegration", label: "Integration" },
+        // { to: "/obdIntegration", label: "Integration" },
       ],
       roles: ["ADMIN"],
     },
@@ -299,16 +317,6 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       ],
       roles: ["ADMIN"],
     },
-    // {
-    //     name: 'settings',
-    //     icon: <IoSettingsOutline />,
-    //     label: 'Settings',
-    //     type: "dropdown",
-    //     links: [
-    //         { to: '/mainsettings', label: 'Profile' },
-    //         { to: '/mainaccount', label: 'Account' },
-    //     ],
-    // },
     {
       id: "",
       name: "CallBack",
@@ -357,7 +365,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
     //     { to: "/managenotifications", label: "ManageNotifications" },
     //     { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
     //   ],
-    //   roles: ["ADMIN"],
+    //   roles: ["ADMIN"],  
     // },
     {
       id: "",
@@ -368,15 +376,51 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/managecontacts",
       roles: ["ADMIN", "DIRECTUSER"],
     },
+    // {
+    //   id: "",
+    //   name: "Aiconfiguration",
+    //   icon: <HiOutlineSparkles className="h-4.5 w-4.5" />,
+    //   label: "Ai Configuration",
+    //   type: "single",
+    //   to: "/aiconfiguration",
+    //   roles: ["ADMIN"],
+    // },
     {
       id: "",
-      name: "Wishmanagement",
-      icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
-      label: "Wish Management",
+      name: "Workflow",
+      icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Workflow",
       type: "single",
-      to: "/smswishmanagement",
+      to: "/workflow",
       roles: ["ADMIN"],
     },
+    // {
+    //   id: "",
+    //   name: "recharge",
+    //   icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Recharge",
+    //   type: "single",
+    //   to: "/selfrecharge",
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "Wishmanagement",
+    //   icon: <LuWandSparkles fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Wish Management",
+    //   type: "single",
+    //   to: "/smswishmanagement",
+    //   roles: ["ADMIN"],
+    // },
+    // {
+    //   id: "",
+    //   name: "tagmanager",
+    //   icon: <LiaTagsSolid fontSize="20" style={{ fontSize: "17px" }} />,
+    //   label: "Tag Manager",
+    //   type: "single",
+    //   to: "/tagmanager",
+    //   roles: ["ADMIN"],
+    // },
     // {
     //   id: "",
     //   name: "apiDocs",
@@ -430,6 +474,7 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       "apiDocs",
       "CallBack",
       "Managecontacts",
+      "Workflow",
     ];
 
     // menuItems.forEach((item) => {

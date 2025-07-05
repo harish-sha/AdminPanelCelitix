@@ -27,6 +27,16 @@ export const getWabaTemplate = async (wabaAccountId, templateName) => {
   );
 };
 
+// get template by id (vendor id)
+export const getTemplateDetialsById = async (id) => {
+  return await fetchWithAuth(
+    `/whatsapptemplate/getTemplateById?vendorTemplateId=${id}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
 // delete template
 export const deleteTemplate = async (data) => {
   return await fetchWithAuth(
@@ -118,21 +128,21 @@ export const sendWhatsappCampaign = async (campaignData) => {
 // Get Whatsapp Campaign Report
 export const getWhatsappCampaignReport = async (filters = {}) => {
   try {
-    const formattedFromDate = filters.fromQueDateTime
-      ? new Date(
-          filters.fromQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
+    // const formattedFromDate = filters.fromQueDateTime
+    //   ? new Date(
+    //       filters.fromQueDateTime.split("/").reverse().join("-")
+    //     ).toLocaleDateString("en-GB")
+    //   : new Date().toLocaleDateString("en-GB");
 
-    const formattedToDate = filters.toQueDateTime
-      ? new Date(
-          filters.toQueDateTime.split("/").reverse().join("-")
-        ).toLocaleDateString("en-GB")
-      : new Date().toLocaleDateString("en-GB");
+    // const formattedToDate = filters.toQueDateTime
+    //   ? new Date(
+    //       filters.toQueDateTime.split("/").reverse().join("-")
+    //     ).toLocaleDateString("en-GB")
+    //   : new Date().toLocaleDateString("en-GB");
 
     const requestBody = {
-      fromQueDateTime: formattedFromDate,
-      toQueDateTime: formattedFromDate,
+      fromQueDateTime: filters.fromQueDateTime,
+      toQueDateTime: filters.toQueDateTime,
       campaignName: filters.campaignName || "",
       template_category: filters.template_category || "all",
     };
@@ -175,6 +185,30 @@ export const getWhatsappCampaignDetailsReport = async (data) => {
     return response;
   } catch (error) {
     console.error("Error fetching campaign details report:", error);
+    return [];
+  }
+};
+
+// Get Whatsapp Campaign Scheduled Reports
+export const getWhatsappCampaignScheduledReport = async () => {
+  try {
+    const response = await fetchWithAuth(
+      "/whatsapp/getScheduledWhatsAppCampaignReport?selectedUserId=0",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response) {
+      console.error("Failed to fetch campaign report.");
+      return [];
+    }
+    return response || [];
+  } catch (error) {
+    console.error("Error fetching campaign report:", error);
     return [];
   }
 };
@@ -333,13 +367,14 @@ export const sendTemplateMessageToUser = async (data) => {
 
 // send input message to user (live chat)
 export const sendInputMessageToUser = async (data, body) => {
+  const encodeMessage = encodeURIComponent(data?.message);
   return await fetchWithAuth(
     `/LiveChat/sendMessage?mobile=${data.mobile}&wabaNumber=${
       data.wabaNumber
     }&srno=${data.srno}&contactName=${data.contactName}&replyType=${
       data.replyType
     }&replyFrom=${data.replyFrom}&wabaSrNo=${data.wabaSrNo}${
-      data.message ? `&message=${data.message}` : ""
+      data.message ? `&message=${encodeMessage}` : ""
     }`,
     {
       method: "POST",
@@ -528,9 +563,13 @@ export const getWhatsappFlow = async () => {
 };
 
 // whatsapp flow update status (Published and draft)
-export const getWhatsappFlowTemplate = async (reqbody, selectedWaba) => {
+export const getWhatsappFlowTemplate = async (
+  reqbody,
+  selectedWaba,
+  status
+) => {
   return await fetchWithAuth(
-    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=PUBLISHED`,
+    `/WhatsappFlow/sendFlowTemplate?wabaNumber=${selectedWaba}&status=${status}`,
     {
       method: "POST",
       body: JSON.stringify(reqbody),
@@ -549,17 +588,7 @@ export const updateFlowStatus = async (data) => {
   );
 };
 
-// fetch reply data (livechat)
-export const fetchReplyData = async (data) => {
-  return await fetchWithAuth(
-    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
-    {
-      method: "GET",
-    }
-  );
-};
-
-// save whatsapp flows 
+// save whatsapp flows
 export const saveFlow = async (params, data) => {
   return await fetchWithAuth(
     `/WhatsappFlow/saveFlow?flowname=${params.name}&categorie=${
@@ -570,4 +599,93 @@ export const saveFlow = async (params, data) => {
       body: JSON.stringify(data),
     }
   );
+};
+
+// delete flow
+export const deleteFlow = async (data) => {
+  return await fetchWithAuth(`/WhatsappFlow/deleteWorkflow?flowId=${data}`, {
+    method: "DELETE",
+  });
+};
+
+export const getMainJson = async (srNo) => {
+  return await fetchWithAuth(`/WhatsappFlow/getMainJson?srNo=${srNo}`, {
+    method: "GET",
+  });
+};
+
+// fetch reply data (livechat)
+export const fetchReplyData = async (data) => {
+  return await fetchWithAuth(
+    `/LiveChat/getChatByReceiptNo?wabaNumber=${data.wabaNumber}&receiptNo=${data.receiptNo}`,
+    {
+      method: "GET",
+    }
+  );
+};
+
+// cancel campaign
+export const cancelCampaign = async ({ srno }) => {
+  return await fetchWithAuth(
+    `/whatsapp/cancelCampaign?srNo=${srno}&selectedUserId=0`,
+    {
+      method: "POST",
+    }
+  );
+};
+
+// export conversation data
+export const exportConversationData = async (data) => {
+  return await fetchWithAuth("/whatsapp/getConversationExportData", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// block user
+export const blockUser = async (waba, data) => {
+  return await fetchWithAuth(`/whatsapp/add-block-user/${waba}`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// get block user
+export const getblockUser = async (waba) => {
+  return await fetchWithAuth(`/whatsapp/get-block-user/${waba}`, {
+    method: "GET",
+  });
+};
+
+// delete block user
+export const deleteblockUser = async (waba, data) => {
+  return await fetchWithAuth(`/whatsapp/delete-block-user/${waba}`, {
+    method: "DELETE",
+    body: JSON.stringify(data),
+  });
+};
+
+// Save canned message
+export const saveCannedMessage = async (data) => {
+  return await fetchWithAuth(`/canned/save-message`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
+
+// Get all canned messages
+export const getAllCannedMessages = async () => {
+  return await fetchWithAuth(`/canned/all-messages`);
+};
+
+// Get canned message by SrNo
+export const getCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/getbySrno?srNo=${srNo}`);
+};
+
+// Delete canned message by SrNo
+export const deleteCannedMessageBySrNo = async (srNo) => {
+  return await fetchWithAuth(`/canned/deleteBySrno?srNo=${srNo}`, {
+    method: "DELETE",
+  });
 };

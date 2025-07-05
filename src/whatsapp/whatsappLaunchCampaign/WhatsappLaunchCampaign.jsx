@@ -5,6 +5,7 @@ import { Checkbox } from "primereact/checkbox";
 import toast from "react-hot-toast";
 
 import {
+  getTemplateDetialsById,
   getWabaList,
   getWabaTemplate,
   getWabaTemplateDetails,
@@ -19,6 +20,7 @@ import InputField from "../../components/layout/InputField.jsx";
 import UniversalButton from "../components/UniversalButton.jsx";
 import Loader from "../components/Loader";
 import DropdownWithSearch from "../components/DropdownWithSearch.jsx";
+import { RadioButton } from "primereact/radiobutton";
 
 const extractVariablesFromText = (text) => {
   const regex = /{{(\d+)}}/g;
@@ -78,6 +80,8 @@ const WhatsappLaunchCampaign = () => {
 
   const [cardIndex, setCardIndex] = useState(0);
 
+  const [marketingType, setMarketingType] = useState(2);
+
   const fileRef = useRef(null);
 
   function handleNextCard() {
@@ -109,7 +113,7 @@ const WhatsappLaunchCampaign = () => {
     } else if (typeof value === "number") {
       updatedGroups = [value];
     } else {
-      console.error("Unexpected value type in handleGroupChange:", value);
+      toast.error("Unexpected value type in handleGroupChange:", value);
     }
 
     setIsGroup(updatedGroups.length > 0 ? 1 : 0);
@@ -226,6 +230,29 @@ const WhatsappLaunchCampaign = () => {
       });
     }
 
+    const contentValues = bodyVariables
+      ?.map((variable) => {
+        const key = `body${variable}`;
+        const value = (formData[key] || "").trim();
+        console.log("value", value);
+
+        if (!value) {
+          isError = true;
+          return;
+        }
+
+        if (value.match(/{{(.*?)}}/)) {
+          return `#${value.match(/{{(.*?)}}/)[1]}#`;
+        }
+
+        return `"${value}"`;
+      })
+      ?.join(",");
+
+    if (isError) {
+      return toast.error("Please enter all variable values!");
+    }
+
     setTotalRecords(finalTotalRecords);
     setDialogVisible(true);
   };
@@ -237,7 +264,7 @@ const WhatsappLaunchCampaign = () => {
       (waba) => waba.mobileNo === selectedWaba
     );
     const selectedTemplateData = templateList?.find(
-      (template) => template.templateName === selectedTemplate
+      (template) => template.vendorTemplateId === selectedTemplate
     );
 
     const bodyVariables = templateDataNew?.components
@@ -297,6 +324,11 @@ const WhatsappLaunchCampaign = () => {
         const key = `body${variable}`;
         const value = (formData[key] || "").trim();
 
+        if (!value) {
+          isError = true;
+          return toast.error("Please enter all variable values!");
+        }
+
         if (value.match(/{{(.*?)}}/)) {
           return `#${value.match(/{{(.*?)}}/)[1]}#`;
         }
@@ -322,7 +354,6 @@ const WhatsappLaunchCampaign = () => {
         : "-1";
 
     if (selectedOption === "option1" && (!groups || groups.length === 0)) {
-      console.error("Groups data is not available.");
       toast.error(
         "Error: Group data is missing. Please wait for data to load."
       );
@@ -369,10 +400,12 @@ const WhatsappLaunchCampaign = () => {
       wabaNumber: selectedWabaData?.wabaSrno || "",
       campaignName: inputValue,
       templateSrno: selectedTemplateData?.templateSrno || "",
-      templateName: selectedTemplate,
+      templateName: selectedTemplateData?.templateName,
       templateLanguage: selectedLanguage,
       templateCategory: selectedTemplateData?.category || "",
       templateType: selectedTemplateData?.type || "",
+      // isMarketingMessage: marketingType || "",
+      ...(marketingType === 1 && { isMarketingMessage: 1 }),
       url: "",
       variables: [],
       xlsxpath: xlsxPath,
@@ -441,7 +474,8 @@ const WhatsappLaunchCampaign = () => {
         setVarLength(0);
         setFileData([]);
         setIsGroup(-1);
-        fileRef.current.value = "";
+        // fileRef.current.value = "";
+        fileRef.current && (fileRef.current.value = "");
       } else {
         toast.error(response?.msg || "Campaign launch failed.");
         toast.error(response?.message || "Campaign launch failed.");
@@ -494,9 +528,10 @@ const WhatsappLaunchCampaign = () => {
       const response = await getWabaTemplateDetails(wabaNumber, 0);
       if (response) {
         setTemplateList(response);
+        const approvedTemplateList = response.filter((template) => template.status === "APPROVED");
         setTemplateOptions(
-          response.map((template) => ({
-            value: template.templateName,
+          approvedTemplateList.map((template) => ({
+            value: template.vendorTemplateId,
             label: template.templateName,
           }))
         );
@@ -536,7 +571,7 @@ const WhatsappLaunchCampaign = () => {
 
   // Find the selected template data
   const selectedTemplateData = templateList.find(
-    (template) => template.templateName === selectedTemplate
+    (template) => template.vendorTemplateId === selectedTemplate
   );
 
   useEffect(() => {
@@ -544,11 +579,15 @@ const WhatsappLaunchCampaign = () => {
       if (!selectedTemplate || !wabaAccountId) return;
       setIsFetching(true);
       try {
-        const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+        // const response = await getWabaTemplate(wabaAccountId, selectedTemplate);
+        const response = await getTemplateDetialsById(selectedTemplate);
 
-        if (response && response.data && response.data.length > 0) {
-          setTemplateDataNew(response.data[0]);
-          setSelectedLanguage(response.data[0]?.language);
+        // if (response && response.data && response.data.length > 0) {
+        //   setTemplateDataNew(response.data[0]);
+        //   setSelectedLanguage(response.data[0]?.language);
+        if (response) {
+          setTemplateDataNew(response);
+          setSelectedLanguage(response?.language);
         } else {
           toast.error("Failed to load template data!");
         }
@@ -650,6 +689,52 @@ const WhatsappLaunchCampaign = () => {
                       placeholder="Select Template"
                     />
                   </div>
+                  {selectedTemplateData?.category === "MARKETING" && (
+                    <div>
+                      <h1 className="mb-1 text-sm font-medium text-gray-800">
+                        Send Via
+                      </h1>
+                      <div className="grid lg:grid-cols-2 gap-2 mb-2 sm:grid-cols-2">
+                        {/* Option 1 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2 cursor-pointer">
+                            <RadioButton
+                              inputId="radioOptionSend1"
+                              name="radioGroupSend"
+                              value="2"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 2}
+                            />
+                            <label
+                              htmlFor="radioOptionSend1"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              Cloud API
+                            </label>
+                          </div>
+                        </label>
+
+                        {/* Option 2 */}
+                        <label className="cursor-pointer bg-white border border-gray-300 rounded-lg px-2 py-2 hover:shadow-lg transition-shadow duration-300">
+                          <div className="flex items-center justify-start gap-2">
+                            <RadioButton
+                              inputId="radioOptionSend2"
+                              name="radioGroupSend"
+                              value="1"
+                              onChange={(e) => setMarketingType(parseInt(e.target.value))}
+                              checked={marketingType === 1}
+                            />
+                            <label
+                              htmlFor="radioOptionSend2"
+                              className="text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                              MM Lite
+                            </label>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  )}
                   <div>
                     {isFetching ? (
                       // <UniversalSkeleton height="15rem" width="100%" />
@@ -674,6 +759,8 @@ const WhatsappLaunchCampaign = () => {
                           cardIndex={cardIndex}
                           setFileData={setFileData}
                           fileData={fileData}
+                          marketingType={marketingType}
+                          setMarketingType={setMarketingType}
                         />
                       )
                     )}
@@ -695,7 +782,8 @@ const WhatsappLaunchCampaign = () => {
                     isUploaded={isUploaded}
                     setIsUploaded={setIsUploaded}
                     fileRef={fileRef}
-                    // setIsCountryCodeChecked={setIsCountryCodeChecked}
+                    setSelectedOption={setSelectedOption}
+                  // setIsCountryCodeChecked={setIsCountryCodeChecked}
                   />
                 </div>
               </div>
@@ -746,7 +834,7 @@ const WhatsappLaunchCampaign = () => {
                     ?.name || "N/A"}
                 </p>
                 <span className="font-semibold font-m">Template Name : </span>
-                <p className="">{selectedTemplate || "N/A"}</p>
+                <p className=""> {selectedTemplateData?.templateName || "N/A"}</p>
                 <span className="font-semibold font-m">Template Type : </span>
                 <p className="">{selectedTemplateData?.type || "N/A"}</p>
                 <span className="font-semibold font-m">

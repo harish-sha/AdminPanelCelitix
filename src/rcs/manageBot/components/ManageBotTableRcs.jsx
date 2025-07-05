@@ -5,6 +5,7 @@ import CustomNoRowsOverlay from "../../../whatsapp/components/CustomNoRowsOverla
 import usePagination from "@mui/material/usePagination/usePagination";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import EditNoteIcon from "@mui/icons-material/EditNote";
+import moment from "moment";
 
 
 const PaginationList = styled("ul")({
@@ -78,34 +79,42 @@ const ManageBotTableRcs = ({ id, name, data = [], onEdit }) => {
     { field: "sn", headerName: "S.No", flex: 0, minWidth: 80 },
     { field: "agent_name", headerName: "Bot Name", flex: 1, minWidth: 120 },
     { field: "agent_id", headerName: "Bot Id", flex: 1, minWidth: 120 },
-    { field: "insert_time", headerName: "Created on", flex: 1, minWidth: 120 },
     {
-      field: "user_id",
-      headerName: "Assign To User",
+      field: "insert_time",
+      headerName: "Created on",
       flex: 1,
       minWidth: 120,
-    },
-    { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
-    {
-      field: "action",
-      headerName: "Action",
-      flex: 1,
-      minWidth: 350,
       renderCell: (params) => (
-        <>
-          <CustomTooltip arrow title="Edit User Details" placement="top">
-            <IconButton onClick={() => onEdit(params.row.srno)}>
-              <EditNoteIcon
-                sx={{
-                  fontSize: "1.2rem",
-                  color: "gray",
-                }}
-              />
-            </IconButton>
-          </CustomTooltip>
-        </>
+        <>{moment(params.row.insert_time).format("DD-MM-YYYY")}</>
       ),
     },
+    // {
+    //   field: "user_id",
+    //   headerName: "Assign To User",
+    //   flex: 1,
+    //   minWidth: 120,
+    // },
+    { field: "active", headerName: "Status", flex: 1, minWidth: 120 },
+    // {
+    //   field: "action",
+    //   headerName: "Action",
+    //   flex: 1,
+    //   minWidth: 350,
+    //   renderCell: (params) => (
+    //     <>
+    //       <CustomTooltip arrow title="Edit User Details" placement="top">
+    //         <IconButton onClick={() => onEdit(params.row.srno)}>
+    //           <EditNoteIcon
+    //             sx={{
+    //               fontSize: "1.2rem",
+    //               color: "gray",
+    //             }}
+    //           />
+    //         </IconButton>
+    //       </CustomTooltip>
+    //     </>
+    //   ),
+    // },
   ];
 
   const rows = Array.isArray(data)

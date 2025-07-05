@@ -19,6 +19,8 @@ import { Dialog } from "primereact/dialog";
 import { Calendar } from "primereact/calendar";
 import { Checkbox } from "@mui/material";
 import moment from "moment";
+import CustomTooltip from "@/components/common/CustomTooltip";
+import { AiOutlineInfoCircle } from "react-icons/ai";
 
 const SendRcs = () => {
   const [allAgents, setAllAgents] = useState([]);
@@ -68,14 +70,23 @@ const SendRcs = () => {
     if (!data || !Array.isArray(data)) return;
 
     if (data.length === 1) {
+      let matchLength = 0;
+      let matchBtnList = [];
       const content = data[0]?.content || "";
+      console.log("data", data[0].suggestions)
       const suggestionVar = data[0]?.suggestions?.map((item) => {
         if (item?.type === "website") {
           const match = item?.suggestionValue.match(/{#(.+?)#}/g) || [];
-          setBtnVarLength(match.length);
-          setBtnVarList(match);
+          // setBtnVarLength(match.length);
+          // setBtnVarList(match);
+          matchLength += match.length;
+          matchBtnList = [...matchBtnList, ...match];
         }
       });
+
+      setBtnVarLength(matchLength);
+      setBtnVarList(matchBtnList);
+      console.log("suggestionvar", suggestionVar)
       const matches = content.match(/{#(.+?)#}/g) || [];
 
       setVarLength(matches.length);
@@ -143,7 +154,8 @@ const SendRcs = () => {
   useEffect(() => {
     async function handleFetchAllTemplates() {
       try {
-        const res = await fetchAllTemplates(campaignDetails?.agent, 1);
+        // const res = await fetchAllTemplates(campaignDetails?.agent, 1);
+        const res = await fetchAllTemplates(campaignDetails?.agent, 1, "approved");
         setAllTemplates(res?.Data);
       } catch (e) {
         toast.error("Something went wrong.");
@@ -254,11 +266,19 @@ const SendRcs = () => {
       allVar.push(btninputVariables[key]);
     });
 
+    // Clean up curly braces in allVar → {#name#} → #name#
+    for (let i = 0; i < allVar.length; i++) {
+      if (typeof allVar[i] === "string") {
+        allVar[i] = allVar[i].replace(/{#(.*?)#}/g, "#$1#");
+      }
+    }
+
     let variables = [];
     const content = varList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
     const btn = btnvarList?.map((v) => v.match(/{#(.+?)#}/)?.[1]);
 
-    variables = [...content, ...btn];
+    // variables = [...content, ...btn];
+    variables = [...content, ...btn].filter(Boolean); // remove undefined
 
     // let grp = "";
     // if (selectedGrp) {
@@ -280,9 +300,7 @@ const SendRcs = () => {
         ? contactData?.selectedCountryCode
         : "0",
       groupSrNoList: selectedOption === "group" ? selectedGrp : [],
-      isSchedule: scheduleData?.isSchedule
-        ? contactData?.selectedCountryCode
-        : "0",
+      isSchedule: scheduleData?.isSchedule ? "1" : "0",
       scheduleTime: scheduleData?.isSchedule
         ? moment(scheduleData?.time).format("YYYY-MM-DD HH:mm:ss")
         : "",
@@ -482,6 +500,17 @@ const SendRcs = () => {
             <label htmlFor="scheduleCheckbox" className="text-md">
               Schedule
             </label>
+            <CustomTooltip
+              title={
+                "Schedule this campaign to be sent at a later date and time."
+              }
+              placement={"top"}
+              arrow
+            >
+              <span>
+                <AiOutlineInfoCircle className="text-gray-500 cursor-pointer hover:text-gray-700" />
+              </span>
+            </CustomTooltip>
             {scheduleData.isSchedule && (
               <Calendar
                 id="scheduleDateTime"

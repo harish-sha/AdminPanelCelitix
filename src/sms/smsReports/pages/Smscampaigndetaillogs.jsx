@@ -29,6 +29,7 @@ const Smscampaigndetaillogs = () => {
       setIsFetching(true);
       const data = {
         receiptNo: state.id,
+        summaryType: "",
         mobileNo,
       };
       const res = await getCampaignDetails(data);

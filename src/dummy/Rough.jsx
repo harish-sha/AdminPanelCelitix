@@ -1,42 +1,155 @@
-// ...existing imports...
+"use client";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import {
+  FaWhatsapp,
+  FaPhone,
+  FaRegCommentDots,
+  FaSms,
+} from "react-icons/fa";
+import {
+  BarChart,
+  Bar,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
+  Tooltip,
+  CartesianGrid,
+  Legend,
+  ResponsiveContainer,
+  ComposedChart,
+} from "recharts";
+import moment from "moment";
 
-const HoverEffect = ({ items, className }) => {
-  const [hoveredIndex, setHoveredIndex] = useState(null);
+const FILTERS = ["Day", "Month", "Year"];
+
+const icons = {
+  whatsapp: <FaWhatsapp className="text-green-500 text-2xl" />,
+  voice: <FaPhone className="text-blue-500 text-2xl" />,
+  rcs: <FaRegCommentDots className="text-indigo-500 text-2xl" />,
+  sms: <FaSms className="text-yellow-500 text-2xl" />,
+};
+
+export default function Dashboard() {
+  const [filter, setFilter] = useState("Day");
+  const [usageData, setUsageData] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+
+  const startDate = moment().startOf("day").toDate();
+  const endDate = moment().endOf("day").toDate();
+
+  const dailyServiceUsage = async () => {
+    const payload = {
+      userSrno: 0,
+      fromDate: moment(startDate).format("YYYY-MM-DD"),
+      toDate: moment(endDate).format("YYYY-MM-DD"),
+    };
+    setIsLoading(true);
+    try {
+      const res = await fetch("/api/service-usage", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      setUsageData(data);
+    } catch (err) {
+      console.error("Fetch error:", err);
+      setUsageData({});
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    dailyServiceUsage();
+  }, [startDate, endDate, filter]);
+
+  const services = ["whatsapp", "voice", "rcs", "sms"];
+
+  const chartData = services.map((s) => {
+    const item = usageData?.[s]?.[0] || {};
+    return {
+      name: s.toUpperCase(),
+      totalSent: item.totalSent || 0,
+      totalCharge: item.totalCharge || 0,
+    };
+  });
 
   return (
-    <div className={cn("flex flex-wrap justify-between gap-4 py-5", className)}>
-      {items.map((item, idx) => (
-        <div
-          key={idx}
-          className="relative group block"
-          onMouseEnter={() => setHoveredIndex(idx)}
-          onMouseLeave={() => setHoveredIndex(null)}
-        >
-          <Card>
-            <CardTitle>{item.title}</CardTitle>
-            <div className="m-auto h-45 w-45 flex items-center justify-center mt-4">
-              <Lottie animationData={item.animation} loop={true} />
-            </div>
-            <div className="flex items-center justify-center m-auto mt-8">
-              <UniversalButton
-                label={item.button}
-                variant="primary"
-                className={cn(
-                  // Animation: start hidden and below, move up and fade in on hover
-                  "transition-all duration-500 ease-out transform opacity-0 translate-y-8 group-hover:opacity-100 group-hover:translate-y-0",
-                  // Button style: gradient, rounded, shadow, animated on hover
-                  "bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 text-white font-semibold rounded-xl px-5 py-2 shadow-lg",
-                  "hover:scale-105 hover:shadow-2xl hover:from-blue-600 hover:to-pink-600 focus:outline-none"
-                )}
-                style={{
-                  boxShadow: "0 4px 24px 0 rgba(99,102,241,0.15)",
-                  border: "none",
-                }}
-              />
-            </div>
-          </Card>
-        </div>
-      ))}
-    </div>
+    <motion.div
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="bg-white p-6 rounded-2xl shadow-md"
+    >
+      <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
+
+      {/* Filter Buttons */}
+      <div className="flex gap-4 mb-6">
+        {FILTERS.map((item) => (
+          <button
+            key={item}
+            onClick={() => setFilter(item)}
+            className={`px-4 py-2 rounded-full border ${filter === item
+                ? "bg-blue-600 text-white"
+                : "bg-gray-100 text-gray-700"
+              } transition`}
+          >
+            {item}
+          </button>
+        ))}
+      </div>
+
+      {/* Usage Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {services.map((service) => {
+          const record = usageData?.[service]?.[0];
+          return (
+            <motion.div
+              key={service}
+              whileHover={{ scale: 1.03 }}
+              className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center shadow-sm"
+            >
+              {icons[service]}
+              <p className="text-sm mt-2 text-gray-500 capitalize">{service}</p>
+              <p className="text-xl font-bold mt-1">
+                {record?.totalSent ?? 0} Sent
+              </p>
+              <p className="text-sm text-gray-400">
+                ₹{record?.totalCharge?.toFixed(2) ?? "0.00"} charged
+              </p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Graph */}
+      <div className="mt-10 bg-gray-100 p-4 rounded-xl">
+        <ResponsiveContainer width="100%" height={300}>
+          <ComposedChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis yAxisId="left" label={{ value: "Sent", angle: -90, position: "insideLeft" }} />
+            <YAxis
+              yAxisId="right"
+              orientation="right"
+              label={{ value: "Charge ₹", angle: 90, position: "insideRight" }}
+            />
+            <Tooltip />
+            <Legend />
+            <Bar yAxisId="left" dataKey="totalSent" fill="#60a5fa" />
+            <Line
+              yAxisId="right"
+              type="monotone"
+              dataKey="totalCharge"
+              stroke="#ef4444"
+              strokeWidth={2}
+              dot={{ r: 4 }}
+            />
+          </ComposedChart>
+        </ResponsiveContainer>
+      </div>
+    </motion.div>
   );
-};
+}

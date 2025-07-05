@@ -8,6 +8,9 @@ import Mainlayout from "@/mainlayout/Mainlayout";
 import Dashboard from "@/dashboard/Dashboard";
 import ResellerDashboard from "@/dashboard/ResellerDashboard";
 
+// canned message
+import CannedMessage from "@/cannedmessage/CannedMessage";
+
 // Whatsapp
 import ManageTemplate from "@/whatsapp/managetemplate/Managetemplate";
 import WhatsappLaunchCampaign from "@/whatsapp/whatsappLaunchCampaign/WhatsappLaunchCampaign";
@@ -20,12 +23,17 @@ import WhatsappLiveChatSettings from "@/whatsapp/whatsappLiveChatSetting/Whatsap
 import WhatsappManageWaba from "@/whatsapp/whatsappManageWaba/WhatsappManageWaba";
 import WhatsappConversation from "@/whatsapp/whatsappConversation/WhatsappConversation";
 import CampaignDetailsReport from "@/whatsapp/whatsappManageCampaign/CampaignDetailsReport";
+import DetailedLogsInsidersDetails from "@/sms/smsReports/components/DetailedLogsInsidersDetails";
 import ManageAgent from "@/whatsapp/manageagent/ManageAgent";
 import WhatsappBot from "@/whatsapp/WhatsappBot/WhatsappBot";
 import CreateWhatsAppBot from "@/whatsapp/WhatsappBot/component/createBot";
 import { ApiCampaignInfo } from "@/whatsapp/whatsappManageCampaign/components/page/ApiCampaignInfo";
 import WhatsappFlows from "@/whatsapp/whatsappFlows/Pages/WhatsappFlows";
 import FlowCreationPage from "@/whatsapp/whatsappFlows/Pages/FlowCreationPage";
+import { BlockUser } from "@/whatsapp/blockUser";
+import { EditFlow } from "@/whatsapp/whatsappFlows/Pages/FlowEditPage";
+// MMLite
+import MmLite from "@/whatsapp/mmlite/MmLite";
 
 // manage funds
 import Recharge from "@/managefunds/recharge/Recharge";
@@ -102,6 +110,7 @@ import ObdCreateCampaign from "@/obd/obdcreatecampaign/ObdCreateCampaign";
 import ObdManageVoiceClips from "@/obd/managevoiceclips/ObdManageVoiceClips";
 import ObdIntegration from "@/obd/obdmanageinteration/ObdIntegration";
 import ObdCampaignReports from "@/obd/obdManageCampaign/ObdCampaignReports";
+import CampaignDetailsReports from "@/obd/obdManageCampaign/components/CampaignDetailReports";
 
 // missed call
 import HistoryMissedCall from "@/missedcall/missedCallHistory/HistoryMissedCall";
@@ -124,12 +133,27 @@ import Callback from "@/callback/Callback";
 import { AddCallback } from "@/callback/page/addCallback";
 import { EditCallback } from "@/callback/page/editCallback";
 
+// Tag Manager
+import TagManager from "@/tagmanager/TagManager";
+
 // Not Found Page
 import PageNotFound from "@/NotFound/PageNotFound";
+
+//WorkFlow
+import { WorkflowDetails } from "@/workflow/details";
+import { WorkflowCreate } from "@/workflow/create";
+import { UpdateWorkflow } from "@/workflow/edit";
+
+// GPT
+import GptConfiguration from "@/gpt/GptConfiguration";
+
+// Self Recharge
+import SelfRecharge from "@/SelfRecharge/SelfRecharge";
 
 // dummy
 import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
+
 
 const Approutes = () => {
   return (
@@ -204,6 +228,10 @@ const Approutes = () => {
           element={<CampaignDetailsReport />}
         />
         <Route
+          path="smscampaigndetailsreport"
+          element={<DetailedLogsInsidersDetails />}
+        />
+        <Route
           path="wcampaigndetailsreport"
           element={<CampaignDetailsReport />}
         />
@@ -213,6 +241,9 @@ const Approutes = () => {
         <Route path="apicampaigninfo" element={<ApiCampaignInfo />} />
         <Route path="wwhatsappflows" element={<WhatsappFlows />} />
         <Route path="wflowcreation" element={<FlowCreationPage />} />
+        <Route path="wflowedit" element={<EditFlow />} />
+        <Route path="wblockuser" element={<BlockUser />} />
+        <Route path="wmmlite" element={<MmLite />} />
 
         {/* RCS */}
         <Route path="sendrcs" element={<SendRcs />} />
@@ -225,7 +256,7 @@ const Approutes = () => {
           element={<CampaignDeliveryReportDetails />}
         />
         <Route path="rcsmanagebot" element={<ManageBotRcs />} />
-        {/* <Route path="rcslivechats" element={<RcsLiveChat />} /> */}
+        <Route path="rcslivechats" element={<RcsLiveChat />} />
 
         {/* profile */}
         <Route path="profile" element={<ProfilePage />} />
@@ -257,6 +288,8 @@ const Approutes = () => {
         <Route path="/obdmanagevoiceclips" element={<ObdManageVoiceClips />} />
         <Route path="/obdIntegration" element={<ObdIntegration />} />
         <Route path="/obdmanagecampaign" element={<ObdCampaignReports />} />
+        <Route path='/obdCampaignDetailslog' element={<CampaignDetailsReports />} />
+
 
         {/* MissedCall */}
         <Route path="/missedcallhistory" element={<HistoryMissedCall />} />
@@ -271,6 +304,11 @@ const Approutes = () => {
         <Route path="/addcallback" element={<AddCallback />} />
         <Route path="/editcallback" element={<EditCallback />} />
 
+        {/* Tag Manager */}
+        <Route path="/tagmanager" element={<TagManager />} />
+
+        {/* Canned Message Manager */}
+        <Route path="/cannedmessagemanager" element={<CannedMessage />} />
 
         {/* Appauthenticator */}
         <Route path="/authreports" element={<AppauthenticatorReports />} />
@@ -279,6 +317,18 @@ const Approutes = () => {
         {/* Email */}
         <Route path="/emailtemplate" element={<EmailTemplate />} />
         <Route path="/emailreports" element={<EmailReport />} />
+
+        {/* Workflow */}
+        <Route path="/workflow" element={<WorkflowDetails />} />
+        <Route path="/workflow/create" element={<WorkflowCreate />} />
+        <Route path="/workflow/edit" element={<UpdateWorkflow />} />
+
+        {/* Ai Configuration */}
+        <Route path="/aiconfiguration" element={<GptConfiguration />} />
+
+        {/* self recharge */}
+        <Route path="/selfrecharge" element={<SelfRecharge />} />
+
       </Route>
 
       <Route path="dummy" element={<Dummy />} />

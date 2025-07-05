@@ -1,5 +1,88 @@
-whatsapp > whatsappFlows > pages > FlowCreationPage.jsx
-whatsapp > whatsappFlows > components > Canvas.jsx
-whatsapp > whatsappFlows > components > TabView.jsx
-whatsapp > whatsappFlows > components > MobilePanel.jsx
+Healthsquare
+user: healthsq
+Pass: UfoH3ezU
+
+Directuser
+User: demouser
+Pass: 9c2x*cZM
+
+reseller Admin
+user: Devtest
+pass: 7%3uShWk
+
+reseller user with otp enable
+user: demores
+pass: QZ@5x4bC
+
+=================================== Merge file from main to reseller & admin ==================================
+
+OBD 
+
+apis > Obd > Obd.js
+
+OBD > ManageVoiceClips > component > DynamicFile.jsx
+OBD > ManageVoiceClips > component > ObdAudioPlayer.jsx
+OBD > ManageVoiceClips >  ObdManageCampaignVoiceClips.jsx
+
+OBD > CreateCampaign > ObdCreateCampaign.jsx
+OBD > CreateCampaign > components > DynamicValueBox.jsx
+OBD > CreateCampaign > components > ObdVariable.jsx
+OBD > CreateCampaign > components > RadioButtonLaunchCampaignObd.jsx
+OBD > CreateCampaign > components > DynamicObdVariable.jsx
+
+OBD > ObdManageCampaign > ObdCampaignReports.jsxu
+OBD > ObdManageCampaign > component > ObdCampaignTable.jsx
+OBD > ObdManageCampaign > component > CampaignDetailReports.jsx
+OBD > ObdManageCampaign > component > ObdDaySummaryTable.jsx
+OBD > ObdManageCampaign > component > ObSummaryLogsTable.jsx
+OBD > ObdManageCampaign > component > ManageScheduleCampaignTableObd.jsx
+OBD > ObdManageCampaign > export > ExportDialogObd.jsx
+
+OBD > ObdManageIntegration > ObdIntegration.jsx
+OBD > ObdManageIntegration > components >  ObdManageIntegration.jsx
+
+===================
+
+reseller changes - dashboard,whatsapp flow, workflow , recharge , livechat setting, send sms
+
+whatsapp - summary - 1.add waba dropdown , 2.dropdown for month wise and date wise 3.show dropdown of year and month separate when choose month wise and start date and end date calendar when select date wise 
+
+- add mmlit in launchcampaignpayload whatsapp 
+
+
+===============================july03 file changes=====================================
+
+merge files to main & reseller 
+
+1.
+
+
+============issues rcs live chat===========================
+1./rcs/getRcsChatDetail - userActive - 1 and 0 is not proper
+2./rcs/getRcsChatDetail - searchMobileNumber - mobile filteration is not working
+3./rcs/getRcsChatsOneUser - blank response
+4./rcs/sendRcsMessage - something missing error - 
+{
+    "msg": "Something missing.",
+    "status": "error"
+}
+
+=======july03===============================
+
+Callback
+1.editCallback.jsx - done
+
+whatsapp - 
+1.WhatsappLiveChatSetting.jsx - done
+2.whatsappmanagecampaign.jsx - done
+
+SMS - 
+1.SendSms.jsx - done
+2.RadioButtonLaunchSms.jsx - done
+
+RCS - 
+1.
+
+OBD -
+1.
 

@@ -2,11 +2,14 @@ import { MultiSelect } from "primereact/multiselect";
 import { RadioButton } from "primereact/radiobutton";
 import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
 import { MdOutlineDeleteForever } from "react-icons/md";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import toast from "react-hot-toast";
-import { campaignUploadFile } from "@/apis/whatsapp/whatsapp";
+import { campaignUploadFile, uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 import DropdownWithSearch from "@/whatsapp/components/DropdownWithSearch";
+import InputField from "@/whatsapp/components/InputField";
+import { LetterTextIcon } from "lucide-react";
+import { id } from "date-fns/locale";
 
 export const RadioButtonLaunchSms = ({
   allGroups,
@@ -19,6 +22,8 @@ export const RadioButtonLaunchSms = ({
   setContactData,
   contactData,
   countryList,
+  inputDetails,
+  setInputDetails,
 }) => {
   const fileInputRef = useRef(null);
 
@@ -112,8 +117,61 @@ export const RadioButtonLaunchSms = ({
     });
   }
 
+
+  function stripPlaceholders(str) {
+    const varsToRemove = ["short_url", "whatsapp_chat", "file"];
+    return varsToRemove.reduce(
+      (s, v) => s.replace(new RegExp(`\\{#${v}#\\}`, "g"), ""),
+      str
+    );
+  }
+  function handleAttachmentChange(e) {
+    setInputDetails((prev) => {
+      const strippedMessage = stripPlaceholders(prev.message);
+      const hasAttachment = Boolean(e);
+      const tag = hasAttachment ? `{#${e}#}` : "";
+
+      return {
+        ...prev,
+        attachmentType: hasAttachment ? e : null,
+        message: strippedMessage + tag,
+        shortUrl: hasAttachment ? 1 : 0,
+        attachmentVar: {},
+      };
+    });
+  }
+
+  async function handleAttachmentFileChange(e) {
+    let message = "";
+    try {
+      if (inputDetails?.attachmentType === "file") {
+        const file = e.target.files[0];
+        const res = await uploadImageFile(file);
+
+        if (!res?.status) {
+          return toast.error("Error uploading file");
+        }
+        message = res?.fileUrl;
+      } else if (inputDetails?.attachmentType === "short_url") {
+        message = e.target.value;
+      } else {
+        // const url = `https://wa.me/${e.target.value}`;
+        message = e.target.value;
+      }
+      setInputDetails((prev) => ({
+        ...prev,
+        attachmentVar: {
+          [`{#${inputDetails?.attachmentType}#}`]: message,
+          // [inputDetails.message]: "asdasdsad",
+        },
+      }));
+    } catch (e) {
+      return toast.error("Error uploading file");
+    }
+  }
+
   return (
-    <div className="max-h-full bg-gray-100 rounded-lg shadow-md lg:flex-1 border p-2 space-y-2 w-1/3">
+    <div className="max-h-full bg-gray-100 rounded-lg shadow-md lg:flex-1 border p-2 space-y-2 md:w-1/3 w-full">
       <div>
         <h2 className="mb-2 text-sm font-medium tracking-wide text-gray-800">
           Choose an Option
@@ -396,6 +454,59 @@ export const RadioButtonLaunchSms = ({
             </div>
           </>
         )}
+
+      <div className="mt-5 space-y-2">
+        <h1 className="mb-2 text-sm font-medium tracking-wide text-gray-800">
+          SMS Attachment
+        </h1>
+        <AnimatedDropdown
+          id="attachmentType"
+          name="attachmentType"
+          options={[
+            { value: "file", label: "File" },
+            { value: "short_url", label: "Short URL" },
+            { value: "whatsapp_chat", label: "WhatsApp Chat" },
+          ]}
+          onChange={handleAttachmentChange}
+          value={inputDetails.attachmentType}
+        />
+        {inputDetails.attachmentType === "file" && (
+          <div>
+            <InputField
+              id="attachmentfile"
+              name="attachmentfile"
+              onChange={handleAttachmentFileChange}
+              type="file"
+              label="Select File"
+            />
+          </div>
+        )}
+        {(inputDetails.attachmentType === "short_url" ||
+          inputDetails.attachmentType === "whatsapp_chat") && (
+            <div className="mt-2">
+              <InputField
+                id="attachmentText"
+                name="attachmentText"
+                onChange={handleAttachmentFileChange}
+                label={
+                  inputDetails.attachmentType === "short_url"
+                    ? "Short URL"
+                    : "WhatsApp Chat"
+                }
+                placeholder={
+                  inputDetails.attachmentType === "short_url"
+                    ? "Enter Short URL"
+                    : "Enter WhatsApp Number with Country Code"
+                }
+                value={
+                  inputDetails?.attachmentVar[
+                  `{#${inputDetails?.attachmentType}#}`
+                  ] || ""
+                }
+              />
+            </div>
+          )}
+      </div>
     </div>
   );
 };

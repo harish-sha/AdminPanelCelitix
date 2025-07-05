@@ -17,9 +17,12 @@ import UniversalButton from "../../whatsapp/components/UniversalButton";
 import CampaignsLogsTable from "./components/CampaignsLogsTableRcs";
 import DayWiseSummarytableRcs from "./components/DayWiseSummarytableRcs";
 import {
+  cancelschedule,
   fetchCampaignReport,
   fetchSummaryReport,
   getAllCampaign,
+  scheduledata,
+  // cancelCampaign
 } from "../../apis/rcs/rcs";
 import UniversalSkeleton from "../../whatsapp/components/UniversalSkeleton";
 import { Checkbox } from "primereact/checkbox";
@@ -27,7 +30,10 @@ import toast from "react-hot-toast";
 import IosShareOutlinedIcon from "@mui/icons-material/IosShareOutlined";
 import { ExportDialog } from "./components/exportDialog";
 import CampaignScheduleTable from "./components/CampaignSchedule";
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
+import moment from "moment";
+import { Dialog } from "primereact/dialog";
+import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 
 const DeliveryreportRcs = () => {
   const [value, setValue] = useState(0);
@@ -48,9 +54,8 @@ const DeliveryreportRcs = () => {
     toDate: new Date(),
     isMonthWise: false,
   });
+  const [selectedMonth, setSelectedMonth] = useState(new Date());
   const [summaryTableData, setSummaryTableData] = useState([]);
-
-
   // scheduleState
   const [scheduleData, setScheduleData] = useState({
     startDate: new Date(),
@@ -59,7 +64,9 @@ const DeliveryreportRcs = () => {
     status: " ",
   });
   const [scheduleTableData, setScheduleTableData] = useState([]);
-  
+
+  const [visible, setVisible] = useState(false);
+  const [currentRow, setCurrentRow] = useState(null);
 
   const [allCampaigns, setAllCampaigns] = useState([]);
   const [campaigncheckboxStates, setCampaignCheckboxStates] = useState({
@@ -81,14 +88,15 @@ const DeliveryreportRcs = () => {
 
   const [dataToExport, setDataToExport] = useState({
     campaignName: "",
-    fromDate: new Date(),
-    toDate: new Date(),
+    fromDate: "",
+    toDate: "",
     srno: 0,
     isCustomField: 0,
     customColumns: "",
     campaignType: "",
     status: "",
-    delStatus: {},
+    source:"",
+    deliveryStatus: "",
     type: "campaign",
   });
 
@@ -138,58 +146,197 @@ const DeliveryreportRcs = () => {
   //fetchCampaignData
   const handleCampaignSearch = async () => {
     const data = {
-      startDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
-      endDate: new Date(campaignData.startDate).toLocaleDateString("en-GB"),
+      startDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
+      endDate: moment(campaignData.startDate).format("YYYY-MM-DD"),
       templateType: campaignData.templateType ?? "",
       campaignName: campaignData.campaignName,
       status: campaignData.status ?? "",
     };
 
-    // console.log(data);
-
     try {
       setIsFetching(true);
       const res = await fetchCampaignReport(data);
-      // console.log(res);
       const reversedData = res.reverse();
       setCampaignTableData(reversedData);
     } catch (e) {
       toast.error("Something went wrong.");
-      // console.log(e);
     } finally {
       setIsFetching(false);
     }
   };
 
-  //fetchSummaryData
-  const handleSummarySearch = async () => {
-    if (!summaryData.fromDate || !summaryData.toDate) {
-      toast.error("Please select from and to date.");
+const handleSummarySearch = async () => {
+  let FinalFromDate, FinalToDate;
+
+  // Case 1: Use selectedMonth if isMonthWise is enabled
+  if (selectedMonth && Number(summaryData.isMonthWise) === 1) {
+    FinalFromDate = moment(selectedMonth).startOf("month").format("YYYY-MM-DD");
+    FinalToDate = moment(selectedMonth).endOf("month").format("YYYY-MM-DD");
+  }
+
+  // ✅ Case 2: No selectedMonth, but isMonthWise is true — fallback to fromDate
+  else if (
+    Number(summaryData.isMonthWise) === 1 &&
+    summaryData.fromDate
+  ) {
+    const fallbackMonth = summaryData.fromDate;
+    FinalFromDate = moment(fallbackMonth).startOf("month").format("YYYY-MM-DD");
+    FinalToDate = moment(fallbackMonth).endOf("month").format("YYYY-MM-DD");
+
+    // Clear selectedMonth ONLY in fallback case
+    setSelectedMonth(null);
+  }
+
+  // Case 3: Manual date range mode
+  else if (
+    Number(summaryData.isMonthWise) !== 1 &&
+    summaryData.fromDate &&
+    summaryData.toDate
+  ) {
+    FinalFromDate = moment(summaryData.fromDate).format("YYYY-MM-DD");
+    FinalToDate = moment(summaryData.toDate).format("YYYY-MM-DD");
+
+    // Optional: clear selectedMonth if switching to manual
+    setSelectedMonth(null);
+  }
+
+  // Invalid case
+  else {
+    toast.error("Please select a valid date range or month.");
+    return;
+  }
+
+  const data = {
+    fromDate: FinalFromDate,
+    toDate: FinalToDate,
+    summaryType: "rcs,date,user",
+    isMonthWise: Number(summaryData.isMonthWise),
+  };
+
+  try {
+    setIsFetching(true);
+    const res = await fetchSummaryReport(data);
+    setSummaryTableData(res);
+  } catch (e) {
+    toast.error("Something went wrong.");
+    console.error("Summary Search Error:", e);
+  } finally {
+    setIsFetching(false);
+  }
+};
+
+
+
+  // fetchscheduleData
+  // const handleScheduleSearch = async () => {
+  //   const data = {
+  //     startDate: moment(scheduleData.startDate).format("YYYY-MM-DD"),
+  //     endDate: moment(scheduleData.endDate).format("YYYY-MM-DD"),
+  //     templateType: scheduleData.templateType ?? "",
+  //     campaignDataName: scheduleData.campaignName,
+  //     status: scheduleData.status ?? "",
+  //   };
+
+  //   try {
+  //     setIsFetching(true);
+  //     const res = await scheduledata(data);
+
+  //     if (Array.isArray(res) && res.length > 0) {
+  //       setScheduleTableData(res);
+  //     } else {
+  //       setScheduleTableData([]); // Clear table data if no results
+  //       toast.error("No matching records found.");
+  //     }
+  //   } catch (err) {
+  //     toast.error("Failed to fetch schedule data.");
+  //   } finally {
+  //     setIsFetching(false); // Ensure loading state is reset
+  //   }
+  // };
+
+  const handleScheduleSearch = async () => {
+    try {
+      setIsFetching(true);
+      const res = await scheduledata();
+
+      if (Array.isArray(res) && res.length > 0) {
+        setScheduleTableData(res);
+      } else {
+        setScheduleTableData([]);
+      }
+    } catch (err) {
+      console.error("Error fetching schedule data:", err);
+      toast.error("Failed to fetch schedule data.");
+    } finally {
+      setIsFetching(false);
     }
-    const data = {
-      fromDate: formatDate(summaryData.fromDate),
-      toDate: formatDate(summaryData.toDate),
-      // fromDate: "2022-10-01",
-      // toDate: "2025-02-26",
-      summaryType: "rcs,date,user",
-      isMonthWise: Number(summaryData.isMonthWise),
-    };
+  };
+
+  // const handleCancel = async (srno) => {
+  //   if (!srno) {
+  //     console.error("SRNO is undefined. Cannot cancel schedule.");
+  //     toast.error("Failed to cancel schedule. SRNO is missing.");
+  //     return;
+  //   }
+
+  //   try {
+  //     const res = await cancelschedule({
+  //       srno: srno,
+  //       selectedUserId: 0,
+  //     });
+  //     if (res) {
+  //       toast.success("Schedule cancelled successfully");
+
+  //       // Refresh the table by fetching the data again
+  //       handleScheduleSearch();
+  //     } else {
+  //       toast.error("Failed to cancel schedule.");
+  //     }
+  //   } catch (err) {
+  //     console.error("Cancel error:", err);
+  //     toast.error("Failed to cancel schedule.");
+  //   }
+  // };
+
+  const handleCancel = (srno, campaignName) => {
+    // if (!srno || !campaignName) {
+    //   console.error("SRNO is undefined. Cannot cancel campaign.");
+    //   toast.error("Failed to cancel campaign. SRNO is missing.");
+    //   return;
+    // }
+    setVisible(true);
+    setCurrentRow({ srno, campaignName });
+  };
+
+  const handleCancelConfirm = async (srno) => {
+    if (!srno) {
+      toast.error("Cannot cancel the campaign.");
+      return;
+    }
 
     try {
       setIsFetching(true);
-      const res = await fetchSummaryReport(data);
-      setSummaryTableData(res);
-    } catch (e) {
-      // console.log(e);
-      toast.error("Something went wrong.");
+
+      const result = await cancelschedule({ srno: srno });
+
+      if (result) {
+        toast.success("Campaign Cancelled successfully");
+        handleScheduleSearch();
+        setVisible(false);
+      } else {
+        toast.error("Failed to cancel campaign.");
+      }
+    } catch (error) {
+      console.error("Error cancelling campaign:", error);
+      toast.error("Error cancelling campaign");
     } finally {
       setIsFetching(false);
     }
   };
 
-  useEffect(() => {
-    handleSummarySearch();
-  }, [summaryData.isMonthWise]);
+  // useEffect(() => {
+  //   handleSummarySearch();
+  // }, [summaryData.isMonthWise]);
 
   function handleExportBtn() {
     setVisibledialog(true);
@@ -232,7 +379,7 @@ const DeliveryreportRcs = () => {
           >
             <Tab
               label={
-                <span className="flex items-center gap-1 text-sm md:text-base">
+                <span>
                   <GradingOutlinedIcon fontSize="small" /> Campaigns Logs
                 </span>
               }
@@ -250,7 +397,7 @@ const DeliveryreportRcs = () => {
             />
             <Tab
               label={
-                <span className="flex items-center gap-1 text-sm md:text-base">
+                <span>
                   <LibraryBooksOutlinedIcon fontSize="small" /> Day Wise Summary
                 </span>
               }
@@ -266,11 +413,10 @@ const DeliveryreportRcs = () => {
                 },
               }}
             />
-
             <Tab
               label={
-                <span className="flex items-center gap-1 text-sm md:text-base">
-                  <CalendarMonthOutlinedIcon fontSize="small" />  Schedule
+                <span>
+                  <CalendarMonthOutlinedIcon fontSize="small" /> Schedule
                 </span>
               }
               {...a11yProps(2)}
@@ -410,40 +556,82 @@ const DeliveryreportRcs = () => {
           </CustomTabPanel>
           <CustomTabPanel value={value} index={1}>
             <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-              <div className="w-full sm:w-56">
-                <UniversalDatePicker
-                  label="From Date"
-                  id="fromDate"
-                  name="fromDate"
-                  defaultValue={new Date()}
-                  value={setSummaryData?.fromDate}
-                  onChange={(e) => {
-                    setSummaryData({
-                      ...summaryData,
-                      fromDate: e,
-                    });
-                  }}
-                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                  maxDate={new Date()}
-                />
-              </div>
-              <div className="w-full sm:w-56">
-                <UniversalDatePicker
-                  defaultValue={new Date()}
-                  label="To Date"
-                  id="toDate"
-                  name="toDate"
-                  value={setSummaryData.toDate}
-                  onChange={(e) => {
-                    setSummaryData({
-                      ...summaryData,
-                      toDate: e,
-                    });
-                  }}
-                  minDate={new Date().setMonth(new Date().getMonth() - 3)}
-                  maxDate={new Date()}
-                />
-              </div>
+              {!summaryData.isMonthWise ? (
+                <>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      label="From Date"
+                      id="fromDate"
+                      name="fromDate"
+                      defaultValue={new Date()}
+                      value={setSummaryData?.fromDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          fromDate: e,
+                        });
+                      }}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                    />
+                  </div>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      defaultValue={new Date()}
+                      label="To Date"
+                      id="toDate"
+                      name="toDate"
+                      value={setSummaryData.toDate}
+                      onChange={(e) => {
+                        setSummaryData({
+                          ...summaryData,
+                          toDate: e,
+                        });
+                      }}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                    />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageFromDate"
+                      name="manageFromDate"
+                      label="Month"
+                      value={selectedMonth}
+                      views={["month"]}
+                      onChange={(newValue) => setSelectedMonth(newValue)}
+                      placeholder="Pick a month"
+                      tooltipContent="Select the month"
+                      tooltipPlacement="right"
+                      error={!selectedMonth}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid month"
+                    />
+                  </div>
+                  <div className="w-full sm:w-56">
+                    <UniversalDatePicker
+                      id="manageFromDate"
+                      name="manageFromDate"
+                      label="Year"
+                      value={selectedMonth}
+                      views={["year"]}
+                      onChange={(newValue) => setSelectedMonth(newValue)}
+                      placeholder="Pick a year"
+                      tooltipContent="Select the year"
+                      tooltipPlacement="right"
+                      error={!selectedMonth}
+                      minDate={new Date().setMonth(new Date().getMonth() - 3)}
+                      maxDate={new Date()}
+                      errorText="Please select a valid year"
+                    />
+                  </div>
+                </>
+              )}
+
               <div className="flex items-center justify-center gap-2">
                 <Checkbox
                   id="isMonthWise"
@@ -480,11 +668,10 @@ const DeliveryreportRcs = () => {
               />
             </div>
           </CustomTabPanel>
-
           <CustomTabPanel value={value} index={2}>
             <div className="w-full">
               <div className="flex flex-wrap items-end w-full gap-2 mb-5">
-                <div className="w-full sm:w-56">
+                {/* <div className="w-full sm:w-56">
                   <UniversalDatePicker
                     label="Created On"
                     id="created"
@@ -504,9 +691,9 @@ const DeliveryreportRcs = () => {
                 <div className="w-full sm:w-56">
                   <InputField
                     label="Campaign Name"
-                    id="campaignName"
-                    name="campaignName"
-                    placeholder="Enter Campaign Name"
+                    id="campaignNameSchedule"
+                    name="campaignNameSchedule"
+                    placeholder="Enter campaign name"
                     value={scheduleData.campaignName}
                     onChange={(e) => {
                       setScheduleData({
@@ -534,17 +721,10 @@ const DeliveryreportRcs = () => {
                       });
                     }}
                   />
-                </div>
-                <div className="w-full sm:w-56">
-                <InputField 
-                label="Status"
-                placeholder="Schedule"
-                />
-                  
-                </div>
+                </div> */}
                 <div className="w-max-content">
                   <UniversalButton
-                    label={isFetching ? "Searching..." : "Search"}
+                    label={isFetching ? "Refreshing..." : "Refresh"}
                     id="campaignsearch"
                     name="campaignsearch"
                     variant="primary"
@@ -553,7 +733,7 @@ const DeliveryreportRcs = () => {
                     disabled={isFetching}
                   />
                 </div>
-                <div className="w-max-content">
+                {/* <div className="w-max-content">
                   <UniversalButton
                     id="manageCampaignExportBtn"
                     name="manageCampaignExportBtn"
@@ -566,19 +746,81 @@ const DeliveryreportRcs = () => {
                     onClick={handleExportBtn}
                     variant="primary"
                   />
-                </div>
+                </div> */}
               </div>
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
               <CampaignScheduleTable
                 id="RCSScheduleTable"
                 name="RCSScheduleTable"
-               data={scheduleData} />
+                data={scheduleTableData}
+                onCancel={handleCancel}
+              />
+            </div> */}
 
-           
-            </div>
+            {isFetching ? (
+              <div className="">
+                <UniversalSkeleton height="35rem" width="100%" />
+              </div>
+            ) : (
+              <div className="w-full">
+                <CampaignScheduleTable
+                  id="RCSScheduleTable"
+                  name="RCSScheduleTable"
+                  data={scheduleTableData}
+                  onCancel={handleCancel}
+                />
+              </div>
+            )}
+
+            {/* cancel campaign Start */}
+            <Dialog
+              header={"Confirm Cancel"}
+              visible={visible}
+              style={{ width: "27rem" }}
+              onHide={() => setVisible(false)}
+              draggable={false}
+            >
+              <div className="flex items-center justify-center">
+                <CancelOutlinedIcon
+                  sx={{
+                    fontSize: 64,
+                    color: "#ff3f3f",
+                  }}
+                />
+              </div>
+              <div className="p-4 text-center">
+                <p className="text-[1.1rem] font-semibold text-gray-700">
+                  Are you sure you want to cancel the campaign:
+                  <span className="text-green-500">
+                    "{currentRow?.campaignName}"
+                  </span>
+                  ?
+                </p>
+                <p className="mt-2 text-sm text-gray-500">
+                  This action is irreversible.
+                </p>
+              </div>
+
+              <div className="flex justify-center gap-4 mt-2">
+                {!isFetching && (
+                  <UniversalButton
+                    label="Cancel"
+                    style={{
+                      backgroundColor: "#090909",
+                    }}
+                    onClick={() => setVisible(false)}
+                  />
+                )}
+                <UniversalButton
+                  label={isFetching ? "Deleting..." : "Delete"}
+                  style={{}}
+                  onClick={() => handleCancelConfirm(currentRow.srno)}
+                  disabled={isFetching}
+                />
+              </div>
+            </Dialog>
           </CustomTabPanel>
-
         </Box>
       </div>
 

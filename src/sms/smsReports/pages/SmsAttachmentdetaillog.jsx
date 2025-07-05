@@ -7,6 +7,7 @@ import toast from "react-hot-toast";
 import { fetchDetailsAttachment } from "../../../apis/sms/sms";
 import { useLocation, useNavigate } from "react-router-dom";
 import UniversalSkeleton from "../../../whatsapp/components/UniversalSkeleton";
+import moment from "moment";
 
 const SmsAttachmentdetaillog = () => {
   const [isFetching, setIsFetching] = useState(false);
@@ -27,7 +28,15 @@ const SmsAttachmentdetaillog = () => {
 
       setColumns([
         { field: "sn", headerName: "S.No", flex: 0, minWidth: 50 },
-        { field: "insert_time", headerName: "Date", flex: 1, minWidth: 50 },
+        // { field: "insert_time", headerName: "Date", flex: 1, minWidth: 50 },
+        {
+          field: "insert_time",
+          headerName: "Date",
+          flex: 1,
+          minWidth: 50,
+          renderCell: (params) =>
+            moment(params.row.insert_time).format("DD-MM-YYYY HH:mm"),
+        },
         { field: "mobile_no", headerName: "Mobile No.", flex: 1, minWidth: 80 },
         {
           field: "attachment_type",
@@ -40,16 +49,18 @@ const SmsAttachmentdetaillog = () => {
           headerName: "Click Time",
           flex: 1,
           minWidth: 150,
+          renderCell: (params) =>
+            moment(params.row.click_time).format("DD-MM-YYYY HH:mm"),
         },
         { field: "info", headerName: "Info", flex: 1, minWidth: 410 },
       ]);
       setRows(
         Array.isArray(res)
           ? res.map((item, index) => ({
-              sn: index + 1,
-              id: index + 1,
-              ...item,
-            }))
+            sn: index + 1,
+            id: index + 1,
+            ...item,
+          }))
           : []
       );
     } catch (e) {

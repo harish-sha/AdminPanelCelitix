@@ -95,7 +95,12 @@ const Header = () => {
         <>
 
             {/* <div className="bg-gradient-to-r from-blue-800 to-purple-600 text-white text-sm md:px-3 px-1 py-2 flex justify-between items-center flex-wrap"> */}
-            <div className="bg-[#9B44B6] text-white text-sm md:px-3 px-1 pt-1 pb-0 flex justify-between items-center flex-wrap">
+            <motion.div
+                initial={{ y: -100, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 0.4, ease: "easeOut" }}
+
+                className="bg-[#9B44B6] text-white text-sm md:px-3 px-1 pt-1 pb-0 flex justify-between items-center flex-wrap">
                 {/* Email Section */}
                 <div className="flex items-center gap-1 md:gap-2 mb-2">
                     <FaEnvelope />
@@ -107,14 +112,11 @@ const Header = () => {
                     <FaPhoneAlt />
                     <span>+91 968-000-6460</span>
                 </div>
-            </div>
-            <motion.div
+            </motion.div>
+            {/* <motion.div
                 initial={{ y: -100, opacity: 0 }}
-                // animate={{ y: 0, opacity: 1 }}
                 animate={{ y: scrolled ? 0 : 40, opacity: 1 }}
                 transition={{ duration: 0.4, ease: "easeOut" }}
-                // className={` lg:px-12 md:px-10 px-0 fixed w-full z-50  transition-all duration-500  ease-in-out ${scrolled ? 'top-0' : 'top-10'
-                //     }`}
                 className="lg:px-12 md:px-10 px-0 fixed w-full z-50 top-0 transition-all duration-500 ease-in-out"
             >
                 <div className="flex items-center justify-between px-4 md:px-6 py-4 bg-white md:rounded-2xl shadow-md relative">
@@ -129,8 +131,6 @@ const Header = () => {
                     </div>
 
                     <nav className="hidden lg:flex flex-1 justify-center gap-1 text-sm font-medium text-black items-center">
-                        {/* <div className="flex items-center text-lg gap-2 p-2 rounded-md transition-all duration-300 cursor-pointer">Home</div> */}
-                        {/* Cpaas */}
                         <div className="relative group cursor-pointer">
                             <Link href="#" to={`${WEBSITE_BASEURL}/cpaas-solutions`} target='_blank'>
                                 <div className="flex items-center text-lg gap-2 p-2 popfh rounded-md transition-all duration-300 cursor-pointer">
@@ -148,7 +148,7 @@ const Header = () => {
                                 <div className="absolute -left-40 top-full grid grid-cols-3 lg:grid-cols-3 md:grid-cols-3 gap-6 bg-white text-black border border-gray-200 shadow-lg p-6 rounded-md w-[800px] ">
 
                                     <div className="w-full bg-white border border-gray-200 rounded-lg shadow-md p-6 text-gray-800 hover:shadow-lg transition duration-300 ease-in-out">
-                                        {/* Icon or Emoji */}
+
                                         <div className="flex items-center gap-2 mb-4">
                                             <div className="w-10 h-10 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full text-xl font-bold">
                                                 <img src={Channels} alt="Channels" className="w-6 h-6" />
@@ -160,12 +160,7 @@ const Header = () => {
                                             Explore our omnichannel communication solutions
                                         </p>
 
-                                        {/* <a
-                           href="#"
-                        className="text-indigo-600 text-sm font-semibold hover:underline"
-                                 >
-                              Overview &rarr;
-                                </a> */}
+
 
                                         <Link to={`${WEBSITE_BASEURL}/cpaas-solutions`}>
                                             <LogBtn
@@ -215,28 +210,28 @@ const Header = () => {
                             </div>
                         </div>
 
-                        {/* Industries */}
+
                         <div className="relative group cursor-pointer">
-                            {/* Trigger */}
+
                             <div className="flex items-center text-lg gap-2 popfh p-2 rounded-md transition-all duration-300">
                                 Industries
                                 <MdKeyboardArrowDown className="block group-hover:hidden transition-transform duration-300" />
                                 <MdKeyboardArrowUp className="hidden group-hover:block transition-transform duration-300" />
                             </div>
 
-                            {/* Dropdown Wrapper */}
+
                             <div className="absolute left-1/2 top-9 mt-2 transform -translate-x-1/2 opacity-0 scale-95 
           pointer-events-none group-hover:pointer-events-auto group-hover:opacity-100 
           group-hover:scale-100 transition-all duration-500 ease-out z-50 ">
 
-                                {/* Arrow */}
+
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 rotate-45 bg-white h-4 w-4 border-t border-l border-gray-200  z-[1]"></div>
 
 
                                 <div className="absolute -left-40 top-full grid grid-cols-3 lg:grid-cols-3 md:grid-cols-3 gap-6 bg-white text-black border border-gray-200 shadow-lg p-6 rounded-md w-[800px] ">
 
                                     <div className="w-full bg-white border border-gray-200 rounded-lg shadow-md p-6 text-gray-800 hover:shadow-lg transition duration-300 ease-in-out">
-                                        {/* Icon or Emoji */}
+
                                         <div className="flex items-center gap-2 mb-4">
                                             <div className="w-10 h-10 flex items-center justify-center bg-indigo-100 text-indigo-600 rounded-full text-xl font-bold">
                                                 <img src={Industries} alt="Industries" className="w-6 h-6" />
@@ -248,20 +243,7 @@ const Header = () => {
                                             Learn how Celitix can help companies in various industries
                                         </p>
 
-                                        {/* <a
-         href="#"
-                className="text-indigo-600 text-sm font-semibold hover:underline"
-               >
-            Overview &rarr;
-              </a> */}
 
-                                        {/* <Link to="/cpaas-solutions">
-                      <LogBtn
-                        label="Overview →"
-                        variant="brutal"
-                        className="bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] mb-2"
-                      />
-                    </Link> */}
 
                                     </div>
                                     <div className="w-full grid grid-cols-1 popfh sm:grid-cols-1 md:grid-cols-1 gap-1 p-1">
@@ -300,56 +282,26 @@ const Header = () => {
 
 
 
-                                {/* Menu */}
-                                {/* <div className="bg-white text-black  border border-gray-200 rounded-md p-2 grid grid-cols-1 gap-2 w-48">
-                  <Link href="#" to="/retail-and-ecommerce">
-                    <ResourcesItem title="ECommerce" />
-                  </Link>
-                  <Link href="#" to="/healthcare">
-                    <ResourcesItem title="Healthcare" />
-                  </Link>
-                  <Link href="#" to="/financial-services">
-                    <ResourcesItem title="Finance" />
-                  </Link>
-                  <Link href="#" to="/education-and-edtech">
-                    <ResourcesItem title="Education" />
-                  </Link>
-                  <Link href="#" to="/travel-and-tourism">
-                    <ResourcesItem title="Tourism" />
-                  </Link>
-                  <Link href="#" to="/construction-and-real-estate">
-                    <ResourcesItem title="Real Estate" />
-                  </Link>
-                  <Link href="#" to="/food-and-beverages">
-                    <ResourcesItem title="Food Production" />
-                  </Link>
-                  <Link href="#" to="/professional-services">
-                    <ResourcesItem title="Service-Based" />
-                  </Link>
-                  <Link href="#" to="/tech-startups">
-                    <ResourcesItem title="Tech Startups" />
-                  </Link>
-                </div> */}
+
                             </div>
                         </div>
 
-                        {/* Company */}
+
                         <div className="relative group cursor-pointer">
-                            {/* Trigger */}
+
                             <div className="flex items-center popfh text-lg gap-2 p-2 rounded-md transition-all duration-300">
                                 Company
                                 <MdKeyboardArrowDown className="block group-hover:hidden transition-transform duration-300" />
                                 <MdKeyboardArrowUp className="hidden group-hover:block transition-transform duration-300" />
                             </div>
 
-                            {/* Dropdown */}
                             <div className="absolute left-1/2 top-9 mt-2 transform -translate-x-1/2 z-50
               opacity-0 scale-95 pointer-events-none group-hover:opacity-100 group-hover:scale-100 group-hover:pointer-events-auto 
               transition-all duration-500 ease-out border border-gray-200 p-2 rounded-md  bg-white w-56 ">
-                                {/* Arrow */}
+
                                 <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-2 rotate-45 bg-white h-4 w-4 border-t border-l border-gray-200  z-[1]" />
 
-                                {/* Dropdown Box */}
+
                                 <div className="bg-white border border-gray-200 grid grid-cols-2 rounded-lg shadow-md py-3 px-0 flex-col">
                                     <Link href="#" to={`${WEBSITE_BASEURL}/about-us`}>
                                         <div className="flex flex-col popfh items-center justify-center border-r border-gray-700 m-0">
@@ -372,13 +324,12 @@ const Header = () => {
                                         </div>
                                     </Link>
 
-                                    {/* <ResourcesItem title="About Us" desc="About our team" />
-                    <ResourcesItem title="Careers" desc="Who we work with" /> */}
+
                                 </div>
                             </div>
                         </div>
 
-                        {/* Pricing  */}
+
                         <div className="relative group cursor-pointer">
                             <Link href="#" to={`${WEBSITE_BASEURL}/pricing`}>
                                 <div className="flex items-center text-lg popfh gap-2 p-2 rounded-md transition-all duration-300">
@@ -387,13 +338,10 @@ const Header = () => {
                                     <MdKeyboardArrowUp className="hidden group-hover:block transition-transform duration-300" />
                                 </div>
                             </Link>
-                            {/* <div className="absolute left-0 top-full hidden group-hover:grid grid-cols-1 bg-white shadow-lg p-4 rounded-md w-56 z-50">
-                    <ResourcesItem title="Plans" desc="Compare features" />
-                    <ResourcesItem title="Custom Quotes" desc="Enterprise solutions" />
-                  </div> */}
+
                         </div>
 
-                        {/* Resources */}
+
                         <div className="relative group cursor-pointer">
                             <div className="flex items-center text-lg gap-2 p-2 popfh rounded-md transition-all duration-300">
                                 Resources
@@ -408,8 +356,7 @@ const Header = () => {
                                     <Link href="#" to={`${WEBSITE_BASEURL}/blog/`}>
                                         <ResourcesItem title="Blog" desc="Learn & Explore" />
                                     </Link>
-                                    {/* <ResourcesItem title="Case Studies" desc="How Celitix Helps" /> */}
-                                    {/* Add more if needed */}
+
                                 </div>
                             </div>
                         </div>
@@ -420,32 +367,15 @@ const Header = () => {
                             <LogBtn label="Book Demo" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
               hover:shadow-[4px_4px_0px_#9B44B6] '/>
                         </Link>
-                        {/* <a
-                            href="https://app.celitix.com/login"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
-                            <LogBtn
-                                label="Login"
-                                variant="brutal"
-                                className="bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] "
-                            />
-                        </a> */}
 
-                        {/* <button className="px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
-                  Book Demo
-                </button>
-                <button className="px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
-                  Login
-                </button> */}
+
+
                     </div>
 
-                    {/* <div className="md:hidden text-2xl cursor-pointer" onClick={toggleMenu}>
-                {mobileMenuOpen ? <FaTimes /> : <FaBars />}
-              </div> */}
+
                     <div className="lg:hidden text-2xl cursor-pointer">
                         <label className="hamburger">
-                            {/* Controlled by your mobileMenuOpen state */}
+
                             <input
                                 type="checkbox"
                                 checked={mobileMenuOpen}
@@ -585,10 +515,8 @@ const Header = () => {
                                 Pricing <MdKeyboardArrowDown />
                             </div>
                         </Link>
-                        {/* <div className="flex items-center text-lg gap-2 p-2 rounded-md transition-all duration-300 cursor-pointer">
-                Resources <MdKeyboardArrowDown />
-                  </div> */}
-                        {/* <div className="cursor-pointer">Resources</div> */}
+
+
                         <div
                             className="relative group cursor-pointer"
                             onClick={() => {
@@ -608,7 +536,7 @@ const Header = () => {
                                 <Link href="#" to={`${WEBSITE_BASEURL}/blog/`}>
                                     <ResourcesItem title="blog" desc="Learn & Explore" />
                                 </Link>
-                                {/* <ResourcesItem title="Case Studies" desc="How Celitix Helps" /> */}
+
                             </div>
 
                         </div>
@@ -617,28 +545,11 @@ const Header = () => {
                                 <LogBtn label="Book Demo" variant="brutal" className='bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black 
               hover:shadow-[4px_4px_0px_#9B44B6] '/>
                             </Link>
-                            {/* <a
-                                href="https://app.celitix.com/login"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <LogBtn
-                                    label="Login"
-                                    variant="brutal"
-                                    className="bg-[#9B44B6] border-[#9B44B6] text-white px-2 py-1 font-semibold hover:bg-white hover:text-black hover:shadow-[4px_4px_0px_#9B44B6] "
-                                />
-                            </a> */}
 
-                            {/* <button className="w-full px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
-                    Book Demo
-                  </button>
-                  <button className="w-full px-5 py-2 rounded-full text-white font-medium bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-90 transition">
-                    Login
-                  </button> */}
                         </div>
                     </div>
                 )}
-            </motion.div>
+            </motion.div> */}
         </>
     );
 };
