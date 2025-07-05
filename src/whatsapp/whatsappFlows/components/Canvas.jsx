@@ -20,7 +20,6 @@ import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import { deleteFlowItem } from "../redux/features/FlowSlice";
 import IfElseBlock from "./IfElseBlock";
 
-
 const Canvas = ({
   items,
   setItems,
@@ -47,6 +46,7 @@ const Canvas = ({
   createTab,
   setCreateTab,
   menuRefs,
+  selectedItem
 }) => {
   const [{ isOver }, drop] = useDrop(() => ({
     accept: [
@@ -149,12 +149,12 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem["error-message"] ||
-            targetItem["input-type"] ||
-            targetItem["min-chars"] ||
-            targetItem["max-chars"] ||
-            targetItem.required ? (
+          targetItem["helper-text"] ||
+          targetItem["error-message"] ||
+          targetItem["input-type"] ||
+          targetItem["min-chars"] ||
+          targetItem["max-chars"] ||
+          targetItem.required ? (
             <div className="text-sm p-2 rounded-md bg-blue-50 border border-gray-300">
               <div className="flex flex-col items-start space-y-1.5">
                 {targetItem.label && (
@@ -222,8 +222,8 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem.required ? (
+          targetItem["helper-text"] ||
+          targetItem.required ? (
             <div className="p-1.5  rounded-md space-y-1.5 bg-blue-50 border shadow-sm">
               {targetItem.label && (
                 <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -281,8 +281,9 @@ const Canvas = ({
 
       return (
         <div
-          className={`p-3 rounded-md border shadow-sm ${isEmptyContent ? "bg-white" : "bg-blue-50"
-            }`}
+          className={`p-3 rounded-md border shadow-sm ${
+            isEmptyContent ? "bg-white" : "bg-blue-50"
+          }`}
         >
           <div
             className="flex-1 overflow-y-auto prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
@@ -314,7 +315,7 @@ const Canvas = ({
     }
 
     // For footerbutton: look under footer
-    // if (item.type === "footerbutton") {  
+    // if (item.type === "footerbutton") {
     //   const footer = targetItem.footerData.footer_1
     //   const hasContent =
     //     footer.label ||
@@ -355,7 +356,6 @@ const Canvas = ({
     //             </div>
     //           )}
 
-
     //           {footer.on_click_action && (
     //             <div className="mt-1">
     //               <span className="font-semibold">Next Action: </span>
@@ -374,51 +374,47 @@ const Canvas = ({
     //   );
     // }
 
-
     if (item.type === "footerbutton") {
-  const footer = targetItem.footerData?.footer_1 || {};
+      const footer = targetItem.footer?.footer_1 || {};
 
-  const hasContent =
-    footer.label ||
-    footer.center_caption ||
-    footer.on_click_action;
+      const hasContent =
+        footer.label || footer.center_caption || footer.on_click_action;
 
-  return (
-    <div className="bg-white">
-      {hasContent ? (
-        <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
-          {footer.label && (
-            <div>
-              <span className="font-semibold">Label: </span>
-              {footer.label}
+      return (
+        <div className="bg-white">
+          {hasContent ? (
+            <div className="p-3 rounded-md bg-blue-50 border shadow-sm">
+              {footer.label && (
+                <div>
+                  <span className="font-semibold">Label: </span>
+                  {footer.label}
+                </div>
+              )}
+
+              {footer.center_caption && (
+                <div className="mt-1">
+                  <span className="font-semibold">Center-caption: </span>
+                  {footer.center_caption}
+                </div>
+              )}
+
+              {footer.on_click_action && (
+                <div className="mt-1">
+                  <span className="font-semibold">Next Action: </span>
+                  {footer.on_click_action}
+                </div>
+              )}
             </div>
-          )}
-
-          {footer.center_caption && (
-            <div className="mt-1">
-              <span className="font-semibold">Center-caption: </span>
-              {footer.center_caption}
-            </div>
-          )}
-
-          {footer.on_click_action && (
-            <div className="mt-1">
-              <span className="font-semibold">Next Action: </span>
-              {footer.on_click_action}
-            </div>
+          ) : (
+            <span className="text-gray-400 italic">
+              Please fill this field by clicking the{" "}
+              <span className="text-violet-600 font-medium">edit icon</span> or
+              remove this block.
+            </span>
           )}
         </div>
-      ) : (
-        <span className="text-gray-400 italic">
-          Please fill this field by clicking the{" "}
-          <span className="text-violet-600 font-medium">edit icon</span> or
-          remove this block.
-        </span>
-      )}
-    </div>
-  );
-}
-
+      );
+    }
 
     if (item.type === "radioButton") {
       const options = targetItem["data-source"] || [];
@@ -745,8 +741,8 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem.required ||
-            targetItem["on-click-action"] ? (
+          targetItem.required ||
+          targetItem["on-click-action"] ? (
             <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
               {targetItem.label && (
                 <div className="mb-1">
@@ -784,8 +780,8 @@ const Canvas = ({
       return (
         <div className=" bg-white">
           {targetItem.src ||
-            targetItem["alt-text"] ||
-            targetItem["scale-type"] ? (
+          targetItem["alt-text"] ||
+          targetItem["scale-type"] ? (
             <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm flex items-center gap-5">
               {targetItem.src && (
                 <img
@@ -829,9 +825,9 @@ const Canvas = ({
       return (
         <div className=" bg-white">
           {targetItem.label ||
-            targetItem.description ||
-            targetItem["min-uploaded-documents"] ||
-            targetItem["max-uploaded-documents"] ? (
+          targetItem.description ||
+          targetItem["min-uploaded-documents"] ||
+          targetItem["max-uploaded-documents"] ? (
             <div className="p-3 border rounded-md shadow-sm bg-blue-50">
               {targetItem.label && (
                 <label className="font-semibold">
@@ -875,9 +871,9 @@ const Canvas = ({
       return (
         <div className=" bg-white ">
           {targetItem.label ||
-            targetItem.description ||
-            targetItem["min-uploaded-photos"] ||
-            targetItem["max-uploaded-photos"] ? (
+          targetItem.description ||
+          targetItem["min-uploaded-photos"] ||
+          targetItem["max-uploaded-photos"] ? (
             <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
               {" "}
               {targetItem.label && (
@@ -950,10 +946,10 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem["min-date"] ||
-            targetItem["max-date"] ||
-            targetItem["unavailable-dates"] ? (
+          targetItem["helper-text"] ||
+          targetItem["min-date"] ||
+          targetItem["max-date"] ||
+          targetItem["unavailable-dates"] ? (
             <div className=" bg-blue-50 px-4 py-2 rounded-md shadow-sm  border w-full">
               {targetItem.label && (
                 <label className="mb-1">
@@ -1202,9 +1198,13 @@ const Canvas = ({
 
     const [selectedItem, setSelectedItem] = useState(null);
     const [editDialogVisible, setEditDialogVisible] = useState(false);
+    const [ifIndex, setIfIndex] = useState()
 
     const handleEdit = (index, item) => {
-      setSelectedItem({ ...item, index, caseKey: item.caseKey }); // ✅ force a new reference
+      console.log("index", index)
+      console.log("item", item)
+      setIfIndex(index)
+      setSelectedItem({ ...item, index }); // ✅ force a new reference
       setEditDialogVisible(true); // ✅ show the edit panel/modal
     };
 
@@ -1215,6 +1215,7 @@ const Canvas = ({
       "helper_text"
     );
 
+    
     return (
       // <motion.div
       //   key={item.id}
@@ -1224,6 +1225,7 @@ const Canvas = ({
       //   exit={{ opacity: 0, x: -100 }}
       //   transition={{ type: "spring", stiffness: 200, damping: 25 }}
       // >
+      
       <Paper
         // ref={drag}
         ref={ref}
@@ -1235,10 +1237,11 @@ const Canvas = ({
           backgroundColor: getBackgroundColor(item.type),
           borderRadius: "10px",
         }}
-        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${item.status === 0
+        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${
+          item.status === 0
             ? "border-2 border-red-300"
             : "border-2 border-green-300"
-          }`}
+        }`}
       >
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-700 tracking-wider">
@@ -1250,7 +1253,9 @@ const Canvas = ({
               onClick={() => {
                 if (item.type === "ifelse") {
                   setOpenIfElse(true);
-                } else {
+                  handleEdit(index, item)  
+                  // onEdit(index, item);   
+                } else {  
                   onEdit(index, item);
                 }
               }}
@@ -1299,11 +1304,16 @@ const Canvas = ({
             </span>
           )}
         </div>
+        {openIfElse && (
+        <IfElseBlock
+          openIfElse={openIfElse}
+          setOpenIfElse={setOpenIfElse}
+          onSave={onSave}
+          selectedItem={selectedItem}
+        />
+      )}
       </Paper>
       // </motion.div>
-
-
-
     );
   });
 
@@ -1765,10 +1775,7 @@ const Canvas = ({
         </AnimatePresence>
       </div>
 
-      {openIfElse && (
-        <IfElseBlock openIfElse={openIfElse} setOpenIfElse={setOpenIfElse} onSave={onSave} />
-      )}
-
+      
     </div>
   );
 };

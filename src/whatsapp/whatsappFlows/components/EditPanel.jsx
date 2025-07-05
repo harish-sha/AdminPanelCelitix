@@ -39,7 +39,6 @@ import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
 import { useSelector } from "react-redux";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 
-
 const EditPanel = ({
   selectedItem,
   onClose,
@@ -73,6 +72,8 @@ const EditPanel = ({
   const [isToggled, setIsToggled] = useState(false);
   // const [file, setFile] = useState("")
   const [uploadPhoto, setUploadPhoto] = useState("");
+
+  console.log("selectedItem", selectedItem);
 
   useEffect(() => {
     if (selectedItem) {
@@ -795,29 +796,29 @@ const EditPanel = ({
     const minDates = moment(minDate);
     const maxDates = moment(maxDate);
 
-    if (
-      minDates.isValid() &&
-      maxDates.isValid() &&
-      maxDates.isBefore(minDates)
-    ) {
-      toast.error("Max date cannot be earlier than Min date");
-      return;
-    }
+    // if (
+    //   minDates.isValid() &&
+    //   maxDates.isValid() &&
+    //   maxDates.isBefore(minDates)
+    // ) {
+    //   toast.error("Max date cannot be earlier than Min date");
+    //   return;
+    // }
 
-    const validUnavailableDates = unavailableDate.filter((date) => {
-      const d = moment(date);
-      return (
-        d.isValid() &&
-        (!minDates.isValid() || d.isSameOrAfter(minDates, "day")) &&
-        (!maxDates.isValid() || d.isSameOrBefore(maxDates, "day"))
-      );
-    });
+    // const validUnavailableDates = unavailableDate.filter((date) => {
+    //   const d = moment(date);
+    //   return (
+    //     d.isValid() &&
+    //     (!minDates.isValid() || d.isSameOrAfter(minDates, "day")) &&
+    //     (!maxDates.isValid() || d.isSameOrBefore(maxDates, "day"))
+    //   );
+    // });
 
     const payload = {
       label: dateLable,
       "min-date": formatDateToString(minDate),
       "max-date": formatDateToString(maxDate),
-      "unavailable-dates": formatArrayToDates(validUnavailableDates),
+      "unavailable-dates": formatArrayToDates(unavailableDate),
       "helper-text": datePlaceholder,
     };
 
@@ -1264,7 +1265,6 @@ const EditPanel = ({
   //       "complete"
   //     );
 
-
   //     setCaption(selectedItem.caption || "center");
 
   //     // Derive caption type from data
@@ -1349,7 +1349,6 @@ const EditPanel = ({
   //   onClose();
   // };
 
-
   const [footerButtonLabel, setFooterButtonLabel] = useState("");
   // const [leftCaption, setLeftCaption] = useState("");
   // const [rightCaption, setRightCaption] = useState("");
@@ -1402,7 +1401,6 @@ const EditPanel = ({
     onClose();
     console.log("Final footer data:", updatedData);
   };
-
 
   // footertype
 
@@ -4886,6 +4884,7 @@ const EditPanel = ({
               </>
             )} */}
 
+            {/* Switch Component Start */}
             {selectedItem?.type === "switch" && (
               <>
                 <SwitchFlow
@@ -4900,9 +4899,9 @@ const EditPanel = ({
                 />
               </>
             )}
+            {/* Switch Component End */}
 
-
-            {/* Editable option for date In */}
+            {/* Date Componenet Start */}
             {selectedItem?.type === "date" && (
               <div className="space-y-3 mt-3">
                 <InputField
@@ -4973,8 +4972,10 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* Date Componenet End */}
 
-            {/* Editable option for calendar In */}
+
+            {/* Calendar Componenet Start */}
             {selectedItem?.type === "calendar" && (
               <div className="space-y-3 mt-3">
                 <InputField
@@ -5020,7 +5021,6 @@ const EditPanel = ({
                   tooltipPlacement="right"
                   value={minCalendarDate}
                   onChange={(value) => setMinCalendarDate(value)}
-                  PopperProps={{ "data-ignore-click-outside": true }}
                 />
 
                 <UniversalDatePicker
@@ -5031,7 +5031,6 @@ const EditPanel = ({
                   onChange={(value) => setMaxCalendarDate(value)}
                   minDate={minCalendarDate}
                   disabled={!minCalendarDate}
-                  PopperProps={{ "data-ignore-click-outside": true }}
                 />
 
                 <UniversalDatePicker
@@ -5041,7 +5040,6 @@ const EditPanel = ({
                   value={null}
                   disabled={!minCalendarDate || !maxCalendarDate}
                   onChange={handleAddCalendarUnavailableDate}
-                  PopperProps={{ "data-ignore-click-outside": true }}
                   minDate={minCalendarDate}
                   maxDate={maxCalendarDate}
                 />
@@ -5116,47 +5114,40 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* Calendar Componenet End */}
+
 
             {/* {selectedItem?.type === "userdetail" && (
-           <>
-            <InputField
-              placeholder="User Details"
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-            />
-            <Switch
-              color={isToggled ? "primary" : "secondary"}
-              onClick={handleToggle}
-              // {isToggled ? "ON" : "OFF"}
-            />
-            {isToggled && (
-              <AnimatedDropdown
-                value={isToggled}
-                onChange={(value) => handleToggle(value)}
-                fullWidth
-                sx={{ marginTop: 2 }}
-                // visible={isToggled === isToggled}
-                options={[
-                  { value: "A", label: "A" },
-                  { value: "B", label: "B" },
-                  { value: "C", label: "C" },
-                  { value: "D", label: "D" },
-                ]}
-              />
-            )}
-          </>
-        )} */}
+              <>
+                <InputField
+                  placeholder="User Details"
+                  value={value}
+                  onChange={(e) => setValue(e.target.value)}
+                />
+                <Switch
+                  color={isToggled ? "primary" : "secondary"}
+                  onClick={handleToggle}
+                // {isToggled ? "ON" : "OFF"}
+                />
+                {isToggled && (
+                  <AnimatedDropdown
+                    value={isToggled}
+                    onChange={(value) => handleToggle(value)}
+                    fullWidth
+                    sx={{ marginTop: 2 }}
+                    // visible={isToggled === isToggled}
+                    options={[
+                      { value: "A", label: "A" },
+                      { value: "B", label: "B" },
+                      { value: "C", label: "C" },
+                      { value: "D", label: "D" },
+                    ]}
+                  />
+                )}
+              </>
+            )} */}
 
-            {/* Save Button */}
-            {/* <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <UniversalButton
-            onClick={handleSave}
-            label="Save"
-            className="btn-flow2"
-          >
-            Save
-          </UniversalButton>
-        </Box> */}
+
           </motion.div>
         </ClickAwayListener>
       </AnimatePresence>

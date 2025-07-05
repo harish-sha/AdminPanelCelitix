@@ -5,168 +5,12 @@ import { Dialog } from "primereact/dialog";
 import { useDispatch } from "react-redux";
 import { updateFlowItem } from "../redux/features/FlowSlice";
 import InputField from "../../components/InputField";
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import toast from "react-hot-toast";
 
-const componentsOptions = [
-  { label: "heading", value: "heading" },
-  { label: "subHeading", value: "subHeading" },
-  { label: "textBody", value: "textBody" },
-  { label: "textCaption", value: "textCaption" },
-  { label: "textInput", value: "textInput" },
-  { label: "textArea", value: "textArea" },
-  { label: "checkBox", value: "checkBox" },
-  { label: "radioButton", value: "radioButton" },
-  { label: "chipSelector", value: "chipSelector" },
-  { label: "dropDown", value: "dropDown" },
-  { label: "datePicker", value: "date" },
-  { label: "embeddedlink", value: "embeddedlink" },
-  { label: "image", value: "image" },
-  { label: "optin", value: "optin" },
-  { label: "switch", value: "switch" },
-  { label: "ifelse", value: "ifelse" },
-  { label: "footer", value: "footerbutton" },
-];
-
-const conditionOptions = [
-  { label: "Equal to", value: "==" },
-  { label: "Not equal to", value: "!=" },
-  { label: "AND", value: "&&" },
-  { label: "OR", value: "||" },
-  { label: "NOT", value: "!" },
-];
-
-// const IfElseBlock = ({
-//   level = 1,
-//   maxLevel = 3,
-//   path = ["root"],
-//   onUpdateTree = () => { },
-//   handleIfElseSave,
-//   selectedCondition,
-//   setSelectedCondition,
-//   selectedThenComponent,
-//   setSelectedThenComponent,
-//   selectedElseComponent,
-//   setSelectedElseComponent
-// }) => {
-//   // const [selectedThenComponent, setSelectedThenComponent] = useState("");
-//   // const [selectedElseComponent, setSelectedElseComponent] = useState("");
-//   const [showNestedThen, setShowNestedThen] = useState(false);
-//   const [showNestedElse, setShowNestedElse] = useState(false);
-
-//   console.log("selectedThenComponent", selectedThenComponent)
-//   console.log("selectedElseComponent", selectedElseComponent)
-
-//   // Update the tree whenever selections change
-//   useEffect(() => {
-//     onUpdateTree(path, {
-//       condition: selectedCondition,
-//       then: selectedThenComponent,
-//       else: selectedElseComponent,
-//     });
-//   }, [selectedCondition, selectedThenComponent, selectedElseComponent]);
-
-//   const filteredOptions =
-//     level === maxLevel
-//       ? componentsOptions.filter((opt) => opt.value !== "ifelse")
-//       : componentsOptions;
-
-//   return (
-//     <div className="border rounded p-4 mt-4 bg-gray-50 shadow-md space-y-4">
-//       <p className="text-sm font-bold text-gray-700">If/Else Block - Level {level}</p>
-
-//       {/* Condition Dropdown */}
-//       <AnimatedDropdown
-//         label="If-Condition"
-//         tooltipContent="Select If-Condition"
-//         tooltipPlacement="right"
-//         value={selectedCondition}
-//         options={conditionOptions}
-//         onChange={setSelectedCondition}
-//       />
-
-//       {/* THEN Branch */}
-//       <div>
-//         <AnimatedDropdown
-//           label="Then Branch Component"
-//           tooltipContent="Select Then Branch"
-//           tooltipPlacement="right"
-//           value={selectedThenComponent}
-//           options={filteredOptions}
-//           onChange={(val) => {
-//             setSelectedThenComponent(val);
-//             setShowNestedThen(val === "ifelse");
-//           }}
-//         />
-
-//         {selectedThenComponent === "ifelse" && showNestedThen && level < maxLevel && (
-//           <div className="ml-6 mt-2 border-l-2 pl-4 border-gray-300 relative">
-//             <button
-//               className="absolute top-0 right-0 text-xs text-red-600 underline"
-//               onClick={() => {
-//                 setShowNestedThen(false);
-//                 setSelectedThenComponent("");
-//               }}
-//             >
-//               <CloseIcon fontSize="small" />
-//             </button>
-//             <IfElseBlock
-//               level={level + 1}
-//               maxLevel={maxLevel}
-//               path={[...path, "then"]}
-//               onUpdateTree={onUpdateTree}
-//               handleIfElseSave={handleIfElseSave}
-//             />
-//           </div>
-//         )}
-//       </div>
-
-//       {/* ELSE Branch */}
-//       <div>
-//         <AnimatedDropdown
-//           label="Else Branch Component"
-//           tooltipContent="Select Else Branch"
-//           tooltipPlacement="right"
-//           value={selectedElseComponent}
-//           options={filteredOptions}
-//           onChange={(val) => {
-//             setSelectedElseComponent(val);
-//             setShowNestedElse(val === "ifelse");
-//           }}
-//         />
-
-//         {selectedElseComponent === "ifelse" && showNestedElse && level < maxLevel && (
-//           <div className="ml-6 mt-2 border-l-2 pl-4 border-gray-300 relative">
-//             <button
-//               className="absolute top-0 right-0 text-xs text-red-600 underline"
-//               onClick={() => {
-//                 setShowNestedElse(false);
-//                 setSelectedElseComponent("");
-//               }}
-//             >
-//               <CloseIcon fontSize="small" />
-//             </button>
-//             <IfElseBlock
-//               level={level + 1}
-//               maxLevel={maxLevel}
-//               path={[...path, "else"]}
-//               onUpdateTree={onUpdateTree}
-//               handleIfElseSave={handleIfElseSave}
-//             />
-//           </div>
-//         )}
-//       </div>
-
-//       {/* Save Button - only for level 1 */}
-//       {level === 1 && (
-//         <div className="flex justify-center pt-2">
-//           <UniversalButton label="Save" onClick={handleIfElseSave} />
-//         </div>
-//       )}
-//     </div>
-//   );
-// };
 
 const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
-  console.log("selectedItem", selectedItem);
+
   const [selectedCondition, setSelectedCondition] = useState();
   const [selectedThenComponent, setSelectedThenComponent] = useState();
   const [selectedElseComponent, setSelectedElseComponent] = useState();
@@ -177,8 +21,9 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [componentTree, setComponentTree] = useState({});
   const [thenBranchText, setThenBranchText] = useState("");
   const [elseBranchText, setElseBranchText] = useState("");
-  // const [thenBranchText, setThenBranchText] = useState("");
-  // const [elseBranchText, setElseBranchText] = useState("");
+
+  //------------- input components start-------------------
+
   const [thenInputLabel, setThenInputLabel] = useState("");
   const [thenInputType, setThenInputType] = useState("");
   const [thenInputPlaceholder, setThenInputPlaceholder] = useState("");
@@ -187,27 +32,35 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [thenMaxLength, setThenMaxLength] = useState("");
   const [thenIsRequired, setThenIsRequired] = useState(false);
 
-  const dispatch = useDispatch();
+  const [elseInputLabel, setElseInputLabel] = useState("");
+  const [elseInputType, setElseInputType] = useState("");
+  const [elseInputPlaceholder, setElseInputPlaceholder] = useState("");
+  const [elseInputError, setElseInputError] = useState("");
+  const [elseMinLength, setElseMinLength] = useState("");
+  const [elseMaxLength, setElseMaxLength] = useState("");
+  const [elseIsRequired, setElseIsRequired] = useState(false);
 
+  //------------------input components end---------------------
+
+  const dispatch = useDispatch();
   const handleIfElseSave = () => {
     if (!selectedCondition) {
       toast.error("Please Enter condition first");
       return;
     }
-
     const payload = {
       type: "If",
       condition: selectedCondition,
       then: [
         {
           type: selectedThenComponent,
-          text: "It is a cat",
+          text: thenBranchText,
         },
       ],
       else: [
         {
           type: selectedElseComponent,
-          text: "It is not a cat",
+          text: elseBranchText,
         },
       ],
     };
@@ -217,6 +70,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       ...payload,
     };
 
+    console.log("updatedData", updatedData)
     onSave(updatedData);
     dispatch(
       updateFlowItem({
@@ -247,42 +101,137 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     { label: "If-Else", value: "ifelse" },
   ];
 
-  const addComponent = (caseKey) => {
-    const updated = JSON.parse(JSON.stringify(cases));
-    updated[caseKey].push({ ...emptyComponent });
-    setCases(updated);
+  // components start
+  const renderTextBranchInput = (branchType) => {
+    const selectedComponent =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+    const branchText = branchType === "then" ? thenBranchText : elseBranchText;
+    const setBranchText =
+      branchType === "then" ? setThenBranchText : setElseBranchText;
+
+    if (
+      ["heading", "subHeading", "textBody", "textCaption"].includes(
+        selectedComponent
+      )
+    ) {
+      return (
+        <div className="mt-3 w-1/2">
+          <InputField
+            placeholder={`${branchType === "then" ? "Then" : "Else"
+              } branch text`}
+            className="w-full p-1 rounded text-black"
+            value={branchText}
+            onChange={(e) => setBranchText(e.target.value)}
+          />
+        </div>
+      );
+    }
+
+    return null;
   };
 
-  const removeComponent = (caseKey, idx) => {
-    const updated = JSON.parse(JSON.stringify(cases));
-    updated[caseKey].splice(idx, 1);
-    setCases(updated);
+  const renderTextInputBranch = (branchType) => {
+    const selectedComponent =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+
+    const inputLabel = branchType === "then" ? thenInputLabel : elseInputLabel;
+    const setInputLabel =
+      branchType === "then" ? setThenInputLabel : setElseInputLabel;
+
+    const inputType = branchType === "then" ? thenInputType : elseInputType;
+    const setInputType =
+      branchType === "then" ? setThenInputType : setElseInputType;
+
+    const inputPlaceholder =
+      branchType === "then" ? thenInputPlaceholder : elseInputPlaceholder;
+    const setInputPlaceholder =
+      branchType === "then" ? setThenInputPlaceholder : setElseInputPlaceholder;
+
+    const inputError = branchType === "then" ? thenInputError : elseInputError;
+    const setInputError =
+      branchType === "then" ? setThenInputError : setElseInputError;
+
+    const minLength = branchType === "then" ? thenMinLength : elseMinLength;
+    const setMinLength =
+      branchType === "then" ? setThenMinLength : setElseMinLength;
+
+    const maxLength = branchType === "then" ? thenMaxLength : elseMaxLength;
+    const setMaxLength =
+      branchType === "then" ? setThenMaxLength : setElseMaxLength;
+
+    if (["textInput"].includes(selectedComponent)) {
+      return (
+        <div className="mt-3 space-y-3 w-1/2">
+          <InputField
+            label="Input Label"
+            placeholder="Enter input label"
+            tooltipContent="Enter input label"
+            tooltipPlacement="right"
+            className="w-full p-1 rounded text-black"
+            value={inputLabel}
+            onChange={(e) => setInputLabel(e.target.value)}
+          />
+          <AnimatedDropdown
+            label="Select Input Type"
+            tooltipContent="Select input type (select text for default)"
+            tooltipPlacement="right"
+            value={inputType}
+            onChange={setInputType}
+            placeholder="Select Type"
+          />
+          <InputField
+            label="Helper Text"
+            type="text"
+            placeholder="Enter helper text"
+            tooltipContent="Enter helper text"
+            tooltipPlacement="right"
+            value={inputPlaceholder}
+            onChange={(e) => setInputPlaceholder(e.target.value)}
+          />
+          <InputField
+            label="Error Message"
+            placeholder="Enter error message"
+            tooltipContent="Enter error message"
+            tooltipPlacement="right"
+            value={inputError}
+            onChange={(e) => setInputError(e.target.value)}
+          />
+          <div className="flex gap-2">
+            <InputField
+              label="Min Length"
+              type="number"
+              placeholder="Min Length"
+              tooltipContent="Enter minimum length"
+              tooltipPlacement="right"
+              value={minLength}
+              onChange={(e) => setMinLength(e.target.value)}
+            />
+            <InputField
+              label="Max Length"
+              type="number"
+              placeholder="Max Length"
+              tooltipContent="Enter maximum length"
+              tooltipPlacement="right"
+              value={maxLength}
+              onChange={(e) => setMaxLength(e.target.value)}
+            />
+          </div>
+          <div className="flex items-center gap-2">
+            <UniversalLabel
+              htmlFor="required"
+              className="text-sm font-medium text-gray-700"
+              text="Required?"
+              tooltipContent="Set required field for TextInput"
+              tooltipPlacement="top"
+            />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
   };
-
-  const updateComponent = (caseKey, idx, field, value) => {
-    const updated = JSON.parse(JSON.stringify(cases));
-    updated[caseKey][idx][field] = value;
-    setCases(updated);
-  };
-
-  const handleUpdateTree = (path, data) => {
-    setComponentTree((prev) => {
-      const updated = { ...prev };
-      let node = updated;
-
-      path.forEach((key, index) => {
-        if (!node[key]) node[key] = {};
-        if (index === path.length - 1) {
-          node[key] = data;
-        } else {
-          node = node[key];
-        }
-      });
-
-      return { ...updated };
-    });
-  };
-
+  // components end
   return (
     <>
       <Dialog
@@ -356,102 +305,21 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
           <div className="mt-4">
             <h2 className="text-xl font-semibold mb-4">If-Else Overview</h2>
             <p>{selectedCondition}</p>
-            <p className="my-2">{selectedThenComponent}</p>
-            {["heading", "subHeading", "textBody", "textCaption"].includes(
-              selectedThenComponent
-            ) && (
-              <div className="mt-3 w-1/2">
-                <InputField
-                  placeholder="Then branch text"
-                  className="w-full p-1 rounded text-black"
-                  value={thenBranchText}
-                  onChange={(e) => setThenBranchText(e.target.value)}
-                />
-              </div>
+            {selectedThenComponent && (
+              <p className="my-2 font-semibold">
+                Then Component - {selectedThenComponent}
+              </p>
             )}
+            {renderTextBranchInput("then")}
+            {renderTextInputBranch("then")}
 
-            {["textInput"].includes(selectedThenComponent) && (
-              <div className="mt-3 space-y-3">
-                <InputField
-                  label="Input Label"
-                  placeholder="Enter input label"
-                  tooltipContent="Enter input label"
-                  tooltipPlacement="right"
-                  className="w-full p-1 rounded text-black"
-                  value={thenInputLabel}
-                  onChange={(e) => setThenInputLabel(e.target.value)}
-                />
-                <AnimatedDropdown
-                  label="Select Input Type"
-                  tooltipContent="Select input type (select text for default)"
-                  tooltipPlacement="right"
-                  // options={OptionsTypeOptions}
-                  value={thenInputType}
-                  onChange={(val) => setThenInputType(val)}
-                  placeholder="Select Type"
-                />
-                <InputField
-                  label="Helper Text"
-                  type="text"
-                  placeholder="Enter helper text"
-                  tooltipContent="Enter helper text"
-                  tooltipPlacement="right"
-                  value={thenInputPlaceholder}
-                  onChange={(e) => setThenInputPlaceholder(e.target.value)}
-                />
-                <InputField
-                  label="Error Message"
-                  placeholder="Enter error message"
-                  tooltipContent="Enter error message"
-                  tooltipPlacement="right"
-                  value={thenInputError}
-                  onChange={(e) => setThenInputError(e.target.value)}
-                />
-                <div className="flex gap-2">
-                  <InputField
-                    label="Min Length"
-                    type="number"
-                    placeholder="Min Length"
-                    tooltipContent="Enter minimum length"
-                    tooltipPlacement="right"
-                    value={thenMinLength}
-                    onChange={(e) => setThenMinLength(e.target.value)}
-                  />
-                  <InputField
-                    label="Max Length"
-                    type="number"
-                    placeholder="Max Length"
-                    tooltipContent="Enter maximum length"
-                    tooltipPlacement="right"
-                    value={thenMaxLength}
-                    onChange={(e) => setThenMaxLength(e.target.value)}
-                  />
-                </div>
-                <div className="flex items-center gap-2">
-                  <UniversalLabel
-                    htmlFor="required"
-                    className="text-sm font-medium text-gray-700"
-                    text="Required?"
-                    tooltipContent="Set required field for TextInput"
-                    tooltipPlacement="top"
-                  />
-                </div>
-              </div>
+            {selectedElseComponent && (
+              <p className="my-2 font-semibold">
+                Else component - {selectedElseComponent}
+              </p>
             )}
-
-            <p className="my-2">{selectedElseComponent}</p>
-            {["heading", "subHeading", "textBody", "textCaption"].includes(
-              selectedElseComponent
-            ) && (
-              <div className="mt-3 w-1/2">
-                <InputField
-                  placeholder="Else branch text"
-                  className="w-full p-1 rounded text-black"
-                  value={elseBranchText}
-                  onChange={(e) => setElseBranchText(e.target.value)}
-                />
-              </div>
-            )}
+            {renderTextBranchInput("else")}
+            {renderTextInputBranch("else")}
           </div>
         </div>
       </Dialog>

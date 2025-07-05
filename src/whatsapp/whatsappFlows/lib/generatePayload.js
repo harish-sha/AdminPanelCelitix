@@ -759,6 +759,7 @@ export const generatePayload = (data) => {
         component = {
           type: "Footer",
           label: footerData.label || "Submit",
+          "center-caption": footerData.center_caption,
           "on-click-action": {
             name: onClickActionName,
             ...(index !== data.length - 1 && {

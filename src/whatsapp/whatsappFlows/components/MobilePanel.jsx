@@ -657,30 +657,52 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+            // case "footerbutton":
+            //   return (
+            //     <div className="w-full max-w-md text-center py-2 bottom-0">
+            //       {/* Captions */}
+
+            //       {(item["left-caption"] || item["right-caption"]) && (
+            //         <div className="flex justify-between text-sm text-gray-700 mb-1">
+            //           <span>{item["left-caption"] || ""}</span>
+            //           <span>{item["right-caption"] || ""}</span>
+            //         </div>
+            //       )}
+            //       {(item["center-caption"]) && (
+            //         <div className="flex justify-center text-sm text-gray-700 mb-1">
+            //           <span>{item["center-caption"] || ""}</span>
+            //         </div>
+            //       )}
+
+            //       {/* Footer Button */}
+            //       <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
+            //         {item.label || "Click me"}
+            //       </button>
+
+            //       {/* Managed by Section */}
+            //       <p className="text-xs text-gray-500 mt-2">
+            //         Managed by the business.{" "}
+            //         <a href="#" className="text-blue-600 hover:underline">
+            //           Learn more
+            //         </a>
+            //       </p>
+            //     </div>
+            //   );
+
+
 
             case "footerbutton":
+              const centerCaption =
+                item.footer?.footer_1?.center_caption || "center caption";
+              const buttonLabel =
+                item.footer?.footer_1?.label || "Click me";
+
               return (
                 <div className="w-full max-w-md text-center py-2 bottom-0">
-                  {/* Captions */}
-
-                  {(item["left-caption"] || item["right-caption"]) && (
-                    <div className="flex justify-between text-sm text-gray-700 mb-1">
-                      <span>{item["left-caption"] || ""}</span>
-                      <span>{item["right-caption"] || ""}</span>
-                    </div>
-                  )}
-                  {(item["center-caption"]) && (
-                    <div className="flex justify-center text-sm text-gray-700 mb-1">
-                      <span>{item["center-caption"] || ""}</span>
-                    </div>
-                  )}
-
-                  {/* Footer Button */}
+                  <p className="text-xs" > {centerCaption}</p>
                   <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
-                    {item.label || "Click me"}
+                    {buttonLabel}
                   </button>
-
-                  {/* Managed by Section */}
                   <p className="text-xs text-gray-500 mt-2">
                     Managed by the business.{" "}
                     <a href="#" className="text-blue-600 hover:underline">

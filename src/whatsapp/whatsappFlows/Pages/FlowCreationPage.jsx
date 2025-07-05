@@ -108,7 +108,7 @@ const FlowCreationPage = () => {
 
 
   //if-else
-  const[openIfElse, setOpenIfElse] = useState(false)
+  const [openIfElse, setOpenIfElse] = useState(false)
 
 
   // console.log("labelValue", labelValue)
@@ -374,9 +374,9 @@ const FlowCreationPage = () => {
 
     // radioBtn
   };
+  console.log("selectedItem", selectedItem)
 
   const handleSave = (updatedData) => {
-    console.log("updatedData", updatedData)
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       if (
@@ -881,6 +881,7 @@ const FlowCreationPage = () => {
             createTab={createTab}
             setCreateTab={setCreateTab}
             menuRefs={menuRefs}
+            selectedItem={selectedItem}
           />
           {selectedItem && (
             <EditPanel
@@ -928,7 +929,7 @@ const FlowCreationPage = () => {
           )}
         </div>
 
-        <div className="flex-1 ">
+        <div className="flex-1">
           {/* Mobile Panel Preview*/}
           <MobilePanel
             items={tabs[activeIndex].payload}
