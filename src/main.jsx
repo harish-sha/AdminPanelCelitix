@@ -24,7 +24,7 @@ createRoot(document.getElementById("root")).render(
           <DownloadProvider>
             <DndProvider backend={HTML5Backend}>
               <Provider store={store}>
-                  <App />
+                <App />
               </Provider>
             </DndProvider>
           </DownloadProvider>

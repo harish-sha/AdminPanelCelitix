@@ -75,7 +75,7 @@ const WhatsappCreateTemplate = () => {
 
   const [isFetching, setIsFetching] = useState(false);
 
-  const [headerVariable, setHeaderVariable] = useState("");
+  const [headerVariable, setHeaderVariable] = useState([]);
   const [headerVariableValue, setHeaderVariableValue] = useState("");
 
 
