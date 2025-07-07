@@ -702,22 +702,22 @@ export const generatePayload = (data) => {
         //  console.log("Generated embeddedlink component:", JSON.stringify(component, null, 2));
       }
 
-      if (pay.type === "If") {
-        console.log("pay", pay);
+      console.log("pay", pay)
+      if (pay?.type === "ifelse") {
 
         component = {
-          type: "If",
-          condition: pay.condition,
+          type: "ifelse",
+          // condition: pay?.condition,
           then: [
             {
-              type: pay.then?.[0]?.type,
-              text: "It is a cat",
+              type: pay?.then?.[0]?.type,
+              text: pay?.then?.[0]?.text 
             },
           ],
           else: [
             {
-              type: pay.else?.[0]?.type,
-              text: "It is not a cat",
+              type: pay?.else?.[0]?.type,
+              text: pay?.else?.[0]?.text
             },
           ],
           // required: true,

@@ -15,17 +15,17 @@ import {
   Chip,
   // Dropdown
 } from "@mui/material";
-import InputField from "../../components/InputField";
-import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
-import CheckBoxIcon from "@mui/icons-material/CheckBox";
 import RadioButtonUncheckedOutlinedIcon from "@mui/icons-material/RadioButtonUncheckedOutlined";
-import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import CheckBoxOutlineBlankIcon from "@mui/icons-material/CheckBoxOutlineBlank";
 import AddAPhotoOutlinedIcon from "@mui/icons-material/AddAPhotoOutlined";
 import ArticleOutlinedIcon from "@mui/icons-material/ArticleOutlined";
+import { motion, AnimatePresence } from "framer-motion";
+import CheckBoxIcon from "@mui/icons-material/CheckBox";
+import { marked } from "marked";
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import AnimatedDropdown from "../../components/AnimatedDropdown";
-import { motion, AnimatePresence } from "framer-motion";
-import { marked } from "marked";
+import InputField from "../../components/InputField";
 
 const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
   const [radioBtnLabel, setRadioBtnLabel] = useState("Choose an option");
@@ -109,7 +109,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      // console.log("File uploaded:", selectedFile.name);
     } else {
       alert("Please select a file to upload.");
     }
@@ -119,7 +118,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
     const selectedPhoto = e.target.files[0];
     if (selectedPhoto) {
       setUploadPhoto(selectedPhoto);
-      // console.log("Photo uploaded:", selectedPhoto.name);
     } else {
       alert("Please choose a photo.");
     }
@@ -138,7 +136,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
       <h2 className="text-xl font-semibold text-center">{screenTitle}</h2>
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
-          // console.log("item", item);
           switch (item.type) {
             // Render Heading
             case "heading":
@@ -177,6 +174,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </Typography>
               );
 
+            // Text Caption
             case "textcaption":
               return (
                 <Typography
@@ -194,7 +192,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 <div key={index} className="">
                   <Typography
                     variant="caption"
-                  // sx={{ whiteSpace: "pre-line" }}
                   >
                     {item.label || "Label"}
                   </Typography>
@@ -332,7 +329,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
             }
 
             // Render Checkboxes
-
             case "checkBox":
               return (
                 <div key={index} className="">
@@ -428,7 +424,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               );
 
             // Render Radio Buttons
-
             case "radioButton":
               return (
                 <div key={index} className="">
@@ -657,40 +652,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            // case "footerbutton":
-            //   return (
-            //     <div className="w-full max-w-md text-center py-2 bottom-0">
-            //       {/* Captions */}
-
-            //       {(item["left-caption"] || item["right-caption"]) && (
-            //         <div className="flex justify-between text-sm text-gray-700 mb-1">
-            //           <span>{item["left-caption"] || ""}</span>
-            //           <span>{item["right-caption"] || ""}</span>
-            //         </div>
-            //       )}
-            //       {(item["center-caption"]) && (
-            //         <div className="flex justify-center text-sm text-gray-700 mb-1">
-            //           <span>{item["center-caption"] || ""}</span>
-            //         </div>
-            //       )}
-
-            //       {/* Footer Button */}
-            //       <button className="w-full bg-green-700 text-white py-1 rounded-full hover:bg-green-800 transition-all">
-            //         {item.label || "Click me"}
-            //       </button>
-
-            //       {/* Managed by Section */}
-            //       <p className="text-xs text-gray-500 mt-2">
-            //         Managed by the business.{" "}
-            //         <a href="#" className="text-blue-600 hover:underline">
-            //           Learn more
-            //         </a>
-            //       </p>
-            //     </div>
-            //   );
-
-
-
             case "footerbutton":
               const centerCaption =
                 item.footer?.footer_1?.center_caption || "center caption";
@@ -844,7 +805,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 item?.["image-1"],
                 item?.["image-2"],
                 item?.["image-3"],
-              ].filter((img) => img?.src); // Only non-empty images
+              ].filter((img) => img?.src);
 
               const scaleType = item?.["scale-type"] || "contain";
 
@@ -1066,21 +1027,6 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                   </div>
                 </div>
               );
-
-            // case "userdetail":
-            //   return (
-            //     <InputField
-            //       value={item.value || ""}
-            //       onChange={(e) =>
-            //         onUpdateItem &&
-            //         onUpdateItem(index, (prevItem) => ({
-            //           ...prevItem,
-            //           value: e.target.value,
-            //         }))
-
-            //       }
-            //     />
-            //   )
 
             default:
               return null;

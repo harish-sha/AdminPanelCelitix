@@ -540,6 +540,7 @@ const FlowCreationPage = () => {
       }
 
       if (!res.flag) {
+        console.log(res.error_user_msg.error.error_user_msg)
         return toast.error(res.error_user_msg.error.error_user_msg);
       }
 

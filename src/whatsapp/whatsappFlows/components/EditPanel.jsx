@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef } from "react";
-import InputField from "../../components/InputField";
 import {
   Box,
   Typography,
@@ -16,28 +15,29 @@ import {
   Select,
   Switch,
 } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import UniversalButton from "../../components/UniversalButton";
-import toast from "react-hot-toast";
-import EditIcon from "@mui/icons-material/Edit";
+import Chip from "@mui/material/Chip";
 import AddCircleOutlineOutlinedIcon from "@mui/icons-material/AddCircleOutlineOutlined";
-import UniversalDatePicker from "../../components/UniversalDatePicker";
-import AnimatedDropdown from "../../components/AnimatedDropdown";
+import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
+import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
+import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { motion, AnimatePresence } from "framer-motion";
+import EditIcon from "@mui/icons-material/Edit";
+import CloseIcon from "@mui/icons-material/Close";
+import { useSelector } from "react-redux";
 import { is } from "date-fns/locale";
 import { Dialog } from "primereact/dialog";
-import FileUploadOutlinedIcon from "@mui/icons-material/FileUploadOutlined";
-import { uploadImageFile } from "@/apis/whatsapp/whatsapp";
 import moment from "moment";
-import Chip from "@mui/material/Chip";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
-import { motion, AnimatePresence } from "framer-motion";
-import UniversalLabel from "@/whatsapp/components/UniversalLabel";
-import SwitchFlow from "./SwitchFlow";
-import RichTextEditor from "./Editor.jsx";
-import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import toast from "react-hot-toast";
+
 import CustomEmojiPicker from "@/whatsapp/components/CustomEmojiPicker";
-import { useSelector } from "react-redux";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+import UniversalTextArea from "@/whatsapp/components/UniversalTextArea";
+import UniversalDatePicker from "../../components/UniversalDatePicker";
+import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import AnimatedDropdown from "../../components/AnimatedDropdown";
+import UniversalButton from "../../components/UniversalButton";
+import InputField from "../../components/InputField";
+import RichTextEditor from "./Editor.jsx";
+import SwitchFlow from "./SwitchFlow";
 
 const EditPanel = ({
   selectedItem,
@@ -116,220 +116,20 @@ const EditPanel = ({
     setOptions((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // akhil
-
-  // const OptionsTypeTypeOptions = [
-  //   { value: 'text', label: 'Text' },
-  //   { value: 'number', label: 'Number' },
-  //   { value: 'email', label: 'Email' },
-  // ];
-
-  // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
-  // const [inputValue, setInputValue] = useState('');
-  // const [maxLengthValue, setMaxLengthValue] = useState('100');
-  // const [minLengthValue, setMinLengthValue] = useState('100');
-
-  // const handleDropdownChange = (val) => {
-  //   const option = OptionsTypeTypeOptions.find(opt => opt.value === val) || null;
-  //   setSelectedOptionsType(option);
-  //   setInputValue(''); // Clear input field when option changes
-  // };
-
-  // const handleInputChange = (event) => {
-  //   setInputValue(event.target.value);
-  // };
-
-  // const handleMaxChange = (e) => {
-  //   const val = e.target.value;
-  //   // ensure numeric and positive
-  //   if (/^\d*$/.test(val)) setMaxLengthValue(val);
-  // };
-
-  // const handleMinChange = (e) => {
-  //   const val = e.target.value;
-  //   if (/^\d*$/.test(val)) setMinLengthValue(val);
-  // };
-
-  // const maxLen = parseInt(maxLengthValue, 10) || 0;
-  // const minLen = parseInt(minLengthValue, 10) || 0;
-
-  // inputtype
-
-  // const [selectedOptionsType, setSelectedOptionsType] = useState(null);
   const [inputValue, setInputValue] = useState("");
-  // const [maxValue, setMaxValue] = useState("");
-  // const [minValue, setMinValue] = useState("");
-  // const [labelValue, setLabelValue] = useState("");
-  // const [errorValue, setErrorValue] = useState("");
-  // const [placeholderValue, setPlaceholderValue] = useState("");
-  // const [switchChecked, setSwitchChecked] = useState(false);
-
-  // const switchLabel = { inputProps: { "aria-label": "Switch demo" } };
-  // const handleErrorChange = (e) => setErrorValue(e.target.value);
-  // const handleLabelChange = (e) => setLabelValue(e.target.value);
-  // const handlePlaceholder = (e) => setPlaceholderValue(e.target.value);
-  // const handleSwitchChange = (event) => {
-  //   setSwitchChecked(event.target.checked);
-  // };
-
-  // const handleDropdownChange = (val) => {
-  //   const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
-  //   setSelectedOptionsType(option);
-  //   setInputValue("");
-  // };
-
-  // const handleInputChange = (e) => {
-  //   const val = e.target.value;
-  //   if (selectedOptionsType?.value === "number") {
-  //     // Enforce digit count limits
-  //     if (/^\d*$/.test(val)) {
-  //       if (!maxValue || val.length <= Number(maxValue)) {
-  //         setInputValue(val);
-  //       }
-  //     }
-  //   } else {
-  //     // Text/email: enforce length via HTML attrs
-  //     setInputValue(val);
-  //   }
-  // };
-
-  // const handleMaxChange = (e) => {
-  //   console.log("e", e.target.value);
-
-  //   const val = e.target.value;
-  //   if (/^\d*$/.test(val)) {
-  //     setMaxValue(val);
-  //     if (
-  //       selectedOptionsType?.value === "number" &&
-  //       inputValue.length > Number(val)
-  //     ) {
-  //       setInputValue(inputValue.slice(0, Number(val)));
-  //     }
-  //   }
-  // };
-
-  // const handleMinChange = (e) => {
-  //   console.log("e", e.target.value);
-  //   const val = e.target.value;
-  //   if (/^\d*$/.test(val)) setMinValue(val);
-  // };
-
-  // console.log("minVal", minValue);
-  // const isNumberType = selectedOptionsType?.value === "number";
-  // const maxNum = maxValue ? Number(maxValue) : "";
-  // const minNum = minValue ? Number(minValue) : "";
-
-  // const handleInputSave = () => {
-  //   if (!labelValue) {
-  //     toast.error("Please Enter Label");
-  //     return;
-  //   }
-  //   if (!placeholderValue) {
-  //     toast.error("Please Enter Placeholder value");
-  //     return;
-  //   }
-
-  //   const typeMapping = {
-  //     textInput: "TextInput",
-  //     textArea: "TextArea",
-  //   };
-
-  //   const selectedType = selectedItem?.type; // e.g., 'textInput' or 'textArea'
-  //   const mappedType = typeMapping[selectedType];
-
-  //   if (!selectedType || !mappedType) {
-  //     toast.error("Invalid input type");
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     texts: {},
-  //   };
-
-  //   const id = `${selectedType}_1`; // Assuming only 1 for now
-  //   payload.texts[id] = {
-  //     inputType: mappedType,
-  //     label: labelValue,
-  //     helper_text: placeholderValue,
-  //     min_chars: minNum,
-  //     max_chars: maxNum,
-  //     error_message: errorValue || "",
-  //     required: switchChecked,
-  //   };
-
-  //   console.log("payload by input", payload);
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     ...payload,
-  //   };
-
-  //   onSave(updatedData);
-  //   onClose();
-  //   console.log(updatedData);
-  // };
 
   const allowed = ["heading", "subheading", "textbody", "textcaption"];
 
   const { type, payload } = selectedItem || {};
 
-  // 1️⃣ state to track the input’s value
-  // const [headingValue, setHeadingValue] = useState("");
-
-  // 2️⃣ prefill (or clear) when selectedItem changes
-  // useEffect(() => {
-  //   if (allowed.includes(type)) {
-  //     setHeadingValue(payload?.[type] ?? "");
-  //   } else {
-  //     setHeadingValue("");
-  //   }
-  // }, [type, payload]);
-
-  // for headings
-  // const handleHeadingSave = () => {
-
-  //   const screenId = "";
-
-  //   const textElements = {
-  //     heading: "Welcome!",
-  //     subheading: "Please login to continue",
-  //     textcaption: "Secure Login",
-  //     textbody: "Enter your credentials to access your account."
-  //   };
-
-  //   const type = {
-  //     heading: "TextHeading",
-  //     subheading: "TextSubheading",
-  //     textcaption: "TextCaption",
-  //     textbody: "TextBody"
-  //   };
-
-  //   const payload = {
-  //     headings: {}
-  //   };
-  //   console.log(payload)
-  //   Object.entries(textElements).forEach(([key, text], index) => {
-  //     const id = `${key}_${index + 1}`;
-  //     payload.headings[id] = {
-  //       screenId,
-  //       id,
-  //       type: type[key],
-  //       text
-  //     };
-  //   });
-  //   console.log(payload);
-  // }
-
-  // EmbeddedLink
+  // =================================EmbeddedLink Start===============================
   const embeddedscreenName = useSelector((state) => state.flows.screenName);
-  // console.log("screenNameedtred:", screenName);
 
   const [text, setText] = useState("");
   const [onClickAction, setOnClickAction] = useState("complete");
   const [selectedScreenName, setSelectedScreenName] = useState("");
   const [embeddedlinktUrl, setEmbeddedlinktUrl] = useState("");
 
-  // Get list of screens from screenName
   const screenNameOptions = Object.values(embeddedscreenName).map(
     (screen, index) => ({
       label: screen.screenName || `Screen ${index + 1}`,
@@ -369,16 +169,12 @@ const EditPanel = ({
       ...payload,
     };
 
-    // console.log("payloadlink:", payload);
-
     onSave(updatedData);
     onClose();
   };
+  // =================================EmbeddedLink End===============================
 
-  // richtextPayload
-  const [richTextPayload, setRichTextPayload] = useState();
-
-  // // opt-in
+  // =================================Optin Start===============================
   const [optLabel, setOptLabel] = useState("");
   const [optAction, setOPTAction] = useState("");
   const [isChecked, setIsChecked] = useState(false);
@@ -411,13 +207,11 @@ const EditPanel = ({
       setOPTAction(action);
       setOptSelectedScreenName(selectedItem.screen);
 
-      // console.log("selectedItem.screen", selectedItem.screen);
       setOptInRequired(selectedItem.required ?? true);
     }
   }, [selectedItem]);
 
   const allscreenName = useSelector((state) => state.flows.screenName) || {};
-  // console.log("allflowItems:", allscreenName);
 
   const optScreenNameOptions = Object.values(allscreenName).map(
     (screen, index) => ({
@@ -425,7 +219,6 @@ const EditPanel = ({
       value: screen.screenName || `Screen ${index + 1}`,
     })
   );
-  // console.log("optScreenNameOptions", optScreenNameOptions);
 
   // useEffect(() => {
   //   if (optAction !== "navigate") {
@@ -454,15 +247,17 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Optin End===============================
 
-  // image
+
+  // =================================Image Start===============================
   const [width, setWidth] = useState();
   const [height, setHeight] = useState();
   const [scaleType, setSCaleType] = useState("contain");
   const [aspectRatio, setAspectRatio] = useState(1);
   const [imgAltText, setImgAltText] = useState("");
-  const [imageSrc, setImageSrc] = useState(null); // will hold base64 only
-  const [imageFile, setImageFile] = useState(null); // null or File object
+  const [imageSrc, setImageSrc] = useState(null);
+  const [imageFile, setImageFile] = useState(null);
   const imageSrcFile =
     imageFile && typeof imageFile === "string"
       ? `data:image/png;base64,${imageFile}`
@@ -479,7 +274,7 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem) {
-      setImageFile(selectedItem.src); // No File object to preload
+      setImageFile(selectedItem.src);
 
       setImgAltText(selectedItem["alt-text"] || "");
       setAspectRatio(
@@ -533,7 +328,7 @@ const EditPanel = ({
 
     try {
       const base64String = await getBase64(file);
-      setImageSrc(base64String); // store base64 only
+      setImageSrc(base64String);
       setDraft((prev) => ({
         ...prev,
         image: base64String,
@@ -570,7 +365,7 @@ const EditPanel = ({
     }
 
     const payload = {
-      src: imageSrc.trim(), // base64 string
+      src: imageSrc.trim(),
       "scale-type": scaleType,
       "aspect-ratio": aspectRatio,
       "alt-text": imgAltText,
@@ -590,8 +385,9 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Image End===============================
 
-  // IMAGECarousel
+  // =================================ImageCarousel Start===============================
   const [imageCarouselImages, setImageCarouselImages] = useState([
     { src: "", file: null },
     { src: "", file: null },
@@ -720,8 +516,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================ImageCarousel End===============================
 
-  // date
+
+  // =================================Date Start===============================
   const [dateLable, setDateLabel] = useState("");
   const [minDate, setMinDate] = useState("");
   const [maxDate, setMaxDate] = useState("");
@@ -767,7 +565,6 @@ const EditPanel = ({
     const min = moment(minDate);
     const max = moment(maxDate);
 
-    // Check if within range
     const isValid =
       (!min.isValid() || d.isSameOrAfter(min, "day")) &&
       (!max.isValid() || d.isSameOrBefore(max, "day"));
@@ -780,7 +577,6 @@ const EditPanel = ({
     }
   };
 
-  // Handle removing a selected date
   const handleRemoveUnavailableDate = (indexToRemove) => {
     setUnavailableDate((prev) =>
       prev.filter((_, index) => index !== indexToRemove)
@@ -795,24 +591,6 @@ const EditPanel = ({
 
     const minDates = moment(minDate);
     const maxDates = moment(maxDate);
-
-    // if (
-    //   minDates.isValid() &&
-    //   maxDates.isValid() &&
-    //   maxDates.isBefore(minDates)
-    // ) {
-    //   toast.error("Max date cannot be earlier than Min date");
-    //   return;
-    // }
-
-    // const validUnavailableDates = unavailableDate.filter((date) => {
-    //   const d = moment(date);
-    //   return (
-    //     d.isValid() &&
-    //     (!minDates.isValid() || d.isSameOrAfter(minDates, "day")) &&
-    //     (!maxDates.isValid() || d.isSameOrBefore(maxDates, "day"))
-    //   );
-    // });
 
     const payload = {
       label: dateLable,
@@ -830,11 +608,12 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Date End===============================
 
-  // Calendar
+
+  // =================================Calendar Start===============================
   const [dateCalendarLable, setDateCalendarLabel] = useState("");
   const [minCalendarDate, setMinCalendarDate] = useState("");
-
   const [maxCalendarDate, setMaxCalendarDate] = useState("");
   const [unavailableCalendarDates, setUnavailableCalendarDates] = useState([]);
   const [dateCalendarPlaceholder, setDateCalendarPlaceholder] = useState("");
@@ -894,7 +673,6 @@ const EditPanel = ({
     const min = moment(minCalendarDate);
     const max = moment(maxCalendarDate);
 
-    // Check if within range
     const isValid =
       (!min.isValid() || d.isSameOrAfter(min, "day")) &&
       (!max.isValid() || d.isSameOrBefore(max, "day"));
@@ -912,7 +690,6 @@ const EditPanel = ({
     }
   };
 
-  // Handle removing a selected date
   const handleRemoveCalendarUnavailableDate = (indexToRemove) => {
     setUnavailableCalendarDates((prev) =>
       prev.filter((_, index) => index !== indexToRemove)
@@ -940,7 +717,6 @@ const EditPanel = ({
     const minDate = moment(minCalendarDate);
     const maxDate = moment(maxCalendarDate);
 
-    // Filter unavailable dates within range
     const validUnavailableDates = unavailableCalendarDates.filter((date) => {
       const d = moment(date);
       return (
@@ -992,50 +768,14 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Calendar End===============================
 
-  // document
+  // =================================Document Start===============================
   const [documentLabel, setDocumentLabel] = useState("");
   const [description, setDescription] = useState("");
   const [minDocsUpload, setMinDocsUpload] = useState("");
   const [maxDocsUpload, setMaxDocsUpload] = useState("");
   // const [documentName, setDocumentName] = useState("")
-  // const [listItems, setListItems] = useState("")
-  // const [mediaSize, setMediaSize] = useState("")
-  // const [mainContent, setMainContent] = useState("")
-  // const [imageSrc, setImageSrc] = useState(null)
-  // const [end, setEnd] = useState("")
-  // const [badges, setBadges] = useState("")
-  // const [tags, setTags] = useState("")
-  // const [file, setFile] = useState(null);
-
-  // const handleFileUpload = (e) => {
-
-  //   const MAX_FILE_SIZE = 100 * 1024;
-  //   if (file) {
-  //     if (file.size > MAX_FILE_SIZE) {
-  //       alert("File size exceeds 100KB. Please upload a smaller file.");
-  //       event.target.value = '';
-  //       return;
-  //     }
-  //     console.log("Uploaded file:", file);
-  //   }
-
-  //   const uploadedFile = e.target.files[0];
-  //   if (!uploadedFile) return;
-
-  //   const fileType = uploadedFile.name.split(".").pop().toLowerCase();
-  //   const allowedTypes = ["pdf", "docx", "doc"];
-
-  //   if (!allowedTypes.includes(fileType)) {
-  //     toast.error("Unsupported file type. Please upload a .pdf, .docx, or .doc file.");
-  //     setFile(null);
-  //     setMainContent("");
-  //     return;
-  //   }
-
-  //   setFile(uploadedFile);
-  //   setMainContent(`Uploaded file: ${uploadedFile.name}. `);
-  // };
 
   useEffect(() => {
     if (selectedItem) {
@@ -1078,8 +818,9 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Document End===============================
 
-  // media
+  // =================================Media Start===============================
   const [mediaLabel, setMediaLabel] = useState("");
   const [mediaDescription, setMediaDescription] = useState("");
   const [minPhotoUpload, setMinPhotoUpload] = useState("");
@@ -1127,228 +868,11 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Media End===============================
 
-  // footertype
-  // const [footerButtonLabel, setFooterButtonLabel] = useState("");
-  // const [leftCaption, setLeftCaption] = useState("");
-  // const [rightCaption, setRightCaption] = useState("");
-  // const [centerCaption, setCenterCaption] = useState("");
-  // const [nextAction, setNextAction] = useState("complete");
-  // const [caption, setCaption] = useState("");
 
-  // console.log(nextAction, "NEXTACTIONFOOTER")
-  // // console.log("leftCaption", leftCaption);
-  // // console.log("rightCaption", rightCaption);
-  // // console.log("centerCaption", centerCaption);
 
-  // useEffect(() => {
-  //   if (selectedItem) {
-  //     console.log(selectedItem, "selectedItemfooter");
-  //     setFooterButtonLabel(selectedItem.label || "");
-  //     // setLeftCaption(selectedItem["left-caption"] || "");
-  //     // setRightCaption(selectedItem["right-caption"] || "");
-  //     setCenterCaption(selectedItem["center-caption"] || "");
-  //     // setNextAction(
-  //     //   (selectedItem["on-click-action"] &&
-  //     //     selectedItem["on-click-action"].name) ||
-  //     //   ""
-  //     // );
-
-  //     const action = selectedItem["on-click-action"] || "";
-  //     setNextAction(action);
-
-  //     setCaption(selectedItem.caption || "center");
-
-  //     // Derive caption type from data
-  //     // if (selectedItem["center-caption"]) {
-  //     //   setCaption("center");
-  //     // } else if (
-  //     //   selectedItem["left-caption"] ||
-  //     //   selectedItem["right-caption"]
-  //     // ) {
-  //     //   setCaption("left-right");
-  //     // } else {
-  //     //   setCaption("");
-  //     // }
-
-  //     console.log("caption", caption);
-
-  //     //   if (caption === "center") {
-  //     //     setCenterCaption(selectedItem["center-caption"] || "");
-  //     //   } else if (caption === "left-right") {
-  //     //     setLeftCaption(selectedItem["left-caption"] || "");
-  //     //     setRightCaption(selectedItem["right-caption"] || "");
-  //     //   }
-  //   }
-  // }, [selectedItem?.id]);
-
-  // const handleFooterSave = () => {
-  //   if (!footerButtonLabel) {
-  //     toast.error("Please enter a Footer Button Label");
-  //     return;
-  //   }
-
-  //   if (!nextAction) {
-  //     toast.error("Action is required.");
-  //     return;
-  //   }
-
-  //   // if (centerCaption && (leftCaption || rightCaption)) {
-  //   //   toast.error(
-  //   //     "Cannot set center caption together with left/right captions"
-  //   //   );
-  //   //   return;
-  //   // }
-
-  //   // if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
-  //   //   toast.error("Both left and right captions must be provided together");
-  //   //   return;
-  //   // }
-
-  //   const payload = {
-  //     //  id: selectedItem.id,
-  //     label: footerButtonLabel,
-  //     "on-click-action": nextAction || "",
-  //   };
-
-  //   if (centerCaption) {
-  //     payload["center-caption"] = centerCaption;
-  //   }
-
-  //   // if (leftCaption && rightCaption) {
-  //   //   payload["left-caption"] = leftCaption;
-  //   //   payload["right-caption"] = rightCaption;
-  //   // }
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     ...payload,
-  //     // caption,
-  //   };
-
-  //   // if (caption === "center" && centerCaption) {
-  //   //   updatedData["center-caption"] = centerCaption;
-  //   // }
-
-  //   // if (caption === "left-right") {
-  //   //   if (leftCaption) updatedData["left-caption"] = leftCaption;
-  //   //   if (rightCaption) updatedData["right-caption"] = rightCaption;
-  //   // }
-
-  //   console.log(updatedData, "updatedDatafooter");
-
-  //   onSave(updatedData);
-  //   onClose();
-  // };
-
-  // const [footerButtonLabel, setFooterButtonLabel] = useState("");
-  // const [leftCaption, setLeftCaption] = useState("");
-  // const [rightCaption, setRightCaption] = useState("");
-  // const [centerCaption, setCenterCaption] = useState("");
-  // const [nextAction, setNextAction] = useState("complete");
-  // const [caption, setCaption] = useState("");
-
-  // // console.log("leftCaption", leftCaption);
-  // // console.log("rightCaption", rightCaption);
-  // // console.log("centerCaption", centerCaption);
-
-  // useEffect(() => {
-  //   if (selectedItem) {
-  //     console.log(selectedItem, "selectedItemfooter");
-  //     setFooterButtonLabel(selectedItem.label || "");
-  //     setLeftCaption(selectedItem["left-caption"] || "");
-  //     setRightCaption(selectedItem["right-caption"] || "");
-  //     setCenterCaption(selectedItem["center-caption"] || "");
-  //     setNextAction(
-  //       (selectedItem["on-click-action"] &&
-  //         selectedItem["on-click-action"].name) ||
-  //       "complete"
-  //     );
-
-  //     setCaption(selectedItem.caption || "center");
-
-  //     // Derive caption type from data
-  //     // if (selectedItem["center-caption"]) {
-  //     //   setCaption("center");
-  //     // } else if (
-  //     //   selectedItem["left-caption"] ||
-  //     //   selectedItem["right-caption"]
-  //     // ) {
-  //     //   setCaption("left-right");
-  //     // } else {
-  //     //   setCaption("");
-  //     // }
-
-  //     console.log("caption", caption);
-
-  //     //   if (caption === "center") {
-  //     //     setCenterCaption(selectedItem["center-caption"] || "");
-  //     //   } else if (caption === "left-right") {
-  //     //     setLeftCaption(selectedItem["left-caption"] || "");
-  //     //     setRightCaption(selectedItem["right-caption"] || "");
-  //     //   }
-  //   }
-  // }, [selectedItem?.id]);
-
-  // const handleFooterSave = () => {
-  //   if (!footerButtonLabel) {
-  //     toast.error("Please enter a Footer Button Label");
-  //     return;
-  //   }
-
-  //   if (!nextAction) {
-  //     toast.error("Action is required.");
-  //     return;
-  //   }
-
-  //   if (centerCaption && (leftCaption || rightCaption)) {
-  //     toast.error(
-  //       "Cannot set center caption together with left/right captions"
-  //     );
-  //     return;
-  //   }
-
-  //   if ((leftCaption && !rightCaption) || (!leftCaption && rightCaption)) {
-  //     toast.error("Both left and right captions must be provided together");
-  //     return;
-  //   }
-
-  //   const payload = {
-  //     //  id: selectedItem.id,
-  //     label: footerButtonLabel,
-  //     "on-click-action": nextAction || "",
-  //   };
-
-  //   if (centerCaption) {
-  //     payload["center-caption"] = centerCaption;
-  //   }
-
-  //   if (leftCaption && rightCaption) {
-  //     payload["left-caption"] = leftCaption;
-  //     payload["right-caption"] = rightCaption;
-  //   }
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     ...payload,
-  //     // caption,
-  //   };
-
-  //   if (caption === "center" && centerCaption) {
-  //     updatedData["center-caption"] = centerCaption;
-  //   }
-
-  //   if (caption === "left-right") {
-  //     if (leftCaption) updatedData["left-caption"] = leftCaption;
-  //     if (rightCaption) updatedData["right-caption"] = rightCaption;
-  //   }
-
-  //   console.log(updatedData, "updatedData");
-
-  //   onSave(updatedData);
-  //   onClose();
-  // };
-
+  // =================================Footer Start===============================
   const [footerButtonLabel, setFooterButtonLabel] = useState("");
   // const [leftCaption, setLeftCaption] = useState("");
   // const [rightCaption, setRightCaption] = useState("");
@@ -1379,7 +903,7 @@ const EditPanel = ({
       footer: {},
     };
 
-    const id = `footer_1`; // Unique ID for the footer (adjust if needed)
+    const id = `footer_1`;
 
     payload.footer[id] = {
       label: footerButtonLabel,
@@ -1389,9 +913,6 @@ const EditPanel = ({
       on_click_action: nextAction || "",
     };
 
-    console.log("Saving footer payload:", payload);
-
-    // Assuming we want to merge it with selectedItem like in handleInputSave
     const updatedData = {
       ...selectedItem,
       ...payload,
@@ -1399,12 +920,10 @@ const EditPanel = ({
 
     onSave(updatedData);
     onClose();
-    console.log("Final footer data:", updatedData);
   };
+  // =================================Footer End===============================
 
-  // footertype
-
-  // RadioBtn
+  // =================================RadioButton Start===============================
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
 
   const [radioBtnLabel, setRadioBtnLabel] = useState("");
@@ -1425,36 +944,15 @@ const EditPanel = ({
     altText: "",
   });
 
-  // useEffect(() => {
-  //   if (selectedItem?.type === "radioButton") {
-  //     setRadioBtnLabel(selectedItem.label || "");
-  //     setDraft(
-  //       (selectedItem =
-  //         {
-  //           title: selectedItem.title || "",
-  //           description: selectedItem.description || "",
-  //           metadata: selectedItem.label || "",
-  //           image: selectedItem.metadata || "",
-  //           altText: selectedItem.altText || "",
-  //         } || "")
-  //     );
-  //     setRadioRequired(selectedItem.required ?? false);
-  //   }
-  // }, [selectedItem]);
-
   useEffect(() => {
     if (selectedItem?.type === "radioButton") {
-      // Set group label
       setRadioBtnLabel(selectedItem.label || "");
 
-      // Set required field
       setRadioRequired(selectedItem.required ?? false);
 
-      // Set options
       const radioOptions = selectedItem["data-source"] || [];
       setRadioButtonOptions(radioOptions);
 
-      // Prefill draft with first option (optional)
       if (radioOptions.length > 0) {
         const first = radioOptions[0];
         setDraft({
@@ -1468,7 +966,7 @@ const EditPanel = ({
         // const base64Image = first.image;
         // const objectURL = base64ToObjectURL(base64Image, "image/png");
 
-        setRadiobtnEditIdx(0); // if you want to open first in edit mode, otherwise remove this line
+        setRadiobtnEditIdx(0);
       } else {
         setDraft({
           title: "",
@@ -1482,21 +980,15 @@ const EditPanel = ({
     }
   }, [selectedItem]);
 
-  // console.log("selectedItem", selectedItem);
-
   useEffect(() => {
     if (selectedItem?.type === "checkBox") {
-      // Set group label
       setMainLabelCheckbox(selectedItem.label || "");
 
-      // Set required field
       setCheckboxRequired(selectedItem.required ?? false);
 
-      // Set options
       const checkboxOptions = selectedItem["data-source"] || [];
       setCheckBoxes(checkboxOptions);
 
-      // Prefill draft with first option (optional)
       if (checkBoxes.length > 0) {
         const first = checkboxOptions[0];
         setDraftCheckbox({
@@ -1523,8 +1015,6 @@ const EditPanel = ({
   };
 
   const radioImageInputRef = useRef(null);
-
-  // console.log("radioImageInputRef", radioImageInputRef);
 
   const handleRadioImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -1649,7 +1139,6 @@ const EditPanel = ({
   };
 
   const handleSaveRadioButton = () => {
-    // 1) Validate label
     if (!radioBtnLabel.trim()) {
       toast.error("Label is required");
       return;
@@ -1659,9 +1148,6 @@ const EditPanel = ({
       return;
     }
 
-    // }
-
-    // 2) Filter and validate options
     const filteredOptions = radioButtonOptions.filter((opt) =>
       opt.title?.trim()
     );
@@ -1705,7 +1191,6 @@ const EditPanel = ({
       }
     }
 
-    // 3) Build payload options
     const payloadOptions = filteredOptions.map((opt, idx) => ({
       id: (idx + 1).toString(),
       title: opt.title.trim(),
@@ -1713,9 +1198,7 @@ const EditPanel = ({
       metadata: opt.metadata?.trim() || "",
       image: opt.image || "",
     }));
-    // console.log("Filtered and processed radio button options:", payloadOptions);
 
-    // 4) Final payload and merge
     const payload = {
       label: radioBtnLabel.trim(),
       required: radioRequired,
@@ -1738,12 +1221,12 @@ const EditPanel = ({
       },
     };
 
-    // 5) Save and close
     onSave(updatedData);
     onClose();
   };
+  // =================================RadioButton End===============================
 
-  //checkbox
+  // =================================Checkbox Start===============================
   const [mainLabelCheckbox, setMainLabelCheckbox] = useState("");
   const [mainNameCheckbox, setMainNameCheckbox] = useState("");
   const [checkBoxes, setCheckBoxes] = useState([]);
@@ -1761,37 +1244,11 @@ const EditPanel = ({
   });
   const [checkboxEditIdx, setCheckboxEditIdx] = useState(null);
 
-  //  useEffect((idx) => {
-  //   if (selectedItem) {
-  //     setMainLabelCheckbox(selectedItem.label || "");
-
-  //     const draft = selectedItem.draftCheckbox || {};
-  //     console.log("draft", draft);
-
-  //     setDraftCheckbox({
-  //       title: selectedItem.draft?.title || "",
-  //       description: selectedItem.draft?.description || "",
-  //       metadata: selectedItem.draft?.metadata || "",
-  //       image: selectedItem.draft?.image || "",
-  //     });
-  //     setCheckboxRequired(selectedItem.required ?? false);
-
-  //   //   setDraftCheckbox({
-  //   //   // title: checkBoxes[idx].title || "",
-  //   //   description: checkBoxes[idx].description || "",
-  //   //   metadata: checkBoxes[idx].metadata || "",
-  //   //   image: checkBoxes[idx].image || "",
-  //   // });
-  //   }
-  // }, [selectedItem]);
-
   const handleCheckboxRequiredChange = () => {
     setCheckboxRequired((prev) => !prev);
   };
 
   const checkboxImageInputRef = useRef(null);
-
-  // const Max_Image_Size = 100 * 1024; // 100 KB
 
   const handleCheckboxImageChange = async (e) => {
     const file = e.target.files?.[0];
@@ -1802,7 +1259,7 @@ const EditPanel = ({
 
     if (checkboxImageFile?.image) {
       toast.error("Image already uploaded");
-      e.target.value = ""; // reset input
+      e.target.value = "";
       return;
     }
 
@@ -1818,11 +1275,11 @@ const EditPanel = ({
     //   return;
     // }
 
-    setCheckboxImageFile(file); // save raw file object
+    setCheckboxImageFile(file);
 
     const reader = new FileReader();
     reader.onload = () => {
-      setCheckboxImageSrc(reader.result); // preview
+      setCheckboxImageSrc(reader.result);
     };
     reader.readAsDataURL(file);
 
@@ -1830,11 +1287,11 @@ const EditPanel = ({
       const base64String = await getBase64(file);
       setDraft((prev) => ({
         ...prev,
-        checkboxImage: base64String, // if needed
+        checkboxImage: base64String,
       }));
       setDraftCheckbox((prev) => ({
         ...prev,
-        image: `${base64String}`, // ✅ this is what checkbox preview uses
+        image: `${base64String}`,
       }));
       toast.success("Image loaded successfully!");
     } catch {
@@ -1882,7 +1339,7 @@ const EditPanel = ({
     updated[checkboxEditIdx] = {
       ...updated[checkboxEditIdx],
       ...draftCheckbox,
-      image: draftCheckbox.image || updated[checkboxEditIdx].image || "", // ✅ make sure image is carried
+      image: draftCheckbox.image || updated[checkboxEditIdx].image || "",
     };
     setCheckBoxes(updated);
     setCheckboxEditIdx(null);
@@ -1924,10 +1381,8 @@ const EditPanel = ({
       return;
     }
 
-    // Filter and validate options
     const filteredOptions = checkBoxes.filter((opt) => opt.title?.trim());
 
-    // Build payload options
     const payloadOptions = filteredOptions.map((opt, idx) => ({
       id: (idx + 1).toString(),
       title: opt.title.trim(),
@@ -1964,10 +1419,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
-  // anshu
-  //checkbox
+  // =================================Checkbox End===============================
 
-  // dropdown
+
+  // =================================Dropdown Start===============================
   const [mainLabelDropdown, setMainLabelDropdown] = useState("");
   const [options, setOptions] = useState([]);
   const [editingIdx, setEditingIdx] = useState(null);
@@ -1995,15 +1450,12 @@ const EditPanel = ({
 
   useEffect(() => {
     if (selectedItem?.type === "dropDown") {
-      // Set main label and required flag
       setMainLabelDropdown(selectedItem.label || "");
       setDropdownRequired(selectedItem.required ?? false);
 
-      // Get dropdown options
       const dropdownOptions = selectedItem["data-source"] || [];
       setOptions(dropdownOptions);
 
-      // Prefill draft with first option (optional)
       if (dropdownOptions.length > 0) {
         const first = dropdownOptions[0];
         setEditingIdx(0);
@@ -2027,46 +1479,6 @@ const EditPanel = ({
     setDropdownRequired((prev) => !prev);
   };
 
-  //  const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
-
-  // const handleDropdownImageChange = async (event) => {
-  //   const file = event.target.files?.[0];
-  //   if (!file) {
-  //     toast.error("No file selected");
-  //     return;
-  //   }
-
-  //   if (!file.type.match(/^image\/(png|jpeg)$/)) {
-  //     toast.error("Please select a .png or .jpeg file");
-  //     event.target.value = "";
-  //     return;
-  //   }
-
-  //   // if (file.size > MAX_IMAGE_SIZE) {
-  //   //   toast.error("Image must be under 100 KB");
-  //   //   event.target.value = "";
-  //   //   return;
-  //   // }
-
-  //   setDropImageFile(file);
-  //   const reader = new FileReader();
-  //   reader.onload = () => {
-  //     setDropImageSrc(reader.result);
-  //   };
-  //   reader.readAsDataURL(file);
-
-  //   try {
-  //     const base64String = await getBase64(file);
-  //     setDraft((prev) => ({
-  //       ...prev,
-  //       // dropdownImage: base64String,
-  //     }));
-  //     toast.success("Image uploaded successfully!");
-  //   } catch {
-  //     toast.error("Failed to convert image to base64");
-  //   }
-  // };
-
   const handleDropdownImageChange = async (event) => {
     const file = event.target.files?.[0];
     if (!file) {
@@ -2084,7 +1496,7 @@ const EditPanel = ({
 
     const reader = new FileReader();
     reader.onload = () => {
-      setDropImageSrc(reader.result); // still use full base64 for preview
+      setDropImageSrc(reader.result);
     };
     reader.readAsDataURL(file);
 
@@ -2094,7 +1506,7 @@ const EditPanel = ({
 
       setDraft((prev) => ({
         ...prev,
-        // image: base64String, // ✅ No prefix stored in payload
+        // image: base64String,
       }));
 
       toast.success("Image uploaded successfully!");
@@ -2237,64 +1649,10 @@ const EditPanel = ({
 
     onSave(updatedData);
   };
+  // =================================Dropdown End===============================
 
-  // const handleSaveDropdown = async () => {
-  //   const filteredOptions = options.filter((o) => o.title.trim());
 
-  //   if (filteredOptions.length < 2) {
-  //     toast.error("At least two Dropdown options are required!");
-  //     return;
-  //   }
-
-  //   const payloadOptions = await Promise.all(
-  //     filteredOptions.map(async (opt, idx) => {
-  //       let imagePath = opt.image; // default is already string (url)
-
-  //       // If image is a File, upload it
-  //       if (opt.image instanceof File) {
-  //         const uploadedUrl = await uploadImageToServer(opt.image);
-  //         imagePath = uploadedUrl || "";
-  //       }
-
-  //       return {
-  //         id: idx + 1,
-  //         title: opt.title.trim(),
-  //         description: opt.description?.trim() || "",
-  //         metadata: opt.metadata?.trim() || "",
-  //         image: imagePath,
-  //       };
-  //     })
-  //   );
-
-  //   const payload = {
-  //     label: mainLabelDropdown.trim(),
-  //     required: dropdownRequired,
-  //     "data-source": payloadOptions,
-  //   };
-
-  //   const existingCount = selectedItem?.dropdown
-  //     ? Object.keys(selectedItem.dropdown).length
-  //     : 0;
-
-  //   const id = `dropdown_${existingCount + 1}`;
-
-  //   const updatedData = {
-  //     ...selectedItem,
-  //     ...payload,
-  //     dropdown: {
-  //       ...(selectedItem?.dropdown || {}),
-  //       [id]: payload,
-  //     },
-  //   };
-
-  //   onSave(updatedData);
-  //   onClose();
-  // };
-
-  // dropdown
-  // akhil
-
-  // chipSelector
+  // =================================Chip Selector start===============================
   const [chipSelectorLabel, setChipSelectorLabel] = useState("");
   const [chipSelectorOptions, setChipSelectorOptions] = useState([]);
   const [editingChipIdx, setEditingChipIdx] = useState(null);
@@ -2409,8 +1767,9 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Chip Selector End===============================
 
-  // heading
+  // =================================heading start===============================
   const [headingInput, setHeadingInput] = useState("");
   useEffect(() => {
     if (selectedItem) {
@@ -2460,8 +1819,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================heading start===============================
 
-  // sub-heading
+
+  // =================================Sub heading start===============================
   const [subheadingInput, setSubheadingInput] = useState("");
 
   useEffect(() => {
@@ -2512,8 +1873,9 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // =================================Sub heading End===============================
 
-  // text-body
+  // ====================text body start=======================
   const [textbodyInput, setTextbodyInput] = useState("");
 
   useEffect(() => {
@@ -2564,8 +1926,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  // ====================text body End=======================
 
-  // text-caption
+
+  //================================= text caption start===================================
   const [textcaptionInput, setTextcaptionInput] = useState("");
 
   useEffect(() => {
@@ -2616,8 +1980,10 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  //========================== text Caption End============================
 
-  // textInput
+
+  //========================== textInput Start=========================
   const [inputLabel, setInputLabel] = useState("");
   const [inputPlaceholder, setInputPlaceholder] = useState("");
   const [inputError, setInputError] = useState("");
@@ -2666,7 +2032,6 @@ const EditPanel = ({
     const val = e.target.value;
 
     if (selectedOptionsType?.value === "number") {
-      // Only allow numbers and limit to max length
       if (/^\d*$/.test(val)) {
         if (!inputMax || val.length <= Number(inputMax)) {
           setInputName(val);
@@ -2680,7 +2045,7 @@ const EditPanel = ({
   const handleDropdownChange = (val) => {
     const option = OptionsTypeOptions.find((opt) => opt.value === val) || null;
     setSelectedOptionsType(option);
-    setInputName(""); // Reset on type change
+    setInputName("");
   };
 
   const handleMaxChange = (e) => {
@@ -2737,12 +2102,9 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  //========================== textInput End=========================
 
-  // useEffect(() => {
-  //   console.log("123", tabs);
-  // }, [tabs]);
-
-  // textArea
+  //========================== textArea Start===========================================
   const [textAreaLabel, setTextAreaLabel] = useState("");
   const [textAreaPlaceholder, setTextAreaPlaceholder] = useState("");
   const [textAreaError, setTextAreaError] = useState("");
@@ -2790,16 +2152,8 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
+  //========================== textArea End===========================================
 
-  // // switch
-  // const [addCases, setAddCases] = useState("")
-
-  const maxLengthMap = {
-    heading: 80,
-    subheading: 80,
-    textbody: 4096,
-    textcaption: 409,
-  };
 
   return (
     <Box>
@@ -2811,7 +2165,6 @@ const EditPanel = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 30 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            // className="bg-white z-10 p-5 absolute top-[40%] left-[78%] translate-x-[-50%] translate-y-[-50%] w-[70%] md:w-[40%] lg:w-[40%] xl:w-[40%] h-[87%] mt-29"
             className="bg-gray-100 z-10 p-3 absolute right-3 w-100 top-18 border-2 rounded-xl shadow-sm border-gray-200"
           >
             <div className="flex items-center justify-between border-b-2">
@@ -2823,59 +2176,9 @@ const EditPanel = ({
               </IconButton>
             </div>
 
-            {/* if-else condition */}
-            {/* {selectedCondition && (
-              <h2 className="text-xl font-semibold mb-2 top-0">
-                {selectedCondition}
-              </h2>
-            )} */}
-            {/* if-else condition */}
-            {/* Input Fields for Text-Based Items */}
-            {/* {["heading", "subheading", "textbody", "textcaption"].includes(
-          selectedItem?.type
-        ) && (
-          <div className="mb-2 font-semibold text-lg mt-3">
-            <InputField
-              label={`Edit ${type}`}
-              placeholder={`Enter ${type}`}
-              variant="outlined"
-              tooltipContent={`Edit ${type}`}
-              tooltipPlacement="right"
-              fullWidth
-              value={headingValue}
-              maxLength={maxLengthMap[selectedItem?.type] || 80}
-              onChange={(e) => setHeadingValue(e.target.value)}
-            />
-
-            <div className="mt-5 flex justify-center items-center">
-              <UniversalButton
-                label="SAVE"
-                onClick={() => {
-                  onSave({
-                    index: selectedItem.index,
-                    [type]: headingValue,
-                  });
-                }}
-              />
-            </div>
-          </div>
-        )} */}
-
-            {/* new */}
+            {/* Heading start here */}
             {selectedItem?.type === "heading" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {/* <InputField
-                  label="Heading"
-                  placeholder="Enter Text for  Heading"
-                  variant="outlined"
-                  tooltipContent="Enter Text for  Heading"
-                  tooltipPlacement="right"
-                  fullWidth
-                  value={headingInput}
-                  type="text"
-                  maxLength={80}
-                  onChange={(e) => setHeadingInput(e.target.value)}
-                /> */}
                 <div className="relative">
                   <UniversalTextArea
                     label="Heading"
@@ -2910,41 +2213,11 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* Heading Ends here */}
 
-            {/* {selectedItem?.type === "heading" && (
-            <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
-              <InputField
-                label="Heading"
-                placeholder="Enter Text for Heading"
-                variant="outlined"
-                tooltipContent="Enter Text for Heading"
-                tooltipPlacement="right"
-                fullWidth
-                value={headingInput}
-                type="text"
-                maxLength={80}
-                onChange={(e) => setHeadingInput(e.target.value)}
-              />
-              <div className="flex justify-center">
-                <UniversalButton label="Save" onClick={headingSave} />
-              </div>
-            </div>
-          )} */}
-
+            {/* subheading starts here */}
             {selectedItem?.type === "subheading" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {/* <InputField
-                  label="Sub-Heading"
-                  placeholder="Enter Text for Sub-Heading "
-                  tooltipContent="Enter Text for  Sub-Heading"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={80}
-                  value={subheadingInput}
-                  onChange={(e) => setSubheadingInput(e.target.value)}
-                  fullWidth
-                /> */}
-
                 <div className="relative">
                   <UniversalTextArea
                     label="Sub-Heading"
@@ -2983,21 +2256,11 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* subheading ends here */}
 
+            {/* textbody starts here */}
             {selectedItem?.type === "textbody" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3 ">
-                {/* <InputField
-                  label="TextBody"
-                  placeholder="Enter Text for TextBody "
-                  tooltipContent="Enter Text for  TextBody"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={4096}
-                  value={textbodyInput}
-                  onChange={(e) => setTextbodyInput(e.target.value)}
-                  fullWidth
-                /> */}
-
                 <div className="relative">
                   <UniversalTextArea
                     label="TextBody"
@@ -3031,20 +2294,11 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* textbody ends here */}
 
+            {/* textecaption starts here */}
             {selectedItem?.type === "textcaption" && (
               <div className="mb-2 font-semibold text-lg mt-3 space-y-3">
-                {/* <InputField
-                  label="TextCaption"
-                  placeholder="Enter Text for text caption"
-                  tooltipContent="Enter Text for text caption"
-                  tooltipPlacement="right"
-                  type="text"
-                  maxLength={409}
-                  value={textcaptionInput}
-                  onChange={(e) => setTextcaptionInput(e.target.value)}
-                  fullWidth
-                /> */}
                 <div className="relative">
                   <UniversalTextArea
                     label="TextCaption"
@@ -3084,7 +2338,9 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* textcaption ends here */}
 
+            {/* textinput ends here */}
             {selectedItem?.type === "textInput" && (
               <div className="mb-2 text-lg space-y-2 mt-3">
                 <InputField
@@ -3180,7 +2436,9 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* textInpt ends here */}
 
+            {/* textArea start here  */}
             {selectedItem?.type === "textArea" && (
               <div className="mb-2 text-lg space-y-2 mt-3">
                 <InputField
@@ -3205,13 +2463,13 @@ const EditPanel = ({
                   onChange={(e) => setTextAreaPlaceholder(e.target.value)}
                 />
                 {/* <InputField
-                label="Name"
-                placeholder="Enter Name"
-                tooltipContent="Enter name for TextArea"
-                tooltipPlacement="right"
-                value={textAreaName}
-                onChange={(e) => setTextAreaName(e.target.value)}
-              /> */}
+                  label="Name"
+                  placeholder="Enter Name"
+                  tooltipContent="Enter name for TextArea"
+                  tooltipPlacement="right"
+                  value={textAreaName}
+                  onChange={(e) => setTextAreaName(e.target.value)}
+                /> */}
 
                 <InputField
                   label="Enter error to display"
@@ -3224,29 +2482,29 @@ const EditPanel = ({
                 />
 
                 {/* <div className="flex gap-8">
-              <InputField
-                label="Min Length"
-                id="textarea_min"
-                type="number"
-                placeholder="Min length"
-                tooltipContent="Enter Min Length"
-                tooltipPlacement="right"
-                value={textAreaMin}
-                onChange={(e) => setTextAreaMin(e.target.value)}
-                autoComplete="off"
-              />
-              <InputField
-                label="Max Length"
-                id="textarea_max"
-                type="number"
-                placeholder="Max length"
-                tooltipContent="Enter Max Length"
-                tooltipPlacement="right"
-                value={textAreaMax}
-                onChange={(e) => setTextAreaMax(e.target.value)}
-                autoComplete="off"
-              />
-             </div> */}
+                  <InputField
+                    label="Min Length"
+                    id="textarea_min"
+                    type="number"
+                    placeholder="Min length"
+                    tooltipContent="Enter Min Length"
+                    tooltipPlacement="right"
+                    value={textAreaMin}
+                    onChange={(e) => setTextAreaMin(e.target.value)}
+                    autoComplete="off"
+                  />
+                  <InputField
+                    label="Max Length"
+                    id="textarea_max"
+                    type="number"
+                    placeholder="Max length"
+                    tooltipContent="Enter Max Length"
+                    tooltipPlacement="right"
+                    value={textAreaMax}
+                    onChange={(e) => setTextAreaMax(e.target.value)}
+                    autoComplete="off"
+                  />
+                </div> */}
 
                 <div className="flex items-end">
                   <UniversalLabel
@@ -3273,8 +2531,9 @@ const EditPanel = ({
                 </div>
               </div>
             )}
-            {/* NEW */}
+            {/* textArea ends here  */}
 
+            {/* richtext start here  */}
             {selectedItem?.type === "richText" && (
               <RichTextEditor
                 content={selectedItem.content || ""}
@@ -3286,8 +2545,9 @@ const EditPanel = ({
                 selectedItem={selectedItem}
               />
             )}
+            {/* richtext ends here  */}
 
-            {/* Editable Options for Checkboxes */}
+            {/*Checkboxes start here */}
             {selectedItem?.type === "checkBox" && (
               <FormControl fullWidth>
                 <div className="mb-2 mt-3 space-y-3">
@@ -3498,8 +2758,9 @@ const EditPanel = ({
                 </div>
               </FormControl>
             )}
+            {/* checkbox ends here */}
 
-            {/* Editable Options for Radio Buttons */}
+            {/*Radio Buttons start here */}
             {selectedItem?.type === "radioButton" && (
               <FormControl fullWidth>
                 <div className="mb-2 mt-3">
@@ -3705,8 +2966,9 @@ const EditPanel = ({
                 </div>
               </FormControl>
             )}
+            {/* radiobtn ends here */}
 
-            {/* Editable Options for Dropdown */}
+            {/*Dropdown start here */}
             {selectedItem?.type === "dropDown" && (
               <FormControl fullWidth>
                 {/* ── Dropdown Label Input ── */}
@@ -3918,8 +3180,9 @@ const EditPanel = ({
                 </div>
               </FormControl>
             )}
+            {/* dropdown ends here */}
 
-            {/* Editable option for chipselector In */}
+            {/*chipselector start here */}
             {selectedItem?.type === "chipSelector" && (
               <FormControl fullWidth>
                 <div className="mt-3 space-y-3 mb-3">
@@ -4047,9 +3310,9 @@ const EditPanel = ({
                 </div>
               </FormControl>
             )}
+            {/* chipselector ends here */}
 
             {/* Editable option for FooterButton  */}
-
             {selectedItem?.type === "footerbutton" && (
               <div className="mb-2 text-lg space-y-3 mt-3">
                 <InputField
@@ -4139,7 +3402,9 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* footerbtn ends here */}
 
+            {/* embeddedlink starts here  */}
             {selectedItem.type === "embeddedlink" && (
               <div className="mt-5">
                 <div className="mb-2">
@@ -4211,6 +3476,7 @@ const EditPanel = ({
                 </div>
               </div>
             )}
+            {/* embeddedlink ends here  */}
 
             {/* Editable option for Opt In */}
             {selectedItem?.type === "optin" && (
@@ -4296,8 +3562,9 @@ const EditPanel = ({
                 </div>
               </>
             )}
+            {/* opt-in ends here */}
 
-            {/* Editable option for Image In */}
+            {/* Image Start here */}
             {selectedItem?.type === "image" && (
               <>
                 <div className="space-y-3 mt-3">
@@ -4331,26 +3598,26 @@ const EditPanel = ({
                   )}
 
                   {/* {imageSrc && (
-                <img
-                  src={imageSrc}
-                  alt="Uploaded preview"
-                  style={{ maxWidth: "100%", marginTop: "10px" }}
-                />
-              )} */}
+                    <img
+                      src={imageSrc}
+                      alt="Uploaded preview"
+                      style={{ maxWidth: "100%", marginTop: "10px" }}
+                    />
+                  )} */}
 
                   {/* <InputField
-                label="Width"
-                type="integer"
-                value={width}
-                onChange={(e) => setWidth(e.target.value)}
-              />
+                    label="Width"
+                    type="integer"
+                    value={width}
+                    onChange={(e) => setWidth(e.target.value)}
+                  />
 
-              <InputField
-                label="Height"
-                type="integer"
-                value={height}
-                onChange={(e) => setHeight(e.target.value)}
-              /> */}
+                  <InputField
+                    label="Height"
+                    type="integer"
+                    value={height}
+                    onChange={(e) => setHeight(e.target.value)}
+                  /> */}
 
                   <AnimatedDropdown
                     label="Scale-Type"
@@ -4365,11 +3632,11 @@ const EditPanel = ({
                   />
 
                   {/* <InputField
-                label="Aspect-Ratio"
-                type="number"
-                value={aspectRatio}
-                onChange={(e) => setAspectRatio(e.target.value)}
-              /> */}
+                    label="Aspect-Ratio"
+                    type="number"
+                    value={aspectRatio}
+                    onChange={(e) => setAspectRatio(e.target.value)}
+                  /> */}
 
                   <InputField
                     label="Alt-Text"
@@ -4386,8 +3653,9 @@ const EditPanel = ({
                 </div>
               </>
             )}
+            {/* image ends here */}
 
-            {/* Editable option for document In */}
+            {/*  document start here  */}
             {selectedItem?.type === "document" && (
               <>
                 <div className="space-y-3 mt-3">
@@ -4432,13 +3700,13 @@ const EditPanel = ({
                   />
 
                   {/* <InputField
-                label="List-items"
-                minLength={1}
-                maxLength={20}
-                required={true}
-                value={listItems}
-                onChange={(e) => setListItems(e.target.value)}
-              /> */}
+                    label="List-items"
+                    minLength={1}
+                    maxLength={20}
+                    required={true}
+                    value={listItems}
+                    onChange={(e) => setListItems(e.target.value)}
+                  /> */}
 
                   <div className="flex justify-center">
                     <UniversalButton
@@ -4449,8 +3717,9 @@ const EditPanel = ({
                 </div>
               </>
             )}
+            {/*  document ends here  */}
 
-            {/* Editable option for media In */}
+            {/*  media start here */}
             {selectedItem?.type === "media" && (
               <>
                 <div className="space-y-3 mt-3">
@@ -4517,29 +3786,11 @@ const EditPanel = ({
                 </div>
               </>
             )}
+            {/*  media ends here */}
 
+            {/* ImageCarousel start here */}
             {selectedItem?.type === "imageCarousel" && (
               <div className="space-y-3 mt-3">
-                {/* {imageCarouselImages.map((index) => (
-                <div key={index} className="flex items-center space-x-2">
-                  <InputField
-                    label={`Image ${index + 1}`}
-                    type="file"
-                    accept=".png, .jpeg"
-                    tooltipContent="Upload Image"
-                    tooltipPlacement="right"
-                    required={true}
-                    onChange={(e) => handleImageCarouselChange(e, index)}
-                    ref={imageCarouselInputRefs[index]}
-                  />
-                  <button onClick={() => handleImageCarouselDelete(index)}>
-                    <DeleteOutlineIcon
-                      sx={{ fontSize: "23px", marginTop: 3, color: "#ef4444" }}
-                    />
-                  </button>
-                </div>
-              ))} */}
-
                 {imageCarouselImages.map((item, index) => {
                   return (
                     <div
@@ -4582,54 +3833,6 @@ const EditPanel = ({
                     </div>
                   );
                 })}
-                {/* {imageCarouselImages.map((item, index) => {
-                  // Prepare final image source
-                  console.log("item", item)
-                  const imageSrcFile = item.src
-                    ? `data:image/png;base64,${item.src}`
-                    : "";
-                  const imageSrcUrl = item.file
-                    ? URL.createObjectURL(item.file)
-                    : "";
-                  const finalSrc = imageSrcFile || imageSrcUrl;
-
-                  return (
-                    <div key={index} className="flex items-center space-x-2">
-                      {finalSrc ? (
-                        <label
-                          htmlFor={`carousel-upload-${index}`}
-                          className="cursor-pointer"
-                        >
-                          <img
-                            src={finalSrc}
-                            alt={`Image ${index + 1}`}
-                            className="rounded-full w-20 h-20 object-cover border-2 border-gray-300 hover:opacity-80 transition"
-                          />
-                        </label>
-                      ) : (
-                        <InputField
-                          label={`Image ${index + 1}`}
-                          type="file"
-                          accept=".png, .jpeg"
-                          tooltipContent="Upload Image"
-                          tooltipPlacement="right"
-                          required={true}
-                          onChange={(e) => handleImageCarouselChange(e, index)}
-                          ref={imageCarouselInputRefs[index]}
-                        />
-                      )}
-                      <button onClick={() => handleImageCarouselDelete(index)}>
-                        <DeleteOutlineIcon
-                          sx={{
-                            fontSize: "23px",
-                            marginTop: 3,
-                            color: "#ef4444",
-                          }}
-                        />
-                      </button>
-                    </div>
-                  );
-                })} */}
 
                 <AnimatedDropdown
                   label="Scale-Type"
@@ -4651,11 +3854,11 @@ const EditPanel = ({
                 />
 
                 {/* <InputField
-                label="Aspect-Ratio"
-                placeholder=""
-                value={imageCarouselAspectRatio}
-                onChange={(e) => setImageCarouselAspectRatio(e.target.value)}
-              /> */}
+                  label="Aspect-Ratio"
+                  placeholder=""
+                  value={imageCarouselAspectRatio}
+                  onChange={(e) => setImageCarouselAspectRatio(e.target.value)}
+                /> */}
 
                 <div className="flex justify-center">
                   <UniversalButton
@@ -4665,224 +3868,7 @@ const EditPanel = ({
                 </div>
               </div>
             )}
-
-            {/* Editable option for if-else In */}
-
-            {/* {(selectedItem?.type === "ifelse" ||
-            selectedThenComponent === "ifelse" ||
-            selectedElseComponent === "ifelse") && (
-            <>
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="If-Condition"
-                  tooltipContent="Select If-Condition"
-                  tooltipPlacement="right"
-                  value={selectedCondition}
-                  options={[
-                    { label: "Equal to", value: "==" },
-                    { label: "Not equal to", value: "!=" },
-                    { label: "AND", value: "&&" },
-                    { label: "OR", value: "||" },
-                    { label: "NOT", value: "!" },
-                  ]}
-                  onChange={(value) => setSelectedCondition(value)}
-                />
-              </div>
-
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="Add Component to Then Branch"
-                  tooltipContent="Select Then Branch"
-                  tooltipPlacement="right"
-                  value={selectedThenComponent}
-                  options={[
-                    { label: "heading", value: "heading" },
-                    { label: "subHeading", value: "subHeading" },
-                    { label: "textBody", value: "textBody" },
-                    { label: "textCaption", value: "textCaption" },
-                    { label: "textInput", value: "textInput" },
-                    { label: "textArea", value: "textArea" },
-                    { label: "checkBox", value: "checkBox" },
-                    { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" },
-                    { label: "dropDown", value: "dropDown" },
-                    { label: "datePicker", value: "date" },
-                    { label: "embeddedlink", value: "embeddedlink" },
-                    { label: "image", value: "image" },
-                    { label: "optin", value: "optin" },
-                    { label: "switch", value: "switch" },
-                    { label: "footer", value: "footerbutton" },
-                    { label: "ifelse", value: "ifelse" }
-                  ]}
-                  
-                  // onChange={(value) => setSelectedThenComponent(value)}
-                  onChange={(value) => {
-                    setSelectedThenComponent(value);
-                    if (value === "ifelse") {
-                      setNestedIf(true); // ✅ Set your flag here
-                    } else {
-                      setNestedIf(false); // optionally reset
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="Add Component to Else Branch"
-                  tooltipContent="Select Else Branch"
-                  tooltipPlacement="right"
-                  value={selectedElseComponent}
-                  options={[
-                    { label: "heading", value: "heading" },
-                    { label: "subHeading", value: "subHeading" },
-                    { label: "textBody", value: "textBody" },
-                    { label: "textCaption", value: "textCaption" },
-                    { label: "textInput", value: "textInput" },
-                    { label: "textArea", value: "textArea" },
-                    { label: "checkBox", value: "checkBox" },
-                    { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" },
-                    { label: "dropDown", value: "dropDown" },
-                    { label: "datePicker", value: "date" },
-                    { label: "embeddedlink", value: "embeddedlink" },
-                    { label: "image", value: "image" },
-                    { label: "optin", value: "optin" },
-                    { label: "switch", value: "switch" },
-                    { label: "ifelse", value: "ifelse" },
-                    { label: "footer", value: "footerbutton" },
-                  ]}
-                  onChange={(value) => {
-                    setSelectedElseComponent(value);
-                    if (value === "ifelse") {
-                      setNestedElse(true); // ✅ Set your flag here
-                    } else {
-                      setNestedElse(false); // optionally reset
-                    }
-                  }}
-                />
-
-                <div className="flex justify-center mt-4">
-                  <UniversalButton label="Save" onClick={handleIfElseSave} />
-                </div>
-              </div>
-            </>
-          )}
-
-          {(nestedIf === true || nestedElse === true) && (
-            <>
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="If-Condition"
-                  tooltipContent="Select If-Condition"
-                  tooltipPlacement="right"
-                  value={selectedCondition}
-                  options={[
-                    { label: "Equal to", value: "==" },
-                    { label: "Not equal to", value: "!=" },
-                    { label: "AND", value: "&&" },
-                    { label: "OR", value: "||" },
-                    { label: "NOT", value: "!" },
-                  ]}
-                  onChange={(value) => setSelectedCondition(value)}
-                />
-              </div>
-
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="Add Component to Then Branch"
-                  tooltipContent="Select Then Branch"
-                  tooltipPlacement="right"
-                  value={selectedThenComponent}
-                  options={[
-                    { label: "heading", value: "heading" },
-                    { label: "subHeading", value: "subHeading" },
-                    { label: "textBody", value: "textBody" },
-                    { label: "textCaption", value: "textCaption" },
-                    { label: "textInput", value: "textInput" },
-                    { label: "textArea", value: "textArea" },
-                    { label: "checkBox", value: "checkBox" },
-                    { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" },
-                    { label: "dropDown", value: "dropDown" },
-                    { label: "datePicker", value: "date" },
-                    { label: "embeddedlink", value: "embeddedlink" },
-                    { label: "image", value: "image" },
-                    { label: "optin", value: "optin" },
-                    { label: "switch", value: "switch" },
-                    { label: "ifelse", value: "ifelse" },
-                    { label: "footer", value: "footerbutton" },
-                  ]}
-                  onChange={(value) => {
-                    setSelectedThenComponent(value);
-                    if (value === "ifelse") {
-                      setNestedIf(true); // ✅ Set your flag here
-                    } else {
-                      setNestedIf(false); // optionally reset
-                    }
-                  }}
-                />
-              </div>
-
-              <div className="mt-4">
-                <AnimatedDropdown
-                  label="Add Component to Else Branch"
-                  tooltipContent="Select Else Branch"
-                  tooltipPlacement="right"
-                  value={selectedElseComponent}
-                  options={[
-                    { label: "heading", value: "heading" },
-                    { label: "subHeading", value: "subHeading" },
-                    { label: "textBody", value: "textBody" },
-                    { label: "textCaption", value: "textCaption" },
-                    { label: "textInput", value: "textInput" },
-                    { label: "textArea", value: "textArea" },
-                    { label: "checkBox", value: "checkBox" },
-                    { label: "radioButton", value: "radioButton" },
-                    { label: "chipSelector", value: "chipSelector" },
-                    { label: "dropDown", value: "dropDown" },
-                    { label: "datePicker", value: "date" },
-                    { label: "embeddedlink", value: "embeddedlink" },
-                    { label: "image", value: "image" },
-                    { label: "optin", value: "optin" },
-                    { label: "switch", value: "switch" },
-                    { label: "ifelse", value: "ifelse" },
-                    { label: "footer", value: "footerbutton" },
-                  ]}
-                  onChange={(value) => {
-                    setSelectedElseComponent(value);
-                    if (value === "ifelse") {
-                      setNestedElse(true); // ✅ Set your flag here
-                    } else {
-                      setNestedElse(false); // optionally reset
-                    }
-                  }}
-                />
-
-                <div className="flex justify-center mt-4">
-                  <UniversalButton label="Save" onClick={handleIfElseSave} />
-                </div>
-              </div>
-
-          
-          )}
-           */}
-
-            {/* {selectedItem?.type === "ifelse" && (
-              <>
-                <IfElseBlock
-                  level={1}
-                  selectedThenComponent={selectedThenComponent}
-                  setSelectedThenComponent={setSelectedThenComponent}
-                  selectedElseComponent={selectedElseComponent}
-                  setSelectedElseComponent={setSelectedElseComponent}
-                  selectedCondition={selectedCondition}
-                  setSelectedCondition={setSelectedCondition}
-                  handleIfElseSave={handleIfElseSave}
-                  onUpdateTree={handleUpdateTree}
-                />
-              </>
-            )} */}
+            {/* ImageCarousel ends here */}
 
             {/* Switch Component Start */}
             {selectedItem?.type === "switch" && (
@@ -4973,7 +3959,6 @@ const EditPanel = ({
               </div>
             )}
             {/* Date Componenet End */}
-
 
             {/* Calendar Componenet Start */}
             {selectedItem?.type === "calendar" && (
@@ -5115,39 +4100,6 @@ const EditPanel = ({
               </div>
             )}
             {/* Calendar Componenet End */}
-
-
-            {/* {selectedItem?.type === "userdetail" && (
-              <>
-                <InputField
-                  placeholder="User Details"
-                  value={value}
-                  onChange={(e) => setValue(e.target.value)}
-                />
-                <Switch
-                  color={isToggled ? "primary" : "secondary"}
-                  onClick={handleToggle}
-                // {isToggled ? "ON" : "OFF"}
-                />
-                {isToggled && (
-                  <AnimatedDropdown
-                    value={isToggled}
-                    onChange={(value) => handleToggle(value)}
-                    fullWidth
-                    sx={{ marginTop: 2 }}
-                    // visible={isToggled === isToggled}
-                    options={[
-                      { value: "A", label: "A" },
-                      { value: "B", label: "B" },
-                      { value: "C", label: "C" },
-                      { value: "D", label: "D" },
-                    ]}
-                  />
-                )}
-              </>
-            )} */}
-
-
           </motion.div>
         </ClickAwayListener>
       </AnimatePresence>
@@ -5155,4 +4107,4 @@ const EditPanel = ({
   );
 };
 
-export default EditPanel;
+export default EditPanel; 
