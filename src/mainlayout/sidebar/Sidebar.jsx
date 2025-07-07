@@ -16,6 +16,7 @@ import Divider from "@mui/material/Divider";
 import toast from "react-hot-toast";
 import { LiaTagsSolid } from "react-icons/lia";
 import { motion } from "framer-motion";
+import AssuredWorkloadOutlinedIcon from '@mui/icons-material/AssuredWorkloadOutlined';
 
 import { LuWorkflow } from "react-icons/lu";
 import rcsicon from "../../assets/icons/RCS02.svg";
@@ -394,15 +395,15 @@ const Sidebar = ({ isCollapsed, setIsCollapsed, isMobile }) => {
       to: "/workflow",
       roles: ["ADMIN"],
     },
-    // {
-    //   id: "",
-    //   name: "recharge",
-    //   icon: <LuWorkflow fontSize="20" style={{ fontSize: "17px" }} />,
-    //   label: "Recharge",
-    //   type: "single",
-    //   to: "/selfrecharge",
-    //   roles: ["ADMIN"],
-    // },
+    {
+      id: "",
+      name: "recharge",
+      icon: <AssuredWorkloadOutlinedIcon fontSize="20" style={{ fontSize: "17px" }} />,
+      label: "Recharge",
+      type: "single",
+      to: "/selfrecharge",
+      roles: ["ADMIN"],
+    },
     // {
     //   id: "",
     //   name: "Wishmanagement",

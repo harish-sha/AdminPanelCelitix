@@ -285,6 +285,7 @@ import { load } from "@cashfreepayments/cashfree-js";
 import toast from "react-hot-toast";
 import Lottie from "lottie-react";
 import rechargeAnim from "../assets/animation/recharge.json";
+import { rechargeCreateOrderCashFree } from "@/apis/recharge/recharge";
 
 export default function RechargeFullWidth() {
   const [cashfree, setCashfree] = useState(null);
@@ -308,37 +309,44 @@ export default function RechargeFullWidth() {
       return;
     }
 
+    function generateOrderId() {
+      const random14Digit = Math.floor(1e13 + Math.random() * 9e13); // ensures 14 digits
+      return `order_id${random14Digit}`;
+    }
+
     if (!paymentSessionId) {
-      const orderId = `order_${Date.now()}`;
+      // const orderId = `order_id${Date.now()}`;
+      const orderId = generateOrderId();
+      console.log(orderId);
+      // const domain = window.location.hostname;
+      const domain = "https://app.celitix.com";
       try {
-        const res = await fetch("https://sandbox.cashfree.com/pg/orders", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-client-id": "TEST430329ae80e0f32e41a393d78b923034",
-            "x-client-secret": "TESTaf195616268bd6202eeb3bf8dc458956e7192a85",
-            "x-api-version": "2022-09-01",
+
+        const payload = {
+          order_id: orderId,
+          order_amount: amount,
+          order_currency: "INR",
+          customer_details: {
+            customer_id: orderId,
+            customer_email: email,
+            customer_phone: phone,
+            customer_name: name,
           },
-          body: JSON.stringify({
-            order_id: orderId,
-            order_amount: amount,
-            order_currency: "INR",
-            customer_details: {
-              customer_id: phone,
-              customer_email: email,
-              customer_phone: phone,
-              customer_name: name,
-            },
-            order_meta: {
-              return_url: `https://yourdomain.com/payment-status?order_id=${orderId}`,
-            },
-          }),
-        });
-        const data = await res.json();
-        if (data.payment_session_id) {
-          setPaymentSessionId(data.payment_session_id);
+          order_meta: {
+            // return_url: `${domain}/payment-status?order_id=${orderId}`,
+            return_url: `${domain}/selfrecharge`,
+          },
+        }
+        const res = await rechargeCreateOrderCashFree(payload)
+        console.log("response cashfree", res);
+        if (res?.status === true && res?.paymentSessionId) {
+          setPaymentSessionId(res.paymentSessionId);
+          const result = await cashfree.checkout({
+            paymentSessionId: res.paymentSessionId,
+            redirectTarget: "_modal",
+          });
         } else {
-          console.error(data);
+          console.error("Missing paymentSessionId in response:", res);
           toast.error("Failed to create payment session.");
           return;
         }
@@ -350,28 +358,28 @@ export default function RechargeFullWidth() {
     }
 
 
-    if (!cashfree) {
-      toast.error("Payment SDK not loaded yet. Try again in a moment.");
-      return;
-    }
+    // if (!cashfree) {
+    //   toast.error("Payment SDK not loaded yet. Try again in a moment.");
+    //   return;
+    // }
 
-    try {
-      const result = await cashfree.checkout({
-        paymentSessionId,
-        redirectTarget: "_modal",
-      });
+    // try {
+    //   const result = await cashfree.checkout({
+    //     paymentSessionId,
+    //     redirectTarget: "_modal",
+    //   });
 
-      if (result.error) {
-        console.error(result.error);
-        toast.error("Payment cancelled or failed.");
-      } else {
-        console.log("Payment details:", result.paymentDetails);
-        toast.success("Payment completed!");
-      }
-    } catch (err) {
-      console.error(err);
-      toast.error("Unexpected error during payment.");
-    }
+    //   if (result.error) {
+    //     console.error(result.error);
+    //     toast.error("Payment cancelled or failed.");
+    //   } else {
+    //     console.log("Payment details:", result.paymentDetails);
+    //     toast.success("Payment completed!");
+    //   }
+    // } catch (err) {
+    //   console.error(err);
+    //   toast.error("Unexpected error during payment.");
+    // }
   };
 
   return (

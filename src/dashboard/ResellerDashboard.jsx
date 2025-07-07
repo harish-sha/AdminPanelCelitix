@@ -18,6 +18,9 @@ import {
   SupportAgent,
   Feedback,
 } from "@mui/icons-material";
+import { FaShopify, FaFacebookMessenger } from "react-icons/fa";
+import { MdSupportAgent } from "react-icons/md";
+import { AiFillApi } from "react-icons/ai";
 import { FaWhatsapp, FaPhone, FaRegCommentDots, FaSms } from "react-icons/fa";
 import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
@@ -45,6 +48,9 @@ import { getUserDetails } from "@/apis/user/user";
 import { useUser } from "@/context/auth";
 import CountUp from "react-countup";
 import toast from "react-hot-toast";
+import { Dialog } from "primereact/dialog";
+import { AiOutlineAppstoreAdd } from "react-icons/ai";
+
 
 import {
   BarChart,
@@ -64,6 +70,7 @@ import {
   dailySeriveUsage,
   dailyWalletUsage,
   fetchBalance,
+  getOldApiKey,
 } from "@/apis/settings/setting";
 import UniversalDatePicker from "@/whatsapp/components/UniversalDatePicker";
 import moment from "moment";
@@ -441,6 +448,87 @@ const ResellerDashboard = () => {
     },
   ];
 
+  // Add Integrations start
+  const [oldApiKey, setOldApiKey] = useState("");
+  const [visible, setVisible] = useState(false);
+  const openDialog = () => setVisible(true);
+  const closeDialog = () => setVisible(false);
+
+  useEffect(() => {
+    const handlegetOldApiKey = async () => {
+      try {
+        const res = await getOldApiKey();
+        if (res.status === 200) {
+          setOldApiKey(res.oldkey);
+        } else {
+          toast.error("Error fetching old API Key else");
+        }
+      } catch (e) {
+        // console.log(e);
+        toast.error("Error fetching old API Key");
+      }
+    };
+    handlegetOldApiKey();
+  }, []);
+
+  const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyC0kAJahOWabdn2eiwVnBr3HXCHaTSnXzQ`
+
+  console.log("final integration url", integrationUrl)
+
+  // const integrations = [
+  //   {
+  //     name: "Zoho",
+  //     icon: <AiFillApi size={40} />,
+  //     url: iframeSrcMap.zoho,
+  //   },
+  //   {
+  //     name: "WebEngage",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "Freshdesk",
+  //     icon: <MdSupportAgent size={40} />,
+  //     url: iframeSrcMap.freshdesk,
+  //   },
+  //   {
+  //     name: "Shopify",
+  //     icon: <FaShopify size={40} />,
+  //     url: iframeSrcMap.shopify,
+  //   },
+  //   {
+  //     name: "Messenger",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "WordPress",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "Zapier",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "WooCommerce",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "Cronberry",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  //   {
+  //     name: "Google Sheets",
+  //     icon: <FaFacebookMessenger size={40} />,
+  //     url: iframeSrcMap.messenger,
+  //   },
+  // ];
+
+
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
       {/* Logged In User Card */}
@@ -502,186 +590,118 @@ const ResellerDashboard = () => {
         </div>
       </motion.div>
 
-      {/* Service Cards */}
-      <Grid container spacing={3}>
-        {services.map((service, index) => {
-          const IconComponent = service.icon;
-          const hasService = user.services?.some(
-            (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
-          );
-          return (
-            <Grid item xs={12} sm={6} md={3} key={index}>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                className={`relative rounded-xl bg-gradient-to-br ${service.color
-                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
-                  } `}
-              >
-                {hasService && (
-                  <>
-                    <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
-                    <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
-                      Active
-                    </div>
-                  </>
-                )}
-                {!hasService && (
-                  <>
-                    <div className="absolute top-2 right-2 bg-red-400 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
-                    <div className="absolute top-2 right-8 bg-red-400 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
-                      inActive
-                    </div>
-                  </>
-                )}
-                <div className="font-semibold text-lg text-gray-900">
-                  {service.displayName}
-                </div>
-                <motion.div className="flex items-center justify-end z-10">
-                  <div className="flex justify-end">
-                    {service.animation ? (
-                      <div className="w-full  h-auto text-left">
-                        <Lottie
-                          animationData={service.animation}
-                          loop
-                          autoplay
-                          className="w-22 h-auto "
-                        />
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        {/* Service Cards */}
+        <Grid container spacing={3}>
+          {services.map((service, index) => {
+            const IconComponent = service.icon;
+            const hasService = user.services?.some(
+              (s) => s.display_name.toLowerCase() === service.name.toLowerCase()
+            );
+            return (
+              <Grid item xs={12} sm={6} md={3} key={index}>
+                <motion.div
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  className={`relative rounded-xl bg-gradient-to-br ${service.color
+                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
+                    } `}
+                >
+                  {hasService && (
+                    <>
+                      <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                      <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                        Active
                       </div>
-                    ) : (
-                      <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
-                    )}
+                    </>
+                  )}
+                  {!hasService && (
+                    <>
+                      <div className="absolute top-2 right-2 bg-red-400 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                      <div className="absolute top-2 right-8 bg-red-400 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                        inActive
+                      </div>
+                    </>
+                  )}
+                  <div className="font-semibold text-lg text-gray-900">
+                    {service.displayName}
                   </div>
+                  <motion.div className="flex items-center justify-end z-10">
+                    <div className="flex justify-end">
+                      {service.animation ? (
+                        <div className="w-full  h-auto text-left">
+                          <Lottie
+                            animationData={service.animation}
+                            loop
+                            autoplay
+                            className="w-22 h-auto "
+                          />
+                        </div>
+                      ) : (
+                        <IconComponent className="text-gray-700 group-hover:rotate-6 transition-transform duration-300" />
+                      )}
+                    </div>
+                  </motion.div>
+                  <p className="text-sm opacity-70 mt-3">{service.desc}</p>
                 </motion.div>
-                <p className="text-sm opacity-70 mt-3">{service.desc}</p>
-              </motion.div>
-            </Grid>
-          );
-        })}
-      </Grid>
+              </Grid>
+            );
+          })}
+        </Grid>
+      </motion.div>
+
+
+      {/* Add Integrations Start */}
+      <motion.div
+        initial={{ opacity: 0, y: -30 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="bg-white p-6 rounded-2xl shadow-md cursor-pointer hover:shadow-lg"
+        onClick={openDialog}
+      >
+        <div className="flex flex-col items-center justify-center space-y-4">
+          <AiOutlineAppstoreAdd size={48} className="text-blue-500" />
+          <h2 className="text-2xl font-bold text-gray-800">Add Integrations</h2>
+          <p className="text-gray-500 text-center max-w-sm">
+            Connect Freshdesk, Zoho, Shopify, and more from a single dashboard.
+          </p>
+        </div>
+      </motion.div>
+
+      <Dialog
+        header="CPaaS Integrations Panel"
+        visible={visible}
+        style={{ width: '85vw', maxWidth: '90vw', height: "80vh" }}
+        onHide={() => setVisible(false)}
+        draggable={false}
+        maximizable
+      >
+        <div>
+          <button onClick={() => window.open(integrationUrl, "_blank")}>Open</button>
+        </div>
+        <iframe
+          src={integrationUrl}
+          width="100%"
+          height="100%"
+          frameBorder="0"
+          className="rounded-md"
+        ></iframe>
+      </Dialog>
+      {/* Add Integrations End */}
 
       {/* Service Usage Overview start */}
-      {/* <div className="grid grid-cols-1 gap-4">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white p-6 rounded-2xl shadow-md"
-        >
-          <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
-
-          <div className="flex flex-wrap gap-4 items-center mb-6">
-            <div className="flex gap-2">
-              {FILTERS.map((item) => (
-                <button
-                  key={item}
-                  onClick={() => setFilter(item)}
-                  className={`px-4 py-1.5 rounded-full border ${
-                    filter === item
-                      ? "bg-blue-600 text-white"
-                      : "bg-gray-100 text-gray-700"
-                  } transition-all duration-300`}
-                >
-                  {item}
-                </button>
-              ))}
-            </div>
-
-            {filter === "Custom" && (
-              <div className="flex gap-2 items-center">
-                <DatePicker
-                  selected={startDate}
-                  onChange={(date) => setStartDate(date)}
-                />
-                <span className="text-gray-500">to</span>
-                <DatePicker
-                  selected={endDate}
-                  onChange={(date) => setEndDate(date)}
-                />
-              </div>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {servicesDailyUsage.map((service, index) => {
-              const record = usageData?.[service]?.[0];
-              return (
-                <motion.div
-                  key={`${service}-${index}`}
-                  whileHover={{ scale: 1.03 }}
-                  className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center shadow-sm"
-                >
-                  <div key={`icon-${service}`} className="text-3xl">
-                    {icons?.[service] ?? <span>⚠️</span>}
-                  </div>
-                  <p className="text-sm mt-2 text-gray-500 capitalize">
-                    {service}
-                  </p>
-                  <p className="text-xl font-bold mt-1">
-                    {record?.totalSent ?? 0} Sent
-                  </p>
-                  <p className="text-sm text-gray-400">
-                    ₹{record?.totalCharge?.toFixed(2) ?? "0.00"} charged
-                  </p>
-                </motion.div>
-              );
-            })}
-          </div>
-
-          <div className="mt-10 p-6 rounded-2xl bg-white shadow-md">
-            <h3 className="text-lg font-semibold mb-4">Usage Analytics</h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <ComposedChart data={chartData}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis yAxisId="left" />
-                <YAxis yAxisId="right" orientation="right" />
-                <Tooltip />
-                <Legend />
-                <Bar
-                  yAxisId="left"
-                  dataKey="totalSent"
-                  fill="#3b82f6"
-                  radius={[4, 4, 0, 0]}
-                />
-                <Line
-                  yAxisId="right"
-                  type="monotone"
-                  dataKey="totalCharge"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  dot={{ r: 4 }}
-                />
-              </ComposedChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-      </div> */}
-      {/* Service Usage Overview end */}
-
-      <ServiceUsageDashboard />
-
-      {/* Service Usage Trends start */}
-      {/* <motion.div
+      <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="bg-white p-4 rounded-2xl shadow-sm"
       >
-        <LineGraphChart rawData={rawDatanew} activeServices={activeServices} />
-      </motion.div> */}
-      {/* Service Usage Trends end */}
-
-      {/* Revenue & Balance History start */}
-      {/* <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-white p-4 rounded-2xl shadow-sm"
-      >
-        <RevenueChartWithFilter rawData={rawData} />
-      </motion.div> */}
-      {/* Revenue & Balance History end */}
+        <ServiceUsageDashboard />
+      </motion.div>
+      {/* Service Usage Overview End */}
 
       {/* bots & flows start */}
       <motion.div

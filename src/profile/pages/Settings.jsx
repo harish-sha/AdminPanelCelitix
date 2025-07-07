@@ -267,7 +267,7 @@ const Settings = () => {
             aria-label="Settings Tabs"
             textColor="primary"
             indicatorColor="primary"
-            // variant="fullWidth"
+          // variant="fullWidth"
           >
             {/* <Tab
               label={
@@ -504,7 +504,7 @@ const Settings = () => {
                 onChange={(e) => console.log(e)}
               />
               <div className="flex items-end gap-2">
-                <div className="flex-1 ">
+                <div className="flex-1">
                   <InputField
                     id="newapikey"
                     name="newapikey"

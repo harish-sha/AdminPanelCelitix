@@ -294,11 +294,11 @@ export default function ServiceUsageDashboard() {
                   "bg-yellow-50",
                 ],
               }[service.toLowerCase()] || [
-                "from-gray-100",
-                "to-gray-300",
-                "text-black-600",
-                "bg-gray-50",
-              ];
+                  "from-gray-100",
+                  "to-gray-300",
+                  "text-black-600",
+                  "bg-gray-50",
+                ];
 
               const [from, to, txt, bg] = palette;
 
@@ -314,18 +314,16 @@ export default function ServiceUsageDashboard() {
                   }
                   className={`
                     flex items-center gap-2 w-full px-2 py-2 rounded-lg transition 
-                         ${
-                           selected
-                             ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
-                             : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                         }
+                         ${selected
+                      ? `bg-gradient-to-r ${from} ${to} ${txt} shadow-md`
+                      : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                    }
                     `}>
                   <span
                     className={`
                     flex-shrink-0 p-2 rounded-full transition
-                      ${selected ? "bg-white" : bg} ${
-                      selected ? txt : "text-gray-400"
-                    }
+                      ${selected ? "bg-white" : bg} ${selected ? txt : "text-gray-400"
+                      }
                        `}
                   >
                     {icons[service] || "🔧"}
@@ -347,9 +345,8 @@ export default function ServiceUsageDashboard() {
               <button
                 key={type}
                 onClick={() => setChartType(type)}
-                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${
-                  chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
-                }`}
+                className={`flex items-center justify-center gap-2 px-3 py-1 rounded-md ${chartType === type ? "bg-blue-600 text-white" : "bg-gray-100"
+                  }`}
               >
                 {ICON_MAP[type] || <span className="w-5" />}
                 {/* label */}
@@ -369,9 +366,8 @@ export default function ServiceUsageDashboard() {
               <button
                 key={item}
                 onClick={() => setFilter(item)}
-                className={`px-4 py-1.5 rounded-full border ${
-                  filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
-                }`}
+                className={`px-4 py-1.5 rounded-full border ${filter === item ? "bg-blue-600 text-white" : "bg-gray-100"
+                  }`}
               >
                 {item}
               </button>
