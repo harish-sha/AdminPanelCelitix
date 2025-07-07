@@ -22,6 +22,7 @@ export const resellerItems = [
       "/blacklist",
       "/managenotifications",
       "/CreateWhatsappTemplateAdmin",
+      "/managewabaadmin",
     ],
     roles: ["ADMIN"],
   },
@@ -69,7 +70,6 @@ export const resellerItems = [
     links: ["/managecontacts"],
     roles: ["ADMIN", "DIRECTUSER"],
   },
-
   {
     name: "Callback",
     links: ["/callback", "/addcallback", "/editcallback"],

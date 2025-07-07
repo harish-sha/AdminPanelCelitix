@@ -67,6 +67,7 @@ import EditRouting from "@/admin/manageRouting/pages/EditRouting";
 import SMPPErrorCode from "@/admin/smmpErrorCode/SMPPErrorCode";
 import AddOperator from "@/admin/managePrefix/pages/AddOperator";
 import CreateWhatsappTemplateAdmin from "@/admin/createWhatsappTemplate/CreateWhatsappTemplateAdmin";
+import ManageWabaAdmin from "@/admin/managewaba/ManageWabaAdmin";
 
 // sms
 import SmsReports from "@/sms/smsReports/SmsReports";
@@ -144,6 +145,7 @@ import Dummy from "../../dummy/Dummy";
 import Arihant from "../../random/arihant";
 
 
+
 const Approutes = () => {
   return (
     <Routes>
@@ -175,6 +177,10 @@ const Approutes = () => {
         <Route
           path="createwhatsapptemplateadmin"
           element={<CreateWhatsappTemplateAdmin />}
+        />
+        <Route
+          path="managewabaadmin"
+          element={<ManageWabaAdmin />}
         />
 
         {/* SMS */}

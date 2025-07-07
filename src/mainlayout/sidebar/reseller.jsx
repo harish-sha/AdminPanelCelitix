@@ -2,6 +2,8 @@ import { FaHome, FaSignOutAlt, FaWhatsapp } from "react-icons/fa";
 import { IoPersonOutline } from "react-icons/io5";
 import { SiGoogleauthenticator } from "react-icons/si";
 import { LuMessageSquareMore } from "react-icons/lu";
+import ScreenSearchDesktopOutlinedIcon from '@mui/icons-material/ScreenSearchDesktopOutlined';
+import { FaListUl } from "react-icons/fa6";
 
 import rcsicon from "../../assets/icons/RCS02.svg";
 import twoway from "../../assets/icons/TWOWAY.svg";
@@ -33,7 +35,10 @@ export const resellerItems = [
     icon: <IoWalletOutline />,
     label: "User Management",
     type: "dropdown",
-    links: [{ to: "/manageuser", label: "Manage User" }],
+    links: [
+      { to: "/manageuser", label: "Manage User" },
+      { to: "/accountmanager", label: "Account Manager" },
+    ],
     roles: ["ADMIN"],
   },
   {
@@ -43,21 +48,8 @@ export const resellerItems = [
     label: "Admin",
     type: "dropdown",
     links: [
-      // { to: "/manageuser", label: "Manage User" },
-      { to: "/managedlttemplate", label: "Manage DLT Template" },
-      { to: "/rcsmanagebot", label: "Manage Bot" },
-      { to: "/managevoiceclips", label: "Manage Voice Clips" },
       { to: "/manageplan", label: "Manage Plan" },
-      { to: "/accountmanager", label: "Account Manager" },
-      { to: "/graphmain", label: "Graph Main" },
-      { to: "/graphuserwise", label: "Graph User Wise" },
-      { to: "/manageSMPP", label: "Manage SMPP" },
-      { to: "/managerouting", label: "Manage Routing" },
-      { to: "/SMPPerrorcode", label: "SMPP Error Code" },
       { to: "/manageprefix", label: "Manage Prefix" },
-      { to: "/blacklist", label: "Blacklist" },
-      { to: "/managenotifications", label: "ManageNotifications" },
-      { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
     ],
     roles: ["ADMIN"],
   },
@@ -79,6 +71,68 @@ export const resellerItems = [
         isHide: true,
         id: "3",
       },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "monitoring",
+    icon: <ScreenSearchDesktopOutlinedIcon sx={{ fontSize: "18px" }} />,
+    label: "Monitoring",
+    type: "dropdown",
+    links: [
+      { to: "/graphmain", label: "Graph Main" },
+      { to: "/graphuserwise", label: "Graph User Wise" },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "wabaadmin",
+    icon: <FaWhatsapp />,
+    label: "WABA Admin",
+    type: "dropdown",
+    links: [
+      { to: "/managewabaadmin", label: "Manage Waba" },
+      { to: "/CreateWhatsappTemplateAdmin", label: "whatsapp Library" },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "smsadmin",
+    icon: <LuMessageSquareMore />,
+    label: "SMS Admin",
+    type: "dropdown",
+    links: [
+      { to: "/managedlttemplate", label: "Manage DLT Template" },
+      { to: "/manageSMPP", label: "Manage SMPP" },
+      { to: "/managerouting", label: "Manage Routing" },
+      { to: "/SMPPerrorcode", label: "SMPP Error Code" },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "rcsadmin",
+    icon: <img src={rcsicon} className="w-4 h-4" />,
+    label: "RCS Admin",
+    type: "dropdown",
+    links: [
+      { to: "/rcsmanagebot", label: "Manage Bot" },
+    ],
+    roles: ["ADMIN"],
+  },
+  {
+    id: "",
+    name: "othersadmin",
+    icon: <FaListUl fontSize="15px" />,
+    label: "Others",
+    type: "dropdown",
+    links: [
+      { to: "/blacklist", label: "Blacklist" },
+      { to: "/managenotifications", label: "Manage Notifications" },
+      { to: "/managevoiceclips", label: "Manage Voice Clips" },
     ],
     roles: ["ADMIN"],
   },
