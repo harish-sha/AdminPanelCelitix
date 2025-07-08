@@ -128,18 +128,18 @@ const Login = () => {
 
       setInputDetails((prev) => ({
         ...prev,
-        // systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        systemInfo: "chrome",
-        ip: "183.83.53.47",
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // systemInfo: "chrome",
+        // ip: "183.83.53.47",
       }));
 
       const payloadd = {
         ...inputDetails,
-        // systemInfo: uaResult.browser.name || "Unknown",
-        // ip: ipResponse?.data?.clientIp || "0.0.0.0",
-        systemInfo: "chrome",
-        ip: "183.83.53.47",
+        systemInfo: uaResult.browser.name || "Unknown",
+        ip: ipResponse?.data?.clientIp || "0.0.0.0",
+        // systemInfo: "chrome",
+        // ip: "183.83.53.47",
       };
 
       delete payloadd.rememberMe;

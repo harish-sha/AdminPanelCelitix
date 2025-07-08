@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { Grid } from "@mui/material";
 import {
@@ -41,6 +41,18 @@ import Animationsms from "../assets/animation/Animation-sms.json";
 import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
 import Animationobd from "../assets/animation/Animation-obd.json";
+
+import zohoicon from "../assets/icons/zoho.svg";
+import zapier from "../assets/icons/zapier.svg";
+import wordpress from "../assets/icons/wordpress.svg";
+import woocommerce from "../assets/icons/woocommerce.svg";
+import telegram from "../assets/icons/telegram.svg";
+import slack from "../assets/icons/slack.svg";
+import shopify from "../assets/icons/shopify.svg";
+import instagram from "../assets/icons/instagram.svg";
+import freshdesk from "../assets/icons/freshdesk.svg";
+import facebookmessenger from "../assets/icons/facebookmessenger.svg";
+
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import twowaysms from "../assets/animation/twowaysms.json";
 import twowaysmsnew from "../assets/animation/twowaysmsnew.json";
@@ -52,7 +64,6 @@ import toast from "react-hot-toast";
 import { Dialog } from "primereact/dialog";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
 import { SiZendesk, SiZapier, SiZoho } from "react-icons/si";
-
 
 import {
   BarChart,
@@ -81,6 +92,7 @@ import RevenueChartWithFilter from "./components/balanceChart";
 import LineGraphChart from "./components/account";
 import MetricsDashboard from "./components/bots";
 import ServiceUsageDashboard from "./components/ServiceUsageDashboard";
+import ParticleRing from "./components/ParticleRing";
 
 const revenueData = [
   { name: "Mon", online: 14000, offline: 11000 },
@@ -532,7 +544,6 @@ const ResellerDashboard = () => {
 
   const iconSize = 48;
 
-
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
       {/* Logged In User Card */}
@@ -667,24 +678,26 @@ const ResellerDashboard = () => {
         onClick={openDialog}
         className="cursor-pointer group p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all"
       >
-        <div className="flex flex-col items-center justify-center space-y-2">
+        <div className="flex  items-center justify-around space-y-2">
           {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
-          <Lottie
-            animationData={integration}
-            loop
-            autoplay
-            className="w-35 h-auto"
-          />
-          <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">Add Integrations</h2>
-          <p className="text-gray-500 text-center text-sm">
-            Connect Freshdesk, Zoho, Shopify, and more from a single dashboard.
-          </p>
+          <div className="flex flex-col items-center" >
+            <Lottie
+              animationData={integration}
+              loop
+              autoplay
+              className="w-35 h-auto"
+            />
+            <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">Add Integrations</h2>
+            <p className="text-gray-500 text-center text-sm">
+              Connect Freshdesk, Zoho, Shopify, and more from a single dashboard.
+            </p>
+          </div>
 
           <motion.div
             layout
-            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-20"
+            className="grid grid-cols-5 justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-14"
           >
-            {[
+            {/* {[
               { icon: <AiFillApi size={iconSize} />, color: "text-purple-600 hover:text-purple-800" },
               { icon: <FaFacebookMessenger size={iconSize} />, color: "text-blue-500 hover:text-blue-700" },
               { icon: <MdSupportAgent size={iconSize} />, color: "text-amber-600 hover:text-amber-800" },
@@ -703,10 +716,32 @@ const ResellerDashboard = () => {
               >
                 {item.icon}
               </motion.div>
+            ))} */}
+            {[
+              { icon: <img src={zohoicon} alt="" className="w-22" /> },
+              { icon: <img src={zapier} alt="" className="w-12" /> },
+              { icon: <img src={wordpress} alt="" className="w-12" /> },
+              { icon: <img src={woocommerce} alt="" className="w-14" /> },
+              { icon: <img src={slack} alt="" className="w-12" /> },
+              { icon: <img src={telegram} alt="" className="w-12" /> },
+              { icon: <img src={shopify} alt="" className="w-12" /> },
+              { icon: <img src={instagram} alt="" className="w-12" /> },
+              { icon: <img src={freshdesk} alt="" className="w-25" /> },
+              { icon: <img src={facebookmessenger} alt="" className="w-10" /> },
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                className={`transition-all duration-300`}
+                whileHover={{ scale: 1.25 }}
+                animate={{ scale: 1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.icon}
+              </motion.div>
             ))}
           </motion.div>
-          <p className="text-xs text-gray-400 mt-2">Click to configure integrations</p>
         </div>
+        {/* <p className="text-xs text-gray-400 mt-5 text-center">Click to configure integrations</p> */}
       </motion.div>
 
 
@@ -730,6 +765,8 @@ const ResellerDashboard = () => {
         ></iframe>
       </Dialog>
       {/* Add Integrations End */}
+
+      {/* <ParticleRing /> */}
 
       {/* Service Usage Overview start */}
       <motion.div
