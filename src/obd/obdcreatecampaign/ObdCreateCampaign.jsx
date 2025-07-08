@@ -130,7 +130,6 @@ const ObdCreateCampaign = () => {
 
   useEffect(() => {
     // const isHeaderAvailable = fileHeaders?.length;
-    // console.log("isHeaderAvailable", isHeaderAvailable);
 
     // setAllHeaders(fileHeaders);
 
@@ -608,7 +607,6 @@ const ObdCreateCampaign = () => {
   const handleSelectDynamicVoice = async (srno) => {
     try {
       const res = await ObdVariableList(srno);
-      console.log("res", res);
       if (!res?.data || !Array.isArray(res.data)) {
         toast.error("Invalid variable data received");
         return;
@@ -617,6 +615,7 @@ const ObdCreateCampaign = () => {
       const enrichedVariables = res.data.map((item) => ({
         sequence: item.sequence,
         variableSampleValue: item.variableSampleValue || "",
+        filePath: item.filePath
       }));
 
       setVoiceVariables(enrichedVariables);
@@ -772,25 +771,31 @@ const ObdCreateCampaign = () => {
                     {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
                         <div>
-                          <div className="w-full mt-4">
-                            <AnimatedDropdown
-                              options={voiceListData?.map((data) => ({
-                                value: data.srNo,
-                                label: data.fileName,
-                              }))}
-                              value={slectedSBVoiceFile}
-                              onChange={(value) => {
-                                setSelectedSBVoiceFile(value);
-                                handleSelectSBVoice(value);
-                              }}
-                              placeholder="Select Voice Clip 1"
-                              id="voiceClipOne"
-                              label="Voice Clip 1"
-                              tooltipContent="First vocie clip"
-                            />
+                          <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 border-gray-400 shadow">
+                            <div className="">
+                              <AnimatedDropdown
+                                options={voiceListData?.map((data) => ({
+                                  value: data.srNo,
+                                  label: data.fileName,
+                                }))}
+                                value={slectedSBVoiceFile}
+                                onChange={(value) => {
+                                  setSelectedSBVoiceFile(value);
+                                  handleSelectSBVoice(value);
+                                }}
+                                placeholder="Select Voice Clip 1"
+                                id="voiceClipOne"
+                                label="Select Voice Clip 1"
+                                tooltipContent="First vocie clip"
+                              />
+                            </div>
+                            <div className="flex flex-col my-2">
+                              <p className="text-sm font-medium text-gray-800 my-1.5">Voice Clip Audio 1</p>
+                              <audio src={voiceSBURLPath} controls></audio>
+                            </div>
                           </div>
                           {obdType === "multibroadcast" && (
-                            <div className="w-full mt-4">
+                            <div className="w-full mt-4 border-2 border-dashed rounded-xl p-2 shadow border-gray-400">
                               <AnimatedDropdown
                                 options={voiceListData?.map((data) => ({
                                   value: data.srNo,
@@ -803,78 +808,35 @@ const ObdCreateCampaign = () => {
                                 }}
                                 placeholder="Select Voice Clip 2"
                                 id="voiceClipTwo"
-                                label="Voice Clip 2"
+                                label="Select Voice Clip 2"
                                 tooltipContent="Second vocie clip"
                               />
+                              <div className="flex flex-col my-2">
+                                <p className="text-sm font-medium text-gray-700 my-1.5">Voice Clip Audio 2</p>
+                                <audio src={voiceMBURLPath} controls></audio>
+                              </div>
                             </div>
                           )}
                         </div>
                       )}
 
-                    {(obdType === "simplebroadcast" ||
+                    {/* {(obdType === "simplebroadcast" ||
                       obdType === "multibroadcast") && (
-                        <div>
-                          <div className="mt-4">
-                            {/* <WavesurferPlayer
-                              height={50}
-                              waveColor="pink"
-                              progressColor="violet"
-                              barGap={1}
-                              url={voiceSBURLPath}
-                              onReady={onReady}
-                              onPlay={() => setIsPlaying(true)}
-                              onPause={() => setIsPlaying(false)}
-                            />
-
-                            <div className="flex gap-3 mt-3">
-                              <button
-                                onClick={handlePlayPause}
-                                className="bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
-                              >
-                                {isPlaying ? <FaPause /> : <FaPlay />}
-                              </button>
-                              <button
-                                onClick={handleRestart}
-                                className="bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
-                              >
-                                <IoStop />
-                              </button>
-                            </div> */}
+                        <div className="border-2 border-dashed my-2 rounded-xl">
+                          <p className="text-center py-2 text-[0.95rem] font-semibold border-b-2 border-dashed">Voice Clips</p>
+                          <div className="flex items-center gap-8 p-2 border-b-2 border-dashed rounded-xl">
+                            <p className="text-sm font-medium text-gray-800 my-2">Voice Clip 1</p>
                             <audio src={voiceSBURLPath} controls></audio>
                           </div>
 
                           {obdType === "multibroadcast" && (
-                            <div className="mt-4">
-                              {/* <WavesurferPlayer
-                                height={50}
-                                waveColor="pink"
-                                progressColor="violet"
-                                barGap={1}
-                                url={voiceMBURLPath}
-                                onReady={onReady}
-                                onPlay={() => setIsPlaying(true)}
-                                onPause={() => setIsPlaying(false)}
-                              />
-
-                              <div className="flex gap-3 mt-3">
-                                <button
-                                  onClick={handlePlayPause}
-                                  className="bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
-                                >
-                                  {isPlaying ? <FaPause /> : <FaPlay />}
-                                </button>
-                                <button
-                                  onClick={handleRestart}
-                                  className="bg-gray-600 text-white p-2 rounded hover:bg-gray-700"
-                                >
-                                  <IoStop />
-                                </button>
-                              </div> */}
+                            <div className="flex items-center gap-8 p-2">
+                              <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip 2</p>
                               <audio src={voiceMBURLPath} controls></audio>
                             </div>
                           )}
                         </div>
-                      )}
+                      )} */}
 
                     {obdType === "dynamicbroadcast" && (
                       <div className="flex flex-col gap-3">
@@ -902,38 +864,44 @@ const ObdCreateCampaign = () => {
                             </div>
                             {voiceVariables.map((item, index) => {
                               return (
-                                <div
-                                  key={`variable-${item.sequence}`}
-                                  className="relative mt-4"
-                                >
-                                  <InputField
-                                    id={`variable-${item.sequence}`}
-                                    name={`variable-${item.sequence}`}
-                                    label={`Sequence Variable ${item.sequence}`}
-                                    value={item.variableSampleValue}
-                                    onChange={(e) =>
-                                      handleVoiceVariableChange(
-                                        index,
-                                        e.target.value
-                                      )
-                                    }
-                                    placeholder={`Enter value for variable ${item.sequence}`}
-                                    tooltipContent={`Sequence: ${item.sequence}`}
-                                    ref={(el) => {
-                                      if (el) variableRef.current[index] = el;
-                                    }}
-                                  />
-
-                                  {/* Ensure this appears for every input */}
-                                  <div className="absolute top-7 right-0 z-10">
-                                    <DynamicObdVariable
-                                      variables={allHeaders}
-                                      selectVariable={(e) => {
-                                        handleDynamicVariableSelect(e, index);
+                                <>
+                                  <div
+                                    key={`variable-${item.sequence}`}
+                                    className="relative mt-4"
+                                  >
+                                    <InputField
+                                      id={`variable-${item.sequence}`}
+                                      name={`variable-${item.sequence}`}
+                                      label={`Sequence Variable ${item.sequence}`}
+                                      value={item.variableSampleValue}
+                                      onChange={(e) =>
+                                        handleVoiceVariableChange(
+                                          index,
+                                          e.target.value
+                                        )
+                                      }
+                                      placeholder={`Enter value for variable ${item.sequence}`}
+                                      tooltipContent={`Sequence: ${item.sequence}`}
+                                      ref={(el) => {
+                                        if (el) variableRef.current[index] = el;
                                       }}
                                     />
+                                    <p className="text-sm font-medium text-gray-700 my-2" >Voice Clip Sequence &nbsp;{item.sequence}</p>
+                                    <div className="mt-4">
+                                      <audio src={`${BASE_AUDIO_URL}${item.filePath}`} controls></audio>
+                                    </div>
+
+                                    {/* Ensure this appears for every input */}
+                                    <div className="absolute top-7 right-0 z-10">
+                                      <DynamicObdVariable
+                                        variables={allHeaders}
+                                        selectVariable={(e) => {
+                                          handleDynamicVariableSelect(e, index);
+                                        }}
+                                      />
+                                    </div>
                                   </div>
-                                </div>
+                                </>
                               );
                             })}
                           </div>

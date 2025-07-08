@@ -19,15 +19,16 @@ import {
     Feedback,
 } from "@mui/icons-material";
 import PermIdentityOutlinedIcon from "@mui/icons-material/PermIdentityOutlined";
-import AccountBalanceOutlinedIcon from '@mui/icons-material/AccountBalanceOutlined';
-import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
-import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
-import RefreshIcon from '@mui/icons-material/Refresh';
-import GppMaybeIcon from '@mui/icons-material/GppMaybe';
+import { BsCreditCard2Back } from "react-icons/bs";
+import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
+import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
+import AccountBalanceWalletIcon from "@mui/icons-material/AccountBalanceWallet";
+import RefreshIcon from "@mui/icons-material/Refresh";
+import GppMaybeIcon from "@mui/icons-material/GppMaybe";
 import { Loop as LoopIcon } from "@mui/icons-material";
-import AccountBalanceWalletOutlinedIcon from '@mui/icons-material/AccountBalanceWalletOutlined';
-import StarHalfOutlinedIcon from '@mui/icons-material/StarHalfOutlined';
-import ReportProblemOutlinedIcon from '@mui/icons-material/ReportProblemOutlined';
+import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
+import StarHalfOutlinedIcon from "@mui/icons-material/StarHalfOutlined";
+import ReportProblemOutlinedIcon from "@mui/icons-material/ReportProblemOutlined";
 import whatsappAnime from "../assets/animation/whatsappanimation.json";
 import whatsappAnime2 from "../assets/animation/whatsappanimation2.json";
 import smsAnime from "../assets/animation/smsanime.json";
@@ -43,12 +44,21 @@ import Animationobd from "../assets/animation/Animation-obd.json";
 import Animationwhatsapp2 from "../assets/animation/Animation-whatsapp2.json";
 import twowaysms from "../assets/animation/twowaysms.json";
 import Lottie from "lottie-react";
-import { getUserDetails } from "@/apis/user/user";
-import CountUp from 'react-countup';
+import { getUserDetails, getCreditLimit } from "@/apis/user/user";
+import CountUp from "react-countup";
 import toast from "react-hot-toast";
 
 import {
-    BarChart, Bar, LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer
+    BarChart,
+    Bar,
+    LineChart,
+    Line,
+    CartesianGrid,
+    XAxis,
+    YAxis,
+    Tooltip,
+    Legend,
+    ResponsiveContainer,
 } from "recharts";
 import { fetchBalance } from "@/apis/settings/setting";
 import { useUser } from "@/context/auth";
@@ -81,8 +91,6 @@ const targetRealityData = [
     { name: "Jun", reality: 9400, target: 12500 },
     { name: "Jul", reality: 9800, target: 13000 },
 ];
-
-
 
 // const services = [
 //     {
@@ -195,26 +203,46 @@ const ResellerDashboard = () => {
     const [showRefresh, setShowRefresh] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [refreshKey, setRefreshKey] = useState(0);
+    const [creditLimit, setCreditLimit] = useState(0);
 
     const { user } = useUser();
 
     const getBalance = async () => {
-        setIsLoading(true)
+        setIsLoading(true);
         try {
             const res = await fetchBalance();
-            console.log("balance", res)
+            console.log("balance", res);
             setBalance(parseFloat(res.balance));
             setRechargableCredit(parseFloat(res.rechargableCredit));
-            setRefreshKey(prevKey => prevKey + 1);
+            setRefreshKey((prevKey) => prevKey + 1);
         } catch (error) {
             console.error("Error fetching balance:", error);
         } finally {
-            setIsLoading(false)
+            setIsLoading(false);
         }
     };
 
     useEffect(() => {
         getBalance();
+    }, []);
+
+    const fetchCreditLimit = async () => {
+        setIsLoading(true);
+        try {
+            const response = await getCreditLimit();
+            console.log("response", response);
+            const limit = parseFloat(response.creditLimit);
+            setCreditLimit(isNaN(limit) ? 0 : limit);
+            setRefreshKey((prevKey) => prevKey + 1);
+        } catch (error) {
+            console.error("Error fetching credit limit:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchCreditLimit();
     }, []);
 
     useEffect(() => {
@@ -243,7 +271,16 @@ const ResellerDashboard = () => {
         {
             icon: <AccountBalanceIcon className="text-green-900" />,
             label: "Current Balance",
-            value: <CountUp start={0} end={balance} separator="," decimals={2} duration={1.5} key={refreshKey} />,
+            value: (
+                <CountUp
+                    start={0}
+                    end={balance}
+                    separator=","
+                    decimals={2}
+                    duration={1.5}
+                    key={refreshKey}
+                />
+            ),
             // onHover: () => setShowRefresh(true),
             // onMouseLeave: () => setShowRefresh(false),
             showRefreshIcon: true,
@@ -253,21 +290,44 @@ const ResellerDashboard = () => {
         //     label: "Outstanding Balance",
         //     value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} />
         // },
-        ...(user.role === "RESELLER" ? [
-            {
-                icon: <GppMaybeIcon className="text-red-800" />,
-                label: "Outstanding Balance",
-                value: <CountUp start={0} end={rechargableCredit} separator="," decimals={2} duration={1.5} key={refreshKey} />,
-            }
-        ] : [
-
-            {
-                icon: <TrendingUp className="text-blue-600" />,
-                label: "Engagement Rate",
-                value: "78%",
-            },
-
-        ]),
+        ...(user.role === "RESELLER"
+            ? [
+                {
+                    icon: <GppMaybeIcon className="text-red-800" />,
+                    label: "Outstanding Balance",
+                    value: (
+                        <CountUp
+                            start={0}
+                            end={rechargableCredit}
+                            separator=","
+                            decimals={2}
+                            duration={1.5}
+                            key={refreshKey}
+                        />
+                    ),
+                },
+                {
+                    icon: <BsCreditCard2Back className="text-blue-800" />,
+                    label: "Credit Limit",
+                    value: (
+                        <CountUp
+                            start={0}
+                            end={creditLimit}
+                            separator=","
+                            decimals={2}
+                            duration={1.5}
+                            key={refreshKey}
+                        />
+                    ),
+                },
+            ]
+            : [
+                {
+                    icon: <TrendingUp className="text-blue-600" />,
+                    label: "Engagement Rate",
+                    value: "78%",
+                },
+            ]),
         {
             icon: [
                 <Star className="text-yellow-500" />,
@@ -348,7 +408,6 @@ const ResellerDashboard = () => {
         },
     ];
 
-
     return (
         <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
             {/* Logged In User Card */}
@@ -375,7 +434,7 @@ const ResellerDashboard = () => {
                             Welcome back, {formData.firstName || "User"}
                         </h2>
                         <p className="text-xs opacity-80">
-                            You're doing great. Here's a  quick overview of your dashboard.
+                            You're doing great. Here's a quick overview of your dashboard.
                         </p>
                     </div>
                 </div>
@@ -383,23 +442,21 @@ const ResellerDashboard = () => {
                     {quickStats.map((stat, i) => (
                         <div
                             key={i}
-                            className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50"
+                            className="relative bg-white rounded-xl shadow p-3 px-4 flex flex-col items-start justify-center w-50 h-28"
                         >
                             {stat.showRefreshIcon && (
-                                <CustomTooltip
-                                    title="Refresh Balance"
-                                    placement="top"
-                                    arrow
-                                >
+                                <CustomTooltip title="Refresh Balance" placement="top" arrow>
                                     <div className="absolute top-2 right-2 cursor-pointer">
-
                                         {isLoading ? (
-                                            <LoopIcon className="text-[18px] animate-spin text-blue-400 cursor-pointer" sx={{ color: "blue" }} />
+                                            <LoopIcon
+                                                className="text-[18px] animate-spin text-blue-400 cursor-pointer"
+                                                sx={{ color: "blue" }}
+                                            />
                                         ) : (
-                                            <button
-                                                onClick={getBalance}
-                                                className=""
-                                            >
+                                            <button onClick={() => {
+                                                getBalance()
+                                                fetchCreditLimit()
+                                            }} className="">
                                                 <LoopIcon className="text-blue-400 cursor-pointer" />
                                             </button>
                                         )}
@@ -433,9 +490,10 @@ const ResellerDashboard = () => {
                             >
                                 {hasService && (
                                     <>
-                                        <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white">
+                                        <div className="absolute top-2 right-2 bg-green-600 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full shadow-sm uppercase tracking-wider h-5 w-4 border-2 border-white"></div>
+                                        <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm">
+                                            Active
                                         </div>
-                                        <div className="absolute top-2 right-8 bg-green-600 text-white text-[11px] font-medium px-2 py-0.5 rounded-full shadow-sm" >Active</div>
                                     </>
                                 )}
                                 {!hasService && (
@@ -471,8 +529,6 @@ const ResellerDashboard = () => {
                     );
                 })}
             </Grid>
-
-
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Total Revenue */}
@@ -511,8 +567,18 @@ const ResellerDashboard = () => {
                             <YAxis />
                             <Tooltip />
                             <Legend />
-                            <Line type="monotone" dataKey="last" stroke="#3498db" name="Last Month" />
-                            <Line type="monotone" dataKey="current" stroke="#2ecc71" name="This Month" />
+                            <Line
+                                type="monotone"
+                                dataKey="last"
+                                stroke="#3498db"
+                                name="Last Month"
+                            />
+                            <Line
+                                type="monotone"
+                                dataKey="current"
+                                stroke="#2ecc71"
+                                name="This Month"
+                            />
                         </LineChart>
                     </ResponsiveContainer>
                     <div className="flex justify-between text-sm mt-2 text-gray-600">

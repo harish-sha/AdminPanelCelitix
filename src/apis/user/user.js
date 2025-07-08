@@ -36,10 +36,14 @@ export const getaccountInfo = async () => {
 
 // get Sms Rate
 export const getSmsRate = async (sno) => {
-  return await fetchWithAuth(
-    `/accountInfo/getSmsPricing?srno=${sno}`,
-    {
-      method: "POST",
-    }
-  );
+  return await fetchWithAuth(`/accountInfo/getSmsPricing?srno=${sno}`, {
+    method: "POST",
+  });
+};
+
+// get Credit Limit
+export const getCreditLimit = async () => {
+  return await fetchWithAuth(`/user/getcreditlimit`, {
+    method: "GET",
+  });
 };
