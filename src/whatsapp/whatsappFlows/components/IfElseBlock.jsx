@@ -7,9 +7,16 @@ import { updateFlowItem } from "../redux/features/FlowSlice";
 import InputField from "../../components/InputField";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
 import toast from "react-hot-toast";
-import { Switch, FormControl, Box, Typography, IconButton  } from "@mui/material";
+import {
+  Switch,
+  FormControl,
+  Box,
+  Typography,
+  IconButton,
+} from "@mui/material";
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
+import { useSelector } from "react-redux";
 
 const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [selectedCondition, setSelectedCondition] = useState();
@@ -22,11 +29,16 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [componentTree, setComponentTree] = useState({});
   const [thenBranchText, setThenBranchText] = useState("");
   const [elseBranchText, setElseBranchText] = useState("");
+  const [selectedFlowItem, setSelectedFlowItem] = useState("");
+  const flowItems = useSelector((state) => state.flows.canvasItems);
+
+  console.log("flowItems", flowItems);
 
   //------------- input components start-------------------
 
   const [thenInputLabel, setThenInputLabel] = useState("");
   const [thenInputType, setThenInputType] = useState("");
+  console.log("thenInputLabel", thenInputLabel);
   const [thenInputPlaceholder, setThenInputPlaceholder] = useState("");
   const [thenInputError, setThenInputError] = useState("");
   const [thenMinLength, setThenMinLength] = useState("");
@@ -46,7 +58,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   //------------------text area components start---------------------
 
   const [thenTextAreaLabel, setThenTextAreaLabel] = useState("");
-  console.log("thenTextAreaLabel", thenTextAreaLabel)
+  console.log("thenTextAreaLabel", thenTextAreaLabel);
   const [thenTextAreaPlaceholder, setThenTextAreaPlaceholder] = useState("");
   const [thenTextAreaError, setThenTextAreaError] = useState("");
   const [thenTextAreaRequired, setThenTextAreaRequired] = useState(false);
@@ -85,7 +97,6 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   //------------------checkbox components ends---------------------
 
   //------------------optin components starts---------------------
-
 
   const [thenOptLabel, setThenOptLabel] = useState("");
   const [elseOptLabel, setElseOptLabel] = useState("");
@@ -169,84 +180,99 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
   //------------------ date picker Component starts-------------------
 
-
   const [thenDateLabel, setThenDateLabel] = useState("");
-const [elseDateLabel, setElseDateLabel] = useState("");
+  const [elseDateLabel, setElseDateLabel] = useState("");
 
-const [thenDatePlaceholder, setThenDatePlaceholder] = useState("");
-const [elseDatePlaceholder, setElseDatePlaceholder] = useState("");
+  const [thenDatePlaceholder, setThenDatePlaceholder] = useState("");
+  const [elseDatePlaceholder, setElseDatePlaceholder] = useState("");
 
-const [thenMinDate, setThenMinDate] = useState(null);
-const [elseMinDate, setElseMinDate] = useState(null);
+  const [thenMinDate, setThenMinDate] = useState(null);
+  const [elseMinDate, setElseMinDate] = useState(null);
 
-const [thenMaxDate, setThenMaxDate] = useState(null);
-const [elseMaxDate, setElseMaxDate] = useState(null);
+  const [thenMaxDate, setThenMaxDate] = useState(null);
+  const [elseMaxDate, setElseMaxDate] = useState(null);
 
-const [thenUnavailableDate, setThenUnavailableDate] = useState([]);
-const [elseUnavailableDate, setElseUnavailableDate] = useState([]);
+  const [thenUnavailableDate, setThenUnavailableDate] = useState([]);
+  const [elseUnavailableDate, setElseUnavailableDate] = useState([]);
 
- //------------------ date picker Component ends-------------------
+  //------------------ date picker Component ends-------------------
 
- //------------------ footer Component starts-------------------
+  //------------------ footer Component starts-------------------
 
- const [thenFooterButtonLabel, setThenFooterButtonLabel] = useState("");
-const [elseFooterButtonLabel, setElseFooterButtonLabel] = useState("");
+  const [thenFooterButtonLabel, setThenFooterButtonLabel] = useState("");
+  const [elseFooterButtonLabel, setElseFooterButtonLabel] = useState("");
 
-const [thenCenterCaption, setThenCenterCaption] = useState("");
-const [elseCenterCaption, setElseCenterCaption] = useState("");
+  const [thenCenterCaption, setThenCenterCaption] = useState("");
+  const [elseCenterCaption, setElseCenterCaption] = useState("");
 
-const [thenNextAction, setThenNextAction] = useState("");
-const [elseNextAction, setElseNextAction] = useState("");
+  const [thenNextAction, setThenNextAction] = useState("");
+  const [elseNextAction, setElseNextAction] = useState("");
 
-//------------------ footer Component ends-------------------
+  //------------------ footer Component ends-------------------
 
+  const generateBranchPayload = (branchType) => {
+    const type =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+    let payload = { type };
 
-const generateBranchPayload = (branchType) => {
-  const type = branchType === "then" ? selectedThenComponent : selectedElseComponent;
-  let payload = { type };
+    // Text components
+    if (
+      ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
+        type
+      )
+    ) {
+      payload.text = branchType === "then" ? thenBranchText : elseBranchText;
+    }
 
-  // Text components
-  if (["heading", "subHeading", "textBody", "textCaption"].includes(type)) {
-    payload.text = branchType === "then" ? thenBranchText : elseBranchText;
-  }
+    // TextArea
+    else if (type === "textArea") {
+      payload.label =
+        branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
+      payload.placeholder =
+        branchType === "then"
+          ? thenTextAreaPlaceholder
+          : elseTextAreaPlaceholder;
+      payload.error =
+        branchType === "then" ? thenTextAreaError : elseTextAreaError;
+      payload.required =
+        branchType === "then" ? thenTextAreaRequired : elseTextAreaRequired;
+    }
 
-  // TextArea
-  else if (type === "textArea") {
-    payload.label = branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
-    payload.placeholder = branchType === "then" ? thenTextAreaPlaceholder : elseTextAreaPlaceholder;
-    payload.error = branchType === "then" ? thenTextAreaError : elseTextAreaError;
-    payload.required = branchType === "then" ? thenTextAreaRequired : elseTextAreaRequired;
-  }
+    // CheckBox
+    else if (type === "checkBox") {
+      payload.mainLabel =
+        branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
+      payload.options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
+      payload.required =
+        branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
+    }
 
-  // CheckBox
-  else if (type === "checkBox") {
-    payload.mainLabel = branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
-    payload.options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
-    payload.required = branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
-  }
+    // Dropdown
+    else if (type === "dropDown") {
+      payload.mainLabel =
+        branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
+      payload.options = branchType === "then" ? thenOptions : elseOptions;
+      payload.required =
+        branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
+    }
 
-  // Dropdown
-  else if (type === "dropDown") {
-    payload.mainLabel = branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
-    payload.options = branchType === "then" ? thenOptions : elseOptions;
-    payload.required = branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
-  }
+    // Optin
+    else if (type === "optin") {
+      payload.label = branchType === "then" ? thenOptLabel : elseOptLabel;
+      payload.required =
+        branchType === "then" ? thenOptInRequired : elseOptInRequired;
+      payload.action = branchType === "then" ? thenOptAction : elseOptAction;
+      payload.url = branchType === "then" ? thenOptUrl : elseOptUrl;
+      payload.screenName =
+        branchType === "then"
+          ? thenOptSelectedScreenName
+          : elseOptSelectedScreenName;
+    }
 
-  // Optin
-  else if (type === "optin") {
-    payload.label = branchType === "then" ? thenOptLabel : elseOptLabel;
-    payload.required = branchType === "then" ? thenOptInRequired : elseOptInRequired;
-    payload.action = branchType === "then" ? thenOptAction : elseOptAction;
-    payload.url = branchType === "then" ? thenOptUrl : elseOptUrl;
-    payload.screenName = branchType === "then" ? thenOptSelectedScreenName : elseOptSelectedScreenName;
-  }
+    // You can keep adding cases for other types as needed (image, date, footerbutton, etc.)
 
-  // You can keep adding cases for other types as needed (image, date, footerbutton, etc.)
-
-  return payload;
-};
-
-
+    return payload;
+  };
 
   const dispatch = useDispatch();
   const handleIfElseSave = () => {
@@ -255,12 +281,12 @@ const generateBranchPayload = (branchType) => {
       return;
     }
     const payload = {
-    condition: selectedCondition,
-    then: [generateBranchPayload("then")],
-    else: [generateBranchPayload("else")],
-  };
+      condition: selectedCondition,
+      then: [generateBranchPayload("then")],
+      else: [generateBranchPayload("else")],
+    };
 
-  console.log("payload", payload)
+    console.log("payload", payload);
 
     const updatedData = {
       ...selectedItem,
@@ -282,21 +308,21 @@ const generateBranchPayload = (branchType) => {
   };
 
   const allowedComponents = [
-    { label: "Heading", value: "heading" },
-    { label: "Sub Heading", value: "subHeading" },
-    { label: "Text Body", value: "textBody" },
-    { label: "Text Caption", value: "textCaption" },
-    { label: "Text Input", value: "textInput" },
-    { label: "Text Area", value: "textArea" },
-    { label: "Checkbox", value: "checkBox" },
-    { label: "Dropdown", value: "dropDown" },
-    { label: "Date Picker", value: "date" },
-    { label: "Embedded Link", value: "embeddedlink" },
-    { label: "Image", value: "image" },
-    { label: "Opt-in", value: "optin" },
-    { label: "Switch", value: "switch" },
-    { label: "Footer Button", value: "footerbutton" },
-    { label: "If-Else", value: "ifelse" },
+    { label: "Heading", value: "TextHeading" },
+    { label: "Sub Heading", value: "TextSubheading" },
+    { label: "Text Body", value: "TextBody" },
+    { label: "Text Caption", value: "TextCaption" },
+    { label: "Text Input", value: "TextInput" },
+    { label: "Text Area", value: "TextInput" },
+    { label: "Checkbox", value: "CheckboxGroup" },
+    { label: "Dropdown", value: "Dropdown" },
+    { label: "Date Picker", value: "DatePicker" },
+    { label: "Embedded Link", value: "EmbeddedLink" },
+    { label: "Image", value: "Image" },
+    { label: "Opt-in", value: "OptIn" },
+    { label: "Switch", value: "Switch" },
+    { label: "Footer Button", value: "Footer" },
+    { label: "If-Else", value: "If" },
   ];
 
   // components start
@@ -308,15 +334,16 @@ const generateBranchPayload = (branchType) => {
       branchType === "then" ? setThenBranchText : setElseBranchText;
 
     if (
-      ["heading", "subHeading", "textBody", "textCaption"].includes(
+      ["TextHeading", "TextSubheading", "TextBody", "TextCaption"].includes(
         selectedComponent
       )
     ) {
       return (
         <div className="mt-3 w-1/2">
           <InputField
-            placeholder={`${branchType === "then" ? "Then" : "Else"
-              } branch text`}
+            placeholder={`${
+              branchType === "then" ? "Then" : "Else"
+            } branch text`}
             className="w-full p-1 rounded text-black"
             value={branchText}
             onChange={(e) => setBranchText(e.target.value)}
@@ -437,7 +464,7 @@ const generateBranchPayload = (branchType) => {
       branchType === "then" ? thenTextAreaLabel : elseTextAreaLabel;
     const setAreaLabel =
       branchType === "then" ? setThenTextAreaLabel : setElseTextAreaLabel;
-    console.log("areaLabel", areaLabel)
+    console.log("areaLabel", areaLabel);
     const areaPlaceholder =
       branchType === "then" ? thenTextAreaPlaceholder : elseTextAreaPlaceholder;
     const setAreaPlaceholder =
@@ -514,20 +541,30 @@ const generateBranchPayload = (branchType) => {
     const selectedComponent =
       branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
-    const mainLabel = branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
-    const setMainLabel = branchType === "then" ? setThenMainLabelCheckbox : setElseMainLabelCheckbox;
+    const mainLabel =
+      branchType === "then" ? thenMainLabelCheckbox : elseMainLabelCheckbox;
+    const setMainLabel =
+      branchType === "then"
+        ? setThenMainLabelCheckbox
+        : setElseMainLabelCheckbox;
 
     const options = branchType === "then" ? thenCheckBoxes : elseCheckBoxes;
-    const setOptions = branchType === "then" ? setThenCheckBoxes : setElseCheckBoxes;
+    const setOptions =
+      branchType === "then" ? setThenCheckBoxes : setElseCheckBoxes;
 
-    const required = branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
-    const setRequired = branchType === "then" ? setThenCheckboxRequired : setElseCheckboxRequired;
+    const required =
+      branchType === "then" ? thenCheckboxRequired : elseCheckboxRequired;
+    const setRequired =
+      branchType === "then" ? setThenCheckboxRequired : setElseCheckboxRequired;
 
     const draft = branchType === "then" ? thenDraftCheckbox : elseDraftCheckbox;
-    const setDraft = branchType === "then" ? setThenDraftCheckbox : setElseDraftCheckbox;
+    const setDraft =
+      branchType === "then" ? setThenDraftCheckbox : setElseDraftCheckbox;
 
-    const editIdx = branchType === "then" ? thenCheckboxEditIdx : elseCheckboxEditIdx;
-    const setEditIdx = branchType === "then" ? setThenCheckboxEditIdx : setElseCheckboxEditIdx;
+    const editIdx =
+      branchType === "then" ? thenCheckboxEditIdx : elseCheckboxEditIdx;
+    const setEditIdx =
+      branchType === "then" ? setThenCheckboxEditIdx : setElseCheckboxEditIdx;
 
     if (["checkBox"].includes(selectedComponent)) {
       return (
@@ -584,7 +621,9 @@ const generateBranchPayload = (branchType) => {
                       tooltipPlacement="right"
                       value={draft.title}
                       maxLength={30}
-                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                      onChange={(e) =>
+                        setDraft((d) => ({ ...d, title: e.target.value }))
+                      }
                       fullWidth
                     />
                     <InputField
@@ -594,7 +633,9 @@ const generateBranchPayload = (branchType) => {
                       tooltipPlacement="right"
                       value={draft.description}
                       maxLength={300}
-                      onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                      onChange={(e) =>
+                        setDraft((d) => ({ ...d, description: e.target.value }))
+                      }
                       fullWidth
                     />
                     <InputField
@@ -604,7 +645,9 @@ const generateBranchPayload = (branchType) => {
                       tooltipPlacement="right"
                       value={draft.metadata}
                       maxLength={20}
-                      onChange={(e) => setDraft((d) => ({ ...d, metadata: e.target.value }))}
+                      onChange={(e) =>
+                        setDraft((d) => ({ ...d, metadata: e.target.value }))
+                      }
                       fullWidth
                     />
 
@@ -631,10 +674,19 @@ const generateBranchPayload = (branchType) => {
                     </Box>
 
                     {draft.image && (
-                      <p className="text-green-600 text-sm font-medium mt-1">Image uploaded</p>
+                      <p className="text-green-600 text-sm font-medium mt-1">
+                        Image uploaded
+                      </p>
                     )}
 
-                    <Box sx={{ display: "flex", gap: 2, mt: 2, justifyContent: "center" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 2,
+                        mt: 2,
+                        justifyContent: "center",
+                      }}
+                    >
                       <UniversalButton
                         label="Save"
                         disabled={!draft.metadata.trim()}
@@ -648,36 +700,55 @@ const generateBranchPayload = (branchType) => {
                       <UniversalButton
                         label="Cancel"
                         onClick={() => {
-                          setDraft({ title: "", description: "", metadata: "", image: "" });
+                          setDraft({
+                            title: "",
+                            description: "",
+                            metadata: "",
+                            image: "",
+                          });
                           setEditIdx(null);
                         }}
                       />
                     </Box>
                   </div>
                 ) : (
-                  <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-                    <Box sx={{ flexGrow: 1, minWidth: 0 }} onClick={() => {
-                      setDraft({ ...opt });
-                      setEditIdx(idx);
-                    }}>
+                  <Box
+                    sx={{ display: "flex", justifyContent: "space-between" }}
+                  >
+                    <Box
+                      sx={{ flexGrow: 1, minWidth: 0 }}
+                      onClick={() => {
+                        setDraft({ ...opt });
+                        setEditIdx(idx);
+                      }}
+                    >
                       <Typography variant="subtitle1">{opt.title}</Typography>
                       <Typography
                         variant="body2"
-                        sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                        sx={{
+                          wordWrap: "break-word",
+                          overflowWrap: "break-word",
+                        }}
                       >
                         {opt.description}
                       </Typography>
                     </Box>
-                    <IconButton onClick={() => {
-                      setDraft({ ...opt });
-                      setEditIdx(idx);
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        setDraft({ ...opt });
+                        setEditIdx(idx);
+                      }}
+                    >
                       <EditIcon />
                     </IconButton>
-                    <IconButton onClick={() => {
-                      const updatedOptions = options.filter((_, i) => i !== idx);
-                      setOptions(updatedOptions);
-                    }}>
+                    <IconButton
+                      onClick={() => {
+                        const updatedOptions = options.filter(
+                          (_, i) => i !== idx
+                        );
+                        setOptions(updatedOptions);
+                      }}
+                    >
                       <CloseIcon />
                     </IconButton>
                   </Box>
@@ -715,25 +786,30 @@ const generateBranchPayload = (branchType) => {
     return null;
   };
 
-
   const renderOptInBranchInput = (branchType) => {
     const selectedComponent =
       branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
     const optLabel = branchType === "then" ? thenOptLabel : elseOptLabel;
-    const setOptLabel = branchType === "then" ? setThenOptLabel : setElseOptLabel;
+    const setOptLabel =
+      branchType === "then" ? setThenOptLabel : setElseOptLabel;
 
     const optAction = branchType === "then" ? thenOptAction : elseOptAction;
-    const setOptAction = branchType === "then" ? setThenOptAction : setElseOptAction;
+    const setOptAction =
+      branchType === "then" ? setThenOptAction : setElseOptAction;
 
     const optUrl = branchType === "then" ? thenOptUrl : elseOptUrl;
     const setOptUrl = branchType === "then" ? setThenOptUrl : setElseOptUrl;
 
-    const optRequired = branchType === "then" ? thenOptRequired : elseOptRequired;
-    const setOptRequired = branchType === "then" ? setThenOptRequired : setElseOptRequired;
+    const optRequired =
+      branchType === "then" ? thenOptRequired : elseOptRequired;
+    const setOptRequired =
+      branchType === "then" ? setThenOptRequired : setElseOptRequired;
 
-    const optScreenName = branchType === "then" ? thenOptScreenName : elseOptScreenName;
-    const setOptScreenName = branchType === "then" ? setThenOptScreenName : setElseOptScreenName;
+    const optScreenName =
+      branchType === "then" ? thenOptScreenName : elseOptScreenName;
+    const setOptScreenName =
+      branchType === "then" ? setThenOptScreenName : setElseOptScreenName;
 
     if (selectedComponent === "optin") {
       return (
@@ -813,15 +889,19 @@ const generateBranchPayload = (branchType) => {
       branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
     const imageFile = branchType === "then" ? thenImageFile : elseImageFile;
-    const setImageFile = branchType === "then" ? setThenImageFile : setElseImageFile;
+    const setImageFile =
+      branchType === "then" ? setThenImageFile : setElseImageFile;
 
     const scaleType = branchType === "then" ? thenScaleType : elseScaleType;
-    const setScaleType = branchType === "then" ? setThenScaleType : setElseScaleType;
+    const setScaleType =
+      branchType === "then" ? setThenScaleType : setElseScaleType;
 
     const imgAltText = branchType === "then" ? thenImgAltText : elseImgAltText;
-    const setImgAltText = branchType === "then" ? setThenImgAltText : setElseImgAltText;
+    const setImgAltText =
+      branchType === "then" ? setThenImgAltText : setElseImgAltText;
 
-    const imageInputRef = branchType === "then" ? thenImageInputRef : elseImageInputRef;
+    const imageInputRef =
+      branchType === "then" ? thenImageInputRef : elseImageInputRef;
 
     const handleImageChange = (e) => {
       const file = e.target.files[0];
@@ -869,7 +949,9 @@ const generateBranchPayload = (branchType) => {
           </div>
 
           {imageFile && (
-            <p className="text-green-600 text-sm font-medium mt-1">Image uploaded</p>
+            <p className="text-green-600 text-sm font-medium mt-1">
+              Image uploaded
+            </p>
           )}
 
           <AnimatedDropdown
@@ -904,31 +986,46 @@ const generateBranchPayload = (branchType) => {
     const selectedComponent =
       branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
-    const mainLabel = branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
-    const setMainLabel = branchType === "then" ? setThenMainLabelDropdown : setElseMainLabelDropdown;
+    const mainLabel =
+      branchType === "then" ? thenMainLabelDropdown : elseMainLabelDropdown;
+    const setMainLabel =
+      branchType === "then"
+        ? setThenMainLabelDropdown
+        : setElseMainLabelDropdown;
 
-    const required = branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
-    const setRequired = branchType === "then" ? setThenDropdownRequired : setElseDropdownRequired;
+    const required =
+      branchType === "then" ? thenDropdownRequired : elseDropdownRequired;
+    const setRequired =
+      branchType === "then" ? setThenDropdownRequired : setElseDropdownRequired;
 
     const options = branchType === "then" ? thenOptions : elseOptions;
     const setOptions = branchType === "then" ? setThenOptions : setElseOptions;
 
     const editingIdx = branchType === "then" ? thenEditingIdx : elseEditingIdx;
-    const setEditingIdx = branchType === "then" ? setThenEditingIdx : setElseEditingIdx;
+    const setEditingIdx =
+      branchType === "then" ? setThenEditingIdx : setElseEditingIdx;
 
     const draftTitle = branchType === "then" ? thenDraftTitle : elseDraftTitle;
-    const setDraftTitle = branchType === "then" ? setThenDraftTitle : setElseDraftTitle;
+    const setDraftTitle =
+      branchType === "then" ? setThenDraftTitle : setElseDraftTitle;
 
-    const draftDescription = branchType === "then" ? thenDraftDescription : elseDraftDescription;
-    const setDraftDescription = branchType === "then" ? setThenDraftDescription : setElseDraftDescription;
+    const draftDescription =
+      branchType === "then" ? thenDraftDescription : elseDraftDescription;
+    const setDraftDescription =
+      branchType === "then" ? setThenDraftDescription : setElseDraftDescription;
 
-    const draftMetadata = branchType === "then" ? thenDraftMetadata : elseDraftMetadata;
-    const setDraftMetadata = branchType === "then" ? setThenDraftMetadata : setElseDraftMetadata;
+    const draftMetadata =
+      branchType === "then" ? thenDraftMetadata : elseDraftMetadata;
+    const setDraftMetadata =
+      branchType === "then" ? setThenDraftMetadata : setElseDraftMetadata;
 
-    const currentOption = branchType === "then" ? thenCurrentOption : elseCurrentOption;
-    const setCurrentOption = branchType === "then" ? setThenCurrentOption : setElseCurrentOption;
+    const currentOption =
+      branchType === "then" ? thenCurrentOption : elseCurrentOption;
+    const setCurrentOption =
+      branchType === "then" ? setThenCurrentOption : setElseCurrentOption;
 
-    const dropImageInputRef = branchType === "then" ? thenDropImageInputRef : elseDropImageInputRef;
+    const dropImageInputRef =
+      branchType === "then" ? thenDropImageInputRef : elseDropImageInputRef;
 
     // ──────────────
     const handleDropdownImageChange = (e) => {
@@ -1105,14 +1202,27 @@ const generateBranchPayload = (branchType) => {
 
                       <button onClick={handleDropdownFileDelete}>
                         <DeleteOutlineIcon
-                          sx={{ fontSize: "23px", marginTop: 3, color: "#ef4444" }}
+                          sx={{
+                            fontSize: "23px",
+                            marginTop: 3,
+                            color: "#ef4444",
+                          }}
                         />
                       </button>
                     </Box>
                     {currentOption.image && (
-                      <p className="text-green-600 text-sm font-medium mt-1">Image uploaded</p>
+                      <p className="text-green-600 text-sm font-medium mt-1">
+                        Image uploaded
+                      </p>
                     )}
-                    <Box sx={{ display: "flex", gap: 1, mt: 2, justifyContent: "left" }}>
+                    <Box
+                      sx={{
+                        display: "flex",
+                        gap: 1,
+                        mt: 2,
+                        justifyContent: "left",
+                      }}
+                    >
                       <UniversalButton
                         label="Save Option"
                         onClick={handleSaveInline}
@@ -1134,13 +1244,19 @@ const generateBranchPayload = (branchType) => {
                       {opt.description && (
                         <Typography
                           variant="body2"
-                          sx={{ wordWrap: "break-word", overflowWrap: "break-word" }}
+                          sx={{
+                            wordWrap: "break-word",
+                            overflowWrap: "break-word",
+                          }}
                         >
                           {opt.description}
                         </Typography>
                       )}
                     </Box>
-                    <IconButton size="small" onClick={() => handleStartEdit(idx)}>
+                    <IconButton
+                      size="small"
+                      onClick={() => handleStartEdit(idx)}
+                    >
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton size="small" onClick={() => handleRemove(idx)}>
@@ -1157,7 +1273,10 @@ const generateBranchPayload = (branchType) => {
               <UniversalButton label="Add Option" onClick={handleAddNew} />
             </Box>
             <Box sx={{ mt: 1 }}>
-              <UniversalButton label="Save Dropdown" onClick={handleSaveDropdown} />
+              <UniversalButton
+                label="Save Dropdown"
+                onClick={handleSaveDropdown}
+              />
             </Box>
           </div>
         </FormControl>
@@ -1167,267 +1286,306 @@ const generateBranchPayload = (branchType) => {
     return null;
   };
 
- const renderEmbeddedLinkBranchInput = (branchType) => {
-  const selectedComponent =
-    branchType === "then" ? selectedThenComponent : selectedElseComponent;
+  const renderEmbeddedLinkBranchInput = (branchType) => {
+    const selectedComponent =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
-  const text = branchType === "then" ? thenText : elseText;
-  const setText = branchType === "then" ? setThenText : setElseText;
+    const text = branchType === "then" ? thenText : elseText;
+    const setText = branchType === "then" ? setThenText : setElseText;
 
-  const onClickAction = branchType === "then" ? thenOnClickAction : elseOnClickAction;
-  const setOnClickAction = branchType === "then" ? setThenOnClickAction : setElseOnClickAction;
+    const onClickAction =
+      branchType === "then" ? thenOnClickAction : elseOnClickAction;
+    const setOnClickAction =
+      branchType === "then" ? setThenOnClickAction : setElseOnClickAction;
 
-  const selectedScreenName = branchType === "then" ? thenSelectedScreenName : elseSelectedScreenName;
-  const setSelectedScreenName = branchType === "then" ? setThenSelectedScreenName : setElseSelectedScreenName;
+    const selectedScreenName =
+      branchType === "then" ? thenSelectedScreenName : elseSelectedScreenName;
+    const setSelectedScreenName =
+      branchType === "then"
+        ? setThenSelectedScreenName
+        : setElseSelectedScreenName;
 
-  const embeddedLinkUrl = branchType === "then" ? thenEmbeddedLinkUrl : elseEmbeddedLinkUrl;
-  const setEmbeddedLinkUrl = branchType === "then" ? setThenEmbeddedLinkUrl : setElseEmbeddedLinkUrl;
+    const embeddedLinkUrl =
+      branchType === "then" ? thenEmbeddedLinkUrl : elseEmbeddedLinkUrl;
+    const setEmbeddedLinkUrl =
+      branchType === "then" ? setThenEmbeddedLinkUrl : setElseEmbeddedLinkUrl;
 
-  const handleSave = () => {
-    console.log("Saved Embedded Link:", { text, onClickAction, selectedScreenName, embeddedLinkUrl });
+    const handleSave = () => {
+      console.log("Saved Embedded Link:", {
+        text,
+        onClickAction,
+        selectedScreenName,
+        embeddedLinkUrl,
+      });
+    };
+
+    if (selectedComponent === "embeddedlink") {
+      return (
+        <div className="mt-5 w-1/2">
+          <div className="mb-2">
+            <InputField
+              label="Text"
+              type="url"
+              maxLength={25}
+              value={text}
+              tooltipContent="Enter label which display in the screen max length 25"
+              tooltipPlacement="right"
+              placeholder="Button Embedded Link"
+              onChange={(e) => setText(e.target.value)}
+            />
+          </div>
+          <p className="text-gray-600 text-xs mb-2">Chars: {text.length}/25</p>
+
+          <div className="mb-2">
+            <AnimatedDropdown
+              id="next-action"
+              label="Next Action"
+              tooltipContent="[navigate = ensure there is screen created where user can navigate],[Open_url = paste or enter url link where user can redirect to page]"
+              tooltipPlacement="right"
+              options={[
+                { value: "navigate", label: "Navigate" },
+                { value: "open_url", label: "Open_url" },
+              ]}
+              value={onClickAction}
+              onChange={(value) => setOnClickAction(value)}
+            />
+          </div>
+
+          {onClickAction === "navigate" && (
+            <>
+              <AnimatedDropdown
+                id="screen-name"
+                label="List Of Screen Name"
+                tooltipContent="Create a screen where you want to navigate the user"
+                tooltipPlacement="right"
+                options={screenNameOptions}
+                value={selectedScreenName}
+                onChange={(value) => setSelectedScreenName(value)}
+              />
+              <span className="text-xs">
+                NOTE: Create a screen or select where you want to navigate the
+                user
+              </span>
+            </>
+          )}
+
+          {onClickAction === "open_url" && (
+            <InputField
+              label="URL"
+              placeholder="Enter the URL to open"
+              type="text"
+              tooltipContent="Provide the URL to open when user clicks Read more"
+              value={embeddedLinkUrl}
+              onChange={(e) => setEmbeddedLinkUrl(e.target.value)}
+            />
+          )}
+
+          <div className="flex justify-center mt-5">
+            <UniversalButton label="Save" onClick={handleSave} />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
   };
 
-  if (selectedComponent === "embeddedlink") {
-    return (
-      <div className="mt-5 w-1/2">
-        <div className="mb-2">
-          <InputField
-            label="Text"
-            type="url"
-            maxLength={25}
-            value={text}
-            tooltipContent="Enter label which display in the screen max length 25"
-            tooltipPlacement="right"
-            placeholder="Button Embedded Link"
-            onChange={(e) => setText(e.target.value)}
-          />
-        </div>
-        <p className="text-gray-600 text-xs mb-2">
-          Chars: {text.length}/25
-        </p>
+  const renderDateBranchInput = (branchType) => {
+    const selectedComponent =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
 
-        <div className="mb-2">
+    const dateLabel = branchType === "then" ? thenDateLabel : elseDateLabel;
+    const setDateLabel =
+      branchType === "then" ? setThenDateLabel : setElseDateLabel;
+
+    const datePlaceholder =
+      branchType === "then" ? thenDatePlaceholder : elseDatePlaceholder;
+    const setDatePlaceholder =
+      branchType === "then" ? setThenDatePlaceholder : setElseDatePlaceholder;
+
+    const minDate = branchType === "then" ? thenMinDate : elseMinDate;
+    const setMinDate = branchType === "then" ? setThenMinDate : setElseMinDate;
+
+    const maxDate = branchType === "then" ? thenMaxDate : elseMaxDate;
+    const setMaxDate = branchType === "then" ? setThenMaxDate : setElseMaxDate;
+
+    const unavailableDate =
+      branchType === "then" ? thenUnavailableDate : elseUnavailableDate;
+    const setUnavailableDate =
+      branchType === "then" ? setThenUnavailableDate : setElseUnavailableDate;
+
+    const handleAddUnavailableDate = (value) => {
+      if (value) {
+        setUnavailableDate((prev) => [...prev, value]);
+      }
+    };
+
+    const handleSave = () => {
+      console.log("Saved Date config:", {
+        dateLabel,
+        datePlaceholder,
+        minDate,
+        maxDate,
+        unavailableDate,
+      });
+    };
+
+    if (selectedComponent === "date") {
+      return (
+        <div className="space-y-3 mt-3 w-1/2">
+          <InputField
+            label="Date Label"
+            placeholder="Enter Date Label"
+            tooltipContent="Enter Date Label"
+            tooltipPlacement="right"
+            maxLength={40}
+            value={dateLabel}
+            onChange={(e) => setDateLabel(e.target.value)}
+          />
+
+          <InputField
+            label="Helper Text"
+            placeholder="Enter Placeholder for Date"
+            tooltipContent="Enter Placeholder for Date"
+            tooltipPlacement="right"
+            value={datePlaceholder}
+            onChange={(e) => setDatePlaceholder(e.target.value)}
+          />
+
+          <UniversalDatePicker
+            label="Min-Date"
+            tooltipContent="Select Min-Date"
+            tooltipPlacement="right"
+            value={minDate}
+            onChange={setMinDate}
+          />
+
+          <UniversalDatePicker
+            label="Max-Date"
+            tooltipContent="Select Max-Date"
+            tooltipPlacement="right"
+            value={maxDate}
+            onChange={setMaxDate}
+            minDate={minDate}
+            disabled={!minDate}
+          />
+
+          <UniversalDatePicker
+            label="Unavailable Dates"
+            tooltipContent="Select Unavailable-Date"
+            tooltipPlacement="right"
+            value={null}
+            onChange={handleAddUnavailableDate}
+            disabled={!minDate || !maxDate}
+            minDate={minDate}
+            maxDate={maxDate}
+          />
+
+          <div className="flex flex-wrap gap-2 mt-2 ">
+            {unavailableDate.map((date, index) => (
+              <Chip
+                sx={{ padding: 1 }}
+                key={index}
+                label={new Date(date).toLocaleDateString()}
+                onDelete={() =>
+                  setUnavailableDate((prev) =>
+                    prev.filter((_, i) => i !== index)
+                  )
+                }
+              />
+            ))}
+          </div>
+
+          <div className="flex justify-center">
+            <UniversalButton label="Save" onClick={handleSave} />
+          </div>
+        </div>
+      );
+    }
+
+    return null;
+  };
+
+  const renderFooterBranchInput = (branchType) => {
+    const selectedComponent =
+      branchType === "then" ? selectedThenComponent : selectedElseComponent;
+
+    const footerButtonLabel =
+      branchType === "then" ? thenFooterButtonLabel : elseFooterButtonLabel;
+    const setFooterButtonLabel =
+      branchType === "then"
+        ? setThenFooterButtonLabel
+        : setElseFooterButtonLabel;
+
+    const centerCaption =
+      branchType === "then" ? thenCenterCaption : elseCenterCaption;
+    const setCenterCaption =
+      branchType === "then" ? setThenCenterCaption : setElseCenterCaption;
+
+    const nextAction = branchType === "then" ? thenNextAction : elseNextAction;
+    const setNextAction =
+      branchType === "then" ? setThenNextAction : setElseNextAction;
+
+    const handleSave = () => {
+      console.log("Saved Footer Button config:", {
+        footerButtonLabel,
+        centerCaption,
+        nextAction,
+      });
+    };
+
+    if (selectedComponent === "footerbutton") {
+      return (
+        <div className="mb-2 text-lg space-y-3 mt-3 w-1/2">
+          <InputField
+            label="Footer Button Label"
+            placeholder="Enter Footer Button Label"
+            tooltipContent="Enter Label"
+            tooltipPlacement="right"
+            maxLength={35}
+            id="footer-button-label"
+            value={footerButtonLabel}
+            onChange={(e) => setFooterButtonLabel(e.target.value)}
+          />
+
+          <InputField
+            label="Center Caption"
+            placeholder="Enter Center Caption"
+            tooltipContent="Enter Center Caption"
+            tooltipPlacement="right"
+            maxLength={15}
+            id="center-caption"
+            value={centerCaption}
+            onChange={(e) => setCenterCaption(e.target.value)}
+          />
+
           <AnimatedDropdown
             id="next-action"
             label="Next Action"
-            tooltipContent="[navigate = ensure there is screen created where user can navigate],[Open_url = paste or enter url link where user can redirect to page]"
+            tooltipContent="Select Option"
             tooltipPlacement="right"
             options={[
+              { value: "complete", label: "Complete" },
               { value: "navigate", label: "Navigate" },
-              { value: "open_url", label: "Open_url" },
             ]}
-            value={onClickAction}
-            onChange={(value) => setOnClickAction(value)}
+            value={nextAction}
+            onChange={(val) => setNextAction(val)}
           />
+
+          <div className="flex justify-center">
+            <UniversalButton label="SAVE" onClick={handleSave} />
+          </div>
         </div>
-
-        {onClickAction === "navigate" && (
-          <>
-            <AnimatedDropdown
-              id="screen-name"
-              label="List Of Screen Name"
-              tooltipContent="Create a screen where you want to navigate the user"
-              tooltipPlacement="right"
-              options={screenNameOptions}
-              value={selectedScreenName}
-              onChange={(value) => setSelectedScreenName(value)}
-            />
-            <span className="text-xs">
-              NOTE: Create a screen or select where you want to navigate the user
-            </span>
-          </>
-        )}
-
-        {onClickAction === "open_url" && (
-          <InputField
-            label="URL"
-            placeholder="Enter the URL to open"
-            type="text"
-            tooltipContent="Provide the URL to open when user clicks Read more"
-            value={embeddedLinkUrl}
-            onChange={(e) => setEmbeddedLinkUrl(e.target.value)}
-          />
-        )}
-
-        <div className="flex justify-center mt-5">
-          <UniversalButton
-            label="Save"
-            onClick={handleSave}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const renderDateBranchInput = (branchType) => {
-  const selectedComponent = branchType === "then" ? selectedThenComponent : selectedElseComponent;
-
-  const dateLabel = branchType === "then" ? thenDateLabel : elseDateLabel;
-  const setDateLabel = branchType === "then" ? setThenDateLabel : setElseDateLabel;
-
-  const datePlaceholder = branchType === "then" ? thenDatePlaceholder : elseDatePlaceholder;
-  const setDatePlaceholder = branchType === "then" ? setThenDatePlaceholder : setElseDatePlaceholder;
-
-  const minDate = branchType === "then" ? thenMinDate : elseMinDate;
-  const setMinDate = branchType === "then" ? setThenMinDate : setElseMinDate;
-
-  const maxDate = branchType === "then" ? thenMaxDate : elseMaxDate;
-  const setMaxDate = branchType === "then" ? setThenMaxDate : setElseMaxDate;
-
-  const unavailableDate = branchType === "then" ? thenUnavailableDate : elseUnavailableDate;
-  const setUnavailableDate = branchType === "then" ? setThenUnavailableDate : setElseUnavailableDate;
-
-  const handleAddUnavailableDate = (value) => {
-    if (value) {
-      setUnavailableDate((prev) => [...prev, value]);
+      );
     }
+
+    return null;
   };
 
-  const handleSave = () => {
-    console.log("Saved Date config:", { dateLabel, datePlaceholder, minDate, maxDate, unavailableDate });
-  };
-
-  if (selectedComponent === "date") {
-    return (
-      <div className="space-y-3 mt-3 w-1/2">
-        <InputField
-          label="Date Label"
-          placeholder="Enter Date Label"
-          tooltipContent="Enter Date Label"
-          tooltipPlacement="right"
-          maxLength={40}
-          value={dateLabel}
-          onChange={(e) => setDateLabel(e.target.value)}
-        />
-
-        <InputField
-          label="Helper Text"
-          placeholder="Enter Placeholder for Date"
-          tooltipContent="Enter Placeholder for Date"
-          tooltipPlacement="right"
-          value={datePlaceholder}
-          onChange={(e) => setDatePlaceholder(e.target.value)}
-        />
-
-        <UniversalDatePicker
-          label="Min-Date"
-          tooltipContent="Select Min-Date"
-          tooltipPlacement="right"
-          value={minDate}
-          onChange={setMinDate}
-        />
-
-        <UniversalDatePicker
-          label="Max-Date"
-          tooltipContent="Select Max-Date"
-          tooltipPlacement="right"
-          value={maxDate}
-          onChange={setMaxDate}
-          minDate={minDate}
-          disabled={!minDate}
-        />
-
-        <UniversalDatePicker
-          label="Unavailable Dates"
-          tooltipContent="Select Unavailable-Date"
-          tooltipPlacement="right"
-          value={null}
-          onChange={handleAddUnavailableDate}
-          disabled={!minDate || !maxDate}
-          minDate={minDate}
-          maxDate={maxDate}
-        />
-
-        <div className="flex flex-wrap gap-2 mt-2 ">
-          {unavailableDate.map((date, index) => (
-            <Chip
-              sx={{ padding: 1 }}
-              key={index}
-              label={new Date(date).toLocaleDateString()}
-              onDelete={() =>
-                setUnavailableDate((prev) => prev.filter((_, i) => i !== index))
-              }
-            />
-          ))}
-        </div>
-
-        <div className="flex justify-center">
-          <UniversalButton label="Save" onClick={handleSave} />
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
-const renderFooterBranchInput = (branchType) => {
-  const selectedComponent = branchType === "then" ? selectedThenComponent : selectedElseComponent;
-
-  const footerButtonLabel = branchType === "then" ? thenFooterButtonLabel : elseFooterButtonLabel;
-  const setFooterButtonLabel = branchType === "then" ? setThenFooterButtonLabel : setElseFooterButtonLabel;
-
-  const centerCaption = branchType === "then" ? thenCenterCaption : elseCenterCaption;
-  const setCenterCaption = branchType === "then" ? setThenCenterCaption : setElseCenterCaption;
-
-  const nextAction = branchType === "then" ? thenNextAction : elseNextAction;
-  const setNextAction = branchType === "then" ? setThenNextAction : setElseNextAction;
-
-  const handleSave = () => {
-    console.log("Saved Footer Button config:", { footerButtonLabel, centerCaption, nextAction });
-  };
-
-  if (selectedComponent === "footerbutton") {
-    return (
-      <div className="mb-2 text-lg space-y-3 mt-3 w-1/2">
-        <InputField
-          label="Footer Button Label"
-          placeholder="Enter Footer Button Label"
-          tooltipContent="Enter Label"
-          tooltipPlacement="right"
-          maxLength={35}
-          id="footer-button-label"
-          value={footerButtonLabel}
-          onChange={(e) => setFooterButtonLabel(e.target.value)}
-        />
-
-        <InputField
-          label="Center Caption"
-          placeholder="Enter Center Caption"
-          tooltipContent="Enter Center Caption"
-          tooltipPlacement="right"
-          maxLength={15}
-          id="center-caption"
-          value={centerCaption}
-          onChange={(e) => setCenterCaption(e.target.value)}
-        />
-
-        <AnimatedDropdown
-          id="next-action"
-          label="Next Action"
-          tooltipContent="Select Option"
-          tooltipPlacement="right"
-          options={[
-            { value: "complete", label: "Complete" },
-            { value: "navigate", label: "Navigate" },
-          ]}
-          value={nextAction}
-          onChange={(val) => setNextAction(val)}
-        />
-
-        <div className="flex justify-center">
-          <UniversalButton label="SAVE" onClick={handleSave} />
-        </div>
-      </div>
-    );
-  }
-
-  return null;
-};
-
+  const flowItemsOptions = flowItems.map((item) => ({
+    label: item.data.type || item.id, // fallback if text is empty
+    value: item.id,
+  }));
 
   // components end
   return (
@@ -1458,6 +1616,16 @@ const renderFooterBranchInput = (branchType) => {
                   { label: "Less than or equal to (<=)", value: "<=" },
                 ]}
                 onChange={(value) => setSelectedCondition(value)}
+              />
+            </div>
+            <div className="w-3/1">
+              <AnimatedDropdown
+                label="Select Flow Item"
+                tooltipContent="Select a flow item"
+                tooltipPlacement="right"
+                value={selectedFlowItem}
+                options={flowItemsOptions}
+                onChange={(value) => setSelectedFlowItem(value)}
               />
             </div>
             <div className="w-3/1">
@@ -1518,8 +1686,6 @@ const renderFooterBranchInput = (branchType) => {
             {renderEmbeddedLinkBranchInput("then")}
             {renderDateBranchInput("then")}
             {renderFooterBranchInput("then")}
-
-
 
             {selectedElseComponent && (
               <p className="my-2 font-semibold">

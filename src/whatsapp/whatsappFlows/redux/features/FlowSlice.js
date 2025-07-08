@@ -5,6 +5,7 @@ const initialState = {
   screenName: {
     WELCOME: { screenName: "Welcome" },
   },
+  canvasItems: [],
 };
 
 const flowSlice = createSlice({
@@ -16,8 +17,11 @@ const flowSlice = createSlice({
       state.flowItems[id] = data;
     },
     addScreenName: (state, action) => {
-        const { id, data } = action.payload;
-        state.screenName[id] = data;
+      const { id, data } = action.payload;
+      state.screenName[id] = data;
+    },
+    addCanvasItems: (state, action) => {
+      state.canvasItems.push(action.payload);
     },
     deleteFlowItem: (state, action) => {
       const { id } = action.payload;
@@ -41,6 +45,12 @@ const flowSlice = createSlice({
   },
 });
 
-export const { addFlowItem, deleteFlowItem, updateFlowItem, addScreenName, deleteScreen } =
-  flowSlice.actions;
+export const {
+  addFlowItem,
+  addCanvasItems,
+  deleteFlowItem,
+  updateFlowItem,
+  addScreenName,
+  deleteScreen,
+} = flowSlice.actions;
 export default flowSlice.reducer;

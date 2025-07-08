@@ -297,6 +297,7 @@ export const generatePayload = (data) => {
     imageCarousel: 0,
     richText: 0,
     switch: 0,
+    // ifelse: 0,
   };
 
   const numberToWord = (num) => {
@@ -328,6 +329,35 @@ export const generatePayload = (data) => {
 
   data.forEach((screenData, index) => {
     const screenId = screenData.id;
+    let lastCreatedComponentName = ""; // Track last named component except ifelse
+//     const getExpectedValueBasedOnType = (componentName) => {
+//   const comp = allComponents.find((c) => c.name === componentName);
+
+//   if (!comp) return `'value'`; // default
+
+//   switch (comp.type) {
+//     case "optin":
+//       return "true"; // or false
+
+//     case "dropDown":
+//     case "textInput":
+//     case "textArea":
+//       return `'someText'`; // use string quotes
+
+//     case "numberInput":
+//       return `5`; // no quotes
+
+//     case "checkbox":
+//       // Can't use directly in If — skip or warn
+//       return `'checkboxOptionId'`; // just for fallback
+
+//     default:
+//       return `'value'`;
+//   }
+// };
+
+
+
 
     const layout = {
       type: "SingleColumnLayout",
@@ -560,14 +590,8 @@ export const generatePayload = (data) => {
 
       if (type === "switch") {
         // Look for the last component already pushed to layout that has a name
-        let valueName = "";
-        for (let i = layout.children.length - 1; i >= 0; i--) {
-          const prev = layout.children[i];
-          if (prev.name) {
-            valueName = prev.name;
-            break;
-          }
-        }
+     
+        const valueName = lastCreatedComponentName;
 
         component = {
           type: "Switch",
@@ -702,22 +726,33 @@ export const generatePayload = (data) => {
         //  console.log("Generated embeddedlink component:", JSON.stringify(component, null, 2));
       }
 
-      console.log("pay", pay)
-      if (pay?.type === "ifelse") {
+      console.log("pay", pay);
+      if (type === "ifelse") {
+        const componentName = lastCreatedComponentName;
+        // const expectedValue = getExpectedValueBasedOnType(componentName); 
 
         component = {
-          type: "ifelse",
-          // condition: pay?.condition,
+          type: "If",
+          // condition: `\${data.value} ${pay?.condition} (\${form.${componentName}} == 'cat')`,
+            condition: `(\${form.${componentName}} ${pay?.condition} 'cat')`,
+
+            // condition: `(\${form.${componentName}} ${pay?.condition || '=='} ${expectedValue})`,
+
+          
+          // condition: componentName
+          //   ? ` \${form.${componentName}} ${pay?.condition}`
+          //   : "",
+
           then: [
             {
               type: pay?.then?.[0]?.type,
-              text: pay?.then?.[0]?.text 
+              text: pay?.then?.[0]?.text,
             },
           ],
           else: [
             {
               type: pay?.else?.[0]?.type,
-              text: pay?.else?.[0]?.text
+              text: pay?.else?.[0]?.text,
             },
           ],
           // required: true,
@@ -830,6 +865,18 @@ export const generatePayload = (data) => {
       //   // }
       // }
 
+      //       if (component.name && component.type !== "If") {
+      //   lastNamedComponent = component.name;
+      // }
+
+      if (name && type !== "switch") {
+        lastCreatedComponentName = name;
+      }
+
+      if (name && type !== "ifelse") {
+        lastCreatedComponentName = name;
+      }
+
       layout.children.push(component);
     });
 
@@ -837,12 +884,18 @@ export const generatePayload = (data) => {
 
     const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
     payload.screens.push({
-      // data: {},
+      data: {
+        value: {
+          type: "boolean",
+          __example__: true,
+        },
+      },
       id: capitalize(screenId),
       title: screenData.title || `Screen ${index + 1}`,
       layout,
       // terminal: index === data.length - 1,
       ...(index === data.length - 1 ? { terminal: true } : ""),
+      success: true,
     });
   });
 

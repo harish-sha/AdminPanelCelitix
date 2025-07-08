@@ -23,7 +23,11 @@ import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 import CustomTooltip from "@/components/common/CustomTooltip";
 import DownloadForOfflineOutlinedIcon from "@mui/icons-material/DownloadForOfflineOutlined";
 import { useDispatch, useSelector } from "react-redux";
-import { addFlowItem, updateFlowItem } from "../redux/features/FlowSlice";
+import {
+  addFlowItem,
+  updateFlowItem,
+  addCanvasItems,
+} from "../redux/features/FlowSlice";
 
 const FlowCreationPage = () => {
   const { state } = useLocation();
@@ -106,10 +110,8 @@ const FlowCreationPage = () => {
     altText: "",
   });
 
-
   //if-else
-  const [openIfElse, setOpenIfElse] = useState(false)
-
+  const [openIfElse, setOpenIfElse] = useState(false);
 
   // console.log("labelValue", labelValue)
 
@@ -240,7 +242,8 @@ const FlowCreationPage = () => {
         (item.type === "document" && hasMedia)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasMedia ? "media" : "document"
+          `Cannot add "${item.type}" when "${
+            hasMedia ? "media" : "document"
           }" already exists.`
         );
         return;
@@ -261,7 +264,8 @@ const FlowCreationPage = () => {
         (item.type === "calendar" && hasDate)
       ) {
         toast.error(
-          `Cannot add "${item.type}" when "${hasDate ? "date" : "calendar"
+          `Cannot add "${item.type}" when "${
+            hasDate ? "date" : "calendar"
           }" already exists.`
         );
         return;
@@ -293,6 +297,8 @@ const FlowCreationPage = () => {
         },
       })
     );
+
+    console.log("item", item);
 
     // ✅ Add the item
     newTabs[activeIndex] = {
@@ -374,7 +380,7 @@ const FlowCreationPage = () => {
 
     // radioBtn
   };
-  console.log("selectedItem", selectedItem)
+  console.log("selectedItem", selectedItem);
 
   const handleSave = (updatedData) => {
     setTabs((prevTabs) => {
@@ -400,6 +406,13 @@ const FlowCreationPage = () => {
     setSelectedItem(null);
 
     console.log("updatedData", updatedData);
+
+    dispatch(
+      addCanvasItems({
+        id: updatedData.storeId,
+        data: updatedData,
+      })
+    );
 
     if (updatedData.type === "imageCarousel") {
       const imageKeys = Object.keys(updatedData).filter((key) =>
@@ -540,7 +553,7 @@ const FlowCreationPage = () => {
       }
 
       if (!res.flag) {
-        console.log(res.error_user_msg.error.error_user_msg)
+        console.log(res.error_user_msg.error.error_user_msg);
         return toast.error(res.error_user_msg.error.error_user_msg);
       }
 
@@ -681,8 +694,9 @@ const FlowCreationPage = () => {
                   }
                 </span>
                 <ExpandMoreIcon
-                  className={`transform transition ${showErrors ? "rotate-180" : "rotate-0"
-                    }`}
+                  className={`transform transition ${
+                    showErrors ? "rotate-180" : "rotate-0"
+                  }`}
                 />
               </motion.button>
 
@@ -696,10 +710,11 @@ const FlowCreationPage = () => {
                 onClick={handleFlowBuild}
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
-                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
-                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
-                  }`}
+                className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${
+                  isLoading || hasErrors
+                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />
                 {isLoading ? "Building..." : "Build Flow"}
