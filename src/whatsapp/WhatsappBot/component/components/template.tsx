@@ -71,9 +71,6 @@ export const TemplateNode = ({
   }, []);
 
   useEffect(() => {
-    console.log(nodesInputData[id]);
-  }, [nodesInputData]);
-  useEffect(() => {
     handleFetchTemplateDetails();
   }, [nodesInputData[id]?.templateSrno]);
   return (
