@@ -83,8 +83,6 @@ function NodeComponent({
   const options = nodesInputData?.[id]?.options || [];
   const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
 
-  console.log("isBtnDisable", isBtnDisable);
-
   return (
     <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
       <button
@@ -1210,6 +1208,7 @@ const CreateWhatsAppBot = () => {
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
+              details={details}
             />
           ) : null}
 
