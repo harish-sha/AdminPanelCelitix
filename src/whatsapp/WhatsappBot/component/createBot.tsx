@@ -54,6 +54,7 @@ import {
 } from "./components/helper/convertToReactFlow";
 import { Url } from "./components/url";
 import { HiOutlineTemplate } from "react-icons/hi";
+import { TemplateNode } from "./components/template";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -67,6 +68,7 @@ function NodeComponent({
   connectionType,
   setNodesInputData,
   nodesInputData,
+  isBtnDisable = false,
 }: {
   id: string;
   data: any;
@@ -76,9 +78,12 @@ function NodeComponent({
   connectionType: string;
   setNodesInputData: any;
   nodesInputData?: any;
+  isBtnDisable?: boolean;
 }) {
   const options = nodesInputData?.[id]?.options || [];
   const buttonTexts = nodesInputData?.[id]?.buttonTexts || [];
+
+  console.log("isBtnDisable", isBtnDisable);
 
   return (
     <div className="relative p-1.5 bg-white border border-gray-300 rounded-md shadow-md">
@@ -127,6 +132,7 @@ function NodeComponent({
         onClick={() => {
           setIsVisible(true);
         }}
+        disabled={isBtnDisable}
       >
         <SettingsOutlinedIcon fontSize="small" />
       </button>
@@ -273,6 +279,8 @@ const CreateWhatsAppBot = () => {
   const [connectionType, setConnectionType] = useState("");
   const [lastPosition, setLastPosition] = useState({ x: 50, y: 50 });
 
+  const [isSettingBtnDisables, setIsSettingBtnDisables] = useState(true);
+
   const [nodesInputData, setNodesInputData] = useState(data);
   const [allVariables, setAllVariables] = useState([]);
 
@@ -320,6 +328,8 @@ const CreateWhatsAppBot = () => {
           selected: state?.wabaNumber || "",
           name: state?.botName ?? "",
         }));
+
+        setIsSettingBtnDisables(false);
       } catch (e) {
         return toast.error("Error fetching Waba");
       }
@@ -589,10 +599,11 @@ const CreateWhatsAppBot = () => {
           setIsVisible={setIsVisible}
           connectionType={connectionType}
           setNodesInputData={setNodesInputData}
+          isBtnDisable={isSettingBtnDisables}
         />
       ),
     }),
-    [deleteNode, isConnecting, nodesInputData]
+    [deleteNode, isConnecting, nodesInputData, isSettingBtnDisables]
   );
 
   const onNodeClick = (_event: any, node: any) => {
@@ -1073,6 +1084,7 @@ const CreateWhatsAppBot = () => {
               onDragStart={(event) => handleDragStart(event, "template")}
               onClick={() => addNode("template")}
               className={commonButtonClass}
+              disabled={!details.selected}
             >
               <HiOutlineTemplate className="size-6" />
               Template
@@ -1097,6 +1109,7 @@ const CreateWhatsAppBot = () => {
             details={details}
             handleSubmit={handleSubmit}
             isUpdate={state ?? false}
+            setIsSettingBtnDisables={setIsSettingBtnDisables}
           />
         </div>
       </div>
@@ -1188,6 +1201,12 @@ const CreateWhatsAppBot = () => {
             />
           ) : type === "urlbutton" ? (
             <Url
+              id={selectedNodeId}
+              nodesInputData={nodesInputData}
+              setNodesInputData={setNodesInputData}
+            />
+          ) : type === "template" ? (
+            <TemplateNode
               id={selectedNodeId}
               nodesInputData={nodesInputData}
               setNodesInputData={setNodesInputData}
