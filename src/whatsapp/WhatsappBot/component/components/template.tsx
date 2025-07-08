@@ -1,4 +1,5 @@
 import {
+  fetchCurlData,
   getTemplateDetialsById,
   getWabaTemplate,
   getWabaTemplateDetails,
@@ -32,13 +33,33 @@ export const TemplateNode = ({
   async function handleFetchTemplateDetails() {
     if (!nodesInputData[id]?.templateSrno) return;
     try {
-      const vendorId = allTemplates?.find(
+      const templateDetails = allTemplates?.find(
         (item) => item.templateSrno === nodesInputData[id]?.templateSrno
-      )?.vendorTemplateId;
+      );
+      console.log(templateDetails);
 
-      const res = await getTemplateDetialsById(vendorId);
+      const res = await getTemplateDetialsById(
+        templateDetails?.vendorTemplateId
+      );
+      const curlData = await fetchCurlData({
+        waba: details?.selected,
+        tempName: templateDetails?.templateName,
+      });
 
-      setSelectedTemplateData(res);
+      console.log(curlData);
+      const curl = {
+        ...curlData,
+        messaging_product: "whatsapp",
+      };
+      setSelectedTemplateData(curl);
+
+      setNodesInputData((prev) => ({
+        ...prev,
+        [id]: {
+          ...prev[id],
+          json: curl,
+        },
+      }));
     } catch (e) {
       console.log(e);
       toast.error("Error fetching template details");
@@ -49,6 +70,9 @@ export const TemplateNode = ({
     handleFetchAllTemplates();
   }, []);
 
+  useEffect(() => {
+    console.log(nodesInputData[id]);
+  }, [nodesInputData]);
   useEffect(() => {
     handleFetchTemplateDetails();
   }, [nodesInputData[id]?.templateSrno]);
