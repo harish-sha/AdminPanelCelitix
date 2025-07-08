@@ -18,6 +18,7 @@ import CarouselInteractiveActions from "../whatsappcreatetemplate/components/Car
 import Loader from "../components/Loader.jsx";
 import {
   getWabaList,
+  getWhatsappFlow,
   sendTemplatetoApi,
   uploadImageFile,
 } from "../../apis/whatsapp/whatsapp.js";
@@ -80,6 +81,13 @@ const WhatsappCreateTemplate = () => {
 
   const [headerVariable, setHeaderVariable] = useState("");
   const [headerVariableValue, setHeaderVariableValue] = useState("");
+
+  const [flowTemplateState, setFlowTemplateState] = useState({
+    title: "",
+    flow_id: "",
+  });
+
+  const [allFlows, setAllFlows] = useState([]);
 
   const [expiryTime, setExpiryTime] = useState(10);
   const handlePreviewUpdate = (updatedPreview) => {
@@ -245,6 +253,20 @@ const WhatsappCreateTemplate = () => {
     console.log("imageuploadfile", imageuploadfile);
   }
 
+  useEffect(() => {
+    async function handleFetchAllFlow() {
+      try {
+        const res = await getWhatsappFlow();
+        console.log(res);
+        setAllFlows(res);
+      } catch (e) {
+        console.log(e);
+      }
+    }
+
+    handleFetchAllFlow();
+  }, []);
+
   // Submit Function
   const handleSubmit = async () => {
     if (!selectedWaba) {
@@ -303,6 +325,13 @@ const WhatsappCreateTemplate = () => {
         phone_number: phoneNumber,
       });
     }
+    if (flowTemplateState) {
+      btns.push({
+        type: "FLOW",
+        text: flowTemplateState?.title,
+        flow_id: flowTemplateState?.flow_id,
+      });
+    }
     if (url && urlTitle) {
       if (urlVariables.length > 0) {
         btns.push({
@@ -348,10 +377,12 @@ const WhatsappCreateTemplate = () => {
 
     const allHeadersVariable = headerVariable.map((variable, index) => {
       if (!variable.value) {
-        return toast.error(`Please enter value for header variable ${index + 1}`);
+        return toast.error(
+          `Please enter value for header variable ${index + 1}`
+        );
       }
       return variable.value;
-    })
+    });
     if (selectedTemplateType === "text" && allHeadersVariable.length > 0) {
       data.components.push({
         type: "HEADER",
@@ -986,6 +1017,9 @@ const WhatsappCreateTemplate = () => {
                               addQuickReply={addQuickReply}
                               removeQuickReply={removeQuickReply}
                               setUrlVariables={setUrlVariables}
+                              setFlowTemplateState={setFlowTemplateState}
+                              flowTemplateState={flowTemplateState}
+                              allFlows={allFlows}
                             />
                           </>
                         )}

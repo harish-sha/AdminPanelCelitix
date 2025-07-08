@@ -4,6 +4,7 @@ import { AiOutlineClose, AiOutlineInfoCircle } from "react-icons/ai";
 import CustomTooltip from "../../components/CustomTooltip";
 import VariableManager from "./VariableManager";
 import VariableManagerUrl from "./VariableManagerUrl";
+import AnimatedDropdown from "@/whatsapp/components/AnimatedDropdown";
 
 const InteractiveActions = ({
   interactiveAction,
@@ -26,6 +27,9 @@ const InteractiveActions = ({
   removeQuickReply,
   selectedTemplateType,
   setUrlVariables,
+  setFlowTemplateState,
+  flowTemplateState,
+  allFlows
 }) => {
   // useEffect(() => {
   //   if (interactiveAction !== "all" || selectedTemplateType) {
@@ -76,25 +80,27 @@ const InteractiveActions = ({
 
       {/* Action Type Selection */}
       <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-2 gap-4 mb-4">
-        {["none", "callToActions", "quickReplies", "all"].map((action) => (
-          <label
-            key={action}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <input
-              id="interactiveAction"
-              type="radio"
-              name="interactiveAction"
-              value={action}
-              checked={interactiveAction === action}
-              onChange={() => setInteractiveAction(action)}
-              className="w-4 h-4"
-            />
-            <span className="text-sm capitalize">
-              {action.replace(/([A-Z])/g, " $1")}
-            </span>
-          </label>
-        ))}
+        {["none", "callToActions", "quickReplies", "all", "flow"].map(
+          (action) => (
+            <label
+              key={action}
+              className="flex items-center gap-2 cursor-pointer"
+            >
+              <input
+                id="interactiveAction"
+                type="radio"
+                name="interactiveAction"
+                value={action}
+                checked={interactiveAction === action}
+                onChange={() => setInteractiveAction(action)}
+                className="w-4 h-4"
+              />
+              <span className="text-sm capitalize">
+                {action.replace(/([A-Z])/g, " $1")}
+              </span>
+            </label>
+          )
+        )}
       </div>
 
       {/* Call to Actions */}
@@ -258,6 +264,41 @@ const InteractiveActions = ({
               Add Quick Reply
             </button>
           )}
+        </div>
+      )}
+
+      {(interactiveAction === "flow" || interactiveAction === "all") && (
+        <div className="grid lg:grid-cols-2 md:grid-cols-2 gap-2">
+          <input
+            id="flowTitle"
+            name="flowTitle"
+            type="text"
+            className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded"
+            placeholder="Flow Title"
+            value={flowTemplateState.title}
+            onChange={(e) =>
+              setFlowTemplateState((prev) => ({
+                ...prev,
+                title: e.target.value,
+              }))
+            }
+            maxLength={25}
+          />
+          <AnimatedDropdown
+            id="flowId"
+            name="flowId"
+            options={allFlows?.map((flow) => ({
+              value: flow.flowId,
+              label: flow.flowName,
+            }))}
+            value={flowTemplateState.flow_id}
+            onChange={(e) => {
+              setFlowTemplateState((prev) => ({
+                ...prev,
+                flow_id: e,
+              }));
+            }}
+          />
         </div>
       )}
     </div>
