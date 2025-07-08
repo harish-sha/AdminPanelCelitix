@@ -146,3 +146,10 @@ export const saveCharges = async (data) => {
     }
   );
 };
+
+export const saveSMPP = async (data) => {
+  return await fetchWithAuth(`/smpp/createSmppConnection`, {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
