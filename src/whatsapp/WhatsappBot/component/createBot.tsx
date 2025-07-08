@@ -53,6 +53,7 @@ import {
   transformNodesById,
 } from "./components/helper/convertToReactFlow";
 import { Url } from "./components/url";
+import { HiOutlineTemplate } from "react-icons/hi";
 
 const initialNodes = [];
 const initialEdges = [];
@@ -142,6 +143,7 @@ function NodeComponent({
         {data.type === "list" && <p>List Node ({id})</p>}
         {data.type === "button" && <p>Button Node ({id})</p>}
         {data.type === "urlbutton" && <p>Url Node ({id})</p>}
+        {data.type === "template" && <p>Template Node ({id})</p>}
       </div>
       {data?.type !== "list" && data?.type !== "button" && (
         <Handle
@@ -578,6 +580,17 @@ const CreateWhatsAppBot = () => {
           setNodesInputData={setNodesInputData}
         />
       ),
+      template: (node: any) => (
+        <NodeComponent
+          id={node.id}
+          data={node.data}
+          onDelete={deleteNode}
+          isConnecting={isConnecting}
+          setIsVisible={setIsVisible}
+          connectionType={connectionType}
+          setNodesInputData={setNodesInputData}
+        />
+      ),
     }),
     [deleteNode, isConnecting, nodesInputData]
   );
@@ -660,9 +673,7 @@ const CreateWhatsAppBot = () => {
         message: "",
         buttonTexts: [],
       },
-      urlbutton: {
-       
-      },
+      urlbutton: {},
     };
     const nodeData = nodesInputData[selectedNodeId];
     const requiredFields = data[type];
@@ -1056,6 +1067,15 @@ const CreateWhatsAppBot = () => {
             >
               <QuestionAnswerOutlinedIcon />
               URL
+            </Button>
+            <Button
+              draggable
+              onDragStart={(event) => handleDragStart(event, "template")}
+              onClick={() => addNode("template")}
+              className={commonButtonClass}
+            >
+              <HiOutlineTemplate className="size-6" />
+              Template
             </Button>
             <Button
               draggable
