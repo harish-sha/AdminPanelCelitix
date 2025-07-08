@@ -166,7 +166,7 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("active");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
               }}
               className={`w-1/2 py-2 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "active"
                 ? "text-white font-semibold"
@@ -178,7 +178,7 @@ export const InputData = ({
             <button
               onClick={() => {
                 setBtnOption("close");
-                setIsSubscribed(false);
+                // setIsSubscribed(false);
               }}
               className={`w-1/2 py-1 rounded-full cursor-pointer transition-all duration-200 ${btnOption === "close"
                 ? "text-white font-semibold"
