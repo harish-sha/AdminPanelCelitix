@@ -85,6 +85,7 @@ const ObdCreateCampaign = () => {
   const [slectedDynamicVoiceFile, setSelectedDynamicVoiceFile] = useState(null);
   const [voiceDynamicURLPath, setVoiceDynamicURLPath] = useState("");
   const [voiceVariables, setVoiceVariables] = useState([]);
+  console.log("voiceVariables", voiceVariables)
 
   const [voiceDBClip, setVoiceDBClip] = useState(null);
 
@@ -618,6 +619,7 @@ const ObdCreateCampaign = () => {
       const enrichedVariables = res.data.map((item) => ({
         sequence: item.sequence,
         variableSampleValue: item.variableSampleValue || "",
+        filePath: item.filePath
       }));
 
       setVoiceVariables(enrichedVariables);
@@ -926,6 +928,10 @@ const ObdCreateCampaign = () => {
                                       if (el) variableRef.current[index] = el;
                                     }}
                                   />
+
+                                  <div className="mt-4">
+                                    <audio src={`${BASE_AUDIO_URL}${item.filePath}`} controls></audio>
+                                  </div>
 
                                   {/* Ensure this appears for every input */}
                                   <div className="absolute top-7 right-0 z-10">

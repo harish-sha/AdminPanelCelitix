@@ -18,7 +18,7 @@ import {
   SupportAgent,
   Feedback,
 } from "@mui/icons-material";
-import { FaShopify, FaFacebookMessenger } from "react-icons/fa";
+import { FaShopify, FaFacebookMessenger, FaSlack } from "react-icons/fa";
 import { MdSupportAgent } from "react-icons/md";
 import { AiFillApi } from "react-icons/ai";
 import { FaWhatsapp, FaPhone, FaRegCommentDots, FaSms } from "react-icons/fa";
@@ -36,6 +36,7 @@ import sms from "../assets/animation/sms.json";
 import auth from "../assets/animation/auth.json";
 import email from "../assets/animation/email.json";
 import email2 from "../assets/animation/email2.json";
+import integration from "../assets/animation/integration.json";
 import Animationsms from "../assets/animation/Animation-sms.json";
 import Animationrcs from "../assets/animation/Animation-rcs.json";
 import Animationibd from "../assets/animation/Animation-ibd.json";
@@ -50,6 +51,7 @@ import CountUp from "react-countup";
 import toast from "react-hot-toast";
 import { Dialog } from "primereact/dialog";
 import { AiOutlineAppstoreAdd } from "react-icons/ai";
+import { SiZendesk, SiZapier, SiZoho } from "react-icons/si";
 
 
 import {
@@ -528,6 +530,8 @@ const ResellerDashboard = () => {
   //   },
   // ];
 
+  const iconSize = 48;
+
 
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
@@ -660,29 +664,63 @@ const ResellerDashboard = () => {
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="bg-white p-6 rounded-2xl shadow-md cursor-pointer hover:shadow-lg"
         onClick={openDialog}
+        className="cursor-pointer group p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all"
       >
-        <div className="flex flex-col items-center justify-center space-y-4">
-          <AiOutlineAppstoreAdd size={48} className="text-blue-500" />
-          <h2 className="text-2xl font-bold text-gray-800">Add Integrations</h2>
-          <p className="text-gray-500 text-center max-w-sm">
+        <div className="flex flex-col items-center justify-center space-y-2">
+          {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
+          <Lottie
+            animationData={integration}
+            loop
+            autoplay
+            className="w-35 h-auto"
+          />
+          <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">Add Integrations</h2>
+          <p className="text-gray-500 text-center text-sm">
             Connect Freshdesk, Zoho, Shopify, and more from a single dashboard.
           </p>
+
+          <motion.div
+            layout
+            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-20"
+          >
+            {[
+              { icon: <AiFillApi size={iconSize} />, color: "text-purple-600 hover:text-purple-800" },
+              { icon: <FaFacebookMessenger size={iconSize} />, color: "text-blue-500 hover:text-blue-700" },
+              { icon: <MdSupportAgent size={iconSize} />, color: "text-amber-600 hover:text-amber-800" },
+              { icon: <FaShopify size={iconSize} />, color: "text-green-600 hover:text-green-800" },
+              { icon: <SiZendesk size={iconSize} />, color: "text-green-400 hover:text-green-600" },
+              { icon: <SiZapier size={iconSize} />, color: "text-orange-500 hover:text-orange-700" },
+              { icon: <SiZoho size={iconSize} />, color: "text-red-500 hover:text-red-700" },
+              { icon: <FaSlack size={iconSize} />, color: "text-indigo-500 hover:text-indigo-700" }
+            ].map((item, idx) => (
+              <motion.div
+                key={idx}
+                className={`transition-all duration-300 ${item.color}`}
+                whileHover={{ scale: 1.25 }}
+                animate={{ scale: 1 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                {item.icon}
+              </motion.div>
+            ))}
+          </motion.div>
+          <p className="text-xs text-gray-400 mt-2">Click to configure integrations</p>
         </div>
       </motion.div>
+
 
       <Dialog
         header="CPaaS Integrations Panel"
         visible={visible}
-        style={{ width: '85vw', maxWidth: '90vw', height: "80vh" }}
+        style={{ width: '70vw', maxWidth: '75vw', height: "70vh" }}
         onHide={() => setVisible(false)}
         draggable={false}
         maximizable
       >
-        <div>
+        {/* <div>
           <button onClick={() => window.open(integrationUrl, "_blank")}>Open</button>
-        </div>
+        </div> */}
         <iframe
           src={integrationUrl}
           width="100%"
