@@ -18,6 +18,8 @@ import { marked } from "marked";
 import { useDispatch } from "react-redux";
 import DrawOutlinedIcon from "@mui/icons-material/DrawOutlined";
 import { deleteFlowItem } from "../redux/features/FlowSlice";
+import draganddrop from "@/assets/animation/draganddrop.json";
+import Lottie from "lottie-react";
 
 const Canvas = ({
   items,
@@ -144,12 +146,12 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem["error-message"] ||
-            targetItem["input-type"] ||
-            targetItem["min-chars"] ||
-            targetItem["max-chars"] ||
-            targetItem.required ? (
+          targetItem["helper-text"] ||
+          targetItem["error-message"] ||
+          targetItem["input-type"] ||
+          targetItem["min-chars"] ||
+          targetItem["max-chars"] ||
+          targetItem.required ? (
             <div className="text-sm p-2 rounded-md bg-blue-50 border border-gray-300">
               <div className="flex flex-col items-start space-y-1.5">
                 {targetItem.label && (
@@ -217,8 +219,8 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem.required ? (
+          targetItem["helper-text"] ||
+          targetItem.required ? (
             <div className="p-1.5  rounded-md space-y-1.5 bg-blue-50 border shadow-sm">
               {targetItem.label && (
                 <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -276,8 +278,9 @@ const Canvas = ({
 
       return (
         <div
-          className={`p-3 rounded-md border shadow-sm ${isEmptyContent ? "bg-white" : "bg-blue-50"
-            }`}
+          className={`p-3 rounded-md border shadow-sm ${
+            isEmptyContent ? "bg-white" : "bg-blue-50"
+          }`}
         >
           <div
             className="flex-1 overflow-y-auto prose prose-sm max-w-none prose-img:rounded prose-a:text-blue-500 prose-a:underline prose-ul:list-disc prose-ol:list-decimal prose-strong:font-bold"
@@ -676,8 +679,8 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem.required ||
-            targetItem["on-click-action"] ? (
+          targetItem.required ||
+          targetItem["on-click-action"] ? (
             <div className="p-3  rounded-md  bg-blue-50 border shadow-sm">
               {targetItem.label && (
                 <div className="mb-1">
@@ -715,8 +718,8 @@ const Canvas = ({
       return (
         <div className=" bg-white">
           {targetItem.src ||
-            targetItem["alt-text"] ||
-            targetItem["scale-type"] ? (
+          targetItem["alt-text"] ||
+          targetItem["scale-type"] ? (
             <div className="w-full px-4 py-2 bg-blue-50 border rounded-md shadow-sm flex items-center gap-5">
               {targetItem.src && (
                 <img
@@ -760,9 +763,9 @@ const Canvas = ({
       return (
         <div className=" bg-white">
           {targetItem.label ||
-            targetItem.description ||
-            targetItem["min-uploaded-documents"] ||
-            targetItem["max-uploaded-documents"] ? (
+          targetItem.description ||
+          targetItem["min-uploaded-documents"] ||
+          targetItem["max-uploaded-documents"] ? (
             <div className="p-3 border rounded-md shadow-sm bg-blue-50">
               {targetItem.label && (
                 <label className="font-semibold">
@@ -806,9 +809,9 @@ const Canvas = ({
       return (
         <div className=" bg-white ">
           {targetItem.label ||
-            targetItem.description ||
-            targetItem["min-uploaded-photos"] ||
-            targetItem["max-uploaded-photos"] ? (
+          targetItem.description ||
+          targetItem["min-uploaded-photos"] ||
+          targetItem["max-uploaded-photos"] ? (
             <div className="p-3 border bg-blue-50 rounded-md shadow-sm ">
               {" "}
               {targetItem.label && (
@@ -881,10 +884,10 @@ const Canvas = ({
       return (
         <div className="bg-white">
           {targetItem.label ||
-            targetItem["helper-text"] ||
-            targetItem["min-date"] ||
-            targetItem["max-date"] ||
-            targetItem["unavailable-dates"] ? (
+          targetItem["helper-text"] ||
+          targetItem["min-date"] ||
+          targetItem["max-date"] ||
+          targetItem["unavailable-dates"] ? (
             <div className=" bg-blue-50 px-4 py-2 rounded-md shadow-sm  border w-full">
               {targetItem.label && (
                 <label className="mb-1">
@@ -1166,10 +1169,11 @@ const Canvas = ({
           backgroundColor: getBackgroundColor(item.type),
           borderRadius: "10px",
         }}
-        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${item.status === 0
-          ? "border-2 border-red-300"
-          : "border-2 border-green-300"
-          }`}
+        className={`w-110 p-2 mb-3 rounded-lg shadow-md mt-10 ${
+          item.status === 0
+            ? "border-2 border-red-300"
+            : "border-2 border-green-300"
+        }`}
       >
         <div className="flex items-center justify-between">
           <label className="text-sm font-semibold text-gray-700 tracking-wider">
@@ -1662,6 +1666,20 @@ const Canvas = ({
               design your personalized WhatsApp experience.
             </p>
           </motion.div>
+          {/* <motion.div
+            initial={{ opacity: 0, y: 100 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 100 }}
+            transition={{ type: "spring", stiffness: 200, damping: 25 }}
+            className="flex flex-col items-center p-5 rounded-2xl border-dashed border-indigo-300 shadow-2xl"
+          >
+            <Lottie
+              animationData={draganddrop}
+              loop
+              autoplay
+              className="w-150 h-auto "
+            />
+          </motion.div> */}
         </div>
       )}
       <div className="w-1/3 ml-5">

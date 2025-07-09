@@ -485,9 +485,9 @@ const ResellerDashboard = () => {
     handlegetOldApiKey();
   }, []);
 
-  const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyC0kAJahOWabdn2eiwVnBr3HXCHaTSnXzQ`
+  const integrationUrl = `https://int.celitix.com/?user_id=${oldApiKey}&api_key=AIzaSyC0kAJahOWabdn2eiwVnBr3HXCHaTSnXzQ`;
 
-  console.log("final integration url", integrationUrl)
+  console.log("final integration url", integrationUrl);
 
   // const integrations = [
   //   {
@@ -543,6 +543,19 @@ const ResellerDashboard = () => {
   // ];
 
   const iconSize = 48;
+
+  function generateRandomPath() {
+    const points = [];
+    const pointCount = 3 + Math.floor(Math.random() * 3);
+
+    for (let i = 0; i < pointCount; i++) {
+      const x = 10 + Math.random() * 80;
+      const y = 10 + Math.random() * 80;
+      points.push(`${i === 0 ? "M" : "L"}${x},${y}`);
+    }
+
+    return points.join(" ");
+  }
 
   return (
     <div className="bg-white text-gray-900 rounded-2xl p-4 space-y-6 min-h-[calc(100vh-6rem)]">
@@ -622,9 +635,11 @@ const ResellerDashboard = () => {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className={`relative rounded-xl bg-gradient-to-br ${service.color
-                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
-                    } `}
+                  className={`relative rounded-xl bg-gradient-to-br ${
+                    service.color
+                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
+                    hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
+                  } `}
                 >
                   {hasService && (
                     <>
@@ -669,33 +684,96 @@ const ResellerDashboard = () => {
         </Grid>
       </motion.div>
 
-
       {/* Add Integrations Start */}
       <motion.div
         initial={{ opacity: 0, y: -30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         onClick={openDialog}
-        className="cursor-pointer group p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all"
+        className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
       >
-        <div className="flex  items-center justify-around space-y-2">
+        <div className="absolute inset-0 overflow-hidden opacity-20 group-hover:opacity-30 transition-opacity">
+          <svg
+            className="absolute inset-0 w-full h-full"
+            preserveAspectRatio="xMidYMid slice"
+            viewBox="0 0 100 100"
+          >
+            <defs>
+              <linearGradient
+                id="connectionGradient"
+                x1="0%"
+                y1="0%"
+                x2="100%"
+                y2="0%"
+              >
+                <stop offset="0%" stopColor="#2b40b0" />
+                <stop offset="50%" stopColor="#8447c6" />
+                <stop offset="100%" stopColor="#36bae2" />
+              </linearGradient>
+            </defs>
+            {[...Array(8)].map((_, i) => (
+              <motion.path
+                key={i}
+                d={generateRandomPath()}
+                // stroke="#3b82f6"
+                stroke="url(#connectionGradient)"
+                strokeWidth="0.2"
+                fill="none"
+                initial={{ pathLength: 0, pathOffset: 1 }}
+                animate={{ pathLength: 1, pathOffset: 0 }}
+                transition={{
+                  duration: 4 + Math.random() * 4,
+                  repeat: Infinity,
+                  ease: "linear",
+                }}
+              />
+            ))}
+
+            {[...Array(12)].map((_, i) => (
+              <motion.circle
+                key={`dot-${i}`}
+                cx={10 + Math.random() * 80}
+                cy={10 + Math.random() * 80}
+                r={0.3 + Math.random() * 0.7}
+                // fill="#3b82f6"
+                fill="url(#connectionGradient)"
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{
+                  opacity: [0, 0.8, 0],
+                  scale: [0, 1.2, 0],
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 5,
+                  delay: Math.random() * 3,
+                  repeat: Infinity,
+                  repeatDelay: Math.random() * 5,
+                }}
+              />
+            ))}
+          </svg>
+        </div>
+
+        <div className="relative z-10 flex flex-col items-center justify-around space-y-2">
           {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
-          <div className="flex flex-col items-center" >
+          <div className="flex flex-col items-center">
             <Lottie
               animationData={integration}
               loop
               autoplay
               className="w-35 h-auto"
             />
-            <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">Add Integrations</h2>
+            <h2 className="text-4xl font-extrabold text-gray-800 playf bluetxt">
+              Add Integrations
+            </h2>
             <p className="text-gray-500 text-center text-sm">
-              Connect Freshdesk, Zoho, Shopify, and more from a single dashboard.
+              Connect Freshdesk, Zoho, Shopify, and more from a single
+              dashboard.
             </p>
           </div>
 
           <motion.div
             layout
-            className="grid grid-cols-5 justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-14"
+            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-14"
           >
             {/* {[
               { icon: <AiFillApi size={iconSize} />, color: "text-purple-600 hover:text-purple-800" },
@@ -741,14 +819,15 @@ const ResellerDashboard = () => {
             ))}
           </motion.div>
         </div>
-        {/* <p className="text-xs text-gray-400 mt-5 text-center">Click to configure integrations</p> */}
+        <p className="relative z-10 text-xs text-gray-400 mt-5 text-center">
+          Click to configure integrations
+        </p>
       </motion.div>
-
 
       <Dialog
         header="CPaaS Integrations Panel"
         visible={visible}
-        style={{ width: '70vw', maxWidth: '75vw', height: "70vh" }}
+        style={{ width: "70vw", maxWidth: "75vw", height: "70vh" }}
         onHide={() => setVisible(false)}
         draggable={false}
         maximizable
