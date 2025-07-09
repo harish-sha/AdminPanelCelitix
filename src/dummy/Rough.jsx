@@ -1,155 +1,121 @@
-"use client";
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import {
-  FaWhatsapp,
-  FaPhone,
-  FaRegCommentDots,
-  FaSms,
-} from "react-icons/fa";
-import {
-  BarChart,
-  Bar,
-  Line,
-  LineChart,
-  XAxis,
-  YAxis,
-  Tooltip,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  ComposedChart,
-} from "recharts";
-import moment from "moment";
+import React, { useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { SiAmazon, SiGithub, SiGoogle, SiMeta, SiTwitch } from "react-icons/si";
+import { twMerge } from "tailwind-merge";
 
-const FILTERS = ["Day", "Month", "Year"];
-
-const icons = {
-  whatsapp: <FaWhatsapp className="text-green-500 text-2xl" />,
-  voice: <FaPhone className="text-blue-500 text-2xl" />,
-  rcs: <FaRegCommentDots className="text-indigo-500 text-2xl" />,
-  sms: <FaSms className="text-yellow-500 text-2xl" />,
+export const DivOrigami = () => {
+  return (
+    <section className="flex h-72 flex-col items-center justify-center gap-12 bg-neutral-950 px-4 py-24 md:flex-row">
+      <LogoRolodex
+        items={[
+          <LogoItem key={1} className="bg-orange-300 text-neutral-900">
+            <SiAmazon />
+          </LogoItem>,
+          <LogoItem key={2} className="bg-green-300 text-neutral-900">
+            <SiGoogle />
+          </LogoItem>,
+          <LogoItem key={3} className="bg-blue-300 text-neutral-900">
+            <SiMeta />
+          </LogoItem>,
+          <LogoItem key={4} className="bg-white text-black">
+            <SiGithub />
+          </LogoItem>,
+          <LogoItem key={5} className="bg-purple-300 text-neutral-900">
+            <SiTwitch />
+          </LogoItem>,
+        ]}
+      />
+    </section>
+  );
 };
 
-export default function Dashboard() {
-  const [filter, setFilter] = useState("Day");
-  const [usageData, setUsageData] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
+const DELAY_IN_MS = 2500;
+const TRANSITION_DURATION_IN_SECS = 1.5;
 
-  const startDate = moment().startOf("day").toDate();
-  const endDate = moment().endOf("day").toDate();
-
-  const dailyServiceUsage = async () => {
-    const payload = {
-      userSrno: 0,
-      fromDate: moment(startDate).format("YYYY-MM-DD"),
-      toDate: moment(endDate).format("YYYY-MM-DD"),
-    };
-    setIsLoading(true);
-    try {
-      const res = await fetch("/api/service-usage", {
-        method: "POST",
-        body: JSON.stringify(payload),
-      });
-      const data = await res.json();
-      setUsageData(data);
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setUsageData({});
-    } finally {
-      setIsLoading(false);
-    }
-  };
+const LogoRolodex = ({ items }) => {
+  const intervalRef = useRef(null);
+  const [index, setIndex] = useState(0);
 
   useEffect(() => {
-    dailyServiceUsage();
-  }, [startDate, endDate, filter]);
+    intervalRef.current = setInterval(() => {
+      setIndex((pv) => pv + 1);
+    }, DELAY_IN_MS);
 
-  const services = ["whatsapp", "voice", "rcs", "sms"];
-
-  const chartData = services.map((s) => {
-    const item = usageData?.[s]?.[0] || {};
-    return {
-      name: s.toUpperCase(),
-      totalSent: item.totalSent || 0,
-      totalCharge: item.totalCharge || 0,
+    return () => {
+      clearInterval(intervalRef.current || undefined);
     };
-  });
+  }, []);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="bg-white p-6 rounded-2xl shadow-md"
+    <div
+      style={{
+        transform: "rotateY(-20deg)",
+        transformStyle: "preserve-3d",
+      }}
+      className="relative z-0 h-44 w-60 shrink-0 rounded-xl border border-neutral-700 bg-neutral-800"
     >
-      <h2 className="text-xl font-semibold mb-4">Service Usage Overview</h2>
+      <AnimatePresence mode="sync">
+        <motion.div
+          style={{
+            y: "-50%",
+            x: "-50%",
+            clipPath: "polygon(0 0, 100% 0, 100% 50%, 0 50%)",
+            zIndex: -index,
+            backfaceVisibility: "hidden",
+          }}
+          key={index}
+          transition={{
+            duration: TRANSITION_DURATION_IN_SECS,
+            ease: "easeInOut",
+          }}
+          initial={{ rotateX: "0deg" }}
+          animate={{ rotateX: "0deg" }}
+          exit={{ rotateX: "-180deg" }}
+          className="absolute left-1/2 top-1/2"
+        >
+          {items[index % items.length]}
+        </motion.div>
+        <motion.div
+          style={{
+            y: "-50%",
+            x: "-50%",
+            clipPath: "polygon(0 50%, 100% 50%, 100% 100%, 0 100%)",
+            zIndex: index,
+            backfaceVisibility: "hidden",
+          }}
+          key={(index + 1) * 2}
+          initial={{ rotateX: "180deg" }}
+          animate={{ rotateX: "0deg" }}
+          exit={{ rotateX: "0deg" }}
+          transition={{
+            duration: TRANSITION_DURATION_IN_SECS,
+            ease: "easeInOut",
+          }}
+          className="absolute left-1/2 top-1/2"
+        >
+          {items[index % items.length]}
+        </motion.div>
+      </AnimatePresence>
 
-      {/* Filter Buttons */}
-      <div className="flex gap-4 mb-6">
-        {FILTERS.map((item) => (
-          <button
-            key={item}
-            onClick={() => setFilter(item)}
-            className={`px-4 py-2 rounded-full border ${filter === item
-                ? "bg-blue-600 text-white"
-                : "bg-gray-100 text-gray-700"
-              } transition`}
-          >
-            {item}
-          </button>
-        ))}
-      </div>
-
-      {/* Usage Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {services.map((service) => {
-          const record = usageData?.[service]?.[0];
-          return (
-            <motion.div
-              key={service}
-              whileHover={{ scale: 1.03 }}
-              className="bg-gray-50 border border-gray-200 rounded-xl p-5 flex flex-col items-center text-center shadow-sm"
-            >
-              {icons[service]}
-              <p className="text-sm mt-2 text-gray-500 capitalize">{service}</p>
-              <p className="text-xl font-bold mt-1">
-                {record?.totalSent ?? 0} Sent
-              </p>
-              <p className="text-sm text-gray-400">
-                ₹{record?.totalCharge?.toFixed(2) ?? "0.00"} charged
-              </p>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Graph */}
-      <div className="mt-10 bg-gray-100 p-4 rounded-xl">
-        <ResponsiveContainer width="100%" height={300}>
-          <ComposedChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis yAxisId="left" label={{ value: "Sent", angle: -90, position: "insideLeft" }} />
-            <YAxis
-              yAxisId="right"
-              orientation="right"
-              label={{ value: "Charge ₹", angle: 90, position: "insideRight" }}
-            />
-            <Tooltip />
-            <Legend />
-            <Bar yAxisId="left" dataKey="totalSent" fill="#60a5fa" />
-            <Line
-              yAxisId="right"
-              type="monotone"
-              dataKey="totalCharge"
-              stroke="#ef4444"
-              strokeWidth={2}
-              dot={{ r: 4 }}
-            />
-          </ComposedChart>
-        </ResponsiveContainer>
-      </div>
-    </motion.div>
+      <hr
+        style={{
+          transform: "translateZ(1px)",
+        }}
+        className="absolute left-0 right-0 top-1/2 z-[999999999] -translate-y-1/2 border-t-2 border-neutral-800"
+      />
+    </div>
   );
-}
+};
+
+const LogoItem = ({ children, className }) => {
+  return (
+    <div
+      className={twMerge(
+        "grid h-36 w-52 place-content-center rounded-lg bg-neutral-700 text-6xl text-neutral-50",
+        className
+      )}
+    >
+      {children}
+    </div>
+  );
+};

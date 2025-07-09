@@ -635,11 +635,9 @@ const ResellerDashboard = () => {
                 <motion.div
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  className={`relative rounded-xl bg-gradient-to-br ${
-                    service.color
-                  } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${
-                    hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
-                  } `}
+                  className={`relative rounded-xl bg-gradient-to-br ${service.color
+                    } p-5 h-50 shadow-md hover:shadow-xl flex flex-col justify-between relative overflow-hidden group cursor-pointer transition-all duration-300 ${hasService ? "ring-1 ring-green-300" : "ring-1 ring-red-300"
+                    } `}
                 >
                   {hasService && (
                     <>
@@ -692,7 +690,7 @@ const ResellerDashboard = () => {
         onClick={openDialog}
         className="cursor-pointer group relative p-6 rounded-2xl shadow-md bg-gradient-to-tr from-blue-50 via-white to-blue-100 border-2 border-dashed border-blue-200 hover:shadow-xl transition-all overflow-hidden"
       >
-        <div className="absolute inset-0 overflow-hidden opacity-20 group-hover:opacity-30 transition-opacity">
+        {/* <div className="absolute inset-0 overflow-hidden opacity-20 group-hover:opacity-30 transition-opacity">
           <svg
             className="absolute inset-0 w-full h-full"
             preserveAspectRatio="xMidYMid slice"
@@ -751,9 +749,9 @@ const ResellerDashboard = () => {
               />
             ))}
           </svg>
-        </div>
+        </div> */}
 
-        <div className="relative z-10 flex flex-col items-center justify-around space-y-2">
+        <div className="relative z-10 flex items-center justify-around space-y-2">
           {/* <AiOutlineAppstoreAdd size={48} className="text-blue-600" /> */}
           <div className="flex flex-col items-center">
             <Lottie
@@ -773,7 +771,7 @@ const ResellerDashboard = () => {
 
           <motion.div
             layout
-            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-14"
+            className="flex justify-center items-center flex-wrap mt-4 transition-all duration-500 gap-12 group-hover:gap-13"
           >
             {/* {[
               { icon: <AiFillApi size={iconSize} />, color: "text-purple-600 hover:text-purple-800" },

@@ -56,7 +56,8 @@ const icons = {
 };
 
 // const FILTERS = ["Day", "Month", "Year", "Custom"];
-const FILTERS = ["Day", "Month", "Year"];
+// const FILTERS = ["Day", "Month", "Year"];
+const FILTERS = ["Day", "Month"];
 const CHART_TYPES = ["Bar", "Line", "Pie"];
 
 export default function ServiceUsageDashboard() {
@@ -94,8 +95,10 @@ export default function ServiceUsageDashboard() {
   useEffect(() => {
     const today = new Date();
     if (filter === "Day") {
-      setStartDate(today);
-      setEndDate(today);
+      const yesterday = new Date(today);
+      yesterday.setDate(today.getDate() - 1);
+      setStartDate(yesterday);
+      setEndDate(yesterday);
     } else if (filter === "Month") {
       setStartDate(new Date(today.getFullYear(), today.getMonth(), 1));
       setEndDate(today);
