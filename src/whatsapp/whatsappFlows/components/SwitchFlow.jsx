@@ -55,7 +55,7 @@ export default function SwitchFlow({ selectedItem, onSave }) {
 
   const handleSwitchSave = () => {
     const payload = {
-    
+
       cases,
 
     };

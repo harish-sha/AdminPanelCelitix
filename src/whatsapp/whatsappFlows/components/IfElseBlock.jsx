@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 import { updateFlowItem } from "../redux/features/FlowSlice";
 import InputField from "../../components/InputField";
 import UniversalLabel from "@/whatsapp/components/UniversalLabel";
+import { MdSettings, MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
 import {
   Switch,
@@ -17,6 +18,18 @@ import {
 import DeleteOutlineIcon from "@mui/icons-material/DeleteOutline";
 import UniversalDatePicker from "../../components/UniversalDatePicker";
 import { useSelector } from "react-redux";
+import {
+  ReactFlow,
+  useNodesState,
+  useEdgesState,
+  addEdge,
+  Background,
+  MiniMap,
+  Controls,
+  Handle,
+  Position,
+} from "@xyflow/react";
+import "@xyflow/react/dist/style.css";
 
 const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [selectedCondition, setSelectedCondition] = useState();
@@ -30,6 +43,7 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
   const [thenBranchText, setThenBranchText] = useState("");
   const [elseBranchText, setElseBranchText] = useState("");
   const [selectedFlowItem, setSelectedFlowItem] = useState("");
+  console.log("selectedFlowItem", selectedFlowItem);
   const flowItems = useSelector((state) => state.flows.canvasItems);
 
   console.log("flowItems", flowItems);
@@ -307,6 +321,36 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     setOpenIfElse(false);
   };
 
+  // handlesave for Then
+  const handleThenBranchSave = () => {
+    const thenPayload = generateBranchPayload("then");
+
+    const updatedData = {
+      ...selectedItem,
+      then: [thenPayload],
+      status: 1,
+    };
+
+    onSave(updatedData);
+
+    toast.success("Then branch saved successfully.");
+  };
+
+  // handleSave for Else
+  const handleElseBranchSave = () => {
+    const elsePayload = generateBranchPayload("else");
+
+    const updatedData = {
+      ...selectedItem,
+      else: [elsePayload],
+      status: 1,
+    };
+
+    onSave(updatedData);
+
+    toast.success("Else branch saved successfully.");
+  };
+
   const allowedComponents = [
     { label: "Heading", value: "TextHeading" },
     { label: "Sub Heading", value: "TextSubheading" },
@@ -341,9 +385,8 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       return (
         <div className="mt-3 w-1/2">
           <InputField
-            placeholder={`${
-              branchType === "then" ? "Then" : "Else"
-            } branch text`}
+            placeholder={`${branchType === "then" ? "Then" : "Else"
+              } branch text`}
             className="w-full p-1 rounded text-black"
             value={branchText}
             onChange={(e) => setBranchText(e.target.value)}
@@ -354,6 +397,64 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
 
     return null;
   };
+
+  const CustomNode = ({ id, data }) => {
+    return (
+      <div className="bg-white border rounded shadow p-2 relative min-w-[150px] text-center">
+        <div>{data.label}</div>
+        <div className="text-xs text-gray-500">
+          Type: {data.details?.type}
+        </div>
+        <div className="text-xs text-gray-500">
+          Text: {data.details?.text}
+        </div>
+        <div className="absolute top-0 right-1 flex gap-1 z-20">
+          <MdSettings
+            className="text-blue-500 cursor-pointer hover:text-blue-700"
+            onClick={() => data?.onSettings?.(id)}
+          />
+          <MdClose
+            className="text-red-500 cursor-pointer hover:text-red-700"
+            onClick={() => data?.onDelete?.(id)}
+          />
+        </div>
+        {/* <button
+          onClick={() => data.onDelete(id)}
+          className="absolute top-1 right-1 text-red-500 font-bold"
+        >
+          ×
+        </button> */}
+        <Handle type="source" position={Position.Bottom} />
+        <Handle type="target" position={Position.Top} />
+      </div>
+    );
+  };
+
+  // const CustomNode = ({ id, data }) => {
+  //   return (
+  //     <div className="bg-white p-2 rounded shadow-md border w-[10px] text-center relative">
+  //       <div className="absolute top-0 right-1 flex gap-1 z-20">
+  //         <MdSettings
+  //           className="text-blue-500 cursor-pointer hover:text-blue-700"
+  //           onClick={() => data?.onSettings?.(id)}
+  //         />
+  //         <MdClose
+  //           className="text-red-500 cursor-pointer hover:text-red-700"
+  //           onClick={() => data?.onDelete?.(id)}
+  //         />
+  //       </div>
+  //       <div className="mt-4">
+  //         {data?.icon && <div className="text-2xl">{data.icon}</div>}
+  //         <div className="text-sm font-medium">{data.label}</div>
+  //       </div>
+  //     </div>
+  //   );
+  // };
+
+  const nodeTypes = {
+    customNode: CustomNode,
+  };
+
 
   const renderTextInputBranch = (branchType) => {
     const selectedComponent =
@@ -1582,10 +1683,89 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
     return null;
   };
 
-  const flowItemsOptions = flowItems.map((item) => ({
-    label: item.data.type || item.id, // fallback if text is empty
-    value: item.id,
-  }));
+  const flowItemsOptions = flowItems.map((item) => {
+    const label = item.data.text || item.data.type || item.id;
+    return {
+      label,
+      value: item.id,
+    };
+  });
+
+  const flowItem = flowItems.find((item) => item.id === selectedFlowItem);
+
+  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+
+  const handleDeleteNode = (nodeId) => {
+    setNodes((nds) => nds.filter((n) => n.id !== nodeId));
+
+    // Optionally clear selections
+    if (selectedFlowItem?.value === nodeId.replace("node-", "")) {
+      setSelectedFlowItem(null);
+    }
+    if (nodeId === "then-node") {
+      setSelectedThenComponent(null);
+    }
+    if (nodeId === "else-node") {
+      setSelectedElseComponent(null);
+    }
+  };
+
+  useEffect(() => {
+    if (selectedFlowItem) {
+      console.log("selectedFlowItem", selectedFlowItem)
+      const newNode = {
+        id: `node-${selectedFlowItem}`,
+        type: "customNode",
+        position: { x: Math.random() * 250, y: Math.random() * 250 },
+        data: {
+          label: flowItem.data.text || flowItem.data.type || flowItem.id,
+          details: flowItem.data,
+          onDelete: handleDeleteNode
+        },
+
+      };
+
+      setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+    }
+  }, [selectedFlowItem]);
+
+  useEffect(() => {
+    if (selectedThenComponent) {
+      const newNode = {
+        id: `then-node`,
+        type: "customNode",
+        position: { x: 300, y: 100 },
+        data: { label: selectedThenComponent, onDelete: handleDeleteNode },
+      };
+      setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+    }
+  }, [selectedThenComponent]);
+
+  useEffect(() => {
+    if (selectedElseComponent) {
+      const newNode = {
+        id: `else-node`,
+        type: "customNode",
+        position: { x: 300, y: 300 },
+        data: { label: selectedElseComponent, onDelete: handleDeleteNode },
+      };
+      setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+    }
+  }, [selectedElseComponent]);
+
+  const [openThenEditDialog, setOpenThenEditDialog] = useState(false);
+  const [openElseEditDialog, setOpenElseEditDialog] = useState(false);
+
+  const handleSettingsClick = (id) => {
+    if (id === "then-node") {
+      setOpenThenEditDialog(true);
+    } else if (id === "else-node") {
+      setOpenElseEditDialog(true);
+    } else {
+      // Optional: open flow item dialog
+    }
+  };
 
   // components end
   return (
@@ -1593,84 +1773,269 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
       <Dialog
         visible={openIfElse}
         onHide={() => setOpenIfElse(false)}
-        style={{ width: "80rem", height: "50rem" }}
+        style={{ width: "85vw", height: "85vh" }}
         draggable={false}
         header={"IF Else Component"}
       >
         <div className="">
-          <div className="flex items-center justify-center gap-2 w-full">
-            <div className="w-3/1">
-              <AnimatedDropdown
-                label="Condition"
-                tooltipContent="Select If-Condition"
-                tooltipPlacement="right"
-                value={selectedCondition}
-                options={[
-                  { label: "Equal to (==)", value: "==" },
-                  { label: "Not equal to (!=)", value: "!=" },
-                  { label: "AND (&&)", value: "&&" },
-                  { label: "OR (||)", value: "||" },
-                  { label: "Greater than (>)", value: ">" },
-                  { label: "Greater than or equal to (>=)", value: ">=" },
-                  { label: "Less than (<)", value: "<" },
-                  { label: "Less than or equal to (<=)", value: "<=" },
-                ]}
-                onChange={(value) => setSelectedCondition(value)}
-              />
+          <div className="flex items-start justify-center gap-2 w-full">
+
+            <div className="w-full h-180 bg-white rounded shadow">
+              <ReactFlow
+                nodes={nodes}
+                edges={edges}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
+                onConnect={(params) => setEdges((eds) => addEdge(params, eds))}
+                fitView
+              >
+                <Background />
+                <Controls />
+                {/* <MiniMap /> */}
+              </ReactFlow>
             </div>
-            <div className="w-3/1">
-              <AnimatedDropdown
-                label="Select Flow Item"
-                tooltipContent="Select a flow item"
-                tooltipPlacement="right"
-                value={selectedFlowItem}
-                options={flowItemsOptions}
-                onChange={(value) => setSelectedFlowItem(value)}
-              />
-            </div>
-            <div className="w-3/1">
-              <AnimatedDropdown
-                label="Add Component to Then Branch"
-                tooltipContent="Select Then Branch"
-                tooltipPlacement="right"
-                value={selectedThenComponent}
-                options={allowedComponents}
-                // onChange={(value) => setSelectedThenComponent(value)}
-                onChange={(value) => {
-                  setSelectedThenComponent(value);
-                  // if (value === "ifelse") {
-                  //   setNestedIf(true); // ✅ Set your flag here
-                  // } else {
-                  //   setNestedIf(false); // optionally reset
-                  // }
-                }}
-              />
+            <div className="flex flex-col gap-3 w-70">
+              <div className="">
+                <AnimatedDropdown
+                  label="Select Flow Item"
+                  tooltipContent="Select a flow item"
+                  tooltipPlacement="right"
+                  value={selectedFlowItem}
+                  options={flowItemsOptions}
+                  onChange={(value) => {
+                    setSelectedFlowItem(value);
+                  }}
+                />
+              </div>
+              <div className="">
+                <AnimatedDropdown
+                  label="Condition"
+                  tooltipContent="Select If-Condition"
+                  tooltipPlacement="right"
+                  value={selectedCondition}
+                  options={[
+                    { label: "Equal to (==)", value: "==" },
+                    { label: "Not equal to (!=)", value: "!=" },
+                    { label: "AND (&&)", value: "&&" },
+                    { label: "OR (||)", value: "||" },
+                    { label: "Greater than (>)", value: ">" },
+                    { label: "Greater than or equal to (>=)", value: ">=" },
+                    { label: "Less than (<)", value: "<" },
+                    { label: "Less than or equal to (<=)", value: "<=" },
+                  ]}
+                  onChange={(value) => setSelectedCondition(value)}
+                />
+              </div>
+
+              <div className="flex items-center gap-4 w-full">
+                <div className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
+                  onClick={() => {
+                    const newNode = {
+                      id: "then-node",
+                      type: "customNode",
+                      position: { x: 300, y: 100 },
+                      data: {
+                        label: "Then",
+                        icon: "✅",
+                        onDelete: handleDeleteNode,
+                        onSettings: handleSettingsClick,
+                      },
+                    };
+                    setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+                  }}
+                >
+                  <span className="text-sm font-medium tracking-wider text-white">Add Then</span>
+                </div>
+                <div className="h-15 flex-1 bg-gray-400 flex items-center justify-center rounded-md shadow-md cursor-pointer hover:shadow-xl"
+                  onClick={() => {
+                    const newNode = {
+                      id: "else-node",
+                      type: "customNode",
+                      position: { x: 300, y: 300 },
+                      data: {
+                        label: "Else",
+                        icon: "❌",
+                        onDelete: handleDeleteNode,
+                        onSettings: handleSettingsClick,
+                      },
+                    };
+                    setNodes((nds) => [...nds.filter((n) => n.id !== newNode.id), newNode]);
+                  }}
+                >
+                  <span className="text-sm font-medium tracking-wider text-white">Add Else</span>
+                </div>
+              </div>
+
+              {/* {selectedThenComponent && (
+                <div className="flex items-center gap-3">
+                  <p className="font-semibold">Then Component - {selectedThenComponent}</p>
+                  <button
+                    className="text-blue-600 hover:underline text-sm"
+                    onClick={() => setOpenThenEditDialog(true)}
+                  >
+                    Edit
+                  </button>
+                </div>
+              )}
+
+              {selectedElseComponent && (
+                <div className="flex items-center gap-3">
+                  <p className="font-semibold">Else Component - {selectedElseComponent}</p>
+                  <button
+                    className="text-blue-600 hover:underline text-sm"
+                    onClick={() => setOpenElseEditDialog(true)}
+                  >
+                    Edit
+                  </button>
+                </div>
+              )} */}
+
+              {/* Else Dialog Start */}
+              <Dialog
+                visible={openThenEditDialog}
+                onHide={() => setOpenThenEditDialog(false)}
+                header="Edit THEN Branch Component"
+                style={{ width: "400px" }}
+                modal
+              >
+                <div className="">
+                  <AnimatedDropdown
+                    label="Then Branch"
+                    tooltipContent="Select Then Branch"
+                    tooltipPlacement="right"
+                    value={selectedThenComponent}
+                    options={allowedComponents}
+                    // onChange={(value) => setSelectedThenComponent(value)}
+                    onChange={(value) => {
+                      setSelectedThenComponent(value);
+                      // if (value === "ifelse") {
+                      //   setNestedIf(true); // ✅ Set your flag here
+                      // } else {
+                      //   setNestedIf(false); // optionally reset
+                      // }
+                    }}
+                  />
+                </div>
+                {selectedThenComponent && (
+                  <p className="my-2 font-semibold">
+                    Then Component - {selectedThenComponent}
+                  </p>
+                )}
+                {renderTextBranchInput("then")}
+                {renderTextInputBranch("then")}
+                {renderTextAreaBranch("then")}
+                {renderCheckBoxBranch("then")}
+                {renderOptInBranchInput("then")}
+                {renderImageBranchInput("then")}
+                {renderDropdownBranchInput("then")}
+                {renderEmbeddedLinkBranchInput("then")}
+                {renderDateBranchInput("then")}
+                {renderFooterBranchInput("then")}
+
+                <div className="mt-4 flex justify-left gap-4">
+                  <UniversalButton
+                    label="Save Then Branch"
+                    onClick={handleThenBranchSave}
+                  />
+                </div>
+              </Dialog>
+              {/* Then Dialog End */}
+
+
+              {/* Else Dialog Start */}
+              <Dialog
+                visible={openElseEditDialog}
+                onHide={() => setOpenElseEditDialog(false)}
+                header="Edit ELSE Branch Component"
+                style={{ width: "400px" }}
+                modal
+              >
+                <AnimatedDropdown
+                  label="Else Branch"
+                  tooltipContent="Select Else Branch"
+                  tooltipPlacement="right"
+                  value={selectedElseComponent}
+                  options={allowedComponents}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    // if (value === "ifelse") {
+                    //   setNestedElse(true); // ✅ Set your flag here
+                    // } else {
+                    //   setNestedElse(false); // optionally reset
+                    // }
+                  }}
+                />
+                {selectedElseComponent && (
+                  <p className="my-2 font-semibold">
+                    Else component - {selectedElseComponent}
+                  </p>
+                )}
+                {renderTextBranchInput("else")}
+                {renderTextInputBranch("else")}
+                {renderTextAreaBranch("else")}
+                {renderCheckBoxBranch("else")}
+                {renderOptInBranchInput("else")}
+                {renderImageBranchInput("else")}
+                {renderDropdownBranchInput("else")}
+                {renderEmbeddedLinkBranchInput("else")}
+                {renderDateBranchInput("else")}
+                {renderFooterBranchInput("else")}
+                <div className="mt-4 flex justify-left gap-4">
+                  <UniversalButton
+                    label="Save Else Branch"
+                    onClick={handleElseBranchSave}
+                  />
+                </div>
+              </Dialog>
+              {/* Else Dialog End */}
+
+
+              {/* <div className="">
+                <AnimatedDropdown
+                  label="Then Branch"
+                  tooltipContent="Select Then Branch"
+                  tooltipPlacement="right"
+                  value={selectedThenComponent}
+                  options={allowedComponents}
+                  // onChange={(value) => setSelectedThenComponent(value)}
+                  onChange={(value) => {
+                    setSelectedThenComponent(value);
+                    // if (value === "ifelse") {
+                    //   setNestedIf(true); // ✅ Set your flag here
+                    // } else {
+                    //   setNestedIf(false); // optionally reset
+                    // }
+                  }}
+                />
+              </div>
+
+              <div className="mt-2">
+                <AnimatedDropdown
+                  label="Else Branch"
+                  tooltipContent="Select Else Branch"
+                  tooltipPlacement="right"
+                  value={selectedElseComponent}
+                  options={allowedComponents}
+                  onChange={(value) => {
+                    setSelectedElseComponent(value);
+                    // if (value === "ifelse") {
+                    //   setNestedElse(true); // ✅ Set your flag here
+                    // } else {
+                    //   setNestedElse(false); // optionally reset
+                    // }
+                  }}
+                />
+              </div> */}
             </div>
 
-            <div className="w-3/1">
-              <AnimatedDropdown
-                label="Add Component to Else Branch"
-                tooltipContent="Select Else Branch"
-                tooltipPlacement="right"
-                value={selectedElseComponent}
-                options={allowedComponents}
-                onChange={(value) => {
-                  setSelectedElseComponent(value);
-                  // if (value === "ifelse") {
-                  //   setNestedElse(true); // ✅ Set your flag here
-                  // } else {
-                  //   setNestedElse(false); // optionally reset
-                  // }
-                }}
-              />
-            </div>
-            <div className="flex justify-center mt-6">
+            {/* <div className="flex justify-center mt-6">
               <UniversalButton label="Save" onClick={handleIfElseSave} />
-            </div>
+            </div> */}
           </div>
-          <div className="mt-4">
-            <h2 className="text-xl font-semibold mb-4">If-Else Overview</h2>
+
+          {/* <div className="mt-4">
             <p>{selectedCondition}</p>
+            <p>{selectedFlowItem}</p>
             {selectedThenComponent && (
               <p className="my-2 font-semibold">
                 Then Component - {selectedThenComponent}
@@ -1687,6 +2052,13 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             {renderDateBranchInput("then")}
             {renderFooterBranchInput("then")}
 
+            <div className="mt-4 flex justify-left gap-4">
+              <UniversalButton
+                label="Save Then Branch"
+                onClick={handleThenBranchSave}
+              />
+            </div>
+
             {selectedElseComponent && (
               <p className="my-2 font-semibold">
                 Else component - {selectedElseComponent}
@@ -1702,8 +2074,14 @@ const IfElseBlock = ({ openIfElse, setOpenIfElse, onSave, selectedItem }) => {
             {renderEmbeddedLinkBranchInput("else")}
             {renderDateBranchInput("else")}
             {renderFooterBranchInput("else")}
-          </div>
+          </div> */}
         </div>
+        {/* <div className="mt-4 flex justify-left gap-4">
+          <UniversalButton
+            label="Save Else Branch"
+            onClick={handleElseBranchSave}
+          />
+        </div> */}
       </Dialog>
     </>
   );

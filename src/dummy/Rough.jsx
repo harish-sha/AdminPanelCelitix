@@ -3,8 +3,8 @@
     <div
       key={index}
       className={`flex items-center px-3 py-1.5 rounded-full transition-all duration-200 ease-in-out cursor-pointer border ${activeIndex === index
-          ? "bg-blue-100 border-blue-400 text-blue-700"
-          : "bg-gray-100 border-transparent text-gray-700 hover:bg-gray-200"
+        ? "bg-blue-100 border-blue-400 text-blue-700"
+        : "bg-gray-100 border-transparent text-gray-700 hover:bg-gray-200"
         }`}
       onClick={() => setActiveIndex(index)}
       onMouseEnter={(e) =>

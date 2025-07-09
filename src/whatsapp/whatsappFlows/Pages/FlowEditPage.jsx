@@ -673,8 +673,8 @@ export const EditFlow = () => {
                 // disabled={isLoading}
                 disabled={isLoading || hasErrors}
                 className={`px-5 py-2 rounded-md text-nowrap font-medium text-sm shadow-sm transition duration-300 flex items-center gap-2 ${isLoading || hasErrors
-                    ? "bg-gray-300 text-gray-600 cursor-not-allowed"
-                    : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
+                  ? "bg-gray-300 text-gray-600 cursor-not-allowed"
+                  : "bg-indigo-500 text-white hover:bg-indigo-500 cursor-pointer"
                   }`}
               >
                 <ConstructionOutlinedIcon sx={{ fontSize: "1.3rem" }} />

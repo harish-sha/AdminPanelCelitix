@@ -1,11 +1,10 @@
-// ParticleBackground.jsx
 import { useCallback } from "react";
 import Particles from "react-tsparticles";
 import { loadSlim } from "tsparticles-slim";
 
 const ParticleBackground = () => {
   const particlesInit = useCallback(async (engine) => {
-    await loadSlim(engine); // Use 'slim' version for performance
+    await loadSlim(engine);
   }, []);
 
   return (

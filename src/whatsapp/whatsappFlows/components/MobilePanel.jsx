@@ -137,7 +137,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
       <Box sx={{ display: "flex", flexDirection: "column", gap: "8px", p: 2 }}>
         {items.map((item, index) => {
           switch (item.type) {
-            // Render Heading
+            // Heading
             case "heading":
               return (
                 <Typography
@@ -149,7 +149,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </Typography>
               );
 
-            // Render Subheading
+            //Subheading
             case "subheading":
               return (
                 <Typography
@@ -161,7 +161,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </Typography>
               );
 
-            // Render Text Body and Text Caption
+            // Text Body
             case "textbody":
               return (
                 <Typography
@@ -186,7 +186,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </Typography>
               );
 
-            // Render Text Input
+            // Text Input
             case "textInput":
               return (
                 <div key={index} className="">
@@ -218,7 +218,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            // Render Text Area
+            // Text Area
             case "textArea":
               return (
                 <div key={index} className="">
@@ -245,7 +245,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            //Render RichText
+            // RichText
             case "richText": {
               let renderedHTML = "<p>No content available</p>";
 
@@ -277,58 +277,57 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                       prose-table:border prose-table:border-collapse prose-th:border prose-th:border-gray-300 prose-td:border prose-td:border-gray-300 prose-th:px-2 prose-th:py-1 prose-td:px-2 prose-td:py-1"
                     dangerouslySetInnerHTML={{ __html: renderedHTML }}
                   />
-
                   <style>
                     {`
-    .prose h1 {
-      font-size: 1.5rem;
-      font-weight: 700;
-    }
-    .prose h2 {
-      font-size: 1.25rem;
-      font-weight: 500;
-    }
-    .prose table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    .prose th, .prose td {
-      border: 1px solid #ddd;
-      padding: 4px 8px;
-    }
-    .prose thead {
-      background-color: #f3f4f6;
-    }
-    .prose ul {
-      list-style-type: disc;
-      margin-left: 1.5rem;
-    }
-    .prose ol {
-      list-style-type: decimal;
-      margin-left: 1.5rem;
-    }
-    // .prose a {
-    //  text-color: blue-500;
-    // }
-    .prose li {
-      color: #6b7280
-      margin: 0.25rem 0;
-    }
-    .prose img {
-      width: 2.5rem; 
-      height: 2.5rem; 
-      border-radius: 9999px; 
-      object-fit: cover; 
-      border: 1px solid #d1d5db; 
-      display: inline-block; 
-    }
-  `}
+                      .prose h1 {
+                        font-size: 1.5rem;
+                        font-weight: 700;
+                      }
+                      .prose h2 {
+                        font-size: 1.25rem;
+                        font-weight: 500;
+                      }
+                      .prose table {
+                        width: 100%;
+                        border-collapse: collapse;
+                      }
+                      .prose th, .prose td {
+                        border: 1px solid #ddd;
+                        padding: 4px 8px;
+                      }
+                      .prose thead {
+                        background-color: #f3f4f6;
+                      }
+                      .prose ul {
+                        list-style-type: disc;
+                        margin-left: 1.5rem;
+                      }
+                      .prose ol {
+                        list-style-type: decimal;
+                        margin-left: 1.5rem;
+                      }
+                      // .prose a {
+                      //  text-color: blue-500;
+                      // }
+                      .prose li {
+                        color: #6b7280
+                        margin: 0.25rem 0;
+                      }
+                      .prose img {
+                        width: 2.5rem; 
+                        height: 2.5rem; 
+                        border-radius: 9999px; 
+                        object-fit: cover; 
+                        border: 1px solid #d1d5db; 
+                        display: inline-block; 
+                      }
+                          `}
                   </style>
                 </div>
               );
             }
 
-            // Render Checkboxes
+            // Checkboxes
             case "checkBox":
               return (
                 <div key={index} className="">
@@ -423,7 +422,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            // Render Radio Buttons
+            // Radio Buttons
             case "radioButton":
               return (
                 <div key={index} className="">
@@ -526,7 +525,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            // Render Dropdown
+            //Dropdown
             case "dropDown":
               return (
                 <div key={index}>
@@ -615,6 +614,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+            // chipselector
             case "chipSelector":
               return (
                 <div className="p-2 bg-gray-100 rounded-lg">
@@ -652,6 +652,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+            // Footer Button
             case "footerbutton":
               const centerCaption =
                 item.footer?.footer_1?.center_caption || "center caption";
@@ -673,9 +674,11 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+            //Embedded Link
             case "embeddedlink":
               return <div className="text-green-500">{item.text || ""}</div>;
 
+            // Optin
             case "optin":
               return (
                 <div className="flex items-center space-x-2">
@@ -698,6 +701,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
+            // Image
             case "image":
               return (
                 <>
@@ -749,6 +753,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </>
               );
 
+            // Document
             case "document":
               return (
                 <>
@@ -774,6 +779,8 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                   )}
                 </>
               );
+
+            // Media
             case "media":
               return (
                 <>
@@ -800,6 +807,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </>
               );
 
+            // Image Carousel
             case "imageCarousel": {
               const images = [
                 item?.["image-1"],
@@ -860,11 +868,15 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
               );
             }
 
+            // If Else
             case "ifelse":
               return <InputField value={item.value || ""} />;
+
+            // Switch
             case "switch":
               return <InputField placeholder="SWITCH" label="SWITCH" />;
 
+            // Calendar
             case "calendar":
               return (
                 <div className="w-full px-3 py-2">
@@ -1011,7 +1023,7 @@ const MobilePanel = ({ items, onUpdateItem, screenTitle }) => {
                 </div>
               );
 
-            // Render Date
+            // Date
             case "date":
               return (
                 <div className="w-full px-4 py-2">

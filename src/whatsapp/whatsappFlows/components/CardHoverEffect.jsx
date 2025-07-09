@@ -40,21 +40,21 @@ export default function CardHoverEffect() {
       animation: Animation_ContactUs,
       button: "Contact Us",
     },
-    // {
-    //   title: "Customer Support",
-    //   animation:Animation_CustomerSupport,
-    //   button: "Customer Support",
-    // },
-    // {
-    //   title: "Survey",
-    //   animation: Animation_Survey,
-    //   button: "Survey",
-    // },
-    // {
-    //   title: "Lead Generation",
-    //   animation: Animation_LeadGeneration,
-    //   button: "LeadGeneration",
-    // },
+    {
+      title: "Customer Support",
+      animation: Animation_CustomerSupport,
+      button: "Customer Support",
+    },
+    {
+      title: "Survey",
+      animation: Animation_Survey,
+      button: "Survey",
+    },
+    {
+      title: "Lead Generation",
+      animation: Animation_LeadGeneration,
+      button: "LeadGeneration",
+    },
   ];
 
   return (
@@ -148,30 +148,6 @@ const HoverEffect = ({ items, className }) => {
     </div>
   );
 };
-
-// const Card = ({ className, children }) => {
-//   return (
-//     <div
-//       className={cn(
-//         "w-[250px] h-[350px] rounded-2xl p-4 overflow-hidden bg-gradient-to-b from-[#AF7ABD] to-[#8683C9] border border-transparent dark:border-white/[0.2] group-hover:border-slate-700 relative z-20",
-//         className
-//       )}
-//     >
-//       <div className="relative">
-//         <div className="h-full flex flex-col justify-between">{children}</div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// const CardTitle = ({ className, children }) => {
-//   return (
-//     <h4 className={cn("text-gray-50 font-bold tracking-wide text-center  text-lg", className)}>
-//       {children}
-//     </h4>
-//   );
-// };
-
 
 const Card = ({ className, children }) => {
   return (

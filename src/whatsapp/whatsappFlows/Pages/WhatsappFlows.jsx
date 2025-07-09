@@ -9,7 +9,6 @@ import {
 import EditNoteIcon from "@mui/icons-material/EditNote";
 import { MdOutlineDeleteForever } from "react-icons/md";
 import { Carousel } from "primereact/carousel";
-// import { Player } from "@lottiefiles/react-lottie-player";
 import Lottie from "lottie-react";
 import nothinganimation from "@/assets/animation/nothinganimation.json";
 
@@ -43,11 +42,9 @@ import WarningOutlinedIcon from "@mui/icons-material/WarningOutlined";
 import { MdOutlinePublishedWithChanges } from "react-icons/md";
 import { FaCheckCircle } from "react-icons/fa";
 import { IoCloseCircle } from "react-icons/io5";
-// import RadioButtonCheckedOutlinedIcon from "@mui/icons-material/RadioButtonCheckedOutlined";
 import RestaurantMenuOutlinedIcon from "@mui/icons-material/RestaurantMenuOutlined";
 import AccessAlarmsOutlinedIcon from "@mui/icons-material/AccessAlarmsOutlined";
 import SchoolOutlinedIcon from "@mui/icons-material/SchoolOutlined";
-// import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import CancelOutlinedIcon from "@mui/icons-material/CancelOutlined";
 import { AnimatePresence, motion } from "framer-motion";
 import CardActions from "@mui/material/CardActions";
@@ -196,10 +193,6 @@ const WhatsappFlows = () => {
     }
   };
 
-  // const filteredFlows = flowList.filter((flow) =>
-  //   flow.flowName.toLowerCase().includes(search.toLowerCase())
-  // );
-
   const filteredFlows = (Array.isArray(flowList) ? flowList : []).filter(
     (flow) =>
       (flow?.flowName || "").toLowerCase().includes(search.toLowerCase())
@@ -214,7 +207,6 @@ const WhatsappFlows = () => {
   const handleMenuOpen = (event, flow) => {
     setSelectedFlow(flow);
     setDropdownOpenId(flow.flowId);
-    console.log(flow);
   };
 
   const handleMenuClose = () => {
@@ -222,8 +214,8 @@ const WhatsappFlows = () => {
     setSelectedFlow(null);
   };
 
+  // Handle Edit
   const handleEdit = (flow) => {
-    console.log("flow", flow);
     navigate("/wflowedit", {
       state: {
         data: flow?.srNo,
@@ -237,7 +229,6 @@ const WhatsappFlows = () => {
     setCurrentRow(selectedFlow);
     setVisible(true);
     handleMenuClose();
-    console.log(selectedFlow);
   };
 
   // deleteFlow
@@ -245,10 +236,7 @@ const WhatsappFlows = () => {
     if (!currentRow) {
       return toast.error("No flow selected for deletion");
     }
-
     const { flowId } = currentRow;
-
-    console.log(flowId);
 
     try {
       setIsFetching(true);
@@ -259,7 +247,6 @@ const WhatsappFlows = () => {
         setVisible(false);
         await fetchWabaFlows();
       } else {
-        console.log("Error object in response:", res?.error);
         const errorMsg = res?.error?.error_user_msg || "Flow deletion failed";
         console.log("Error user message:", errorMsg);
         toast.error(errorMsg);
@@ -273,22 +260,17 @@ const WhatsappFlows = () => {
   }
 
   const handleExport = async (flow = selectedFlow) => {
-    console.log("flow", flow)
     setIsLoading(true);
     try {
       const response = await getMainJson(flow.srNo);
-      console.log("response from download", response);
 
       const mainJsonStr = response.data[0].mainJson;
       const mainJsonObj = JSON.parse(mainJsonStr);
 
-      // Convert to pretty JSON string
       const jsonString = JSON.stringify(mainJsonObj, null, 2);
 
-      // Create Blob
       const blob = new Blob([jsonString], { type: "application/json" });
 
-      // Create download link
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -306,7 +288,6 @@ const WhatsappFlows = () => {
     setIsLoading(false);
     handleMenuClose();
   };
-
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -361,6 +342,16 @@ const WhatsappFlows = () => {
       animation: Animation_ContactUs,
       button: "Contact Us",
     },
+    {
+      name: "Customer Support",
+      animation: Animation_CustomerSupport,
+      button: "Customer Support",
+    },
+    {
+      name: "Survey",
+      animation: Animation_Survey,
+      button: "Survey",
+    },
   ];
 
   // 2. Your itemTemplate
@@ -413,31 +404,28 @@ const WhatsappFlows = () => {
         </div>
         <div className="mb-2 sm:mb-0">
           {/* <CardHoverEffect/> */}
-
-          <div className="">
-            <Carousel
-              value={templates}
-              numVisible={4}
-              numScroll={1}
-              itemTemplate={templateItem}
-              circular
-              showIndicators={true}
-              showNavigators={true}
-              className="custom-carousel"
-              responsiveOptions={[
-                {
-                  breakpoint: "1024px",
-                  numVisible: 4,
-                  numScroll: 1,
-                },
-                {
-                  breakpoint: "768px",
-                  numVisible: 1,
-                  numScroll: 1,
-                },
-              ]}
-            />
-          </div>
+          <Carousel
+            value={templates}
+            numVisible={4}
+            numScroll={1}
+            itemTemplate={templateItem}
+            circular
+            showIndicators={true}
+            showNavigators={true}
+            className="custom-carousel"
+            responsiveOptions={[
+              {
+                breakpoint: "1024px",
+                numVisible: 4,
+                numScroll: 1,
+              },
+              {
+                breakpoint: "768px",
+                numVisible: 1,
+                numScroll: 1,
+              },
+            ]}
+          />
         </div>
       </div>
 
@@ -818,8 +806,6 @@ const WhatsappFlows = () => {
                       <div className="flex flex-row items-center justify-between gap-2 mt-2 border-b w-full py-2 px-2 border-gray-500">
                         <div className="flex items-center gap-3">
                           <img
-                            // src="https://static.vecteezy.com/system/resources/previews/048/216/750/original/cartoon-man-avatar-character-male-avatar-profile-free-png.png"
-                            // src={celifavicon}
                             src={officebuilding}
                             className="w-10 h-10 rounded-full border object-fit border-gray-400 bg-gray-600"
                           />

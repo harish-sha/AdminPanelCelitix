@@ -27,6 +27,7 @@ import {
   addFlowItem,
   updateFlowItem,
   addCanvasItems,
+  updateCanvasItem,
 } from "../redux/features/FlowSlice";
 
 const FlowCreationPage = () => {
@@ -298,6 +299,18 @@ const FlowCreationPage = () => {
       })
     );
 
+    dispatch(
+      addCanvasItems({
+        id: uniqueId,
+        data: {
+          screenId: screenId,
+          type: item.type,
+          value: item.label,
+          status: 0,
+        },
+      })
+    );
+
     console.log("item", item);
 
     // ✅ Add the item
@@ -408,9 +421,14 @@ const FlowCreationPage = () => {
     console.log("updatedData", updatedData);
 
     dispatch(
-      addCanvasItems({
+      updateCanvasItem({
         id: updatedData.storeId,
-        data: updatedData,
+        updates: {
+          data: {
+            ...updatedData,
+          },
+          status: 2,
+        },
       })
     );
 

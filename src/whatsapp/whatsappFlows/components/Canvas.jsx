@@ -94,7 +94,7 @@ const Canvas = ({
 
     if (!targetItem) return "";
 
-    // Heading
+    // =====================================Heading====================================
     if (item.type === "heading") {
       return (
         <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -103,7 +103,7 @@ const Canvas = ({
       );
     }
 
-    // Subheading
+    // ==================================Subheading====================================
     if (item.type === "subheading") {
       return (
         <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -112,7 +112,7 @@ const Canvas = ({
       );
     }
 
-    // TextCaption
+    // ====================================TextCaption=================================
     if (item.type === "textcaption") {
       return (
         <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -121,7 +121,7 @@ const Canvas = ({
       );
     }
 
-    // Textbody
+    // ======================================Textbody==================================
     if (item.type === "textbody") {
       return (
         <div className="break-words whitespace-pre-wrap w-full max-w-full">
@@ -130,7 +130,7 @@ const Canvas = ({
       );
     }
 
-    // TextInput
+    // ======================================TextInput=================================
     if (item.type === "textInput") {
       return (
         <div className="bg-white">
@@ -204,7 +204,7 @@ const Canvas = ({
       );
     }
 
-    // Textarea
+    //================================== Textarea======================================
     if (item.type === "textArea") {
       return (
         <div className="bg-white">
@@ -244,7 +244,7 @@ const Canvas = ({
       );
     }
 
-    // Richtext
+    // ===========================================Richtext=============================
     if (item.type === "richText") {
       let renderedHTML = "";
       let isEmptyContent = false;
@@ -301,7 +301,7 @@ const Canvas = ({
       );
     }
 
-    // Footerbutton
+    //======================================Footerbutton===============================
     if (item.type === "footerbutton") {
       const footer = targetItem.footer?.footer_1 || {};
 
@@ -344,7 +344,7 @@ const Canvas = ({
       );
     }
 
-    // Radiobutton
+    //====================================Radiobutton==================================
     if (item.type === "radioButton") {
       const options = targetItem["data-source"] || [];
       const hasContent =
@@ -424,7 +424,7 @@ const Canvas = ({
       );
     }
 
-    // Checkbox
+    //===============================Checkbox==========================================
     if (item.type === "checkBox") {
       const options = targetItem["data-source"] || [];
       const hasContent =
@@ -501,7 +501,7 @@ const Canvas = ({
       );
     }
 
-    // Dropdown
+    //=======================Dropdown==================================================
     if (item.type === "dropDown") {
       const options = targetItem["data-source"] || [];
       const hasContent =
@@ -576,7 +576,7 @@ const Canvas = ({
       );
     }
 
-    // Chipselector
+    //===========================Chipselector==========================================
     if (item.type === "chipSelector") {
       const options = targetItem["data-source"] || [];
       const hasContent =
@@ -639,6 +639,7 @@ const Canvas = ({
       );
     }
 
+    // ==========================Embedded Link==========================================
     if (item.type === "embeddedlink") {
       return (
         <div className=" bg-white">
@@ -669,6 +670,7 @@ const Canvas = ({
       );
     }
 
+    // ==================================Optin==========================================
     if (item.type === "optin") {
       return (
         <div className="bg-white">
@@ -708,6 +710,7 @@ const Canvas = ({
       );
     }
 
+    // ===================================Image==========================================
     if (item.type === "image") {
       return (
         <div className=" bg-white">
@@ -753,6 +756,7 @@ const Canvas = ({
       );
     }
 
+    //=================================Document==========================================
     if (item.type === "document") {
       return (
         <div className=" bg-white">
@@ -799,6 +803,7 @@ const Canvas = ({
       );
     }
 
+    // ===================================Media==========================================
     if (item.type === "media") {
       return (
         <div className=" bg-white ">
@@ -844,6 +849,7 @@ const Canvas = ({
       );
     }
 
+    //===========================Image Carousel==========================================
     if (item.type === "imageCarousel") {
       return (
         <div className=" bg-white ">
@@ -874,6 +880,7 @@ const Canvas = ({
       );
     }
 
+    // =====================================Date=========================================
     if (item.type === "date") {
       return (
         <div className="bg-white">
@@ -931,6 +938,7 @@ const Canvas = ({
       );
     }
 
+    // ================================Calendar==========================================
     if (item.type === "calendar") {
       const isRange = targetItem.mode === "range";
 
@@ -1059,10 +1067,7 @@ const Canvas = ({
   };
 
   const dispatch = useDispatch();
-  // Handle deleting items from the canvas
   const handleDelete = (index, item) => {
-    // console.log("index", index);
-    // console.log("item", item);
     setTabs((prevTabs) => {
       const newTabs = [...prevTabs];
       newTabs[activeIndex] = {
@@ -1090,9 +1095,7 @@ const Canvas = ({
 
   // Draggable component for individual canvas items
   const DraggableItem = React.memo(({ item, index, tabs, activeIndex }) => {
-    // console.log("itemmmmmmmmmmmmmmm", item);
     if (!item?.type) {
-      // console.error("DraggableItem error: item.type is not defined");
       return null;
     }
 
@@ -1132,8 +1135,8 @@ const Canvas = ({
     const [editDialogVisible, setEditDialogVisible] = useState(false);
 
     const handleEdit = (index, item) => {
-      setSelectedItem({ ...item, index }); // force a new reference
-      // setEditDialogVisible(true); // show the edit panel/modal
+      setSelectedItem({ ...item, index });
+      // setEditDialogVisible(true);
       setOpenIfElse(true);
     };
 
@@ -1143,8 +1146,6 @@ const Canvas = ({
       item,
       "helper_text"
     );
-
-    console.log("item", item);
 
     return (
       // <motion.div
@@ -1255,24 +1256,6 @@ const Canvas = ({
   // Helper function to get background color based on item type
   const getBackgroundColor = (type) => {
     switch (type) {
-      // case "heading":
-      //   return "#e3f2fd";
-      // case "subheading":
-      //   return "#ffebee";
-      // case "textbody":
-      //   return "#fff3cd";
-      // case "textcaption":
-      //   return "#f8bbd0";
-      // case "textInput":
-      //   return "#E0F7FA";
-      // case "textArea":
-      //   return "#E0F7FA";
-      // case "radioButton":
-      // case "checkBox":
-      // case "dropDown":
-      //   return "#c5e1f5";
-      // case "chipSelector":
-
       case "heading":
         return "#E0F7FA";
       case "subheading":

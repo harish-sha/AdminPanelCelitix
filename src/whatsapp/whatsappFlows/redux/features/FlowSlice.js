@@ -27,6 +27,18 @@ const flowSlice = createSlice({
       const { id } = action.payload;
       delete state.flowItems[id];
     },
+    updateCanvasItem: (state, action) => {
+      const { id, updates } = action.payload;
+
+      const index = state.canvasItems.findIndex((item) => item.id === id);
+
+      if (index !== -1) {
+        state.canvasItems[index] = {
+          ...state.canvasItems[index],
+          ...updates,
+        };
+      }
+    },
     deleteScreen: (state, action) => {
       const { id } = action.payload;
       delete state.screenName[id];
@@ -48,6 +60,7 @@ const flowSlice = createSlice({
 export const {
   addFlowItem,
   addCanvasItems,
+  updateCanvasItem,
   deleteFlowItem,
   updateFlowItem,
   addScreenName,

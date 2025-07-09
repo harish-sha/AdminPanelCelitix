@@ -71,7 +71,6 @@ export default function CustomTabView({
     );
   };
 
-
   const removeTab = (index) => {
     const screenDetails = tabs[index]
     if (tabs.length === 1) return;
@@ -223,6 +222,7 @@ export default function CustomTabView({
         </div>
       </div>
 
+      {/* New Screen Dialog Start */}
       <Dialog
         visible={dialogVisible}
         onHide={() => {
@@ -314,8 +314,10 @@ export default function CustomTabView({
           </div>
         </div>
       </Dialog>
+      {/* New Screen Dialog End */}
 
-      {/* Edit screen dialog */}
+
+      {/* Edit screen dialog Start */}
       <Dialog
         visible={editDialogVisible}
         onHide={() => {
@@ -391,6 +393,8 @@ export default function CustomTabView({
           </div>
         </div>
       </Dialog>
+      {/* Edit screen dialog End */}
+
     </div>
   );
 }

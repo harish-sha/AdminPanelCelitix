@@ -188,7 +188,6 @@ const EditPanel = ({
   const [optSelectedScreenName, setOptSelectedScreenName] = useState("");
 
   // useEffect(() => {
-  //   console.log("selectedItemooooppppttttiiinnn", selectedItem.screen);
   //   if (selectedItem) {
   //     setOptLabel(selectedItem.label || "");
   //     setOPTAction(selectedItem["on-click-action"]);
@@ -921,7 +920,7 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
-  // =================================Footer End===============================
+  // =================================Footer End==========================================
 
   // =================================RadioButton Start===============================
   const MAX_IMAGE_SIZE = 100 * 1024; // 100 KB
@@ -1438,7 +1437,6 @@ const EditPanel = ({
 
   // useEffect(() => {
   //   if (selectedItem) {
-  //     console.log("selectedItem", selectedItem)
   //     setMainLabelDropdown(selectedItem.label || "");
   //     setDraftTitle(selectedItem.title || "");
   //     setDraftDescription(selectedItem.description || "");
@@ -1649,10 +1647,10 @@ const EditPanel = ({
 
     onSave(updatedData);
   };
-  // =================================Dropdown End===============================
+  // =================================Dropdown End========================================
 
 
-  // =================================Chip Selector start===============================
+  // =================================Chip Selector start=======================================
   const [chipSelectorLabel, setChipSelectorLabel] = useState("");
   const [chipSelectorOptions, setChipSelectorOptions] = useState([]);
   const [editingChipIdx, setEditingChipIdx] = useState(null);
@@ -1875,7 +1873,7 @@ const EditPanel = ({
   };
   // =================================Sub heading End===============================
 
-  // ====================text body start=======================
+  // ====================text body start========================================
   const [textbodyInput, setTextbodyInput] = useState("");
 
   useEffect(() => {
@@ -1926,7 +1924,7 @@ const EditPanel = ({
     onSave(updatedData);
     onClose();
   };
-  // ====================text body End=======================
+  // ====================text body End=================================================
 
 
   //================================= text caption start===================================

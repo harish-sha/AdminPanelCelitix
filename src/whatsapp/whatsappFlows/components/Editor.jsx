@@ -1,6 +1,4 @@
-// RichTextEditor.jsx - Markdown-style payload generator without turndownService
 import React, { useEffect, useRef, useState, useCallback } from "react";
-
 import toast from "react-hot-toast";
 import {
   FormatBoldOutlined,
@@ -12,9 +10,9 @@ import {
   AddPhotoAlternateOutlined,
 } from "@mui/icons-material";
 import TableViewIcon from "@mui/icons-material/TableView";
-import UniversalButton from "../../components/UniversalButton";
 import InputField from "@/whatsapp/components/InputField";
 import { useDispatch } from "react-redux";
+import UniversalButton from "../../components/UniversalButton";
 import { updateFlowItem } from "../redux/features/FlowSlice";
 
 export const convertNodeToMarkdown = (node) => {
@@ -46,10 +44,6 @@ export const convertNodeToMarkdown = (node) => {
       const src = node.getAttribute("src") || "";
       const altText = (node.getAttribute("alt") || "").trim();
       return `![${altText}](${src})`;
-    // case "ul":
-    //   return Array.from(node.children)
-    //     .map((li) => `+ ${convertNodeToMarkdown(li)}`);
-
     case "ul":
       return Array.from(node.children)
         .map((li) => {
@@ -61,12 +55,6 @@ export const convertNodeToMarkdown = (node) => {
           }
         })
         .flat();
-
-    // case "ol":
-    //   return Array.from(node.children)
-    //     .map((li, i) => `${i + 1}. ${convertNodeToMarkdown(li)}`)
-
-
     case "ol":
       return Array.from(node.children)
         .map((li, i) => {
@@ -81,16 +69,6 @@ export const convertNodeToMarkdown = (node) => {
         .flat();
 
 
-
-    // case "li":
-    //   return children;
-
-    // case "li":
-    //   return Array.from(node.childNodes)
-    //     .map(convertNodeToMarkdown)
-    //     .flat()
-    //     // .join("")  // join content of li itself
-    //     .trim();
 
 
     // case "ul":
@@ -197,7 +175,6 @@ export const convertNodeToMarkdown = (node) => {
 // }, [selectedItem]);
 
 
-
 const walkNodes = (node) => {
   if (!node) return [];
   if (node.nodeType === 3) return [node];
@@ -235,7 +212,7 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
 
   const insertImage = () => {
     let altText = "";
-    let srcFile; // local File
+    let srcFile;
 
     const handleInsert = () => {
       if (!srcFile) {
@@ -264,7 +241,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
       <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
         <h3 className="font-semibold">Insert Image</h3>
 
-        {/* ALT TEXT input */}
         <InputField
           type="text"
           placeholder="Image alt text"
@@ -272,7 +248,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           onChange={(e) => (altText = e.target.value.trim())}
         />
 
-        {/* File input */}
         <InputField
           type="file"
           accept="image/png,image/jpeg,image/webp"
@@ -404,7 +379,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     };
 
     toast.success("Changes saved!");
-    // if (onPayloadChange) onPayloadChange(payload);
     onUpdate(updatedData);
 
     dispatch(
@@ -417,11 +391,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     );
   };
 
-
-
-
-
-
   const [active, setActive] = useState({
     h3: false,
     h2: false,
@@ -433,7 +402,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     insertOrderedList: false,
   });
 
-  // Helper to pull the latest command states from the browser
   const updateActive = useCallback(() => {
     const block = document.queryCommandValue("formatBlock")?.toLowerCase();
     setActive({
@@ -457,16 +425,13 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
   const inactive = "bg-white text-gray-700 hover:bg-gray-100";
   const activeBtn = "bg-blue-600 text-white";
 
-  // Wrapper for exec calls that also refresh state
   const doExec = (cmd, arg) => {
     exec(cmd, arg);
-    // slight delay to let the browser apply the change before reading state
     setTimeout(updateActive, 0);
   };
 
   useEffect(() => {
     const updateState = () => {
-      // get current block tag, e.g. "h1", "h2", "p", etc.
       const block = document.queryCommandValue("formatBlock")?.toLowerCase();
       setActive({
         h3: block === "h3",
@@ -504,7 +469,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
     let linkText = "";
 
     toast.custom((t) => {
-      // Move handleInsert here so we have access to t.id
       const handleInsert = () => {
         if (!/^https?:\/\/.+/.test(url)) {
           toast.error("Please enter a valid URL (must start with http/https)", { id: t.id });
@@ -531,7 +495,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <div className="bg-white p-4 rounded shadow-md border w-[320px] flex flex-col gap-3">
           <h3 className="font-semibold">Insert Link</h3>
 
-          {/* URL Input */}
           <InputField
             type="text"
             placeholder="https://example.com"
@@ -539,7 +502,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
             onChange={(e) => (url = e.target.value.trim())}
           />
 
-          {/* Optional Link Text Input */}
           <InputField
             type="text"
             placeholder="Link text (optional)"
@@ -679,8 +641,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           <AddLinkOutlined />
         </button>
 
-
-
         {/* Image */}
         <button
           onMouseDown={(e) => e.preventDefault()}
@@ -698,11 +658,9 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
         <button
           onMouseDown={(e) => e.preventDefault()}
           onClick={() => {
-            // first-time click: insert a table if none exists at cursor
-            // or toggle the visibility of the controls
             const tbl = findCurrentTable();
             if (!tbl) {
-              insertTable(); // your existing insertTable fn
+              insertTable();
             }
             setTableControlsVisible((vis) => !vis);
           }}
@@ -731,31 +689,6 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
             </div>
           )}
         </div>
-
-        {/* Clear */}
-        {/* <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => doExec("removeFormat")}
-        className={`${base} text-red-700 ${inactive}`}
-      >
-        Clear
-      </button> */}
-
-        {/* Preview Toggle */}
-        {/* <button
-        onMouseDown={e => e.preventDefault()}
-        onClick={() => {
-          setPreviewMode(p => !p);
-          setTimeout(updateActive, 0);
-        }}
-        className={`${base} ${
-          previewMode
-            ? activeBtn
-            : "bg-blue-100 text-blue-800 hover:bg-blue-200"
-        }`}
-      >
-        {previewMode ? "Edit" : "Preview"}
-      </button> */}
       </div>
 
       {previewMode ? (
@@ -770,12 +703,8 @@ const RichTextEditor = ({ onUpdate, selectedItem, onClose }) => {
           ref={editorRef}
           contentEditable
           suppressContentEditableWarning
-          className=" editor prose prose-sm max-w-none
-    block
-    min-h-[250px] border border-gray-300 p-4 rounded shadow
-    focus:outline-none focus:ring
-    [&_ol]:list-decimal 
-    [&_ul]:list-disc    "
+          className="editor prose prose-sm max-w-none block min-h-[250px] border border-gray-300 p-4 rounded shadow
+    focus:outline-none focus:ring [&_ol]:list-decimal [&_ul]:list-disc"
         />
       )}
 

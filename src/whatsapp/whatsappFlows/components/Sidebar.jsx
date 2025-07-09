@@ -42,8 +42,6 @@ const itemVariants = {
   show: { opacity: 1, y: 0 },
 };
 
-
-
 const items = [
   { id: 1, type: "heading", label: "Text Heading", icon: <TextFieldsIcon /> },
   {
