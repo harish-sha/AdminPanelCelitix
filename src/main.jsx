@@ -21,13 +21,13 @@ createRoot(document.getElementById("root")).render(
 
         <PrimeReactProvider>
           {/* Error Boundary*/}
-          <ErrorBoundary>
+          {/* <ErrorBoundary> */}
             <DownloadProvider>
               <DndProvider backend={HTML5Backend}>
                 <App />
               </DndProvider>
             </DownloadProvider>
-          </ErrorBoundary>
+          {/* </ErrorBoundary> */}
         </PrimeReactProvider>
       </PageDataProvider>
     </UserProvider>

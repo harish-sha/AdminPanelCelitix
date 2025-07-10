@@ -11,6 +11,7 @@ import { InputData } from "./components/input";
 import { Sidebar } from "./components/sidebar";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChatScreen } from "./components/chatScreen";
+import moment from "moment";
 
 const RcsLiveChat = () => {
   const [isLoading, setIsLoading] = React.useState(false);
@@ -101,11 +102,71 @@ const RcsLiveChat = () => {
       const payload = {
         agentId: chatState.active.agentId,
         mobileNo: chatState.active.mobileNo,
-        chatNo: chatState.active.srno,
+        chatNo: 1,
       };
 
       const res = await fetchSpecificConvo(payload);
       const messages = [...(res?.conversationEntityList || [])].reverse();
+
+      const enrichedMessages = await Promise.all(
+        messages.map(async (msg) => {
+          let mediaPath = null;
+          let replyMessage = null;
+          let isReply = false;
+          let mediaSize = null;
+
+          if (msg?.contextReceiptNo) {
+            const data = {
+              wabaNumber: msg?.wabaNumber,
+              receiptNo: msg?.contextReceiptNo,
+            };
+            const res = await fetchReplyData(data);
+            replyMessage = res?.messageBody;
+            isReply = true;
+          }
+
+          // if (msg.isReceived && msg?.replyType === "image") {
+          //   try {
+          //     mediaPath = await downloadAttachment({
+          //       waba: wabaState.selectedWaba,
+          //       id: msg.mediaId,
+          //       conversionSrno: msg.srno,
+          //     });
+          //   } catch (err) {
+          //     console.error(`Failed to fetch media for srno ${msg.srno}`, err);
+          //   }
+          // } else {
+          // }
+
+          mediaPath = msg.mediaPath;
+          return {
+            ...msg,
+            date: moment(msg.replyTime).format("YYYY-MM-DD"),
+            mediaPath,
+            replyMessage,
+            isReply,
+            // mediaPath: mediaPath?.msg || "/default-avatar.jpg",
+          };
+        })
+      );
+
+      const grouped = enrichedMessages.reduce((acc, msg) => {
+        if (!acc[msg.date]) {
+          acc[msg.date] = [];
+        }
+        acc[msg.date].push(msg);
+        return acc;
+      }, {});
+
+      const groupedArray = Object.entries(grouped).map(([date, messages]) => ({
+        date,
+        messages,
+      }));
+
+      setChatState((prev) => ({
+        ...prev,
+        specificConversation: groupedArray,
+      }));
     } catch (e) {
       toast.error("Error fetching conversation");
     }
@@ -188,7 +249,7 @@ const RcsLiveChat = () => {
 
   useEffect(() => {
     handleFetchSpecificConvo();
-  }, [chatState]);
+  }, [chatState?.active]);
 
   return (
     <div className="flex h-[100%] bg-gray-50 rounded-2xl overflow-hidden border ">
@@ -214,6 +275,7 @@ const RcsLiveChat = () => {
           setChatState={setChatState}
           isLoading={isLoading}
           agentState={agentState}
+          handleFetchSpecificConvo={handleFetchSpecificConvo}
         />
       </div>
 
